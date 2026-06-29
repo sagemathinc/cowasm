@@ -5067,6 +5067,20 @@ diff -urN a/src/sage/matrix/docs.py b/src/sage/matrix/docs.py
 @@ -300 +300 @@
 -    sage: A = matrix(RR,2,[1,10,3.5,2])
 +    sage: A = matrix(RR,2,[1,10,3.5,2])                                             # needs sage.rings.real_mpfr
+diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
+--- a/src/sage/matrix/change_ring.pyx
++++ b/src/sage/matrix/change_ring.pyx
+@@ -26,8 +26,8 @@
+         sage: a.change_ring(RDF)
+         [                  -2.0                   -5.0                    3.0]
+         [                   4.0                    8.0 1.0303398304893499e+18]
+-        sage: import sage.matrix.change_ring
+-        sage: sage.matrix.change_ring.integer_to_real_double_dense(a)
++        sage: import sage.matrix.change_ring                                      # needs sage.matrix.matrix_integer_dense
++        sage: sage.matrix.change_ring.integer_to_real_double_dense(a)             # needs sage.matrix.matrix_integer_dense
+         [                  -2.0                   -5.0                    3.0]
+         [                   4.0                    8.0 1.0303398304893499e+18]
+     """
 diff -urN a/src/sage/monoids/trace_monoid.py b/src/sage/monoids/trace_monoid.py
 --- a/src/sage/monoids/trace_monoid.py
 +++ b/src/sage/monoids/trace_monoid.py

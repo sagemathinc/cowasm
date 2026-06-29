@@ -10872,6 +10872,34 @@ Sagelite source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty; skip grouping
 records only the expected `optional:sage.libs.pari` deferrals.
 
+Focused matrix change-ring helper corpus-growth pass:
+
+```text
+sage -t passed: 2 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/change_ring.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 692 non-comment
+entries. Direct sampling first recorded two passing blocks and two failures:
+the ordinary `matrix(...).change_ring(RDF)` path already works in the default
+profile, while the explicit `sage.matrix.change_ring` import path requires the
+unavailable dense integer matrix backend.
+
+The added WASI source patch marks the direct
+`integer_to_real_double_dense(...)` backend probe as
+`# needs sage.matrix.matrix_integer_dense`, preserving default-profile
+coverage for the public matrix change-ring behavior without promoting the
+stripped dense-integer side-module import. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/change-ring/change-ring-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The run metadata
+records CoWasm commit `f6be66969e767343ac1803bcc07fa07eb2fa551e`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 69.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
