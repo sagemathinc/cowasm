@@ -9147,6 +9147,42 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-special-values-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Scheduled 2026-06-28 sampling follow-up: no corpus entry was added. The
+checked `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` file was a
+zero-byte placeholder in this checkout, and `/tmp` returned `EDQUOT` for the
+doctest runner's adjacent `mkdtemp`, so focused probes used `.tmp/*.sqlite3`
+instead.
+
+Already-covered sanity reruns still pass for
+`sage/combinat/root_system/root_space.py` (53 passed, 35 skipped),
+`sage/combinat/root_system/coxeter_type.py` (75 passed, 10 skipped),
+`sage/combinat/root_system/type_A.py` (43 passed, 13 skipped),
+`sage/misc/repr.py` (27 passed, 7 skipped), `sage/misc/table.py` (52 passed,
+25 skipped), `sage/misc/lazy_string.pyx` (129 passed, 8 skipped), and
+`sage/misc/unknown.py` (22 passed, 0 skipped).
+
+The unlisted root-system probes `sage/combinat/root_system/coxeter_matrix.py`,
+`sage/combinat/root_system/braid_move_calculator.py`,
+`sage/combinat/root_system/dynkin_diagram.py`, and
+`sage/combinat/root_system/pieri_factors.py` were skipped-only under the
+default browser profile. Unlisted set and monoid probes
+`sage/sets/real_set.py`, `sage/monoids/hecke_monoid.py`, and
+`sage/monoids/monoid.py` were also skipped-only. Small unlisted utility probes
+such as `sage/combinat/counting.py`, `sage/combinat/family.py`,
+`sage/combinat/algebraic_combinatorics.py`, `sage/combinat/ribbon.py`,
+`sage/misc/mathml.py`, `sage/structure/coerce_exceptions.py`,
+`sage/structure/gens_py.py`, and `sage/structure/sage_object_test.py` exposed
+no doctest blocks.
+
+The same sampling pass confirmed several non-quiet blockers that should remain
+future triage targets rather than immediate corpus additions:
+`sage/combinat/graph_path.py` fails graph-backed examples,
+`sage/combinat/abstract_tree.py` still reaches a `list_clone`
+maximum-call-stack trap, `sage/misc/sage_input.py` reaches the known
+NTL/libcxx ostream memory trap through finite-field polynomial setup, and
+`sage/misc/functional.py` times out in a symbolic rational-expression
+denominator example.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
