@@ -54,6 +54,7 @@ src/sage/data_structures/mutable_poset.py
 src/sage/data_structures/pairing_heap.pyx
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
+src/sage/games/sudoku_backtrack.pyx
 src/sage/features/bitness.py
 src/sage/features/bliss.py
 src/sage/features/brial.py
@@ -111,6 +112,7 @@ src/sage/features/threejs.py
 src/sage/features/tides.py
 src/sage/features/topcom.py
 src/sage/libs/flint/ulong_extras_sage.pyx
+src/sage/interfaces/abc.py
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
@@ -553,6 +555,7 @@ src/sage/monoids/string_ops.py
 src/sage/monoids/trace_monoid.py
 src/sage/monoids/indexed_free_monoid.py
 src/sage/parallel/ncpus.py
+src/sage/parallel/reference.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
@@ -566,6 +569,7 @@ src/sage/modules/vector_modn_dense.pyx
 src/sage/modules/vector_rational_dense.pyx
 src/sage/modules/vector_space_homspace.py
 src/sage/modules/vector_space_morphism.py
+src/sage/homology/matrix_utils.py
 src/sage/matrix/constructor.pyx
 src/sage/matrix/docs.py
 src/sage/matrix/echelon_matrix.pyx
@@ -598,6 +602,7 @@ src/sage/probability/random_variable.py
 src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py
+src/sage/symbolic/symbols.py
 src/sage/typeset/ascii_art.py
 src/sage/typeset/character_art.py
 src/sage/typeset/character_art_factory.py
