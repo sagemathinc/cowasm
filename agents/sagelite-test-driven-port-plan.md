@@ -105,6 +105,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   `file-coverage-summary.sql`, which keeps broad sampling runs readable when
   most candidates are skipped-only, empty, or blocked by known runtime
   clusters.
+- Focused sampling runs can be sorted by promotion readiness with
+  `corpus-candidate-ranking.sql`, so clean runnable files surface ahead of
+  noisy triage targets, file-level errors, skipped-only files, and empty
+  helpers.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -2478,6 +2482,14 @@ For broad exploratory batches, start with the aggregate shape counts:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/file-coverage-summary.sql
+```
+
+When a broad sampling run mixes clean candidates with noisy files, rank files
+by promotion readiness:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/corpus-candidate-ranking.sql
 ```
 
 ### Newly Passing Blocks
@@ -9054,6 +9066,32 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-forms-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
+
+Follow-up sampling and candidate-ranking tooling pass:
+
+This pass does not add a new corpus file. It samples several adjacent
+low-count and helper modules and records why they are not yet good quiet
+dashboard candidates:
+
+- small CPython, REPL, stats, and feature helpers were mostly zero-block or
+  skipped-only under the default browser-compatible profile;
+- category wrappers such as `finite_groups.py`, `finite_posets.py`, and
+  `posets.py` were skipped-only, while `quotient_fields.py` and
+  `principal_ideal_domains.py` timed out in polynomial gcd/xgcd paths;
+- module helpers such as `filtered_vector_space.py`,
+  `free_module_morphism.py`, and related pseudomorphism files still have
+  substantial block-level failures around vector-space and matrix behavior;
+- low-level FLINT/NTL probes exposed warning-capture drift for deprecated
+  import shims plus existing FLINT/NTL runtime boundaries;
+- lie-conformal and quaternion-adjacent probes still cluster around
+  algebraic-field coercion, graph-backed affine constructors, and broader
+  backend gaps.
+
+The pass adds `corpus-candidate-ranking.sql`, a saved SQLite query that sorts
+the latest run by promotion readiness. It puts clean runnable files first,
+then files needing triage, file-level errors, skipped-only files, and
+zero-block files. This complements `file-coverage-shape.sql` by making broad
+sampling runs easier to turn into the next focused corpus-growth target.
 
 ## Phase 5: Subprocess Strategy
 
