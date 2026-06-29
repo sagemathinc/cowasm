@@ -2370,6 +2370,30 @@ The saved block- and file-failure cluster queries are empty; `skips-by-reason`
 groups the newly deferred examples under explicit `optional:scipy` and
 `optional:matplotlib` requirements.
 
+Focused quadratic-form helper corpus-growth pass:
+
+```text
+sage -t passed: 32 passed, 0 failed, 0 skipped
+```
+
+That two-file make-target validation adds
+`sage/quadratic_forms/count_local_2.pyx` and
+`sage/quadratic_forms/quadratic_form__evaluate.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 704
+non-comment entries. Direct sampling first recorded startup-name failures
+because these internal helper doctests use `DiagonalQuadraticForm` and
+`QuadraticForm` from Sage's startup namespace without local imports.
+
+The doctest runner now seeds those quadratic-form constructors in the common
+doctest namespace, and the WASI `sage.all` patch exposes the same names for
+REPL parity on a fresh patched Sagelite source copy. Focused validation used
+the `test-sage-doctest-corpus` make target after rebuilding a fresh patched
+source copy, with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-helper-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+summary records runner version 70 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

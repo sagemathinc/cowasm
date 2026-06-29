@@ -972,6 +972,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.plot.point", ("point", "point2d")),
         ("sage.plot.polygon", ("polygon",)),
         ("sage.probability.probability_distribution", ("RealDistribution",)),
+        ("sage.quadratic_forms.quadratic_form", ("DiagonalQuadraticForm", "QuadraticForm")),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
         ("sage.modules.free_module_element", ("vector",)),
         ("sage.sets.condition_set", ("ConditionSet",)),
