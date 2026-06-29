@@ -5628,6 +5628,14 @@ diff -urN a/src/sage/symbolic/tests.py b/src/sage/symbolic/tests.py
          sage: from sage.symbolic.tests import rational_powers_memleak
 -        sage: rational_powers_memleak()
 +        sage: rational_powers_memleak()                                           # needs sage.symbolic
+diff -urN a/src/sage/symbolic/complexity_measures.py b/src/sage/symbolic/complexity_measures.py
+--- a/src/sage/symbolic/complexity_measures.py
++++ b/src/sage/symbolic/complexity_measures.py
+@@ -30,2 +30,2 @@
+-        sage: f = x^2
+-        sage: string_length(f)
++        sage: f = x^2                                                               # needs sage.symbolic
++        sage: string_length(f)                                                       # needs sage.symbolic
 diff -urN a/src/sage/rings/polynomial/refine_root.pyx b/src/sage/rings/polynomial/refine_root.pyx
 --- a/src/sage/rings/polynomial/refine_root.pyx
 +++ b/src/sage/rings/polynomial/refine_root.pyx

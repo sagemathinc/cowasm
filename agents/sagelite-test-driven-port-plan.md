@@ -10302,6 +10302,46 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; the latest-run
 summary records runner version 64 in the default node profile.
 
+Focused symbolic complexity-helper corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/symbolic/complexity_measures.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 673
+non-comment entries. Direct sampling first recorded one runnable import
+doctest and two startup-name failures because the example expression uses the
+stripped symbolic variable `x`. The added WASI source patch marks the
+expression construction and dependent `string_length(...)` check as
+`# needs sage.symbolic`, matching the existing browser-profile boundary for
+symbolic helper files.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/complexity-measures-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the two `optional:sage.symbolic` deferrals.
+
+The same scheduled probe kept several low-count support files out of the
+quiet corpus. `sage/cpython/wrapperdescr.pxd`,
+`sage/combinat/species/misc.py`, `sage/misc/map_threaded.py`,
+`sage/tests/lazy_imports.py`, `sage/tests/numpy.py`,
+`sage/cpython/cython_metaclass.pyx`, `sage/databases/odlyzko.py`,
+`sage/plot/step.py`, `sage/modular/modform/tests.py`,
+`sage/databases/cunningham_tables.py`, and `sage/cpython/string.pyx` were
+skipped-only under the default profile. `sage/repl/inputhook.py` and
+`sage/misc/sage_timeit_class.pyx` still cluster around missing IPython,
+`sage/features/planarity.py` needs optional-feature packaging triage,
+`sage/matrix/change_ring.pyx` still depends on unavailable dense integer
+matrix imports, and
+`sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py`
+still exposes an algebraic-real-field cache mismatch beyond the narrow
+symbolic tagging handled here.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
