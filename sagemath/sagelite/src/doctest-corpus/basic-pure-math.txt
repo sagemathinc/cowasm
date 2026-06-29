@@ -659,6 +659,7 @@ src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/plot/bar_chart.py
 src/sage/plot/point.py
+src/sage/plot/polygon.py
 src/sage/plot/scatter_plot.py
 src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py

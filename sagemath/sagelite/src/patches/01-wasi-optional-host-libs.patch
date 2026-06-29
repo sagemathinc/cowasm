@@ -5704,6 +5704,18 @@ diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
 @@ -181 +181 @@
 -        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
 +        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/polygon.py b/src/sage/plot/polygon.py
+--- a/src/sage/plot/polygon.py
++++ b/src/sage/plot/polygon.py
+@@ -62 +62 @@
+-        sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
++        sage: polygon([(0,0,1), (1,1,1), (2,0,1)])                              # needs sage.plot.plot3d
+@@ -304 +304 @@
+-        sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
++        sage: polygon([(0,0,1), (1,1,1), (2,0,1)])                              # needs sage.plot.plot3d
+@@ -311 +311 @@
+-        sage: polygon([(0,0), (1,1), (0,1)]).show(axes=False) # These are equivalent
++        sage: polygon([(0,0), (1,1), (0,1)]).show(axes=False) # These are equivalent  # needs matplotlib
 diff -urN a/src/sage/plot/point.py b/src/sage/plot/point.py
 --- a/src/sage/plot/point.py
 +++ b/src/sage/plot/point.py

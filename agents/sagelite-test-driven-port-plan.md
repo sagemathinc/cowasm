@@ -10396,6 +10396,36 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected `optional:sage.plot.plot3d`, `optional:sage.symbolic`,
 and `optional:sage.schemes` deferrals. The runner version is now 65.
 
+Focused polygon-plot corpus-growth pass:
+
+```text
+sage -t passed: 52 passed, 0 failed, 25 skipped
+```
+
+That one-file make-target validation adds `sage/plot/polygon.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 677 non-comment
+entries. Direct sampling first recorded 52 passed blocks, 22 existing
+symbolic skips, and three focused failures. The failures split into two 3D
+polygon dispatcher examples that import the unavailable
+`sage.ext.interpreters.wrapper_rdf` stack through
+`sage.plot.plot3d.shapes2`, plus one `.show(...)` equivalence example that
+requires Matplotlib.
+
+The added WASI source patch marks the 3D polygon examples as
+`# needs sage.plot.plot3d` and the `.show(...)` example as
+`# needs matplotlib`, matching the adjacent plotting corpus boundary while
+preserving the 2D polygon primitive coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with `TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`,
+a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/polygon-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.symbolic`,
+`optional:sage.plot.plot3d`, and `optional:matplotlib` deferrals. The runner
+version remains 65.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
