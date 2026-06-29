@@ -9659,6 +9659,30 @@ missing IPython backend; `covering_array.py` still reaches Singular-backed
 construction; small FLINT/qsieve wrappers have output drift; and
 `libs/ntl/error.pyx` still hits a side-module `gf2x_mul` import failure.
 
+Focused geometry ABC corpus-growth pass:
+
+```text
+sage -t passed: 6 passed, 0 failed, 9 skipped
+```
+
+That one-file focused validation adds `sage/geometry/abc.pyx` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 651 non-comment
+entries. The file gives the dashboard small abstract-base-class coverage for
+geometry interfaces while keeping polyhedron-backed construction examples
+explicitly skipped under the default browser-compatible profile.
+
+Fresh low-count support sampling in the same pass kept several files outside
+the quiet corpus. `sage/cpython/string.pyx`, `databases/cunningham_tables.py`,
+`misc/sphinxify.py`, `monoids/monoid.py`, `combinat/species/misc.py`,
+`misc/profiler.py`, and `calculus/functions.py` were skipped-only in the
+default profile. `features/planarity.py`, `libs/flint/arith.pyx`,
+`libs/flint/qsieve_sage.pyx`, `matrix/change_ring.pyx`, `tests/__init__.py`,
+`tests/test_deprecation.py`, `combinat/posets/bubble_shuffle.py`, and
+`algebras/quaternion_algebra_element.py` still have focused import, backend,
+subprocess, or output-drift failures rather than clean browser-profile
+coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
