@@ -1577,6 +1577,9 @@ importers:
 
   sagemath/sagelite:
     dependencies:
+      '@cowasm/conway-polynomials':
+        specifier: workspace:*
+        version: link:../conway-polynomials
       '@cowasm/cypari2':
         specifier: workspace:*
         version: link:../cypari2

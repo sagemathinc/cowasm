@@ -11059,6 +11059,35 @@ corpus still records 91 block failures. The remaining clusters are broader
 matrix-special semantics rather than a narrow browser-profile tagging pass, so
 `special.py` remains outside `basic-pure-math.txt`.
 
+Focused Conway database resource pass:
+
+```text
+Conway polynomial database smoke: passed
+```
+
+This pass wires CoWasm's `@cowasm/conway-polynomials` package into Sagelite's
+runtime dependency set and adds `sage/databases/conway.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to
+697 non-comment entries. Direct sampling before the resource wiring recorded
+15 passed blocks and 27 failures in `conway.py`, all rooted in the missing
+`conway_polynomials` module and dependent state names.
+
+The standalone resource script now stages the Conway data package under
+`deps/conway_polynomials`, includes it in the manifest-derived `PYTHONPATH`,
+and has a focused Node `python-wasm` smoke that constructs
+`ConwayPolynomials()` and checks representative database availability. The
+checked standalone rerun reaches and passes that smoke:
+
+```text
+sagelite-node-ok Conway polynomial database
+```
+
+The broader `test-wasi-sdk-standalone` run still exits through the existing
+nonfatal blocker where `import sage.all` exits before its completion marker,
+before Electron resources are emitted. A direct `python-wasm` probe against the
+same staged Sagelite `PYTHONPATH` confirms that `ConwayPolynomials()` now
+imports the data package and returns polynomial data under WASI.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -33,6 +33,7 @@
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "dependencies": {
+    "@cowasm/conway-polynomials": "workspace:*",
     "@cowasm/cypari2": "workspace:*",
     "@cowasm/cysignals": "workspace:*",
     "@cowasm/memory-allocator": "workspace:*",

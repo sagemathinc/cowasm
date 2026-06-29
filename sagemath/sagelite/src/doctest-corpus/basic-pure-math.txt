@@ -62,6 +62,7 @@ src/sage/data_structures/bounded_integer_sequences.pyx
 src/sage/data_structures/list_of_pairs.pyx
 src/sage/data_structures/mutable_poset.py
 src/sage/data_structures/pairing_heap.pyx
+src/sage/databases/conway.py
 src/sage/databases/db_class_polynomials.py
 src/sage/databases/db_modular_polynomials.py
 src/sage/databases/jones.py

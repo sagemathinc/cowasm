@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 19 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 20 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -19,12 +19,13 @@ py_ninja="$(cd "${10}" && pwd)"
 py_packaging="$(cd "${11}" && pwd)"
 py_platformdirs="$(cd "${12}" && pwd)"
 python_wasm="$(cd "${13}" && pwd)"
-primecountpy_wasi_sdk="$(cd "${14}" && pwd)"
-cysignals_wasi_sdk="$(cd "${15}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${16}" && pwd)"
-posix_wasi_sdk="$(cd "${17}" && pwd)"
-libcxx_wasi_sdk="$(cd "${18}" && pwd)"
-cypari2_wasi_sdk="$(cd "${19}" && pwd)"
+conway_polynomials_wasi_sdk="$(cd "${14}" && pwd)"
+primecountpy_wasi_sdk="$(cd "${15}" && pwd)"
+cysignals_wasi_sdk="$(cd "${16}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${17}" && pwd)"
+posix_wasi_sdk="$(cd "${18}" && pwd)"
+libcxx_wasi_sdk="$(cd "${19}" && pwd)"
+cypari2_wasi_sdk="$(cd "${20}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -256,6 +257,7 @@ fi
 
 pythonpath_parts=(
   "$cypari2_wasi_sdk"
+  "$conway_polynomials_wasi_sdk"
   "$primecountpy_wasi_sdk"
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
@@ -570,6 +572,11 @@ print('sagelite-node-ok import sage.version')"
 run_node_import "import sage.structure.element" "import sage.structure.element; print('sagelite-node-ok import sage.structure.element')"
 run_node_import "integer arithmetic" "from sage.rings.integer_ring import ZZ; assert ZZ(7) < ZZ(9); print(ZZ(2) + ZZ(3))"
 run_node_import "rational arithmetic" "from sage.rings.rational_field import QQ; print(QQ(2) / QQ(5) + QQ(1) / QQ(5))"
+run_node_import "Conway polynomial database" "from sage.databases.conway import ConwayPolynomials
+c = ConwayPolynomials()
+assert c.has_polynomial(97, 12)
+assert len(c) > 30000
+print('sagelite-node-ok Conway polynomial database')"
 run_node_import "import sage.all" "import sage.all; print('sagelite-node-ok import sage.all')"
 run_wasi_sdk_python_import "import sage.all" "import sys
 assert sys.platform == 'wasi'
@@ -1319,11 +1326,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=142
+electron_manifest_schema_version=143
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77-matrix-polynomial-partition-accessors-v78-polynomial-dict-partition-composition-accessors-v79-free-module-matrix-polynomial-accessors-v80-rational-matrix-inverse-v81-integer-comparison-v82-integer-bits-polynomial-truncation-v83-polynomial-composition-substitution-v84-finite-field-matrix-solve-v85-finite-field-matrix-space-v86-finite-field-matrix-accessors-v87-finite-field-matrix-space-arithmetic-v88-finite-field-matrix-space-identity-zero-v89-trivariate-polynomial-derivative-substitution-v90-finite-field-matrix-parent-indexing-v91-rational-numerator-denominator-v92-laurent-polynomial-accessors-v93-required-laurent-mpair-resource-v94-rational-3x3-matrix-v95-rational-matrix-solve-view-v96-matrix-row-column-mutation-v97-matrix-row-column-assignment-v98-matrix-row-column-combination-v99-finite-field-3x3-matrix-v100-finite-field-3x3-solve-v101-finite-field-3x3-charpoly-rank-v102-integer-zero-one-predicates-v103-rational-comparison-integer-divisibility-v104-rational-normalization-sign-v105"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77-matrix-polynomial-partition-accessors-v78-polynomial-dict-partition-composition-accessors-v79-free-module-matrix-polynomial-accessors-v80-rational-matrix-inverse-v81-integer-comparison-v82-integer-bits-polynomial-truncation-v83-polynomial-composition-substitution-v84-finite-field-matrix-solve-v85-finite-field-matrix-space-v86-finite-field-matrix-accessors-v87-finite-field-matrix-space-arithmetic-v88-finite-field-matrix-space-identity-zero-v89-trivariate-polynomial-derivative-substitution-v90-finite-field-matrix-parent-indexing-v91-rational-numerator-denominator-v92-laurent-polynomial-accessors-v93-required-laurent-mpair-resource-v94-rational-3x3-matrix-v95-rational-matrix-solve-view-v96-matrix-row-column-mutation-v97-matrix-row-column-assignment-v98-matrix-row-column-combination-v99-finite-field-3x3-matrix-v100-finite-field-3x3-solve-v101-finite-field-3x3-charpoly-rank-v102-integer-zero-one-predicates-v103-rational-comparison-integer-divisibility-v104-rational-normalization-sign-v105-conway-polynomial-resource-v106"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1366,6 +1373,7 @@ cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-elec
 
 runtime_dep_labels=(
   cypari2
+  conway_polynomials
   primecountpy
   libcxx
   cysignals
@@ -1379,6 +1387,7 @@ runtime_dep_labels=(
 )
 runtime_dep_paths=(
   "$cypari2_wasi_sdk"
+  "$conway_polynomials_wasi_sdk"
   "$primecountpy_wasi_sdk"
   "$libcxx_wasi_sdk"
   "$cysignals_wasi_sdk"
@@ -1589,6 +1598,8 @@ electron_required_paths=(
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/handle_error.py"
   "deps/cypari2/cypari2/pari_instance.py"
+  "deps/conway_polynomials/conway_polynomials/__init__.py"
+  "deps/conway_polynomials/conway_polynomials/CPimport.txt.xz"
   "deps/primecountpy/primecountpy/__init__.py"
   "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"
   "deps/libcxx/libcxx.so"
