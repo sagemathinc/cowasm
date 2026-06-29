@@ -9942,6 +9942,43 @@ freshly patched Sagelite source copy with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/symbolic-tests-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused polynomial root-refinement corpus-growth pass:
+
+```text
+sage -t passed: 5 passed, 0 failed, 4 skipped
+```
+
+That one-file focused validation adds
+`sage/rings/polynomial/refine_root.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 660
+non-comment entries. Direct sampling first recorded five passing blocks and
+four failures caused by the stripped browser-compatible startup namespace not
+providing symbolic `pi`/`sin` for the complex-interval root example. The added
+WASI source patch marks the root estimate and dependent checks as
+`# needs sage.symbolic`, leaving the non-symbolic polynomial setup and
+interval conversion coverage runnable in the default node profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target from a
+freshly patched Sagelite source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/refine-root-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the four deferred examples as `optional:sage.symbolic`.
+
+The same scheduled pass sampled several nearby small uncovered helpers without
+finding another promotion candidate. CLI test wrappers and `repl/prompts.py`
+had zero runnable blocks; `cpython/string.pyx`, `crypto/cipher.py`,
+`tests/lazy_imports.py`, `misc/map_threaded.py`, `misc/sphinxify.py`,
+`homology/tests.py`, `monoids/hecke_monoid.py`, `monoids/monoid.py`,
+`categories/groupoid.py`, `categories/g_sets.py`, `rings/factorint_flint.pyx`,
+and `arith/multi_modular.pyx` were skipped-only under the default profile.
+Rejected runnable probes exposed broader clusters: `libs/ntl/error.pyx` still
+hits the GF2X side-module import boundary, `misc/sage_timeit_class.pyx` has
+timing-helper mismatches, `symbolic/complexity_measures.py` needs symbolic
+startup semantics, `quadratic_forms/quadratic_form__evaluate.pyx` needs
+quadratic-form startup/import work, and `arith/misc.py` still reaches the
+known polynomial table-index trap.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
