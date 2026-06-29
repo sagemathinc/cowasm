@@ -9365,6 +9365,29 @@ Focused make-target validation used a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/gnuplot-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused FLINT arithmetic helper corpus-growth pass:
+
+```text
+sage -t passed: 44 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/libs/flint/arith_sage.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 641 non-comment
+entries. The file extends the existing FLINT shim coverage with arithmetic
+helper doctests while relying on the upstream skip metadata for its one
+optional/deferred block.
+
+Fresh sampling in the same Cython/lib utility batch kept
+`sage/libs/mpmath/utils.pyx` out of the quiet corpus because it still has
+startup-symbol failures around `pi`, `NaN`, and dependent values. Other sampled
+CPython/GMP/FLINT/PARI helper files were skipped-only or had no doctest
+blocks. Focused validation used the `test-sage-doctest-corpus` make target
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/flint-arith-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

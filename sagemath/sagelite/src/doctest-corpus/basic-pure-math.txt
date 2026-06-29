@@ -121,6 +121,7 @@ src/sage/features/tdlib.py
 src/sage/features/threejs.py
 src/sage/features/tides.py
 src/sage/features/topcom.py
+src/sage/libs/flint/arith_sage.pyx
 src/sage/libs/flint/flint_sage.pyx
 src/sage/libs/flint/fmpz_poly.pyx
 src/sage/libs/flint/ulong_extras_sage.pyx
