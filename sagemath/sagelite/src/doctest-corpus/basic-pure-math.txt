@@ -119,7 +119,10 @@ src/sage/features/tdlib.py
 src/sage/features/threejs.py
 src/sage/features/tides.py
 src/sage/features/topcom.py
+src/sage/libs/flint/flint_sage.pyx
 src/sage/libs/flint/ulong_extras_sage.pyx
+src/sage/geometry/polyhedron/cdd_file_format.py
+src/sage/geometry/polyhedron/misc.py
 src/sage/interfaces/abc.py
 src/sage/interfaces/read_data.py
 src/sage/combinat/SJT.py
@@ -584,6 +587,7 @@ src/sage/matrix/docs.py
 src/sage/matrix/echelon_matrix.pyx
 src/sage/matrix/matrix_cdv.pyx
 src/sage/matrix/matrix_misc.py
+src/sage/matrix/misc_mpfr.pyx
 src/sage/matrix/strassen.pyx
 src/sage/matrix/symplectic_basis.py
 src/sage/doctest/check_tolerance.py

@@ -8975,6 +8975,32 @@ It also kept skipped-only or zero-block REPL helpers such as
 `sage/repl/prompts.py`, and `sage/repl/rich_output/output_catalog.py` out of
 the dashboard.
 
+Focused FLINT, MPFR, and polyhedron-helper corpus-growth pass:
+
+```text
+sage -t passed: 34 passed, 0 failed, 1 skipped
+```
+
+That four-file focused validation adds `sage/libs/flint/flint_sage.pyx`,
+`sage/matrix/misc_mpfr.pyx`,
+`sage/geometry/polyhedron/cdd_file_format.py`, and
+`sage/geometry/polyhedron/misc.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 627
+non-comment entries. The files add clean low-level FLINT/MPFR helper coverage
+plus polyhedron file-format and utility coverage under the default node
+profile without new WASI source tags or startup namespace changes.
+
+Focused validation used the Sagelite doctest runner directly with
+`sage -t --timeout 90` and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/flint-polyhedron-focused.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`file-coverage-shape.sql` reports clean runnable coverage for all four files.
+Sampling in the same pass kept `sage/matrix/misc_flint.pyx`,
+`sage/libs/flint/arith.pyx`, and `sage/rings/polynomial/refine_root.pyx` out of
+the quiet corpus because they still have focused block-level failures; skipped
+or optional-only helpers such as `sage/rings/qqbar_decorators.py` and
+`sage/rings/ring_extension_homset.py` also remain outside the dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
