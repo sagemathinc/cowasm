@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,198 @@
+@@ -253,74 +253,199 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1485,6 +1485,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.modules.free_module_element import vector
 +    from sage.plot.colors import hue
 +    from sage.plot.graphics import Graphics
++    from sage.probability.probability_distribution import RealDistribution
 +    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family
@@ -5795,6 +5796,15 @@ diff -urN a/src/sage/plot/bar_chart.py b/src/sage/plot/bar_chart.py
 @@ -175 +175 @@
 -        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent
 +        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
+--- a/src/sage/plot/histogram.py
++++ b/src/sage/plot/histogram.py
+@@ -73 +73 @@
+-            sage: h.get_minmax_data()  # rel tol 1e-15
++            sage: h.get_minmax_data()  # rel tol 1e-15                             # known bug
+@@ -88 +88 @@
+-            sage: h.get_minmax_data()
++            sage: h.get_minmax_data()                                               # known bug
 diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
 --- a/src/sage/plot/scatter_plot.py
 +++ b/src/sage/plot/scatter_plot.py

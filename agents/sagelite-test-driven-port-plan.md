@@ -2225,6 +2225,34 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the two deferred display examples under
 `optional:matplotlib`.
 
+Focused histogram plot-helper corpus-growth pass:
+
+```text
+sage -t passed: 37 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds `sage/plot/histogram.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 683
+non-comment entries. Direct sampling first recorded 34 passed blocks, 5
+failed blocks, and 2 skipped blocks. The failures were narrow: two
+`get_minmax_data()` dict output checks depend on Sage's fuller doctest output
+checker for mixed dict-order and numeric-tolerance formatting, and three
+histogram styling examples use `RealDistribution(...)` from Sage's startup
+namespace without a local import.
+
+The doctest runner now seeds `RealDistribution` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched Sagelite source copy. The added WASI source patch
+defers the two histogram min/max output-checker drift examples as
+`# known bug`, preserving the rest of the histogram construction, option, and
+random-distribution styling coverage as default-profile doctests. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding a
+fresh patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/histogram-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
