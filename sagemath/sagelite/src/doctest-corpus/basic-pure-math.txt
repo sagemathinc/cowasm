@@ -27,6 +27,7 @@ src/sage/rings/padics/padic_relaxed_errors.pyx
 src/sage/rings/padics/misc.py
 src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/arith/srange.pyx
+src/sage/arith/functions.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx

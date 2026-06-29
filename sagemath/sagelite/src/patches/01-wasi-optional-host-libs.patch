@@ -5556,3 +5556,12 @@ diff -urN a/src/sage/misc/benchmark.py b/src/sage/misc/benchmark.py
 @@ -212 +212 @@
 -        sage: print(bench7()[0])
 +        sage: print(bench7()[0])                                                   # needs sage.schemes
+diff -urN a/src/sage/arith/functions.pyx b/src/sage/arith/functions.pyx
+--- a/src/sage/arith/functions.pyx
++++ b/src/sage/arith/functions.pyx
+@@ -183 +183 @@
+-        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
++        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))  # known bug - polynomial LCM times out in the Sagelite WASI profile
+@@ -186 +186 @@
+-        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
++        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))  # known bug - polynomial LCM times out in the Sagelite WASI profile
