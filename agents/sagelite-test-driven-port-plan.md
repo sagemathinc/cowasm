@@ -10900,6 +10900,40 @@ records CoWasm commit `f6be66969e767343ac1803bcc07fa07eb2fa551e`,
 Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 69.
 
+Focused matrix-argument helper corpus-growth pass:
+
+```text
+sage -t passed: 157 passed, 0 failed, 34 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/args.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 693
+non-comment entries. Direct sampling first recorded 162 passing blocks and 13
+failures; the failures were all browser-profile boundaries or dependent
+fallout around PARI matrix conversion, graph-backed matrix construction,
+QQbar algebraic-number scalar checks, and permutation-group algebra
+construction.
+
+The added WASI source patch marks those examples with explicit `# needs`
+metadata for `sage.libs.pari`, `sage.graphs`, `sage.rings.number_field`, and
+`sage.groups`, preserving the broad plain `MatrixArgs` construction,
+iteration, coercion, scalar, sparse-entry, and matrix-space coverage under the
+default node profile. The pass also refreshes two older
+`integer_mod_ring.py` patch hunks so the full WASI source patch applies
+cleanly to the current local Sagelite checkout after a fresh source copy.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`, a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/matrix-args-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected optional `numpy`, `sage.libs.pari`, `sage.symbolic`,
+`sage.rings.number_field`, `sage.groups`, `sage.graphs`, and finite-ring/PARI
+deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

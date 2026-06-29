@@ -2145,15 +2145,21 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
  AUTHORS:
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
-@@ -1095,7 +1095,7 @@
+@@ -1095,10 +1095,10 @@
  
              sage: K2 = GF(2)
              sage: K3 = GF(3)
 -            sage: K8 = GF(8, 'a')
 +            sage: K8 = GF(8, 'a')                                                      # needs sage.libs.ntl
-             sage: K8(5)  # indirect doctest
+-            sage: K8(5)  # indirect doctest
++            sage: K8(5)  # indirect doctest                                            # needs sage.libs.ntl
              1
-             sage: K8('a+1')
+-            sage: K8('a+1')
++            sage: K8('a+1')                                                            # needs sage.libs.ntl
+             a + 1
+-            sage: K8(K2(1))
++            sage: K8(K2(1))                                                            # needs sage.libs.ntl
+             1
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 @@ -444,9 +444,9 @@
@@ -2187,7 +2193,8 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
              sage: R = Zmod(2)
 -            sage: S.<x> = R[]
 +            sage: S.<x> = R[]                                                         # needs sage.libs.ntl
-             sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
+-            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
++            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))           # needs sage.libs.ntl
              (0,)
  
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
@@ -2936,21 +2943,6 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
              (83,)
          """
          try:
-@@ -1096,11 +1096,11 @@
-             sage: K2 = GF(2)
-             sage: K3 = GF(3)
-             sage: K8 = GF(8, 'a')                                                      # needs sage.libs.ntl
--            sage: K8(5)  # indirect doctest
-+            sage: K8(5)  # indirect doctest                                            # needs sage.libs.ntl
-             1
--            sage: K8('a+1')
-+            sage: K8('a+1')                                                            # needs sage.libs.ntl
-             a + 1
--            sage: K8(K2(1))
-+            sage: K8(K2(1))                                                            # needs sage.libs.ntl
-             1
- 
-         The following test refers to :issue:`6468`::
 @@ -1398,9 +1398,9 @@
          cyclic factors are computed, but in a different order::
  
@@ -2987,15 +2979,6 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
              (127, 133, 65)
              sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
              Multiplicative Abelian group isomorphic to C16 x C2 x C2
-@@ -1535,7 +1535,7 @@
- 
-             sage: R = Zmod(2)
-             sage: S.<x> = R[]                                                         # needs sage.libs.ntl
--            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
-+            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))           # needs sage.libs.ntl
-             (0,)
- 
-         Lifting roots of the zero polynomial::
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
@@ -6222,3 +6205,59 @@ diff -urN a/src/sage/rings/bernmm.pyx b/src/sage/rings/bernmm.pyx
 +        sage: [ Zmod(101)(t) for t in lst2 ]                                                       # needs sage.libs.pari
          [77, 72, 89, 98, 86]
      """
+diff -urN a/src/sage/matrix/args.pyx b/src/sage/matrix/args.pyx
+--- a/src/sage/matrix/args.pyx
++++ b/src/sage/matrix/args.pyx
+@@ -214 +214 @@
+-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()
++        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()          # needs sage.libs.pari
+@@ -217 +217 @@
+-        sage: ma.matrix()
++        sage: ma.matrix()                                                             # needs sage.libs.pari
+@@ -220 +220 @@
+-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()
++        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()    # needs sage.libs.pari
+@@ -223 +223 @@
+-        sage: ma.matrix()
++        sage: ma.matrix()                                                             # needs sage.libs.pari
+@@ -226 +226 @@
+-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()
++        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()          # needs sage.libs.pari
+@@ -229 +229 @@
+-        sage: ma.matrix()
++        sage: ma.matrix()                                                             # needs sage.libs.pari
+@@ -276 +276 @@
+-        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()
++        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()                   # needs sage.graphs
+@@ -281 +281 @@
+-        sage: ma.matrix()
++        sage: ma.matrix()                                                             # needs sage.graphs
+@@ -1094 +1094 @@
+-            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
++            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):          # needs sage.rings.number_field
+@@ -1097 +1097 @@
+-            sage: matrix(1, 1, MyAlgebraicNumber(0))
++            sage: matrix(1, 1, MyAlgebraicNumber(0))                                  # needs sage.rings.number_field
+@@ -1099 +1099 @@
+-            sage: matrix(1, 1, MyAlgebraicNumber(3))
++            sage: matrix(1, 1, MyAlgebraicNumber(3))                                  # needs sage.rings.number_field
+@@ -1101 +1101 @@
+-            sage: matrix(1, 2, MyAlgebraicNumber(0))
++            sage: matrix(1, 2, MyAlgebraicNumber(0))                                  # needs sage.rings.number_field
+@@ -1105 +1105 @@
+-            sage: matrix(1, 2, MyAlgebraicNumber(3))
++            sage: matrix(1, 2, MyAlgebraicNumber(3))                                  # needs sage.rings.number_field
+@@ -1489 +1489 @@
+-            sage: M(pari(A))
++            sage: M(pari(A))                                                          # needs sage.libs.pari
+@@ -1507 +1507 @@
+-            sage: G = CyclicPermutationGroup(7)
++            sage: G = CyclicPermutationGroup(7)                                       # needs sage.groups
+@@ -1509,2 +1509,2 @@
+-            sage: A = G.algebra(R)
+-            sage: matrix(A, 3, 3, A.zero())
++            sage: A = G.algebra(R)                                                    # needs sage.groups
++            sage: matrix(A, 3, 3, A.zero())                                           # needs sage.groups
+@@ -1514 +1514 @@
+-            sage: matrix(A, 3, 3, A.one())
++            sage: matrix(A, 3, 3, A.one())                                            # needs sage.groups
