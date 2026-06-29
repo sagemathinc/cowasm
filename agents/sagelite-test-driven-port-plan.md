@@ -9505,6 +9505,29 @@ boundaries. Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/with-basis-morphism-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused interface tab-completion corpus-growth pass:
+
+```text
+sage -t passed: 13 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/interfaces/tab_completion.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 646 non-comment
+entries. Direct sampling first recorded one completion-list mismatch because
+upstream Sage's startup namespace includes `dickman_rho` while the stripped
+Sagelite startup namespace did not. The doctest runner now seeds the
+lightweight `dickman_rho` function in the common doctest namespace, and the
+WASI `sage.all` patch exposes the same name for REPL parity on a fresh
+patched Sagelite source copy.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/tab-completion-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tab-completion-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty. The runner
+version is now 62.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

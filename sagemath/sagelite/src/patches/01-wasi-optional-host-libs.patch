@@ -1341,7 +1341,7 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,193 @@
+@@ -253,74 +253,194 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1463,6 +1463,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.functions.trig import cos
++    from sage.functions.transcendental import dickman_rho
 +    from sage.logic.all import SymbolicLogic, propcalc
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
