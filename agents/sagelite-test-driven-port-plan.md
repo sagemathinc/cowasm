@@ -10426,6 +10426,36 @@ records the expected `optional:sage.symbolic`,
 `optional:sage.plot.plot3d`, and `optional:matplotlib` deferrals. The runner
 version remains 65.
 
+Focused ellipse-plot corpus-growth pass:
+
+```text
+sage -t passed: 39 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/plot/ellipse.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 678 non-comment
+entries. Direct sampling recorded 39 runnable blocks and one existing
+`sage.symbolic` deferral for the `Ellipse(...).plot3d()` example, with no new
+WASI source tags or startup namespace changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/ellipse-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` records the single deferred 3D symbolic example under
+`optional:sage.symbolic`.
+
+The same scheduled plot-primitive probe kept nearby files out of the quiet
+corpus. `sage/plot/arc.py`, `sage/plot/arrow.py`,
+`sage/plot/bezier_path.py`, `sage/plot/circle.py`, `sage/plot/disk.py`,
+`sage/plot/line.py`, `sage/plot/text.py`, `sage/plot/histogram.py`, and
+`sage/plot/primitive.py` still expose focused `NameError`,
+`ModuleNotFoundError`, or output-mismatch clusters. `sage/plot/colors.py`,
+`sage/plot/misc.py`, and the hyperbolic plot primitives were skipped-only
+under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
