@@ -11375,6 +11375,32 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/binary-qf-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused quadratic-form helper corpus pass:
+
+```text
+sage -t passed: 94 passed, 0 failed, 6 skipped
+```
+
+This pass adds `sage/quadratic_forms/quadratic_form__local_normal_form.py`,
+`sage/quadratic_forms/quadratic_form__mass__Conway_Sloane_masses.py`, and
+`sage/quadratic_forms/quadratic_form__variable_substitutions.py` to the quiet
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 712 non-comment entries. The Conway-Sloane mass helper's remaining default
+skips are explicit `# needs sage.symbolic` examples, and the local-normal-form
+and variable-substitution helpers run with no skips under the default
+browser-compatible node profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/qf-helper-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and skip grouping
+shows only the expected `optional:sage.symbolic` deferrals. Nearby probes kept
+`sage/quadratic_forms/quadratic_form__local_field_invariants.py` and
+`sage/misc/functional.py` outside the quiet corpus: the former still has
+focused failures, while the latter times out in a symbolic denominator
+example.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
