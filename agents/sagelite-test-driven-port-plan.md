@@ -3172,6 +3172,38 @@ rebuilding a fresh patched source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the new deferred examples under `optional:ppl`.
 
+Focused number-field polyhedron base corpus-growth pass:
+
+```text
+base_number_field.py: 1 passed, 0 failed, 13 skipped
+```
+
+That one-file make-target validation adds
+`sage/geometry/polyhedron/base_number_field.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 826
+non-comment entries. The default browser-compatible profile gains compact
+coverage for the number-field polyhedron base helper import path while leaving
+Normaliz, symbolic, and number-field construction examples under their
+existing explicit optional metadata.
+
+Fresh candidate filtering first scanned recent current-run SQLite artifacts
+for clean runnable files not already present in the corpus. All historical
+clean candidates had already been consumed except this polyhedron helper.
+A broader low-count probe in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-auto/low-count-probe.sqlite3`
+found no promotion candidates: 28 files were skipped-only, five needed triage,
+and two hit the known NTL/libcxx WASM trap cluster.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-auto/base-number-field-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`2eecebaf15d13654defa59262e9ed61020e8c77b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
