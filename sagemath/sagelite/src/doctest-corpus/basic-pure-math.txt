@@ -691,6 +691,7 @@ src/sage/doctest/marked_output.py
 src/sage/doctest/rif_tol.py
 src/sage/doctest/test.py
 src/sage/doctest/util.py
+src/sage/repl/configuration.py
 src/sage/repl/display/fancy_repr.py
 src/sage/repl/display/jsmol_iframe.py
 src/sage/repl/display/pretty_print.py

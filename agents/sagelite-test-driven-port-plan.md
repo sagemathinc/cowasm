@@ -13547,6 +13547,40 @@ files stayed out of the quiet corpus: `reset.pyx`, `interface_magic.py`, and
 design files still have output or backend failures; and polynomial/BERNOULLI
 helpers still hit the known NTL/libcxx memory-trap boundary.
 
+Focused REPL configuration corpus-growth pass:
+
+```text
+configuration.py: 1 passed, 0 failed, 21 skipped
+```
+
+That one-file promotion adds `sage/repl/configuration.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 791 non-comment
+entries. The default browser-compatible profile keeps the stdin/stdout command
+smoke as runnable coverage while marking the `sage_ipython_config` examples as
+explicit `# needs IPython` blocks, since importing the configuration object
+requires the unavailable `traitlets`/IPython stack. The existing piped-Sage
+check remains `# needs pexpect`.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-next/`.
+The mixed low-count, exact-math, crypto/coding, and utility/runtime probes did
+not expose another clean non-skipped candidate. Most low-count files were
+skipped-only under the browser profile; the runnable failures clustered around
+polynomial/category timeouts, GAP-backed species imports, NTL/libcxx traps,
+IPython/traitlets REPL configuration, subprocess/fork helpers, and session
+persistence/symbolic reset behavior. The `configuration.py` follow-up was the
+narrow promotion because all non-smoke failures were the single IPython
+configuration dependency boundary.
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched-source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-repl-config/make.sqlite3`.
+The latest-run summary records runner version 73 with 22 total blocks, and the
+saved block- and file-failure cluster queries are empty. Skip grouping records
+18 `optional:ipython` blocks and 3 `optional:pexpect` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

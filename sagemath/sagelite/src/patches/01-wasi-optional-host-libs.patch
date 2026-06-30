@@ -7386,3 +7386,51 @@ diff --git a/src/sage/game_theory/parser.py b/src/sage/game_theory/parser.py
              ....:     _ = game_file.write(game_str)
              sage: from sage.features.lrs import LrsNash
              sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+diff --git a/src/sage/repl/configuration.py b/src/sage/repl/configuration.py
+--- a/src/sage/repl/configuration.py
++++ b/src/sage/repl/configuration.py
+@@ -48,2 +48,2 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: sage_ipython_config._doctest_mode()
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: sage_ipython_config._doctest_mode()                                 # needs IPython
+@@ -64,2 +64,2 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: sage_ipython_config._allow_ansi()
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: sage_ipython_config._allow_ansi()                                   # needs IPython
+@@ -79,2 +79,2 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: sage_ipython_config.simple_prompt()
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: sage_ipython_config.simple_prompt()                                 # needs IPython
+@@ -96,2 +96,2 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: sage_ipython_config.simple_prompt()
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: sage_ipython_config.simple_prompt()                                 # needs IPython
+@@ -110,2 +110,2 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: sage_ipython_config.term_title()
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: sage_ipython_config.term_title()                                    # needs IPython
+@@ -122,3 +122,3 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: conf = sage_ipython_config.default()
+-            sage: type(conf)
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: conf = sage_ipython_config.default()                                # needs IPython
++            sage: type(conf)                                                          # needs IPython
+@@ -126 +126 @@
+-            sage: 'InteractiveShell' in conf
++            sage: 'InteractiveShell' in conf                                          # needs IPython
+@@ -171,3 +171,3 @@
+-            sage: from sage.repl.configuration import sage_ipython_config
+-            sage: conf = sage_ipython_config.copy()
+-            sage: type(conf)
++            sage: from sage.repl.configuration import sage_ipython_config              # needs IPython
++            sage: conf = sage_ipython_config.copy()                                   # needs IPython
++            sage: type(conf)                                                          # needs IPython
+@@ -175 +175 @@
+-            sage: 'InteractiveShell' in conf
++            sage: 'InteractiveShell' in conf                                          # needs IPython
