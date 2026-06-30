@@ -12824,6 +12824,35 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused Siegel-density mass helper corpus-growth pass:
+
+```text
+quadratic_form__mass__Siegel_densities.py: 9 passed, 0 failed, 5 skipped
+```
+
+That one-file focused validation adds
+`sage/quadratic_forms/quadratic_form__mass__Siegel_densities.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 770
+non-comment entries. The file adds compact default-profile coverage for
+Siegel-density mass helper imports and odd-prime/local-density dispatch while
+leaving the symbolic mass-value examples under their existing explicit
+`# needs sage.symbolic` tags.
+
+Direct sampling first used
+`/home/user/cowasm/.tmp/current-run/probes/qf-siegel-densities.sqlite3`.
+Adjacent `quadratic_form__genus.py`, `quadratic_form__siegel_product.py`,
+`plot/colors.py`, and `plot/misc.py` probes were skipped-only under the
+default browser-compatible profile, so they remain outside the curated
+dashboard.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/qf-siegel-densities-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

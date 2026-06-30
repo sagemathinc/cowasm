@@ -723,6 +723,7 @@ src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
 src/sage/quadratic_forms/quadratic_form__local_normal_form.py
 src/sage/quadratic_forms/quadratic_form__mass.py
 src/sage/quadratic_forms/quadratic_form__mass__Conway_Sloane_masses.py
+src/sage/quadratic_forms/quadratic_form__mass__Siegel_densities.py
 src/sage/quadratic_forms/quadratic_form__neighbors.py
 src/sage/quadratic_forms/quadratic_form__reduction_theory.py
 src/sage/quadratic_forms/quadratic_form__variable_substitutions.py
