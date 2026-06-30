@@ -11874,6 +11874,32 @@ copy, with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 47 passed, 0 failed, 11 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries.
 
+Focused Gelfand-Tsetlin pattern corpus-growth pass:
+
+```text
+gelfand_tsetlin_patterns.py: 214 passed, 0 failed, 6 skipped
+```
+
+This pass adds `sage/combinat/gelfand_tsetlin_patterns.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 730 non-comment entries. The file adds direct Gelfand-Tsetlin pattern
+coverage across construction, tableaux conversion, iteration, mutation, and
+Tokuyama coefficient examples. The only focused failure cluster was the two
+semistandard-tableaux cardinality checks that import
+`sage.combinat.crystals.kirillov_reshetikhin.partitions_in_box`; that path
+currently reaches the stripped graph backend through rigged-configuration
+helpers, so the dependent import, loop, and equality checks are tagged
+`# needs sage.graphs`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/gelfand-tsetlin-make.sqlite3`.
+The latest-run summary records 214 passed, 0 failed, 6 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries;
+`skips-by-reason.sql` records all six skips under `optional:sage.graphs`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

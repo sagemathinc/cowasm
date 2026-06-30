@@ -183,6 +183,7 @@ src/sage/combinat/matrices/dlxcpp.py
 src/sage/combinat/dyck_word.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/free_module.py
+src/sage/combinat/gelfand_tsetlin_patterns.py
 src/sage/combinat/misc.py
 src/sage/combinat/necklace.py
 src/sage/combinat/rooted_tree.py
