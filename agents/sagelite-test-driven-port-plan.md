@@ -2825,6 +2825,37 @@ against a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty, and the
 latest-run summary records runner version 73 in the default node profile.
 
+Focused BCH Lie-algebra corpus-growth pass:
+
+```text
+bch.py: 37 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_algebras/bch.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 801
+non-comment entries. The default browser-compatible profile gains compact
+coverage for Baker-Campbell-Hausdorff helpers without new WASI source tags or
+startup namespace changes.
+
+Direct Lie-algebra frontier sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-continuation/lie-algebra-candidates.sqlite3`.
+The saved candidate-ranking query classified `bch.py` as the only clean
+non-skipped promotion candidate in that batch. Nearby files stayed out of the
+quiet corpus because their failures remain broader triage clusters:
+`examples.py` and `heisenberg.py` need startup or `sage.all` surface work for
+`lie_algebras`, while `morphism.py`, `representation.py`,
+`structure_coefficients.py`, and the sampled Lie-conformal implementation
+files have wider semantic failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-continuation/bch/make.sqlite3`.
+The latest-run summary records runner version 73 in the default node profile,
+with 37 total blocks. The saved block- and file-failure cluster queries are
+empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
