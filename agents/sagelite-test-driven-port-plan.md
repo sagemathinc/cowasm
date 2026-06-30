@@ -12132,6 +12132,37 @@ their failures grouped as 96 `NameError`, 48 `ModuleNotFoundError`, and
 Useful probe databases for this pass are under
 `/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-candidates/`.
 
+Focused memcheck helper corpus-growth pass:
+
+```text
+run_tests_in_valgrind.py: 1 passed, 0 failed, 1 skipped
+```
+
+This pass adds `sage/tests/memcheck/run_tests_in_valgrind.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to
+735 non-comment entries. The default profile gets one runnable import smoke
+for the memcheck entry point while the actual `valgrind` subprocess execution
+remains an explicit `optional:valgrind` skip, matching the browser-compatible
+subprocess policy.
+
+Focused validation used the `test-sage-doctest-corpus` make target against
+the current patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=45`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/fresh-sampling/valgrind.sqlite3`.
+The latest-run summary records 1 passed, 0 failed, 1 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
+Sampling in the same pass kept several adjacent low-count candidates outside
+the quiet corpus. `sage/cpython/string.pyx`,
+`sage/crypto/cipher.py`, `sage/databases/cunningham_tables.py`,
+`sage/cpython/cython_metaclass.pyx`, and
+`sage/modular/modform/j_invariant.py` were skipped-only in the default
+profile, while a Judson abstract-algebra exercise file had no extracted
+doctest blocks. `sage/graphs/base/overview.py` exposed a narrow `Graph`
+startup-name failure, and `sage/matroids/advanced.py` still reaches the
+stripped graph backend through `sage.graphs.generic_graph_pyx`, so both remain
+triage targets rather than namespace-broadening promotions.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

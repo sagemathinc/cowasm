@@ -728,6 +728,7 @@ src/sage/games/quantumino.py
 src/sage/tests/__init__.py
 src/sage/tests/cython.pyx
 src/sage/tests/functools_partial_src.py
+src/sage/tests/memcheck/run_tests_in_valgrind.py
 src/sage/tests/startup.py
 src/sage/tests/stl_vector.pyx
 src/sage/tests/test_deprecation.py
