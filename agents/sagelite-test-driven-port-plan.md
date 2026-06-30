@@ -14163,6 +14163,36 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused group exponentiation corpus-growth pass:
+
+```text
+group_exp.py: 68 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds `sage/groups/group_exp.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 817
+non-comment entries. The default browser-compatible profile gains coverage
+for the `GroupExp` functor on commutative additive groups, functor
+initialization, element arithmetic, coercion, representation, comparison, and
+hashing.
+
+Direct sampling first recorded 69 passed blocks and four failures in the
+homomorphism example where `L.weyl_group(prefix='s')` imports GAP through the
+stripped `sage.libs.gap.libgap` path, with dependent failures in the
+reflection-action examples. The added WASI source patch marks that
+Weyl-group-backed chain as `# needs sage.libs.gap`, preserving the non-GAP
+group-exponentiation coverage as runnable default-profile doctests. Focused
+validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus after a fresh patched-source rebuild, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/group-exp/make2.sqlite3`.
+The latest-run summary records CoWasm commit
+`8799ddbb5c60abfaa767811522314ace38ccaa1c`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records 5 `optional:sage.libs.gap` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -1881,6 +1881,35 @@ diff --git a/src/sage/groups/abelian_gps/abelian_group_morphism.py b/src/sage/gr
 @@ -57 +57 @@
 -        sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism
 +        sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism  # needs sage.libs.gap
+diff --git a/src/sage/groups/group_exp.py b/src/sage/groups/group_exp.py
+--- a/src/sage/groups/group_exp.py
++++ b/src/sage/groups/group_exp.py
+@@ -73,20 +73,20 @@ class GroupExp(Functor):
+         sage: L = RootSystem(['A',2]).ambient_space()
+         sage: EL = E(L)
+-        sage: W = L.weyl_group(prefix='s')
+-        sage: s2 = W.simple_reflection(2)
++        sage: W = L.weyl_group(prefix='s')                                      # needs sage.libs.gap
++        sage: s2 = W.simple_reflection(2)                                       # needs sage.libs.gap
+         sage: def my_action(mu):
+         ....:     return s2.action(mu)
+         sage: from sage.categories.morphism import SetMorphism
+         sage: from sage.categories.homset import Hom
+         sage: f = SetMorphism(Hom(L, L, CommutativeAdditiveGroups()), my_action)
+-        sage: F = E(f); F
++        sage: F = E(f); F                                                       # needs sage.libs.gap
+         Generic endomorphism of
+          Multiplicative form of Ambient space of the Root system of type ['A', 2]
+         sage: v = L.an_element(); v
+         (2, 2, 3)
+-        sage: y = F(EL(v)); y
++        sage: y = F(EL(v)); y                                                   # needs sage.libs.gap
+         (2, 3, 2)
+-        sage: y.parent()
++        sage: y.parent()                                                        # needs sage.libs.gap
+         Multiplicative form of Ambient space of the Root system of type ['A', 2]
+     """
+     def __init__(self):
 diff -urN a/src/sage/misc/all.py b/src/sage/misc/all.py
 --- a/src/sage/misc/all.py
 +++ b/src/sage/misc/all.py
