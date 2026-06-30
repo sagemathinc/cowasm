@@ -14349,6 +14349,32 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records 5 `optional:sage.libs.gap` blocks.
 
+Focused linear-extension iterator corpus-growth pass:
+
+```text
+linear_extension_iterator.pyx: 3 passed, 0 failed, 17 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/posets/linear_extension_iterator.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 823
+non-comment entries. The default browser-compatible profile gains compact
+coverage for the linear-extension helper imports while classifying the
+`Poset`/`posets` setup examples under explicit `# needs sage.graphs` metadata
+because the current packaged graph stack still lacks `generic_graph_pyx`.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus after a fresh patched-source rebuild, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-more/linear-extension/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`eaee39761b09a352036ff6c883dd8bad070e0857`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records 7 `optional:sage.graphs` blocks,
+4 `optional:sage.modules`/long-module blocks, and 6 deferred `not tested`
+blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

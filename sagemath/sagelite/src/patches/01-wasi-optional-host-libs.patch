@@ -7798,3 +7798,33 @@ diff -urN a/src/sage/modular/modsym/manin_symbol_list.py b/src/sage/modular/mods
 @@ -870 +875 @@
 -            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()
 +            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()   # needs sage.modular.modsym
+diff -urN a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/combinat/posets/linear_extension_iterator.pyx
+--- a/src/sage/combinat/posets/linear_extension_iterator.pyx
++++ b/src/sage/combinat/posets/linear_extension_iterator.pyx
+@@ -26,4 +26,4 @@
+         sage: from sage.combinat.posets.linear_extension_iterator import _linear_extension_prepare
+-        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
++        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # needs sage.graphs
+-        sage: _linear_extension_prepare(D)
++        sage: _linear_extension_prepare(D)                                      # needs sage.graphs
+         ([0, 1, 2, 3, 4], [1, 3], [2, 4])
+@@ -148,4 +148,4 @@
+         sage: from sage.combinat.posets.linear_extension_iterator import _linear_extension_prepare, _linear_extension_gen
+-        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
++        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # needs sage.graphs
+-        sage: le, a, b = _linear_extension_prepare(D)
++        sage: le, a, b = _linear_extension_prepare(D)                           # needs sage.graphs
+         sage: [e for e in _linear_extension_gen(D, le, a, b, [True], len(a)-1)]         # needs sage.modules
+@@ -260,5 +260,5 @@
+         sage: from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
+-        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
++        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # needs sage.graphs
+         sage: list(linear_extension_iterator(D))                                        # needs sage.modules
+         [[0, 1, 2, 3, 4],
+          [0, 2, 1, 3, 4],
+@@ -269,1 +269,1 @@
+-        sage: D = posets.BooleanLattice(3)._hasse_diagram
++        sage: D = posets.BooleanLattice(3)._hasse_diagram                      # needs sage.graphs
+@@ -273,1 +273,1 @@
+-        sage: D = posets.AntichainPoset(9)._hasse_diagram
++        sage: D = posets.AntichainPoset(9)._hasse_diagram                      # needs sage.graphs
