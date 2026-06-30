@@ -47,6 +47,7 @@ src/sage/algebras/quantum_groups/q_numbers.py
 src/sage/algebras/steenrod/steenrod_algebra_misc.py
 src/sage/algebras/lie_algebras/abelian.py
 src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
+src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
 src/sage/algebras/lie_conformal_algebras/graded_lie_conformal_algebra.py

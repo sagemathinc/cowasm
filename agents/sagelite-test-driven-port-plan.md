@@ -13183,6 +13183,39 @@ file-failure cluster queries are empty; `skips-by-reason.sql` groups 30 skips
 under `optional:sage.libs.ntl` and one skip under
 `optional:sage.libs.ntl,sage.rings.padics`.
 
+Focused bosonic ghost Lie conformal algebra corpus-growth pass:
+
+```text
+bosonic_ghosts_lie_conformal_algebra.py: 6 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 780
+non-comment entries. The default browser-compatible profile gains coverage for
+the rational-field Bosonic Ghosts constructor, generator injection, bracket,
+degree, and TestSuite checks. The QQbar/AA examples are now tagged as
+`sage.rings.number_field`, matching the existing Virasoro and Fermionic Ghosts
+number-field boundary.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/agent-continue/mixed-lowcount.sqlite3`.
+That mixed low-count batch did not find a clean untagged candidate: most files
+were skipped-only, while `sage/doctest/__main__.py`,
+`sage/schemes/weighted_projective/weighted_projective_homset.py`, and the
+Bosonic Ghosts module still had runnable failures. The Bosonic Ghosts failures
+were the narrow follow-up because they were limited to the same number-field
+boundary already documented for adjacent Lie conformal algebra modules.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/agent-continue/bosonic-ghosts/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty;
+`skips-by-reason.sql` groups all four skips under
+`optional:sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

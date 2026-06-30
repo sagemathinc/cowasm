@@ -5792,6 +5792,21 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
+@@ -69 +69 @@
+-        sage: R = lie_conformal_algebras.BosonicGhosts(QQbar, ngens = 4, names = 'abcd'); R
++        sage: R = lie_conformal_algebras.BosonicGhosts(QQbar, ngens = 4, names = 'abcd'); R  # needs sage.rings.number_field
+@@ -71 +71 @@
+-        sage: R.structure_coefficients()
++        sage: R.structure_coefficients()                                               # needs sage.rings.number_field
+@@ -78 +78 @@
+-        sage: lie_conformal_algebras.BosonicGhosts(AA).category()
++        sage: lie_conformal_algebras.BosonicGhosts(AA).category()                      # needs sage.rings.number_field
+@@ -127 +127 @@
+-            sage: lie_conformal_algebras.BosonicGhosts(QQbar)
++            sage: lie_conformal_algebras.BosonicGhosts(QQbar)                          # needs sage.rings.number_field
 diff -urN a/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
