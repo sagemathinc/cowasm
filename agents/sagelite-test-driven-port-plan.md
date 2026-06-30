@@ -12448,6 +12448,33 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 16 passed, 0 failed, 9 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused finite-field Diffie-Hellman corpus-growth pass:
+
+```text
+finite_field_diffie_hellman.py: 12 passed, 0 failed, 9 skipped
+```
+
+This pass adds
+`sage/crypto/public_key/key_exchange/finite_field_diffie_hellman.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 745
+non-comment entries. The doctest runner now seeds Sage's lazy
+`key_exchange` catalog in the common startup namespace, and the WASI
+`sage.all` patch exposes the same lazy catalog for REPL parity on a fresh
+patched Sagelite source copy. The large 8192-bit MODP example is classified
+as `# needs sage.symbolic` because it depends on Sage's symbolic `pi`; the
+initial constructor example is marked `# random` because Sagelite imports the
+tested module while seeding module globals, so the expected experimental
+`FutureWarning` is emitted before doctest output capture.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/autonomous-2026-06-30/dh/make-final-linehunks.sqlite3`.
+The latest-run summary records 12 passed, 0 failed, 9 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

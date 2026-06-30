@@ -1026,6 +1026,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
     except BaseException:
         pass
     try:
+        from sage.crypto.all import key_exchange
+        namespace.setdefault("key_exchange", key_exchange)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "key_exchange"):
+                setattr(sage_all, "key_exchange", key_exchange)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
         import sage.coding.codes_catalog as codes
         namespace.setdefault("codes", codes)
         try:
