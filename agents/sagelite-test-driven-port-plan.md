@@ -12500,6 +12500,34 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 159 passed, 0 failed, 24 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries.
 
+Focused abelian-group value-domain corpus-growth pass:
+
+```text
+values.py: 59 passed, 0 failed, 22 skipped
+```
+
+This pass adds `sage/groups/abelian_gps/values.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 747
+non-comment entries. The file gives the dashboard direct coverage of abelian
+group value-domain helpers under the default browser-compatible profile
+without new WASI source tags or startup namespace changes.
+
+Direct sampling of adjacent startup-gap files still kept
+`sage/algebras/nil_coxeter_algebra.py`,
+`sage/groups/abelian_gps/abelian_group.py`, and
+`sage/groups/abelian_gps/abelian_group_element.py` out of the quiet corpus.
+Those failures remain useful follow-up clusters: missing
+`NilCoxeterAlgebra`/`AbelianGroup` startup names, dependent missing variables
+after failed setup examples, and two abelian-group elementary-divisor display
+or arithmetic mismatches.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/abelian-values-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
