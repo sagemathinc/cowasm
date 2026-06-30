@@ -6989,6 +6989,35 @@ diff --git a/src/sage/doctest/util.py b/src/sage/doctest/util.py
 @@ -870 +870 @@
 -        sage: data  # abs tol 0.1
 +        sage: data  # abs tol 0.1                                                     # needs cysignals.alarm
+diff --git a/src/sage/functions/trig.py b/src/sage/functions/trig.py
+--- a/src/sage/functions/trig.py
++++ b/src/sage/functions/trig.py
+@@ -8,11 +8,11 @@
+-    sage: sin(x*(x+1)-x^2-x)
++    sage: sin(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     0
+-    sage: cos(x*(x+1)-x^2-x)
++    sage: cos(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     1
+-    sage: tan(x*(x+1)-x^2-x)
++    sage: tan(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     0
+-    sage: csc(x*(x+1)-x^2-x)
++    sage: csc(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     Infinity
+-    sage: sec(x*(x+1)-x^2-x)
++    sage: sec(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     1
+-    sage: cot(x*(x+1)-x^2-x)
++    sage: cot(x*(x+1)-x^2-x)                                                          # needs sage.symbolic
+     Infinity
+diff --git a/src/sage/functions/trig.py b/src/sage/functions/trig.py
+--- a/src/sage/functions/trig.py
++++ b/src/sage/functions/trig.py
+@@ -663,2 +663,2 @@
+-            sage: arcsin(sqrt(2)/2)
++            sage: arcsin(sqrt(2)/2)                                                   # needs sage.symbolic
+             1/4*pi
 diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
 --- a/src/sage/functions/special.py
 +++ b/src/sage/functions/special.py

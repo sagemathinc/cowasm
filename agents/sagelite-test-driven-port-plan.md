@@ -12671,6 +12671,37 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused trigonometric-function corpus-growth pass:
+
+```text
+trig.py: 6 passed, 0 failed, 262 skipped
+```
+
+This pass adds `sage/functions/trig.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 762
+non-comment entries. The default browser-compatible profile gains compact
+coverage for trigonometric startup/import behavior and numeric complex
+inverse-cosine evaluation, while the symbolic trigonometric examples remain
+explicitly skipped under `sage.symbolic`.
+
+Exploratory sampling first checked the remaining absent `sage/functions`
+files in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/functions-next/missing-functions.sqlite3`.
+That probe kept `all.py` out as empty coverage, kept `min_max.py`,
+`piecewise.py`, `prime_pi.pyx`, and `transcendental.py` out as skipped-only
+symbolic-heavy files, and kept `other.py` out as a broader triage target with
+symbolic-expression imports plus factorial/binomial behavior drift. `trig.py`
+was the narrow promotion after tagging the unguarded symbolic `x` checks and
+the `arcsin(sqrt(2)/2)` example as `# needs sage.symbolic`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/functions-next/trig-make.sqlite3`.
+The latest-run summary records 6 passed, 0 failed, 262 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
