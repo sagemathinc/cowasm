@@ -167,6 +167,8 @@ src/sage/groups/abelian_gps/abelian_group_element.py
 src/sage/groups/abelian_gps/abelian_group_morphism.py
 src/sage/groups/abelian_gps/element_base.py
 src/sage/groups/abelian_gps/values.py
+src/sage/groups/additive_abelian/qmodnz.py
+src/sage/groups/additive_abelian/qmodnz_element.py
 src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_lists.pyx
 src/sage/interfaces/abc.py

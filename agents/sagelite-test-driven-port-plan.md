@@ -12949,6 +12949,37 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused additive abelian quotient corpus-growth pass:
+
+```text
+sage -t passed: 114 passed, 0 failed, 0 skipped
+```
+
+That two-file make-target validation adds
+`sage/groups/additive_abelian/qmodnz.py` and
+`sage/groups/additive_abelian/qmodnz_element.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 776
+non-comment entries. The default browser-compatible profile gains direct
+coverage for rational-mod-integer quotient groups and elements, including
+construction, coercion, arithmetic, comparison, hashing, lifting, and additive
+order helpers without new WASI source tags or startup namespace changes.
+
+Direct group sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/group-followup/group-probe.sqlite3`.
+The same batch kept `sage/groups/additive_abelian/additive_abelian_group.py`
+out because its failures still cluster around finite presentation module
+construction, kept `sage/groups/misc_gps/imaginary_groups.py` out for
+symbolic-startup and conversion display drift, kept `sage/groups/pari_group.py`
+out as skipped-only PARI coverage, and kept `sage/groups/groups_catalog.py`
+out as empty coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/group-followup/qmodnz-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
