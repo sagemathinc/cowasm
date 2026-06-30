@@ -11960,6 +11960,33 @@ browser-compatible profile. `sage/games/hexad.py`,
 homology/quadratic-form probes exposed real block failures or timeouts, so
 they remain separate triage targets rather than corpus promotions.
 
+Scheduled uncovered-file sampling follow-up:
+
+This pass did not add a new corpus file. Fresh compact probes over uncovered
+stats, games, typeset, coding, crypto, category-example, database, misc,
+lie-conformal, algebra, homology, module, and polynomial files found no clean
+non-skipped promotion candidate outside the current 732-file corpus.
+
+The skipped-only or empty batches remain out of the dashboard because they add
+no default-profile pass signal. Examples include low-count stats/coding/crypto
+wrappers such as `sage/stats/intlist.pyx`, `sage/coding/channel.py`,
+`sage/coding/encoder.py`, `sage/coding/decoder.py`, `sage/crypto/util.py`,
+and category/database helpers such as `sage/categories/groupoid.py`,
+`sage/categories/examples/algebras_with_basis.py`, `sage/databases/sloane.py`,
+and `sage/misc/sphinxify.py`.
+
+The runnable candidates exposed real clusters rather than narrow promotion
+work. `sage/combinat/posets/hochschild_lattice.py` is blocked by the stripped
+graph backend through Sage's `posets` and `simplicial_complexes` catalogs.
+`sage/misc/reset.pyx` and `sage/misc/session.pyx` have useful passing blocks
+but still depend on symbolic reset/session behavior, IPython attach support,
+and Cython/pkgconfig-backed session examples. Small lie-conformal, algebra,
+homology, and polynomial probes exposed broader semantic failures, an NTL
+`memory access out of bounds` trap, or a polynomial-ideal timeout. Prior probe
+databases contained clean entries for `sage/structure/nonexact.py`,
+`sage/structure/debug_options.pyx`, and `sage/misc/python.py`, but all three
+are already present in the curated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
