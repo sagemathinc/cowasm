@@ -675,9 +675,15 @@ src/sage/modules/vector_rational_dense.pyx
 src/sage/modules/vector_space_homspace.py
 src/sage/modules/vector_space_morphism.py
 src/sage/modules/with_basis/morphism.py
+src/sage/tensor/modules/alternating_contr_tensor.py
+src/sage/tensor/modules/ext_pow_free_module.py
 src/sage/tensor/modules/format_utilities.py
+src/sage/tensor/modules/free_module_alt_form.py
 src/sage/tensor/modules/free_module_basis.py
 src/sage/tensor/modules/free_module_element.py
+src/sage/tensor/modules/free_module_homset.py
+src/sage/tensor/modules/free_module_linear_group.py
+src/sage/tensor/modules/reflexive_module.py
 src/sage/tensor/modules/tensor_free_submodule_basis.py
 src/sage/tensor/modules/tensor_free_module.py
 src/sage/modular/modsym/apply.pyx

@@ -2918,6 +2918,45 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused tensor exterior/module helper corpus-growth pass:
+
+```text
+alternating_contr_tensor.py: 150 passed, 0 failed, 0 skipped
+ext_pow_free_module.py: 174 passed, 0 failed, 0 skipped
+free_module_alt_form.py: 170 passed, 0 failed, 5 skipped
+free_module_homset.py: 124 passed, 0 failed, 0 skipped
+free_module_linear_group.py: 112 passed, 0 failed, 0 skipped
+reflexive_module.py: 65 passed, 0 failed, 6 skipped
+```
+
+That six-file focused validation adds
+`sage/tensor/modules/alternating_contr_tensor.py`,
+`sage/tensor/modules/ext_pow_free_module.py`,
+`sage/tensor/modules/free_module_alt_form.py`,
+`sage/tensor/modules/free_module_homset.py`,
+`sage/tensor/modules/free_module_linear_group.py`, and
+`sage/tensor/modules/reflexive_module.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 812
+non-comment entries. The files extend the existing finite-rank tensor-module
+coverage with alternating contravariant tensors, exterior powers, alternating
+forms, homsets, linear groups, and reflexive-module helpers without new WASI
+source tags or startup namespace changes.
+
+Direct tensor-frontier sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-cont/tensor-remaining.sqlite3`.
+The saved candidate-ranking query classified the six added files as promotion
+candidates with a 100% non-skipped pass rate. Nearby tensor files remain
+outside the quiet dashboard: `finite_rank_free_module.py`,
+`free_module_automorphism.py`, `free_module_tensor.py`, and
+`tensor_free_submodule.py` still have runnable block-failure clusters;
+`free_module_morphism.py` reaches a matrix `echelonize_ring` WASM signature
+mismatch; and `tensor_with_indices.py` is skipped-only in the default browser
+profile. Focused validation used the `test-sage-doctest-corpus` make target
+against a temporary six-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-cont/tensor-promoted-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
