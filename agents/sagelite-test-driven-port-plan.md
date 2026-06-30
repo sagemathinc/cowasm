@@ -13011,6 +13011,48 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72 in the default node profile,
 and the saved block- and file-failure cluster queries are empty.
 
+Scheduled 2026-06-30 no-promotion sampling pass:
+
+This follow-up run searched for the next small browser-profile corpus
+candidate but did not promote a file. Several apparently useful historical
+clean candidates were already present in the current 777-entry corpus, notably
+the logic frontend files, `sage/games/sudoku_backtrack.pyx`, and
+`sage/misc/python.py`.
+
+Fresh absent-file probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next3/`:
+
+```text
+pari-probe.sqlite3: 0 passed, 2 failed, 19 skipped
+small-probe.sqlite3: 0 passed, 0 failed, 38 skipped
+algebra-small-probe.sqlite3: 0 passed, 25 failed, 82 skipped
+books-probe.sqlite3: 18 passed, 10 failed, 0 skipped
+mixed-probe.sqlite3: 7 passed, 50 failed, 42 skipped
+helpers-probe.sqlite3: 0 passed, 0 failed, 60 skipped
+```
+
+The sampled skipped-only files are not useful corpus additions yet because
+they add no default-profile runnable blocks. The sampled failure clusters also
+remain too broad for a narrow promotion patch:
+
+- `sage/libs/pari/convert_sage.pyx` still reaches the PARI
+  `err_recover` function-signature mismatch through `pari_divisors_small(4)`.
+- `sage/libs/pari/tests.py` and `sage/coding/two_weight_db.py` still reach the
+  known NTL/libcxx ostream `memory access out of bounds` trap through finite
+  field setup.
+- `sage/games/hexad.py`, `sage/combinat/posets/bubble_shuffle.py`, and
+  `sage/combinat/posets/hochschild_lattice.py` currently fail before producing
+  any passing default-profile blocks.
+- The sampled `sage/rings/polynomial/pbori/*` files still have broader
+  Boolean-polynomial backend failures, and the small book-exercise probes were
+  either empty or mixed with graph/linear-algebra backend failures.
+
+Next corpus-growth passes should skip these sampled batches unless the PARI,
+NTL/libcxx, graph, linear-algebra, or Boolean-polynomial backend boundaries
+have changed. Better near-term candidates should come from a fresh absent-file
+ranking that excludes skipped-only dashboards and already-promoted historical
+clean rows.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
