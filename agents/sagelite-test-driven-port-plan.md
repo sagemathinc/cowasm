@@ -12349,6 +12349,46 @@ around missing IPython/traitlets support, missing symbolic reset support, and
 dependent startup-name failures. The remaining sampled files were skipped-only
 or had no extracted doctest blocks, so they remain outside the quiet corpus.
 
+Follow-up absent-candidate audit pass:
+
+This pass also does not add a new corpus file. Three additional focused probes
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/new-sampling/`
+sampled absent coding, geometry, algebra, utility, database, REPL, doctest,
+and nested helper files. The checked corpus remains at 743 non-comment
+entries.
+
+The mixed coding/geometry/algebra probe recorded 216 passed, 197 failed, and
+334 skipped blocks in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/new-sampling/mixed-candidates.sqlite3`.
+Its candidate summary classifies three files as `needs_triage`, four as
+`skipped_only`, and three as `no_doctest_blocks`. The skipped-only coding
+interface files and empty CLI/catalog helpers remain outside the corpus. The
+useful blocker clusters are `sage/geometry/toric_lattice.py` submodule and
+quotient construction failures grouped under `TypeError: attribute name must
+be string, not ''`, `sage/geometry/toric_plotter.py` plotter failures, and
+`sage/algebras/cellular_basis.py` cyclotomic-field setup failures.
+
+The small utility/helper probe recorded 203 passed, 124 failed, and 183
+skipped blocks in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/new-sampling/utility-small-candidates.sqlite3`.
+Its candidate summary classifies four files as `needs_triage`, five as
+`skipped_only`, and three as `no_doctest_blocks`. `sage/games/hexad.py` is
+blocked before its `Minimog` examples can run because importing the module
+reaches `sage.calculus.calculus.SR` and the unavailable symbolic expression
+module. `sage/repl/display/formatter.py` remains IPython-backed, while
+`sage/doctest/fixtures.py` and `sage/doctest/util.py` expose broader doctest
+fixture and utility clusters instead of a narrow corpus-promotion path.
+
+The nested Guruswami-Sudan and hyperbolic-space probe recorded 12 passed, 451
+failed, and 227 skipped blocks in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/new-sampling/geometry-coding-nested.sqlite3`.
+The Guruswami-Sudan helpers are skipped-only in the default browser-compatible
+profile, and `hyperbolic_constants.py` has no extracted blocks. The
+hyperbolic-space files are blocked by symbolic support rather than a simple
+startup-name fix: importing `HyperbolicPlane` reaches
+`sage.symbolic.constants.I`, which then fails on the unavailable
+`sage.symbolic.expression` module.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
