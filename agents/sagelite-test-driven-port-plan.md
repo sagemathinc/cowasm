@@ -11928,6 +11928,38 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 8 passed, 0 failed, 16 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries.
 
+Focused spike-function corpus-growth pass:
+
+```text
+spike_function.py: 22 passed, 0 failed, 10 skipped
+```
+
+This pass adds `sage/functions/spike_function.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 732
+non-comment entries. The file gives the dashboard compact default-profile
+coverage for sparse spike-function construction, support manipulation,
+sorting, equality, and Fourier-transform helper behavior. Its plotting,
+symbolic, module-vector, and real-field examples remain explicit
+browser-profile skips through existing `# needs` metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target against
+the patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next/spike-function/make.sqlite3`.
+The latest-run summary records 22 passed, 0 failed, 10 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries;
+`skips-by-reason.sql` records the skipped examples under
+`optional:sage.plot`, `optional:sage.symbolic`, `optional:sage.modules`, and
+`optional:sage.rings.real_mpfr`.
+
+Sampling in the same scheduled pass kept several adjacent candidates outside
+the quiet corpus. Plot, coding, statistics, SAT wrapper, category-example,
+and crypto helper batches were skipped-only or empty under the default
+browser-compatible profile. `sage/games/hexad.py`,
+`sage/repl/configuration.py`, `sage/modules/module_functors.py`, and small
+homology/quadratic-form probes exposed real block failures or timeouts, so
+they remain separate triage targets rather than corpus promotions.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
