@@ -2887,6 +2887,37 @@ several skipped-only plotting and crypto helpers from a mixed utility sample.
 `sage/probability/random_variable.py` was also confirmed clean in the mixed
 sample, but it was already present in the checked corpus.
 
+Focused polynomial book-doctest corpus-growth pass:
+
+```text
+polynomes_doctest.py: 28 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 804
+non-comment entries. The default browser-compatible profile gains compact
+coverage for polynomial arithmetic, power-series division, Berlekamp-Massey,
+finite-field interpolation, rational reconstruction, and formal power-series
+iteration from the computational mathematics book.
+
+The added WASI source patch classifies the three Chebyshev-basis examples as
+`# needs sage.symbolic`: the setup imports `sage.symbolic.function_factory`
+and the dependent blocks use `chebyshev_T`, which are outside the current
+browser-compatible symbolic surface. The file's other two skips are existing
+`# long time` examples.
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched-source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-followup/polynomes/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`c68233493dfbf8e0100eb3ebda6ec4f486610657`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

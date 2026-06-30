@@ -6492,6 +6492,32 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/lin
 +  sage: ok, V = Similar(2*A, B); ok                                            # known bug - matrix frobenius form hits generic-dense attribute gap
    False
  """
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
+@@ -13,7 +13,7 @@
+ 
+ Sage example in ./sol/polynomes.tex, line 78::
+ 
+-  sage: T = sage.symbolic.function_factory.function('T', nargs=2)
++  sage: T = sage.symbolic.function_factory.function('T', nargs=2)                # needs sage.symbolic
+   sage: def to_chebyshev_basis(pol):
+   ....:     (x,) = pol.variables()
+   ....:     res = 0
+@@ -26,10 +26,10 @@
+ Sage example in ./sol/polynomes.tex, line 105::
+ 
+   sage: x = polygen(QQ)
+   sage: p = 4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
+-  sage: p_cheb = to_chebyshev_basis(p); p_cheb
++  sage: p_cheb = to_chebyshev_basis(p); p_cheb                                  # needs sage.symbolic
+   1/8*T(6, x) + 1/4*T(5, x) + 55/72*T(4, x) + 3/4*T(3, x) +
+   2713/1368*T(2, x) + T(1, x) + 1069/456*T(0, x)
+-  sage: p_cheb.substitute_function(T, chebyshev_T).expand()
++  sage: p_cheb.substitute_function(T, chebyshev_T).expand()                     # needs sage.symbolic
+   4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
+ 
+ Sage example in ./sol/polynomes.tex, line 131::
 diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
 --- a/src/sage/categories/simplicial_sets.py
 +++ b/src/sage/categories/simplicial_sets.py
