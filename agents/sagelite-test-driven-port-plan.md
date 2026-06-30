@@ -2738,6 +2738,36 @@ one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the new deferrals under `optional:subprocess`.
 
+Focused Lie-algebra category corpus-growth pass:
+
+```text
+lie_algebras.py: 36 passed, 0 failed, 148 skipped
+```
+
+That one-file make-target validation adds `sage/categories/lie_algebras.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 797
+non-comment entries. Direct sampling first recorded 36 passed blocks, two
+focused failures, and 146 skips. The failures were the
+`trivial_representation()` setup pair using the `lie_algebras` catalog's
+strictly-upper-triangular matrix constructor, which currently resolves through
+graph-backed classical Lie algebra code in the stripped browser-compatible
+profile.
+
+The added WASI source patch marks that constructor setup and dependent
+representation check as `# needs sage.graphs`, matching the existing
+browser-profile boundary for graph-backed Lie-algebra catalog imports while
+preserving the category-level bracket, finite-dimensional, nilpotent,
+subalgebra, ideal, BCH, representation, and test-helper coverage that already
+runs in the default profile. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/lie-algebras-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the newly deferred pair under
+`optional:sage.graphs`.
+
 Follow-up absent-frontier audit:
 
 Fresh focused probes after the tensor free-submodule promotion did not find a

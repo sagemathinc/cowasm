@@ -4564,6 +4564,14 @@ diff -urN a/src/sage/categories/additive_groups.py b/src/sage/categories/additiv
 @@ -46 +46 @@
 -        sage: AdditiveGroups().axioms()
 +        sage: AdditiveGroups().axioms()                                                # random
+diff -urN a/src/sage/categories/lie_algebras.py b/src/sage/categories/lie_algebras.py
+--- a/src/sage/categories/lie_algebras.py
++++ b/src/sage/categories/lie_algebras.py
+@@ -742,2 +742,2 @@
+-                sage: L = lie_algebras.strictly_upper_triangular_matrices(QQ, 4)
+-                sage: L.trivial_representation()
++                sage: L = lie_algebras.strictly_upper_triangular_matrices(QQ, 4)        # needs sage.graphs
++                sage: L.trivial_representation()                                        # needs sage.graphs
 diff -urN a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.py
 --- a/src/sage/categories/semigroups.py
 +++ b/src/sage/categories/semigroups.py
