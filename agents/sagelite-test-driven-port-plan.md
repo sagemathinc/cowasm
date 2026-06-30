@@ -12195,6 +12195,35 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 5 passed, 0 failed, 2 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused group and modular-symbol helper corpus-growth pass:
+
+```text
+canonical_augmentation.pyx: 1 passed, 0 failed, 0 skipped
+refinement_lists.pyx: 3 passed, 0 failed, 0 skipped
+relation_matrix_pyx.pyx: 4 passed, 0 failed, 0 skipped
+```
+
+This pass adds the three compact helper files to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 740 non-comment
+entries. The default profile gains small runnable coverage for permutation
+group partition-refinement helpers and modular-symbol relation-matrix helper
+logic without new WASI source tags or startup namespace changes.
+
+Exploratory low-prompt sampling used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/followup/low-prompt-new.sqlite3`.
+It found these three clean non-skipped candidates while keeping adjacent
+interfaces, coding, database, stats, and monoid files out as skipped-only, and
+keeping PARI conversion, FLINT qsieve, and Boolean-polynomial helper probes out
+as real triage targets with conversion failures, a qsieve memory trap, or
+backend mismatches.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/followup/group-modsym-make.sqlite3`.
+The latest-run summary records 8 passed, 0 failed, 0 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
