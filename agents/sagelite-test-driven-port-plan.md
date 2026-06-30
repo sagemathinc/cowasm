@@ -11802,6 +11802,38 @@ the patched source copy, with a temporary one-file corpus,
 The latest-run summary records 61 passed, 0 failed, 30 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries.
 
+Focused DIMACS SAT solver corpus-growth pass:
+
+```text
+dimacs.py: 154 passed, 0 failed, 32 skipped
+```
+
+This pass adds `sage/sat/solvers/dimacs.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 727 non-comment
+entries. The file adds pure DIMACS SAT interface coverage while keeping
+external solver execution behind its existing optional `glucose`, `kissat`,
+and `rsat` tags. The one default-profile failure from the sampling run was a
+Boolean-polynomial SAT example that imports the unavailable
+`sage.rings.polynomial.plural` backend; the WASI source patch now tags that
+setup import as `# needs sage.rings.polynomial.plural`, so the rest of the
+file remains runnable.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/dimacs-make.sqlite3`.
+The latest-run summary records 154 passed, 0 failed, 32 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
+Sampling in the same pass kept additional candidates outside the quiet corpus:
+runtime helper and low-count batches were skipped-only or empty; book-style
+computational math doctests had broad symbolic/combinatorics failures;
+`sage/parallel/decorate.py` and `sage/parallel/map_reduce.py` still require
+`_multiprocessing`; category example modules not already promoted were
+skipped-only; `sage/combinat/gelfand_tsetlin_patterns.py` remains a near miss
+with a `sage.graphs.generic_graph_pyx` import gap through crystal helpers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

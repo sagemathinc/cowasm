@@ -6822,3 +6822,11 @@ diff -urN a/src/sage/misc/sage_ostools.pyx b/src/sage/misc/sage_ostools.pyx
 @@ -245 +245 @@
 -        sage: with redirection(sys.stdout, open(os.devnull, 'w')) as r:
 +        sage: with redirection(sys.stdout, open(os.devnull, 'w')) as r:               # needs file-descriptor-redirection
+diff --git a/src/sage/sat/solvers/dimacs.py b/src/sage/sat/solvers/dimacs.py
+--- a/src/sage/sat/solvers/dimacs.py
++++ b/src/sage/sat/solvers/dimacs.py
+@@ -530,3 +530,3 @@
+-            sage: from sage.sat.boolean_polynomials import solve as solve_sat
++            sage: from sage.sat.boolean_polynomials import solve as solve_sat          # needs sage.rings.polynomial.plural
+             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings brial
+             sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings brial
