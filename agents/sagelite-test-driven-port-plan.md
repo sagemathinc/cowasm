@@ -13151,6 +13151,38 @@ The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty; `skips-by-reason.sql` groups all six
 skips under `optional:phc`.
 
+Focused p-adic Eisenstein extension corpus-growth pass:
+
+```text
+eisenstein_extension_generic.py: 10 passed, 0 failed, 31 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/eisenstein_extension_generic.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 779
+non-comment entries. The default browser-compatible profile gains compact
+coverage for generic Eisenstein p-adic extension methods that do not construct
+NTL-backed extension fields, while the extension-construction examples remain
+explicit `sage.libs.ntl` and `sage.rings.padics` skips.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-continue/more-runnable.sqlite3`.
+The same batch kept nearby skipped-only files such as topology catalogs,
+Sloane database helpers, coding databases, finite-poset tests, and category
+examples out of the corpus because they add no default-profile runnable
+blocks. It also kept `unramified_extension_generic.py`, matrix tests, species
+helpers, and small combinatorics design/poset helpers out because their
+runnable blocks still have focused failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-continue/eisenstein-extension/make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups 30 skips
+under `optional:sage.libs.ntl` and one skip under
+`optional:sage.libs.ntl,sage.rings.padics`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
