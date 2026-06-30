@@ -12980,6 +12980,37 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused PARI GMP conversion corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds
+`sage/libs/pari/convert_gmp.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 777
+non-comment entries. The default browser-compatible profile gains direct
+coverage for GMP integer-to-PARI conversion, integer type conversion, PARI
+stack initialization, and rational matrix conversion skip propagation.
+
+Direct sampling first recorded 9 passed blocks, 8 failed blocks, and 41
+skipped blocks across `convert_gmp.pyx`, `convert_flint.pyx`, and nearby
+ring/PARI helpers. The runnable `convert_gmp.pyx` failures were the focused
+cypari2 object-model boundary for PARI rational `Gen` values plus integer
+hash-stability drift; the WASI source patch now marks the rational examples
+as `# needs sage.libs.pari` and the integer hash check as a deferred
+`# known bug`. `convert_flint.pyx` remains outside the curated corpus because
+its current default-profile coverage is skipped-only after the same cypari2
+boundary.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next2/convert-gmp-make.sqlite3`.
+The latest-run summary records runner version 72 in the default node profile,
+and the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

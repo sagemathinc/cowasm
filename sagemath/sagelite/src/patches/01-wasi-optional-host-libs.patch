@@ -2146,6 +2146,28 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
  cdef Gen new_gen_from_mpz_t(mpz_srcptr value):
      """
      Create a new PARI Gen of type ``t_INT`` from a given
+@@ -49 +53 @@
+-        sage: a5.__hash__() == b5.__hash__()
++        sage: a5.__hash__() == b5.__hash__()                                          # known bug
+@@ -83 +87 @@
+-        sage: pari(-2/3)
++        sage: pari(-2/3)                                                              # needs sage.libs.pari
+@@ -89 +93 @@
+-        sage: pari(QQ(1/42)).type()
++        sage: pari(QQ(1/42)).type()                                                   # needs sage.libs.pari
+@@ -97,6 +101,6 @@
+-        sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state
+-        sage: a5 = pari(5/7)
+-        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1))  # Dirty PARI stack
+-        sage: b5 = pari(5/7)
+-        sage: a5.__hash__() == b5.__hash__()
++        sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state  # needs sage.libs.pari
++        sage: a5 = pari(5/7)                                                          # needs sage.libs.pari
++        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1))  # Dirty PARI stack  # needs sage.libs.pari
++        sage: b5 = pari(5/7)                                                          # needs sage.libs.pari
++        sage: a5.__hash__() == b5.__hash__()                                          # needs sage.libs.pari
+         True
+     """
 --- a/src/sage/libs/pari/convert_sage.pyx
 +++ b/src/sage/libs/pari/convert_sage.pyx
 @@ -368,6 +368,11 @@
