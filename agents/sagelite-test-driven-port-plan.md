@@ -14098,6 +14098,38 @@ and 82 total blocks. The saved block- and file-failure cluster queries are
 empty; skip grouping records 5 `optional:sage.numerical.mip` blocks and 5
 `optional:sage.symbolic` blocks.
 
+Focused modular-form Eisenstein-series corpus-growth pass:
+
+```text
+eis_series_cython.pyx: 6 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/modular/modform/eis_series_cython.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 815 non-comment
+entries. The default browser-compatible profile gains compact coverage for the
+optimized Eisenstein-series coefficient and FLINT polynomial q-expansion helper
+paths without adding new skips or WASI source tags.
+
+Fresh sampling first checked the remaining computational-mathematics book
+doctests, small category/lie-conformal files, small combinatorics/monoid
+files, and then a bounded low-doctest one-file search under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-2/`. Most
+candidates were skipped-only, zero-block, or exposed broader symbolic, MIP,
+Singular, graph/category, or NTL/libcxx runtime clusters. The modular-form
+file was the narrow follow-up because it passed all runnable examples directly
+with no metadata changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched-source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-2/eis-series/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`0a9859abc665d3b572428fe0b58067c1b58f8657`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 6 total blocks. The saved block- and file-failure cluster queries are
+empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
