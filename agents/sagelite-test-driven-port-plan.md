@@ -12389,6 +12389,42 @@ startup-name fix: importing `HyperbolicPlane` reaches
 `sage.symbolic.constants.I`, which then fails on the unavailable
 `sage.symbolic.expression` module.
 
+Scheduled compact absent-candidate audit pass:
+
+This pass does not add a new corpus file. Four focused probes under
+`/home/user/cowasm/.tmp/current-run/` sampled absent low-prompt, Lie
+conformal/category, mixed utility, and pure-math helper files. The checked
+corpus remains at 743 non-comment entries because no clean non-skipped
+promotion candidate surfaced.
+
+The first low-prompt probe recorded `0 passed, 0 failed, 148 skipped` in
+`fresh-small-candidates.sqlite3`. All 16 sampled files were skipped-only under
+the default browser-compatible profile, including compact cpython, crypto,
+category, monoid, coding, and knot helpers.
+
+The Lie conformal/category probe recorded `43 passed, 71 failed, 66 skipped`
+in `lie-category-candidates.sqlite3`. The saved candidate summary classified
+nine Lie conformal files as `needs_triage` and four category example files as
+`skipped_only`. The useful clusters are QQbar/AA coercion-cache drift,
+stripped graph-backend imports from affine Lie conformal algebra setup, and
+dependent missing-name failures after failed setup examples.
+
+The mixed utility probe recorded `4 passed, 9 failed, 126 skipped` in
+`mixed-utility-candidates.sqlite3`. It kept databases, plotting, numpy-backed
+matrix/vector, coding, crypto, knot, and Judson exercise files out as
+skipped-only or empty coverage. The only runnable failure target was the known
+`matrix/tests.py` runtime-drift cluster around degenerate kernel/determinant
+examples.
+
+The broader pure-math probe recorded `28 passed, 109 failed, 253 skipped` in
+`pure-math-candidates.sqlite3`. Its candidate summary classified six files as
+`needs_triage`, one as `file_error`, and ten as `skipped_only`. The actionable
+clusters are missing startup names for `NilCoxeterAlgebra`, `key_exchange`,
+`AbelianGroup`, and `Poset`-adjacent doctests; graph/backend imports in
+`combinat/posets/sashes.py`; homology/module-construction runtime type
+errors; and the existing NTL/libcxx terminal-error trap reached by
+`rings/polynomial/polynomial_ring_homomorphism.pyx`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
