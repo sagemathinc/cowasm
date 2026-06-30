@@ -12755,6 +12755,40 @@ recording 46 skipped blocks. `sage/repl/configuration.py` remains a separate
 triage target, with the useful failure cluster still centered on missing
 `traitlets`/IPython configuration support and dependent startup-name failures.
 
+Focused quadratic-form local-density corpus-growth pass:
+
+```text
+sage -t passed: 165 passed, 0 failed, 6 skipped
+```
+
+That three-file make-target validation adds
+`sage/quadratic_forms/quadratic_form__count_local_2.py`,
+`sage/quadratic_forms/quadratic_form__local_density_congruence.py`, and
+`sage/quadratic_forms/quadratic_form__local_density_interfaces.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 766
+non-comment entries. The accepted files add default-profile coverage for
+2-adic counting helpers, congruence local-density logic, and local-density
+interface dispatch while leaving theta-series and padic normal-form examples
+as explicit PARI/padic dependency skips.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/qform-probe/qform-probe.sqlite3`.
+The mixed quadratic-form batch kept `probability/all.py` and
+`quadratic_forms/all.py` out as empty coverage, kept `qfsolve.py`,
+`quadratic_form__local_representation_conditions.py`, and
+`quadratic_form__siegel_product.py` out as skipped-only dependency-boundary
+files, and kept `bqf_class_group.py` plus
+`quadratic_form__split_local_covering.py` out for cypari2/PARI and output
+triage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/qform-probe/qform-clean.sqlite3`.
+The latest-run summary records runner version 72, and the saved block-failure
+cluster query is empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
