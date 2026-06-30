@@ -971,6 +971,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
         ("sage.functions.bessel", ("bessel_J",)),
+        ("sage.calculus.transforms.dwt", ("WaveletTransform",)),
         ("sage.functions.jacobi", ("jacobi",)),
         ("sage.functions.trig", ("cos", "sin", "tan")),
         ("sage.functions.transcendental", ("dickman_rho",)),
