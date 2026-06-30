@@ -699,8 +699,14 @@ src/sage/functions/wigner.py
 src/sage/functions/airy.py
 src/sage/functions/bessel.py
 src/sage/functions/error.py
+src/sage/functions/exp_integral.py
 src/sage/functions/gamma.py
+src/sage/functions/generalized.py
+src/sage/functions/hyperbolic.py
+src/sage/functions/hypergeometric.py
+src/sage/functions/jacobi.py
 src/sage/functions/log.py
+src/sage/functions/orthogonal_polys.py
 src/sage/functions/special.py
 src/sage/quadratic_forms/constructions.py
 src/sage/quadratic_forms/binary_qf.py

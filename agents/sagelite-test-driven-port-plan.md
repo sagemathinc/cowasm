@@ -12644,6 +12644,33 @@ The latest-run summary records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 72.
 
+Focused special-function frontier corpus-growth pass:
+
+```text
+sage -t passed: 86 passed, 0 failed, 1374 skipped
+```
+
+That six-file make-target validation adds
+`sage/functions/exp_integral.py`, `sage/functions/generalized.py`,
+`sage/functions/hyperbolic.py`, `sage/functions/hypergeometric.py`,
+`sage/functions/jacobi.py`, and `sage/functions/orthogonal_polys.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 761
+non-comment entries. Direct sampling first found four clean runnable files,
+plus one symbolic-expression failure in `hypergeometric.py` and one
+Maxima-import setup failure in `orthogonal_polys.py`.
+
+The added WASI source patch marks those two setup examples as
+`# needs sage.symbolic`, preserving the default-profile validation and error
+path coverage while keeping symbolic/Maxima-heavy examples explicit skips.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary six-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/function-frontier/functions-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

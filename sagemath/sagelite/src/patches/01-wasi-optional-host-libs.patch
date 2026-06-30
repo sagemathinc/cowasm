@@ -6995,3 +6995,15 @@ diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
 @@ -219 +219 @@
 -        sage: import scipy.version
 +        sage: import scipy.version                                                    # needs scipy
+diff --git a/src/sage/functions/hypergeometric.py b/src/sage/functions/hypergeometric.py
+--- a/src/sage/functions/hypergeometric.py
++++ b/src/sage/functions/hypergeometric.py
+@@ -301 +301 @@
+-            sage: hypergeometric([2, 3, 4], [4, 1], 1)
++            sage: hypergeometric([2, 3, 4], [4, 1], 1)                                # needs sage.symbolic
+diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogonal_polys.py
+--- a/src/sage/functions/orthogonal_polys.py
++++ b/src/sage/functions/orthogonal_polys.py
+@@ -2555 +2555 @@
+-            sage: from sage.interfaces.maxima_lib import maxima
++            sage: from sage.interfaces.maxima_lib import maxima                        # needs sage.symbolic
