@@ -2513,6 +2513,19 @@ for expected_coverage_shape in \
     record_blocker "sagelite-blocked: file-coverage-summary query missed $expected_coverage_shape."
   fi
 done
+doctest_query_candidate_summary="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/corpus-candidate-summary.sql")"
+for expected_candidate_status in \
+  'promote_candidate|1|3|2|0|1|2|30' \
+  'needs_triage|1|4|2|1|1|3|40' \
+  'file_error|4|0|0|3|0|0|0' \
+  'skipped_only|1|2|0|0|2|0|20' \
+  'no_doctest_blocks|1|0|0|0|0|0|10'; do
+  if ! printf '%s\n' "$doctest_query_candidate_summary" | grep -Fxq "$expected_candidate_status"; then
+    printf '%s\n' "$doctest_query_candidate_summary" >&2
+    sqlite3 "$doctest_query_db" ".dump" >&2 || true
+    record_blocker "sagelite-blocked: corpus-candidate-summary query missed $expected_candidate_status."
+  fi
+done
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"

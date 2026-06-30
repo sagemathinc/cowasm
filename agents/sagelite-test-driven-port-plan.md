@@ -113,6 +113,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   `corpus-candidate-ranking.sql`, so clean runnable files surface ahead of
   noisy triage targets, file-level errors, skipped-only files, and empty
   helpers.
+- Broad sampling runs can also be summarized with
+  `corpus-candidate-summary.sql`, so "no promotion candidate" passes leave a
+  compact SQLite audit of promote-candidate, triage, file-error, skipped-only,
+  and empty-file counts.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -2972,6 +2976,14 @@ by promotion readiness:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/corpus-candidate-ranking.sql
+```
+
+For scheduled uncovered-file sweeps where the useful result may be "no new
+candidate", summarize the promotion classes before reading individual rows:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/corpus-candidate-summary.sql
 ```
 
 ### Newly Passing Blocks
@@ -12070,6 +12082,22 @@ block failures.
 
 Useful probe databases for this pass are under
 `/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/uncovered-sampling/`.
+
+Scheduled dashboard-query follow-up:
+
+This pass did not add a new corpus file. Additional compact probes over
+uncovered REPL helpers, misc helpers, low-count CPython/database/module files,
+and crypto interfaces again produced only skipped-only or empty default-profile
+coverage, so those files remain outside the curated dashboard.
+
+The pass adds `corpus-candidate-summary.sql`, a saved SQLite query that
+aggregates the same promotion classes used by `corpus-candidate-ranking.sql`.
+This makes broad scheduled sampling runs easier to audit when the actionable
+result is "no clean non-skipped candidate": the query reports file counts,
+block counts, runnable block counts, and elapsed time for
+`promote_candidate`, `needs_triage`, `file_error`, `skipped_only`, and
+`no_doctest_blocks` groups. The standalone Sagelite smoke now validates this
+query against its synthetic doctest dashboard fixture.
 
 ## Phase 5: Subprocess Strategy
 
