@@ -2607,6 +2607,33 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty, and the
 latest-run summary records runner version 72 in the default node profile.
 
+Follow-up low-prompt frontier sampling on 2026-06-30 did not find a new
+promotable runnable corpus candidate. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 747 non-comment entries, already including the recent dynamics, feature,
+environment, plot, quadratic-form, and game-theory additions above.
+
+Direct probes recorded skipped-only default-profile coverage for these absent
+files, so they remain outside the curated dashboard for now:
+`sage/cpython/string.pyx`, `sage/cpython/cython_metaclass.pyx`,
+`sage/misc/map_threaded.py`, `sage/monoids/monoid.py`,
+`sage/categories/g_sets.py`, `sage/crypto/cipher.py`,
+`sage/databases/odlyzko.py`, `sage/plot/step.py`,
+`sage/tests/lazy_imports.py`, `sage/topology/simplicial_complex_catalog.py`,
+`sage/topology/simplicial_set_catalog.py`,
+`sage/combinat/species/misc.py`, `sage/monoids/hecke_monoid.py`, and
+`sage/categories/groupoid.py`.
+
+The same pass rejected two runnable-looking files because their failures are
+broader backend boundaries rather than narrow corpus-growth tags:
+`sage/games/hexad.py` fails at module import on the stripped symbolic
+expression stack, leaving 44 dependent `NameError` failures after the nine
+`ModuleNotFoundError` blocks; `sage/coding/two_weight_db.py` reaches the known
+NTL/libcxx `memory access out of bounds` trap while loading namespace
+documentation for coding bounds. Future scheduled runs should avoid resampling
+this low-prompt set unless the symbolic, coding/NTL, or default-profile skip
+policy changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
