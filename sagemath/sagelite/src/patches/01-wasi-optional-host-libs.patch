@@ -1546,7 +1546,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,218 @@
+@@ -253,74 +253,220 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1647,9 +1647,10 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    import sage.combinat.designs.design_catalog as designs
 +    import sage.dynamics.cellular_automata.catalog as cellular_automata
 +    from sage.combinat.combination import Combinations
-+    from sage.combinat.combinat import stirling_number2
++    from sage.combinat.combinat import catalan_number, stirling_number2
 +    from sage.combinat.free_module import CombinatorialFreeModule
 +    from sage.combinat.composition import Composition, Compositions
++    from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 +    from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction, NonDecreasingParkingFunctions
 +    from sage.combinat.parking_functions import ParkingFunction
 +    from sage.combinat.partition import Partition
@@ -1658,6 +1659,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.root_system.cartan_type import CartanType
 +    from sage.combinat.root_system.coxeter_type import CoxeterType
 +    from sage.combinat.root_system.root_system import RootSystem, WeylDim
++    from sage.combinat.set_partition import SetPartitions
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
 +    from sage.combinat.subset import Subsets, subsets
 +    from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -1677,7 +1679,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.functions.other import real_part
 +    from sage.functions.trig import cos, sin, tan
 +    from sage.functions.transcendental import dickman_rho
-+    import sage.game_theory.catalog as game_theory
++    lazy_import('sage.game_theory', 'catalog', 'game_theory')
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.logic.all import SymbolicLogic, propcalc
@@ -4056,6 +4058,86 @@ diff -urN a/src/sage/combinat/set_partition.py b/src/sage/combinat/set_partition
              sage: SetPartitions(0).list()
              [{}]
              sage: SetPartitions([]).list()
+diff -urN a/src/sage/combinat/tutorial.py b/src/sage/combinat/tutorial.py
+--- a/src/sage/combinat/tutorial.py
++++ b/src/sage/combinat/tutorial.py
+@@ -845 +845 @@
+-    sage: C = Posets(7); C
++    sage: C = Posets(7); C                                                            # needs sage.graphs
+@@ -847 +847 @@
+-    sage: C.cardinality()
++    sage: C.cardinality()                                                            # needs sage.graphs
+@@ -852 +852 @@
+-    sage: C.unrank(20).plot()
++    sage: C.unrank(20).plot()                                                        # needs sage.graphs
+@@ -860 +860 @@
+-    sage: len(list(graphs(5)))
++    sage: len(list(graphs(5)))                                                       # needs sage.graphs
+@@ -865,2 +865,2 @@
+-    sage: up_to_four_edges = list(graphs(5, lambda G: G.size() <= 4))
+-    sage: pretty_print(*up_to_four_edges)
++    sage: up_to_four_edges = list(graphs(5, lambda G: G.size() <= 4))                # needs sage.graphs
++    sage: pretty_print(*up_to_four_edges)                                            # needs sage.graphs
+@@ -886 +886 @@
+-    sage: G = DihedralGroup(4); G
++    sage: G = DihedralGroup(4); G                                                    # needs sage.groups
+@@ -888 +888 @@
+-    sage: G.cardinality()
++    sage: G.cardinality()                                                            # needs sage.groups
+@@ -890 +890 @@
+-    sage: G.list()
++    sage: G.list()                                                                   # needs sage.groups
+@@ -1171 +1171 @@
+-        sage: for p in GL(2, 2): print(p); print("")
++        sage: for p in GL(2, 2): print(p); print("")                                # needs sage.groups sage.modules sage.rings.finite_rings
+@@ -1410,10 +1410,10 @@
+-    sage: G = DihedralGroup(4)
+-    sage: H = cartesian_product([G,G])
+-    sage: H in Groups()
++    sage: G = DihedralGroup(4)                                                       # needs sage.groups
++    sage: H = cartesian_product([G,G])                                               # needs sage.groups
++    sage: H in Groups()                                                             # needs sage.groups
+     True
+-    sage: H.an_element()
++    sage: H.an_element()                                                            # needs sage.groups
+     ((1,3), (1,3))
+-    sage: t = H([G.gen(0), G.gen(0)])
+-    sage: t
++    sage: t = H([G.gen(0), G.gen(0)])                                               # needs sage.groups
++    sage: t                                                                         # needs sage.groups
+     ((1,2,3,4), (1,2,3,4))
+-    sage: t*t
++    sage: t*t                                                                       # needs sage.groups
+     ((1,3)(2,4), (1,3)(2,4))
+diff -urN a/src/sage/combinat/tutorial.py b/src/sage/combinat/tutorial.py
+--- a/src/sage/combinat/tutorial.py
++++ b/src/sage/combinat/tutorial.py
+@@ -1623,16 +1623,16 @@
+-    sage: A = random_matrix(ZZ, 6, 3, x=7)
+-    sage: L = LatticePolytope(A.rows())
+-    sage: L.points()                               # random
++    sage: A = random_matrix(ZZ, 6, 3, x=7)                                          # needs sage.geometry
++    sage: L = LatticePolytope(A.rows())                                             # needs sage.geometry
++    sage: L.points()                               # random                         # needs sage.geometry
+     M(4, 1, 0),
+     M(0, 3, 5),
+     M(2, 2, 3),
+     M(6, 1, 3),
+     M(1, 3, 6),
+     M(6, 2, 3),
+     M(3, 2, 4),
+     M(3, 2, 3),
+     M(4, 2, 4),
+     M(4, 2, 3),
+     M(5, 2, 3)
+     in 3-d lattice M
+-    sage: L.n_points()                                 # random
++    sage: L.n_points()                                 # random                     # needs sage.geometry
+@@ -1822,3 +1822,4 @@
++    sage: # needs sage.graphs
+     sage: [len(list(graphs(n, property=lambda G: G.is_planar())))
+     ....:  for n in range(7)]
+     [1, 1, 2, 4, 11, 33, 142]
 diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 --- a/src/sage/rings/real_double.pyx
 +++ b/src/sage/rings/real_double.pyx

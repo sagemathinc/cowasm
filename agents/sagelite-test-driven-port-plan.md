@@ -13347,6 +13347,56 @@ The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty; `skips-by-reason.sql` groups all five
 skips under `optional:sage.rings.number_field`.
 
+Focused combinatorics tutorial corpus-growth pass:
+
+```text
+tutorial.py: 160 passed, 0 failed, 97 skipped
+```
+
+That one-file make-target validation adds `sage/combinat/tutorial.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 786 non-comment
+entries. The default browser-compatible profile gains broad tutorial coverage
+for finite enumerated sets, Catalan-number checks, weighted integer vectors,
+set partitions, Cartesian products, lazy streams, disjoint unions, trees,
+subsets, and basic combinatorial generation.
+
+The WASI `sage.all` patch now exposes the pure combinatorics startup names
+`catalan_number`, `WeightedIntegerVectors`, and `SetPartitions`, so tutorial
+examples that rely on the Sage REPL namespace run instead of becoming missing
+name failures. The same pass keeps the lightweight `game_theory` startup alias
+lazy; a fresh standalone rebuild showed that eagerly importing
+`sage.game_theory.catalog` now reaches the stripped `sage.numerical.mip`
+backend path and breaks `import sage.all`. The standalone smoke expectation
+for the feature-filtered doctest run was also corrected to the current runner
+behavior: enabling `--optional=cowasm_smoke` keeps 30 total smoke blocks while
+turning two feature-gated skips into passes.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-next-lca/probe.sqlite3`,
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-misc-probe/probe.sqlite3`,
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-tests-probe/probe.sqlite3`,
+and three absent-combinatorics probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-combinat-probe*`.
+The remaining LCA files are still dominated by graph-backed affine
+construction and algebraic-field cache drift. The sampled `sage.misc` and
+`sage.tests` helpers were skipped-only, empty, subprocess-heavy, or timed out.
+The absent-combinatorics probes found no clean new promotion except
+`sage/combinat/output.py`, which was already in the corpus; `tutorial.py` was
+the narrow follow-up after tagging graph, group, geometry, and finite-field
+display boundaries.
+
+Focused validation used `make -C sagemath/sagelite test-wasi-sdk-standalone`
+after a fresh patched-source rebuild, then the `test-sage-doctest-corpus` make
+target with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-tutorial/make-final.sqlite3`.
+The latest-run summary records runner version 72 with 257 total blocks, and
+the saved block- and file-failure cluster queries are empty. Skip grouping is
+dominated by `optional:sage.symbolic`, with smaller explicit
+`sage.groups`, `sage.graphs`, `sage.geometry`, finite-field/module,
+internet, long-time, and deferred-test boundaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -306,6 +306,7 @@ src/sage/combinat/tableau.py
 src/sage/combinat/tableau_residues.py
 src/sage/combinat/tableau_tuple.py
 src/sage/combinat/triangles_FHM.py
+src/sage/combinat/tutorial.py
 src/sage/combinat/vector_partition.py
 src/sage/combinat/words/abstract_word.py
 src/sage/combinat/words/finite_word.py
