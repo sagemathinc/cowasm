@@ -12015,6 +12015,38 @@ The latest-run summary records 9 passed, 0 failed, 0 skipped, runner version
 doctest smoke now also checks that `ProjectiveSpace(2, QQ)` is available from
 the common doctest namespace.
 
+Scheduled uncovered-file sampling follow-up:
+
+This pass did not add a new corpus file. Fresh focused probes over uncovered
+REPL/display, misc, CLI, CPython, database, coding, crypto, matrix, numeric,
+combinatorics, and category support files found no clean non-skipped promotion
+candidate outside the current 733-file corpus.
+
+The clean non-skipped infrastructure batch from
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/uncovered-sampling/batch1.sqlite3`
+was a useful sanity check but all of its files are already present in the
+curated corpus: logic parser/table helpers, REPL rich-output/display helpers,
+typeset helpers, `sage/misc/python.py`, `sage/structure/debug_options.pyx`,
+and `sage/structure/nonexact.py`.
+
+The genuinely uncovered compact probes were skipped-only, empty, or exposed
+real clusters. `sage/repl/display/formatter.py` still depends on the stripped
+IPython test shell, `sage/misc/functional.py` times out in symbolic
+denominator setup, `sage/repl/inputhook.py` has direct input-hook failures,
+and small database/CPython/coding/crypto files were skipped-only except for
+`sage/coding/two_weight_db.py`, which still reaches the known NTL/libcxx
+`memory access out of bounds` trap during namespace loading. Numeric helper
+sampling kept matrix, PARI conversion, and combinatorial-species files out of
+the quiet corpus because their failures are runtime/type errors, missing
+`cypari2.convert`, or stripped GAP-backed species support rather than narrow
+metadata gaps. Category-example sampling was skipped-only except for
+`sage/categories/euclidean_domains.py`, which times out in polynomial
+`gcd_free_basis`, and `sage/categories/kahler_algebras.py`, which has broader
+block failures.
+
+Useful probe databases for this pass are under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/uncovered-sampling/`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
