@@ -978,6 +978,8 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.groups.abelian_gps.abelian_group", ("AbelianGroup",)),
         ("sage.logic.all", ("propcalc", "SymbolicLogic")),
         ("sage.misc.functional", ("sqrt",)),
+        ("sage.modular.modsym.g1list", ("G1list",)),
+        ("sage.modular.modsym.p1list", ("P1List",)),
         ("sage.plot.colors", ("hue",)),
         ("sage.plot.graphics", ("Graphics",)),
         ("sage.plot.arc", ("arc",)),

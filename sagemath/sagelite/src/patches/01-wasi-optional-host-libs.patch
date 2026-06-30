@@ -1546,7 +1546,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,221 @@
+@@ -253,74 +253,223 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1683,6 +1683,8 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.logic.all import SymbolicLogic, propcalc
++    from sage.modular.modsym.g1list import G1list
++    from sage.modular.modsym.p1list import P1List
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
 +    from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
@@ -7755,5 +7757,38 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
 +    from sage.rings.integer_ring import ZZ
 +
      if n <= 0:
-         raise ValueError("n must be positive")
+        raise ValueError("n must be positive")
      M = FreeModule(ZZ, n)
+diff -urN a/src/sage/modular/modsym/manin_symbol_list.py b/src/sage/modular/modsym/manin_symbol_list.py
+--- a/src/sage/modular/modsym/manin_symbol_list.py
++++ b/src/sage/modular/modsym/manin_symbol_list.py
+@@ -171,7 +171,7 @@
+-            sage: eps = DirichletGroup(4).gen(0)
++            sage: eps = DirichletGroup(4).gen(0)                                  # needs sage.rings.number_field
+             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
+-            sage: ManinSymbolList_character(eps,2)._apply_S_only_0pm1()
++            sage: ManinSymbolList_character(eps,2)._apply_S_only_0pm1()           # needs sage.rings.number_field
+             True
+-            sage: eps = DirichletGroup(7).gen(0)
++            sage: eps = DirichletGroup(7).gen(0)                                  # needs sage.rings.number_field
+             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
+-            sage: ManinSymbolList_character(eps,2)._apply_S_only_0pm1()
++            sage: ManinSymbolList_character(eps,2)._apply_S_only_0pm1()           # needs sage.rings.number_field
+@@ -442,2 +443,3 @@
+             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma_h
++            sage: # needs sage.modular.arithgroup
+             sage: ManinSymbolList_gamma_h(GammaH(117, [4]),2).level()
+@@ -818,2 +820,3 @@
+         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma_h
++        sage: # needs sage.modular.arithgroup
+         sage: G = GammaH(117, [4])
+@@ -844,2 +847,3 @@
+             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma_h
++            sage: # needs sage.modular.arithgroup
+             sage: G = GammaH(117, [4])
+@@ -859 +864 @@
+-            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().group()
++            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().group()      # needs sage.modular.modsym
+@@ -870 +875 @@
+-            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()
++            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()   # needs sage.modular.modsym

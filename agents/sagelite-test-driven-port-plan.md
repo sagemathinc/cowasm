@@ -3045,6 +3045,38 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next4/modsym/p1list-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused modular-symbol Manin-list corpus-growth pass:
+
+```text
+manin_symbol_list.py: 115 passed, 0 failed, 76 skipped
+```
+
+That one-file focused validation adds
+`sage/modular/modsym/manin_symbol_list.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 821
+non-comment entries. The default browser-compatible profile gains coverage
+for Manin-symbol list construction, base-class behavior, Gamma0/Gamma1 list
+operations, indexing, normalization, matrix-action helpers, pickling, and
+TestSuite paths.
+
+The doctest runner now seeds the lightweight `P1List` and `G1list`
+constructors in the common startup namespace, and the WASI `sage.all` patch
+exposes the same names for REPL parity on a fresh patched Sagelite source
+copy. The added WASI source patch keeps the heavier Dirichlet-character,
+GammaH, and full `ModularSymbols(...)` examples outside the default profile
+with explicit `# needs sage.rings.number_field`,
+`# needs sage.modular.arithgroup`, and `# needs sage.modular.modsym` tags.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus after rebuilding a fresh patched source copy, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-this/modsym/manin-make-inline.sqlite3`.
+The latest-run summary records CoWasm commit
+`44378b632daffb0fb2750f13ed2753e3b80a50e3`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
