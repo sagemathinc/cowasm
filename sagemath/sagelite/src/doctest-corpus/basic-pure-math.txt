@@ -769,6 +769,7 @@ src/sage/quadratic_forms/quadratic_form__mass__Conway_Sloane_masses.py
 src/sage/quadratic_forms/quadratic_form__mass__Siegel_densities.py
 src/sage/quadratic_forms/quadratic_form__neighbors.py
 src/sage/quadratic_forms/quadratic_form__reduction_theory.py
+src/sage/quadratic_forms/quadratic_form__split_local_covering.py
 src/sage/quadratic_forms/quadratic_form__variable_substitutions.py
 src/sage/quadratic_forms/random_quadraticform.py
 src/sage/quadratic_forms/special_values.py

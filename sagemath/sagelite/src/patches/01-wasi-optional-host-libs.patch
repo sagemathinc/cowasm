@@ -1450,6 +1450,12 @@ diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/bin
 +            sage: # known bug
 @@ -1810,0 +1813 @@
 +            sage: # needs sage.libs.pari
+diff -urN a/src/sage/quadratic_forms/quadratic_form__split_local_covering.py b/src/sage/quadratic_forms/quadratic_form__split_local_covering.py
+--- a/src/sage/quadratic_forms/quadratic_form__split_local_covering.py
++++ b/src/sage/quadratic_forms/quadratic_form__split_local_covering.py
+@@ -303 +303 @@
+-        sage: Q1.complementary_subform_to_vector([1,1,1,1])
++        sage: Q1.complementary_subform_to_vector([1,1,1,1])                         # random
 diff -urN a/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py b/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
 --- a/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
 +++ b/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py

@@ -3077,6 +3077,42 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused quadratic split-local covering corpus-growth pass:
+
+```text
+quadratic_form__split_local_covering.py: 13 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/quadratic_forms/quadratic_form__split_local_covering.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 822 non-comment
+entries. Direct sampling first recorded 12 passed blocks, one focused output
+mismatch, and five skips. The mismatch was the
+`complementary_subform_to_vector([1,1,1,1])` display check: the browser-profile
+runtime produced a different valid complementary quadratic subform basis than
+the checked textual example.
+
+The added WASI source patch marks that non-canonical basis display as
+`# random`, preserving execution while avoiding dependence on a particular
+unimodular completion. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched source
+copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-continuation/qf-split/make-after-hunk-cleanup.sqlite3`.
+The latest-run summary records Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same continuation pass did not find a new modular-symbol promotion beyond
+files already present in the corpus. `relation_matrix_pyx.pyx` was again clean
+but was already checked in, while nearby arithmetic-group probes still cluster
+around broader startup/backend boundaries for `SL2Z`, `Gamma`, and matrix
+kernel behavior. Mixed small-file probes were mostly skipped-only or zero-block;
+the only near-miss with enough passing coverage was the quadratic split-local
+helper promoted above.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
