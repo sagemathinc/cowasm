@@ -14033,6 +14033,40 @@ The latest-run summary records CoWasm commit
 and 6 total blocks. The saved block- and file-failure cluster queries are
 empty; skip grouping records 2 `optional:sage.graphs` blocks.
 
+Focused computational-mathematics linear-solve corpus-growth pass:
+
+```text
+linsolve_doctest.py: 2 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 813
+non-comment entries. The default browser-compatible profile gains the RDF
+random-matrix and positive-semidefinite matrix setup examples from the
+computational mathematics book while leaving the Cholesky/SVD verification
+chain under explicit `# needs scipy` metadata.
+
+Fresh low-count sampling first checked helper, category, book, and example
+files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next/`. Most
+candidates were skipped-only, zero-block, or exposed broader doctest-harness,
+Hexad, symbolic, graph, numerical-integration, or linear-programming clusters.
+The linear-solve book file was the narrow follow-up because its remaining
+failures all depended on the unavailable SciPy-backed Cholesky path.
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched-source rebuild in a temporary `BUILD` directory, with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next/linsolve/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`a32334c0819c4e5bcdd315f12c61275b93af7271`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 7 total blocks. The saved block- and file-failure cluster queries are
+empty; skip grouping records 5 `optional:scipy` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

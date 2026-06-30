@@ -6512,6 +6512,21 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/lin
 +  sage: ok, V = Similar(2*A, B); ok                                            # known bug - matrix frobenius form hits generic-dense attribute gap
    False
  """
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py
+@@ -14,3 +14,3 @@
+-  sage: c = a.cholesky()
+-  sage: U,S,V = c.SVD()
+-  sage: X = U*S*transpose(U)
++  sage: c = a.cholesky()                                                        # needs scipy
++  sage: U,S,V = c.SVD()                                                         # needs scipy
++  sage: X = U*S*transpose(U)                                                    # needs scipy
+@@ -20,2 +20,2 @@
+-  sage: M = (X*X-a)
+-  sage: all(abs(M[i,j]) < 10^-13
++  sage: M = (X*X-a)                                                            # needs scipy
++  sage: all(abs(M[i,j]) < 10^-13                                               # needs scipy
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
