@@ -13281,6 +13281,39 @@ The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty; `skips-by-reason.sql` groups all four
 skips under `optional:sage.graphs`.
 
+Focused Weyl Lie conformal algebra corpus-growth pass:
+
+```text
+weyl_lie_conformal_algebra.py: 9 passed, 0 failed, 10 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/weyl_lie_conformal_algebra.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 784
+non-comment entries. The default browser-compatible profile gains coverage
+for rational-field Weyl LCA construction, category checks, generator
+injection, degree error behavior, invalid Gram-matrix diagnostics, and
+TestSuite coverage.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/agent-lca-next/candidates.sqlite3`.
+The same adjacent LCA batch kept the affine, Neveu-Schwarz, N2, and generic
+Lie conformal algebra base files out of the corpus because their failures are
+still dominated by graph-backed affine Lie algebra construction and
+algebraic-real/algebraic-field cache drift. The Weyl file was the narrow
+follow-up: its only failures were `QQbar` examples and dependent state, now
+classified as `# needs sage.rings.number_field`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/agent-lca-next/weyl/make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups all ten
+skips under `optional:sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

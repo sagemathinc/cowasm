@@ -5867,6 +5867,39 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal
 @@ -81 +81 @@
 -        sage: R.category()
 +        sage: R.category()                                                            # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/weyl_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/weyl_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/weyl_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/weyl_lie_conformal_algebra.py
+@@ -83 +83 @@
+-        sage: R = lie_conformal_algebras.Weyl(QQbar, gram_matrix=Matrix(QQ,[[0,1],[-1,0]]), names = ('a','b'))
++        sage: R = lie_conformal_algebras.Weyl(QQbar, gram_matrix=Matrix(QQ,[[0,1],[-1,0]]), names = ('a','b'))  # needs sage.rings.number_field
+@@ -84 +84 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                    # needs sage.rings.number_field
+@@ -86 +86 @@
+-        sage: a.bracket(b)
++        sage: a.bracket(b)                                                            # needs sage.rings.number_field
+@@ -88 +88 @@
+-        sage: b.bracket(a)
++        sage: b.bracket(a)                                                            # needs sage.rings.number_field
+@@ -91 +91 @@
+-        sage: R = lie_conformal_algebras.Weyl(QQbar, ngens=4)
++        sage: R = lie_conformal_algebras.Weyl(QQbar, ngens=4)                         # needs sage.rings.number_field
+@@ -92 +92 @@
+-        sage: R.gram_matrix()
++        sage: R.gram_matrix()                                                         # needs sage.rings.number_field
+@@ -98 +98 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                    # needs sage.rings.number_field
+@@ -100 +100 @@
+-        sage: alpha0.bracket(alpha2)
++        sage: alpha0.bracket(alpha2)                                                  # needs sage.rings.number_field
+@@ -197 +197 @@
+-            sage: R = lie_conformal_algebras.Weyl(QQbar, ngens=4)
++            sage: R = lie_conformal_algebras.Weyl(QQbar, ngens=4)                     # needs sage.rings.number_field
+@@ -198 +198 @@
+-            sage: R.gram_matrix()
++            sage: R.gram_matrix()                                                     # needs sage.rings.number_field
 diff -urN a/src/sage/algebras/lie_conformal_algebras/freely_generated_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/freely_generated_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/freely_generated_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/freely_generated_lie_conformal_algebra.py
