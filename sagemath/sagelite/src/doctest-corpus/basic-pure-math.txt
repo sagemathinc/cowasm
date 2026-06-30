@@ -50,6 +50,8 @@ src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
+src/sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py
+src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/graded_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 src/sage/cpython/atexit.pyx

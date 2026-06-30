@@ -13216,6 +13216,39 @@ The saved block- and file-failure cluster queries are empty;
 `skips-by-reason.sql` groups all four skips under
 `optional:sage.rings.number_field`.
 
+Focused free boson/fermion Lie conformal algebra corpus-growth pass:
+
+```text
+sage -t passed: 13 passed, 0 failed, 15 skipped
+```
+
+That two-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py`
+and
+`sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 782
+non-comment entries. The default browser-compatible profile gains coverage
+for the rational-field free boson and free fermion constructors, generator
+injection, brackets, degree checks, and TestSuite coverage.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-pass/lca-probe.sqlite3`.
+The same LCA batch kept the freely generated, affine, and Neveu-Schwarz
+modules out of the corpus because their failures are still dominated by
+graph-backed affine Lie algebra construction and broader algebraic-real cache
+drift. The free boson/fermion failures were narrow: all failing runnable
+blocks used `AA` or `QQbar`, matching the existing number-field boundary tags
+for adjacent Virasoro, Fermionic Ghosts, and Bosonic Ghosts modules.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-pass/free-lca/make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups all 15
+skips under `optional:sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

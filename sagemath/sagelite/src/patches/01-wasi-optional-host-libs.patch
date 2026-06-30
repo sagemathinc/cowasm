@@ -5816,6 +5816,57 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_confor
 @@ -70 +70 @@
 -        sage: R.structure_coefficients()
 +        sage: R.structure_coefficients()                                               # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/free_bosons_lie_conformal_algebra.py
+@@ -72 +72 @@
+-        sage: R = lie_conformal_algebras.FreeBosons(AA); R
++        sage: R = lie_conformal_algebras.FreeBosons(AA); R                            # needs sage.rings.number_field
+@@ -74 +74 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                    # needs sage.rings.number_field
+@@ -76 +76 @@
+-        sage: alpha.bracket(alpha)
++        sage: alpha.bracket(alpha)                                                    # needs sage.rings.number_field
+@@ -85 +85 @@
+-        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=3); R
++        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=3); R                 # needs sage.rings.number_field
+@@ -91 +91 @@
+-        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=2, gram_matrix=identity_matrix(QQ,1,1))
++        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=2, gram_matrix=identity_matrix(QQ,1,1))  # needs sage.rings.number_field
+@@ -95 +95 @@
+-        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=2, gram_matrix=Matrix(QQ,[[0,1],[-1,0]]))
++        sage: R = lie_conformal_algebras.FreeBosons(QQbar, ngens=2, gram_matrix=Matrix(QQ,[[0,1],[-1,0]]))  # needs sage.rings.number_field
+@@ -157 +157 @@
+-            sage: lie_conformal_algebras.FreeBosons(AA)
++            sage: lie_conformal_algebras.FreeBosons(AA)                               # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/free_fermions_lie_conformal_algebra.py
+@@ -66 +66 @@
+-        sage: R = lie_conformal_algebras.FreeFermions(QQbar); R
++        sage: R = lie_conformal_algebras.FreeFermions(QQbar); R                       # needs sage.rings.number_field
+@@ -68 +68 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                    # needs sage.rings.number_field
+@@ -70 +70 @@
+-        sage: psi.bracket(psi)
++        sage: psi.bracket(psi)                                                        # needs sage.rings.number_field
+@@ -73 +73 @@
+-        sage: R = lie_conformal_algebras.FreeFermions(QQbar,gram_matrix=Matrix([[0,1],[1,0]])); R
++        sage: R = lie_conformal_algebras.FreeFermions(QQbar,gram_matrix=Matrix([[0,1],[1,0]])); R  # needs sage.rings.number_field
+@@ -75 +75 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                    # needs sage.rings.number_field
+@@ -77 +77 @@
+-        sage: psi_0.bracket(psi_1)
++        sage: psi_0.bracket(psi_1)                                                    # needs sage.rings.number_field
+@@ -79 +79 @@
+-        sage: psi_0.degree()
++        sage: psi_0.degree()                                                          # needs sage.rings.number_field
+@@ -81 +81 @@
+-        sage: R.category()
++        sage: R.category()                                                            # needs sage.rings.number_field
 diff -urN a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
 --- a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
 +++ b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
