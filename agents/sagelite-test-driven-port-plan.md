@@ -12726,6 +12726,35 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 6 passed, 0 failed, 262 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries.
 
+Scheduled support-file audit pass:
+
+This pass does not add a new corpus file. Fresh focused probes over small
+typeset, support, CLI, and low-prompt helper files found no clean new
+non-skipped promotion candidate outside the current 763-file corpus.
+
+The typeset probe reconfirmed already-curated coverage for
+`sage/typeset/ascii_art.py`, `character_art.py`,
+`character_art_factory.py`, `symbols.py`, `unicode_art.py`, and
+`unicode_characters.py`, recording 197 passed, 0 failed, and 65 skipped blocks
+in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/typeset-probe/typeset.sqlite3`.
+The support probe likewise found four promotion candidates that are already in
+the curated corpus: `sage/features/bitness.py`,
+`sage/data_structures/bounded_integer_sequences.pyx`,
+`sage/cpython/dict_del_by_value.pyx`, and `sage/cpython/getattr.pyx`.
+
+The genuinely absent compact probes did not add default-profile pass signal.
+The CLI command batch over `eval_cmd.py`, `options.py`, `run_file_cmd.py`,
+`version_cmd.py`, `selftest.py`, and `__main__.py` had no extracted doctest
+blocks. A low-prompt batch covering `integer_fake.pxd`,
+`numerical_approx.pxd`, `map_threaded.py`, `combinat/species/misc.py`,
+`monoids/monoid.py`, `databases/odlyzko.py`,
+`groups/matrix_gps/binary_dihedral.py`, and
+`geometry/hyperplane_arrangement/check_freeness.py` was skipped-only,
+recording 46 skipped blocks. `sage/repl/configuration.py` remains a separate
+triage target, with the useful failure cluster still centered on missing
+`traitlets`/IPython configuration support and dependent startup-name failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
