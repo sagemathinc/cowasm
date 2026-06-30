@@ -975,6 +975,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.functions.trig", ("cos", "sin", "tan")),
         ("sage.functions.transcendental", ("dickman_rho",)),
         ("sage.functions.other", ("floor", "real_part")),
+        ("sage.groups.abelian_gps.abelian_group", ("AbelianGroup",)),
         ("sage.logic.all", ("propcalc", "SymbolicLogic")),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.plot.colors", ("hue",)),

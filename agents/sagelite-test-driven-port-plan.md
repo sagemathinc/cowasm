@@ -12853,6 +12853,35 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused abelian-group frontend corpus-growth pass:
+
+```text
+sage -t passed: 230 passed, 0 failed, 150 skipped
+```
+
+That two-file make-target validation adds
+`sage/groups/abelian_gps/abelian_group.py` and
+`sage/groups/abelian_gps/abelian_group_element.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 772
+non-comment entries. The default browser-compatible profile gains direct
+coverage for abelian group construction, generator arithmetic, representation,
+invariant-factor helpers, membership, and element operations.
+
+The doctest runner now seeds `AbelianGroup` in the common startup namespace,
+and the WASI `sage.all` patch exposes the same constructor for REPL parity on
+a fresh patched Sagelite source copy. The WASI source patch also normalizes
+`AbelianGroup_class.elementary_divisors()` through `abs(...)` before filtering
+trivial factors, so backend Smith-normal-form sign drift does not leak
+negative invariant factors into abelian-group doctests.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/abelian-next/abelian-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
