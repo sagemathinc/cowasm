@@ -113,6 +113,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   `corpus-candidate-ranking.sql`, so clean runnable files surface ahead of
   noisy triage targets, file-level errors, skipped-only files, and empty
   helpers.
+- Focused sampling runs can also emit only clean runnable promotion candidates
+  with `promote-candidates.sql`, which keeps follow-up corpus-growth passes
+  from spending time on skipped-only or empty files when a broad sample has
+  already been recorded in SQLite.
 - Broad sampling runs can also be summarized with
   `corpus-candidate-summary.sql`, so "no promotion candidate" passes leave a
   compact SQLite audit of promote-candidate, triage, file-error, skipped-only,
@@ -13396,6 +13400,24 @@ the saved block- and file-failure cluster queries are empty. Skip grouping is
 dominated by `optional:sage.symbolic`, with smaller explicit
 `sage.groups`, `sage.graphs`, `sage.geometry`, finite-field/module,
 internet, long-time, and deferred-test boundaries.
+
+Focused dashboard-query pass after the 2026-06-30 frontier sampling:
+
+This pass adds `promote-candidates.sql`, a saved SQLite query that reports only
+files from the latest run that have runnable passing blocks and no failures.
+It is a narrower companion to `corpus-candidate-ranking.sql` for scheduled
+corpus-growth work, where skipped-only and empty files should be filtered out
+before deciding what to promote.
+
+Fresh probes in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-probe`
+confirmed why this narrower query is useful: several exact absent-file
+batches, including small combinatorics helpers, category examples, CPython
+helpers, and low-doctest utility files, were either skipped-only under the
+browser-compatible profile or exposed known backend/runtime failures. The clean
+runnable candidates found in older SQLite artifacts had already been consumed
+by the current 786-entry corpus, so this pass intentionally makes the next
+frontier search more direct instead of adding skipped-only corpus entries.
 
 ## Phase 5: Subprocess Strategy
 
