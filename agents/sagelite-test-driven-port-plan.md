@@ -13500,6 +13500,28 @@ runnable candidates found in older SQLite artifacts had already been consumed
 by the current 786-entry corpus, so this pass intentionally makes the next
 frontier search more direct instead of adding skipped-only corpus entries.
 
+Focused tropical semiring matrix corpus-growth pass:
+
+```text
+tropical_matrix.py: 37 passed, 0 failed, 0 skipped
+```
+
+That one-file promotion adds `sage/rings/semirings/tropical_matrix.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 789 non-comment
+entries. The default browser-compatible profile gains tropical matrix
+constructor, arithmetic, transpose, trace, and row/column behavior coverage
+without adding new skipped blocks or WASI source tags.
+
+Exploratory absent-only sampling used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-continuation/probe3.sqlite3`.
+The saved `promote-candidates.sql` query classified `tropical_matrix.py` as
+the only clean non-skipped candidate in that batch. Nearby utility and support
+files stayed out of the quiet corpus: `reset.pyx`, `interface_magic.py`, and
+`load.py` still expose IPython/symbolic REPL clusters; compact poset and
+design files still have output or backend failures; and polynomial/BERNOULLI
+helpers still hit the known NTL/libcxx memory-trap boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
