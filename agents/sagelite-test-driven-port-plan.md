@@ -12099,6 +12099,39 @@ block counts, runnable block counts, and elapsed time for
 `no_doctest_blocks` groups. The standalone Sagelite smoke now validates this
 query against its synthetic doctest dashboard fixture.
 
+Scheduled next-candidate sampling follow-up:
+
+This pass did not add a new corpus file. Fresh prefiltered probes over absent
+category examples, core category files, data-structure helpers, extension
+helpers, feature tests, stats files, plot helpers, and game helpers found no
+clean non-skipped promotion candidate outside the current 734-file corpus.
+
+The missing category-example batch was entirely skipped-only or empty:
+13 files recorded 604 skipped blocks, and two files recorded no doctest
+blocks. The sampled missing plot/stats support files were also mostly
+skipped-only: discrete Gaussian integer, time-series, hyperbolic-regular
+polygon, step-plot, and plot-field helpers recorded 509 skipped blocks and no
+default-profile pass signal.
+
+The runnable absent candidates exposed real triage clusters rather than narrow
+metadata gaps. Core category sampling recorded seven file-level errors:
+`commutative_rings.py` reached the existing polynomial-number-field table
+index trap, `fields.py` and `finite_fields.py` reached the NTL/libcxx ostream
+`memory access out of bounds` trap, `principal_ideal_domains.py`,
+`unique_factorization_domains.py`, and `quotient_fields.py` timed out in
+polynomial gcd/factorization-style examples, and `rings.py` hit a recursive
+polynomial quotient construction stack overflow. Data/extension sampling found
+`data_structures/stream.py` blocked by a side-module `PyTuple_GET_SIZE`
+assertion and `ext/fast_callable.pyx` at `136 passed, 82 failed,
+414 skipped`, with the largest block-failure cluster being 32 startup
+`NameError` failures around `instr_stream`. The final stats/game pass kept
+`discrete_gaussian_lattice.py` and `games/hexad.py` out of the quiet corpus:
+their failures grouped as 96 `NameError`, 48 `ModuleNotFoundError`, and
+4 output mismatches.
+
+Useful probe databases for this pass are under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-candidates/`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
