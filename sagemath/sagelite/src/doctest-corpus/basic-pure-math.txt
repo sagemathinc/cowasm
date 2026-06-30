@@ -769,6 +769,7 @@ src/sage/schemes/overview.py
 src/sage/schemes/elliptic_curves/kodaira_symbol.py
 src/sage/schemes/elliptic_curves/mod5family.py
 src/sage/numerical/gauss_legendre.pyx
+src/sage/numerical/knapsack.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/plot/arc.py

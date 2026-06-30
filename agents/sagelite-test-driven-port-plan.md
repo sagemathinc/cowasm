@@ -14067,6 +14067,37 @@ The latest-run summary records CoWasm commit
 and 7 total blocks. The saved block- and file-failure cluster queries are
 empty; skip grouping records 5 `optional:scipy` blocks.
 
+Focused numerical knapsack corpus-growth pass:
+
+```text
+knapsack.py: 72 passed, 0 failed, 10 skipped
+```
+
+That one-file make-target validation adds `sage/numerical/knapsack.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 814 non-comment
+entries. Direct sampling first recorded 72 passed blocks, five focused
+failures, and five existing skips. The failures were the public
+`knapsack(...)` examples that construct `MixedIntegerLinearProgram` and import
+the unavailable `sage.numerical.backends.generic_backend` extension in the
+default browser-compatible profile.
+
+The added WASI source patch marks only those MILP-backed examples as
+`# needs sage.numerical.mip`, preserving the super-increasing sequence
+constructor, validation, comparison, LaTeX, and subset-sum doctests as runnable
+default-profile coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy in a temporary `BUILD` directory, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex/knapsack-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`316f834099da4333e08e3f837956a16d987f04dd`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 82 total blocks. The saved block- and file-failure cluster queries are
+empty; skip grouping records 5 `optional:sage.numerical.mip` blocks and 5
+`optional:sage.symbolic` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -7546,6 +7546,24 @@ diff --git a/src/sage/game_theory/parser.py b/src/sage/game_theory/parser.py
              ....:     _ = game_file.write(game_str)
              sage: from sage.features.lrs import LrsNash
              sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+diff --git a/src/sage/numerical/knapsack.py b/src/sage/numerical/knapsack.py
+--- a/src/sage/numerical/knapsack.py
++++ b/src/sage/numerical/knapsack.py
+@@ -52 +52 @@
+-    sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2)
++    sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2)                              # needs sage.numerical.mip
+@@ -607 +607 @@
+-        sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2)
++        sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2)                          # needs sage.numerical.mip
+@@ -610 +610 @@
+-        sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2, value_only=True)
++        sage: knapsack( [(1,2), (1.5,1), (0.5,3)], max=2, value_only=True)          # needs sage.numerical.mip
+@@ -616 +616 @@
+-        sage: knapsack( [(1, 2, 'spam'), (0.5, 3, 'a', 'lot')])
++        sage: knapsack( [(1, 2, 'spam'), (0.5, 3, 'a', 'lot')])                    # needs sage.numerical.mip
+@@ -624 +624 @@
+-        sage: knapsack([1,1.5,0.5], max=2, value_only=True)
++        sage: knapsack([1,1.5,0.5], max=2, value_only=True)                        # needs sage.numerical.mip
 diff --git a/src/sage/repl/configuration.py b/src/sage/repl/configuration.py
 --- a/src/sage/repl/configuration.py
 +++ b/src/sage/repl/configuration.py
