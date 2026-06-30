@@ -6934,3 +6934,44 @@ diff --git a/src/sage/crypto/public_key/key_exchange/finite_field_diffie_hellman
 +            sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)                    # random - warning emitted during Sagelite doctest setup
 @@ -83,0 +84 @@
 +            sage: # needs sage.symbolic
+diff --git a/src/sage/doctest/util.py b/src/sage/doctest/util.py
+--- a/src/sage/doctest/util.py
++++ b/src/sage/doctest/util.py
+@@ -79,4 +79,4 @@
+-        sage: from sage.doctest.control import DocTestDefaults
+-        sage: D1 = DocTestDefaults()
+-        sage: D2 = DocTestDefaults(foobar='hello', timeout=100)
+-        sage: dict_difference(D2.__dict__, D1.__dict__)
++        sage: from sage.doctest.control import DocTestDefaults                         # needs sage.doctest.control
++        sage: D1 = DocTestDefaults()                                                   # needs sage.doctest.control
++        sage: D2 = DocTestDefaults(foobar='hello', timeout=100)                        # needs sage.doctest.control
++        sage: dict_difference(D2.__dict__, D1.__dict__)                                # needs sage.doctest.control
+@@ -155 +155 @@
+-            sage: cputime = Timer()._proc_stat_cpu_seconds(path)
++            sage: cputime = Timer()._proc_stat_cpu_seconds(path)                       # needs procfs
+@@ -366,2 +366,2 @@
+-            sage: Timer().start().annotate(EllipticCurve)
+-            sage: EllipticCurve.cputime # random
++            sage: Timer().start().annotate(EllipticCurve)                              # needs sage.schemes.elliptic_curves
++            sage: EllipticCurve.cputime # random                                      # needs sage.schemes.elliptic_curves
+@@ -369 +369 @@
+-            sage: EllipticCurve.walltime # random
++            sage: EllipticCurve.walltime # random                                     # needs sage.schemes.elliptic_curves
+@@ -764 +764 @@
+-        sage: with ensure_interruptible_after(1) as data: sleep(3)
++        sage: with ensure_interruptible_after(1) as data: sleep(3)                     # needs cysignals.alarm
+@@ -768 +768 @@
+-        sage: data  # abs tol 1
++        sage: data  # abs tol 1                                                       # needs cysignals.alarm
+@@ -809 +809 @@
+-        sage: with ensure_interruptible_after(2) as data: sleep(1)
++        sage: with ensure_interruptible_after(2) as data: sleep(1)                     # needs cysignals.alarm
+@@ -813 +813 @@
+-        sage: data  # abs tol 1
++        sage: data  # abs tol 1                                                       # needs cysignals.alarm
+@@ -866 +866 @@
+-        sage: with ensure_interruptible_after(1) as data: raise ValueError
++        sage: with ensure_interruptible_after(1) as data: raise ValueError             # needs cysignals.alarm
+@@ -870 +870 @@
+-        sage: data  # abs tol 0.1
++        sage: data  # abs tol 0.1                                                     # needs cysignals.alarm

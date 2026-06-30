@@ -12475,6 +12475,31 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 12 passed, 0 failed, 9 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused doctest utility corpus-growth pass:
+
+```text
+util.py: 159 passed, 0 failed, 24 skipped
+```
+
+This pass adds `sage/doctest/util.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 746
+non-comment entries. A fresh focused rerun first exposed 14 failures around
+browser-profile boundaries rather than doctest-runner semantics: the full Sage
+doctest controller import, `/proc` invalid-PID diagnostics, an
+`EllipticCurve` startup-global annotation example, and `cysignals.alarm`
+interruptibility checks. The added WASI patch classifies those examples with
+explicit `# needs ...` metadata, leaving the ordinary utility helpers,
+recording-dict behavior, timer arithmetic, and string formatting examples as
+runnable default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-continuation/doctest-util-make.sqlite3`.
+The latest-run summary records 159 passed, 0 failed, 24 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
