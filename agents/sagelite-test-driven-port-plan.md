@@ -13643,6 +13643,39 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 73 with 132 total blocks, and
 the saved block- and file-failure cluster queries are empty.
 
+Focused sashes poset-helper corpus-growth pass:
+
+```text
+sashes.py: 11 passed, 0 failed, 11 skipped
+```
+
+That one-file promotion adds `sage/combinat/posets/sashes.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 794
+non-comment entries. The WASI source patch now keeps the pure sash iterator
+and cover-relation helpers importable without loading graph or geometry
+modules at module import time, while marking lattice, fan, and polytope
+examples as explicit `# needs sage.graphs` or `# needs sage.geometry`
+coverage. The default browser-compatible profile gains runnable combinatorial
+word-generation coverage without crossing the current graph/polyhedron
+boundary.
+
+Exploratory sampling used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/active-sample3/sample.sqlite3`
+and
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/poset-helpers/focused2.sqlite3`.
+Nearby files such as `bubble_shuffle.py`, `hochschild_lattice.py`, and
+`partial_cube.py` stayed out of the quiet corpus because they still require
+deeper graph-backed poset imports or expose graph namespace gaps before
+recording clean runnable coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/sashes/focused.sqlite3`.
+The latest-run summary records runner version 73 with 22 total blocks, and
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

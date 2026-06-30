@@ -279,6 +279,7 @@ src/sage/combinat/composition_tableau.py
 src/sage/combinat/subset.py
 src/sage/combinat/subsets_hereditary.py
 src/sage/combinat/subsets_pairwise.py
+src/sage/combinat/posets/sashes.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py

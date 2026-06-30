@@ -7452,3 +7452,119 @@ diff --git a/src/sage/repl/configuration.py b/src/sage/repl/configuration.py
 @@ -175 +175 @@
 -            sage: 'InteractiveShell' in conf
 +            sage: 'InteractiveShell' in conf                                          # needs IPython
+diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashes.py
+--- a/src/sage/combinat/posets/sashes.py
++++ b/src/sage/combinat/posets/sashes.py
+@@ -23,18 +23,12 @@
+ - [Law2014]_
+ """
+ 
++from __future__ import annotations
++
+ from itertools import pairwise
+ from collections.abc import Iterator
+ 
+-from sage.categories.finite_lattice_posets import FiniteLatticePosets
+-from sage.combinat.posets.lattices import LatticePoset
+-from sage.geometry.cone import Cone
+-from sage.geometry.fan import Fan
+-from sage.geometry.polyhedron.constructor import Polyhedron
+ from sage.misc.cachefunc import cached_function
+-from sage.modules.free_module import FreeModule
+-from sage.modules.free_module_element import vector
+-from sage.rings.integer_ring import ZZ
+ 
+ B, N, BB = "□", "▨", "■■"
+ 
+@@ -121,18 +115,21 @@
+ 
+     EXAMPLES::
+ 
+-        sage: L = posets.Sashes(4); L
++        sage: L = posets.Sashes(4); L                                             # needs sage.graphs
+         Finite lattice containing 29 elements
+-        sage: L.hasse_diagram().to_undirected().is_regular(4)
++        sage: L.hasse_diagram().to_undirected().is_regular(4)                     # needs sage.graphs
+         True
+ 
+     TESTS::
+ 
+-        sage: posets.Sashes(0)
++        sage: posets.Sashes(0)                                                    # needs sage.graphs
+         Traceback (most recent call last):
+         ...
+         ValueError: n must be positive
+     """
++    from sage.categories.finite_lattice_posets import FiniteLatticePosets
++    from sage.combinat.posets.lattices import LatticePoset
++
+     if n <= 0:
+         raise ValueError("n must be positive")
+     cat = FiniteLatticePosets().CongruenceUniform()
+@@ -155,14 +152,14 @@
+     EXAMPLES::
+ 
+         sage: from sage.combinat.posets.sashes import pellytope_fan
+-        sage: pellytope_fan(3).f_vector()
++        sage: pellytope_fan(3).f_vector()                                         # needs sage.geometry
+         (1, 8, 18, 12)
+ 
+     TESTS::
+ 
+-        sage: pellytope_fan(1)
++        sage: pellytope_fan(1)                                                    # needs sage.geometry
+         Rational polyhedral fan in 1-d lattice N
+-        sage: pellytope_fan(0)
++        sage: pellytope_fan(0)                                                    # needs sage.geometry
+         Traceback (most recent call last):
+         ...
+         ValueError: n must be positive
+@@ -171,6 +168,10 @@
+ 
+     - [BTTM2024]_
+     """
++    from sage.geometry.cone import Cone
++    from sage.geometry.fan import Fan
++    from sage.modules.free_module_element import vector
++
+     if n <= 0:
+         raise ValueError("n must be positive")
+     dim_one = Fan([Cone([[-1]]), Cone([[1]])])
+@@ -196,21 +197,21 @@
+ 
+     EXAMPLES::
+ 
+-        sage: P3 = polytopes.pellytope(3); P3
++        sage: P3 = polytopes.pellytope(3); P3                                     # needs sage.geometry
+         A 3-dimensional polyhedron in ZZ^3 defined as
+         the convex hull of 12 vertices
+-        sage: P3.f_vector()
++        sage: P3.f_vector()                                                       # needs sage.geometry
+         (1, 12, 18, 8, 1)
+ 
+     TESTS::
+ 
+-        sage: polytopes.pellytope(0)
++        sage: polytopes.pellytope(0)                                              # needs sage.geometry
+         Traceback (most recent call last):
+         ...
+         ValueError: n must be positive
+ 
+-        sage: G = posets.Sashes(3).hasse_diagram().to_undirected()
+-        sage: polytopes.pellytope(3).graph().is_isomorphic(G)
++        sage: G = posets.Sashes(3).hasse_diagram().to_undirected()                # needs sage.graphs
++        sage: polytopes.pellytope(3).graph().is_isomorphic(G)                     # needs sage.graphs
+         True
+ 
+     REFERENCES:
+@@ -218,6 +219,10 @@
+     - [BTTM2024]_
+     """
+     from sage.geometry.polyhedron.library import Polytopes
++    from sage.geometry.polyhedron.constructor import Polyhedron
++    from sage.modules.free_module import FreeModule
++    from sage.rings.integer_ring import ZZ
++
+     if n <= 0:
+         raise ValueError("n must be positive")
+     M = FreeModule(ZZ, n)
