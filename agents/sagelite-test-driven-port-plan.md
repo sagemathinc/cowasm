@@ -12312,6 +12312,43 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 1 passed, 0 failed, 1 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Scheduled absent-candidate audit pass:
+
+This pass does not add a new corpus file. Three focused probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/final-pass/`
+sampled low-count helpers, category/algebra candidates, and utility/REPL
+files that were absent from the curated dashboard or suspected to be absent.
+The checked corpus remains at 743 non-comment entries.
+
+The first mixed low-count probe recorded 49 passed, 1 failed, and 31 skipped
+blocks in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/final-pass/low-count-candidates.sqlite3`.
+Its apparent promotion rows were already present in the curated corpus; the
+only truly absent sampled files were `sage/coding/two_weight_db.py`, which
+hit the known NTL/libcxx `memory access out of bounds` trap, plus skipped-only
+modular and misc helpers.
+
+The corrected absent-only algebra/category probe recorded 0 passed, 42 failed,
+and 170 skipped blocks in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/final-pass/absent-small-candidates.sqlite3`.
+The saved candidate summary classifies two files as `needs_triage`, two as
+`file_error`, and thirteen as `skipped_only`. The useful blocker clusters are:
+`sage/algebras/lie_algebras/abelian.py` missing `LieAlgebra`/`lie_algebras`
+startup names, `sage/combinat/posets/bubble_shuffle.py` reaching the stripped
+graph backend and missing `posets`/`simplicial_complexes` startup names,
+`sage/categories/euclidean_domains.py` timing out in `gcd_free_basis`, and
+`sage/rings/bernoulli_mod_p.pyx` trapping in an NTL `ZZ_pX` terminal-error
+path.
+
+The utility/REPL probe recorded 31 passed, 43 failed, and 113 skipped blocks
+in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/final-pass/utility-candidates.sqlite3`.
+Its candidate summary classifies `sage/misc/reset.pyx`, `sage/repl/load.py`,
+and `sage/repl/configuration.py` as real triage targets, with failures grouped
+around missing IPython/traitlets support, missing symbolic reset support, and
+dependent startup-name failures. The remaining sampled files were skipped-only
+or had no extracted doctest blocks, so they remain outside the quiet corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
