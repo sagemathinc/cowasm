@@ -3142,6 +3142,36 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the newly deferred
 package-system probe under `optional:subprocess`.
 
+Focused lattice Euclidean-group element corpus-growth pass:
+
+```text
+lattice_euclidean_group_element.py: 20 passed, 0 failed, 7 skipped
+```
+
+That one-file make-target validation adds
+`sage/geometry/polyhedron/lattice_euclidean_group_element.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 825 non-comment
+entries. The file adds compact default-profile coverage for lattice Euclidean
+group element construction, vector images, representation, comparison, and
+hashing.
+
+Direct frontier sampling first recorded seven failures in the file, all tied
+to the unavailable PPL-backed `LatticePolytope_PPL` path or the dependent
+`_.vertices()` check after that setup. The added WASI source patch marks those
+examples as `# needs ppl`, preserving the vector-only examples as runnable
+browser-compatible coverage. The same sampling batch rejected nearby knot,
+L-function, sandpile, REPL, and geometry helpers because they were
+skipped-only or exposed broader graph, IPython, polyhedron, PPL, or backend
+clusters rather than narrow corpus-growth work.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-new/lattice-euclidean-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the new deferred examples under `optional:ppl`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

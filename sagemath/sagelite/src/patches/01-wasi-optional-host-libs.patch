@@ -7167,6 +7167,30 @@ diff -urN a/src/sage/plot/point.py b/src/sage/plot/point.py
          sage: p = P[0]
 -        sage: q = p.plot3d(z=[2,3])
 +        sage: q = p.plot3d(z=[2,3])                                                # needs sage.plot.plot3d
+diff -urN a/src/sage/geometry/polyhedron/lattice_euclidean_group_element.py b/src/sage/geometry/polyhedron/lattice_euclidean_group_element.py
+--- a/src/sage/geometry/polyhedron/lattice_euclidean_group_element.py
++++ b/src/sage/geometry/polyhedron/lattice_euclidean_group_element.py
+@@ -59 +59 @@
+-            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron
++            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron  # needs ppl
+@@ -75,5 +75,5 @@
+-            sage: M(vector([0,0]))
++            sage: M(vector([0,0]))                                                  # needs ppl
+             (1, 2, 3)
+-            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))
++            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))                         # needs ppl
+             A 2-dimensional lattice polytope in ZZ^3 with 3 vertices
+-            sage: _.vertices()
++            sage: _.vertices()                                                       # needs ppl
+@@ -96 +96 @@
+-            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron
++            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron  # needs ppl
+@@ -99 +99 @@
+-            sage: M(vector(ZZ, [11,13]))
++            sage: M(vector(ZZ, [11,13]))                                             # needs ppl
+@@ -101 +101 @@
+-            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))
++            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))                         # needs ppl
 diff -urN a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
 --- a/src/sage/games/quantumino.py
 +++ b/src/sage/games/quantumino.py

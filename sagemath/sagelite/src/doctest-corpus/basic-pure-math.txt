@@ -176,6 +176,7 @@ src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
 src/sage/geometry/linear_expression.py
 src/sage/geometry/polyhedron/cdd_file_format.py
+src/sage/geometry/polyhedron/lattice_euclidean_group_element.py
 src/sage/geometry/polyhedron/misc.py
 src/sage/graphs/dot2tex_utils.py
 src/sage/groups/abelian_gps/abelian_group.py
