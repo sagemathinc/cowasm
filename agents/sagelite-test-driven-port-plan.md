@@ -2957,6 +2957,34 @@ against a temporary six-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-cont/tensor-promoted-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused KnotInfo database helper corpus-growth pass:
+
+```text
+knotinfo_db.py: 92 passed, 0 failed, 18 skipped
+```
+
+That one-file focused validation adds `sage/databases/knotinfo_db.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 818
+non-comment entries. The file adds browser-profile coverage for KnotInfo
+column metadata, enum helpers, version parsing, and local database wrapper
+logic. Its skipped blocks are already explicit optional
+`database_knotinfo`, `not tested`, and long-test boundaries, so no new WASI
+source tags or startup namespace changes were required.
+
+Direct database-frontier sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next2/database-candidates.sqlite3`.
+The saved candidate-ranking query classified `knotinfo_db.py` as the only
+clean non-skipped promotion candidate in that batch. `cunningham_tables.py`
+and `symbolic_data.py` were skipped-only under the default profile, while
+`sql_db.py` still has a broad SQLite helper failure cluster.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next2/knotinfo-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
