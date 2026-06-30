@@ -6863,3 +6863,26 @@ diff --git a/src/sage/combinat/gelfand_tsetlin_patterns.py b/src/sage/combinat/g
 +            ....:    c += S.cardinality()
 +            sage: c == len(L)                                                           # needs sage.graphs
              True
+diff --git a/src/sage/plot/plot3d/transform.pyx b/src/sage/plot/plot3d/transform.pyx
+--- a/src/sage/plot/plot3d/transform.pyx
++++ b/src/sage/plot/plot3d/transform.pyx
+@@ -164,14 +164,14 @@
+         sage: rotate_arbitrary((1,1,1), 1)  # rel tol 1e-15
+         [  0.6935348705787598   0.6390560643047186 -0.33259093488347846]
+         [-0.33259093488347846   0.6935348705787598   0.6390560643047186]
+         [  0.6390560643047186  -0.3325909348834784   0.6935348705787598]
+-        sage: rotate_arbitrary((1,1,1), -1)^(-1)  # rel tol 1e-15
++        sage: rotate_arbitrary((1,1,1), -1)^(-1)  # rel tol 1e-15                   # needs scipy
+         [  0.6935348705787598   0.6390560643047186 -0.33259093488347846]
+         [-0.33259093488347846   0.6935348705787598   0.6390560643047186]
+         [  0.6390560643047185 -0.33259093488347835   0.6935348705787598]
+-
++
+     Make sure it does the right thing...::
+-
++
+-        sage: rotate_arbitrary((1,2,3), -1).det()
++        sage: rotate_arbitrary((1,2,3), -1).det()                                  # needs scipy
+         1.0000000000000002
+         sage: rotate_arbitrary((1,1,1), 2*pi/3) * vector(RDF, (1,2,3))  # rel tol 2e-15             # needs sage.symbolic
+         (1.9999999999999996, 2.9999999999999996, 0.9999999999999999)

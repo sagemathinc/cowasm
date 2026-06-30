@@ -11900,6 +11900,34 @@ The latest-run summary records 214 passed, 0 failed, 6 skipped, runner
 version 72, and empty saved block- and file-failure cluster queries;
 `skips-by-reason.sql` records all six skips under `optional:sage.graphs`.
 
+Focused 3D plot transform corpus-growth pass:
+
+```text
+plot3d/transform.pyx: 8 passed, 0 failed, 16 skipped
+```
+
+This pass adds `sage/plot/plot3d/transform.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 731
+non-comment entries. The file adds compact default-profile coverage for
+3D rotation matrices and vector transforms next to the existing 2D plotting
+helpers.
+
+Direct sampling first recorded 8 passed blocks, 2 failed blocks, and
+14 skipped blocks. The failures were the inverse and determinant checks for
+`rotate_arbitrary(...)`, both of which currently route through matrix
+linear-algebra methods that import unavailable SciPy support in the
+browser-compatible profile. The added WASI source patch marks those two
+examples as `# needs scipy`, preserving the direct RDF rotation examples as
+default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/plot3d-transform/make-final.sqlite3`.
+The latest-run summary records 8 passed, 0 failed, 16 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
