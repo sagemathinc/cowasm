@@ -12882,6 +12882,43 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused abelian-group morphism corpus-growth pass:
+
+```text
+abelian_group_morphism.py: 26 passed, 0 failed, 18 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/abelian_gps/abelian_group_morphism.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 773
+non-comment entries. The file adds runnable default-profile coverage for the
+AbelianGroupMap and AbelianGroupMorphism parent, domain, codomain, and
+evaluation helpers while preserving GAP-backed homomorphism construction,
+kernel, image, and libgap conversion as explicit optional coverage.
+
+Direct sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/group-next/group-probe.sqlite3`.
+The adjacent dual abelian-group files were skipped-only under the default
+browser-compatible profile, while `sage/groups/generic.py` and
+`sage/groups/group.pyx` still expose broader elliptic-curve, additive-abelian,
+free-group, and presentation startup/backend clusters. A tensor-module probe
+in the same scheduled run was also rejected because it was dominated by long
+doctest setup-state loss and multiprocessing-backed parallel examples rather
+than a narrow corpus-growth tag.
+
+The added WASI source patch tags the module-local
+`AbelianGroupMorphism` import example as `# needs sage.libs.gap`; otherwise the
+module import reaches the stripped `sage.libs.gap.libgap` dependency before
+the following already-optional `gap_package_polycyclic` example can be
+classified. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/group-next/abelian-morphism-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups the new
+deferred import under `optional:sage.libs.gap`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

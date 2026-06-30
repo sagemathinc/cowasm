@@ -1872,6 +1872,12 @@ diff --git a/src/sage/groups/abelian_gps/abelian_group.py b/src/sage/groups/abel
          ed = diagonal_matrix(ZZ, self.gens_orders()).elementary_divisors()
 -        return tuple(d for d in ed if d != 1)
 +        return tuple(abs(d) for d in ed if abs(d) != 1)
+diff --git a/src/sage/groups/abelian_gps/abelian_group_morphism.py b/src/sage/groups/abelian_gps/abelian_group_morphism.py
+--- a/src/sage/groups/abelian_gps/abelian_group_morphism.py
++++ b/src/sage/groups/abelian_gps/abelian_group_morphism.py
+@@ -57 +57 @@
+-        sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism
++        sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism  # needs sage.libs.gap
 diff -urN a/src/sage/misc/all.py b/src/sage/misc/all.py
 --- a/src/sage/misc/all.py
 +++ b/src/sage/misc/all.py
