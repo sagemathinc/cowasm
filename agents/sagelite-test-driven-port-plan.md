@@ -13122,6 +13122,35 @@ probe reaches algebraic-real cache/coercion drift; and the quaternion probes
 are dominated by missing `QuaternionAlgebra` startup/module paths plus
 dependent state loss.
 
+Focused totally-real PHC helper corpus-growth pass:
+
+```text
+totallyreal_phc.py: 3 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/number_field/totallyreal_phc.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 778
+non-comment entries. The default browser-compatible profile gains compact
+coverage for totally-real number-field PHC helper import and wrapper behavior,
+while the PHC subprocess-backed Lagrange-bound examples remain explicit
+`optional:phc` skips.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/auto-followup/number-helper/probe.sqlite3`.
+The same batch kept FLINT qsieve out because it traps in the qsieve side
+module, kept PARI/FLINT factorization, modular-symbol, and p-adic relatives
+out as skipped-only, and kept congruence subgroup, eclib, and pbori probes
+out for broader backend failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/auto-followup/totallyreal-phc/make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups all six
+skips under `optional:phc`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
