@@ -12585,6 +12585,34 @@ The latest-run summary records 5 passed, 0 failed, 4 skipped, and the saved
 block- and file-failure cluster queries are empty. `skips-by-reason.sql`
 groups all deferred examples under `optional:_multiprocessing`.
 
+Focused Wigner-symbol helper corpus-growth pass:
+
+```text
+wigner.py: 12 passed, 0 failed, 38 skipped
+```
+
+This pass adds `sage/functions/wigner.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 749 non-comment
+entries. The file gives the default browser-compatible profile direct coverage
+of Wigner-symbol helper validation and error paths while its symbolic and
+MPFR-backed numerical examples remain explicit dependency skips under
+`sage.symbolic` and `sage.rings.real_mpfr`.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-corpus-growth/mixed-small-batch.sqlite3`.
+That mixed batch left REPL globals, sphinxification, prime-pi, and small crypto
+helpers as skipped-only, kept REPL loading and ring helper files out for
+triage, and surfaced `wigner.py` as the only clean runnable promotion.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=75`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-corpus-growth/wigner-one.sqlite3`.
+The latest-run summary records 12 passed, 0 failed, 38 skipped, and the saved
+block- and file-failure cluster queries are empty. `skips-by-reason.sql`
+groups the deferred examples under `optional:sage.symbolic` and
+`optional:sage.rings.real_mpfr`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
