@@ -12163,6 +12163,38 @@ startup-name failure, and `sage/matroids/advanced.py` still reaches the
 stripped graph backend through `sage.graphs.generic_graph_pyx`, so both remain
 triage targets rather than namespace-broadening promotions.
 
+Focused p-adic and number-field helper corpus-growth pass:
+
+```text
+polynomial_padic_flat.py: 3 passed, 0 failed, 0 skipped
+number_field_element_base.pyx: 2 passed, 0 failed, 2 skipped
+```
+
+This pass adds `sage/rings/polynomial/padics/polynomial_padic_flat.py` and
+`sage/rings/number_field/number_field_element_base.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 737
+non-comment entries. The default profile gains compact coverage for a p-adic
+polynomial element base class and the number-field element base-class
+constructor, while the explicit number-field multiplication and exponentiation
+tests remain skipped behind their existing optional feature tags.
+
+Exploratory sampling used a compact SQLite probe over small absent helper,
+tutorial, module, p-adic, number-field, and scheme files at
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/followup/small-candidates-2.sqlite3`.
+The saved candidate-ranking query classified these two files as promotion
+candidates. The same probe kept Judson exercise files out as zero-block
+coverage, kept NumPy, topology, symbolic, and module helpers out as
+skipped-only, and kept computational-mathematics and scheme candidates out as
+real triage targets with missing SciPy, Singular, graph, symbolic, quartic, and
+hyperelliptic-curve surfaces.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/followup/padic-number-field-make.sqlite3`.
+The latest-run summary records 5 passed, 0 failed, 2 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
