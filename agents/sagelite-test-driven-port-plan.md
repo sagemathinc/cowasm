@@ -2634,6 +2634,30 @@ documentation for coding bounds. Future scheduled runs should avoid resampling
 this low-prompt set unless the symbolic, coding/NTL, or default-profile skip
 policy changes.
 
+Focused tensor format utility corpus-growth pass:
+
+```text
+format_utilities.py: 67 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds
+`sage/tensor/modules/format_utilities.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 763
+non-comment entries and adding useful tensor-module display-name and
+index-formatting helper coverage into the default browser-compatible profile
+without new WASI source tags or startup namespace changes. Direct sampling
+also confirmed that
+`sage/functions/min_max.py` remains skipped-only under the default symbolic
+boundary, while nearby numerical backend, session, homology, and tensor
+submodule probes still expose broader backend, filesystem/session, or startup
+surface clusters and remain outside the quiet dashboard.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tensor-format-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
