@@ -13926,6 +13926,40 @@ and 15 total blocks. The saved block- and file-failure cluster queries are
 empty; skip grouping records all three deferred blocks under
 `deferred:known bug`.
 
+Focused computational-mathematics number-theory corpus-growth pass:
+
+```text
+numbertheory_doctest.py: 11 passed, 0 failed, 8 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py`
+to the curated corpus. The default browser-compatible profile gains compact
+coverage for Carmichael-number enumeration, aliquot-sequence setup, and exact
+arithmetic helpers from the computational mathematics book.
+
+Fresh sampling first checked small data-structure, category, misc, and book
+files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/active-next-candidates*.sqlite3`.
+Most candidates were skipped-only, zero-block, or exposed broader polynomial,
+NTL finite-field, stream, symbolic, or SciPy-backed linear-algebra clusters.
+The number-theory book file was the narrow follow-up because its remaining
+failures were limited to symbolic `pi`, `var`, and `integrate` examples plus
+dependent state from those examples.
+
+The added WASI source patch marks those five examples as
+`# needs sage.symbolic`. Focused validation used the
+`test-sage-doctest-corpus` make target after a fresh patched-source rebuild,
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/numbertheory-focused.sqlite3`.
+The latest-run summary records CoWasm commit
+`886b6b94038a5b68d76b0538c9f47744cac34e35`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 19 total blocks. The saved block- and file-failure cluster queries are
+empty; skip grouping records 5 `optional:sage.symbolic` blocks and 3
+`long time` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

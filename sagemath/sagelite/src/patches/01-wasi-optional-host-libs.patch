@@ -6516,8 +6516,24 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/pol
 -  sage: p_cheb.substitute_function(T, chebyshev_T).expand()
 +  sage: p_cheb.substitute_function(T, chebyshev_T).expand()                     # needs sage.symbolic
    4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
- 
- Sage example in ./sol/polynomes.tex, line 131::
+
+Sage example in ./sol/polynomes.tex, line 131::
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py
+@@ -127 +127 @@
+-  sage: for k in range(2,10): print((k, rk(k)))
++  sage: for k in range(2,10): print((k, rk(k)))  # needs sage.symbolic
+@@ -155,2 +155,2 @@
+-  sage: x1, x2, s2 = var('x1, x2, s2')
+-  sage: n1 = 9; C1 = integrate(x1^n1, x1, x2, s2); C1
++  sage: x1, x2, s2 = var('x1, x2, s2')  # needs sage.symbolic
++  sage: n1 = 9; C1 = integrate(x1^n1, x1, x2, s2); C1  # needs sage.symbolic
+@@ -161,2 +161,2 @@
+-  sage: x3, s3 = var('x3, s3')
+-  sage: n2 = 7; C2 = integrate(C1.subs(s2=s3-x2)*x2^n2, x2, x3, s3/2); C2
++  sage: x3, s3 = var('x3, s3')  # needs sage.symbolic
++  sage: n2 = 7; C2 = integrate(C1.subs(s2=s3-x2)*x2^n2, x2, x3, s3/2); C2  # needs sage.symbolic
 diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
 --- a/src/sage/categories/simplicial_sets.py
 +++ b/src/sage/categories/simplicial_sets.py
