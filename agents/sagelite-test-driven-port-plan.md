@@ -13614,6 +13614,35 @@ The latest-run summary records runner version 73 with 20 total blocks, and the
 saved block- and file-failure cluster queries are empty. Skip grouping records
 all three skips under `optional:sage.symbolic`.
 
+Focused tropical semiring corpus-growth pass:
+
+```text
+tropical_semiring.pyx: 132 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/semirings/tropical_semiring.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 793
+non-comment entries. The default browser-compatible profile gains direct
+coverage for tropical semiring construction, arithmetic, coercion, latex, and
+parent/category behavior without new WASI source tags.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-103716/probe2.sqlite3`.
+The broader batch kept `tropical_polynomial.py`, parallel helpers, and
+pickle/explain-pickle helpers out of the quiet corpus because their runnable
+failures still need semantic or runtime triage; several misc, category
+example, and typeset support files were skipped-only or empty under the
+browser-compatible profile. `tropical_semiring.pyx` was the only clean
+non-skipped promotion candidate in that batch.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-103716/tropical-semiring-make.sqlite3`.
+The latest-run summary records runner version 73 with 132 total blocks, and
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

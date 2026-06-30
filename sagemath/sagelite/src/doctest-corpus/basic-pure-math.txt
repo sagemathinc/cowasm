@@ -33,6 +33,7 @@ src/sage/rings/padics/tests.py
 src/sage/rings/padics/eisenstein_extension_generic.py
 src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/semirings/tropical_matrix.py
+src/sage/rings/semirings/tropical_semiring.pyx
 src/sage/arith/srange.pyx
 src/sage/arith/functions.pyx
 src/sage/arith/power.pyx
