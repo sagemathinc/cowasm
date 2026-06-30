@@ -6471,6 +6471,27 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/dom
    (Real Field with 17 bits of precision, Real Field with 42 bits of precision)
  
  Sage example in ./sol/domaines.tex, line 46::
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
+@@ -42,14 +42,14 @@
+   sage: U = matrix(ZZ, [[3,3,-9,-14,40],[-1,-2,4,2,1],[2,4,-7,-1,-13],
+   ....:                 [-1,0,1,4,-15],[-4,-13,26,8,30]])
+   sage: A = (U^-1 * B * U).change_ring(ZZ)
+-  sage: ok, V = Similar(A, B); ok
++  sage: ok, V = Similar(A, B); ok                                              # known bug - matrix frobenius form hits generic-dense attribute gap
+   True
+-  sage: V
++  sage: V                                                                       # known bug - depends on the previous matrix frobenius form setup
+   [                 1    2824643/1601680   -6818729/1601680 -43439399/11211760  73108601/11211760]
+   [                 0      342591/320336     -695773/320336  -2360063/11211760  -10291875/2242352]
+   [                 0     -367393/640672      673091/640672    -888723/4484704   15889341/4484704]
+   [                 0     661457/3203360    -565971/3203360  13485411/22423520 -69159661/22423520]
+   [                 0   -4846439/3203360    7915157/3203360 -32420037/22423520 285914347/22423520]
+-  sage: ok, V = Similar(2*A, B); ok
++  sage: ok, V = Similar(2*A, B); ok                                            # known bug - matrix frobenius form hits generic-dense attribute gap
+   False
+ """
 diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
 --- a/src/sage/categories/simplicial_sets.py
 +++ b/src/sage/categories/simplicial_sets.py

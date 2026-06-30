@@ -13828,6 +13828,42 @@ and 26 total blocks. The saved block- and file-failure cluster queries are
 empty. Skip grouping records 7 `optional:sage.rings.number_field` blocks and
 4 `optional:sage.graphs` blocks.
 
+Focused computational-mathematics linear-algebra corpus-growth pass:
+
+```text
+linalg_doctest.py: 12 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 802
+non-comment entries. The default browser-compatible profile gains compact
+coverage for finite-field matrix minimal polynomials, factorization, and
+maxspin examples from the computational mathematics book.
+
+Fresh sampling first checked adjacent Lie-conformal, game-theory, plot,
+dynamics, helper, database, topology, coding, category, and book files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-active/`.
+Most candidates were skipped-only, zero-block, or exposed broader graph,
+symbolic, FLINT/ARB, homology, dynamics, or game-theory clusters. The linear
+algebra book file was the narrow follow-up because its only runnable failures
+were two matrix Frobenius-form similarity examples that currently hit the
+generic-dense matrix attribute gap, plus the dependent matrix display check.
+
+The added WASI source patch marks those three examples as deferred
+`# known bug` blocks. Focused validation used the `test-sage-doctest-corpus`
+make target after a fresh patched-source rebuild, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-active/linalg-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`1973fbe01b58d2dc6f253ddb2156a96c569d5164`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 15 total blocks. The saved block- and file-failure cluster queries are
+empty; skip grouping records all three deferred blocks under
+`deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
