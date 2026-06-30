@@ -12425,6 +12425,29 @@ clusters are missing startup names for `NilCoxeterAlgebra`, `key_exchange`,
 errors; and the existing NTL/libcxx terminal-error trap reached by
 `rings/polynomial/polynomial_ring_homomorphism.pyx`.
 
+Focused abelian Lie algebra corpus-growth pass:
+
+```text
+abelian.py: 16 passed, 0 failed, 9 skipped
+```
+
+This pass adds `sage/algebras/lie_algebras/abelian.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 744
+non-comment entries. The WASI `sage.all` patch now exposes the lightweight
+`LieAlgebra` constructor, which makes the finite abelian Lie algebra examples
+run under the default node profile. The three infinite-dimensional examples
+that go through the `lie_algebras` catalog are deferred as `# known bug`,
+because importing that catalog still reaches graph-backed classical Lie
+algebra code in the stripped WASI profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/autonomous-2026-06-30/abelian-lie-make.sqlite3`.
+The latest-run summary records 16 passed, 0 failed, 9 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -1534,7 +1534,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,216 @@
+@@ -253,74 +253,217 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1586,6 +1586,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.graded_algebras import GradedAlgebras
 +    from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 +    from sage.categories.lie_algebras import LieAlgebras
++    from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
 +    from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 +    from sage.categories.graded_modules import GradedModules
 +    from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
@@ -5710,6 +5711,33 @@ diff -urN a/src/sage/structure/proof/all.py b/src/sage/structure/proof/all.py
 @@ -224 +224 @@
 -        sage: proof.all()
 +        sage: proof.all()                                                           # known bug - WASI dict display formatting
+diff -urN a/src/sage/algebras/lie_algebras/abelian.py b/src/sage/algebras/lie_algebras/abelian.py
+--- a/src/sage/algebras/lie_algebras/abelian.py
++++ b/src/sage/algebras/lie_algebras/abelian.py
+@@ -153,6 +153,7 @@
+ 
+         EXAMPLES::
+ 
++            sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
+             sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
+             sage: L.dimension()
+             +Infinity
+@@ -165,6 +166,7 @@
+ 
+         EXAMPLES::
+ 
++            sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
+             sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
+             sage: L.is_abelian()
+             True
+@@ -185,6 +187,7 @@
+ 
+             EXAMPLES::
+ 
++                sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
+                 sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
+                 sage: B = L.basis()
+                 sage: l1 = B[1]
 diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
