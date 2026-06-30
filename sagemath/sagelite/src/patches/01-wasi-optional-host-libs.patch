@@ -7299,6 +7299,48 @@ diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogo
 @@ -2555 +2555 @@
 -            sage: from sage.interfaces.maxima_lib import maxima
 +            sage: from sage.interfaces.maxima_lib import maxima                        # needs sage.symbolic
+diff --git a/src/sage/interfaces/ecm.py b/src/sage/interfaces/ecm.py
+--- a/src/sage/interfaces/ecm.py
++++ b/src/sage/interfaces/ecm.py
+@@ -33 +33 @@
+-    sage: ecm.factor(n, B1=10)
++    sage: ecm.factor(n, B1=10)                                                       # needs subprocess
+@@ -37 +37 @@
+-    sage: ECM(B1=600).one_curve(n, c=1, sigma=10)
++    sage: ECM(B1=600).one_curve(n, c=1, sigma=10)                                    # needs subprocess
+@@ -216 +216 @@
+-            sage: ecm._run_ecm(['cat'], 1234)
++            sage: ecm._run_ecm(['cat'], 1234)                                        # needs subprocess
+@@ -241 +241 @@
+-            sage: print(ecm(3))    # random output
++            sage: print(ecm(3))    # random output                                   # needs subprocess
+@@ -449 +449 @@
+-            sage: f.one_curve(n, B1=10000, sigma=11)
++            sage: f.one_curve(n, B1=10000, sigma=11)                                 # needs subprocess
+@@ -451 +451 @@
+-            sage: f.one_curve(n, B1=10000, sigma=1022170541)
++            sage: f.one_curve(n, B1=10000, sigma=1022170541)                         # needs subprocess
+@@ -454 +454 @@
+-            sage: f.one_curve(n, B1=500000, algorithm='P-1')
++            sage: f.one_curve(n, B1=500000, algorithm='P-1')                         # needs subprocess
+@@ -457 +457 @@
+-            sage: f.one_curve(n, B1=2000, algorithm='P+1', x0=5)
++            sage: f.one_curve(n, B1=2000, algorithm='P+1', x0=5)                     # needs subprocess
+@@ -500 +500 @@
+-            sage: sorted(f._find_factor(n, None, 2000))
++            sage: sorted(f._find_factor(n, None, 2000))                              # needs subprocess
+@@ -549 +549 @@
+-            sage: f.find_factor(n)
++            sage: f.find_factor(n)                                                   # needs subprocess
+@@ -615 +615 @@
+-            sage: ecm.factor(602400691612422154516282778947806249229526581)
++            sage: ecm.factor(602400691612422154516282778947806249229526581)          # needs subprocess
+@@ -706 +706 @@
+-            sage: ecm.time(n, 35)                  # random output
++            sage: ecm.time(n, 35)                  # random output                   # needs subprocess
+@@ -709 +709 @@
+-            sage: ecm.time(n, 30, verbose=True)     # random output
++            sage: ecm.time(n, 30, verbose=True)     # random output                  # needs subprocess
 diff --git a/src/sage/game_theory/parser.py b/src/sage/game_theory/parser.py
 --- a/src/sage/game_theory/parser.py
 +++ b/src/sage/game_theory/parser.py

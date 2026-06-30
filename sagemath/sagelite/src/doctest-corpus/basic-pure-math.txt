@@ -183,6 +183,7 @@ src/sage/groups/additive_abelian/qmodnz_element.py
 src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_lists.pyx
 src/sage/interfaces/abc.py
+src/sage/interfaces/ecm.py
 src/sage/interfaces/tab_completion.py
 src/sage/interfaces/gnuplot.py
 src/sage/interfaces/quit.py

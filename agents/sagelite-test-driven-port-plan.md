@@ -2713,6 +2713,31 @@ Sagelite source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and the
 latest-run summary records runner version 73 in the default node profile.
 
+Focused ECM interface corpus-growth pass:
+
+```text
+ecm.py: 34 passed, 0 failed, 16 skipped
+```
+
+That one-file make-target validation adds `sage/interfaces/ecm.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 790 non-comment
+entries. Direct sampling first recorded 34 passed blocks, 13 failed blocks,
+and three existing skips. All failures were subprocess-backed GMP-ECM calls
+that raise `OSError: [Errno 58] wasi does not support processes` in the
+default browser-compatible profile.
+
+The added WASI source patch marks those external-process examples as
+`# needs subprocess`, preserving ECM command construction, output parsing,
+parameter parsing, validation, and recommendation helpers as default-profile
+coverage. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/ecm-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the new deferrals under `optional:subprocess`.
+
 Follow-up absent-frontier audit:
 
 Fresh focused probes after the tensor free-submodule promotion did not find a
