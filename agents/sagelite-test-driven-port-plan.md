@@ -12224,6 +12224,35 @@ temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 8 passed, 0 failed, 0 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused modular-symbol apply helper corpus-growth pass:
+
+```text
+apply.pyx: 6 passed, 0 failed, 0 skipped
+```
+
+This pass adds `sage/modular/modsym/apply.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 741 non-comment
+entries. The default profile gains compact runnable coverage for the
+modular-symbol apply helper without new WASI source tags or startup namespace
+changes.
+
+Exploratory compact sampling used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-run/compact-candidates.sqlite3`.
+The saved candidate-ranking query classified `apply.pyx` as the only clean
+non-skipped promotion candidate in that batch. The same probe kept interface,
+coding, database, stats, module, modular-form, modular-symbol Hecke,
+combinatorial-species, and monoid files out as skipped-only or empty coverage,
+and kept PARI conversion, GAP-backed matrix-group, weighted-projective,
+Boolean-polynomial, and elliptic-curve helper probes out as real triage
+targets.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/goal-run/apply-only.sqlite3`.
+The latest-run summary records 6 passed, 0 failed, 0 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
