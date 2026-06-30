@@ -11851,6 +11851,29 @@ Direct sampling also confirmed that adjacent `dimacs_test.py` is empty under
 the Sagelite doctest extractor and `sat_lp.py` is skipped-only in the default
 profile, so they remain outside the quiet corpus.
 
+Focused SAT base-class corpus-growth pass:
+
+```text
+satsolver.pyx: 47 passed, 0 failed, 11 skipped
+```
+
+This pass adds `sage/sat/solvers/satsolver.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 729
+non-comment entries. The file adds SAT solver base-class coverage adjacent to
+the existing DIMACS and PicoSAT solver entries without requiring new WASI
+source tags or startup namespace changes.
+
+Direct sampling in the same batch reconfirmed that
+`sage/coding/source_coding/huffman.py` is already present and quiet, while
+SAT converter and coding base-class probes were skipped-only or empty under
+the default browser-compatible profile. Focused validation used the
+`test-sage-doctest-corpus` make target against the current patched source
+copy, with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/satsolver-make.sqlite3`.
+The latest-run summary records 47 passed, 0 failed, 11 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
