@@ -11783,6 +11783,25 @@ setup, and `sage/misc/sage_input.py` still reaches the known NTL/libcxx
 `sage/calculus/transforms/all.py` currently add no extracted default-profile
 blocks.
 
+Focused fast Fourier transform corpus-growth pass:
+
+```text
+fft.pyx: 61 passed, 0 failed, 30 skipped
+```
+
+This pass adds `sage/calculus/transforms/fft.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 726
+non-comment entries. The file extends the transform coverage next to the
+existing DFT and DWT entries without requiring new WASI source tags or startup
+namespace changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target against
+the patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/fft-make.sqlite3`.
+The latest-run summary records 61 passed, 0 failed, 30 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
