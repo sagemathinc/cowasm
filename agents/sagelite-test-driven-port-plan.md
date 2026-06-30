@@ -11756,6 +11756,33 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 9 passed, 0 failed, 11 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused discrete Fourier transform corpus-growth pass:
+
+```text
+dft.py: 100 passed, 0 failed, 26 skipped
+```
+
+This pass adds `sage/calculus/transforms/dft.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 725
+non-comment entries. The file adds broader exact and numerical transform
+coverage next to the existing discrete wavelet transform smoke without
+requiring new WASI source tags or startup namespace changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target against
+the patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/dft-make.sqlite3`.
+The latest-run summary records 100 passed, 0 failed, 26 skipped, runner
+version 72, and empty saved block- and file-failure cluster queries.
+
+Sampling in the same pass kept adjacent misc candidates outside the quiet
+corpus: `sage/misc/functional.py` still times out in symbolic denominator
+setup, and `sage/misc/sage_input.py` still reaches the known NTL/libcxx
+`memory access out of bounds` trap through finite-field polynomial setup.
+`sage/misc/copying.py`, `sage/misc/proof.py`, and
+`sage/calculus/transforms/all.py` currently add no extracted default-profile
+blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

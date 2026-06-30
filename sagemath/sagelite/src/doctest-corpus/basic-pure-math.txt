@@ -35,6 +35,7 @@ src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/calculus/transforms/dwt.pyx
+src/sage/calculus/transforms/dft.py
 src/sage/algebras/associated_graded.py
 src/sage/algebras/free_zinbiel_algebra.py
 src/sage/algebras/quaternion_algebra.py
