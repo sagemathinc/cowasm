@@ -5921,6 +5921,24 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_l
 @@ -98 +98 @@
 -            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()
 +            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()             # needs sage.graphs
+diff -urN a/src/sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py
+@@ -43 +43 @@
+-        sage: R = lie_conformal_algebras.NeveuSchwarz(AA); R
++        sage: R = lie_conformal_algebras.NeveuSchwarz(AA); R                         # needs sage.rings.number_field
+@@ -45 +45 @@
+-        sage: R.structure_coefficients()
++        sage: R.structure_coefficients()                                             # needs sage.rings.number_field
+@@ -47 +47 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                   # needs sage.rings.number_field
+@@ -49 +49 @@
+-        sage: G.nproduct(G,0)
++        sage: G.nproduct(G,0)                                                        # needs sage.rings.number_field
+@@ -51 +51 @@
+-        sage: G.degree()
++        sage: G.degree()                                                             # needs sage.rings.number_field
 diff -urN a/src/sage/libs/flint/fmpz_poly.pyx b/src/sage/libs/flint/fmpz_poly.pyx
 --- a/src/sage/libs/flint/fmpz_poly.pyx
 +++ b/src/sage/libs/flint/fmpz_poly.pyx

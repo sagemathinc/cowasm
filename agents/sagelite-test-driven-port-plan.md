@@ -13314,6 +13314,39 @@ The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty; `skips-by-reason.sql` groups all ten
 skips under `optional:sage.rings.number_field`.
 
+Focused Neveu-Schwarz Lie conformal algebra corpus-growth pass:
+
+```text
+neveu_schwarz_lie_conformal_algebra.py: 3 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal_algebra.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 785
+non-comment entries. The default browser-compatible profile gains compact
+coverage for the rational-field Neveu-Schwarz constructor and TestSuite
+behavior.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-lca-followup/probe.sqlite3`.
+The adjacent LCA batch found no clean untagged promotion: `examples.py` had no
+runnable doctest blocks, while the affine, N2, generic base, and
+structure-coefficient modules still expose graph-backed affine construction
+or broader algebraic-field cache/coercion drift. The Neveu-Schwarz file was
+the narrow follow-up because all failing runnable blocks were the `AA`
+constructor example and dependent state checks, now classified as
+`# needs sage.rings.number_field`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-neveu/make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty; `skips-by-reason.sql` groups all five
+skips under `optional:sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
