@@ -12555,6 +12555,36 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused multiprocessing helper corpus-growth pass:
+
+```text
+multiprocessing_sage.py: 5 passed, 0 failed, 4 skipped
+```
+
+This pass adds `sage/parallel/multiprocessing_sage.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 748
+non-comment entries. The file gives the browser-compatible default profile a
+small import and setup smoke for Sage's multiprocessing-backed parallel
+iterator while the actual process-pool execution steps are classified as
+`# needs _multiprocessing`, matching the current runtime boundary.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/this-run/mixed-lowcount.sqlite3`.
+The saved candidate summary found no clean promotion candidate in the mixed
+batch: twelve files were skipped-only, one had no extracted blocks, and four
+needed triage around graph, GAP, cypari2, or multiprocessing backend support.
+The multiprocessing helper was the narrowest honest promotion after adding
+explicit `_multiprocessing` metadata to its process-pool examples.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=75`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/this-run/multiprocessing-make.sqlite3`.
+The latest-run summary records 5 passed, 0 failed, 4 skipped, and the saved
+block- and file-failure cluster queries are empty. `skips-by-reason.sql`
+groups all deferred examples under `optional:_multiprocessing`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -6070,6 +6070,20 @@ diff -urN a/src/sage/parallel/parallelism.py b/src/sage/parallel/parallelism.py
 @@ -300 +300 @@
 -            sage: Parallelism().get_all()
 +            sage: Parallelism().get_all()  # random - dict display order differs in Sagelite
+diff -urN a/src/sage/parallel/multiprocessing_sage.py b/src/sage/parallel/multiprocessing_sage.py
+--- a/src/sage/parallel/multiprocessing_sage.py
++++ b/src/sage/parallel/multiprocessing_sage.py
+@@ -36 +36 @@
+-        sage: P = parallel(p_iter=p_iter)
++        sage: P = parallel(p_iter=p_iter)                                         # needs _multiprocessing
+@@ -38 +38 @@
+-        sage: v = list(P(f)(list(range(10)))); v.sort(); v
++        sage: v = list(P(f)(list(range(10)))); v.sort(); v                       # needs _multiprocessing
+@@ -62,2 +62,2 @@
+-        sage: v = list(sage.parallel.multiprocessing_sage.parallel_iter(2, f, [((2,), {}), ((3,),{})]))
+-        sage: v.sort(); v
++        sage: v = list(sage.parallel.multiprocessing_sage.parallel_iter(2, f, [((2,), {}), ((3,),{})]))  # needs _multiprocessing
++        sage: v.sort(); v                                                        # needs _multiprocessing
 diff -urN a/src/sage/misc/benchmark.py b/src/sage/misc/benchmark.py
 --- a/src/sage/misc/benchmark.py
 +++ b/src/sage/misc/benchmark.py
