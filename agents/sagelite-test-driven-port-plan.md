@@ -13089,6 +13089,39 @@ stack. A later pass should either target one of those clusters explicitly or
 sample a different namespace rather than repeating the small database,
 plotting, monoid, category, and pure-math helper probes above.
 
+Continued scheduled absent-candidate audit pass:
+
+This continuation sampled 54 more absent files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/continued-corpus-growth/`
+and did not find a clean non-skipped promotion candidate. Across the five
+SQLite dashboards, the direct probes recorded 59 passed blocks, 75 failed
+blocks, and 784 skipped blocks. The saved candidate summary classified 8
+files as `needs_triage`, 34 as `skipped_only`, and 12 as
+`no_doctest_blocks`.
+
+The fresh batches covered compact utility/function files, low static-doctest
+files, small concrete modules, module/category-adjacent files, and quaternion
+algebra helpers:
+
+```text
+utility-function-probe.sqlite3: 49 passed, 17 failed, 527 skipped
+small-concrete-probe.sqlite3: 0 passed, 0 failed, 0 skipped
+low-doctest-probe.sqlite3: 0 passed, 2 failed, 47 skipped
+mid-doctest-probe.sqlite3: 6 passed, 30 failed, 79 skipped
+algebra-category-probe.sqlite3: 4 passed, 26 failed, 131 skipped
+```
+
+The skipped-only and zero-block files should stay out of the curated corpus
+until they gain default-profile runnable coverage. The runnable failures are
+also not narrow corpus-growth tags: `sage/functions/other.py` mixes symbolic
+imports, function-object API gaps, and output drift; the PARI real-double
+conversion probe still hits the cypari2 conversion boundary; the fp-graded
+module probes lose setup around Steenrod algebra examples; the pbori probe is
+blocked by the unavailable Boolean-polynomial backend; the Neveu-Schwarz
+probe reaches algebraic-real cache/coercion drift; and the quaternion probes
+are dominated by missing `QuaternionAlgebra` startup/module paths plus
+dependent state loss.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
