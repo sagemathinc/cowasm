@@ -2985,6 +2985,37 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next2/knotinfo-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused modular-symbol G1-list corpus-growth pass:
+
+```text
+g1list.py: 21 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/modular/modsym/g1list.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 819
+non-comment entries. The default browser-compatible profile gains compact
+coverage for Gamma1 modular-symbol list construction, normalization,
+iteration, indexing, and comparison without new skipped blocks or WASI source
+tags.
+
+Exploratory absent-file sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-next3/probe.sqlite3`
+and
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-next3/probe2.sqlite3`.
+The saved `promote-candidates.sql` query classified `g1list.py` as the only
+clean non-skipped candidate in the second batch. The same probes kept
+skipped-only interface, database, numeric-vector, and quadratic-form helpers
+out of the curated corpus, while graph, PARI conversion, homology,
+hypergeometric, and manifold helpers still expose broader runtime or backend
+failure clusters.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-next3/g1list-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
