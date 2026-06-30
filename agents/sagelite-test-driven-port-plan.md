@@ -2689,6 +2689,30 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; `skips-by-reason`
 groups the new deferred setup blocks under `optional:lrslib`.
 
+Focused tensor free-submodule basis corpus-growth pass:
+
+```text
+tensor_free_submodule_basis.py: 31 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/tensor/modules/tensor_free_submodule_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 788
+non-comment entries. Direct sampling first recorded one passing block and
+thirty dependent startup-name failures because the upstream tensor helper
+doctests use `FiniteRankFreeModule(...)` from Sage's startup namespace without
+a local import.
+
+The doctest runner now seeds `FiniteRankFreeModule` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched source copy. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tensor-submodule-basis-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the
+latest-run summary records runner version 73 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
