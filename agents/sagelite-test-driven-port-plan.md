@@ -13960,6 +13960,40 @@ and 19 total blocks. The saved block- and file-failure cluster queries are
 empty; skip grouping records 5 `optional:sage.symbolic` blocks and 3
 `long time` blocks.
 
+Focused computational-mathematics graph-theory corpus-growth pass:
+
+```text
+graphtheory_doctest.py: 4 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 806
+non-comment entries. The default browser-compatible profile gains compact
+coverage for hand-built graph constructors using `Graph`, `Set`, and
+`Subsets`.
+
+Fresh book-file sampling first checked the remaining computational-mathematics
+solution doctests under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-book-sampling/`.
+Most candidates still exposed broader symbolic, plotting, numerical,
+optimization, or multivariate-polynomial clusters. The graph-theory file was
+the narrow follow-up because its only failures were the graph-catalog
+`graphs.PetersenGraph()` example and the dependent `optimal_order(g)` check.
+
+The added WASI source patch marks those two examples as
+`# needs sage.graphs`, leaving the local graph-construction examples as
+runnable coverage. Focused validation used the `test-sage-doctest-corpus` make
+target after a fresh patched-source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/graphtheory/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`aeb51d725b85a85a513529180c436ad7f80ddf83`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 6 total blocks. The saved block- and file-failure cluster queries are
+empty; skip grouping records 2 `optional:sage.graphs` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

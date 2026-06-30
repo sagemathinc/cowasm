@@ -6471,6 +6471,26 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/dom
    (Real Field with 17 bits of precision, Real Field with 42 bits of precision)
  
  Sage example in ./sol/domaines.tex, line 46::
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
+@@ -40,14 +40,14 @@
+     return g
+ 
+ Sage example in ./sol/graphtheory.tex, line 59::
+ 
+-  sage: g = graphs.PetersenGraph()
++  sage: g = graphs.PetersenGraph()                                                # needs sage.graphs
+   sage: def optimal_order(g):
+   ....:    order = []
+   ....:    for color_class in sorted(g.coloring()):
+   ....:        for v in color_class:
+   ....:            order.append(v)
+   ....:    return order
+-  sage: optimal_order(g)
++  sage: optimal_order(g)                                                          # needs sage.graphs
+   [0, 2, 6, 1, 3, 5, 9, 4, 7, 8]
+ """
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
