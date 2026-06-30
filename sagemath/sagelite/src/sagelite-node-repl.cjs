@@ -1004,6 +1004,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.sets.recursively_enumerated_set", ("RecursivelyEnumeratedSet",)),
         ("sage.sets.set", ("Set",)),
         ("sage.schemes.generic.spec", ("Spec",)),
+        ("sage.schemes.projective.projective_space", ("ProjectiveSpace",)),
     )
     for module_name, names in imports:
         try:

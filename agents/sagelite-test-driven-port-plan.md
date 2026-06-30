@@ -11987,6 +11987,34 @@ databases contained clean entries for `sage/structure/nonexact.py`,
 `sage/structure/debug_options.pyx`, and `sage/misc/python.py`, but all three
 are already present in the curated corpus.
 
+Focused scheme overview corpus-growth pass:
+
+```text
+schemes/overview.py: 9 passed, 0 failed, 0 skipped
+```
+
+This pass adds `sage/schemes/overview.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 733 non-comment
+entries. The file gives the default profile a compact scheme documentation
+smoke covering projective-space construction, point-set display, quotient-ring
+setup, and projective point normalization.
+
+The initial focused probe had two passing quotient-ring setup blocks and seven
+downstream `NameError` failures because `ProjectiveSpace` was absent from the
+stripped Sagelite doctest startup namespace. The doctest runner now seeds
+`ProjectiveSpace` from `sage.schemes.projective.projective_space`, following
+the existing focused-constructor namespace pattern used for entries such as
+`Spec`.
+
+Focused validation used the `test-sage-doctest-corpus` make target against the
+current patched source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/schemes-overview/make.sqlite3`.
+The latest-run summary records 9 passed, 0 failed, 0 skipped, runner version
+72, and empty saved block- and file-failure cluster queries. The standalone
+doctest smoke now also checks that `ProjectiveSpace(2, QQ)` is available from
+the common doctest namespace.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
