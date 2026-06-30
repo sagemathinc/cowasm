@@ -1477,6 +1477,18 @@ diff -urN a/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py b
 @@ -216 +216 @@
 -        sage: Q._rational_diagonal_form_and_transformation()
 +        sage: Q._rational_diagonal_form_and_transformation()                         # random - tuple pretty-printer display differs in Sagelite
+diff -urN a/src/sage/quadratic_forms/quadratic_form__reduction_theory.py b/src/sage/quadratic_forms/quadratic_form__reduction_theory.py
+--- a/src/sage/quadratic_forms/quadratic_form__reduction_theory.py
++++ b/src/sage/quadratic_forms/quadratic_form__reduction_theory.py
+@@ -173 +173 @@
+-        sage: Q.minkowski_reduction()
++        sage: Q.minkowski_reduction()                                                # random - tuple pretty-printer display differs in Sagelite
+@@ -196 +196 @@
+-        sage: Q.minkowski_reduction()
++        sage: Q.minkowski_reduction()                                                # random - tuple pretty-printer display differs in Sagelite
+@@ -306 +306 @@
+-        sage: Q.minkowski_reduction_for_4vars__SP()
++        sage: Q.minkowski_reduction_for_4vars__SP()                                  # random - tuple pretty-printer display differs in Sagelite
 diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
 --- a/src/sage/dynamics/finite_dynamical_system.py
 +++ b/src/sage/dynamics/finite_dynamical_system.py

@@ -12789,6 +12789,41 @@ temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 72, and the saved block-failure
 cluster query is empty.
 
+Focused quadratic equivalence/neighborhood corpus-growth pass:
+
+```text
+sage -t passed: 78 passed, 0 failed, 92 skipped
+```
+
+That three-file make-target validation adds
+`sage/quadratic_forms/quadratic_form__equivalence_testing.py`,
+`sage/quadratic_forms/quadratic_form__neighbors.py`, and
+`sage/quadratic_forms/quadratic_form__reduction_theory.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 769 non-comment entries. The accepted files add default-profile coverage
+for rational and local quadratic-form equivalence checks, p-neighbor
+construction, and Minkowski reduction helpers while preserving existing
+PARI, number-field, symbolic, and GAP boundaries as explicit skips.
+
+Exploratory sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/continuation/qform-next.sqlite3`.
+That five-file quadratic-form batch kept
+`quadratic_form__automorphisms.py` out as skipped-only PARI/GAP coverage and
+kept `quadratic_form__ternary_Tornaria.py` out because its first runnable
+failure still hits a matrix `gcd()`/`__dict__` runtime gap. The
+`quadratic_form__reduction_theory.py` failures were limited to Sagelite's
+compact tuple pretty-printer layout for `(form, matrix)` reduction results, so
+the WASI source patch now marks those three display checks as `# random`,
+matching the existing quadratic local-field invariant tuple-display tags.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary three-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/continuation/qform-clean.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -715,6 +715,7 @@ src/sage/quadratic_forms/binary_qf.py
 src/sage/quadratic_forms/count_local_2.pyx
 src/sage/quadratic_forms/extras.py
 src/sage/quadratic_forms/quadratic_form__count_local_2.py
+src/sage/quadratic_forms/quadratic_form__equivalence_testing.py
 src/sage/quadratic_forms/quadratic_form__evaluate.pyx
 src/sage/quadratic_forms/quadratic_form__local_density_congruence.py
 src/sage/quadratic_forms/quadratic_form__local_density_interfaces.py
@@ -722,6 +723,8 @@ src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
 src/sage/quadratic_forms/quadratic_form__local_normal_form.py
 src/sage/quadratic_forms/quadratic_form__mass.py
 src/sage/quadratic_forms/quadratic_form__mass__Conway_Sloane_masses.py
+src/sage/quadratic_forms/quadratic_form__neighbors.py
+src/sage/quadratic_forms/quadratic_form__reduction_theory.py
 src/sage/quadratic_forms/quadratic_form__variable_substitutions.py
 src/sage/quadratic_forms/random_quadraticform.py
 src/sage/quadratic_forms/special_values.py
