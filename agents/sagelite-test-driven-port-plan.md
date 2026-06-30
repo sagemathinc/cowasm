@@ -13053,6 +13053,42 @@ have changed. Better near-term candidates should come from a fresh absent-file
 ranking that excludes skipped-only dashboards and already-promoted historical
 clean rows.
 
+Follow-up scheduled probe on 2026-06-30 confirmed that the current SQLite
+scratch cache has no clean runnable files left that are absent from
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. Normalizing clean
+`files` rows from the existing `.tmp/current-run` dashboards against the
+current 777-entry corpus produced no promotion candidates; the low-count clean
+files from the previous final pass, such as the small category wrappers,
+catalog helpers, `misc/multireplace.py`, `misc/search.pyx`, and
+`structure/test_factory.py`, are already present.
+
+Fresh direct probes written under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/codex-pass/` also did
+not find a narrow new corpus addition:
+
+```text
+small-probe.sqlite3: 0 passed, 0 failed, 39 skipped
+midsmall-probe.sqlite3: 1 passed, 26 failed, 78 skipped
+pure-probe.sqlite3: 7 passed, 32 failed, 157 skipped
+```
+
+The skipped-only batch covered small absent files such as
+`sage/cpython/cython_metaclass.pyx`, `sage/databases/cunningham_tables.py`,
+`sage/databases/odlyzko.py`, `sage/plot/step.py`,
+`sage/tests/lazy_imports.py`, `sage/misc/map_threaded.py`,
+`sage/categories/g_sets.py`, and `sage/categories/groupoid.py`. These are not
+useful dashboard additions yet because they add no default-profile runnable
+blocks.
+
+The runnable failures should stay out of quick corpus-growth work for now:
+`sage/homology/homology_group.py` is dominated by a repeated core
+module/type-construction `TypeError`, `sage/combinat/posets/sashes.py` is
+blocked by graph and polytope imports plus dependent name failures, and
+`sage/repl/configuration.py` is blocked by the stripped IPython/traitlets
+stack. A later pass should either target one of those clusters explicitly or
+sample a different namespace rather than repeating the small database,
+plotting, monoid, category, and pure-math helper probes above.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
