@@ -13581,6 +13581,39 @@ The latest-run summary records runner version 73 with 22 total blocks, and the
 saved block- and file-failure cluster queries are empty. Skip grouping records
 18 `optional:ipython` blocks and 3 `optional:pexpect` blocks.
 
+Focused computational-mathematics domain doctest corpus-growth pass:
+
+```text
+domaines_doctest.py: 17 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 792
+non-comment entries. The default browser-compatible profile gains compact
+coverage for real-field precision coercion, real literal parent behavior, and
+finite-dimensional vector-space morphism construction from the computational
+mathematics book examples.
+
+Exploratory book sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/continue-fresh/books.sqlite3`.
+The broader sample kept the graph theory, linear solve, integration,
+number-theory, and other book exercise files out of the quiet corpus because
+their failures still group around graph, SciPy, symbolic calculus, and
+dependent-state boundaries. The domain file was the narrow follow-up: its
+only failures were the `pi` precision-coercion setup and dependent checks, now
+classified as `# needs sage.symbolic`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/domaines/make.sqlite3`.
+The latest-run summary records runner version 73 with 20 total blocks, and the
+saved block- and file-failure cluster queries are empty. Skip grouping records
+all three skips under `optional:sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

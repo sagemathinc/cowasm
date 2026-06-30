@@ -6409,6 +6409,24 @@ diff -urN a/src/sage/rings/polynomial/refine_root.pyx b/src/sage/rings/polynomia
 +        sage: refine_root(ip, ipd, irt, CIF)                                       # needs sage.symbolic
          0.766044443118978? + 0.642787609686540?*I
      """
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
+@@ -15,11 +15,11 @@
+   3
+ 
+ Sage example in ./sol/domaines.tex, line 28::
+ 
+-  sage: a = Reals(17)(pi); b = Reals(42)(pi)
+-  sage: type(a) == type(b)
++  sage: a = Reals(17)(pi); b = Reals(42)(pi)                                      # needs sage.symbolic
++  sage: type(a) == type(b)                                                        # needs sage.symbolic
+   True
+-  sage: parent(a), parent(b)
++  sage: parent(a), parent(b)                                                      # needs sage.symbolic
+   (Real Field with 17 bits of precision, Real Field with 42 bits of precision)
+ 
+ Sage example in ./sol/domaines.tex, line 46::
 diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
 --- a/src/sage/categories/simplicial_sets.py
 +++ b/src/sage/categories/simplicial_sets.py
