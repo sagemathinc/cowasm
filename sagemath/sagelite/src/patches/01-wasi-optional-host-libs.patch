@@ -6365,6 +6365,12 @@ diff -urN a/src/sage/databases/oeis.py b/src/sage/databases/oeis.py
 @@ -1598 +1598 @@
 -            sage: HTML = s.links(format='html');  HTML
 +            sage: HTML = s.links(format='html');  HTML                           # random - Sagelite compares the HtmlFragment string repr
+diff -urN a/src/sage/features/__init__.py b/src/sage/features/__init__.py
+--- a/src/sage/features/__init__.py
++++ b/src/sage/features/__init__.py
+@@ -592 +592 @@
+-        sage: package_systems()    # random
++        sage: package_systems()    # random                                      # needs subprocess
 diff -urN a/src/sage/features/join_feature.py b/src/sage/features/join_feature.py
 --- a/src/sage/features/join_feature.py
 +++ b/src/sage/features/join_feature.py
@@ -6387,6 +6393,9 @@ diff -urN a/src/sage/features/pkg_systems.py b/src/sage/features/pkg_systems.py
 @@ -35 +35 @@
 -            sage: debian.is_present()  # indirect doctest, random
 +            sage: debian.is_present()  # indirect doctest, random                 # needs subprocess
+@@ -200 +200 @@
+-        except CalledProcessError:
++        except (CalledProcessError, OSError):
 diff -urN a/src/sage/features/databases.py b/src/sage/features/databases.py
 --- a/src/sage/features/databases.py
 +++ b/src/sage/features/databases.py

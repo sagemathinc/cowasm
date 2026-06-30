@@ -3113,6 +3113,35 @@ kernel behavior. Mixed small-file probes were mostly skipped-only or zero-block;
 the only near-miss with enough passing coverage was the quadratic split-local
 helper promoted above.
 
+Focused feature-framework corpus-growth pass:
+
+```text
+__init__.py: 125 passed, 0 failed, 22 skipped
+```
+
+That one-file make-target validation adds `sage/features/__init__.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 824 non-comment
+entries. Direct sampling first recorded one subprocess-backed
+`package_systems()` failure and, after tagging that explicit package-manager
+probe as `# needs subprocess`, one dependent static-file feature failure where
+missing-file resolution still called the pip package-system probe.
+
+The WASI source patch now treats `OSError` from `PipPackageSystem._is_present()`
+the same as a failed `sage -pip` subprocess, so feature-resolution paths report
+ordinary unavailable optional features instead of leaking WASI's unsupported
+process error. Focused validation rebuilt the Sagelite standalone runtime with
+`make -C sagemath/sagelite test-wasi-sdk-standalone`, then ran
+`test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/features-init-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`333656c0040fec0cd62002a8478439fd8ee393ff`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the newly deferred
+package-system probe under `optional:subprocess`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
