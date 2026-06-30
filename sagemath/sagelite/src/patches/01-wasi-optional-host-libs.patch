@@ -6022,6 +6022,42 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/neveu_schwarz_lie_conformal
 @@ -51 +51 @@
 -        sage: G.degree()
 +        sage: G.degree()                                                             # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_structure_coefs.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_structure_coefs.py
+--- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_structure_coefs.py
++++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_structure_coefs.py
+@@ -108 +108 @@
+-        sage: R = LieConformalAlgebra(QQbar, virdict, names='L')
++        sage: R = LieConformalAlgebra(QQbar, virdict, names='L')                     # needs sage.rings.number_field
+@@ -109 +109 @@
+-        sage: R.inject_variables()
++        sage: R.inject_variables()                                                   # needs sage.rings.number_field
+@@ -111 +111 @@
+-        sage: L.bracket(L)
++        sage: L.bracket(L)                                                           # needs sage.rings.number_field
+@@ -300 +300 @@
+-            sage: Vir = lie_conformal_algebras.Virasoro(AA)
++            sage: Vir = lie_conformal_algebras.Virasoro(AA)                          # needs sage.rings.number_field
+@@ -301 +301 @@
+-            sage: Vir.structure_coefficients()
++            sage: Vir.structure_coefficients()                                       # needs sage.rings.number_field
+@@ -324 +324 @@
+-            sage: Vir = lie_conformal_algebras.Virasoro(QQbar)
++            sage: Vir = lie_conformal_algebras.Virasoro(QQbar)                       # needs sage.rings.number_field
+@@ -325 +325 @@
+-            sage: Vir._repr_generator(Vir.0)
++            sage: Vir._repr_generator(Vir.0)                                         # needs sage.rings.number_field
+@@ -327 +327 @@
+-            sage: R = lie_conformal_algebras.Affine(QQ, 'A1')
++            sage: R = lie_conformal_algebras.Affine(QQ, 'A1')                        # needs sage.graphs
+@@ -328 +328 @@
+-            sage: R._repr_generator(R.0)
++            sage: R._repr_generator(R.0)                                             # needs sage.graphs
+@@ -330 +330 @@
+-            sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names=('e','h','f'))
++            sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names=('e','h','f'))   # needs sage.graphs
+@@ -331 +331 @@
+-            sage: R._repr_generator(R.0)
++            sage: R._repr_generator(R.0)                                             # needs sage.graphs
 diff -urN a/src/sage/libs/flint/fmpz_poly.pyx b/src/sage/libs/flint/fmpz_poly.pyx
 --- a/src/sage/libs/flint/fmpz_poly.pyx
 +++ b/src/sage/libs/flint/fmpz_poly.pyx

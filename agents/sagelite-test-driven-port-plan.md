@@ -13706,6 +13706,40 @@ the saved block- and file-failure cluster queries are empty. Skip grouping
 records all 55 deferred blocks under
 `optional:sage.combinat,sage.modules`.
 
+Focused lie-conformal structure-coefficient corpus-growth pass:
+
+```text
+lie_conformal_algebra_with_structure_coefs.py: 15 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_structure_coefs.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 796
+non-comment entries. The default browser-compatible profile gains direct
+coverage for custom structure-coefficient construction, bracket computation,
+skew-symmetry validation, and Neveu-Schwarz structure coefficients.
+
+Fresh low-count sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-frontier/category-sample.sqlite3`,
+`mixed-lowcount.sqlite3`, and `wide-lowcount.sqlite3`. Most sampled category,
+misc, homology, plot, and small utility files were skipped-only under the
+browser profile. The lie-conformal implementation files exposed broader graph,
+algebraic-number-field, and cypari2 number-field clusters; the structure
+coefficient file was the narrow follow-up because its failures were limited to
+explicit graph-backed affine examples and QQbar/AA number-field examples.
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched-source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-frontier/lie-structure/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`92b661819df364bbe846078a91a3c829095d6e25`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and 26 total blocks. The saved block- and file-failure cluster queries are
+empty. Skip grouping records 7 `optional:sage.rings.number_field` blocks and
+4 `optional:sage.graphs` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
