@@ -165,6 +165,7 @@ src/sage/graphs/dot2tex_utils.py
 src/sage/groups/abelian_gps/abelian_group.py
 src/sage/groups/abelian_gps/abelian_group_element.py
 src/sage/groups/abelian_gps/abelian_group_morphism.py
+src/sage/groups/abelian_gps/element_base.py
 src/sage/groups/abelian_gps/values.py
 src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_lists.pyx

@@ -12919,6 +12919,36 @@ The latest-run summary records runner version 72, and the saved block- and
 file-failure cluster queries are empty; `skips-by-reason.sql` groups the new
 deferred import under `optional:sage.libs.gap`.
 
+Focused abelian-group element-base corpus-growth pass:
+
+```text
+element_base.py: 43 passed, 0 failed, 19 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/abelian_gps/element_base.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 774
+non-comment entries. The file adds runnable default-profile coverage for the
+base element class used by abelian-group elements, including arithmetic,
+comparison, parent, word-problem, and pickling helper paths, while preserving
+existing GAP/libgap-backed coverage as explicit skips.
+
+Direct sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next/probe.sqlite3`.
+The same batch kept `sage/groups/group_exp.py` out because its first failures
+still route through the stripped GAP-backed Weyl-group constructor, kept
+`sage/groups/misc_gps/argument_groups.py` out because it has broader symbolic
+startup and parent-display clusters, kept
+`sage/categories/examples/with_realizations.py` out as skipped-only coverage,
+and kept `sage/groups/misc_gps/misc_groups.py` out as empty coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next/element-base-make.sqlite3`.
+The latest-run summary records runner version 72, and the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
