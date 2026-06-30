@@ -875,7 +875,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.tableau", ("SemistandardTableaux", "StandardTableau", "StandardTableaux", "Tableau", "Tableaux")),
         ("sage.combinat.tableau_tuple", ("StandardTableauTuple", "StandardTableauTuples", "TableauTuples")),
         ("sage.combinat.partition_tuple", ("PartitionTuples",)),
-        ("sage.combinat.subset", ("Subsets",)),
+        ("sage.combinat.subset", ("Subsets", "subsets")),
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
         ("sage.combinat.words.alphabet", ("Alphabet",)),

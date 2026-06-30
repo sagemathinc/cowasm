@@ -2579,6 +2579,30 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 shows the expected `pkgconfig`, Cremona data, meson-editable, and Cython
 deferrals.
 
+Focused cooperative-game corpus-growth pass:
+
+```text
+cooperative_game.py: 101 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/game_theory/cooperative_game.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 734
+non-comment entries. Direct sampling first recorded 99 passed blocks and two
+startup-name failures because the file's Shapley-value example uses Sage's
+lowercase `subsets(...)` helper without a local import.
+
+The doctest runner now seeds `subsets` beside the existing `Subsets`
+constructor in the common doctest namespace, and the WASI `sage.all` patch
+exposes the same helper for REPL parity on a fresh patched source copy.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/cooperative-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the
+latest-run summary records runner version 72 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

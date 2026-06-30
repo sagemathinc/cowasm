@@ -78,6 +78,7 @@ src/sage/dynamics/cellular_automata/elementary.py
 src/sage/dynamics/cellular_automata/glca.py
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
+src/sage/game_theory/cooperative_game.py
 src/sage/games/sudoku_backtrack.pyx
 src/sage/features/all.py
 src/sage/features/bitness.py
