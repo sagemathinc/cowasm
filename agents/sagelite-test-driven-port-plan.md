@@ -2798,6 +2798,33 @@ The one narrow clean file seen in the same utility probe,
 curated corpus, so this pass intentionally records the frontier instead of
 adding a skipped-only or duplicate corpus entry.
 
+Focused tensor module corpus-growth pass:
+
+```text
+free_module_basis.py: 187 passed, 0 failed, 0 skipped
+free_module_element.py: 62 passed, 0 failed, 0 skipped
+tensor_free_module.py: 142 passed, 0 failed, 0 skipped
+```
+
+That three-file make-target validation adds
+`sage/tensor/modules/free_module_basis.py`,
+`sage/tensor/modules/free_module_element.py`, and
+`sage/tensor/modules/tensor_free_module.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 800
+non-comment entries. The files add core finite-rank free-module basis,
+element, and tensor-module coverage, and they are now quiet under the default
+browser-compatible profile after the earlier `FiniteRankFreeModule` startup
+namespace work.
+
+The same direct tensor-frontier probe kept `sage/tensor/modules/comp.py` out
+of the quiet dashboard because it still records a broad 152-failure component
+cluster. Focused validation used the `test-sage-doctest-corpus` make target
+against a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tensor-modules-clean-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the
+latest-run summary records runner version 73 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
