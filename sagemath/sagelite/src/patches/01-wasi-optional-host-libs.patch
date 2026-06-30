@@ -7298,3 +7298,48 @@ diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogo
 @@ -2555 +2555 @@
 -            sage: from sage.interfaces.maxima_lib import maxima
 +            sage: from sage.interfaces.maxima_lib import maxima                        # needs sage.symbolic
+diff --git a/src/sage/game_theory/parser.py b/src/sage/game_theory/parser.py
+--- a/src/sage/game_theory/parser.py
++++ b/src/sage/game_theory/parser.py
+@@ -34,10 +34,10 @@
+             sage: from subprocess import Popen, PIPE
+             sage: A = matrix([[1]])
+             sage: B = matrix([[5]])
+-            sage: g = NormalFormGame([A,B])
+-            sage: game_str = g._lrs_nash_format(A, B)
++            sage: g = NormalFormGame([A,B])                                           # optional - lrslib
++            sage: game_str = g._lrs_nash_format(A, B)                                 # optional - lrslib
+             sage: game_name = tmp_filename()
+-            sage: with open(game_name, 'w') as game_file:
++            sage: with open(game_name, 'w') as game_file:                             # optional - lrslib
+             ....:     _ = game_file.write(game_str)
+             sage: from sage.features.lrs import LrsNash
+             sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+@@ -62,10 +62,10 @@
+             sage: from sage.game_theory.parser import Parser
+             sage: from subprocess import Popen, PIPE
+             sage: A = matrix([[1, 2], [3, 2]])
+-            sage: g = NormalFormGame([A])
+-            sage: game_str = g._lrs_nash_format(A, -A)
++            sage: g = NormalFormGame([A])                                             # optional - lrslib
++            sage: game_str = g._lrs_nash_format(A, -A)                                # optional - lrslib
+             sage: game_name = tmp_filename()
+-            sage: with open(game_name, 'w') as game_file:
++            sage: with open(game_name, 'w') as game_file:                             # optional - lrslib
+             ....:     _ = game_file.write(game_str)
+             sage: from sage.features.lrs import LrsNash
+             sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+@@ -104,10 +104,10 @@
+             sage: B = matrix([[-9, 7, 9],
+             ....:             [6, -2, -3],
+             ....:             [-4, 6, -10]])
+-            sage: g = NormalFormGame([A, B])
+-            sage: game_str = g._lrs_nash_format(A, B)
++            sage: g = NormalFormGame([A, B])                                          # optional - lrslib
++            sage: game_str = g._lrs_nash_format(A, B)                                 # optional - lrslib
+             sage: game_name = tmp_filename()
+-            sage: with open(game_name, 'w') as game_file:
++            sage: with open(game_name, 'w') as game_file:                             # optional - lrslib
+             ....:     _ = game_file.write(game_str)
+             sage: from sage.features.lrs import LrsNash
+             sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib

@@ -2662,6 +2662,33 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tensor-format-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused game-theory parser corpus-growth pass:
+
+```text
+parser.py: 17 passed, 0 failed, 76 skipped
+```
+
+That one-file make-target validation adds `sage/game_theory/parser.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 787
+non-comment entries. Direct sampling first recorded 17 passed blocks, nine
+focused failures, and 67 skips. The failures were untagged setup prompts for
+the parser's `lrslib` examples; the setup constructs a `NormalFormGame` only
+to write input for the external lrs solver, and importing `NormalFormGame` in
+the stripped browser-compatible profile reaches the unavailable numerical MIP
+backend.
+
+The added WASI source patch marks those lrs setup prompts as
+`# optional - lrslib`, preserving the parser's pure string-format and
+Gambit-output conversion coverage while keeping external solver setup out of
+the default profile. Focused validation used the `test-sage-doctest-corpus`
+make target after rebuilding a fresh patched Sagelite source copy, with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/game-parser-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups the new deferred setup blocks under `optional:lrslib`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
