@@ -6831,6 +6831,12 @@ diff --git a/src/sage/sat/solvers/dimacs.py b/src/sage/sat/solvers/dimacs.py
 +            sage: from sage.sat.boolean_polynomials import solve as solve_sat          # needs sage.rings.polynomial.plural
              sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings brial
              sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings brial
+diff --git a/src/sage/schemes/elliptic_curves/mod5family.py b/src/sage/schemes/elliptic_curves/mod5family.py
+--- a/src/sage/schemes/elliptic_curves/mod5family.py
++++ b/src/sage/schemes/elliptic_curves/mod5family.py
+@@ -31 +31 @@
+-        sage: mod5family(0,1)
++        sage: mod5family(0,1)                                                        # needs sage.libs.singular
 diff --git a/src/sage/combinat/gelfand_tsetlin_patterns.py b/src/sage/combinat/gelfand_tsetlin_patterns.py
 --- a/src/sage/combinat/gelfand_tsetlin_patterns.py
 +++ b/src/sage/combinat/gelfand_tsetlin_patterns.py

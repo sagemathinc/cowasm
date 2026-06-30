@@ -12281,6 +12281,37 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records 29 passed, 0 failed, 0 skipped, runner version
 72, and empty saved block- and file-failure cluster queries.
 
+Focused mod-5 elliptic-curve helper corpus-growth pass:
+
+```text
+mod5family.py: 1 passed, 0 failed, 1 skipped
+```
+
+This pass adds `sage/schemes/elliptic_curves/mod5family.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 743 non-comment
+entries. The default profile gains a compact import smoke for the mod-5
+elliptic-curve family helper while the constructor example that reaches
+`sage.libs.singular.function` through the elliptic-curve-over-function-field
+path is now an explicit `# needs sage.libs.singular` skip.
+
+Fresh low-count absent-file probes in the same pass did not expose a clean
+non-skipped promotion candidate. The corrected low-count batch classified
+graph, matroid, PARI conversion, GAP matrix-group, PBORI, Lovasz-theta, and
+qsieve files as triage targets, with many adjacent interface/catalog files
+remaining skipped-only or empty. A targeted follow-up batch over category,
+topology, monoid, doctest, and homology helpers likewise found only
+skipped-only files or real failures in `repl/inputhook.py`,
+`modules/fp_graded/free_homspace.py`, and `doctest/__main__.py`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/next-goal/mod5family-make.sqlite3`.
+The latest-run summary records 1 passed, 0 failed, 1 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
