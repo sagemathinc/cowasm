@@ -696,6 +696,12 @@ src/sage/logic/logictable.py
 src/sage/logic/propcalc.py
 src/sage/functions/spike_function.py
 src/sage/functions/wigner.py
+src/sage/functions/airy.py
+src/sage/functions/bessel.py
+src/sage/functions/error.py
+src/sage/functions/gamma.py
+src/sage/functions/log.py
+src/sage/functions/special.py
 src/sage/quadratic_forms/constructions.py
 src/sage/quadratic_forms/binary_qf.py
 src/sage/quadratic_forms/count_local_2.pyx
