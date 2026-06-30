@@ -13676,6 +13676,36 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The latest-run summary records runner version 73 with 22 total blocks, and
 the saved block- and file-failure cluster queries are empty.
 
+Focused triangular Kac-Moody category corpus-growth pass:
+
+```text
+triangular_kac_moody_algebras.py: 2 passed, 0 failed, 55 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/triangular_kac_moody_algebras.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 795
+non-comment entries. The default browser-compatible profile gains compact
+coverage for the triangular Kac-Moody category while leaving the Lie algebra
+construction examples under their existing explicit
+`# needs sage.combinat sage.modules` metadata.
+
+Fresh support-module sampling first used
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/fresh-after-sashes/support-batch.sqlite3`.
+Most nearby category, misc, and stats files were skipped-only or exposed
+broader reset/session, polynomial-timeout, finite-field NTL, or lattice-poset
+clusters. The triangular Kac-Moody category file was the only clean runnable
+promotion candidate in that batch.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30/fresh-after-sashes/triangular-kac-moody/make.sqlite3`.
+The latest-run summary records runner version 73 with 57 total blocks, and
+the saved block- and file-failure cluster queries are empty. Skip grouping
+records all 55 deferred blocks under
+`optional:sage.combinat,sage.modules`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -441,6 +441,7 @@ src/sage/categories/hopf_algebras_with_basis.py
 src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/kac_moody_algebras.py
+src/sage/categories/triangular_kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lambda_bracket_algebras.py
 src/sage/categories/lie_conformal_algebras.py
