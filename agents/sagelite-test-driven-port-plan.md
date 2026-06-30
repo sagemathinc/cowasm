@@ -14130,6 +14130,39 @@ The latest-run summary records CoWasm commit
 and 6 total blocks. The saved block- and file-failure cluster queries are
 empty.
 
+Focused Euclidean affine-group corpus-growth pass:
+
+```text
+euclidean_group.py: 30 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/affine_gps/euclidean_group.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 816
+non-comment entries. The default browser-compatible profile gains compact
+coverage for Euclidean group construction over exact rings, representation,
+normalization, LaTeX output, element construction, and basic parent behavior.
+
+Fresh sampling first checked modular arithmetic-group helpers, small modular
+and FLINT wrappers, combinatorics species, plot helpers, coding helpers,
+Judson book doctests, and low-level library wrappers under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next2/`. Most
+candidates were skipped-only, zero-block, or exposed broader startup,
+symbolic, FLINT/NTL/libcxx, GAP, coding, or species clusters. The affine
+Euclidean group file was the narrow promotion candidate because it already had
+a clean non-skipped pass rate, with its finite-field and GAP-backed examples
+covered by existing explicit `# needs` metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next2/groups/euclidean-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`faad8a743bf1462ba9e2ef0d24abb1e7da16fc26`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
