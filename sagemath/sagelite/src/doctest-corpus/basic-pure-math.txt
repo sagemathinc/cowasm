@@ -624,6 +624,7 @@ src/sage/parallel/ncpus.py
 src/sage/parallel/parallelism.py
 src/sage/parallel/reference.py
 src/sage/sat/solvers/dimacs.py
+src/sage/sat/solvers/picosat.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx

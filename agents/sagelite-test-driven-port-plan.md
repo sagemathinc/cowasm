@@ -11834,6 +11834,23 @@ computational math doctests had broad symbolic/combinatorics failures;
 skipped-only; `sage/combinat/gelfand_tsetlin_patterns.py` remains a near miss
 with a `sage.graphs.generic_graph_pyx` import gap through crystal helpers.
 
+Focused PicoSAT solver wrapper corpus-growth pass:
+
+```text
+picosat.py: 7 passed, 0 failed, 32 skipped
+```
+
+This pass adds `sage/sat/solvers/picosat.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 728 non-comment
+entries. The file adds lightweight SAT solver wrapper coverage while its
+PicoSAT-backed examples remain explicitly skipped in the default
+browser-compatible profile. No new WASI source tags or startup namespace
+changes were needed.
+
+Direct sampling also confirmed that adjacent `dimacs_test.py` is empty under
+the Sagelite doctest extractor and `sat_lp.py` is skipped-only in the default
+profile, so they remain outside the quiet corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
