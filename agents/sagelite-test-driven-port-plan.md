@@ -3016,6 +3016,35 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-codex-next3/g1list-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused modular-symbol P1-list corpus-growth pass:
+
+```text
+p1list.pyx: 118 passed, 0 failed, 3 skipped
+```
+
+That one-file focused validation adds `sage/modular/modsym/p1list.pyx` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 820
+non-comment entries. The default browser-compatible profile gains
+projective-line list construction, normalization, scalar-normalization,
+iteration, indexing, and pickling coverage for modular-symbol support. The
+only skipped blocks are already explicit deferred `# not tested` examples, so
+no new WASI source tags or startup namespace changes were required.
+
+Exploratory modular-symbol frontier sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next4/modsym/probe.sqlite3`.
+The saved `promote-candidates.sql` query classified `p1list.pyx` as the only
+clean runnable promotion candidate in that batch. Neighboring
+`ghlist.py`, `manin_symbol.pyx`, `relation_matrix.py`, and `tests.py` were
+skipped-only under the default profile, while `manin_symbol_list.py` still
+has a broader startup-namespace and output-mismatch failure cluster.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-next4/modsym/p1list-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
