@@ -2713,6 +2713,36 @@ Sagelite source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and the
 latest-run summary records runner version 73 in the default node profile.
 
+Follow-up absent-frontier audit:
+
+Fresh focused probes after the tensor free-submodule promotion did not find a
+new clean runnable corpus candidate. The probes used direct `sage -t` with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` set to the patched Sagelite source copy
+and wrote SQLite dashboards under `/home/user/cowasm/.tmp/current-run/`.
+
+The following batches should not be repeated without a new runtime or source
+patch:
+
+- `modules-vector-absent.sqlite3`: vector implementation helpers were either
+  skipped-only, or failed in `filtered_vector_space.py`,
+  `free_module_pseudohomspace.py`, `free_module_pseudomorphism.py`,
+  `module_functors.py`, and `submodule_helper.py`.
+- `category-examples-absent-fresh.sqlite3`: absent category example modules
+  were skipped-only under the default browser profile.
+- `small-algebra-game-absent.sqlite3`: `monoids/hecke_monoid.py`,
+  `monoids/monoid.py`, and `game_theory/matching_game.py` were skipped-only;
+  normal-form game files still have broad runnable failures.
+- `homology-absent-fresh.sqlite3`: most sampled homology files were
+  skipped-only, while `homology_group.py` and
+  `chain_complex_morphism.py` still have runnable failures.
+- `misc-absent-fresh.sqlite3`: sampled `sage.misc` helpers were skipped-only,
+  empty, or blocked by existing symbolic/finite-field/runtime failures.
+
+The one narrow clean file seen in the same utility probe,
+`sage/typeset/unicode_characters.py`, was already present in the current
+curated corpus, so this pass intentionally records the frontier instead of
+adding a skipped-only or duplicate corpus entry.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
