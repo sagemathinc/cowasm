@@ -15712,6 +15712,55 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Scheduled frontier audit after the free-module tutorial promotion did not
+find a new quiet non-skipped candidate, so the curated corpus remains at 862
+non-comment entries. The fresh probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-active4/` using CoWasm commit
+`6f26b2b708eeb9048701822fdb27e1d333a03679`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 90-second per-file timeout.
+
+Two category-example batches were skipped-only or empty. The files
+`sage/categories/examples/algebras_with_basis.py`,
+`filtered_modules_with_basis.py`,
+`finite_dimensional_algebras_with_basis.py`, `graded_modules_with_basis.py`,
+`sets_cat.py`, `with_realizations.py`, `crystals.py`,
+`finite_coxeter_groups.py`,
+`finite_dimensional_lie_algebras_with_basis.py`,
+`graded_connected_hopf_algebras_with_basis.py`,
+`hopf_algebras_with_basis.py`, `lie_algebras.py`, and
+`lie_algebras_with_basis.py` currently contribute only skipped rows under the
+default browser-profile tags, while `all.py` and `coxeter_groups.py` expose no
+doctest blocks. They remain outside the quiet corpus because they would not
+increase passing default-profile coverage.
+
+The module candidate probe recorded
+`385 passed, 196 failed, 117 skipped` across the sampled low-level module
+files, with no promotion candidates. `finite_submodule_iter.pyx` was
+skipped-only, and `vector_integer_sparse.pyx` plus
+`vector_rational_sparse.pyx` exposed no blocks. `free_module_integer.py`
+still reaches a `matrix2.Matrix.randomize` function-signature mismatch through
+`random_matrix(ZZ, 10, 10)`. The broader `free_module_morphism.py`,
+`free_module_pseudohomspace.py`, `free_module_pseudomorphism.py`,
+`module_functors.py`, `submodule.py`, and `submodule_helper.py` failures are
+dominated by dependent-state fallout from early module/submodule construction
+errors, missing Singular/plural dependencies, finite-field setup issues, and
+free-module output drift. These files should wait for a focused module/matrix
+runtime pass rather than piecemeal corpus tagging.
+
+The structural category probe recorded
+`0 passed, 3 failed, 839 skipped`. `finite_posets.py`, `g_sets.py`,
+`groupoid.py`, `posets.py`, `finite_coxeter_groups.py`, and `weyl_groups.py`
+are skipped-only under the current default profile, and `subquotients.py`
+exposes no blocks. The active blockers are timeouts in
+`principal_ideal_domains.py` at `QQ['x']._test_gcd_vs_xgcd()` and
+`unique_factorization_domains.py` at `(x^2*(x-1)^3).radical()`, plus a
+polynomial-element `memory access out of bounds` trap in
+`quotient_fields.py` while constructing
+`(1+x)^3*(1+2*x^2)/(1-x^5)`. These clusters point back to the polynomial
+gcd/factorization and NTL/libcxx runtime frontier instead of a narrow category
+startup fix.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
