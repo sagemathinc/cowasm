@@ -1609,7 +1609,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,227 @@
+@@ -253,74 +253,228 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1663,6 +1663,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 +    from sage.categories.lie_algebras import LieAlgebras
 +    from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
++    from sage.algebras.lie_algebras.all import lie_algebras
 +    from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 +    from sage.categories.graded_modules import GradedModules
 +    from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
@@ -5975,6 +5976,24 @@ diff -urN a/src/sage/algebras/lie_algebras/abelian.py b/src/sage/algebras/lie_al
                  sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
                  sage: B = L.basis()
                  sage: l1 = B[1]
+diff -urN a/src/sage/algebras/lie_algebras/structure_coefficients.py b/src/sage/algebras/lie_algebras/structure_coefficients.py
+--- a/src/sage/algebras/lie_algebras/structure_coefficients.py
++++ b/src/sage/algebras/lie_algebras/structure_coefficients.py
+@@ -261,2 +261,2 @@
+-            sage: L = lie_algebras.sl(QQ, 2)
+-            sage: sorted(L.structure_coefficients(True), key=str)
++            sage: L = lie_algebras.sl(QQ, 2)                                      # needs sage.graphs
++            sage: sorted(L.structure_coefficients(True), key=str)                 # needs sage.graphs
+@@ -393,2 +393,2 @@
+-            sage: L = lie_algebras.three_dimensional(QQ, 4, 1, -1, 2)
+-            sage: L.some_elements()
++            sage: L = lie_algebras.three_dimensional(QQ, 4, 1, -1, 2)             # needs sage.graphs
++            sage: L.some_elements()                                               # needs sage.graphs
+@@ -415,2 +415,2 @@
+-            sage: LSR = LQQ.change_ring(SR)
+-            sage: LSR.structure_coefficients()
++            sage: LSR = LQQ.change_ring(SR)                                      # needs sage.symbolic
++            sage: LSR.structure_coefficients()                                    # needs sage.symbolic
 diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py

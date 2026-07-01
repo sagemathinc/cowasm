@@ -56,6 +56,7 @@ src/sage/algebras/steenrod/steenrod_algebra_misc.py
 src/sage/algebras/lie_algebras/abelian.py
 src/sage/algebras/lie_algebras/bch.py
 src/sage/algebras/lie_algebras/free_lie_algebra.py
+src/sage/algebras/lie_algebras/structure_coefficients.py
 src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py

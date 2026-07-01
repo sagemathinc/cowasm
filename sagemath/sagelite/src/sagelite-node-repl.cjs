@@ -929,6 +929,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.graded_algebras_with_basis", ("GradedAlgebrasWithBasis",)),
         ("sage.categories.lie_algebras", ("LieAlgebras",)),
         ("sage.categories.lie_conformal_algebras", ("LieConformalAlgebras",)),
+        ("sage.algebras.lie_algebras.all", ("lie_algebras",)),
         ("sage.algebras.lie_conformal_algebras.all", ("LieConformalAlgebra", "lie_conformal_algebras")),
         ("sage.categories.graded_modules", ("GradedModules",)),
         ("sage.categories.graded_modules_with_basis", ("GradedModulesWithBasis",)),

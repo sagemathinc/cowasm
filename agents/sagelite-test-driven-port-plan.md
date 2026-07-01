@@ -16314,6 +16314,54 @@ investigate the polynomial/fraction-field table-index and recursion failures,
 the NTL/libcxx ostream trap, and resource packaging for `sage.libs.braiding`
 before revisiting these probes.
 
+Focused Lie-algebra structure-coefficient corpus-growth pass:
+
+```text
+structure_coefficients.py: 48 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_algebras/structure_coefficients.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 869
+non-comment entries. Direct sampling first recorded 48 passed blocks and six
+focused failures. Two setup pairs used Sage's `lie_algebras` startup catalog
+and currently resolve through graph-backed classical Lie-algebra code in the
+stripped browser-compatible profile; one symbolic change-ring pair used `SR`
+from the unavailable symbolic startup surface.
+
+The doctest runner now seeds the lightweight `lie_algebras` lazy catalog alias
+in the common doctest namespace, and the WASI `sage.all` patch exposes the same
+alias for REPL parity on a fresh patched source copy. The added WASI source
+patch marks the graph-backed `lie_algebras.sl(...)` and
+`lie_algebras.three_dimensional(...)` setup pairs as `# needs sage.graphs`,
+and the `SR` pair as `# needs sage.symbolic`, preserving the file's ordinary
+structure-coefficient, construction, representation, and change-ring coverage
+as default-profile doctests.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/auto-2026-07-01-next/structure-coefficients/make-rerun.sqlite3`.
+The latest-run summary records CoWasm commit
+`757db852e753f99248660d2af324d2baae27136a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records four `optional:sage.graphs` blocks
+and two `optional:sage.symbolic` blocks.
+
+The same scheduled continuation rejected three small probes as non-promotable.
+The SAT/logic/probability/numerical probe found only zero-block SAT, logic,
+and probability front doors, skipped-only `optimize.py`, a
+`linear_functions.pyx` timeout at quadratic-field setup, and 165 numerical
+tensor block failures dominated by missing `MixedIntegerLinearProgram`.
+The homology probe found skipped-only neighboring files and a file-level
+matrix `echelonize` signature mismatch in `chain_complex.py`. The broader
+Lie-algebra probe confirmed that `examples.py`, `heisenberg.py`, and
+`lie_algebra.py` still expose large graph-backed catalog and algebra backend
+clusters, while `structure_coefficients.py` was the only narrow promotion
+target.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
