@@ -1693,7 +1693,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,228 @@
+@@ -253,74 +253,229 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1791,6 +1791,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 +    from sage.categories.vector_spaces import VectorSpaces
 +    from sage.algebras.lie_conformal_algebras.all import LieConformalAlgebra, lie_conformal_algebras
++    from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra, Sq
 +    import sage.algebras.catalog as algebras
 +    import sage.coding.codes_catalog as codes
 +    import sage.combinat.designs.design_catalog as designs
@@ -8671,3 +8672,10 @@ diff -urN a/src/sage/rings/ideal_monoid.py b/src/sage/rings/ideal_monoid.py
 +            sage: # needs sage.rings.number_field
 @@ -196,0 +201 @@
 +            sage: # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/steenrod/steenrod_algebra_mult.py b/src/sage/algebras/steenrod/steenrod_algebra_mult.py
+--- a/src/sage/algebras/steenrod/steenrod_algebra_mult.py
++++ b/src/sage/algebras/steenrod/steenrod_algebra_mult.py
+@@ -890,3 +890,3 @@
+-        sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest
++        sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest  # needs sage.matrix.matrix_mod2_dense
+         Sq^10 Sq^4 Sq^1 + Sq^10 Sq^5 + Sq^12 Sq^3 + Sq^13 Sq^2

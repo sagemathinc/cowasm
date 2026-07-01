@@ -3336,6 +3336,32 @@ and modular-symbol helpers. Future runs should avoid repeating this exact
 low-prompt set unless graph/matroid startup support or the
 `polynomial_number_field` trap changes.
 
+Focused Steenrod multiplication corpus-growth pass:
+
+```text
+steenrod_algebra_mult.py: 51 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/steenrod/steenrod_algebra_mult.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 871
+non-comment entries. Direct sampling first recorded a startup-name cluster
+around upstream doctests that use `SteenrodAlgebra` and `Sq` without local
+imports, plus one backend boundary in an Adem-basis conversion path.
+
+The doctest runner now seeds `SteenrodAlgebra` and `Sq` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same names for REPL
+parity on a fresh patched source copy. The added WASI source patch marks the
+remaining Adem-basis conversion example as
+`# needs sage.matrix.matrix_mod2_dense`, preserving the rest of the Steenrod
+multiplication helper coverage in the default browser-compatible profile.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex/steenrod-mult-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 Follow-up scheduled frontier audit on 2026-07-01:
 
 No new quiet corpus candidate was found. The checked
