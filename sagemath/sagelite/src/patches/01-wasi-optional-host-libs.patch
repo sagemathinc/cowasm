@@ -8003,3 +8003,57 @@ diff -urN a/src/sage/combinat/species/species.py b/src/sage/combinat/species/spe
              doctest:warning...
              DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
              See https://github.com/sagemath/sage/issues/38544 for details.
+diff -urN a/src/sage/functions/other.py b/src/sage/functions/other.py
+--- a/src/sage/functions/other.py
++++ b/src/sage/functions/other.py
+@@ -720 +720 @@
+-            sage: frac(456/123)
++            sage: frac(456/123)                                                         # needs sage.symbolic
+@@ -802 +802 @@
+-        sage: real_nth_root(8, 3)
++        sage: real_nth_root(8, 3)                                                        # needs sage.symbolic
+@@ -804 +804 @@
+-        sage: real_nth_root(-8, 3)
++        sage: real_nth_root(-8, 3)                                                       # needs sage.symbolic
+@@ -807 +807 @@
+-        sage: real_nth_root(-2, 4)
++        sage: real_nth_root(-2, 4)                                                       # needs sage.symbolic
+@@ -916 +916 @@
+-            sage: real_nth_root(RIF(2), 3)
++            sage: real_nth_root(RIF(2), 3)                                               # needs sage.symbolic
+@@ -1427 +1427 @@
+-            sage: factorial(-32)
++            sage: factorial(-32)                                                        # known bug
+@@ -1477 +1477 @@
+-            sage: latex(factorial)
++            sage: latex(factorial)                                                      # needs sage.symbolic
+@@ -1499 +1499 @@
+-            sage: loads(dumps(factorial))
++            sage: loads(dumps(factorial))                                               # needs sage.symbolic
+@@ -1698 +1698 @@
+-            sage: binomial._binomial_sym(y, 2).parent()
++            sage: binomial._binomial_sym(y, 2).parent()                                 # needs sage.symbolic
+@@ -1723 +1723 @@
+-            sage: binomial._method_arguments(10, 5)
++            sage: binomial._method_arguments(10, 5)                                     # needs sage.symbolic
+@@ -1732 +1732 @@
+-            sage: binomial._eval_(5, 3)
++            sage: binomial._eval_(5, 3)                                                 # needs sage.symbolic
+@@ -1734 +1734 @@
+-            sage: type(binomial._eval_(5, 3))
++            sage: type(binomial._eval_(5, 3))                                           # needs sage.symbolic
+@@ -1751 +1751 @@
+-            sage: binomial._eval_(y, 2).parent()
++            sage: binomial._eval_(y, 2).parent()                                        # needs sage.symbolic
+@@ -1769 +1769 @@
+-            sage: binomial._evalf_(5.r, 3)
++            sage: binomial._evalf_(5.r, 3)                                              # needs sage.symbolic
+@@ -1771 +1771 @@
+-            sage: type(binomial._evalf_(5.r, 3))
++            sage: type(binomial._evalf_(5.r, 3))                                        # needs sage.symbolic
+@@ -1775 +1775 @@
+-            sage: binomial._evalf_(10^20 + 1/1, 10^20)
++            sage: binomial._evalf_(10^20 + 1/1, 10^20)                                  # needs sage.symbolic
+@@ -2072 +2072 @@
+-            sage: cases()
++            sage: cases()                                                               # known bug

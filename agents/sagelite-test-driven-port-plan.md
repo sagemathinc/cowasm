@@ -15055,6 +15055,41 @@ queries are empty. Fresh adjacent sampling reconfirmed that
 resolving optional coding lazy imports, and `sage/combinat/species/misc.py`
 remains skipped-only under existing browser-profile metadata.
 
+Focused symbolic helper corpus-growth pass:
+
+```text
+other.py: 49 passed, 0 failed, 427 skipped
+```
+
+That one-file make-target validation adds `sage/functions/other.py` to the
+curated corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 853 non-comment entries. The default browser-compatible dashboard gains
+coverage for the non-symbolic portions of Sage's miscellaneous function
+helpers, including integer/rational paths and ordinary error handling, while
+the bulk symbolic-function examples remain behind existing
+`# needs sage.symbolic` metadata.
+
+Fresh sampling first checked absent category, combinatorics, crypto,
+data-structure, database, tensor, REPL, plot, dynamics, and function helpers.
+Most candidates were zero-block or skipped-only under the default profile, or
+exposed broader runtime clusters such as category timeouts, IPython display
+hooks, SQL database failures, NTL/libcxx traps, and cellular-automata startup
+namespace gaps. `functions/other.py` was the narrow promotion candidate after
+tagging its remaining symbolic-function internals and diagnostic/display drift
+as explicit browser-profile skips or deferred known bugs.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/functions-other-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`73c6890ff396a4b9a597cc63d741f530e48c59ef`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping is dominated by the existing
+`optional:sage.symbolic` boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

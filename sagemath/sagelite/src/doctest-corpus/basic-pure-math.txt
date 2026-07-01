@@ -768,6 +768,7 @@ src/sage/logic/logicparser.py
 src/sage/logic/logictable.py
 src/sage/logic/propcalc.py
 src/sage/functions/spike_function.py
+src/sage/functions/other.py
 src/sage/functions/trig.py
 src/sage/functions/wigner.py
 src/sage/functions/airy.py
