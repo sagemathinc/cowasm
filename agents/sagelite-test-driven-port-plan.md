@@ -14764,6 +14764,36 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused GAP saved-workspace corpus-growth pass:
+
+```text
+saved_workspace.py: 7 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/libs/gap/saved_workspace.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 835
+non-comment entries. The default browser-compatible profile gains compact
+coverage for GAP workspace timestamp and path helpers without enabling the
+broader GAP interface.
+
+Fresh low-prompt sampling first checked small absent coding, database,
+modular-form, misc, NumPy, root-system, knot, crypto, and GAP helper files.
+Most files were skipped-only under existing browser-profile metadata. The
+other runnable GAP helper probes still have broader interface failures:
+`context_managers.py`, `assigned_names.py`, and `operations.py` remain outside
+the quiet corpus.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/auto-2026-07-01-next/saved-workspace-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b5034ee6afd4926e49835816683f5f2d68542587`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

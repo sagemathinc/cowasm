@@ -171,6 +171,7 @@ src/sage/libs/flint/fmpz_poly.pyx
 src/sage/libs/flint/qsieve.pyx
 src/sage/libs/flint/ulong_extras_sage.pyx
 src/sage/libs/flint/ulong_extras.pyx
+src/sage/libs/gap/saved_workspace.py
 src/sage/libs/gsl/array.pyx
 src/sage/libs/pari/convert_gmp.pyx
 src/sage/libs/ntl/error.pyx
