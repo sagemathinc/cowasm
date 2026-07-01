@@ -16495,6 +16495,39 @@ have broad runtime/backend failure clusters; and `bernoulli_mod_p.pyx` traps
 through the known NTL/libcxx finite-field path. Those files remain outside the
 quiet corpus.
 
+Focused fp-graded free homspace corpus-growth pass:
+
+```text
+free_homspace.py: 8 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/fp_graded/free_homspace.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 874 non-comment
+entries. The file adds compact default-profile coverage for finitely presented
+graded module homspace construction without requiring the mod-2 matrix backend
+that still blocks the neighboring Steenrod homspace file.
+
+Direct mixed sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active6/mixed-small.sqlite3`.
+The saved `promote-candidates.sql` query classified `free_homspace.py` as the
+only clean non-skipped promotion candidate in that batch. The same probe kept
+13 skipped-only compact helpers out of the corpus, and kept
+`sage/libs/arb/arith.pyx` plus
+`sage/modules/fp_graded/steenrod/homspace.py` out because they still expose
+active FLINT integer-polynomial and `sage.matrix.matrix_mod2_dense` backend
+clusters.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active6/free-homspace-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4617371492b49cb13e983cd6744dcbc0ad0e4dac`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
