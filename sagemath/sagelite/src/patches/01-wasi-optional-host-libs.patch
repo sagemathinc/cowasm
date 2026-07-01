@@ -9266,3 +9266,18 @@ diff -urN -U0 a/src/sage/combinat/shard_order.py b/src/sage/combinat/shard_order
 +        sage: # needs sage.graphs
 @@ -213,0 +221 @@
 +        sage: # needs sage.graphs
+diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_constructor.py b/src/sage/schemes/plane_quartics/quartic_constructor.py
+--- a/src/sage/schemes/plane_quartics/quartic_constructor.py
++++ b/src/sage/schemes/plane_quartics/quartic_constructor.py
+@@ -32 +32 @@
+-        sage: QuarticCurve(x**4 + y**4 + z**4)
++        sage: QuarticCurve(x**4 + y**4 + z**4)                                      # needs sage.libs.singular
+@@ -37 +37 @@
+-        sage: QuarticCurve(x**3 + y**3)
++        sage: QuarticCurve(x**3 + y**3)                                             # needs sage.libs.singular
+@@ -42 +42 @@
+-        sage: QuarticCurve(x**4 + y**4 + z**3)
++        sage: QuarticCurve(x**4 + y**4 + z**3)                                      # needs sage.libs.singular
+@@ -48 +48 @@
+-        sage: QuarticCurve(x**4 + y**4)
++        sage: QuarticCurve(x**4 + y**4)                                             # needs sage.libs.singular

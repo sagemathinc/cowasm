@@ -18004,6 +18004,40 @@ The saved block-failure cluster query is empty. `skips-by-reason.sql` records
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 75.
 
+Follow-up plane-quartic constructor corpus-growth pass on 2026-07-01:
+
+The checked corpus now has 895 non-comment entries after promoting
+`src/sage/schemes/plane_quartics/quartic_constructor.py`.
+
+A fresh low-count absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active-goal/`
+found that most sampled support/category files were skipped-only under the
+default browser profile. One candidate, `quartic_constructor.py`, recorded
+two passing setup blocks and four active `QuarticCurve(...)` failures. Direct
+import triage showed that the constructor reaches
+`sage.schemes.curves.projective_curve`, which imports the unavailable
+`sage.libs.singular.function` backend, so adding `QuarticCurve` to the WASI
+startup namespace would broaden the profile incorrectly.
+
+The WASI source patch now marks the four constructor calls as
+`# needs sage.libs.singular`, keeping the polynomial-ring setup blocks
+runnable while recording the plane-curve backend boundary explicitly.
+Focused strict validation rebuilt a fresh patched Sagelite source copy and ran
+the one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active-goal/quartic-make.sqlite3`:
+
+```text
+quartic_constructor.py: 2 passed, 0 failed, 4 skipped
+sage -t passed: 2 passed, 0 failed, 4 skipped
+```
+
+The saved block-failure cluster query is empty. `skips-by-reason.sql` records
+all four skipped blocks under `optional:sage.libs.singular`. The latest-run
+metadata records CoWasm commit `73b141b10cd5b69940a1f4683b54aa5aba7f2073`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, and runner version 75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
