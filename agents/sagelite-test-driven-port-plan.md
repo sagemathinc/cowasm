@@ -18437,6 +18437,35 @@ metadata records CoWasm commit `d502a63838f465d7257e43b7843d7dc8a87fb713`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, runner version 75, and about 6 seconds of elapsed time.
 
+Focused generic glue corpus-growth pass on 2026-07-01:
+
+```text
+glue.py: 6 passed, 0 failed, 13 skipped
+```
+
+This pass promotes `sage/schemes/generic/glue.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 905
+non-comment entries. A focused generic-scheme probe first recorded
+`glue.py` as `6 passed, 13 failed, 0 skipped`; all failures were caused by
+the file's quotient-ring setup importing the stripped
+`sage.rings.polynomial.plural` backend, followed by dependent missing-name
+failures in the gluing-map examples.
+
+The WASI source patch now marks the quotient-ring setup and dependent gluing
+checks as `# needs sage.rings.polynomial.plural`, while preserving the
+independent polynomial-ring setup blocks as runnable default-profile coverage.
+Focused strict validation rebuilt a fresh patched Sagelite source copy and ran
+a one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-cowasm-agent/glue-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+records all 13 deferred blocks under
+`optional:sage.rings.polynomial.plural`. The latest-run metadata records
+CoWasm commit `26419a169ae9e7363dc2327e73834361bbf6346d`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 75, and about 6 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

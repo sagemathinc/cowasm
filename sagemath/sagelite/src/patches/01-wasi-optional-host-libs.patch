@@ -9451,6 +9451,39 @@ diff -urN -U0 a/src/sage/schemes/generic/scheme.py b/src/sage/schemes/generic/sc
 @@ -931 +931 @@
 -            sage: S(0)
 +            sage: S(0)                                                              # needs sage.libs.singular
+diff -urN -U0 a/src/sage/schemes/generic/glue.py b/src/sage/schemes/generic/glue.py
+--- a/src/sage/schemes/generic/glue.py
++++ b/src/sage/schemes/generic/glue.py
+@@ -35 +35 @@
+-        sage: S.<xbar, ybar> = R.quotient(x * y - 1)
++        sage: S.<xbar, ybar> = R.quotient(x * y - 1)                                # needs sage.rings.polynomial.plural
+@@ -38,5 +38,5 @@
+-        sage: phi_x = Rx.hom([xbar])
+-        sage: phi_y = Ry.hom([ybar])
+-        sage: Sx = Schemes()(phi_x)
+-        sage: Sy = Schemes()(phi_y)
+-        sage: Sx.glue_along_domains(Sy)
++        sage: phi_x = Rx.hom([xbar])                                                # needs sage.rings.polynomial.plural
++        sage: phi_y = Ry.hom([ybar])                                                # needs sage.rings.polynomial.plural
++        sage: Sx = Schemes()(phi_x)                                                 # needs sage.rings.polynomial.plural
++        sage: Sy = Schemes()(phi_y)                                                 # needs sage.rings.polynomial.plural
++        sage: Sx.glue_along_domains(Sy)                                             # needs sage.rings.polynomial.plural
+@@ -66 +66 @@
+-            sage: S.<xbar, ybar> = R.quotient(x * y - 1)
++            sage: S.<xbar, ybar> = R.quotient(x * y - 1)                            # needs sage.rings.polynomial.plural
+@@ -69,6 +69,6 @@
+-            sage: phi_x = Rx.hom([xbar])
+-            sage: phi_y = Ry.hom([ybar])
+-            sage: Sx = Schemes()(phi_x)
+-            sage: Sy = Schemes()(phi_y)
+-            sage: Sxy = Sx.glue_along_domains(Sy)
+-            sage: Sxy.gluing_maps() == (Sx, Sy)
++            sage: phi_x = Rx.hom([xbar])                                            # needs sage.rings.polynomial.plural
++            sage: phi_y = Ry.hom([ybar])                                            # needs sage.rings.polynomial.plural
++            sage: Sx = Schemes()(phi_x)                                             # needs sage.rings.polynomial.plural
++            sage: Sy = Schemes()(phi_y)                                             # needs sage.rings.polynomial.plural
++            sage: Sxy = Sx.glue_along_domains(Sy)                                   # needs sage.rings.polynomial.plural
++            sage: Sxy.gluing_maps() == (Sx, Sy)                                     # needs sage.rings.polynomial.plural
 diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_constructor.py b/src/sage/schemes/plane_quartics/quartic_constructor.py
 --- a/src/sage/schemes/plane_quartics/quartic_constructor.py
 +++ b/src/sage/schemes/plane_quartics/quartic_constructor.py
