@@ -18244,6 +18244,38 @@ fresh patched source rebuild, with a temporary one-file corpus,
 The saved block-failure cluster query is empty, and `skips-by-reason.sql`
 groups all six skipped blocks under `optional:sage.graphs`.
 
+Focused generic Spec corpus-growth pass on 2026-07-01:
+
+```text
+sage -t passed: 28 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds `sage/schemes/generic/spec.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 900 non-comment
+entries. Direct sampling first probed a compact helper/topology/typeset batch
+under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continuation2/helper-topology-typeset.sqlite3`;
+the only clean runnable candidate not already covered by the corpus was
+`spec.py`. Clean typeset and proof files in the same batch were already
+present, while the topology files were skipped-only under existing
+browser-profile metadata.
+
+No WASI source patch was needed: upstream `spec.py` already tags its optional
+finite-field, FreeAlgebra, and real-field examples. Focused strict validation
+used `make -C sagemath/sagelite test-sage-doctest-corpus` after a fresh
+patched source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continuation2/spec-onefile-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the four skips under
+`optional:sage.rings.finite_rings`,
+`optional:sage.combinat,sage.modules`, and `optional:sage.rings.real_mpfr`.
+The latest-run metadata records CoWasm commit
+`41fbc40d302bd1e4ada8cfff86a4008f3881baa1`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
