@@ -17786,6 +17786,43 @@ The saved block-failure cluster query is empty, and the focused run records
 doctest runner version 75 on CoWasm commit
 `f3b80f2d4b9c30c9ad6af5f4dc321c265f20f437`.
 
+Follow-up active frontier audit on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in the active scheduled
+probe. The checked corpus remains at 893 non-comment entries after the recent
+free-algebra-element promotion.
+
+Fresh direct probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active/`.
+The low-count absent-file probe recorded no promotion candidates:
+`version.py`, the Judson exercise snippets, and several tiny helper files had
+zero doctest blocks; interface, database, modular, repl, and crypto helpers
+were skipped-only under the default browser-compatible profile; and
+`sage/rings/polynomial/pbori/blocks.py` exposed four active Boolean-polynomial
+backend failures. The grouped plot frontier probe was also skipped-only,
+recording 676 skipped blocks across `colors.py`, `misc.py`,
+`hyperbolic_arc.py`, `hyperbolic_polygon.py`,
+`hyperbolic_regular_polygon.py`, `density_plot.py`, `contour_plot.py`,
+`plot_field.py`, and `streamline_plot.py`.
+
+A small book/crypto probe likewise produced no runnable coverage: the sampled
+Judson book snippets had no doctest blocks, while `sage/crypto/util.py`,
+`stream.py`, `stream_cipher.py`, `classical.py`, and
+`classical_cipher.py` were skipped-only. A focused rerun of
+`sage/algebras/lie_algebras/examples.py` confirmed that the older
+startup-name cluster has moved to a real graph-backend boundary: importing the
+`lie_algebras` catalog now reaches
+`ImportError: cannot import name 'generic_graph_pyx' from 'sage.graphs'`,
+leaving 99 active failures and dependent missing-name failures. That file
+should not be resampled as a startup-namespace candidate; it needs graph
+boundary tagging or graph backend work first.
+
+Candidate filtering across the newest compact probe databases
+(`scheduled-2026-07-01-support-probe`, `small-support-probe`,
+`medium-pure-probe`, `lowprompt-pure-probe`, `small-absent-batch`, and
+`pure-small-corrected`) also printed no uncovered clean runnable rows with
+`doctest-corpus-candidates.py`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
