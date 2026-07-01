@@ -17435,6 +17435,45 @@ the computational-mathematics solution files, or direct backend work on one
 of the existing NTL/libcxx, PolyBoRi/BRiAL, graph, PARI/cypari2, or
 Singular frontiers.
 
+Scheduled category-example and utility frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+888 non-comment entries.
+
+Two fresh direct probes were written under `/tmp/`, and
+`sagemath/sagelite/src/doctest-corpus-candidates.py` found no clean runnable
+candidate absent from the current corpus in either database.
+
+The category-example frontier probe in
+`/tmp/sagelite-category-example-frontier-20260701.sqlite3` recorded 10
+skipped-only files and no runnable blocks:
+`sage/categories/examples/algebras_with_basis.py`,
+`coxeter_groups.py`, `filtered_modules_with_basis.py`,
+`finite_coxeter_groups.py`, `finite_dimensional_algebras_with_basis.py`,
+`finite_dimensional_lie_algebras_with_basis.py`,
+`graded_modules_with_basis.py`, `lie_algebras.py`,
+`lie_algebras_with_basis.py`, and `with_realizations.py` together produced
+385 skipped blocks under the default browser-compatible profile.
+
+The utility/doctest frontier probe in
+`/tmp/sagelite-utility-doctest-frontier-20260701.sqlite3` recorded nine
+zero- or skipped-only files and one file-level timeout. The no-runnable
+entries were `sage/cli/notebook_cmd_test.py`,
+`sage/misc/sagedoc_conf.py`, `sage/repl/prompts.py`,
+`sage/doctest/parsing_test.py`, `sage/tests/numpy.py`,
+`sage/tests/sympy.py`, `sage/misc/proof.py`, `sage/misc/copying.py`, and
+`sage/structure/coerce_exceptions.py`. `sage/misc/functional.py` timed out at
+`functional.denominator`, line 246, while setting up the symbolic expression
+`r = (x+1)/(x-1)`, so it remains part of the broader symbolic/calculus
+frontier rather than a narrow promotion candidate.
+
+Future scheduled corpus-growth runs should avoid these category-example and
+utility/doctest batches as blind promotion candidates. Useful next work
+remains a focused symbolic/calculus classification pass, direct backend work
+on one of the existing runtime frontiers, or sampling a different absent-file
+band with known non-skipped blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
