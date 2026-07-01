@@ -16242,6 +16242,30 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused mpmath utility corpus-growth pass:
+
+```text
+utils.pyx: 57 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/libs/mpmath/utils.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 868
+non-comment entries. The doctest runner now seeds numeric `pi` and `NaN`
+values in the common doctest namespace from `RealField`, which clears the
+mpmath conversion examples without importing unavailable symbolic constants
+or broadening the WASI `sage.all` runtime surface.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-mpmath/mpmath-utils-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`99523075ff4e64cab63f06da88aacda416ff6170`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 The same scheduled pass rejected three small fresh probes. The utility probe
 recorded zero runnable blocks across `sage/logic/all.py`, small
 `sage/data_structures` helpers, and REPL prompt/catalog files, plus 36
