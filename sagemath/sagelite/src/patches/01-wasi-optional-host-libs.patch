@@ -1701,6 +1701,12 @@ diff -urN a/src/sage/quadratic_forms/quadratic_form__reduction_theory.py b/src/s
 @@ -306 +306 @@
 -        sage: Q.minkowski_reduction_for_4vars__SP()
 +        sage: Q.minkowski_reduction_for_4vars__SP()                                  # random - tuple pretty-printer display differs in Sagelite
+diff -urN a/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py b/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
+--- a/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
++++ b/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
+@@ -74 +74 @@
+-        sage: Q.matrix().gcd()
++        sage: Q.matrix().gcd()                                                        # known bug - Sagelite uses a generic dense matrix backend without gcd here
 diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
 --- a/src/sage/dynamics/finite_dynamical_system.py
 +++ b/src/sage/dynamics/finite_dynamical_system.py

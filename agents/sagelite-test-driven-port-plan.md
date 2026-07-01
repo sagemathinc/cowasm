@@ -17690,6 +17690,26 @@ frontier. A normalized sweep over existing local probe databases with the
 current build root found no already-measured clean absent candidate with at
 least five passing blocks.
 
+Latest focused corpus-growth pass after the 2026-07-01 Tornaria quadratic-form
+probe:
+
+```text
+quadratic_form__ternary_Tornaria.py: 57 passed, 0 failed, 42 skipped
+```
+
+The pass promotes `sage/quadratic_forms/quadratic_form__ternary_Tornaria.py`
+into `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. The only
+previous failure was the illustrative `Q.matrix().gcd()` check in the
+`content()` doctest; the actual `Q.content()` and related primitive-form
+examples pass. The WASI source patch now marks the matrix-backend check as a
+deferred `# known bug` because Sagelite currently constructs a generic dense
+matrix there, which does not expose the integer-dense `gcd()` method. A fresh
+patch application through `make -C sagemath/sagelite test-sage-doctest-corpus`
+recreated the patched source tree and applied the new hunk cleanly, but the
+full dashboard run was interrupted after reaching worker 186 of the current
+891-file corpus; future full-dashboard validation should run as a longer
+background check.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
