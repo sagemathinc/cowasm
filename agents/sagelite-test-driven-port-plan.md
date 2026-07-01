@@ -16805,6 +16805,28 @@ targets. The next useful work is still either backend-focused
 support) or a deliberately scoped metadata pass that turns skipped-only
 frontiers into explicit dependency coverage.
 
+Follow-up alternate-namespace probe on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+880 non-comment entries. A small zero-block sweep of absent data-structure,
+misc, semiring, dynamics, typeset, and tensor catalog/helper files found no
+runnable doctest coverage, so those files remain outside the quiet dashboard.
+
+A second small-prompt probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-codex/probe-small-prompts.sqlite3`
+and recorded 3 passed, 10 failed, and 22 skipped blocks across 12 files. The
+database, coding, modular, NumPy, and SymPy helpers were skipped-only, while
+`doctest/parsing_test.py` and `repl/prompts.py` contributed no blocks.
+
+The runnable failures are backend-focused rather than narrow corpus-growth
+targets: `sage/libs/flint/qsieve_sage.pyx` traps in FLINT qsieve relation
+processing, `sage/libs/arb/arith.pyx` depends on disabled FLINT polynomial
+side-module initialization and has a Bernoulli output mismatch, and the sampled
+PARI conversion helpers still reach missing `cypari2.convert` or focused
+cypari2 object-model boundaries. Future scheduled runs should not resample
+this small-prompt set until the ARB/FLINT/PARI backend surface changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
