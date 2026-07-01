@@ -15573,6 +15573,36 @@ helper/category candidates checked afterward were already present in the
 860-entry curated corpus, so this pass records the frontier state without
 changing the corpus.
 
+Scheduled 2026-07-01 category and poset frontier audit:
+
+```text
+category examples probe: 0 passed, 0 failed, 604 skipped
+species/poset probe: 22 passed, 77 failed, 142 skipped
+category core probe: 7 passed, 17 failed, 216 skipped
+```
+
+No new corpus file was promoted in this audit. The checked direct Sagelite
+probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-agent-category-examples/`,
+`.tmp/current-run/scheduled-2026-07-01-agent-species-posets/`, and
+`.tmp/current-run/scheduled-2026-07-01-agent-category-core/`. The probes
+sampled absent category example files, low-count combinatorial species and
+poset helpers, and small category core files against CoWasm commit
+`ba7d648ad3e54bfa7dee6362f175ceb2b3335bac`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+73.
+
+The category example batch is entirely skipped-only under existing
+browser-profile metadata, so those files remain outside the quiet corpus until
+they contribute runnable blocks. The species/poset batch confirms a broader
+graph/poset frontier: `bubble_shuffle.py`, `hochschild_lattice.py`,
+`mobile.py`, and dependent `hasse_cython.pyx` examples fail behind unavailable
+`sage.graphs.generic_graph_pyx`, missing `posets`/`Poset` startup names after
+setup failure, and dependent state fallout. The category core batch is mostly
+skipped-only, but `euclidean_domains.py` times out in the polynomial
+`gcd_free_basis` example and `kahler_algebras.py` depends on matroid startup
+coverage, so neither is a narrow browser-profile promotion candidate yet.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
