@@ -16665,6 +16665,45 @@ IPython/REPL, or PARI/cypari2 object-model boundaries change. The next useful
 corpus-growth pass should start from a different namespace or target one of
 those backend clusters explicitly.
 
+Follow-up scheduled frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+879 non-comment entries. Fresh focused probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-sagelite-port/`.
+
+The topology/homology/geometry probe checked small absent files from
+`sage/topology`, `sage/homology`, and `sage/geometry`. It recorded 5 passed,
+52 failed, and 87 skipped blocks in
+`mixed-topology-geometry.sqlite3`. The catalog/check helpers were skipped-only
+under the default browser-compatible profile. The runnable failures clustered
+around missing startup names for hyperbolic geometry and 3D surface helpers,
+plus the existing homology group constructor TypeError.
+
+The small misc/category probe recorded 0 passed, 0 failed, and 138 skipped
+blocks in `misc-category-small.sqlite3`; it was skipped-only or empty and did
+not contribute runnable dashboard coverage.
+
+The combinatorics/posets probe recorded 31 passed, 127 failed, and 8 skipped
+blocks in `combinat-posets-small.sqlite3`. The active failures cluster around
+the graph backend import gap
+`cannot import name 'generic_graph_pyx' from 'sage.graphs'`, missing
+Sage-global constructors such as `posets` and `SineGordonYsystem`, and the
+known NTL/libcxx finite-field trap reached by `q_bernoulli.pyx`.
+
+The algebra/ring helper probe recorded 13 passed, 69 failed, and 10 skipped
+blocks in `ring-algebra-small.sqlite3`. Its active clusters are not narrow
+corpus-growth targets: missing PolyBoRi/Brial runtime modules, quaternion
+startup globals and matrix backends, matroid/Kahler setup names, two
+polynomial-category timeouts, and the same NTL/libcxx finite-field trap through
+function-field setup.
+
+The highest-leverage next work is runtime/backend focused rather than another
+blind corpus-growth sweep: graph generic backend packaging, NTL/libcxx
+ostream/finite-field traps, PolyBoRi/Brial availability, or a deliberate
+Sage-global namespace pass for constructors that upstream doctests assume from
+`sage.all`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
