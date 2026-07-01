@@ -17120,6 +17120,62 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups all seven deferred blocks under
 `optional:ipython`.
 
+Follow-up active frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries after the inputhook classification pass.
+
+Recent SQLite probes that were not yet reflected in the plan were mined first.
+`probe-small.sqlite3` had two clean runnable files,
+`sage/misc/unknown.py` and `sage/misc/constant_function.pyx`, but both are
+already in the corpus. `probe-category-absent.sqlite3` had clean category
+coverage only for files already in the corpus, and its only active file-level
+error was the known finite-field/NTL ostream trap in `sage/categories/pushout.py`
+at `LaurentPolynomialRing(GF(2), 'a')`.
+
+Fresh focused probes were written under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active/`. The
+pure-candidate probe recorded:
+
+```text
+pure-candidates.sqlite3: 0 passed, 3 failed, 449 skipped
+```
+
+`sage/sets/real_set.py` was skipped-only under the default profile.
+`sage/rings/continued_fraction.py` reproduced the previously documented
+number-field timeout at `K.<sqrt2> = QuadraticField(2)`;
+`sage/misc/functional.py` timed out while constructing a symbolic rational
+expression in `functional.denominator`; and
+`sage/combinat/abstract_tree.py` reproduced the known `list_clone`
+maximum-call-stack crash in `AbstractTree.paths_to_the_right`.
+
+A low-prompt helper/category probe found no runnable promotion candidate. The
+corrected focused rerun:
+
+```text
+low-prompt-corrected.sqlite3: 0 passed, 0 failed, 39 skipped
+```
+
+showed `sage/categories/examples/algebras_with_basis.py`,
+`sage/categories/examples/finite_dimensional_algebras_with_basis.py`, and
+`sage/rings/ring_extension_homset.py` are all skipped-only in the
+browser-compatible profile. The broader low-prompt sample likewise produced
+only skipped rows for `sage/cpython/string.pyx`,
+`sage/cpython/cython_metaclass.pyx`, `sage/categories/groupoid.py`,
+`sage/categories/bialgebras.py`,
+`sage/categories/examples/filtered_modules_with_basis.py`,
+`sage/combinat/species/misc.py`, `sage/misc/sphinxify.py`, and
+`sage/misc/profiler.py`.
+
+Future scheduled corpus-growth runs should not resample these exact
+real-set, continued-fraction, functional, abstract-tree, low-prompt CPython,
+category-example, species-misc, sphinxify, profiler, or ring-extension-homset
+targets as blind promotion candidates. Useful follow-up work is focused
+backend/runtime triage for the NTL ostream and `list_clone` stack clusters, or
+explicit startup/dependency classification for symbolic and number-field
+frontiers before attempting to promote those files.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
