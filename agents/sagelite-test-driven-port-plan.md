@@ -16764,6 +16764,47 @@ The file remains outside the curated corpus because it contributes no
 non-skipped browser-profile coverage, but the previous reset-related
 failure cluster is now queryable as explicit optional dependency metadata.
 
+Follow-up scheduled frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+880 non-comment entries. Fresh focused probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal4/`.
+
+The category/combinatorics probe recorded 63 passed, 3 failed, and 899
+skipped blocks across 16 files. Its only runnable promotion candidate,
+`sage/combinat/regular_sequence_bounded.py`, was already in the curated
+corpus. The remaining category examples were skipped-only or empty, while
+`fields.py` and `finite_fields.py` hit the known NTL/libcxx finite-field trap
+and `commutative_rings.py` hit a polynomial-construction recursion/runtime
+boundary.
+
+The small misc/monoid probe recorded 6 passed, 52 failed, and 109 skipped
+blocks across 13 files. The monoid, misc, ring-extension, and NumPy utility
+helpers were skipped-only under the default browser-compatible profile.
+`module_functors.py` is not a narrow promotion target yet, and
+`rings/polynomial/ideal.py` timed out in Groebner-basis setup.
+
+The compact combinatorics probe recorded 0 passed, 26 failed, and 241 skipped
+blocks across 12 files. Species, root-system, subword-complex,
+symmetric-function, and tableau-adjacent helpers were skipped-only. The active
+failures are still broader backend clusters: poset constructors in
+`bubble_shuffle.py` and `hochschild_lattice.py`, plus the existing
+NTL/libcxx finite-field trap in `q_bernoulli.pyx`.
+
+The small ring/function-field probe recorded 91 passed, 37 failed, and 205
+skipped blocks across 14 files. Function-field, finite-field, polynomial
+homomorphism, and developing-valuation examples again reach the NTL/libcxx
+finite-field trap or a related link/runtime boundary. `complex_roots.py`,
+`pari_ring.py`, and `function_field/constructor.py` have runnable blocks but
+still need focused semantic/backend triage before they can be promoted.
+
+Future scheduled runs should avoid these exact batches as blind corpus-growth
+targets. The next useful work is still either backend-focused
+(`ntl_ZZ_p`/libcxx finite-field traps, polynomial/link recursion, matrix/poset
+support) or a deliberately scoped metadata pass that turns skipped-only
+frontiers into explicit dependency coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
