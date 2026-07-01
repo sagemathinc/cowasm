@@ -16470,6 +16470,31 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records five existing long-time blocks and
 two deferred known-bug display checks.
 
+Focused fp-graded Steenrod profile corpus-growth pass:
+
+```text
+profile.py: 25 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/fp_graded/steenrod/profile.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 873 non-comment
+entries. The profile doctests exercise the finite profile helpers used by the
+Steenrod algebra module layer without requiring the broader mod-2 matrix
+backend that still blocks `steenrod_algebra.py`.
+
+Fresh scheduled sampling first checked small absent category, support, coding,
+crypto, homology, REPL, plotting, and algebra files under
+`/home/user/cowasm/.tmp/current-run/`. Most compact category, coding, crypto,
+design, plotting, and support files were skipped-only in the default
+browser-compatible profile. `repl/load.py` reached 17 passed blocks but still
+depends on missing IPython attach/load behavior; `homology_group.py` only
+passes import prompts before integral homology construction reaches the current
+matrix echelon-copy TypeError; `nil_coxeter_algebra.py` and `hilbert.pyx` still
+have broad runtime/backend failure clusters; and `bernoulli_mod_p.pyx` traps
+through the known NTL/libcxx finite-field path. Those files remain outside the
+quiet corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
