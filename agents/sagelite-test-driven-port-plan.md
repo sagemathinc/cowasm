@@ -15440,6 +15440,36 @@ linear-tensor files expose `MixedIntegerLinearProgram` startup and dependent
 state failures, while `linear_functions.pyx` times out in the
 `QuadraticField(5, 'sqrt5')` setup path.
 
+Scheduled 2026-07-01 utility frontier audit:
+
+```text
+logic recheck: 494 passed, 0 failed, 2 skipped
+light utility probe: 0 passed, 0 failed, 28 skipped
+misc helper probe: 13 passed, 13 failed, 178 skipped
+stats/probability probe: 47 passed, 95 failed, 596 skipped
+cpython support probe: 0 passed, 0 failed, 5 skipped
+```
+
+No new corpus file was promoted in this audit. The clean logic pocket
+(`sage/logic/booleval.py`, `boolformula.py`, `logic.py`, `logicparser.py`,
+`logictable.py`, and `propcalc.py`) is already present in the curated corpus;
+the recheck wrote
+`.tmp/current-run/scheduled-2026-07-01-codex4/logic-probe.sqlite3` and had
+empty saved block- and file-failure cluster queries. The only skipped logic
+blocks are the existing `# long time` examples in `boolformula.py`.
+
+The fresh lightweight probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-codex4/`. The typeset/CPython/stats
+support files sampled in the light utility and CPython probes were empty or
+skipped-only under the default browser-compatible profile, so they remain out
+of the quiet corpus. The misc helper probe kept `sage/misc/reset.pyx` out
+because it still has state-reset failures and kept `sage/misc/sage_input.py`
+out because finite-field input examples reach the known NTL/libcxx
+`memory access out of bounds` trap. The stats/probability probe kept
+`sage/stats/distributions/discrete_gaussian_lattice.py` out because its
+default-profile failures need separate discrete-Gaussian triage; the remaining
+sampled stats and HMM support files were skipped-only or empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
