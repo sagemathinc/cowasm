@@ -17823,6 +17823,55 @@ Candidate filtering across the newest compact probe databases
 `pure-small-corrected`) also printed no uncovered clean runnable rows with
 `doctest-corpus-candidates.py`.
 
+Follow-up low-count absent-file audit on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in the follow-up low-count
+support sweep. The checked corpus remains at 893 non-comment entries after the
+recent free-algebra-element promotion.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal2/`. The
+skipped-only batches should not be resampled as corpus-growth candidates
+without a dependency-scope change:
+
+```text
+monoids-probe.sqlite3: 0 passed, 0 failed, 17 skipped
+support-probe.sqlite3: 0 passed, 0 failed, 58 skipped
+category-lowcount-probe.sqlite3: 0 passed, 0 failed, 79 skipped
+```
+
+The misc batch recorded useful passing `session.pyx` blocks but no clean file:
+
+```text
+misc-probe.sqlite3: 42 passed, 21 failed, 67 skipped
+```
+
+Those active failures are mixed rather than one clean tagging boundary:
+`session.pyx` combines symbolic reset/import gaps, persistence fallout, a
+`pkgconfig` dependency in Cython lambda setup, and state-dependent output
+mismatches; `functional.py` reaches the existing polynomial-element
+function-signature mismatch; and `sage_input.py` reaches the existing
+NTL/libcxx `memory access out of bounds` path through finite-field polynomial
+setup.
+
+The numerical, low-level runtime, and coding/crypto probes likewise produced
+no uncovered clean runnable rows:
+
+```text
+numerical-probe.sqlite3: 53 passed, 206 failed, 0 skipped
+lowcount-probe.sqlite3: 28 passed, 18 failed, 19 skipped
+coding-crypto-probe.sqlite3: 0 passed, 1 failed, 99 skipped
+```
+
+The active clusters are existing frontiers rather than startup-name misses:
+MIP/logging linear-tensor backend gaps in `sage/numerical`, disabled or
+unavailable FLINT/Singular/PARI conversion paths in low-level library helpers,
+a `qsieve_sage.pyx` WASM trap, and an NTL/libcxx trap while loading
+`sage/coding/two_weight_db.py`. Candidate filtering across the new probe
+databases printed no uncovered clean runnable row with at least one passing
+block. Future short runs should skip these exact low-count support batches
+unless the goal is direct work on one of those runtime boundaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
