@@ -5833,6 +5833,69 @@ diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
          [                  -2.0                   -5.0                    3.0]
          [                   4.0                    8.0 1.0303398304893499e+18]
      """
+diff -urN a/src/sage/matrix/misc.pyx b/src/sage/matrix/misc.pyx
+--- a/src/sage/matrix/misc.pyx
++++ b/src/sage/matrix/misc.pyx
+@@ -41,6 +41,6 @@
+         sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
+-        sage: from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
+-        sage: matrix_integer_sparse_rational_reconstruction(A, 500)
++        sage: from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction  # needs sage.matrix.matrix_integer_sparse
++        sage: matrix_integer_sparse_rational_reconstruction(A, 500)                       # needs sage.matrix.matrix_integer_sparse
+         [1/3   2   3  -4]
+         [  7   2   2   3]
+         [  4   3   4 5/7]
+@@ -52,5 +52,5 @@
+         sage: A = random_matrix(ZZ, 3, sparse=True)
+-        sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)
++        sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)  # needs sage.matrix.matrix_integer_sparse
+         Traceback (most recent call last):
+         ...
+         ZeroDivisionError: The modulus cannot be zero
+@@ -182,9 +182,9 @@
+         sage: A = matrix(QQ, 3, 7, [1..21])
+-        sage: from sage.matrix.misc import matrix_rational_echelon_form_multimodular
+-        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)
+-        sage: E
++        sage: from sage.matrix.misc import matrix_rational_echelon_form_multimodular  # needs sage.matrix.matrix_integer_sparse
++        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)               # needs sage.matrix.matrix_integer_sparse
++        sage: E                                                                       # needs sage.matrix.matrix_integer_sparse
+         [ 1  0 -1 -2 -3 -4 -5]
+         [ 0  1  2  3  4  5  6]
+         [ 0  0  0  0  0  0  0]
+-        sage: pivots
++        sage: pivots                                                                  # needs sage.matrix.matrix_integer_sparse
+         (0, 1)
+@@ -192,8 +192,8 @@
+         sage: A = matrix(QQ, 3, 4, [0,0] + [1..9] + [-1/2^20])
+-        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)
+-        sage: E
++        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)                # needs sage.matrix.matrix_integer_sparse
++        sage: E                                                                       # needs sage.matrix.matrix_integer_sparse
+         [                1                 0                 0 -10485761/1048576]
+         [                0                 1                 0  27262979/4194304]
+         [                0                 0                 1                 2]
+-        sage: pivots
++        sage: pivots                                                                  # needs sage.matrix.matrix_integer_sparse
+         (0, 1, 2)
+@@ -393,11 +393,11 @@
+-        sage: from sage.matrix.misc import cmp_pivots
+-        sage: cmp_pivots([1,2,3], [4,5,6,7])
++        sage: from sage.matrix.misc import cmp_pivots              # needs sage.matrix.matrix_integer_sparse
++        sage: cmp_pivots([1,2,3], [4,5,6,7])                      # needs sage.matrix.matrix_integer_sparse
+         -1
+-        sage: cmp_pivots([1,2,3,5], [4,5,6])
++        sage: cmp_pivots([1,2,3,5], [4,5,6])                      # needs sage.matrix.matrix_integer_sparse
+         1
+-        sage: cmp_pivots([1,2,4], [1,2,3])
++        sage: cmp_pivots([1,2,4], [1,2,3])                        # needs sage.matrix.matrix_integer_sparse
+         -1
+-        sage: cmp_pivots([1,2,3], [1,2,3])
++        sage: cmp_pivots([1,2,3], [1,2,3])                        # needs sage.matrix.matrix_integer_sparse
+         0
+-        sage: cmp_pivots([1,2,3], [1,2,4])
++        sage: cmp_pivots([1,2,3], [1,2,4])                        # needs sage.matrix.matrix_integer_sparse
+         1
 diff -urN a/src/sage/matrix/misc_flint.pyx b/src/sage/matrix/misc_flint.pyx
 --- a/src/sage/matrix/misc_flint.pyx
 +++ b/src/sage/matrix/misc_flint.pyx

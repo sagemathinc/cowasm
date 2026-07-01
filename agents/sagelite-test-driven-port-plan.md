@@ -17956,6 +17956,54 @@ groups all 40 blocks under `optional:sage.graphs`. Future blind
 corpus-growth runs should not resample this helper batch as promotion
 candidate data unless the graph backend boundary changes.
 
+Follow-up matrix-helper corpus-growth pass on 2026-07-01:
+
+The checked corpus now has 894 non-comment entries after promoting
+`src/sage/matrix/misc.pyx`.
+
+Fresh frontier probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continuation/`.
+The first low-prompt category/helper batch was clean but skipped-only:
+
+```text
+category-helper-probe.sqlite3: 0 passed, 0 failed, 143 skipped
+```
+
+The second pure-helper batch exposed one narrow promotion target and several
+known runtime/backend boundaries:
+
+```text
+pure-helper-probe.sqlite3: 15 passed, 29 failed, 135 skipped
+```
+
+Most files in that batch were skipped-only. `bernoulli_mod_p.pyx` still
+reaches the existing NTL/libcxx `memory access out of bounds` trap while
+loading `ntl_ZZ_pX`, `homology_group.py` still fails through homology group
+construction/type metadata, and `matrix/misc.pyx` was limited to the missing
+`sage.matrix.matrix_integer_sparse` backend plus dependent name/output
+failures.
+
+The WASI source patch now classifies `matrix/misc.pyx` sparse integer matrix
+helper examples as `# needs sage.matrix.matrix_integer_sparse`, covering
+`matrix_integer_sparse_rational_reconstruction`,
+`matrix_rational_echelon_form_multimodular`, and `cmp_pivots` doctest groups.
+Focused strict validation rebuilt a fresh patched Sagelite source copy and ran
+the one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continuation/matrix-misc-onefile.sqlite3`:
+
+```text
+misc.pyx: 10 passed, 0 failed, 21 skipped
+sage -t passed: 10 passed, 0 failed, 21 skipped
+```
+
+The saved block-failure cluster query is empty. `skips-by-reason.sql` records
+16 blocks under `optional:sage.matrix.matrix_integer_sparse` and 5 existing
+`long time` skips. The latest-run metadata records CoWasm commit
+`c37de3bda2a9ebc62a362232a04bf9027999fee0`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

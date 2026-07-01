@@ -765,6 +765,7 @@ src/sage/matrix/docs.py
 src/sage/matrix/echelon_matrix.pyx
 src/sage/matrix/matrix_cdv.pyx
 src/sage/matrix/matrix_misc.py
+src/sage/matrix/misc.pyx
 src/sage/matrix/misc_flint.pyx
 src/sage/matrix/misc_mpfr.pyx
 src/sage/matrix/strassen.pyx
