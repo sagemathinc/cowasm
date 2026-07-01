@@ -8536,3 +8536,16 @@ diff -urN a/src/sage/rings/derivation.py b/src/sage/rings/derivation.py
              [x + y]
          """
          return [ self._scalar ]
+diff -urN a/src/sage/rings/ideal_monoid.py b/src/sage/rings/ideal_monoid.py
+--- a/src/sage/rings/ideal_monoid.py
++++ b/src/sage/rings/ideal_monoid.py
+@@ -110,0 +111 @@
++            sage: # needs sage.rings.number_field
+@@ -139,0 +141 @@
++            sage: # needs sage.rings.number_field
+@@ -160,0 +163 @@
++            sage: # needs sage.rings.number_field
+@@ -179,0 +183 @@
++            sage: # needs sage.rings.number_field
+@@ -196,0 +201 @@
++            sage: # needs sage.rings.number_field

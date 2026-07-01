@@ -16136,6 +16136,30 @@ queries are empty. The skip breakdown is 34
 `sage.rings.polynomial.plural`, 25 `pexpect`, 16
 `sage.rings.finite_rings`, 6 `sage.libs.singular`, and one deferred known bug.
 
+Follow-up ideal-monoid number-field metadata and corpus-growth pass:
+
+```text
+ideal_monoid.py: 12 passed, 0 failed, 36 skipped
+```
+
+That one-file make-target validation adds `sage/rings/ideal_monoid.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 865
+non-comment entries. The added WASI source patch classifies the remaining
+quadratic-number-field ideal construction, coercion, equality, inequality,
+and hash examples as `# needs sage.rings.number_field`, matching the file's
+already tagged number-field representation examples.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-cont/ideal-monoid-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The skip
+breakdown is 32 `sage.rings.number_field` blocks and 4 `sage.modules`
+blocks, leaving 12 ordinary ideal-monoid blocks runnable in the default
+browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
