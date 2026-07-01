@@ -16384,6 +16384,36 @@ The Sagelite standalone run completed Meson configure/compile/install, the
 `libbraiding wrapper smoke`, the doctest smoke (`23 passed, 0 failed,
 7 skipped`), and the relocated Electron resources smoke.
 
+Follow-up libbraiding doctest metadata and corpus-growth pass:
+
+```text
+braiding.pyx: 16 passed, 0 failed, 55 skipped
+```
+
+That one-file make-target validation adds `sage/libs/braiding.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 870 non-comment
+entries. Now that `sage.libs.braiding` is packaged as a Sagelite WASI side
+module, the default browser-compatible profile gains direct import coverage
+for all public libbraiding wrapper functions.
+
+Direct probing first confirmed that the previous missing-resource blocker is
+gone, but the examples still construct `BraidGroup`, which imports
+`sage.groups.libgap_wrapper` through the stripped GAP/libgap-backed group
+stack. The added WASI source patch classifies those braid-group example bodies
+as `# needs sage.libs.gap`, preserving the wrapper import checks as runnable
+default-profile blocks while keeping the full braid computations behind the
+existing GAP boundary.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/braiding-make.sqlite3`.
+The run used node profile and runner version 74. The saved block- and
+file-failure cluster queries are empty; skip grouping records 55
+`optional:sage.libs.gap` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

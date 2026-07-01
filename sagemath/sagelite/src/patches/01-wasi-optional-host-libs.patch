@@ -538,6 +538,41 @@ diff -urN a/src/sage/libs/all.py b/src/sage/libs/all.py
 +lazy_import('sage.libs.ntl', 'all', 'ntl')
 +lazy_import('sage.libs.pari.all', ['pari', 'pari_gen', 'PariError'])
 +lazy_import('sage.libs.symmetrica', 'all', 'symmetrica')
+diff -urN a/src/sage/libs/braiding.pyx b/src/sage/libs/braiding.pyx
+--- a/src/sage/libs/braiding.pyx
++++ b/src/sage/libs/braiding.pyx
+@@ -68,0 +69 @@
++        sage: # needs sage.libs.gap
+@@ -100,0 +102 @@
++        sage: # needs sage.libs.gap
+@@ -130,0 +133 @@
++        sage: # needs sage.libs.gap
+@@ -157,0 +161 @@
++        sage: # needs sage.libs.gap
+@@ -186,0 +191 @@
++        sage: # needs sage.libs.gap
+@@ -217,0 +223 @@
++        sage: # needs sage.libs.gap
+@@ -251,0 +258 @@
++        sage: # needs sage.libs.gap
+@@ -280,0 +288 @@
++        sage: # needs sage.libs.gap
+@@ -308,0 +317 @@
++        sage: # needs sage.libs.gap
+@@ -345,0 +355 @@
++        sage: # needs sage.libs.gap
+@@ -374,0 +385 @@
++        sage: # needs sage.libs.gap
+@@ -408,0 +420 @@
++        sage: # needs sage.libs.gap
+@@ -438,0 +451 @@
++        sage: # needs sage.libs.gap
+@@ -468,0 +482 @@
++        sage: # needs sage.libs.gap
+@@ -498,0 +513 @@
++        sage: # needs sage.libs.gap
+@@ -531,0 +547 @@
++        sage: # needs sage.libs.gap
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
