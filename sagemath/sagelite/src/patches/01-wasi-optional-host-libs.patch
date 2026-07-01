@@ -9001,3 +9001,23 @@ diff -urN -U0 a/src/sage/modular/hypergeometric_misc.pyx b/src/sage/modular/hype
 +        sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])                    # needs sage.libs.pari
 +        sage: u = H.euler_factor(2,79) # indirect doctest                 # needs sage.libs.pari
 +        sage: u.reverse().is_weil_polynomial()                            # needs sage.libs.pari
+diff -urN -U0 a/src/sage/repl/inputhook.py b/src/sage/repl/inputhook.py
+--- a/src/sage/repl/inputhook.py
++++ b/src/sage/repl/inputhook.py
+@@ -56,2 +56,2 @@
+-        sage: from sage.repl.interpreter import get_test_shell
+-        sage: get_test_shell()
++        sage: from sage.repl.interpreter import get_test_shell                 # needs IPython
++        sage: get_test_shell()                                                # needs IPython
+@@ -62,3 +62,3 @@
+-        sage: from sage.repl.inputhook import install
+-        sage: install()
+-        sage: install()
++        sage: from sage.repl.inputhook import install                         # needs IPython
++        sage: install()                                                       # needs IPython
++        sage: install()                                                       # needs IPython
+@@ -81,2 +81,2 @@
+-        sage: from sage.repl.inputhook import uninstall
+-        sage: uninstall()
++        sage: from sage.repl.inputhook import uninstall                       # needs IPython
++        sage: uninstall()                                                     # needs IPython

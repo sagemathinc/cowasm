@@ -17079,6 +17079,32 @@ corpus-growth targets. Useful follow-up work is either IPython/REPL startup
 triage for `sage/repl/inputhook.py`, or probing a different absent namespace
 with confirmed non-skipped passing coverage.
 
+Focused REPL inputhook classification pass:
+
+```text
+inputhook.py: 0 passed, 0 failed, 7 skipped
+```
+
+No curated corpus entry was added in this pass; the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries. The pass classifies the compact-namespace audit's
+only active `sage/repl/inputhook.py` failure cluster as an explicit IPython
+REPL boundary. Direct reproduction first recorded three `ModuleNotFoundError:
+IPython` failures and four dependent `NameError` blocks for
+`get_test_shell`, `install`, and `uninstall`.
+
+The added WASI source patch marks the inputhook install/uninstall setup
+prompts as `# needs IPython`, preserving the boundary as queryable skip
+metadata instead of active block failures in future exploratory dashboards.
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/inputhook-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups all seven deferred blocks under
+`optional:ipython`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
