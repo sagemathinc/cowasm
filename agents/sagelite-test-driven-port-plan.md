@@ -14695,6 +14695,41 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records six new `optional:sage.graphs` blocks.
 
+Focused covering-array corpus-growth pass:
+
+```text
+covering_array.py: 29 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/designs/covering_array.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 832
+non-comment entries. The default browser-compatible profile gains direct
+coverage for covering-array database lookup, Kleitman-Spencer-Katona binary
+construction, parameter checks, and the no-construction diagnostic while
+leaving the order-7 orthogonal-array construction behind explicit
+`# needs sage.libs.singular` metadata.
+
+Fresh sampling first checked adjacent design and category-example helpers.
+Most were skipped-only, zero-block, or exposed broader runtime clusters:
+`designs_pyx.pyx` and `subhypergraph_search.pyx` still have multi-example
+startup/dependency chains, `ext_rep.py` reaches a dynamic-link signature
+mismatch during module-global setup, and the sampled category examples were
+all skipped-only under existing browser-profile tags. `covering_array.py` was
+the narrow promotion candidate because its only failure was the single
+Singular-backed construction and the dependent follow-up check.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-covering-array/covering-array-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`5832822155ab4dac6a5494779139ba02fac0205e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records two
+`optional:sage.libs.singular` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

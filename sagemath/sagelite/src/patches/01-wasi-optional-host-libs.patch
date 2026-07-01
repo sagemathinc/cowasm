@@ -7946,6 +7946,19 @@ diff -urN a/src/sage/combinat/designs/steiner_quadruple_systems.py b/src/sage/co
          ....:             print("Something is wrong !")
      """
      n = B.n_points()
+diff -urN a/src/sage/combinat/designs/covering_array.py b/src/sage/combinat/designs/covering_array.py
+--- a/src/sage/combinat/designs/covering_array.py
++++ b/src/sage/combinat/designs/covering_array.py
+@@ -242,7 +242,7 @@
+         sage: is_covering_array(C2,parameters=True)
+         (True, (7, 2, 11, 2))
+-        sage: C3 = covering_array(2, 8, 7)
+-        sage: is_covering_array(C3,parameters=True)
++        sage: C3 = covering_array(2, 8, 7)                                      # needs sage.libs.singular
++        sage: is_covering_array(C3,parameters=True)                             # needs sage.libs.singular
+         (True, (49, 2, 8, 7))
+         sage: C4 = covering_array(2, 50, 7)
+         No direct construction known and/or implemented for a CA(N; 2, 50, 7)
 diff -urN a/src/sage/combinat/designs/twographs.py b/src/sage/combinat/designs/twographs.py
 --- a/src/sage/combinat/designs/twographs.py
 +++ b/src/sage/combinat/designs/twographs.py
