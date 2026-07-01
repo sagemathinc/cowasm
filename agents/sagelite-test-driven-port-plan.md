@@ -14730,6 +14730,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records two
 `optional:sage.libs.singular` blocks.
 
+Focused BIBD and difference-family design corpus-growth pass:
+
+```text
+bibd.py: 63 passed, 0 failed, 76 skipped
+difference_family.py: 203 passed, 0 failed, 190 skipped
+```
+
+That two-file make-target validation adds `sage/combinat/designs/bibd.py`
+and `sage/combinat/designs/difference_family.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 834
+non-comment entries. The default browser-compatible profile gains coverage
+for BIBD existence/construction helpers, Wilson and difference-family-backed
+design plumbing, and the difference-family constructor database while leaving
+PARI, finite-ring, module, scheme, and graph-dependent examples behind
+existing explicit dependency metadata.
+
+Fresh sampling first checked the absent design frontier. `bibd.py` and
+`difference_family.py` were the narrow promotion candidates with clean
+non-skipped pass rates. The remaining absent design files were skipped-only
+under existing browser-profile metadata or exposed broader clusters:
+`designs_pyx.pyx` and `incidence_structures.py` had block-level failures,
+`ext_rep.py` hit a dynamic-link signature mismatch during startup, and
+`subhypergraph_search.pyx` retained runnable failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary two-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal2/design-promotion-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`7983ac1d14eb95cddd35a7d34bf7a4a593f2bafd`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

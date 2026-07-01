@@ -209,9 +209,11 @@ src/sage/combinat/cyclic_sieving_phenomenon.py
 src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/decorated_permutation.py
 src/sage/combinat/degree_sequences.pyx
+src/sage/combinat/designs/bibd.py
 src/sage/combinat/designs/covering_design.py
 src/sage/combinat/designs/database.py
 src/sage/combinat/designs/design_catalog.py
+src/sage/combinat/designs/difference_family.py
 src/sage/combinat/designs/MOLS_handbook_data.py
 src/sage/combinat/designs/covering_array.py
 src/sage/combinat/designs/steiner_quadruple_systems.py
