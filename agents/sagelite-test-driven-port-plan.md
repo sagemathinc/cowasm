@@ -17513,6 +17513,44 @@ remains a focused symbolic/calculus classification pass, direct backend work
 on one of the existing runtime frontiers, or sampling a different absent-file
 band with known non-skipped blocks.
 
+Focused Jordan algebra corpus-growth pass on 2026-07-01:
+
+This pass promotes `sage/algebras/jordan_algebra.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 889
+non-comment entries.
+
+A fresh absent-file probe in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-fresh-frontier/probe.sqlite3`
+first found no clean candidate across a mixed modules/species/category/ring
+and algebra batch: six files were skipped-only, three category/ring files
+exited at rest-index startup, NTL/libcxx, or polynomial quotient recursion
+frontiers, and `group_algebra.py`, `jordan_algebra.py`, and `finite_gca.py`
+had active block failures.
+
+The useful signal was that most `jordan_algebra.py` failures were missing
+startup constructors rather than unavailable arithmetic. The Sagelite doctest
+namespace now seeds `FreeAlgebra` and `OctonionAlgebra`, which moved the file
+from `162 passed, 222 failed, 4 skipped` in the mixed probe to only two active
+failures. The WASI source patch classifies the remaining graph-backed
+`LieAlgebra(QQ, cartan_type='F4')` comparison as `# needs sage.graphs` and
+the finite-field octonion `J.some_elements()` ordering drift as
+`# known bug`.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+against a temporary one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-fresh-frontier/jordan-after-tags.sqlite3`:
+
+```text
+jordan_algebra.py: 382 passed, 0 failed, 6 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. Skip grouping
+records four existing `long time` blocks, one `optional:sage.graphs` block,
+and one `deferred:known bug` block. The focused run records doctest runner
+version 75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
