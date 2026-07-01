@@ -33,6 +33,36 @@ diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
 
  This adds the following to the main namespace:
 
+diff -urN a/src/sage/matroids/utilities.py b/src/sage/matroids/utilities.py
+--- a/src/sage/matroids/utilities.py
++++ b/src/sage/matroids/utilities.py
+@@ -7 +7 @@
+-    sage: from sage.matroids.advanced import *
++    sage: from sage.matroids.advanced import *  # needs sage.graphs
+@@ -42 +42 @@
+-        sage: from sage.matroids.advanced import *
++        sage: from sage.matroids.advanced import *  # needs sage.graphs
+@@ -59 +59 @@
+-        sage: from sage.matroids.advanced import setprint
++        sage: from sage.matroids.advanced import setprint  # needs sage.graphs
+@@ -67,0 +68 @@
++        sage: # needs sage.matroids
+@@ -77 +78 @@
+-        sage: from sage.matroids.advanced import setprint
++        sage: from sage.matroids.advanced import setprint  # needs sage.graphs
+@@ -144 +145 @@
+-        sage: from sage.matroids.advanced import *
++        sage: from sage.matroids.advanced import *  # needs sage.graphs
+@@ -157 +158 @@
+-        sage: from sage.matroids.advanced import newlabel
++        sage: from sage.matroids.advanced import newlabel  # needs sage.graphs
+@@ -200,0 +202 @@
++        sage: # needs sage.matroids
+@@ -311 +313 @@
+-        sage: from sage.matroids.advanced import *
++        sage: from sage.matroids.advanced import *  # needs sage.graphs
+@@ -323,0 +326 @@
++        sage: # needs sage.matroids
 diff -urN a/src/sage/rings/polynomial/pbori/easy_polynomials.py b/src/sage/rings/polynomial/pbori/easy_polynomials.py
 --- a/src/sage/rings/polynomial/pbori/easy_polynomials.py
 +++ b/src/sage/rings/polynomial/pbori/easy_polynomials.py

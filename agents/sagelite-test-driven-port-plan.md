@@ -17551,6 +17551,51 @@ records four existing `long time` blocks, one `optional:sage.graphs` block,
 and one `deferred:known bug` block. The focused run records doctest runner
 version 75.
 
+Focused matroid utility corpus-growth pass on 2026-07-01:
+
+This pass promotes `sage/matroids/utilities.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 890
+non-comment entries.
+
+Several fresh support-module probes were first written under
+`/home/user/cowasm/.tmp/current-run/`. The `scheduled-2026-07-01-support-probe`
+batch over `sage/misc` and `sage/structure` helpers found no clean runnable
+candidate: passed files were zero-block or skipped-only, while active failures
+were persistence/session doctest mismatches, an NTL/libcxx ostream trap, and a
+`coerce_maps.pyx` callable-map signature mismatch. The
+`scheduled-2026-07-01-small-support-probe` and
+`scheduled-2026-07-01-medium-pure-probe` batches likewise produced only
+skipped-only helpers or broad doctest-infrastructure, graph, symbolic, and
+algebra startup failures.
+
+The useful signal came from
+`scheduled-2026-07-01-lowprompt-pure-probe/probe.sqlite3`, where
+`matroids/utilities.py` recorded `24 passed, 21 failed, 27 skipped`.
+The failures were all browser-profile dependency classification noise around
+`sage.matroids.advanced`, `matroids.catalog.Fano()`, and
+`matroids.Uniform(...).extensions()` examples, while the standalone
+`setprint_s`, `newlabel`, and related utility examples already ran.
+
+The WASI source patch now marks those graph-backed advanced imports as
+`# needs sage.graphs` and the matroid-catalog groups as
+`# needs sage.matroids`. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-matroid-utilities/utilities-after-zero-context-tags-v2.sqlite3`:
+
+```text
+utilities.py: 22 passed, 0 failed, 50 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. Skip grouping
+records 26 `optional:sage.graphs` blocks, 16 `optional:sage.matroids` blocks,
+and eight existing finite-ring/number-field skip combinations. Future blind
+corpus-growth runs should avoid repeating the support, small-support,
+medium-pure, and low-prompt batches from this pass unless the goal is direct
+runtime/backend triage for their recorded failure clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

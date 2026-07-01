@@ -866,6 +866,7 @@ src/sage/plot/plot3d/tachyon.py
 src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py
+src/sage/matroids/utilities.py
 src/sage/symbolic/complexity_measures.py
 src/sage/symbolic/tests.py
 src/sage/symbolic/symbols.py
