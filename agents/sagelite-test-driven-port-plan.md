@@ -14794,6 +14794,46 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused trivial-valuation corpus-growth pass:
+
+```text
+trivial_valuation.py: 53 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/valuation/trivial_valuation.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 836 non-comment
+entries. The default browser-compatible profile gains compact valuation
+coverage for the trivial valuation on exact rings, residue-field behavior,
+valuation extensions, domain checks, and restriction/comparison helpers. The
+three skipped blocks are existing `# long time` `TestSuite(...)` examples.
+
+Fresh scheduled sampling first checked low-count and mid-count absent helpers
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex-goal/`.
+The saved `promote-candidates.sql` query classified only
+`trivial_valuation.py` as a clean non-skipped candidate in the final helper
+batch. Nearby files stayed outside the quiet corpus: `libs/mpmath/utils.pyx`,
+`repl/display/formatter.py`, `misc/session.pyx`, and
+`modules/module_functors.py` still have real block-level failures;
+`rings/finite_rings/conway_polynomials.py` reaches the known NTL/libcxx
+ostream trap; and compact plotting, coding, crypto, finite-group, and
+coalgebra helpers were skipped-only under existing browser-profile metadata.
+An attempted `SL2Z` startup-namespace probe showed that
+`sage.modular.arithgroup.congroup_sl2z` still imports the unavailable
+`sage.matrix.matrix_integer_dense` module, so modular-arithmetic group
+coverage should wait for that matrix backend boundary instead of adding
+startup names.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus after a fresh patched-source rebuild, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex-goal/trivial-valuation-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d8eae525acc8ce180276ffce76c732e92cf23127`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
