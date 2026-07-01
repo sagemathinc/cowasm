@@ -1958,6 +1958,21 @@ The new `file-coverage-shape.sql` query records this sampling lesson as
 dashboard tooling: skipped-only and no-block files are now easy to identify
 before adding them to the curated corpus.
 
+Follow-up corpus-delta tooling pass on 2026-07-01: focused probes against the
+current runner reconfirmed that several clean-looking promotion rows were
+already present in `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`.
+The new `sagemath/sagelite/src/doctest-corpus-candidates.py` helper reads a
+Sagelite doctest SQLite database, normalizes file paths through the latest
+run's recorded `source_root`, subtracts the curated corpus, and prints only
+clean runnable candidates that are not already covered. This keeps broad
+sampling runs from rediscovering existing corpus entries while preserving the
+saved SQL queries as pure database dashboards.
+
+Validation during that pass used direct `sage -t --timeout` probes against the
+patched source tree. The helper correctly prints no rows for probe databases
+whose only promote candidates are already covered, while skipped-only and
+zero-block probes remain visible through `file-coverage-shape.sql`.
+
 Focused rich-output test backend corpus-growth pass:
 
 ```text
