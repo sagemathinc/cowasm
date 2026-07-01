@@ -18218,6 +18218,32 @@ These results argue against promoting zero-pass front-door or documentation
 files, and the next pass should either choose a different namespace or tackle
 one of the explicit PARI/weighted-projective/runtime clusters directly.
 
+Focused poset helper corpus-growth pass on 2026-07-01:
+
+```text
+sage -t passed: 21 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/posets/hasse_cython.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 899
+non-comment entries. Direct sampling first recorded 21 passed blocks and six
+startup-name failures: upstream examples used `Poset(...)` without a local
+import, but importing `sage.combinat.posets.posets.Poset` reaches the stripped
+graph backend through `sage.graphs.generic_graph_pyx` in the browser-compatible
+profile.
+
+The added WASI source patch marks the three `Poset(...)` setup examples and
+their dependent `P.chains()` checks as `# needs sage.graphs`, preserving the
+local `IncreasingChains` constructor, membership, post-processing, children,
+and test-suite coverage as runnable default-profile doctests. Focused
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` after a
+fresh patched source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-this-run/hasse-cython-make.sqlite3`.
+The saved block-failure cluster query is empty, and `skips-by-reason.sql`
+groups all six skipped blocks under `optional:sage.graphs`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

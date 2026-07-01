@@ -8311,6 +8311,24 @@ diff -urN a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/co
 @@ -273,1 +273,1 @@
 -        sage: D = posets.AntichainPoset(9)._hasse_diagram
 +        sage: D = posets.AntichainPoset(9)._hasse_diagram                      # needs sage.graphs
+diff -urN a/src/sage/combinat/posets/hasse_cython.pyx b/src/sage/combinat/posets/hasse_cython.pyx
+--- a/src/sage/combinat/posets/hasse_cython.pyx
++++ b/src/sage/combinat/posets/hasse_cython.pyx
+@@ -102,2 +102,2 @@
+-            sage: P = Poset({'a':['b'],'b':[]})
+-            sage: ['a'] in P.chains()
++            sage: P = Poset({'a':['b'],'b':[]})                                 # needs sage.graphs
++            sage: ['a'] in P.chains()                                            # needs sage.graphs
+@@ -145,2 +145,2 @@
+-            sage: P = Poset({'a':['b'],'b':[]})
+-            sage: list(P.chains())
++            sage: P = Poset({'a':['b'],'b':[]})                                 # needs sage.graphs
++            sage: list(P.chains())                                               # needs sage.graphs
+@@ -165,2 +165,2 @@
+-            sage: P = Poset({'a':['b'],'b':[]})
+-            sage: next(iter(P.chains()))
++            sage: P = Poset({'a':['b'],'b':[]})                                 # needs sage.graphs
++            sage: next(iter(P.chains()))                                         # needs sage.graphs
 diff -urN a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
 --- a/src/sage/doctest/fixtures.py
 +++ b/src/sage/doctest/fixtures.py
