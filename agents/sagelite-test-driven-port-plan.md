@@ -16827,6 +16827,43 @@ PARI conversion helpers still reach missing `cypari2.convert` or focused
 cypari2 object-model boundaries. Future scheduled runs should not resample
 this small-prompt set until the ARB/FLINT/PARI backend surface changes.
 
+Follow-up Euclidean-domain corpus-growth pass on 2026-07-01:
+
+```text
+euclidean_domains.py: 21 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/euclidean_domains.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 881
+non-comment entries. The added WASI source patch marks the polynomial
+`gcd_free_basis` example as a deferred known-bug skip because that generic
+polynomial gcd-free-basis computation times out in the current Sagelite WASI
+profile; the surrounding category and integer-domain examples run cleanly.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal5/euclidean-make-rerun.sqlite3`.
+The latest-run metadata records CoWasm commit
+`f30e28c76e12fc6a5744a16ff9af770f21f792ae`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records one `deferred:known bug` block at
+`euclidean_domains.py:93`.
+
+The same scheduled run also checked several nearby frontiers without adding
+them to the quiet corpus. The absent root-system helpers
+`braid_move_calculator.py`, `coxeter_matrix.py`, `fundamental_group.py`,
+`pieri_factors.py`, and `plot.py` recorded 855 skipped blocks and no runnable
+coverage. Small helper probes for CPython strings, crypto ciphers, threaded
+mapping, species misc, groupoid/G-set categories, Cunningham/Odlyzko
+databases, Sphinx/profiler helpers, coding lattices, hamming-code utilities,
+and a few test modules were skipped-only or blocked by broader matrix/backend
+failures. Category example files in this batch were also skipped-only under
+existing `sage.combinat`, `sage.modules`, and `sage.groups` dependency tags.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

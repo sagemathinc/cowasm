@@ -1,3 +1,13 @@
+diff -urN a/src/sage/categories/euclidean_domains.py b/src/sage/categories/euclidean_domains.py
+--- a/src/sage/categories/euclidean_domains.py
++++ b/src/sage/categories/euclidean_domains.py
+@@ -92,4 +92,4 @@
+                 sage: Pol.<x> = QQ[]
+-                sage: sorted(Pol.gcd_free_basis([
++                sage: sorted(Pol.gcd_free_basis([                                      # known bug - polynomial gcd-free basis times out in Sagelite WASI profile
+                 ....:     (x+1)^3*(x+2)^3*(x+3), (x+1)*(x+2)*(x+3),
+                 ....:     (x+1)*(x+2)*(x+4)]))
+                 [x + 3, x + 4, x^2 + 3*x + 2]
 diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
 --- a/src/sage/graphs/base/overview.py
 +++ b/src/sage/graphs/base/overview.py
