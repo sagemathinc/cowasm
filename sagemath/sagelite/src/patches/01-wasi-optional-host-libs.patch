@@ -4,11 +4,11 @@ diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
 @@ -47,7 +47,7 @@
  and edges to other objects: the :mod:`graph backends
  <sage.graphs.base.graph_backends>`::
- 
+
 -    sage: Graph()._backend
 +    sage: Graph()._backend  # needs sage.graphs
      <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
- 
+
  A (di)graph backend is a simpler (di)graph class having only the most elementary
 diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
 --- a/src/sage/matroids/advanced.py
@@ -17,27 +17,27 @@ diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
  This module collects a number of advanced functions which are not directly
  available to the end user by default. To import them into the main namespace,
  type::
- 
+
 -    sage: from sage.matroids.advanced import *
 +    sage: from sage.matroids.advanced import *  # needs sage.graphs
- 
+
  This adds the following to the main namespace:
- 
+
 diff -urN a/src/sage/rings/polynomial/pbori/easy_polynomials.py b/src/sage/rings/polynomial/pbori/easy_polynomials.py
 --- a/src/sage/rings/polynomial/pbori/easy_polynomials.py
 +++ b/src/sage/rings/polynomial/pbori/easy_polynomials.py
 @@ -10,6 +10,7 @@
- 
+
      EXAMPLES::
- 
+
 +        sage: # needs brial
          sage: from sage.rings.polynomial.pbori.frontend import x
          sage: from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials
          sage: easy_linear_polynomials(x(1)*x(2) + 1)
 @@ -34,6 +35,7 @@
- 
+
      TESTS::
- 
+
 +        sage: # needs brial
          sage: from sage.rings.polynomial.pbori.frontend import x
          sage: from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials_via_interpolation
@@ -5952,25 +5952,25 @@ diff -urN a/src/sage/algebras/lie_algebras/abelian.py b/src/sage/algebras/lie_al
 --- a/src/sage/algebras/lie_algebras/abelian.py
 +++ b/src/sage/algebras/lie_algebras/abelian.py
 @@ -153,6 +153,7 @@
- 
+
          EXAMPLES::
- 
+
 +            sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
              sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
              sage: L.dimension()
              +Infinity
 @@ -165,6 +166,7 @@
- 
+
          EXAMPLES::
- 
+
 +            sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
              sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
              sage: L.is_abelian()
              True
 @@ -185,6 +187,7 @@
- 
+
              EXAMPLES::
- 
+
 +                sage: # known bug - the lie_algebras catalog import still reaches graph-backed classical Lie algebra code in the WASI profile
                  sage: L = lie_algebras.abelian(QQ, index_set=ZZ)
                  sage: B = L.basis()
@@ -6343,20 +6343,20 @@ diff -urN a/src/sage/repl/rich_output/backend_emacs.py b/src/sage/repl/rich_outp
 --- a/src/sage/repl/rich_output/backend_emacs.py
 +++ b/src/sage/repl/rich_output/backend_emacs.py
 @@ -27,8 +27,8 @@
- 
+
      EXAMPLES::
- 
+
 -        sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
 -        sage: BackendEmacs()
 +        sage: from sage.repl.rich_output.backend_emacs import BackendEmacs               # needs IPython
 +        sage: BackendEmacs()                                                            # needs IPython
          Emacs sage-mode
      """
- 
+
 @@ -40,9 +40,9 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
 -            sage: backend = BackendEmacs()
 -            sage: backend._repr_()
@@ -6367,9 +6367,9 @@ diff -urN a/src/sage/repl/rich_output/backend_emacs.py b/src/sage/repl/rich_outp
          """
          return 'Emacs sage-mode'
 @@ -61,9 +61,9 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
 -            sage: backend = BackendEmacs()
 -            sage: backend.default_preferences()
@@ -6380,7 +6380,7 @@ diff -urN a/src/sage/repl/rich_output/backend_emacs.py b/src/sage/repl/rich_outp
              * align_latex is not specified
              * graphics is not specified
 @@ -101,12 +101,12 @@
- 
+
              sage: from sage.repl.rich_output.output_basic import OutputPlainText, OutputLatex
              sage: plain_text = OutputPlainText.example()
 -            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
@@ -6565,9 +6565,9 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/dom
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
 @@ -15,11 +15,11 @@
    3
- 
+
  Sage example in ./sol/domaines.tex, line 28::
- 
+
 -  sage: a = Reals(17)(pi); b = Reals(42)(pi)
 -  sage: type(a) == type(b)
 +  sage: a = Reals(17)(pi); b = Reals(42)(pi)                                      # needs sage.symbolic
@@ -6576,16 +6576,16 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/dom
 -  sage: parent(a), parent(b)
 +  sage: parent(a), parent(b)                                                      # needs sage.symbolic
    (Real Field with 17 bits of precision, Real Field with 42 bits of precision)
- 
+
  Sage example in ./sol/domaines.tex, line 46::
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 @@ -40,14 +40,14 @@
      return g
- 
+
  Sage example in ./sol/graphtheory.tex, line 59::
- 
+
 -  sage: g = graphs.PetersenGraph()
 +  sage: g = graphs.PetersenGraph()                                                # needs sage.graphs
    sage: def optimal_order(g):
@@ -6638,9 +6638,9 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/pol
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 @@ -13,7 +13,7 @@
- 
+
  Sage example in ./sol/polynomes.tex, line 78::
- 
+
 -  sage: T = sage.symbolic.function_factory.function('T', nargs=2)
 +  sage: T = sage.symbolic.function_factory.function('T', nargs=2)                # needs sage.symbolic
    sage: def to_chebyshev_basis(pol):
@@ -6648,7 +6648,7 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/pol
    ....:     res = 0
 @@ -26,10 +26,10 @@
  Sage example in ./sol/polynomes.tex, line 105::
- 
+
    sage: x = polygen(QQ)
    sage: p = 4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
 -  sage: p_cheb = to_chebyshev_basis(p); p_cheb
@@ -7527,7 +7527,7 @@ diff --git a/src/sage/combinat/gelfand_tsetlin_patterns.py b/src/sage/combinat/g
 --- a/src/sage/combinat/gelfand_tsetlin_patterns.py
 +++ b/src/sage/combinat/gelfand_tsetlin_patterns.py
 @@ -576,9 +576,9 @@
- 
+
          sage: G = GelfandTsetlinPatterns(3,3)
          sage: c = 0
 -        sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
@@ -7542,7 +7542,7 @@ diff --git a/src/sage/combinat/gelfand_tsetlin_patterns.py b/src/sage/combinat/g
 +        sage: c == G.cardinality()                                                  # needs sage.graphs
          True
 @@ -789,9 +789,9 @@
- 
+
              sage: L = list(GelfandTsetlinPatterns(3,3))
              sage: c = 0
 -            sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
@@ -7839,12 +7839,12 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
 @@ -23,18 +23,12 @@
  - [Law2014]_
  """
- 
+
 +from __future__ import annotations
 +
  from itertools import pairwise
  from collections.abc import Iterator
- 
+
 -from sage.categories.finite_lattice_posets import FiniteLatticePosets
 -from sage.combinat.posets.lattices import LatticePoset
 -from sage.geometry.cone import Cone
@@ -7854,22 +7854,22 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
 -from sage.modules.free_module import FreeModule
 -from sage.modules.free_module_element import vector
 -from sage.rings.integer_ring import ZZ
- 
+
  B, N, BB = "□", "▨", "■■"
- 
+
 @@ -121,18 +115,21 @@
- 
+
      EXAMPLES::
- 
+
 -        sage: L = posets.Sashes(4); L
 +        sage: L = posets.Sashes(4); L                                             # needs sage.graphs
          Finite lattice containing 29 elements
 -        sage: L.hasse_diagram().to_undirected().is_regular(4)
 +        sage: L.hasse_diagram().to_undirected().is_regular(4)                     # needs sage.graphs
          True
- 
+
      TESTS::
- 
+
 -        sage: posets.Sashes(0)
 +        sage: posets.Sashes(0)                                                    # needs sage.graphs
          Traceback (most recent call last):
@@ -7884,14 +7884,14 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
      cat = FiniteLatticePosets().CongruenceUniform()
 @@ -155,14 +152,14 @@
      EXAMPLES::
- 
+
          sage: from sage.combinat.posets.sashes import pellytope_fan
 -        sage: pellytope_fan(3).f_vector()
 +        sage: pellytope_fan(3).f_vector()                                         # needs sage.geometry
          (1, 8, 18, 12)
- 
+
      TESTS::
- 
+
 -        sage: pellytope_fan(1)
 +        sage: pellytope_fan(1)                                                    # needs sage.geometry
          Rational polyhedral fan in 1-d lattice N
@@ -7901,7 +7901,7 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
          ...
          ValueError: n must be positive
 @@ -171,6 +168,10 @@
- 
+
      - [BTTM2024]_
      """
 +    from sage.geometry.cone import Cone
@@ -7912,9 +7912,9 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
          raise ValueError("n must be positive")
      dim_one = Fan([Cone([[-1]]), Cone([[1]])])
 @@ -196,21 +197,21 @@
- 
+
      EXAMPLES::
- 
+
 -        sage: P3 = polytopes.pellytope(3); P3
 +        sage: P3 = polytopes.pellytope(3); P3                                     # needs sage.geometry
          A 3-dimensional polyhedron in ZZ^3 defined as
@@ -7922,21 +7922,21 @@ diff --git a/src/sage/combinat/posets/sashes.py b/src/sage/combinat/posets/sashe
 -        sage: P3.f_vector()
 +        sage: P3.f_vector()                                                       # needs sage.geometry
          (1, 12, 18, 8, 1)
- 
+
      TESTS::
- 
+
 -        sage: polytopes.pellytope(0)
 +        sage: polytopes.pellytope(0)                                              # needs sage.geometry
          Traceback (most recent call last):
          ...
          ValueError: n must be positive
- 
+
 -        sage: G = posets.Sashes(3).hasse_diagram().to_undirected()
 -        sage: polytopes.pellytope(3).graph().is_isomorphic(G)
 +        sage: G = posets.Sashes(3).hasse_diagram().to_undirected()                # needs sage.graphs
 +        sage: polytopes.pellytope(3).graph().is_isomorphic(G)                     # needs sage.graphs
          True
- 
+
      REFERENCES:
 @@ -218,6 +219,10 @@
      - [BTTM2024]_
@@ -8017,8 +8017,8 @@ diff -urN a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
 +++ b/src/sage/doctest/fixtures.py
 @@ -45,6 +45,14 @@
  from functools import wraps
- 
- 
+
+
 +def _cowasm_pretty(val):
 +    try:
 +        from IPython.lib.pretty import pretty
@@ -8049,7 +8049,7 @@ diff -urN a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
                                         pretty(val)))
          setattr(self.delegate, name, val)
 @@ -396,7 +404,7 @@
- 
+
      @wraps(f)
      def g(*args, **kwds):
 -        from IPython.lib.pretty import pretty
@@ -8209,41 +8209,41 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/non
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
 @@ -27,6 +27,7 @@
- 
+
  Sage example in ./sol/nonlinear.tex, line 40::
- 
+
 +  sage: # needs sage.symbolic
    sage: f(x) = 4 * x - 1
    sage: a, b = 0, 1
    sage: phi(s, t) = (s + t) / 2
 @@ -53,6 +54,7 @@
- 
+
  Sage example in ./sol/nonlinear.tex, line 76::
- 
+
 +  sage: # needs sage.symbolic
    sage: f(x) = 4 * sin(x) - exp(x) / 2 + 1
    sage: a, b = RR(-pi), RR(pi)
    sage: def phi(s, t): return RR.random_element(s, t)
 @@ -62,6 +64,7 @@
- 
+
  Sage example in ./sol/nonlinear.tex, line 93::
- 
+
 +  sage: # needs sage.symbolic
    sage: basering.<x> = PolynomialRing(SR, 'x')
    sage: p = x^2 + x
    sage: p.roots(multiplicities=False)
 @@ -69,6 +72,7 @@
- 
+
  Sage example in ./sol/nonlinear.tex, line 101::
- 
+
 +  sage: # needs sage.symbolic
    sage: from collections import deque
    sage: basering = PolynomialRing(SR, 'x')
    sage: q, method = None, None
 @@ -101,6 +105,7 @@
- 
+
  Sage example in ./sol/nonlinear.tex, line 141::
- 
+
 +  sage: # needs sage.symbolic
    sage: basering = PolynomialRing(SR, 'x')
    sage: a, b = pi/2, pi
@@ -8346,52 +8346,193 @@ diff -urN a/src/sage/rings/polynomial/toy_d_basis.py b/src/sage/rings/polynomial
 diff -urN a/src/sage/rings/derivation.py b/src/sage/rings/derivation.py
 --- a/src/sage/rings/derivation.py
 +++ b/src/sage/rings/derivation.py
-@@ -1530,5 +1530,6 @@
+@@ -92,7 +92,7 @@
+ At the creation of a module of derivations, a codomain can be specified::
+
+     sage: B = A.fraction_field()
+-    sage: A.derivation_module(B)
++    sage: A.derivation_module(B)                                                       # needs pexpect
+     Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field
+      to Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
+
+@@ -141,34 +141,34 @@
+
+ Twisted derivations are handled similarly::
+
+-    sage: theta = B.hom([B(y),B(z),B(x)])
+-    sage: theta
++    sage: theta = B.hom([B(y),B(z),B(x)])                                              # needs pexpect
++    sage: theta                                                                         # needs pexpect
+     Ring endomorphism of Fraction Field of
+      Multivariate Polynomial Ring in x, y, z over Rational Field
+       Defn: x |--> y
+             y |--> z
+             z |--> x
+
+-    sage: M = B.derivation_module(twist=theta)
+-    sage: M
++    sage: M = B.derivation_module(twist=theta)                                         # needs pexpect
++    sage: M                                                                            # needs pexpect
+     Module of twisted derivations over Fraction Field of Multivariate Polynomial Ring
+      in x, y, z over Rational Field (twisting morphism: x |--> y, y |--> z, z |--> x)
+
+ Over a field, one proves that every `\theta`-derivation is a multiple
+ of `\theta - id`, so that::
+
+-    sage: d = M.gen(); d
++    sage: d = M.gen(); d                                                               # needs pexpect
+     [x |--> y, y |--> z, z |--> x] - id
+
+ and then::
+
+-    sage: d(x)
++    sage: d(x)                                                                         # needs pexpect
+     -x + y
+-    sage: d(y)
++    sage: d(y)                                                                         # needs pexpect
+     -y + z
+-    sage: d(z)
++    sage: d(z)                                                                         # needs pexpect
+     x - z
+-    sage: d(x + y + z)
++    sage: d(x + y + z)                                                                 # needs pexpect
+     0
+
+ AUTHOR:
+@@ -633,13 +633,13 @@
+         ``twist - id``::
+
+             sage: K = R.fraction_field()
+-            sage: theta = K.hom([K(y),K(x)])
+-            sage: M = K.derivation_module(twist=theta); M
++            sage: theta = K.hom([K(y),K(x)])                                           # needs pexpect
++            sage: M = K.derivation_module(twist=theta); M                              # needs pexpect
+             Module of twisted derivations over Fraction Field of Multivariate Polynomial
+              Ring in x, y over Integer Ring (twisting morphism: x |--> y, y |--> x)
+-            sage: M.ngens()
++            sage: M.ngens()                                                            # needs pexpect
+             1
+-            sage: M.gen()
++            sage: M.gen()                                                              # needs pexpect
+             [x |--> y, y |--> x] - id
+         """
+         if self._gens is None:
+@@ -663,11 +663,11 @@
+         ``twist - id``::
+
+             sage: K = R.fraction_field()
+-            sage: theta = K.hom([K(y),K(x)])
+-            sage: M = K.derivation_module(twist=theta); M
++            sage: theta = K.hom([K(y),K(x)])                                           # needs pexpect
++            sage: M = K.derivation_module(twist=theta); M                              # needs pexpect
+             Module of twisted derivations over Fraction Field of Multivariate Polynomial
+              Ring in x, y over Integer Ring (twisting morphism: x |--> y, y |--> x)
+-            sage: M.gens()
++            sage: M.gens()                                                             # needs pexpect
+             ([x |--> y, y |--> x] - id,)
+         """
+         if self._gens is None:
+@@ -1530,6 +1530,7 @@
+
              sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
              sage: R.<x,y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S = R.quo([x^5, y^5])
              sage: M = S.derivation_module()
              sage: der = M.random_element()
-@@ -1566,4 +1567,5 @@
+@@ -1565,6 +1566,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: Dx = S.derivation(x)
              sage: Dy = S.derivation(y)
-@@ -1581,4 +1583,5 @@
+@@ -1580,6 +1582,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: Dx = S.derivation(x)
              sage: Dy = S.derivation(y)
-@@ -1596,4 +1599,5 @@
+@@ -1595,6 +1598,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: Dx = S.derivation(x)
              sage: -Dx
-@@ -1610,4 +1614,5 @@
+@@ -1609,6 +1613,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: Dx = S.derivation(x)
              sage: Dx * 2
-@@ -1626,4 +1631,5 @@
+@@ -1625,6 +1630,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: Dx = S.derivation(x)
              sage: 2 * Dx
-@@ -1643,4 +1649,5 @@
+@@ -1642,6 +1648,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: M = S.derivation_module()
              sage: M.basis()
-@@ -1925,4 +1932,5 @@
+@@ -1885,9 +1892,9 @@
+
+             sage: R.<x,y> = ZZ[]
+             sage: K = R.fraction_field()
+-            sage: f = K.derivation(); f
++            sage: f = K.derivation(); f                                               # needs pexpect
+             d/dx
+-            sage: f(1/x)
++            sage: f(1/x)                                                               # needs pexpect
+             (-1)/x^2
+         """
+         defining_morphism = self.parent().defining_morphism()
+@@ -1924,6 +1931,7 @@
+         EXAMPLES::
+
              sage: R.<X,Y> = GF(5)[]
 +            sage: # needs sage.rings.polynomial.plural
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: f = x^3*S.derivation(); f
              x^3*d/dx
+@@ -2023,7 +2031,7 @@
+             sage: k.<a> = GF(5^3)
+             sage: Frob = k.frobenius_endomorphism()
+             sage: der = k.derivation(a + 1, twist=Frob)
+-            sage: latex(der)
++            sage: latex(der)  # known bug
+             \left(a + 1\right)  \left(\left[a \mapsto a^{5}\right] - \text{id}\right)
+         """
+         scalar = self._scalar
+@@ -2152,13 +2160,13 @@
+             sage: R.<x,y> = QQ[]
+             sage: K = R.fraction_field()
+             sage: theta = K.hom([y,x])
+-            sage: M = K.derivation_module(twist=theta)
+-            sage: M.basis()
++            sage: M = K.derivation_module(twist=theta)                                # needs pexpect
++            sage: M.basis()                                                            # needs pexpect
+             Family (twisting_morphism - id,)
+-            sage: f = (x+y) * M.gen()
+-            sage: f
++            sage: f = (x+y) * M.gen()                                                  # needs pexpect
++            sage: f                                                                    # needs pexpect
+             (x + y)*(twisting_morphism - id)
+-            sage: f.list()
++            sage: f.list()                                                             # needs pexpect
+             [x + y]
+         """
+         return [ self._scalar ]

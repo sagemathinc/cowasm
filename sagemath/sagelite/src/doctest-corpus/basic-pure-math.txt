@@ -27,6 +27,7 @@ src/sage/rings/finite_rings/hom_prime_finite_field.pyx
 src/sage/rings/number_field/number_field_element_base.pyx
 src/sage/rings/number_field/totallyreal_phc.py
 src/sage/rings/function_field/derivations_rational.py
+src/sage/rings/derivation.py
 src/sage/rings/power_series_mpoly.pyx
 src/sage/rings/puiseux_series_ring.py
 src/sage/rings/padics/padic_relaxed_errors.pyx

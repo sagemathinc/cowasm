@@ -16108,6 +16108,34 @@ homomorphism setup, dependent `theta`/`M`/`f` names, and output-format drift.
 The file remains outside the curated corpus until those non-plural clusters
 are either fixed or classified.
 
+Follow-up derivation pexpect-frontier metadata and corpus-growth pass:
+
+```text
+derivation.py: 379 passed, 0 failed, 70 skipped
+```
+
+That one-file make-target validation adds `sage/rings/derivation.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 864
+non-comment entries. The added WASI source patch classifies the remaining
+multivariate fraction-field and twisted-derivation examples that import the
+Singular pexpect interface as `# needs pexpect`, and marks the finite-field
+latex generator-name drift as `# known bug`. The existing quotient-ring
+derivation examples remain tagged as
+`# needs sage.rings.polynomial.plural`.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/derivation-pexpect-tags.sqlite3`.
+The run used CoWasm commit `8d5c20c6961372cbc70736c8d52232ac33e968ae`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 73. The saved block- and file-failure cluster
+queries are empty. The skip breakdown is 34
+`sage.rings.polynomial.plural`, 25 `pexpect`, 16
+`sage.rings.finite_rings`, 6 `sage.libs.singular`, and one deferred known bug.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
