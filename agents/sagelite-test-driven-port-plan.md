@@ -15352,6 +15352,37 @@ tensor, Lie-algebra, homology, interface, and numerical helper probes exposed
 broader startup, GAP, subprocess, matrix-echelon, or timeout clusters rather
 than additional clean promotion candidates.
 
+Scheduled 2026-07-01 frontier audit:
+
+```text
+low-count probe: 0 passed, 1 failed, 44 skipped
+category-example probe: 5 passed, 12 failed, 153 skipped
+mixed utility probe: 10 passed, 35 failed, 124 skipped
+```
+
+No new corpus file was promoted in this audit. The fresh absent-file probes
+confirmed that the current low-count frontier is dominated by skipped-only
+browser-profile boundaries and a few already-known runtime clusters rather
+than easy clean candidates. In particular, `sage/coding/two_weight_db.py`
+still reaches the NTL/libcxx `memory access out of bounds` path during coding
+bounds startup; `sage/homology/homology_group.py` reaches the matrix echelon
+recursion/`TypeError: module name must be a string` cluster through
+`HomologyGroup(..., ZZ, ...)`; `sage/combinat/species/all.py` is blocked by
+the unavailable lazy-species backend and cascading state failures; and
+`sage/matrix/tests.py`, `sage/schemes/generic/glue.py`, and
+`sage/graphs/planarity.pyx` still have focused default-profile failures.
+
+The audit also rechecked the already-promoted REPL/display pocket:
+
+```text
+sage -t passed: 521 passed, 0 failed, 90 skipped
+```
+
+That clean run covered `sage/repl/configuration.py`, the small
+`sage/repl/display/*` helpers, `sage/repl/preparse.py`, and the remaining
+rich-output doctest helpers already present in the corpus, so there is no
+additional REPL/display promotion work in that pocket.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
