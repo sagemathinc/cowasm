@@ -768,6 +768,7 @@ src/sage/matrix/misc_flint.pyx
 src/sage/matrix/misc_mpfr.pyx
 src/sage/matrix/strassen.pyx
 src/sage/matrix/symplectic_basis.py
+src/sage/matrix/tests.py
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/fixtures.py
 src/sage/doctest/marked_output.py

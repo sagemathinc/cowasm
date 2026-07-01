@@ -17710,6 +17710,45 @@ full dashboard run was interrupted after reaching worker 186 of the current
 891-file corpus; future full-dashboard validation should run as a longer
 background check.
 
+Focused matrix-test corpus-growth pass on 2026-07-01:
+
+This pass promotes `sage/matrix/tests.py` into the curated browser-profile
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 892
+non-comment entries.
+
+A fresh small absent-file probe in
+`/tmp/sagelite-20260701-small-cleanhunt/probe.sqlite3` produced no clean
+promotion candidate. Most sampled files were skipped-only under the default
+profile. The active failures were broader graph/poset and matrix-runtime
+frontiers: `bubble_shuffle.py` depended on unavailable graph-backed posets,
+`lovasz_theta.py` depended on graph startup globals and CSDP, and
+`matrix/tests.py` had four passing scalar-division blocks plus zero-size
+kernel and integer-determinant backend gaps.
+
+The useful narrow signal was `matrix/tests.py`: its active scalar division
+examples already pass, while the failures are explicit matrix-backend gaps
+that should remain visible as deferred work rather than hiding the whole file.
+The WASI source patch now marks the zero-column and zero-row kernel examples
+and the large integer determinant check as `# known bug`.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-20260701-matrix-tests/matrix-tests.sqlite3`:
+
+```text
+matrix/tests.py: 4 passed, 0 failed, 14 skipped
+```
+
+The focused run also recreated the patched Sagelite source tree from
+`/home/user/sagelite`, so the updated WASI patch applies cleanly from a fresh
+copy. The saved block-failure cluster query is empty. Skip grouping records
+nine `deferred:known bug` blocks, two `optional:sage.libs.pari` blocks, two
+combined real/symbolic blocks, and one symbolic-only block. The full dashboard
+still needs a longer background run after the recent Tornaria and matrix-test
+promotions.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
