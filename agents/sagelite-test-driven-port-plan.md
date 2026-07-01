@@ -17283,6 +17283,61 @@ combinat_doctest.py: 49 passed, 0 failed, 2 skipped
 The saved block- and file-failure cluster queries are empty. Skip grouping
 records the two display-layout deferrals under `deferred:known bug`.
 
+Follow-up compact frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+888 non-comment entries after the computational-math combinatorics solution
+promotion.
+
+Three focused probes were written under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal-work/`, and the
+new corpus-candidate helper found no clean runnable file absent from the
+current corpus.
+
+The remaining computational-math solution files were probed in
+`book-probe/probe.sqlite3`:
+
+```text
+calculus_doctest.py:    13 passed, 74 failed, 0 skipped
+float_doctest.py:       38 passed, 10 failed, 0 skipped
+graphique_doctest.py:   16 passed, 30 failed, 3 skipped
+integration_doctest.py:  3 passed,  9 failed, 0 skipped
+lp_doctest.py:           1 passed, 19 failed, 0 skipped
+mpoly_doctest.py:       15 passed, 15 failed, 0 skipped
+recequadiff_doctest.py:  1 passed, 22 failed, 0 skipped
+```
+
+The active clusters are not narrow corpus-growth targets: they are dominated
+by missing symbolic startup names such as `var`, dependent symbolic/calculus
+state, plotting display calls, linear-programming backend setup, and
+multivariate polynomial backend behavior.
+
+A compact algebra/geometry/modular/homology/topology probe in
+`compact-probe/probe.sqlite3` recorded 7 passed, 20 failed, and 56 skipped
+blocks. The geometry, modular, homology, and topology files in that batch were
+skipped-only under the default browser-compatible profile. The runnable
+failures were concentrated in `lie_conformal_algebra_with_basis.py`, which
+still reaches graph-backed affine Lie-conformal imports and a `QQbar`
+coercion-cache assertion, and `quaternion_algebra_element.py`, which still
+needs quaternion startup/backend and number-field/symbolic support before it
+can become a clean default-profile candidate.
+
+A mixed low-count probe in `mixed-lowcount/probe.sqlite3` recorded 5 passed,
+22 failed, and 44 skipped blocks. The skipped-only files covered binary
+dihedral groups, quadratic genus helpers, FLINT factorization, HOMFLY, and a
+finite-poset test helper. The active failures were explicit backend/data
+frontiers: optional elliptic-curve database data in `ec_database.py`, missing
+PolyBoRi/Brial runtime modules in `pbori/nf.py`, and missing
+`QuarticCurve` startup/scheme backend support in `quartic_generic.py`.
+
+Future scheduled corpus-growth runs should avoid repeating these exact book,
+compact low-prompt, algebra/geometry/modular, and mixed low-count batches as
+blind promotion candidates. Useful follow-up work is either focused
+symbolic/calculus startup classification for the computational-math solution
+files, graph and quaternion backend work for the algebra failures, or explicit
+metadata/backend packaging for elliptic-curve database and PolyBoRi frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
