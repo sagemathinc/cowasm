@@ -240,6 +240,10 @@ src/sage/combinat/species/empty_species.py
 src/sage/combinat/species/subset_species.py
 src/sage/combinat/species/cycle_species.py
 src/sage/combinat/species/sum_species.py
+src/sage/combinat/species/characteristic_species.py
+src/sage/combinat/species/composition_species.py
+src/sage/combinat/species/generating_series.py
+src/sage/combinat/species/linear_order_species.py
 src/sage/combinat/root_system/ambient_space.py
 src/sage/combinat/root_system/braid_orbit.pyx
 src/sage/combinat/root_system/cartan_type.py

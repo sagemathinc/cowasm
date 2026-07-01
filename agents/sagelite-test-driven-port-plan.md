@@ -14946,6 +14946,44 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up combinatorial-species corpus-growth pass:
+
+```text
+characteristic_species.py: 71 passed, 0 failed, 8 skipped
+composition_species.py: 39 passed, 0 failed, 26 skipped
+generating_series.py: 69 passed, 0 failed, 61 skipped
+linear_order_species.py: 24 passed, 0 failed, 5 skipped
+```
+
+That four-file make-target validation adds
+`sage/combinat/species/characteristic_species.py`,
+`sage/combinat/species/composition_species.py`,
+`sage/combinat/species/generating_series.py`, and
+`sage/combinat/species/linear_order_species.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 849
+non-comment entries. The added files expand the default
+browser-compatible dashboard across characteristic, composition, cycle-index,
+generating-series, and linear-order species behavior without new WASI source
+tags or startup namespace changes.
+
+Direct frontier sampling also checked the remaining adjacent species modules.
+`partition_species.py` and `permutation_species.py` were skipped-only under
+the default profile, so they remain outside the corpus for now. The runnable
+rejects still need broader triage: `product_species.py` traps in a dynamic
+loader `memcpy` path while resolving optional coding lazy imports,
+`recursive_species.py` has one focused block failure, and the generic
+`species.py`/`structure.py` helpers have broader semantic/display failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary four-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01/species-frontier/clean-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4029689c4ec9d9fd4860303ed94b8e14219c454e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
