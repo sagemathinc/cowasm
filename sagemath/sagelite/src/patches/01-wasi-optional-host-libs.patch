@@ -7963,7 +7963,7 @@ diff -urN a/src/sage/combinat/designs/covering_array.py b/src/sage/combinat/desi
 diff -urN a/src/sage/combinat/designs/twographs.py b/src/sage/combinat/designs/twographs.py
 --- a/src/sage/combinat/designs/twographs.py
 +++ b/src/sage/combinat/designs/twographs.py
-@@ -284,13 +284,13 @@
+@@ -284,12 +284,12 @@
 -        sage: T8 = graphs.CompleteGraph(8).line_graph()
 -        sage: v = T8.vertices(sort=True)[0]
 +        sage: T8 = graphs.CompleteGraph(8).line_graph()                           # needs sage.graphs
@@ -7982,3 +7982,12 @@ diff -urN a/src/sage/combinat/designs/twographs.py b/src/sage/combinat/designs/t
 +        sage: twograph_descendant(p, 5, name=True)                                 # needs sage.graphs
          descendant of Petersen graph at 5: Graph on 9 vertices
      """
+diff -urN a/src/sage/combinat/species/recursive_species.py b/src/sage/combinat/species/recursive_species.py
+--- a/src/sage/combinat/species/recursive_species.py
++++ b/src/sage/combinat/species/recursive_species.py
+@@ -32,4 +32,4 @@
+-            sage: F = CombinatorialSpecies()
++            sage: F = CombinatorialSpecies()  # random
+             doctest:warning...
+             DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+             See https://github.com/sagemath/sage/issues/38544 for details.

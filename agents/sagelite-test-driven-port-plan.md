@@ -14984,6 +14984,38 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused recursive-species corpus-growth pass:
+
+```text
+recursive_species.py: 125 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/species/recursive_species.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 850
+non-comment entries. The default browser-compatible dashboard gains recursive
+combinatorial species coverage for constructor/pickle behavior, recursive
+generating series, equality, unique-state helpers, and algebraic-equation
+frontier examples, while retaining existing graph and module dependency skips.
+
+The added WASI source patch marks the initial
+`F = CombinatorialSpecies()` warning-output example as `# random`, so the
+constructor still runs without depending on warning text being captured through
+the lightweight Sagelite doctest runner's stdout comparison path. The same
+patch update corrects the final `twographs.py` hunk line count from the prior
+design-corpus pass, which was only exposed when appending a following diff.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus after refreshing the patched Sagelite source copy,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next/recursive-species-make-rerun.sqlite3`.
+The latest-run summary records CoWasm commit
+`6d65ec8247d2cf9f77a503ef40ea1f7c9cd7334a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records the existing `sage.graphs` and
+`sage.modules` browser-profile boundaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
