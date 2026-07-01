@@ -15470,6 +15470,34 @@ out because finite-field input examples reach the known NTL/libcxx
 default-profile failures need separate discrete-Gaussian triage; the remaining
 sampled stats and HMM support files were skipped-only or empty.
 
+Scheduled 2026-07-01 helper and low-prompt frontier audit:
+
+```text
+helper probe: 195 passed, 55 failed, 87 skipped
+low-prompt probe: 0 passed, 3 failed, 67 skipped
+```
+
+No new corpus file was promoted in this audit. The helper probe rechecked a
+small REPL/doctest/typeset pocket and found clean runnable coverage in
+`sage/doctest/marked_output.py`, `sage/doctest/check_tolerance.py`,
+`sage/typeset/character_art.py`, and
+`sage/typeset/character_art_factory.py`; all four files are already present
+in the curated corpus. The only fresh runnable helper candidate,
+`sage/parallel/decorate.py`, still fails behind the existing
+`cysignals.alarm` browser-profile boundary.
+
+The low-prompt absent-file probe sampled graph, matroid, crypto, CPython,
+database, species, category, monoid, test, knot, and coding helpers. Most
+files were skipped-only under existing browser-compatible metadata. The
+runnable failures confirmed existing frontier boundaries rather than clean
+promotion candidates: graph startup names, missing graph Cython backend
+imports through matroid startup, and a worker `SIGSEGV` while probing
+`sage/knots/gauss_code.py`. The checked SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-01-codex5/`; the latest-run summaries
+record CoWasm commit `5078a9e7af08b871841b1e79615c27f7cfc689ff`, Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and
+runner version 73.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
