@@ -16182,6 +16182,36 @@ one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty. The skip
 breakdown is 14 `sage.libs.gap` blocks.
 
+Follow-up small-frontier audit after the species frontend pass:
+
+```text
+species clean subset: 730 passed, 0 failed, 170 skipped
+```
+
+That 13-file make-target validation rechecks the already-curated runnable
+species backend coverage:
+`characteristic_species.py`, `composition_species.py`, `cycle_species.py`,
+`empty_species.py`, `functorial_composition_species.py`,
+`generating_series.py`, `linear_order_species.py`, `recursive_species.py`,
+`set_species.py`, `species.py`, `structure.py`, `subset_species.py`, and
+`sum_species.py`. The focused run used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-current/species-clean-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same audit keeps the remaining species frontier out of the quiet corpus:
+`partition_species.py` and `permutation_species.py` are skipped-only under the
+current browser-compatible tags, while `product_species.py` still traps in
+the `ProductSpeciesStructure.__init__` random-structure example with a
+side-module memory-range failure. Additional small absent-file probes in
+`/home/user/cowasm/.tmp/current-run/scheduled-current/` did not find new safe
+promotion candidates: utility, data, topology, monoid, and crypto helpers
+were skipped-only or empty; `two_weight_db.py` and `q_bernoulli.pyx` reach the
+known NTL/libcxx finite-field trap; and sampled Lie-conformal, quaternion,
+PolyBoRi, symbolic-vector, homology, manifold, and LP tutorial files have
+ordinary block failures that need focused backend or startup-namespace triage
+before promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
