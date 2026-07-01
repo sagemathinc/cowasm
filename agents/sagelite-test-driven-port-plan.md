@@ -15410,6 +15410,36 @@ tree but not currently importable from the installed Sagelite runtime
 resources. The plane-quartic pocket should wait for an explicit schemes
 packaging pass rather than a doctest namespace seed.
 
+Scheduled 2026-07-01 continuation audit:
+
+```text
+small helper probe: 0 passed, 0 failed, 54 skipped
+repl/cli/test helper probe: 0 passed, 0 failed, 48 skipped
+low-prompt absent-file sweep: 16 passed, 133 failed, 252 skipped
+Judson abstract-algebra sample: 0 passed, 0 failed, 0 skipped
+functions/numerical probe: 49 passed, 166 failed, 458 skipped
+```
+
+No new corpus file was promoted in this audit. The checked probes wrote SQLite
+dashboards under
+`.tmp/current-run/scheduled-2026-07-01-continuation/` and sampled low-prompt
+absent files, small database/crypto/misc helpers, REPL/CLI helpers, Judson
+exercise files, functions, and numerical linear-tensor helpers.
+
+Most small helpers were skipped-only or had no extracted blocks, including
+`sage/cpython/string.pyx`, `sage/crypto/cipher.py`, small database helpers,
+`sage/misc/map_threaded.py`, `sage/misc/sphinxify.py`, monoid helpers,
+REPL/CLI helpers, and the sampled Judson files. The broader low-prompt sweep
+confirmed the same frontier clusters already visible in earlier audits:
+NTL/libcxx traps during coding-bound startup, a FLINT `qsieve` memory trap,
+missing GAP/Singular/PyPolyBoRi/IPython/pexpect/pytest resources, unavailable
+elliptic-curve database data, graph-backed startup names, PARI/cypari2
+object-model gaps, and scheme packaging/startup gaps. The functions sample
+was skipped-only for the symbolic-style function modules; the numerical
+linear-tensor files expose `MixedIntegerLinearProgram` startup and dependent
+state failures, while `linear_functions.pyx` times out in the
+`QuadraticField(5, 'sqrt5')` setup path.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
