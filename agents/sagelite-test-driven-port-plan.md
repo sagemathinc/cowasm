@@ -17909,6 +17909,17 @@ lightweight algebra/category files. They should not be resampled for quiet
 corpus growth without a dependency-scope change because they add no runnable
 default-profile coverage.
 
+Follow-up candidate-helper hygiene pass on 2026-07-01:
+
+The checked corpus remains at 893 non-comment entries. While sweeping older
+local probe databases, `doctest-corpus-candidates.py` surfaced an artificial
+scratch file from a warning-format smoke database because it was clean and not
+listed in the curated corpus. The helper now filters promotion candidates to
+normalized `src/sage/...` paths by default, while preserving an explicit
+`--include-non-sage` escape hatch for diagnostics that intentionally use
+out-of-tree fixtures. This keeps future corpus-growth sweeps focused on
+Sagelite source files instead of temporary runner smoke artifacts.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

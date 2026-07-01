@@ -41,6 +41,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="print a tab-separated header row",
     )
+    parser.add_argument(
+        "--include-non-sage",
+        action="store_true",
+        help="include clean files outside the src/sage source tree",
+    )
     return parser.parse_args()
 
 
@@ -117,6 +122,7 @@ def candidate_rows(
     covered: set[str],
     source_root: Path | None,
     min_passed: int,
+    include_non_sage: bool,
 ) -> list[tuple[str, int, int, int, int, int]]:
     rows = db.execute(
         """
@@ -145,6 +151,8 @@ def candidate_rows(
     candidates = []
     for path, total, passed, skipped, runnable, duration in rows:
         relative_path = normalize_path(path, source_root)
+        if not include_non_sage and not relative_path.startswith("src/sage/"):
+            continue
         if relative_path in covered:
             continue
         candidates.append((relative_path, total, passed, skipped, runnable, duration))
@@ -160,7 +168,14 @@ def main() -> int:
         run_id, db_source_root = latest_run_metadata(db)
         source_root = args.source_root or db_source_root
         covered = read_corpus(args.corpus, source_root)
-        rows = candidate_rows(db, run_id, covered, source_root, args.min_passed)
+        rows = candidate_rows(
+            db,
+            run_id,
+            covered,
+            source_root,
+            args.min_passed,
+            args.include_non_sage,
+        )
 
     if args.include_header:
         print("path\ttotal_blocks\tpassed_blocks\tskipped_blocks\trunnable_blocks\tduration_ms")
