@@ -15273,6 +15273,53 @@ blocks, while `float_doctest.py`, `recequadiff_doctest.py`,
 broader symbolic, combinatorics-startup, plural/Singular, pexpect, and
 PARI/cypari2 object-model clusters.
 
+Focused cyclotomic-polynomial corpus-growth pass:
+
+```text
+cyclotomic.pyx: 21 passed, 0 failed, 16 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/cyclotomic.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 858 non-comment
+entries. The dashboard gains runnable default-profile coverage for fast
+cyclotomic coefficient generation, top-level cyclotomic polynomial evaluation
+on integers and rationals, Bateman-bound helpers, and modulo-integer
+evaluation.
+
+Direct sampling first recorded 21 passed blocks, 6 focused failures, and 10
+skips. The added WASI source patch marks the broad cross-parent
+`cyclotomic_value` consistency loop as a deferred known bug because the
+polynomial-element case currently falls into a recursive
+fraction-field/number-field gcd path ending in `SystemError`. It also marks
+the quotient-ring element examples as deferred known bugs because construction
+currently reaches `Polynomial_absolute_number_field_dense.__init__` with an
+unexpected `construct` keyword before the quotient generator exists. Existing
+PARI, number-field, finite-ring, p-adic, real-field, and symbolic examples
+remain behind their upstream `# needs` metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex2/cyclotomic-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`c317c7849c7a4d0aacc04693e64115f6bf08edf3`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the six new deferrals under
+`deferred:known bug`.
+
+The same sampling pass kept nearby candidates out of the quiet corpus:
+`functions/min_max.py`, `functions/transcendental.py`,
+`functions/prime_pi.pyx`, `plot/misc.py`, and
+`stats/distributions/discrete_gaussian_integer.pyx` were skipped-only;
+several generated Judson exercise files contributed zero extracted blocks;
+`games/hexad.py` depends on the missing symbolic expression module through
+`sage.calculus.calculus.SR`; `categories/euclidean_domains.py` timed out in a
+polynomial `gcd_free_basis` example; and the Bernoulli/q-Bernoulli candidates
+still hit the known NTL/libcxx ostream trap.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

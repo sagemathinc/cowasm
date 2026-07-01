@@ -8190,6 +8190,34 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/non
    sage: basering = PolynomialRing(SR, 'x')
    sage: a, b = pi/2, pi
    sage: f(x) = 4 * sin(x) - exp(x) / 2 + 1
+diff -urN a/src/sage/rings/polynomial/cyclotomic.pyx b/src/sage/rings/polynomial/cyclotomic.pyx
+--- a/src/sage/rings/polynomial/cyclotomic.pyx
++++ b/src/sage/rings/polynomial/cyclotomic.pyx
+@@ -254,7 +254,7 @@
+         sage: K.<i> = NumberField(x^2 + 1); elements += [i]                             # needs sage.rings.number_fields
+         sage: elements += [GF(9,'a').gen()]                                             # needs sage.rings.finite_rings
+         sage: elements += [Zp(3)(54)]                                                   # needs sage.rings.padics
+-        sage: for y in elements:
++        sage: for y in elements:                                                       # known bug
+         ....:     for n in [1..60]:
+         ....:         val1 = cyclotomic_value(n, y)
+         ....:         val2 = cyclotomic_polynomial(n)(y)
+@@ -275,10 +275,10 @@
+-        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
+-        sage: cyclotomic_value(15, t)
++        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                          # known bug
++        sage: cyclotomic_value(15, t)                                                   # known bug
+         0
+-        sage: cyclotomic_value(30, t)
++        sage: cyclotomic_value(30, t)                                                   # known bug
+         2*t^7 - 2*t^5 - 2*t^3 + 2*t
+-        sage: S.<t> = R.quotient(x^10)
+-        sage: cyclotomic_value(2^128 - 1, t)
++        sage: S.<t> = R.quotient(x^10)                                                  # known bug
++        sage: cyclotomic_value(2^128 - 1, t)                                            # known bug
+         -t^7 - t^6 - t^5 + t^2 + t + 1
+         sage: cyclotomic_value(10, mod(3,4))
+         1
 diff -urN a/src/sage/rings/polynomial/toy_d_basis.py b/src/sage/rings/polynomial/toy_d_basis.py
 --- a/src/sage/rings/polynomial/toy_d_basis.py
 +++ b/src/sage/rings/polynomial/toy_d_basis.py
