@@ -16160,6 +16160,28 @@ breakdown is 32 `sage.rings.number_field` blocks and 4 `sage.modules`
 blocks, leaving 12 ordinary ideal-monoid blocks runnable in the default
 browser-compatible profile.
 
+Follow-up species frontend metadata and corpus-growth pass:
+
+```text
+all.py: 1 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds `sage/combinat/species/all.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 866
+non-comment entries. The added WASI source patch classifies the lazy
+combinatorial species examples that import GAP-backed symmetric-group support
+as `# needs sage.libs.gap`, while preserving the initial polynomial-ring setup
+block as runnable browser-profile coverage.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/species-all/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The skip
+breakdown is 14 `sage.libs.gap` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

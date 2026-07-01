@@ -8140,6 +8140,25 @@ diff -urN a/src/sage/combinat/species/recursive_species.py b/src/sage/combinat/s
              doctest:warning...
              DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
              See https://github.com/sagemath/sage/issues/38544 for details.
+diff -urN a/src/sage/combinat/species/all.py b/src/sage/combinat/species/all.py
+--- a/src/sage/combinat/species/all.py
++++ b/src/sage/combinat/species/all.py
+@@ -40,6 +40,7 @@
+ We define rooted ordered trees with leaves having weight `q`::
+ 
+     sage: R.<q> = QQ[]
++    sage: # needs sage.libs.gap
+     sage: L.<X> = LazyCombinatorialSpecies(R)
+     sage: leaf = X
+     sage: node = q * X
+@@ -53,6 +54,7 @@
+ We define rooted unordered trees with leaves of sort `Y`.  The
+ standard representation of a species is its molecular decomposition::
+ 
++    sage: # needs sage.libs.gap
+     sage: L = LazyCombinatorialSpecies(R, "X")
+     sage: E = L.Sets()
+     sage: Ep = E.restrict(1)
 diff -urN a/src/sage/combinat/species/species.py b/src/sage/combinat/species/species.py
 --- a/src/sage/combinat/species/species.py
 +++ b/src/sage/combinat/species/species.py
