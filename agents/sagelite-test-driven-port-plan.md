@@ -16899,6 +16899,40 @@ zero extracted blocks, while computational-mathematics integration, linear
 programming, and multivariate-polynomial examples still require broader
 symbolic/optimization/polynomial backend work.
 
+Follow-up subhypergraph-search corpus-growth pass on 2026-07-01:
+
+```text
+subhypergraph_search.pyx: 1 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/designs/subhypergraph_search.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 885
+non-comment entries. The added WASI source patch classifies the Petersen/Cycle
+graph incidence-structure examples as `# needs sage.graphs`, preserving the
+low-level Cython import smoke as runnable browser-profile coverage while
+keeping graph-backed design enumeration outside the default profile.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=45`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-this/subhypergraph-make.sqlite3`.
+The latest-run metadata records CoWasm commit
+`fc37ef26ce7dcfb49b9bba76b9f687dc550773c6`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records nine `optional:sage.graphs` blocks
+and two pre-existing `optional:sage.schemes` blocks.
+
+The same pass rejected several small probes as non-promotable. A category
+probe kept `algebra_functor.py` and `coalgebras.py` out as skipped-only, while
+`quotient_fields.py`, `pushout.py`, and `rings.py` hit timeout, NTL/libcxx,
+or recursion/runtime frontiers. Low-prompt CPython, helper, math, topology,
+coding, and database probes were mostly skipped-only; the runnable failures
+again clustered around cypari2/PARI object-model gaps, graph-backed design
+coverage, and the known NTL/libcxx finite-field trap.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

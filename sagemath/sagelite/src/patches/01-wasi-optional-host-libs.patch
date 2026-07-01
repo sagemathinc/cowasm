@@ -8955,3 +8955,26 @@ diff -urN -U0 a/src/sage/categories/unique_factorization_domains.py b/src/sage/c
 @@ -310 +311 @@
 -                sage: squarefree_part(pol)
 +                sage: squarefree_part(pol)                                         # known bug
+diff -urN -U0 a/src/sage/combinat/designs/subhypergraph_search.pyx b/src/sage/combinat/designs/subhypergraph_search.pyx
+--- a/src/sage/combinat/designs/subhypergraph_search.pyx
++++ b/src/sage/combinat/designs/subhypergraph_search.pyx
+@@ -354,4 +354,4 @@
+-            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(sort=True, labels=False))
+-            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(sort=True, labels=False))
+-            sage: S = SubHypergraphSearch(g1,g2,0)
+-            sage: sum(1 for _ in S)
++            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(sort=True, labels=False))  # needs sage.graphs
++            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(sort=True, labels=False))    # needs sage.graphs
++            sage: S = SubHypergraphSearch(g1,g2,0)                                                # needs sage.graphs
++            sage: sum(1 for _ in S)                                                               # needs sage.graphs
+@@ -483,5 +483,5 @@
+-            sage: P = graphs.PetersenGraph()
+-            sage: C = graphs.CycleGraph(5)
+-            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))
+-            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))
+-            sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))
++            sage: P = graphs.PetersenGraph()                                                      # needs sage.graphs
++            sage: C = graphs.CycleGraph(5)                                                        # needs sage.graphs
++            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))                       # needs sage.graphs
++            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))                       # needs sage.graphs
++            sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))                        # needs sage.graphs

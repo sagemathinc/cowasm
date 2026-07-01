@@ -232,6 +232,7 @@ src/sage/combinat/designs/difference_family.py
 src/sage/combinat/designs/MOLS_handbook_data.py
 src/sage/combinat/designs/covering_array.py
 src/sage/combinat/designs/steiner_quadruple_systems.py
+src/sage/combinat/designs/subhypergraph_search.pyx
 src/sage/combinat/designs/twographs.py
 src/sage/combinat/diagram.py
 src/sage/combinat/dlx.py
