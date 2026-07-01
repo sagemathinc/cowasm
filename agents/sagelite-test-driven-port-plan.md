@@ -3336,6 +3336,41 @@ and modular-symbol helpers. Future runs should avoid repeating this exact
 low-prompt set unless graph/matroid startup support or the
 `polynomial_number_field` trap changes.
 
+Follow-up scheduled frontier audit on 2026-07-01:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 862 non-comment entries. Fresh focused probes wrote SQLite dashboards
+under `/home/user/cowasm/.tmp/current-run/`.
+
+The modular-symbol `heilbronn.pyx` rerun wrote
+`scheduled-2026-07-01-heilbronn/heilbronn-direct.sqlite3` and recorded
+`0 passed, 66 failed, 0 skipped`. The root import still needs the unavailable
+`sage.matrix.matrix_rational_dense` extension, while later blocks depend on
+the broader `ModularSymbols`, Dirichlet-character, and Hecke-image stack; this
+is not a narrow startup-name promotion target.
+
+Plot and statistics probes were skipped-only under the default browser profile:
+`scheduled-2026-07-01-plot-frontier/simple-plot-clean.sqlite3` recorded
+401 skipped blocks across `colors.py`, `misc.py`, and the hyperbolic plot
+helpers; `plot-field-density.sqlite3` recorded 301 skipped blocks across
+density, contour, plot-field, streamline, and regular-hyperbolic-polygon
+helpers; and `scheduled-2026-07-01-stats/stats-probe.sqlite3` recorded
+651 skipped blocks across `time_series.pyx`, `r.py`, and the HMM helpers.
+The vector-helper probe
+`scheduled-2026-07-01-vector/vector-probe.sqlite3` was also skipped-only,
+recording 61 skipped blocks across NumPy and double-vector helper files.
+
+Low-prompt arithmetic and documentation probes did not produce promotable
+coverage. `scheduled-2026-07-01-low-arith/probe.sqlite3` found only
+skipped-only factorization, profiler, sphinxify, and Gauss-code files, plus a
+`qsieve_sage.pyx` file-level `wasm_trap` at `qsieve(n)`. The computational
+mathematics book probe in `scheduled-2026-07-01-book2/probe.sqlite3` recorded
+only 3 passing blocks against 29 failures, dominated by missing symbolic
+integration setup and mixed-integer linear-programming startup/backend
+boundaries. The Judson abstract-algebra exercise files exposed zero doctest
+blocks in this runner, so they should not be added as corpus entries.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
