@@ -16276,6 +16276,44 @@ skipped blocks in `sage/repl/user_globals.py`. The coding-core probe recorded
 not a narrow corpus-growth target: `linear_functions.pyx` timed out at
 quadratic-field setup and the tensor helpers recorded 166 block failures.
 
+Scheduled 2026-07-01 small-frontier audit:
+
+No new curated corpus entry was added in this audit. Fresh focused probes from
+CoWasm commit `4f22115c695369c01372f211b730a6fe810ff728`, Sagelite package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 74 wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-frontier/`.
+
+The first helper probe recorded `0 passed, 2 failed, 180 skipped`. The
+skipped-only files were small crypto helpers, and the zero-block files were
+small data-structure, misc, GMP, and FLINT wrappers. The two file-level errors
+were `sage/data_structures/stream.py` and `sage/misc/functional.py`, both
+trapping in polynomial/fraction-field setup rather than exposing optional
+backend metadata.
+
+The misc persistence probe recorded `497 passed, 91 failed, 211 skipped`.
+`persist.pyx`, `explain_pickle.py`, and `session.pyx` have real runnable
+failure clusters around pickle/display drift and session state behavior; the
+remaining checked misc helpers were skipped-only or zero-block.
+
+The library-wrapper probe recorded `1 passed, 124 failed, 22 skipped`.
+`sage/libs/braiding.pyx` is blocked first by missing `sage.libs.braiding` in
+the current resource bundle and then by dependent `BraidGroup`/`B` name
+fallout, so a standalone startup seed is not useful yet. The same probe kept
+PARI conversion wrappers and `lrcalc.py` out because they still expose
+backend or output-drift failures.
+
+The function/ring probe recorded `0 passed, 2 failed, 387 skipped`. The
+skipped-only files were tagged symbolic, PARI, FLINT, or cfinite-sequence
+coverage; the active errors were the known NTL/libcxx ostream trap in
+`bernoulli_mod_p.pyx` and a polynomial fraction-field recursion/runtime
+failure in `fraction_field.py`.
+
+The useful next work is runtime/backend focused rather than corpus promotion:
+investigate the polynomial/fraction-field table-index and recursion failures,
+the NTL/libcxx ostream trap, and resource packaging for `sage.libs.braiding`
+before revisiting these probes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
