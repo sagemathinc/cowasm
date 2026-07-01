@@ -10,6 +10,19 @@ diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
      <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
  
  A (di)graph backend is a simpler (di)graph class having only the most elementary
+diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
+--- a/src/sage/matroids/advanced.py
++++ b/src/sage/matroids/advanced.py
+@@ -5,7 +5,7 @@
+ This module collects a number of advanced functions which are not directly
+ available to the end user by default. To import them into the main namespace,
+ type::
+ 
+-    sage: from sage.matroids.advanced import *
++    sage: from sage.matroids.advanced import *  # needs sage.graphs
+ 
+ This adds the following to the main namespace:
+ 
 diff -urN a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build

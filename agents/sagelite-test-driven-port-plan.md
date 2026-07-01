@@ -15896,6 +15896,40 @@ full `01-wasi-optional-host-libs.patch` to a clean Sagelite source copy also
 passes. No curated corpus entry was added because this file is now
 skipped-only under the default browser-compatible profile.
 
+Follow-up matroid graph-frontier metadata pass:
+
+The adjacent `sage/matroids/advanced.py` startup doctest is now tagged with
+`# needs sage.graphs` in the WASI Sagelite source patch. The baseline one-file
+probe wrote `.tmp/current-run/matroid-advanced-probe/baseline.sqlite3` and
+recorded the single block failure as:
+
+```text
+ImportError: cannot import name 'generic_graph_pyx' from 'sage.graphs'
+```
+
+That failure comes from the lazy `GraphicMatroid` import path and is the same
+compiled graph-backend/resource boundary as the graph overview probe, not a
+matroid startup namespace bug.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/matroid-advanced-probe/tagged.sqlite3`.
+The latest run used CoWasm commit
+`6f1a213058d55d0a3a793dbc6d1c940f004dc09f`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+73. The direct doctest result is:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1 skipped
+```
+
+The persisted block row carries `tags = optional,needs:sage.graphs` and
+`skip_reason = optional:sage.graphs` for
+`from sage.matroids.advanced import *`. The file remains outside the curated
+corpus because it is skipped-only under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
