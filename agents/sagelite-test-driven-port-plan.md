@@ -17207,6 +17207,40 @@ denominator, and real-quotient precision examples, plus 3
 `r = (x+1)/(x-1)`, so that polynomial fraction-field runtime issue remains a
 separate follow-up target and is not tagged as an optional dependency here.
 
+Focused continued-fraction symbolic precision classification pass:
+
+This pass promotes `sage/rings/continued_fraction.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 887
+non-comment entries.
+
+The added WASI source patch classifies the remaining high-precision
+`continued_fraction(pi)` numerator, denominator, quotient, and RIF diagnostic
+examples as `# needs sage.symbolic`. This keeps the low-index continued
+fraction arithmetic runnable while deferring the examples whose expected
+values depend on Sage's full symbolic constant and high-precision evaluation
+semantics.
+
+Focused validation against a freshly rebuilt patched source tree used a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continued-fraction-symbolic-tags/continued-fraction.sqlite3`:
+
+```text
+continued_fraction.py: 203 passed, 0 failed, 234 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. Skip grouping
+records 101 `optional:sage.rings.number_field` blocks, 80
+`optional:sage.symbolic` blocks, 36 `optional:sage.combinat` blocks, 8
+`optional:sage.rings.real_mpfr` blocks, and smaller existing PARI, long-time,
+known-bug, and combined dependency buckets.
+
+A full 887-file corpus validation was started with the same 90-second
+per-file timeout and `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, but was interrupted
+before completion because it was still early in the file list. The focused
+hard-failure rerun is the completed validation for this narrow promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

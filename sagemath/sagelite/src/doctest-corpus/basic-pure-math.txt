@@ -17,6 +17,7 @@ src/sage/rings/complex_conversion.pyx
 src/sage/rings/tests.py
 src/sage/rings/fast_arith.pyx
 src/sage/rings/generic.py
+src/sage/rings/continued_fraction.py
 src/sage/rings/continued_fraction_gosper.py
 src/sage/rings/monomials.py
 src/sage/rings/big_oh.py

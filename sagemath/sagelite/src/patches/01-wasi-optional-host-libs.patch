@@ -9030,14 +9030,53 @@ diff -urN -U0 a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_
 +    sage: # needs sage.rings.number_field
 @@ -628,0 +631 @@
 +            sage: # needs sage.rings.number_field
+@@ -772 +775 @@
+-            sage: c.numerator(152)
++            sage: c.numerator(152)                                                    # needs sage.symbolic
+@@ -806 +809 @@
+-            sage: c.denominator(152)
++            sage: c.denominator(152)                                                  # needs sage.symbolic
 @@ -1331,0 +1335 @@
 +            sage: # needs sage.rings.number_field
 @@ -1368,0 +1373 @@
 +            sage: # needs sage.rings.number_field
 @@ -1703,0 +1709 @@
 +            sage: # needs sage.rings.number_field
+@@ -1890 +1896 @@
+-            sage: cf.quotient(2552)
++            sage: cf.quotient(2552)                                                   # needs sage.symbolic
+@@ -1905 +1911 @@
+-            sage: num = (q0*a1 - p0); num.n()
++            sage: num = (q0*a1 - p0); num.n()                                         # needs sage.symbolic
+@@ -1907 +1913 @@
+-            sage: den = (q1*a1 - p1); den.n()
++            sage: den = (q1*a1 - p1); den.n()                                         # needs sage.symbolic
+@@ -1909 +1915 @@
+-            sage: a1 = -num/den
++            sage: a1 = -num/den                                                       # needs sage.symbolic
+@@ -1910 +1916 @@
+-            sage: RIF(a1)
++            sage: RIF(a1)                                                             # needs sage.symbolic
 @@ -1915,0 +1922 @@
 +            sage: # needs sage.rings.number_field
+@@ -1934 +1941 @@
+-            sage: c1.quotient(100)
++            sage: c1.quotient(100)                                                    # needs sage.symbolic
+@@ -1936 +1943 @@
+-            sage: c1._xa.parent()
++            sage: c1._xa.parent()                                                     # needs sage.symbolic
+@@ -1938 +1945 @@
+-            sage: c1.quotient(200)
++            sage: c1.quotient(200)                                                    # needs sage.symbolic
+@@ -1940 +1947 @@
+-            sage: c1._xa.parent()
++            sage: c1._xa.parent()                                                     # needs sage.symbolic
+@@ -1942 +1949 @@
+-            sage: c1.quotient(300)
++            sage: c1.quotient(300)                                                    # needs sage.symbolic
+@@ -1944 +1951 @@
+-            sage: c1._xa.parent()
++            sage: c1._xa.parent()                                                     # needs sage.symbolic
 @@ -1946,0 +1954 @@
 +            sage: # needs sage.rings.number_field
 @@ -2374,0 +2383 @@
