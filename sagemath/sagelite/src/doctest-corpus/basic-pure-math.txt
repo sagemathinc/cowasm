@@ -725,6 +725,7 @@ src/sage/modular/modsym/g1list.py
 src/sage/modular/modsym/manin_symbol_list.py
 src/sage/modular/modsym/p1list.pyx
 src/sage/modular/modsym/relation_matrix_pyx.pyx
+src/sage/homology/chain_homotopy.py
 src/sage/homology/koszul_complex.py
 src/sage/homology/matrix_utils.py
 src/sage/matrix/change_ring.pyx

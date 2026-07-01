@@ -15320,6 +15320,38 @@ several generated Judson exercise files contributed zero extracted blocks;
 polynomial `gcd_free_basis` example; and the Bernoulli/q-Bernoulli candidates
 still hit the known NTL/libcxx ostream trap.
 
+Focused homology chain-homotopy corpus-growth pass:
+
+```text
+chain_homotopy.py: 78 passed, 0 failed, 18 skipped
+```
+
+That one-file make-target validation adds `sage/homology/chain_homotopy.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 859
+non-comment entries. Direct sampling first recorded 12 passed blocks, 66
+failed blocks, and 18 skipped blocks; the failures were all downstream of the
+upstream doctests using `ChainComplex(...)` from Sage's startup namespace
+without a local import.
+
+The doctest runner now seeds `ChainComplex` in the common doctest namespace,
+and the WASI `sage.all` patch exposes the same constructor for REPL parity on
+a fresh patched source copy. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01/chain-homotopy-make/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the 18 skipped blocks under the existing
+`optional:sage.graphs` boundary.
+
+The same post-migration frontier sampling kept several absent batches out of
+the quiet corpus. Small crypto and plot helpers were skipped-only under the
+default profile; feature `*_test.py` helpers had no extracted doctest blocks;
+tensor, Lie-algebra, homology, interface, and numerical helper probes exposed
+broader startup, GAP, subprocess, matrix-echelon, or timeout clusters rather
+than additional clean promotion candidates.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
