@@ -213,6 +213,7 @@ src/sage/combinat/designs/covering_design.py
 src/sage/combinat/designs/database.py
 src/sage/combinat/designs/design_catalog.py
 src/sage/combinat/designs/MOLS_handbook_data.py
+src/sage/combinat/designs/steiner_quadruple_systems.py
 src/sage/combinat/diagram.py
 src/sage/combinat/dlx.py
 src/sage/combinat/matrices/dlxcpp.py

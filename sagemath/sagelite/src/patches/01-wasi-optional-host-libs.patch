@@ -7907,3 +7907,42 @@ diff -urN a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
          arglst = [pretty(arg) for arg in args]
          arglst.extend("{}={}".format(k, pretty(v))
                        for k, v in sorted(kwds.items()))
+diff -urN a/src/sage/combinat/designs/steiner_quadruple_systems.py b/src/sage/combinat/designs/steiner_quadruple_systems.py
+--- a/src/sage/combinat/designs/steiner_quadruple_systems.py
++++ b/src/sage/combinat/designs/steiner_quadruple_systems.py
+@@ -80,7 +80,7 @@
+         sage: for n in range(4, 30):
+         ....:     if (n%6) in [2,4]:
+         ....:         sqs = designs.steiner_quadruple_system(n)
+-        ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
++        ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):              # needs sage.graphs
+         ....:             print("Something is wrong !")
+     """
+     n = B.n_points()
+@@ -118,7 +118,7 @@
+         sage: for n in range(4, 30):
+         ....:     if (n%6) in [2,4]:
+         ....:         sqs = designs.steiner_quadruple_system(n)
+-        ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
++        ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1): # needs sage.graphs
+         ....:             print("Something is wrong !")
+     """
+     n = B.n_points()
+@@ -175,7 +175,7 @@
+         sage: for n in range(4, 30):
+         ....:     if (n%12) == 2:
+         ....:         sqs = designs.steiner_quadruple_system(n)
+-        ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
++        ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1): # needs sage.graphs
+         ....:             print("Something is wrong !")
+     """
+     n = B.n_points()
+@@ -237,7 +237,7 @@
+         sage: for n in range(4, 30):
+         ....:     if n%12 == 10:
+         ....:         sqs = designs.steiner_quadruple_system(n)
+-        ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
++        ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1): # needs sage.graphs
+         ....:             print("Something is wrong !")
+     """
+     n = B.n_points()

@@ -14631,6 +14631,40 @@ output/backend behavior, Singular function factories, and hypergeometric
 helpers. These files should not be resampled as low-risk corpus-growth
 candidates until one of those runtime or source-boundary clusters changes.
 
+Focused Steiner quadruple-system corpus-growth pass:
+
+```text
+steiner_quadruple_systems.py: 32 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/designs/steiner_quadruple_systems.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 830
+non-comment entries. The default browser-compatible profile gains coverage
+for Hanani construction helpers, pair-system helpers, cached SQS constructors,
+and the small built-in `SQS_14`/`SQS_38` data while keeping construction-check
+loops that currently import `sage.graphs.graph_coloring` behind explicit
+`# needs sage.graphs` metadata.
+
+Fresh sampling first ruled out a small pure-utility batch as skipped-only under
+existing browser-profile tags, including crypto, finite-field, module, and
+combinatorics helpers. A second mixed batch exposed broader failures in reset,
+species, sine-Gordon, cyclotomic, matrix-group, and elliptic-curve paths. The
+Steiner file was the narrow promotion candidate from that batch because its
+only failures were four graph-coloring dependency checks, while all other
+default-profile blocks already passed.
+
+Focused validation used direct `sage -t` first, then the
+`test-sage-doctest-corpus` make target against a temporary one-file corpus,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/steiner-make.sqlite3`.
+The make target rebuilt the patched Sagelite source copy from the tracked WASI
+patch and records CoWasm commit `e61c459b54ea1b1739b504be68d4bbfb79df4c38`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 73, and a 100% non-skipped pass rate. The saved block-
+and file-failure cluster queries are empty; skip grouping records four
+`optional:sage.graphs` blocks and one existing `long time` block.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
