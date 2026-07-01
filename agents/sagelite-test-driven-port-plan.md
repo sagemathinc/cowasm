@@ -3309,6 +3309,33 @@ for several minutes and did not create a SQLite database. Future scheduled
 runs should avoid broad unordered batches in this frontier; sample smaller
 coherent namespaces or target one known cluster explicitly.
 
+Follow-up modular-symbol/arithmetic and low-prompt audit on 2026-07-01:
+
+No new quiet corpus candidate was found. The focused modular-symbol/arithmetic
+probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-current/probe/modsym-arith.sqlite3`
+and classified one file as `needs_triage`, one file as `file_error`, and six
+files as `skipped_only`. The skipped-only files were the remaining lightweight
+modular-symbol and arithmetic helpers
+`sage/modular/modsym/ghlist.py`, `manin_symbol.pyx`, `p1list_nf.py`,
+`relation_matrix.py`, `tests.py`, and `sage/arith/multi_modular.pyx`.
+`sage/modular/modsym/heilbronn.pyx` still has a startup/dependent-name cluster
+around missing `M`, while `sage/arith/misc.py` reaches the known
+`polynomial_number_field` table-index trap through `__GCD_sequence(...)`.
+
+The low-prompt probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-current/probe/low-prompt.sqlite3`
+and classified three files as `needs_triage`, eleven files as `skipped_only`,
+and two files as `no_doctest_blocks`. The runnable failures were graph,
+matroid, and weighted-projective startup/backend boundaries:
+`sage/graphs/base/overview.py`, `sage/matroids/advanced.py`, and
+`sage/schemes/weighted_projective/weighted_projective_homset.py`. The
+skipped-only files in that batch included small interface, cluster, vector,
+statistics, database, modular-form, SymPy/NumPy, rigged-configuration, Sloane,
+and modular-symbol helpers. Future runs should avoid repeating this exact
+low-prompt set unless graph/matroid startup support or the
+`polynomial_number_field` trap changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
