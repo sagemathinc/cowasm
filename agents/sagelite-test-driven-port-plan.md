@@ -15603,6 +15603,40 @@ skipped-only, but `euclidean_domains.py` times out in the polynomial
 `gcd_free_basis` example and `kahler_algebras.py` depends on matroid startup
 coverage, so neither is a narrow browser-profile promotion candidate yet.
 
+Focused rational function-field derivation corpus-growth pass:
+
+```text
+derivations_rational.py: 19 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/function_field/derivations_rational.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 861
+non-comment entries. The file adds compact default-profile coverage for
+rational function-field derivations, including derivation construction,
+representation, evaluation, arithmetic, and coefficient behavior, without new
+WASI source tags or startup namespace changes.
+
+Fresh function-field/ring-helper sampling first wrote
+`.tmp/current-run/scheduled-2026-07-01-codex-function-field/probe.sqlite3`.
+The saved candidate-ranking query classified `derivations_rational.py` as the
+only clean non-skipped promotion candidate in that batch. Nearby files remain
+outside the quiet dashboard: `sage/rings/function_field/derivations.py` still
+hits the known NTL/libcxx `memory access out of bounds` trap during finite
+field function-field setup, `sage/rings/qqbar_decorators.py` is skipped-only
+under existing symbolic/number-field tags, and the sampled PBori helpers fail
+behind the unavailable `sage.rings.polynomial.pbori.pbori` backend.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex-function-field/derivations-rational-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`1ae47c1a1dfd89b2684ed2c361c57f9f4379ff0b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
