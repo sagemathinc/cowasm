@@ -15672,6 +15672,46 @@ such as `derivation.py` or `localization.py`, or runtime work on the recurring
 NTL/libcxx/dylink boundary before returning to function-field and finite-field
 functionality.
 
+Focused free-module tutorial corpus-growth pass:
+
+```text
+tutorial_free_modules.py: 42 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/tutorial_free_modules.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 862 non-comment
+entries. The file gives compact default-profile coverage for free-module
+tutorial examples over `ZZ` and `QQ`, including generator access, submodules,
+basis changes, spans, quotients, and vector-space coercions, without new WASI
+source tags or startup namespace changes.
+
+Fresh scheduled sampling first wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-active3/`. The function-field and
+localization probe did not find a narrow promotion candidate:
+`derivation.py` and `localization.py` still have broad runnable failure
+clusters around unavailable `pexpect`, unavailable
+`sage.rings.polynomial.plural`, dependent state fallout, and output drift,
+while `derivations.py`, `derivations_polymod.py`, and `maps.py` still hit the
+recurring NTL/libcxx `memory access out of bounds` trap during finite-field
+function-field setup. The low-count absent-file probe was mostly skipped-only,
+with `weighted_projective_homset.py` failing all three runnable examples and
+`qsieve_sage.pyx` trapping in the FLINT qsieve path. The moderate absent-file
+probe classified `tutorial_free_modules.py` as the only clean non-skipped
+promotion candidate; `interface_magic.py`, `load.py`, and
+`logging_backend.py` remain triage files, and the other sampled files were
+skipped-only or had no doctest blocks.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active3/tutorial-free-modules-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`90e7d0a3068c8ba8ee1e8ff7b9e6f3f9821582a1`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
