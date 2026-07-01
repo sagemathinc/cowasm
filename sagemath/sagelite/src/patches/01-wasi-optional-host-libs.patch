@@ -1764,7 +1764,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,229 @@
+@@ -253,74 +253,230 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1925,6 +1925,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.plot.polygon import polygon
 +    from sage.probability.probability_distribution import RealDistribution
 +    from sage.quadratic_forms.quadratic_form import DiagonalQuadraticForm, QuadraticForm
++    from sage.schemes.affine.affine_space import AffineSpace
 +    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family

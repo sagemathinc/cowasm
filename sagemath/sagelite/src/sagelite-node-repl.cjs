@@ -1017,6 +1017,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.sets.primes", ("Primes",)),
         ("sage.sets.recursively_enumerated_set", ("RecursivelyEnumeratedSet",)),
         ("sage.sets.set", ("Set",)),
+        ("sage.schemes.affine.affine_space", ("AffineSpace",)),
         ("sage.schemes.generic.spec", ("Spec",)),
         ("sage.schemes.projective.projective_space", ("ProjectiveSpace",)),
     )

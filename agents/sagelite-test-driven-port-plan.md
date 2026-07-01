@@ -18276,6 +18276,35 @@ The latest-run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 75.
 
+Focused generic ambient-space corpus-growth pass on 2026-07-01:
+
+```text
+sage -t passed: 54 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/schemes/generic/ambient_space.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 901
+non-comment entries. A focused generic-scheme probe first recorded
+`ambient_space.py` as `36 passed, 18 failed, 2 skipped`; all 18 failures were
+startup-name artifacts from upstream examples that use `AffineSpace(...)`
+without a local import, plus dependent checks after those setup examples did
+not assign state.
+
+The doctest runner now seeds `AffineSpace` beside the existing `ProjectiveSpace`
+and `Spec` startup names, and the WASI `sage.all` patch exposes the same
+constructor for REPL parity on a fresh patched source copy. Focused strict
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` after a
+fresh patched source rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-agent/schemes/ambient-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups the remaining two skipped blocks under the upstream `not tested` and
+`optional:sage.symbolic` metadata. The latest-run summary records CoWasm
+commit `e9c54f9bfd4c2862fb8ca7ce3d860adb9dcc43ff`, Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
+version 75, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
