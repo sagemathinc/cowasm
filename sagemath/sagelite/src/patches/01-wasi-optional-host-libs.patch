@@ -8219,6 +8219,33 @@ diff -urN a/src/sage/rings/polynomial/cyclotomic.pyx b/src/sage/rings/polynomial
          -t^7 - t^6 - t^5 + t^2 + t + 1
          sage: cyclotomic_value(10, mod(3,4))
          1
+diff -urN a/src/sage/algebras/lie_algebras/free_lie_algebra.py b/src/sage/algebras/lie_algebras/free_lie_algebra.py
+--- a/src/sage/algebras/lie_algebras/free_lie_algebra.py
++++ b/src/sage/algebras/lie_algebras/free_lie_algebra.py
+@@ -276,6 +276,6 @@
+             sage: L = LieAlgebra(QQ, 'x', 3)
+             sage: H = L.Hall()
+-            sage: [H.graded_dimension(i) for i in range(1, 11)]
++            sage: [H.graded_dimension(i) for i in range(1, 11)]                       # needs sage.libs.pari
+             [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
+             sage: H.graded_dimension(0)
+             0
+@@ -599,6 +599,6 @@
+                 sage: L = LieAlgebra(QQ, 'x,y,z', 3)
+                 sage: H = L.Hall()
+-                sage: [H.graded_dimension(i) for i in range(1, 11)]
++                sage: [H.graded_dimension(i) for i in range(1, 11)]                   # needs sage.libs.pari
+                 [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
+                 sage: [len(H.graded_basis(i)) for i in range(1, 11)]
+                 [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
+@@ -868,6 +868,6 @@
+                 sage: L = LieAlgebra(QQ, 'x,y,z', 3)
+                 sage: Lyn = L.Lyndon()
+-                sage: [Lyn.graded_dimension(i) for i in range(1, 11)]
++                sage: [Lyn.graded_dimension(i) for i in range(1, 11)]                 # needs sage.libs.pari
+                 [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
+                 sage: [len(Lyn.graded_basis(i)) for i in range(1, 11)]
+                 [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
 diff -urN a/src/sage/rings/polynomial/toy_d_basis.py b/src/sage/rings/polynomial/toy_d_basis.py
 --- a/src/sage/rings/polynomial/toy_d_basis.py
 +++ b/src/sage/rings/polynomial/toy_d_basis.py

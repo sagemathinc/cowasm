@@ -15525,6 +15525,29 @@ record CoWasm commit `5078a9e7af08b871841b1e79615c27f7cfc689ff`, Sagelite
 package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and
 runner version 73.
 
+Focused free-Lie-algebra corpus-growth pass:
+
+```text
+free_lie_algebra.py: 159 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_algebras/free_lie_algebra.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 860
+non-comment entries. The default browser-compatible dashboard gains direct
+coverage for free Lie algebra construction, Hall and Lyndon bases, brackets,
+coercion, morphisms, ideals, quotients, and universal-enveloping behavior.
+
+The added WASI source patch marks the three `graded_dimension(...)` examples
+as `# needs sage.libs.pari`, because they currently route through the
+unported broader cypari2/PARI object model. Validation rebuilt a fresh patched
+Sagelite source copy and ran `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active2/free-lie/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the three deferred examples under `optional:sage.libs.pari`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
