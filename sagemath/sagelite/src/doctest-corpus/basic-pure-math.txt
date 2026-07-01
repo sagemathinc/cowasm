@@ -564,6 +564,7 @@ src/sage/rings/polynomial/integer_valued_polynomials.py
 src/sage/rings/polynomial/padics/polynomial_padic_flat.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/rings/polynomial/refine_root.pyx
+src/sage/rings/polynomial/toy_d_basis.py
 src/sage/rings/polynomial/toy_variety.py
 src/sage/matrix/berlekamp_massey.py
 src/sage/misc/abstract_method.py

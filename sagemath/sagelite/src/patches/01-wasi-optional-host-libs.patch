@@ -8127,3 +8127,43 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/non
    sage: basering = PolynomialRing(SR, 'x')
    sage: a, b = pi/2, pi
    sage: f(x) = 4 * sin(x) - exp(x) / 2 + 1
+diff -urN a/src/sage/rings/polynomial/toy_d_basis.py b/src/sage/rings/polynomial/toy_d_basis.py
+--- a/src/sage/rings/polynomial/toy_d_basis.py
++++ b/src/sage/rings/polynomial/toy_d_basis.py
+@@ -53,18 +53,18 @@
+-
++
+     sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='lex')
+     sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z)
+-    sage: I = Ideal(d_basis(I))
+-    sage: x.reduce(I)
++    sage: I = Ideal(d_basis(I))                                                       # needs sage.libs.singular
++    sage: x.reduce(I)                                                                 # needs sage.libs.singular
+     x
+-    sage: (2*x).reduce(I)
++    sage: (2*x).reduce(I)                                                             # needs sage.libs.singular
+     y*z
+-
++
+ To compute modulo 4, we can add the generator 4 to our basis.::
+-
++
+     sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z, 4)
+-    sage: gb = d_basis(I)
++    sage: gb = d_basis(I)                                                             # needs sage.libs.singular
+     sage: R = P.change_ring(IntegerModRing(4))
+-    sage: gb = [R(f) for f in gb if R(f)]; gb
++    sage: gb = [R(f) for f in gb if R(f)]; gb                                         # needs sage.libs.singular
+     [x^2 - 1, x*z + 2*y, 2*x - y*z, y^2 - 1, z^2, 2*z]
+-
++
+ A third example is also from the Magma Handbook.
+@@ -323,7 +323,7 @@
+         sage: G = set([3*x^2 + 7, 2*y + 1, x^3 - y^2 + 7*x - y + 1])
+         sage: B = set()
+         sage: h = x^2*y - x^2 + y - 3
+-        sage: update(G,B,h)
++        sage: update(G,B,h)                                                           # random
+         ({2*y + 1, 3*x^2 + 7, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1},
+          {(x^2*y - x^2 + y - 3, 2*y + 1),
+           (x^2*y - x^2 + y - 3, 3*x^2 + 7),

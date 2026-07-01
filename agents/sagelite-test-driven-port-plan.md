@@ -15184,6 +15184,50 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups all nine deferred examples
 under `optional:sage.plot.plot3d`.
 
+Focused integer Groebner helper corpus-growth pass:
+
+```text
+toy_d_basis.py: 45 passed, 0 failed, 15 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/toy_d_basis.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 856
+non-comment entries. The default browser-compatible dashboard gains runnable
+coverage for the educational `d`-Groebner basis helper's S-polynomial,
+G-polynomial, selection, update-strategy, and integer-polynomial reduction
+support routines while keeping Singular/plural-backed Groebner reductions
+behind explicit `# needs sage.libs.singular` metadata.
+
+The added WASI source patch classifies the Magma-handbook reduction examples
+that reach the unavailable noncommutative polynomial `plural` module as
+Singular-backed optional coverage, matching the surrounding upstream Groebner
+basis examples. It also marks the `update(G,B,h)` set-display example as
+`# random`, preserving execution of the update helper without depending on
+set iteration order in the rendered pair list.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01/toy-d-basis/toy-d-basis.sqlite3`.
+The latest-run summary records CoWasm commit
+`4b6be0a90e7552416bbe77ce2ac44ea6b6df4ec4`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the deferred examples under
+`optional:sage.libs.singular` and the one finite-ring variant under
+`optional:sage.libs.singular,sage.rings.finite_rings`.
+
+Fresh absent-file sampling in the same pass checked low-count cpython, crypto,
+database, topology, category-example, knot, coding, modular, polynomial, ring,
+and symmetric-function candidates. Most were skipped-only under existing
+browser-profile metadata. The non-promoted runnable candidates exposed broader
+clusters: `sage/repl/inputhook.py` requires IPython, `toy_buchberger.py` and
+`complex_roots.py` still hit pexpect, PARI/cypari2, square-free, or number-field
+object-model gaps, and `rings/homset.py` plus `rings/ideal_monoid.py` still
+reach the known NTL dynamic-link/trap boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
