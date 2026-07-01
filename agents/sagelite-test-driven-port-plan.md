@@ -15809,6 +15809,34 @@ availability for graph and matroid overview tests, focused cypari2 conversion
 coverage for PARI-backed modular and conversion helpers, or explicit
 browser-profile treatment for HOMFLY and PolyBoRi side-module gaps.
 
+Scheduled 2026-07-01 graph-startup frontier audit:
+
+Fresh focused probing from CoWasm commit
+`55a32e6ef326bab53b92a34937a553dab2ea166d` confirmed that the
+`sage/graphs/base/overview.py` `Graph()._backend` doctest is not a narrow
+startup-namespace promotion candidate yet. The direct overview probe wrote
+`.tmp/current-run/graph-overview-probe.sqlite3` and recorded the visible
+failure as:
+
+```text
+NameError: name 'Graph' is not defined
+```
+
+An explicit graph-constructor import probe wrote
+`.tmp/current-run/graph-seed-explicit.sqlite3` and showed the underlying
+blocker:
+
+```text
+ImportError: cannot import name 'generic_graph_pyx' from 'sage.graphs'
+```
+
+The attempted `Graph`/`DiGraph` startup seeding was backed out because the
+constructors are not importable from the current Sagelite resource bundle. No
+curated corpus entry was added. The next graph-focused pass should treat this
+as graph backend/resource availability work, or mark overview/matroid examples
+with explicit `# needs sage.graphs` metadata if the browser-compatible profile
+continues to exclude the compiled graph backend.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
