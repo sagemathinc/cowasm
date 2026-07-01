@@ -16595,6 +16595,36 @@ a passing smoke SQLite summary; the make layer treated that blocker as the
 expected standalone target status and the focused corpus validation completed
 cleanly afterward.
 
+Focused fp-graded Steenrod morphism corpus-growth pass:
+
+```text
+morphism.py: 46 passed, 0 failed, 39 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/fp_graded/steenrod/morphism.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 879 non-comment
+entries. Direct adjacent fp-graded probing first showed that the remaining
+base `fp_graded` files are skipped-only under the default browser-compatible
+profile, while `steenrod/morphism.py` had active failures dominated by the
+same unavailable `sage.matrix.matrix_mod2_dense` backend as the neighboring
+fp-graded Steenrod module/homspace files.
+
+The added WASI source patch classifies the morphism profile,
+injectivity/kernel/image, cokernel, and finite-profile action examples that
+instantiate the mod-2 dense matrix backend as explicit
+`# needs sage.matrix.matrix_mod2_dense` skips. Focused validation rebuilt a
+fresh patched Sagelite source copy and ran `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-fp/steenrod-morphism-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`daaff40b6d5e1ef197197928745df801c6a57e30`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records 39
+`optional:sage.matrix.matrix_mod2_dense` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -8774,3 +8774,108 @@ diff -urN -U0 a/src/sage/modules/fp_graded/steenrod/module.py b/src/sage/modules
 @@ -410 +410 @@
 -            sage: [x.domain() for x in res]
 +            sage: [x.domain() for x in res]                             # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/modules/fp_graded/steenrod/morphism.py b/src/sage/modules/fp_graded/steenrod/morphism.py
+--- a/src/sage/modules/fp_graded/steenrod/morphism.py
++++ b/src/sage/modules/fp_graded/steenrod/morphism.py
+@@ -54,2 +54,2 @@
+-            sage: one = Hom(M,M).identity()
+-            sage: one.profile()
++            sage: one = Hom(M,M).identity()                             # needs sage.matrix.matrix_mod2_dense
++            sage: one.profile()                                         # needs sage.matrix.matrix_mod2_dense
+@@ -71,2 +71,2 @@
+-            sage: one_fin = one.change_ring(A_fin)
+-            sage: one_fin.domain()
++            sage: one_fin = one.change_ring(A_fin)                      # needs sage.matrix.matrix_mod2_dense
++            sage: one_fin.domain()                                      # needs sage.matrix.matrix_mod2_dense
+@@ -79 +79 @@
+-            sage: one_fin.change_ring(A) == one
++            sage: one_fin.change_ring(A) == one                         # needs sage.matrix.matrix_mod2_dense
+@@ -110,5 +110,5 @@
+-            sage: f = Hom(S, M)([M([0,1])])
+-            sage: f.is_injective()
++            sage: f = Hom(S, M)([M([0,1])])                             # needs sage.matrix.matrix_mod2_dense
++            sage: f.is_injective()                                      # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: g = Hom(S, M).zero()
+-            sage: g.is_injective()
++            sage: g = Hom(S, M).zero()                                  # needs sage.matrix.matrix_mod2_dense
++            sage: g.is_injective()                                      # needs sage.matrix.matrix_mod2_dense
+@@ -147,5 +147,5 @@
+-            sage: f = Hom(S, M)([M([0,1])])
+-            sage: f.is_injective()
++            sage: f = Hom(S, M)([M([0,1])])                             # needs sage.matrix.matrix_mod2_dense
++            sage: f.is_injective()                                      # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: k = f.kernel_inclusion()
+-            sage: k == 0
++            sage: k = f.kernel_inclusion()                              # needs sage.matrix.matrix_mod2_dense
++            sage: k == 0                                                # needs sage.matrix.matrix_mod2_dense
+@@ -157 +157 @@
+-            sage: k.domain().is_trivial()
++            sage: k.domain().is_trivial()                               # needs sage.matrix.matrix_mod2_dense
+@@ -160,5 +160,5 @@
+-            sage: g = Hom(S, M)([M([Sq(3),Sq(2)])])
+-            sage: h = g.kernel_inclusion()
+-            sage: h.is_identity()
++            sage: g = Hom(S, M)([M([Sq(3),Sq(2)])])                     # needs sage.matrix.matrix_mod2_dense
++            sage: h = g.kernel_inclusion()                              # needs sage.matrix.matrix_mod2_dense
++            sage: h.is_identity()                                       # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: ker = h.domain();
++            sage: ker = h.domain();                                     # needs sage.matrix.matrix_mod2_dense
+@@ -165 +165 @@
+-            sage: ker is S
++            sage: ker is S                                              # needs sage.matrix.matrix_mod2_dense
+@@ -170 +170 @@
+-            sage: g.is_zero()
++            sage: g.is_zero()                                           # needs sage.matrix.matrix_mod2_dense
+@@ -196,2 +196,2 @@
+-            sage: r = Hom(F, M)([A1.Sq(1)*M.generator(0)])
+-            sage: co = r.cokernel_projection(); co
++            sage: r = Hom(F, M)([A1.Sq(1)*M.generator(0)])              # needs sage.matrix.matrix_mod2_dense
++            sage: co = r.cokernel_projection(); co                      # needs sage.matrix.matrix_mod2_dense
+@@ -203 +203 @@
+-            sage: co.domain().is_trivial()
++            sage: co.domain().is_trivial()                              # needs sage.matrix.matrix_mod2_dense
+@@ -241,4 +241,4 @@
+-            sage: f = Hom(S, M)([M([0,1])])
+-            sage: f.is_injective()
++            sage: f = Hom(S, M)([M([0,1])])                             # needs sage.matrix.matrix_mod2_dense
++            sage: f.is_injective()                                      # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: i = f.image(); i
++            sage: i = f.image(); i                                      # needs sage.matrix.matrix_mod2_dense
+@@ -249 +249 @@
+-            sage: i.codomain() is M
++            sage: i.codomain() is M                                     # needs sage.matrix.matrix_mod2_dense
+@@ -254,4 +254,4 @@
+-            sage: f_ = f.lift(i)
+-            sage: f_.is_injective()
++            sage: f_ = f.lift(i)                                        # needs sage.matrix.matrix_mod2_dense
++            sage: f_.is_injective()                                     # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: f_.is_surjective()
++            sage: f_.is_surjective()                                    # needs sage.matrix.matrix_mod2_dense
+@@ -260,2 +260,2 @@
+-            sage: g = Hom(S, M)([M([Sq(3),Sq(2)])])
+-            sage: j = g.image(); j
++            sage: g = Hom(S, M)([M([Sq(3),Sq(2)])])                     # needs sage.matrix.matrix_mod2_dense
++            sage: j = g.image(); j                                      # needs sage.matrix.matrix_mod2_dense
+@@ -268 +268 @@
+-            sage: g.is_zero()
++            sage: g.is_zero()                                           # needs sage.matrix.matrix_mod2_dense
+@@ -293,2 +293,2 @@
+-            sage: f = Hom(F, L)([L([Sq(2),0]), L([0, Sq(2)])])
+-            sage: f._resolve_kernel()
++            sage: f = Hom(F, L)([L([Sq(2),0]), L([0, Sq(2)])])          # needs sage.matrix.matrix_mod2_dense
++            sage: f._resolve_kernel()                                   # needs sage.matrix.matrix_mod2_dense
+@@ -342,2 +342,2 @@
+-            sage: f = Hom(F, L)([L([Sq(2),0]), L([0, Sq(2)])])
+-            sage: f._resolve_image()
++            sage: f = Hom(F, L)([L([Sq(2),0]), L([0, Sq(2)])])          # needs sage.matrix.matrix_mod2_dense
++            sage: f._resolve_image()                                    # needs sage.matrix.matrix_mod2_dense
+@@ -363,2 +363,2 @@
+-            sage: f = Hom(F, L)([L([Sq(2)])])
+-            sage: f._action(FPModuleMorphism._resolve_image, verbose=True)
++            sage: f = Hom(F, L)([L([Sq(2)])])                           # needs sage.matrix.matrix_mod2_dense
++            sage: f._action(FPModuleMorphism._resolve_image, verbose=True)  # needs sage.matrix.matrix_mod2_dense
