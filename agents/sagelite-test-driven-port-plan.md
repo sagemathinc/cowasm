@@ -15930,6 +15930,40 @@ The persisted block row carries `tags = optional,needs:sage.graphs` and
 `from sage.matroids.advanced import *`. The file remains outside the curated
 corpus because it is skipped-only under the default browser-compatible profile.
 
+Follow-up PolyBoRi/BRiAL frontier metadata pass:
+
+The two `sage/rings/polynomial/pbori/easy_polynomials.py` doctest groups are
+now tagged with standalone `# needs brial` directives in the WASI Sagelite
+source patch. The baseline focused probe wrote
+`.tmp/current-run/homfly-pbori-probe/easy-polynomials.sqlite3` and recorded
+the file as:
+
+```text
+sage -t failed: 0 passed, 10 failed, 0 skipped
+```
+
+The first failures were missing
+`sage.rings.polynomial.pbori.pbori`, followed by dependent `NameError` fallout
+inside the same contiguous examples. That makes the file a BRiAL/PolyBoRi
+backend availability boundary rather than a narrow startup-namespace issue.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/homfly-pbori-probe/easy-polynomials-tagged.sqlite3`.
+The run used CoWasm commit `e9a5b21ac5a4c4d3f573e7026a6c1c7e65b74532`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 73. The direct doctest result is:
+
+```text
+sage -t passed: 0 passed, 0 failed, 10 skipped
+```
+
+All persisted block rows carry `tags = optional,needs:brial` and
+`skip_reason = optional:brial`. The file remains outside the curated corpus
+because it is skipped-only under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
