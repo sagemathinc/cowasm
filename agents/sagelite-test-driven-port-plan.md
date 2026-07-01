@@ -16212,6 +16212,46 @@ PolyBoRi, symbolic-vector, homology, manifold, and LP tutorial files have
 ordinary block failures that need focused backend or startup-namespace triage
 before promotion.
 
+Focused FLINT polynomial wrapper corpus-growth pass:
+
+```text
+fmpz_poly_sage.pyx: 84 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/libs/flint/fmpz_poly_sage.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 867
+non-comment entries. The file adds direct FLINT integer-polynomial wrapper
+coverage without new WASI source tags or startup namespace changes.
+
+Direct library-wrapper sampling first wrote
+`/home/user/cowasm/.tmp/current-run/auto-2026-07-01-next/probes/libs-small.sqlite3`.
+The saved promotion-candidate query classified `fmpz_poly_sage.pyx` as the
+only clean runnable candidate in that batch. Neighboring GMP, FLINT, and
+mpmath top-level helpers were zero-block except for `mpmath/utils.pyx`, which
+recorded 42 passed blocks and 15 failures in a separate startup-symbol
+cluster around missing `pi`, `NaN`, and dependent temporary names.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/auto-2026-07-01-next/fmpz-poly-sage-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d0974261062492bd10752f5c1bedc131776bd04b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same scheduled pass rejected three small fresh probes. The utility probe
+recorded zero runnable blocks across `sage/logic/all.py`, small
+`sage/data_structures` helpers, and REPL prompt/catalog files, plus 36
+skipped blocks in `sage/repl/user_globals.py`. The coding-core probe recorded
+639 skipped blocks and no runnable default-profile coverage across
+`abstract_code.py`, `channel.py`, `encoder.py`, `decoder.py`, and
+`linear_code_no_metric.py`. The numerical linear-programming support probe is
+not a narrow corpus-growth target: `linear_functions.pyx` timed out at
+quadratic-field setup and the tensor helpers recorded 166 block failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
