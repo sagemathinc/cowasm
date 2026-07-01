@@ -711,6 +711,55 @@ diff -urN a/src/sage/libs/meson.build b/src/sage/libs/meson.build
    disabler: true,
  )
  homfly = dependency('libhomfly', required: false, disabler: true)
+@@ -150,10 +150,13 @@
+   'meataxe': files('meataxe.pyx'),
+ }
+
+-dependencies = [py_dep, cysignals, gc, gmp]
++dependencies = [py_dep, cysignals, gmp]
++if not is_wasi
++  dependencies += [gc]
++endif
+
+ foreach name, pyx : extension_data
+-  deps = dependencies
++  deps = [] + dependencies
+   if name == 'ecl'
+     deps += [ecl, maxima]
+   elif name == 'meataxe'
+@@ -180,20 +180,31 @@
+ }
+
++cowasm_libcxx_link_args = []
++if is_wasi
++  cowasm_libcxx_path = meson.get_external_property('cowasm_libcxx', '')
++  if cowasm_libcxx_path != ''
++    cowasm_libcxx_link_args = [cowasm_libcxx_path]
++  endif
++endif
++
+ foreach name, pyx : extension_data_cpp
+-  deps = dependencies
++  deps = [] + dependencies
++  extra_link_args = []
+   if name == 'braiding'
+     deps += [braiding]
++    extra_link_args = cowasm_libcxx_link_args
+   elif name == 'sirocco'
+     deps += [sirocco]
+   endif
+   py.extension_module(
+     name,
+     sources: pyx,
+     subdir: 'sage/libs',
+     install: true,
+     override_options: ['cython_language=cpp'],
+     include_directories: [inc_cpython, inc_rings],
+     dependencies: deps,
++    link_args: extra_link_args,
+   )
+ endforeach
+
 diff -urN a/src/sage/libs/symmetrica/meson.build b/src/sage/libs/symmetrica/meson.build
 --- a/src/sage/libs/symmetrica/meson.build
 +++ b/src/sage/libs/symmetrica/meson.build
@@ -8164,7 +8213,7 @@ diff -urN a/src/sage/combinat/species/all.py b/src/sage/combinat/species/all.py
 +++ b/src/sage/combinat/species/all.py
 @@ -40,6 +40,7 @@
  We define rooted ordered trees with leaves having weight `q`::
- 
+
      sage: R.<q> = QQ[]
 +    sage: # needs sage.libs.gap
      sage: L.<X> = LazyCombinatorialSpecies(R)
@@ -8173,7 +8222,7 @@ diff -urN a/src/sage/combinat/species/all.py b/src/sage/combinat/species/all.py
 @@ -53,6 +54,7 @@
  We define rooted unordered trees with leaves of sort `Y`.  The
  standard representation of a species is its molecular decomposition::
- 
+
 +    sage: # needs sage.libs.gap
      sage: L = LazyCombinatorialSpecies(R, "X")
      sage: E = L.Sets()

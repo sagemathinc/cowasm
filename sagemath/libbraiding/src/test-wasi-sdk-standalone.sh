@@ -45,8 +45,8 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CXX="$bin_dir/cowasm-c++" \
-  CFLAGS="-Oz -fvisibility-main" \
-  CXXFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
+  CXXFLAGS="-Oz -fPIC -fvisibility-main" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
       --build=i686-pc-linux-gnu \

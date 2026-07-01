@@ -16362,6 +16362,28 @@ Lie-algebra probe confirmed that `examples.py`, `heisenberg.py`, and
 clusters, while `structure_coefficients.py` was the only narrow promotion
 target.
 
+Latest checked local runtime-porting pass, 2026-07-01: `sage.libs.braiding`
+is now packaged as a Sagelite WASI side module. The libbraiding WASI static
+archive is built with `-fPIC`, Sagelite's standalone cross file threads
+libbraiding include/link paths through Meson, and the upstream Sage patch links
+the `sage.libs.braiding` C++ wrapper against CoWasm's `libcxx.so` side module.
+The Electron resource manifest contract was bumped to schema 144 with smoke
+contract suffix `libbraiding-wrapper-v107`, and now treats the Sagelite-local
+`site-packages/sage/libs/libcxx.so` as an expected native-library resource.
+
+Validation passed:
+
+```text
+make -C sagemath/libbraiding clean-wasi-sdk
+make -C sagemath/libbraiding test-wasi-sdk-standalone
+make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
+The Sagelite standalone run completed Meson configure/compile/install, the
+`python-wasi-sdk` import probe, all Node import smokes including
+`libbraiding wrapper smoke`, the doctest smoke (`23 passed, 0 failed,
+7 skipped`), and the relocated Electron resources smoke.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
