@@ -9184,3 +9184,22 @@ diff -urN -U0 a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_
 +        sage: # needs sage.rings.number_field
 @@ -2581,0 +2593 @@
 +        sage: # needs sage.rings.number_field
+diff -urN -U0 a/src/sage/combinat/shard_order.py b/src/sage/combinat/shard_order.py
+--- a/src/sage/combinat/shard_order.py
++++ b/src/sage/combinat/shard_order.py
+@@ -11,0 +12 @@
++    sage: # needs sage.graphs
+@@ -42,0 +44 @@
++        sage: # needs sage.graphs
+@@ -55,0 +58 @@
++            sage: # needs sage.graphs
+@@ -69,0 +73 @@
++            sage: # needs sage.graphs
+@@ -99,0 +104 @@
++            sage: # needs sage.graphs
+@@ -109,0 +115 @@
++            sage: # needs sage.graphs
+@@ -173,0 +180 @@
++        sage: # needs sage.graphs
+@@ -213,0 +221 @@
++        sage: # needs sage.graphs

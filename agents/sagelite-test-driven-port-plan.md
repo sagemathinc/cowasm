@@ -17920,6 +17920,42 @@ normalized `src/sage/...` paths by default, while preserving an explicit
 out-of-tree fixtures. This keeps future corpus-growth sweeps focused on
 Sagelite source files instead of temporary runner smoke artifacts.
 
+Follow-up shard-order graph-boundary classification pass on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked corpus remains at
+893 non-comment entries after the candidate-helper hygiene pass.
+
+A fresh helper batch under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-this-run/` sampled
+small absent files in crypto, coding, REPL, misc, category, combinatorics,
+species, group, and `qqbar` helper namespaces. Most files were skipped-only
+under the default browser-compatible profile. The only runnable failure
+cluster was `sage/combinat/shard_order.py`, which initially recorded
+`10 passed, 30 failed, 0 skipped`.
+
+Those failures were graph-boundary noise rather than a narrow corpus-growth
+candidate: importing `ShardPosetElement` or `shard_preorder_graph` reaches the
+stripped `sage.graphs` backend, and the remaining failures were dependent
+missing-name checks from the same contiguous doctest groups. The WASI source
+patch now marks those shard-order groups as `# needs sage.graphs`, so future
+exploratory dashboards record them as explicit dependency skips instead of
+active import/name failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-this-run/shard-order-make.sqlite3`:
+
+```text
+shard_order.py: 0 passed, 0 failed, 40 skipped
+```
+
+The saved block-failure cluster query is empty, and `skips-by-reason.sql`
+groups all 40 blocks under `optional:sage.graphs`. Future blind
+corpus-growth runs should not resample this helper batch as promotion
+candidate data unless the graph backend boundary changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
