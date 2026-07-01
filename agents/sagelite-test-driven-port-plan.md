@@ -15837,6 +15837,30 @@ as graph backend/resource availability work, or mark overview/matroid examples
 with explicit `# needs sage.graphs` metadata if the browser-compatible profile
 continues to exclude the compiled graph backend.
 
+Follow-up graph-frontier metadata pass:
+
+The `sage/graphs/base/overview.py` backend example is now tagged with
+`# needs sage.graphs` in the WASI Sagelite source patch. This records the
+known graph-backend resource gap as browser-profile skip metadata instead of a
+startup `NameError`, consistent with the existing WASI `sage.all` policy that
+does not import `sage.graphs.all` when the compiled graph backend is absent.
+
+Focused validation wrote
+`.tmp/current-run/graph-overview-needs-graphs.sqlite3` from CoWasm commit
+`ef6ceb56803e268b0e34405a0e6b0f4fc3142ba8`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+73. The direct doctest result is:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1 skipped
+```
+
+The persisted block row carries `tags = optional,needs:sage.graphs` and
+`skip_reason = optional:sage.graphs` for `Graph()._backend`. Reapplying the
+full `01-wasi-optional-host-libs.patch` to a clean Sagelite source copy also
+passes. No curated corpus entry was added because this file is now
+skipped-only under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

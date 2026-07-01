@@ -1,3 +1,15 @@
+diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
+--- a/src/sage/graphs/base/overview.py
++++ b/src/sage/graphs/base/overview.py
+@@ -47,7 +47,7 @@
+ and edges to other objects: the :mod:`graph backends
+ <sage.graphs.base.graph_backends>`::
+ 
+-    sage: Graph()._backend
++    sage: Graph()._backend  # needs sage.graphs
+     <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+ 
+ A (di)graph backend is a simpler (di)graph class having only the most elementary
 diff -urN a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build
