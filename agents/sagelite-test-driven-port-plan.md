@@ -3242,6 +3242,39 @@ was already present in the corpus; plotting helpers were skipped-only under
 the default browser profile, and the remaining runnable probes exposed broader
 polyhedron, Newton polygon, doctest external-feature, or backend clusters.
 
+Focused combinatorial-species corpus-growth pass:
+
+```text
+library.py: 11 passed, 0 failed, 12 skipped
+functorial_composition_species.py: 18 passed, 0 failed, 5 skipped
+```
+
+That two-file focused validation adds
+`sage/combinat/species/library.py` and
+`sage/combinat/species/functorial_composition_species.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 840
+non-comment entries. Direct sampling first recorded a startup-name cluster:
+the upstream species doctests use Sage's deprecated `species` lazy alias
+without a local import. The doctest runner now seeds `species` from
+`sage.combinat.species.all`, preserving the expected deprecation warning on
+first use, and the WASI `sage.all` patch exposes the same alias for REPL
+parity on a fresh patched source copy.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/auto-2026-07-01/species/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the latest
+run summary records runner version 73 in the default node profile.
+
+The same scheduled pass rejected a CLI probe with zero doctest blocks and a
+low-count pure-module probe with no promotion candidates. Most files in that
+batch were skipped-only; the runnable failures clustered around symbolic
+manifold imports, species startup aliases, Hilbert-series startup names,
+poset/species constructors, and broader category behavior.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

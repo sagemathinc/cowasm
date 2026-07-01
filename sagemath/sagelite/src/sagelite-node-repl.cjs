@@ -1075,6 +1075,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
     except BaseException:
         pass
     try:
+        from sage.combinat.species.all import species
+        namespace.setdefault("species", species)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "species"):
+                setattr(sage_all, "species", species)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
         import sage.stats.all as stats
         namespace.setdefault("stats", stats)
         try:

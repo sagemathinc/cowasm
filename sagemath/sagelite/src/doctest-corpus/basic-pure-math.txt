@@ -308,6 +308,8 @@ src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/set_partition_ordered.py
 src/sage/combinat/set_partition.py
 src/sage/combinat/shuffle.py
+src/sage/combinat/species/library.py
+src/sage/combinat/species/functorial_composition_species.py
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
