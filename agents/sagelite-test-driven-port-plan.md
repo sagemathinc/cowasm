@@ -14520,6 +14520,45 @@ dependencies in `sage/doctest/__main__.py`, and PARI/FLINT conversion failures
 in `sage/libs/pari/convert_flint.pyx` and
 `sage/libs/pari/convert_sage_real_double.pyx`.
 
+Focused prime finite-field homomorphism corpus-growth pass:
+
+```text
+hom_prime_finite_field.pyx: 16 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/finite_rings/hom_prime_finite_field.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 828
+non-comment entries. The default browser-compatible profile gains focused
+coverage for prime finite-field homomorphism construction, representation,
+equality, hashing, coercion, pickling, and composition while leaving extension
+finite-field examples behind the existing `# needs sage.rings.finite_rings`
+metadata.
+
+Fresh sampling first checked compact absent files across skipped-only cpython,
+crypto, database, misc, module, plot, monoid, category, modular-form, Lie
+conformal, polynomial, matrix, homology, ring, combinatorics, geometry, and
+scheme helpers under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-goal3/`. Most files
+were skipped-only under existing browser-profile metadata or exposed broader
+runtime clusters, including PBoRi imports, IPython-backed REPL hooks,
+species namespace gaps, matrix/homology attribute-name failures, graph-backed
+Voronoi examples, and existing NTL/libcxx traps in Bernoulli and Euclidean
+domain paths. The finite-field homomorphism file was the narrow clean
+promotion candidate because it already had a 100% non-skipped pass rate with
+only explicit extension-field skips.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-goal3/finite-field-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`7360cd0c9206824fc38d135f309cb99c9466354f`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records five
+`optional:sage.rings.finite_rings` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

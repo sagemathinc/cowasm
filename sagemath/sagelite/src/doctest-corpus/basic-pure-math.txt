@@ -23,6 +23,7 @@ src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
 src/sage/rings/factorint.pyx
+src/sage/rings/finite_rings/hom_prime_finite_field.pyx
 src/sage/rings/number_field/number_field_element_base.pyx
 src/sage/rings/number_field/totallyreal_phc.py
 src/sage/rings/power_series_mpoly.pyx
