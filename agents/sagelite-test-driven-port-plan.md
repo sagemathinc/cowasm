@@ -16625,6 +16625,46 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records 39
 `optional:sage.matrix.matrix_mod2_dense` blocks.
 
+Follow-up scheduled frontier audit on 2026-07-01:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+879 non-comment entries. Fresh focused probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex2/`.
+
+The remaining Steenrod algebra front door is not a narrow promotion target:
+`steenrod/probe.sqlite3` records `steenrod_algebra.py` with 603 passed,
+93 failed, and 11 skipped blocks, while `all.py` has no doctest blocks. The
+dominant failure cluster is the unavailable
+`sage.matrix.matrix_mod2_dense` backend, with dependent `NameError` blocks
+after skipped setup state and several output mismatches in `TestSuite` and
+monomial display checks.
+
+Additional coherent probes also produced no promotable files:
+
+- `repl-features/probe.sqlite3` found `load.py` and `inputhook.py` failures,
+  skipped-only `image.py` and `user_globals.py`, and no-block feature/output
+  catalog helpers.
+- `crypto/probe.sqlite3` was entirely skipped-only across classical,
+  stream, utility, and small block-cipher helpers.
+- `small-helper/probe.sqlite3` recorded no runnable blocks except a single
+  skipped `cpython/string.pyx` block.
+- `math-small/probe.sqlite3` found no clean candidate: FLINT wrappers had no
+  blocks, several files were skipped-only, `matrix/tests.py` hit matrix
+  runtime/type-system failures, and the PARI conversion helpers reached
+  cypari2/PARI object-model boundaries.
+- `tests-books/probe.sqlite3` was skipped-only or empty except for
+  `integration_doctest.py`, whose failures are symbolic integration setup
+  boundaries.
+- `categories/probe.sqlite3` was skipped-only or empty across the sampled
+  category and category-example files.
+
+Future scheduled runs should avoid repeating these exact batches unless the
+`matrix_mod2_dense`, matrix kernel/determinant, symbolic integration,
+IPython/REPL, or PARI/cypari2 object-model boundaries change. The next useful
+corpus-growth pass should start from a different namespace or target one of
+those backend clusters explicitly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
