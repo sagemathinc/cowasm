@@ -17042,6 +17042,43 @@ corpus-growth targets. Useful follow-up work is focused backend/runtime triage
 for the named clusters, or a different absent namespace with confirmed
 non-skipped passing coverage.
 
+Follow-up compact-namespace audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries after the modular hypergeometric helper promotion.
+
+A fresh absent-file list was regenerated from the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree, and previously recorded
+SQLite probes were re-mined with normalized source paths. That mining found no
+clean runnable file absent from the current corpus. Direct focused probes were
+then written under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-new/`:
+
+```text
+small-leftovers.sqlite3:       0 passed, 0 failed, 17 skipped
+utility-compact.sqlite3:       0 passed, 7 failed, 31 skipped
+numeric-vector-compact.sqlite3: 0 passed, 0 failed, 95 skipped
+category-examples-compact.sqlite3: 0 passed, 0 failed, 113 skipped
+test-topology-misc.sqlite3:    0 passed, 0 failed, 72 skipped
+database-compact.sqlite3:      0 passed, 0 failed, 24 skipped
+```
+
+The skipped-only probes covered compact leftover front doors in `logic`,
+`probability`, `typeset`, data-structure, monoid, numeric vector/matrix,
+category-example, database, topology, CPython, misc, and small test files. The
+only active block failures were in `sage/repl/inputhook.py`: three missing
+`IPython` imports followed by dependent `get_test_shell`, `install`, and
+`uninstall` name failures. A broader low-prompt sweep was interrupted before it
+created a SQLite database because the first path did not reach the runner's
+per-file reporting/checkpoint path promptly enough for scheduled exploration.
+
+Future scheduled runs should not repeat these compact leftover, utility,
+numeric-vector, category-example, topology/test, or database batches as blind
+corpus-growth targets. Useful follow-up work is either IPython/REPL startup
+triage for `sage/repl/inputhook.py`, or probing a different absent namespace
+with confirmed non-skipped passing coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
