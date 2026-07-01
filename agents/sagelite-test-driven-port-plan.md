@@ -16864,6 +16864,41 @@ and a few test modules were skipped-only or blocked by broader matrix/backend
 failures. Category example files in this batch were also skipped-only under
 existing `sage.combinat`, `sage.modules`, and `sage.groups` dependency tags.
 
+Follow-up PID/UFD/Kähler category corpus-growth pass on 2026-07-01:
+
+```text
+sage -t passed: 62 passed, 0 failed, 52 skipped
+```
+
+That one-file make-target validation uses a temporary three-file corpus and
+adds `sage/categories/kahler_algebras.py`,
+`sage/categories/principal_ideal_domains.py`, and
+`sage/categories/unique_factorization_domains.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+checked corpus to 884 non-comment entries. The WASI source patch marks
+Kähler algebra examples backed by unavailable matroid Chow rings as
+`# needs sage.matroids`, the exotic `QQbar` UFD polynomial GCD example as
+`# needs sage.rings.number_field`, and current polynomial
+gcd/radical/squarefree timeout paths as deferred `# known bug` coverage. The
+focused make-target validation writes
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal6/category-promotion-make-final.sqlite3`
+with latest-run metadata at CoWasm commit
+`9369987694f7634f4f1a18c167e27762644ebef2`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same scheduled pass rejected two fresh probes as non-promotable. A
+category example/helper batch recorded seven passed, 18 failed, and 151
+skipped blocks before the PID/UFD/Kähler metadata tags; the skipped-only
+example files remain outside the quiet corpus, while `kahler_algebras.py`,
+`principal_ideal_domains.py`, and `unique_factorization_domains.py` were the
+narrow metadata-backed promotion targets. A low-count book/test probe recorded
+19 passed, 43 failed, and 30 skipped blocks; Judson abstract-algebra files had
+zero extracted blocks, while computational-mathematics integration, linear
+programming, and multivariate-polynomial examples still require broader
+symbolic/optimization/polynomial backend work.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

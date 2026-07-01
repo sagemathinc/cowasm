@@ -411,6 +411,8 @@ src/sage/categories/cw_complexes.py
 src/sage/categories/discrete_valuation.py
 src/sage/categories/dedekind_domains.py
 src/sage/categories/euclidean_domains.py
+src/sage/categories/principal_ideal_domains.py
+src/sage/categories/unique_factorization_domains.py
 src/sage/categories/examples/commutative_additive_monoids.py
 src/sage/categories/examples/commutative_additive_semigroups.py
 src/sage/categories/examples/cw_complexes.py
@@ -489,6 +491,7 @@ src/sage/categories/hopf_algebras_with_basis.py
 src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/kac_moody_algebras.py
+src/sage/categories/kahler_algebras.py
 src/sage/categories/triangular_kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lambda_bracket_algebras.py

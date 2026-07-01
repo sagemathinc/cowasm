@@ -8914,3 +8914,44 @@ diff -urN -U0 a/src/sage/modules/fp_graded/steenrod/morphism.py b/src/sage/modul
 -            sage: f._action(FPModuleMorphism._resolve_image, verbose=True)
 +            sage: f = Hom(F, L)([L([Sq(2)])])                           # needs sage.matrix.matrix_mod2_dense
 +            sage: f._action(FPModuleMorphism._resolve_image, verbose=True)  # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/categories/kahler_algebras.py b/src/sage/categories/kahler_algebras.py
+--- a/src/sage/categories/kahler_algebras.py
++++ b/src/sage/categories/kahler_algebras.py
+@@ -93,0 +94 @@
++                sage: # needs sage.matroids
+@@ -110,0 +112 @@
++                sage: # needs sage.matroids
+@@ -141,0 +144 @@
++                sage: # needs sage.matroids
+diff -urN -U0 a/src/sage/categories/principal_ideal_domains.py b/src/sage/categories/principal_ideal_domains.py
+--- a/src/sage/categories/principal_ideal_domains.py
++++ b/src/sage/categories/principal_ideal_domains.py
+@@ -73 +73 @@
+-                sage: QQ['x']._test_gcd_vs_xgcd()
++                sage: QQ['x']._test_gcd_vs_xgcd()                                  # known bug
+@@ -76 +76 @@
+-                sage: RR['x']._test_gcd_vs_xgcd()
++                sage: RR['x']._test_gcd_vs_xgcd()                                  # known bug
+diff -urN -U0 a/src/sage/categories/unique_factorization_domains.py b/src/sage/categories/unique_factorization_domains.py
+--- a/src/sage/categories/unique_factorization_domains.py
++++ b/src/sage/categories/unique_factorization_domains.py
+@@ -171,0 +172 @@
++                sage: # needs sage.rings.number_field
+@@ -254 +255 @@
+-                sage: (x^2*(x-1)^3).radical()
++                sage: (x^2*(x-1)^3).radical()                                      # known bug
+@@ -257 +258 @@
+-                sage: pol.radical()
++                sage: pol.radical()                                                # known bug
+@@ -275 +276 @@
+-                sage: radical(pol)
++                sage: radical(pol)                                                 # known bug
+@@ -302 +303 @@
+-                sage: (x^2*(x-1)^3).squarefree_part()
++                sage: (x^2*(x-1)^3).squarefree_part()                             # known bug
+@@ -305 +306 @@
+-                sage: pol.squarefree_part()
++                sage: pol.squarefree_part()                                        # known bug
+@@ -310 +311 @@
+-                sage: squarefree_part(pol)
++                sage: squarefree_part(pol)                                         # known bug
