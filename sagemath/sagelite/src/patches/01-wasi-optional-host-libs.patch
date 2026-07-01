@@ -9315,6 +9315,55 @@ diff -urN -U0 a/src/sage/schemes/generic/point.py b/src/sage/schemes/generic/poi
 @@ -211 +211 @@
 -            sage: pt.prime_ideal()
 +            sage: pt.prime_ideal()                                                  # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/schemes/generic/scheme.py b/src/sage/schemes/generic/scheme.py
+--- a/src/sage/schemes/generic/scheme.py
++++ b/src/sage/schemes/generic/scheme.py
+@@ -77,2 +77,2 @@
+-            sage: RmodI = R.quotient(I)
+-            sage: X = Spec(RmodI)
++            sage: RmodI = R.quotient(I)                                             # needs sage.rings.polynomial.plural
++            sage: X = Spec(RmodI)                                                   # needs sage.rings.polynomial.plural
+@@ -219 +219 @@
+-            sage: A(1, 0)
++            sage: A(1, 0)                                                           # needs sage.libs.singular
+@@ -225,2 +225,2 @@
+-            sage: X = P.subscheme(x^2 - y^2)
+-            sage: X(P([4, 4, 1]))
++            sage: X = P.subscheme(x^2 - y^2)                                       # needs sage.rings.polynomial.plural
++            sage: X(P([4, 4, 1]))                                                   # needs sage.rings.polynomial.plural
+@@ -297 +297 @@
+-            sage: A2.point([4, 5])
++            sage: A2.point([4, 5])                                                  # needs sage.libs.singular
+@@ -473,2 +473,2 @@
+-            sage: X = Spec(R.quotient(I))
+-            sage: X.coordinate_ring()
++            sage: X = Spec(R.quotient(I))                                           # needs sage.rings.polynomial.plural
++            sage: X.coordinate_ring()                                               # needs sage.rings.polynomial.plural
+@@ -493,2 +493,2 @@
+-            sage: X = Spec(R.quotient(I))
+-            sage: X.dimension_absolute()
++            sage: X = Spec(R.quotient(I))                                           # needs sage.rings.polynomial.plural
++            sage: X.dimension_absolute()                                            # needs sage.rings.polynomial.plural
+@@ -498 +498 @@
+-            sage: X.dimension()
++            sage: X.dimension()                                                     # needs sage.rings.polynomial.plural
+@@ -517,2 +517,2 @@
+-            sage: X = Spec(R.quotient(I))
+-            sage: X.dimension_relative()
++            sage: X = Spec(R.quotient(I))                                           # needs sage.rings.polynomial.plural
++            sage: X.dimension_relative()                                            # needs sage.rings.polynomial.plural
+@@ -890 +890 @@
+-            sage: P = S(R.ideal(x, y, z)); P
++            sage: P = S(R.ideal(x, y, z)); P                                        # needs sage.rings.polynomial.plural
+@@ -914 +914 @@
+-            sage: S(0)
++            sage: S(0)                                                              # needs sage.libs.singular
+@@ -922 +922 @@
+-            sage: S(R.ideal(0))
++            sage: S(R.ideal(0))                                                     # needs sage.rings.polynomial.plural
+@@ -931 +931 @@
+-            sage: S(0)
++            sage: S(0)                                                              # needs sage.libs.singular
 diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_constructor.py b/src/sage/schemes/plane_quartics/quartic_constructor.py
 --- a/src/sage/schemes/plane_quartics/quartic_constructor.py
 +++ b/src/sage/schemes/plane_quartics/quartic_constructor.py

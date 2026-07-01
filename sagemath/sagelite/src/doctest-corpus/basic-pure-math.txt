@@ -843,6 +843,7 @@ src/sage/quadratic_forms/quadratic_form__variable_substitutions.py
 src/sage/quadratic_forms/random_quadraticform.py
 src/sage/quadratic_forms/special_values.py
 src/sage/schemes/overview.py
+src/sage/schemes/generic/scheme.py
 src/sage/schemes/generic/ambient_space.py
 src/sage/schemes/generic/point.py
 src/sage/schemes/generic/spec.py

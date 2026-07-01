@@ -18350,6 +18350,38 @@ one of the explicit clusters directly, with the generic-scheme
 startup cluster being the most concentrated sources of otherwise-runnable
 blocks in this audit.
 
+Focused generic scheme corpus-growth pass on 2026-07-01:
+
+```text
+scheme.py: 130 passed, 0 failed, 43 skipped
+```
+
+This pass promotes `sage/schemes/generic/scheme.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 902
+non-comment entries. A focused generic-scheme probe first recorded the file as
+`130 passed, 17 failed, 26 skipped`; the failures were concentrated in
+quotient/subscheme and affine-point doctest groups that cross existing
+browser-profile boundaries.
+
+The WASI source patch now marks the quotient-ring, projective subscheme,
+coordinate-ring, dimension, and topological-point examples that import
+`sage.rings.polynomial.plural` as explicit optional skips. The same patch
+marks the affine-space point-construction examples that import
+`sage.libs.singular.function` as Singular-boundary skips. Focused strict
+validation rebuilt a fresh patched Sagelite source copy and ran a one-file
+corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-port-plan-generic/scheme-onefile-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty;
+`skips-by-reason.sql` records 13 `optional:sage.rings.polynomial.plural`
+blocks and 5 `optional:sage.libs.singular` blocks, alongside the file's
+pre-existing optional Sage, finite-field, PARI, number-field, and real-field
+metadata. The latest-run metadata records CoWasm commit
+`798473a19659d87d4177e2acc8bc4dfb56f3c013`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 75,
+and about 7 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
