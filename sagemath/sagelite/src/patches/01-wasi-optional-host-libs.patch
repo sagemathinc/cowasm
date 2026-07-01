@@ -8738,3 +8738,39 @@ diff -urN -U0 a/src/sage/modules/fp_graded/free_morphism.py b/src/sage/modules/f
 -            sage: pres.fp_module()
 +            sage: pres = Hom(F1, F2)([v])                                          # needs sage.matrix.matrix_mod2_dense
 +            sage: pres.fp_module()                                                 # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/modules/fp_graded/steenrod/homspace.py b/src/sage/modules/fp_graded/steenrod/homspace.py
+--- a/src/sage/modules/fp_graded/steenrod/homspace.py
++++ b/src/sage/modules/fp_graded/steenrod/homspace.py
+@@ -13 +13 @@
+-    sage: homset.an_element()
++    sage: homset.an_element()                                           # needs sage.matrix.matrix_mod2_dense
+@@ -19 +19 @@
+-    sage: f = homset([L((Sq(1), 1)), L((0, Sq(2)))]); f
++    sage: f = homset([L((Sq(1), 1)), L((0, Sq(2)))]); f                 # needs sage.matrix.matrix_mod2_dense
+@@ -25 +25 @@
+-    sage: f.kernel_inclusion()
++    sage: f.kernel_inclusion()                                          # needs sage.matrix.matrix_mod2_dense
+@@ -31 +31 @@
+-    sage: TestSuite(homset).run()
++    sage: TestSuite(homset).run()                                       # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/modules/fp_graded/steenrod/module.py b/src/sage/modules/fp_graded/steenrod/module.py
+--- a/src/sage/modules/fp_graded/steenrod/module.py
++++ b/src/sage/modules/fp_graded/steenrod/module.py
+@@ -161 +161 @@
+-            sage: print(M.export_module_definition())
++            sage: print(M.export_module_definition())                   # needs sage.matrix.matrix_mod2_dense
+@@ -174 +174 @@
+-            sage: print(N.export_module_definition())
++            sage: print(N.export_module_definition())                   # needs sage.matrix.matrix_mod2_dense
+@@ -179 +179 @@
+-            sage: print(N.export_module_definition(powers_of_two_only=False))
++            sage: print(N.export_module_definition(powers_of_two_only=False))  # needs sage.matrix.matrix_mod2_dense
+@@ -187 +187 @@
+-            sage: print(Hko.export_module_definition())
++            sage: print(Hko.export_module_definition())                 # needs sage.matrix.matrix_mod2_dense
+@@ -392 +392 @@
+-            sage: res = Hko.resolution(5, verbose=True)
++            sage: res = Hko.resolution(5, verbose=True)                 # needs sage.matrix.matrix_mod2_dense
+@@ -410 +410 @@
+-            sage: [x.domain() for x in res]
++            sage: [x.domain() for x in res]                             # needs sage.matrix.matrix_mod2_dense

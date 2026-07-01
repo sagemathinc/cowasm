@@ -16563,6 +16563,38 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records 11
 `optional:sage.matrix.matrix_mod2_dense` blocks.
 
+Focused fp-graded Steenrod module/homspace corpus-growth pass:
+
+```text
+homspace.py: 6 passed, 0 failed, 4 skipped
+module.py: 56 passed, 0 failed, 6 skipped
+```
+
+That two-file make-target validation adds
+`sage/modules/fp_graded/steenrod/homspace.py` and
+`sage/modules/fp_graded/steenrod/module.py` to the curated corpus, bringing
+the default-profile dashboard more direct coverage of Steenrod finitely
+presented module construction, profile handling, and lightweight category
+behavior. The added WASI source patch classifies the homspace element/kernel
+examples and module export/resolution examples that instantiate the
+unavailable `sage.matrix.matrix_mod2_dense` backend as explicit
+`# needs sage.matrix.matrix_mod2_dense` skips.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+two-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/steenrod-module-homspace-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`73db93168a31a14b3f4fce2fbfb56a6209e337b0`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The standalone resource rebuild used for validation
+reached the existing optional-feature doctest shutdown segfault after writing
+a passing smoke SQLite summary; the make layer treated that blocker as the
+expected standalone target status and the focused corpus validation completed
+cleanly afterward.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
