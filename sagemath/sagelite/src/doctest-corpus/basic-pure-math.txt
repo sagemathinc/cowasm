@@ -841,6 +841,7 @@ src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctes
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py
+src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/numbertheory_doctest.py
 src/sage/tests/__init__.py

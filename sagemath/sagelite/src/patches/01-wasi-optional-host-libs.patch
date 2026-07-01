@@ -8057,3 +8057,46 @@ diff -urN a/src/sage/functions/other.py b/src/sage/functions/other.py
 @@ -2072 +2072 @@
 -            sage: cases()
 +            sage: cases()                                                               # known bug
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
+@@ -27,6 +27,7 @@
+ 
+ Sage example in ./sol/nonlinear.tex, line 40::
+ 
++  sage: # needs sage.symbolic
+   sage: f(x) = 4 * x - 1
+   sage: a, b = 0, 1
+   sage: phi(s, t) = (s + t) / 2
+@@ -53,6 +54,7 @@
+ 
+ Sage example in ./sol/nonlinear.tex, line 76::
+ 
++  sage: # needs sage.symbolic
+   sage: f(x) = 4 * sin(x) - exp(x) / 2 + 1
+   sage: a, b = RR(-pi), RR(pi)
+   sage: def phi(s, t): return RR.random_element(s, t)
+@@ -62,6 +64,7 @@
+ 
+ Sage example in ./sol/nonlinear.tex, line 93::
+ 
++  sage: # needs sage.symbolic
+   sage: basering.<x> = PolynomialRing(SR, 'x')
+   sage: p = x^2 + x
+   sage: p.roots(multiplicities=False)
+@@ -69,6 +72,7 @@
+ 
+ Sage example in ./sol/nonlinear.tex, line 101::
+ 
++  sage: # needs sage.symbolic
+   sage: from collections import deque
+   sage: basering = PolynomialRing(SR, 'x')
+   sage: q, method = None, None
+@@ -101,6 +105,7 @@
+ 
+ Sage example in ./sol/nonlinear.tex, line 141::
+ 
++  sage: # needs sage.symbolic
+   sage: basering = PolynomialRing(SR, 'x')
+   sage: a, b = pi/2, pi
+   sage: f(x) = 4 * sin(x) - exp(x) / 2 + 1

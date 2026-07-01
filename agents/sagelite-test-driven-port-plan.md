@@ -15090,6 +15090,32 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping is dominated by the existing
 `optional:sage.symbolic` boundary.
 
+Focused nonlinear book-example corpus-growth pass:
+
+```text
+nonlinear_doctest.py: 4 passed, 0 failed, 21 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 854
+non-comment entries. The dashboard gains coverage for the pure-Python
+interval-generator and iteration-helper examples from the computational
+mathematics book while keeping the symbolic root-finding and polynomial
+examples behind explicit `# needs sage.symbolic` directives.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next2/nonlinear-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`818ee6bd4ea003e8201bbf9596ad644c21b452bd`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records only the `sage.symbolic` boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
