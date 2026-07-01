@@ -3204,6 +3204,44 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused doctest fixture corpus-growth pass:
+
+```text
+fixtures.py: 55 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds `sage/doctest/fixtures.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 829 non-comment
+entries. Direct sampling first recorded 38 passed blocks, 17 failed blocks,
+and 6 skipped blocks. The failures were all caused by fixture tracing helpers
+importing `IPython.lib.pretty.pretty` in the stripped browser-compatible
+profile, plus dependent attribute checks after the tracing setup failed.
+
+The WASI source patch now keeps the IPython pretty-printer when it is
+available and falls back to Python `repr(...)` when IPython is absent. This
+preserves the trace-method, attribute-access proxy, and helper formatting
+doctests as runnable default-profile coverage without adding broad IPython
+skips. Focused validation first rebuilt the Sagelite standalone runtime with
+`make -C sagemath/sagelite test-wasi-sdk-standalone`, confirming the updated
+patch applies from a fresh Sagelite source copy. The one-file corpus validation
+then used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/auto-2026-07-01/fixtures-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`e052a1be3a8f9c4e8ca0b3943290277915998cf7`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same 2026-07-01 sampling pass found no additional quiet promotion
+candidate in the probed geometry, plotting, stats, probability, rich-output,
+doctest, typeset, logic, and game front doors. The only clean runnable
+geometry candidate in the first batch, `sage/geometry/polyhedron/cdd_file_format.py`,
+was already present in the corpus; plotting helpers were skipped-only under
+the default browser profile, and the remaining runnable probes exposed broader
+polyhedron, Newton polygon, doctest external-feature, or backend clusters.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

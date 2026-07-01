@@ -7862,3 +7862,48 @@ diff -urN a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/co
 @@ -273,1 +273,1 @@
 -        sage: D = posets.AntichainPoset(9)._hasse_diagram
 +        sage: D = posets.AntichainPoset(9)._hasse_diagram                      # needs sage.graphs
+diff -urN a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
+--- a/src/sage/doctest/fixtures.py
++++ b/src/sage/doctest/fixtures.py
+@@ -45,6 +45,14 @@
+ from functools import wraps
+ 
+ 
++def _cowasm_pretty(val):
++    try:
++        from IPython.lib.pretty import pretty
++    except ModuleNotFoundError:
++        return repr(val)
++    return pretty(val)
++
++
+ def reproducible_repr(val):
+     r"""
+     String representation of an object in a reproducible way.
+@@ -203,7 +211,7 @@
+             4
+         """
+         val = getattr(self.delegate, name)
+-        from IPython.lib.pretty import pretty
++        pretty = _cowasm_pretty
+         if callable(val) and name not in self.delegate.__dict__:
+             @wraps(val)
+             def wrapper(*args, **kwds):
+@@ -240,7 +248,7 @@
+             sage: foo.x
+             2
+         """
+-        from IPython.lib.pretty import pretty
++        pretty = _cowasm_pretty
+         print("{}write {} = {}".format(self.prefix, name,
+                                        pretty(val)))
+         setattr(self.delegate, name, val)
+@@ -396,7 +404,7 @@
+ 
+     @wraps(f)
+     def g(*args, **kwds):
+-        from IPython.lib.pretty import pretty
++        pretty = _cowasm_pretty
+         arglst = [pretty(arg) for arg in args]
+         arglst.extend("{}={}".format(k, pretty(v))
+                       for k, v in sorted(kwds.items()))
