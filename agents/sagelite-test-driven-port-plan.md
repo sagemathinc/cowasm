@@ -16077,6 +16077,37 @@ polynomial/plural availability tagging, and focused startup seeding for large
 geometry/ring files whose early setup failures currently cause broad
 dependent-name fallout.
 
+Follow-up derivation plural-backend metadata pass:
+
+The quotient-ring derivation doctests in `sage/rings/derivation.py` are now
+tagged with standalone `# needs sage.rings.polynomial.plural` directives in
+the WASI Sagelite source patch. The previous lightweight ring probe recorded
+the file as:
+
+```text
+derivation.py: 379 passed, 59 failed, 11 skipped
+```
+
+The repeated `ModuleNotFoundError: sage.rings.polynomial.plural` blocks
+caused dependent `NameError` fallout through the quotient-ring derivation
+examples. Focused validation rebuilt a fresh patched source tree and ran the
+make-target doctest path against a one-file temporary corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=1`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/derivation-plural-tags.sqlite3`.
+The focused result is:
+
+```text
+derivation.py: 379 passed, 25 failed, 45 skipped
+```
+
+The new SQLite dashboard records 34 skipped rows with
+`tags = optional,needs:sage.rings.polynomial.plural` and
+`skip_reason = optional:sage.rings.polynomial.plural`. The remaining focused
+failures are separate clusters: pexpect-backed fraction-field/twisted
+homomorphism setup, dependent `theta`/`M`/`f` names, and output-format drift.
+The file remains outside the curated corpus until those non-plural clusters
+are either fixed or classified.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

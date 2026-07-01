@@ -8343,3 +8343,55 @@ diff -urN a/src/sage/rings/polynomial/toy_d_basis.py b/src/sage/rings/polynomial
          ({2*y + 1, 3*x^2 + 7, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1},
           {(x^2*y - x^2 + y - 3, 2*y + 1),
            (x^2*y - x^2 + y - 3, 3*x^2 + 7),
+diff -urN a/src/sage/rings/derivation.py b/src/sage/rings/derivation.py
+--- a/src/sage/rings/derivation.py
++++ b/src/sage/rings/derivation.py
+@@ -1530,5 +1530,6 @@
+             sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
+             sage: R.<x,y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S = R.quo([x^5, y^5])
+             sage: M = S.derivation_module()
+             sage: der = M.random_element()
+@@ -1566,4 +1567,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: Dx = S.derivation(x)
+             sage: Dy = S.derivation(y)
+@@ -1581,4 +1583,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: Dx = S.derivation(x)
+             sage: Dy = S.derivation(y)
+@@ -1596,4 +1599,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: Dx = S.derivation(x)
+             sage: -Dx
+@@ -1610,4 +1614,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: Dx = S.derivation(x)
+             sage: Dx * 2
+@@ -1626,4 +1631,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: Dx = S.derivation(x)
+             sage: 2 * Dx
+@@ -1643,4 +1649,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: M = S.derivation_module()
+             sage: M.basis()
+@@ -1925,4 +1932,5 @@
+             sage: R.<X,Y> = GF(5)[]
++            sage: # needs sage.rings.polynomial.plural
+             sage: S.<x,y> = R.quo([X^5, Y^5])
+             sage: f = x^3*S.derivation(); f
+             x^3*d/dx
