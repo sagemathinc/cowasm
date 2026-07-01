@@ -51,6 +51,7 @@ src/sage/calculus/transforms/dwt.pyx
 src/sage/calculus/transforms/dft.py
 src/sage/calculus/transforms/fft.pyx
 src/sage/algebras/associated_graded.py
+src/sage/algebras/free_algebra_element.py
 src/sage/algebras/free_zinbiel_algebra.py
 src/sage/algebras/jordan_algebra.py
 src/sage/algebras/quaternion_algebra.py

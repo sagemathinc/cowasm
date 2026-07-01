@@ -17749,6 +17749,43 @@ combined real/symbolic blocks, and one symbolic-only block. The full dashboard
 still needs a longer background run after the recent Tornaria and matrix-test
 promotions.
 
+Focused free-algebra element corpus-growth pass on 2026-07-01:
+
+This pass promotes `sage/algebras/free_algebra_element.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 893
+non-comment entries.
+
+A fresh compact algebra probe in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/algebra-frontier.sqlite3`
+identified `free_algebra_element.py` as the only clean absent promotion
+candidate in the sampled batch:
+
+```text
+free_algebra_element.py: 59 passed, 0 failed, 0 skipped
+```
+
+The same probe kept adjacent algebra files out of the quiet corpus:
+`free_algebra.py` still has 50 active failures, `octonion_algebra.pyx` has
+seven, `tensor_algebra.py` has ten, and `commutative_dga.py` is dominated by
+missing `sage.rings.polynomial.plural` support. `clifford_algebra.py` still
+hits an NTL/libcxx-backed `memory access out of bounds` trap while running
+`ExteriorAlgebraIdeal` setup, and `clifford_algebra_element.pyx` remains a
+broader startup/backend frontier.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+against a temporary one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/free-algebra-element-make.sqlite3`:
+
+```text
+free_algebra_element.py: 59 passed, 0 failed, 0 skipped
+```
+
+The saved block-failure cluster query is empty, and the focused run records
+doctest runner version 75 on CoWasm commit
+`f3b80f2d4b9c30c9ad6af5f4dc321c265f20f437`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
