@@ -9320,3 +9320,15 @@ diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_generic.py b/src/sage/sc
 +            sage: # needs sage.libs.singular
 @@ -47,0 +50 @@
 +            sage: # needs sage.libs.singular
+diff -urN -U0 a/src/sage/matrix/matrix_double_sparse.pyx b/src/sage/matrix/matrix_double_sparse.pyx
+--- a/src/sage/matrix/matrix_double_sparse.pyx
++++ b/src/sage/matrix/matrix_double_sparse.pyx
+@@ -139 +139 @@
+-            sage: L = A.cholesky()
++            sage: L = A.cholesky()                                                   # needs scipy
+@@ -140 +140 @@
+-            sage: L.is_triangular()
++            sage: L.is_triangular()                                                   # needs scipy
+@@ -142 +142 @@
+-            sage: (A - L*L.H).norm(1) < 1e-10
++            sage: (A - L*L.H).norm(1) < 1e-10                                         # needs scipy

@@ -3451,6 +3451,35 @@ skipped-only; `half_integral.py` recorded seven runnable failures; and
 `theta.py` hit the known NTL/libcxx `memory access out of bounds` trap while
 computing `theta_qexp(100, 't', GF(2))`.
 
+Focused sparse double-matrix corpus-growth pass:
+
+```text
+matrix_double_sparse.pyx: 31 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/matrix/matrix_double_sparse.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 898
+non-comment entries. Direct sampling first recorded 32 passed blocks, two
+failures, and two skips. The failures were the complex-double Cholesky example
+and its dependent norm check; that path falls back through dense
+double-matrix Cholesky and imports SciPy, which is not available in the
+default browser-compatible profile.
+
+The added WASI source patch marks the complex Cholesky setup and dependent
+checks as `# needs scipy`, matching the existing sparse/dense Cholesky
+comparison skips in the same file while preserving sparse RDF/CDF class,
+Hermitian, skew-Hermitian, and real sparse Cholesky coverage. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding
+and patching a fresh Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-agent/matrix-double-sparse-make.sqlite3`.
+The SQLite latest-run summary records runner version 75, a 100% non-skipped
+pass rate, and empty saved block- and file-failure cluster queries. The parent
+Node process still segfaulted after printing the successful summary, so the
+database is a checked passing dashboard while the make process exit remains
+runner-lifecycle evidence.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
