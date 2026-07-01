@@ -15548,6 +15548,31 @@ test-sage-doctest-corpus` against a temporary one-file corpus with
 The saved block- and file-failure cluster queries are empty; skip grouping
 records the three deferred examples under `optional:sage.libs.pari`.
 
+Scheduled 2026-07-01 algebra frontier audit:
+
+```text
+algebra probe: 576 passed, 1231 failed, 4 skipped
+```
+
+No new corpus file was promoted in this audit. The direct Sagelite probe wrote
+`.tmp/current-run/scheduled-2026-07-01-autonomous-probe.sqlite3` and sampled
+ten absent algebra files:
+`sage/algebras/affine_nil_temperley_lieb.py`,
+`cellular_basis.py`, `commutative_dga.py`, `down_up_algebra.py`,
+`free_algebra.py`, `free_algebra_element.py`, `jordan_algebra.py`,
+`q_commuting_polynomials.py`, `q_system.py`, and
+`quaternion_algebra_element.py`.
+
+The batch confirmed that this algebra frontier is not a narrow corpus-growth
+pocket yet. The block-level failures are dominated by startup/context
+failures (`NameError` and dependent `ModuleNotFoundError` clusters), while
+`cellular_basis.py` reaches a cyclotomic-field dynamic-link signature
+mismatch and `down_up_algebra.py` reaches the existing NTL/libcxx
+`memory access out of bounds` trap through a `TestSuite(...)` path. The small
+helper/category candidates checked afterward were already present in the
+860-entry curated corpus, so this pass records the frontier state without
+changing the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
