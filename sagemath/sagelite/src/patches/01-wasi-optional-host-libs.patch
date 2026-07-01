@@ -8978,3 +8978,26 @@ diff -urN -U0 a/src/sage/combinat/designs/subhypergraph_search.pyx b/src/sage/co
 +            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))                       # needs sage.graphs
 +            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))                       # needs sage.graphs
 +            sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))                        # needs sage.graphs
+diff -urN -U0 a/src/sage/modular/hypergeometric_misc.pyx b/src/sage/modular/hypergeometric_misc.pyx
+--- a/src/sage/modular/hypergeometric_misc.pyx
++++ b/src/sage/modular/hypergeometric_misc.pyx
+@@ -22,5 +22,5 @@
+-        sage: H = Hyp(cyclotomic=([3],[4]))
+-        sage: H.euler_factor(2, 7, cache_p=True)
++        sage: H = Hyp(cyclotomic=([3],[4]))                              # needs sage.libs.pari
++        sage: H.euler_factor(2, 7, cache_p=True)                          # needs sage.libs.pari
+         7*T^2 - 3*T + 1
+-        sage: gamma = H.gamma_array()
+-        sage: prec, gtable = H.gauss_table(7, 1, 2)
++        sage: gamma = H.gamma_array()                                      # needs sage.libs.pari
++        sage: prec, gtable = H.gauss_table(7, 1, 2)                        # needs sage.libs.pari
+@@ -28 +28 @@
+-        sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)
++        sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)    # needs sage.libs.pari
+@@ -33,3 +33,3 @@
+-        sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
+-        sage: u = H.euler_factor(2,79) # indirect doctest
+-        sage: u.reverse().is_weil_polynomial()
++        sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])                    # needs sage.libs.pari
++        sage: u = H.euler_factor(2,79) # indirect doctest                 # needs sage.libs.pari
++        sage: u.reverse().is_weil_polynomial()                            # needs sage.libs.pari

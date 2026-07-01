@@ -16933,6 +16933,34 @@ coding, and database probes were mostly skipped-only; the runnable failures
 again clustered around cypari2/PARI object-model gaps, graph-backed design
 coverage, and the known NTL/libcxx finite-field trap.
 
+Follow-up modular hypergeometric helper corpus-growth pass on 2026-07-01:
+
+```text
+hypergeometric_misc.pyx: 3 passed, 0 failed, 8 skipped
+```
+
+That one-file make-target validation adds
+`sage/modular/hypergeometric_misc.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 886 non-comment
+entries. Direct sampling had recorded two focused `HypergeometricData(...)`
+setup failures in the unported cypari2/PARI object-model path, plus dependent
+name failures in the later `hgm_coeffs(...)` and Weil-polynomial checks.
+
+The added WASI source patch marks those PARI-backed setup and dependent blocks
+as `# needs sage.libs.pari`, preserving the lower-level import and local
+constant setup coverage as runnable default-profile doctests. Focused
+validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-hypergeom/hypergeom-make.sqlite3`.
+The latest-run metadata records CoWasm commit
+`e465204725c29714ea40082fc9f4460a5a9fbf7d`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the eight deferred blocks
+under `optional:sage.libs.pari`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
