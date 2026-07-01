@@ -36,6 +36,7 @@ src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/semirings/tropical_matrix.py
 src/sage/rings/semirings/tropical_semiring.pyx
 src/sage/rings/valuation/trivial_valuation.py
+src/sage/rings/valuation/scaled_valuation.py
 src/sage/arith/srange.pyx
 src/sage/arith/functions.pyx
 src/sage/arith/power.pyx
@@ -778,6 +779,7 @@ src/sage/quadratic_forms/quadratic_form__local_density_congruence.py
 src/sage/quadratic_forms/quadratic_form__local_density_interfaces.py
 src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
 src/sage/quadratic_forms/quadratic_form__local_normal_form.py
+src/sage/quadratic_forms/quadratic_form__theta.py
 src/sage/quadratic_forms/quadratic_form__mass.py
 src/sage/quadratic_forms/quadratic_form__mass__Conway_Sloane_masses.py
 src/sage/quadratic_forms/quadratic_form__mass__Siegel_densities.py

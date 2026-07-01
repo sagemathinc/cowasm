@@ -14834,6 +14834,43 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused valuation/theta corpus-growth pass:
+
+```text
+scaled_valuation.py: 40 passed, 0 failed, 2 skipped
+quadratic_form__theta.py: 13 passed, 0 failed, 10 skipped
+```
+
+That two-file make-target validation adds
+`sage/rings/valuation/scaled_valuation.py` and
+`sage/quadratic_forms/quadratic_form__theta.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 838
+non-comment entries. The default browser-compatible profile gains valuation
+scaling coverage for comparison, equivalence, reduction, residue-ring maps,
+and extensions, plus quadratic-form theta-series coverage for ordinary
+coefficient computation and representation-vector helpers.
+
+Fresh sampling first checked an alternate low-count helper batch that was
+entirely skipped-only under existing browser-profile metadata. A targeted
+valuation/quadratic/design/coding/numerical batch then surfaced the two clean
+promotion candidates. Nearby non-promoted files stayed outside the quiet
+corpus: `developing_valuation.py` still reaches the known NTL/libcxx ostream
+`memory access out of bounds` trap, `quadratic_form__genus.py`,
+`quadratic_form__siegel_product.py`, design, and coding helpers were
+skipped-only under existing tags, and numerical logging/tensor helper files
+still have broad block-level failure clusters.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary two-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal-next/valuation-theta-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`29a7c37289b681a80a1a60fd814627b67abcc951`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records existing PARI, symbolic,
+number-field, and geometry/polyhedron dependency boundaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
