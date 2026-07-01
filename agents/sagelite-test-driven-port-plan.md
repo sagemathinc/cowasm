@@ -15761,6 +15761,54 @@ polynomial-element `memory access out of bounds` trap in
 gcd/factorization and NTL/libcxx runtime frontier instead of a narrow category
 startup fix.
 
+Scheduled 2026-07-01 low-count absent-file frontier audit:
+
+Fresh sampling from CoWasm commit
+`0231f549711b77d49b22465a1a7c346a06519a41` did not find a new quiet
+non-skipped promotion candidate. The probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-active5/` using the current patched
+Sagelite source copy, node profile, runner version 73, and 60- to 90-second
+per-file timeouts.
+
+The first corrected absent-file pass rebuilt the candidate list with
+`LC_ALL=C` against the tracked 862-entry corpus, after scratch probe mining
+surfaced several stale clean candidates that were already promoted, including
+`sage/libs/flint/ulong_extras.pyx`,
+`sage/libs/flint/ulong_extras_sage.pyx`, `sage/libs/ntl/error.pyx`,
+`sage/misc/python.py`, `sage/probability/random_variable.py`,
+`sage/groups/group_exp.py`, `sage/numerical/knapsack.py`,
+`sage/modular/modsym/manin_symbol_list.py`, and
+`sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py`.
+
+The light absent-file probe recorded `0 passed, 2 failed, 16 skipped`.
+The book exercise files exposed no extracted doctest blocks, topology and
+cluster/R-statistics files were skipped-only, and the runnable failures were
+graph-frontier checks: `matroids/advanced.py` imports the unavailable
+`sage.graphs.generic_graph_pyx`, while `graphs/base/overview.py` uses the
+unseeded graph constructor `Graph()`.
+
+The low-level library probe recorded `10 passed, 18 failed, 22 skipped`, but
+its clean non-skipped files were all already in the curated corpus. The active
+unpromoted failures were the known focused cypari2 object-model boundary in
+`sage/libs/pari/convert_flint.pyx`, missing `cypari2.convert` in
+`convert_sage_real_double.pyx`, unavailable HOMFLY side-module imports, and
+missing PolyBoRi support in `rings/polynomial/pbori/easy_polynomials.py`.
+
+The database/coding-style probe recorded `4 passed, 16 failed, 100 skipped`.
+Most files were skipped-only under browser-profile tags, including coding
+databases, symbolic data, SAT LP, Siegel-product, Buzzard, qqbar decorator,
+profiler, and sphinxify coverage. The two runnable files stayed out:
+`modular/hypergeometric_misc.pyx` reaches the focused cypari2 object-model
+boundary and dependent-state fallout, while `doctest/__main__.py` needs
+pytest/doctest-control filesystem behavior plus startup namespace work for
+`DocTestDefaults`.
+
+No curated corpus entry was added in this pass. The most useful next work is
+still a targeted runtime or dependency-boundary pass: graph startup/backend
+availability for graph and matroid overview tests, focused cypari2 conversion
+coverage for PARI-backed modular and conversion helpers, or explicit
+browser-profile treatment for HOMFLY and PolyBoRi side-module gaps.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
