@@ -9281,3 +9281,12 @@ diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_constructor.py b/src/sag
 @@ -48 +48 @@
 -        sage: QuarticCurve(x**4 + y**4)
 +        sage: QuarticCurve(x**4 + y**4)                                             # needs sage.libs.singular
+diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_generic.py b/src/sage/schemes/plane_quartics/quartic_generic.py
+--- a/src/sage/schemes/plane_quartics/quartic_generic.py
++++ b/src/sage/schemes/plane_quartics/quartic_generic.py
+@@ -9,0 +10 @@
++    sage: # needs sage.libs.singular
+@@ -34,0 +36 @@
++            sage: # needs sage.libs.singular
+@@ -47,0 +50 @@
++            sage: # needs sage.libs.singular

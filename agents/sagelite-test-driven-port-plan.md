@@ -18038,6 +18038,47 @@ metadata records CoWasm commit `73b141b10cd5b69940a1f4683b54aa5aba7f2073`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, and runner version 75.
 
+Follow-up plane-quartic generic corpus-growth pass on 2026-07-01:
+
+The checked corpus now has 896 non-comment entries after promoting
+`src/sage/schemes/plane_quartics/quartic_generic.py`.
+
+A fresh low-count absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-port/`
+found no clean runnable promotion candidate as-is:
+
+```text
+low-count-probe.sqlite3: 17 passed, 122 failed, 296 skipped
+```
+
+Most sampled files were skipped-only, zero-block, or blocked by known backend
+frontiers. The active runtime errors were the existing NTL/libcxx ostream trap
+in `sage/coding/two_weight_db.py` and the existing `qsieve_sage.pyx` WASM
+trap. Block-level failures were concentrated in unavailable GAP, PolyBoRi,
+Singular, elliptic-curve database, graph, modular, and hyperelliptic-curve
+paths.
+
+The narrow promotion target in that batch was the plane-quartic generic module,
+which already had four passing polynomial/projective setup blocks and five
+`QuarticCurve(...)` dependent failures. The WASI source patch now marks those
+constructor groups as `# needs sage.libs.singular`, matching the adjacent
+`quartic_constructor.py` browser-profile boundary without adding the Singular
+curve stack to the startup namespace. Focused strict validation rebuilt a
+fresh patched Sagelite source copy and ran the one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-port/quartic-generic-onefile.sqlite3`:
+
+```text
+quartic_generic.py: 4 passed, 0 failed, 5 skipped
+sage -t passed: 4 passed, 0 failed, 5 skipped
+```
+
+The saved block-failure cluster query is empty. `skips-by-reason.sql` records
+all five skipped blocks under `optional:sage.libs.singular`. The latest-run
+metadata records CoWasm commit `ed5020fd9125a334cd8def73116fa680dfb95a26`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, and runner version 75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
