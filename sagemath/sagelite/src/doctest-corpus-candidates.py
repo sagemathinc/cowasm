@@ -44,6 +44,30 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def require_doctest_schema(database: Path, db: sqlite3.Connection) -> None:
+    if not database.exists():
+        raise SystemExit(f"database not found: {database}")
+    if database.stat().st_size == 0:
+        raise SystemExit(f"empty doctest database: {database}")
+
+    required_tables = {"runs", "files"}
+    rows = db.execute(
+        """
+        select name
+        from sqlite_master
+        where type = 'table'
+        """
+    ).fetchall()
+    existing_tables = {name for (name,) in rows}
+    missing_tables = sorted(required_tables - existing_tables)
+    if missing_tables:
+        missing = ", ".join(missing_tables)
+        raise SystemExit(
+            f"not a Sagelite doctest database: {database} "
+            f"(missing table{'s' if len(missing_tables) != 1 else ''}: {missing})"
+        )
+
+
 def normalize_path(path: str, source_root: Path | None) -> str:
     candidate = Path(path)
     if source_root is not None:
@@ -129,7 +153,10 @@ def candidate_rows(
 
 def main() -> int:
     args = parse_args()
+    if not args.database.exists():
+        raise SystemExit(f"database not found: {args.database}")
     with sqlite3.connect(args.database) as db:
+        require_doctest_schema(args.database, db)
         run_id, db_source_root = latest_run_metadata(db)
         source_root = args.source_root or db_source_root
         covered = read_corpus(args.corpus, source_root)

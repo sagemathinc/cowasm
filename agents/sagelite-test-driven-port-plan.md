@@ -17872,6 +17872,43 @@ databases printed no uncovered clean runnable row with at least one passing
 block. Future short runs should skip these exact low-count support batches
 unless the goal is direct work on one of those runtime boundaries.
 
+Follow-up support/frontier audit on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in this scheduled pass. The
+checked corpus remains at 893 non-comment entries after the recent
+free-algebra-element promotion.
+
+The checked `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` file
+was empty during this pass, so `doctest-corpus-candidates.py` now reports a
+concise missing/empty/non-doctest database error instead of a raw SQLite
+traceback when a dashboard path has not been populated yet.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next-goal/`. The
+low-prompt support probe found no promotion candidate:
+
+```text
+lowprompt-support.sqlite3: 1 passed, 8 failed, 20 skipped
+```
+
+Most support files in that batch were skipped-only or empty under the default
+browser profile. The active failure cluster was `sage/doctest/__main__.py`,
+which still depends on unavailable doctest-control/pytest startup paths and
+then cascades into missing local names. It should be treated as a CLI/doctest
+infrastructure frontier, not as a corpus-growth candidate.
+
+Two additional focused batches were clean but skipped-only:
+
+```text
+lowprompt-second.sqlite3: 0 passed, 0 failed, 36 skipped
+light-algebra-category.sqlite3: 0 passed, 0 failed, 85 skipped
+```
+
+Those batches covered small Cython/database/modular/plot/topology helpers and
+lightweight algebra/category files. They should not be resampled for quiet
+corpus growth without a dependency-scope change because they add no runnable
+default-profile coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
