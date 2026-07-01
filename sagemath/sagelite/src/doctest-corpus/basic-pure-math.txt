@@ -52,6 +52,7 @@ src/sage/algebras/associated_graded.py
 src/sage/algebras/free_zinbiel_algebra.py
 src/sage/algebras/quaternion_algebra.py
 src/sage/algebras/quantum_groups/q_numbers.py
+src/sage/algebras/steenrod/steenrod_algebra_bases.py
 src/sage/algebras/steenrod/steenrod_algebra_misc.py
 src/sage/algebras/steenrod/steenrod_algebra_mult.py
 src/sage/algebras/lie_algebras/abelian.py

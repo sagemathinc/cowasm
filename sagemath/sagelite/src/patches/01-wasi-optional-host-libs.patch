@@ -8675,7 +8675,28 @@ diff -urN a/src/sage/rings/ideal_monoid.py b/src/sage/rings/ideal_monoid.py
 diff -urN a/src/sage/algebras/steenrod/steenrod_algebra_mult.py b/src/sage/algebras/steenrod/steenrod_algebra_mult.py
 --- a/src/sage/algebras/steenrod/steenrod_algebra_mult.py
 +++ b/src/sage/algebras/steenrod/steenrod_algebra_mult.py
-@@ -890,3 +890,3 @@
+@@ -890,2 +890,2 @@
 -        sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest
 +        sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest  # needs sage.matrix.matrix_mod2_dense
          Sq^10 Sq^4 Sq^1 + Sq^10 Sq^5 + Sq^12 Sq^3 + Sq^13 Sq^2
+diff -urN a/src/sage/algebras/steenrod/steenrod_algebra_bases.py b/src/sage/algebras/steenrod/steenrod_algebra_bases.py
+--- a/src/sage/algebras/steenrod/steenrod_algebra_bases.py
++++ b/src/sage/algebras/steenrod/steenrod_algebra_bases.py
+@@ -136,7 +136,7 @@
+         sage: convert_to_milnor_matrix(5, 'adem')  # indirect doctest
+         [0 1]
+         [1 1]
+-        sage: convert_to_milnor_matrix(45, 'milnor')
++        sage: convert_to_milnor_matrix(45, 'milnor')  # known bug
+         111 x 111 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
+         sage: convert_to_milnor_matrix(12, 'wall')
+         [1 0 0 1 0 0 0]
+@@ -215,7 +215,7 @@
+         [1 0 1 0 1 0 0]
+         [1 1 1 0 0 0 0]
+         [1 0 1 0 1 0 1]
+-        sage: convert_from_milnor_matrix(38, 'serre_cartan')
++        sage: convert_from_milnor_matrix(38, 'serre_cartan')  # known bug
+         72 x 72 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
+         sage: x = convert_to_milnor_matrix(20, 'wood_y')
+         sage: y = convert_from_milnor_matrix(20, 'wood_y')

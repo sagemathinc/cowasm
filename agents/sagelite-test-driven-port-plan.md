@@ -16440,6 +16440,36 @@ The run used node profile and runner version 74. The saved block- and
 file-failure cluster queries are empty; skip grouping records 55
 `optional:sage.libs.gap` blocks.
 
+Focused Steenrod basis corpus-growth pass:
+
+```text
+steenrod_algebra_bases.py: 81 passed, 0 failed, 7 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/steenrod/steenrod_algebra_bases.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 872
+non-comment entries. Direct sampling of the remaining Steenrod frontend
+recorded no additional broad promotion candidate: `all.py` has no doctest
+blocks, while `steenrod_algebra.py` still has 93 focused failures dominated
+by the existing `sage.matrix.matrix_mod2_dense` backend boundary and
+dependent setup-name fallout.
+
+The added WASI source patch marks the two large change-of-basis matrix
+representation checks as deferred `# known bug` blocks, because the current
+runtime prints the same matrix dimensions over `GF(2)` without Sage's
+historical `.str()` hint text. Focused validation rebuilt a fresh patched
+Sagelite source copy and ran `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-steenrod-bases/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`a07dbe636550e0494ec6c6b97213923307020a98`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records five existing long-time blocks and
+two deferred known-bug display checks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
