@@ -16704,6 +16704,40 @@ ostream/finite-field traps, PolyBoRi/Brial availability, or a deliberate
 Sage-global namespace pass for constructors that upstream doctests assume from
 `sage.all`.
 
+Focused invariant-reconstruction corpus-growth pass:
+
+```text
+reconstruction.py: 58 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/invariants/reconstruction.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 880 non-comment
+entries. The file gives the default browser-compatible dashboard a compact
+invariant-theory pocket that stays on polynomial coefficient reconstruction
+and transformation helpers without requiring the broader symbolic invariant
+stack.
+
+The broader adjacent probe wrote
+`.tmp/current-run/scheduled-2026-07-01-goal2/probe-semirings-invariants.sqlite3`.
+It found no other immediate promotion candidate: the tropical polynomial and
+tropical variety files have active `sage.symbolic.expression`, plotting,
+PPL, graph-backend, and dependent-state failures; `invariant_theory.py` has a
+large mostly-runnable body but still clusters around missing symbolic
+expression support, output drift, and provable polynomial factorization; the
+two sampled monoid files were skipped-only.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal2/reconstruction-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`730fa87c41c7d2bd4fe9d3ad956fe605f8f23379`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records one `optional:sage.libs.pari` block
+for the discriminant example at `reconstruction.py:88`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
