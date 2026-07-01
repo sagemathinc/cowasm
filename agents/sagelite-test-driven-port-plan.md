@@ -17636,6 +17636,60 @@ future low-count sampling should skip those exact skipped-only batches unless
 the goal is explicit dependency tagging, graph-backend triage, or doctest CLI
 runtime work.
 
+Follow-up topology, numeric-helper, and moderate-frontier audit on 2026-07-01:
+
+This scheduled pass leaves
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` unchanged at 890
+non-comment entries. The pass wrote fresh probe databases under
+`/home/user/cowasm/.tmp/current-run/`, using runner version 75 on CoWasm
+commit `e4c577f37970d02a6ce79156948f58410c1c8b99` and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The compact topology/numeric-helper probe in
+`scheduled-2026-07-01-next-frontier/probe.sqlite3` produced no runnable
+promotion candidate:
+
+```text
+sage -t passed: 0 passed, 0 failed, 64 skipped
+```
+
+All ten sampled absent files were skipped-only under the default browser
+profile: `sage/topology/simplicial_complex_catalog.py`,
+`sage/topology/simplicial_set_catalog.py`,
+`sage/modules/complex_double_vector.py`,
+`sage/matrix/matrix_complex_double_dense.pyx`,
+`sage/matrix/matrix_real_double_dense.pyx`,
+`sage/databases/cunningham_tables.py`, `sage/databases/odlyzko.py`,
+`sage/databases/sloane.py`, `sage/modular/modform/j_invariant.py`, and
+`sage/quadratic_forms/quadratic_form__genus.py`.
+
+The moderate-frontier probe in
+`scheduled-2026-07-01-moderate-frontier/probe.sqlite3` likewise produced no
+clean absent candidate:
+
+```text
+sage -t failed: 15 passed, 59 failed, 187 skipped
+```
+
+The runnable failures clustered around three distinct frontiers:
+`sage/homology/homology_group.py` still reaches additive-abelian-group
+constructor/runtime issues such as `TypeError: attribute name must be string,
+not ''`; `sage/matrix/misc.pyx` depends on unavailable
+`sage.matrix.matrix_integer_sparse` support and has downstream sparse-matrix
+setup failures; and `sage/algebras/nil_coxeter_algebra.py` is blocked before
+startup seeding because importing the Nil-Coxeter constructor is not currently
+available in the stripped profile. A temporary runner seed for
+`NilCoxeterAlgebra` and `WeylGroup` left the focused
+`scheduled-2026-07-01-nil-coxeter/after-seed.sqlite3` rerun at
+`0 passed, 31 failed, 0 skipped`, so that exploratory change was reverted.
+
+Future blind corpus-growth runs should skip these two sampled batches unless
+the goal is direct work on the homology/additive-abelian-group runtime path,
+the sparse integer-matrix helper boundary, or the Nil-Coxeter import/startup
+frontier. A normalized sweep over existing local probe databases with the
+current build root found no already-measured clean absent candidate with at
+least five passing blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
