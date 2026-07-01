@@ -17384,6 +17384,57 @@ batches as blind promotion candidates. A better next pass is to either work
 directly on the NTL/libcxx ostream trap or sample a different absent-file band
 with known non-skipped passing blocks.
 
+Scheduled absent-file frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+888 non-comment entries.
+
+Fresh absent-file probes were written under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-crypto-probe/`, and
+`sagemath/sagelite/src/doctest-corpus-candidates.py` found no clean runnable
+candidate absent from the current corpus in the probe databases.
+
+The crypto probe recorded five skipped-only files and no runnable blocks:
+`sage/crypto/classical.py`, `classical_cipher.py`, `cryptosystem.py`,
+`util.py`, and `lfsr.py` together produced 932 skipped blocks. The small
+data-structure/game/logic probe confirmed `binary_search.pyx`,
+`bitset_base.pyx`, and `logic/all.py` have no extracted doctest blocks, while
+`sage/games/hexad.py` is not a narrow corpus-growth target: it recorded 53
+failed blocks because importing `sage.games.hexad` reaches the unavailable
+symbolic-expression path, and the rest of the examples fail from dependent
+missing `Minimog`, `view_list`, `picture_set`, or `M` state.
+
+The compact CLI probe over `sage/cli/eval_cmd.py`, `eval_cmd_test.py`,
+`version_cmd.py`, `options.py`, and `selftest.py` recorded no doctest blocks.
+The Judson abstract-algebra exercise probe likewise recorded no extracted
+blocks across `actions-sage-exercises.py`, `vect-sage-exercises.py`,
+`homomorph-sage-exercises.py`, and `struct-sage.py`. A mixed small-helper
+probe over `sage/categories/groupoid.py`, `sage/monoids/monoid.py`,
+`sage/monoids/hecke_monoid.py`, `sage/databases/cunningham_tables.py`, and
+`sage/misc/profiler.py` recorded 38 skipped blocks and no passing blocks.
+
+The computational-mathematics calculus solution frontier was reproduced in
+`calculus.sqlite3`:
+
+```text
+calculus_doctest.py: 13 passed, 74 failed, 0 skipped
+```
+
+The active clusters are broader than startup-name seeding: 22 failures start
+at missing `var`, but the same file also reaches unavailable symbolic
+reset/expression imports, dependent symbolic-calculus state, PARI/cypari2
+kernel gaps, a Singular-backed polynomial echelon path, and plot3d/plot
+startup boundaries. This remains a focused symbolic/calculus tagging or
+runtime-porting task rather than a simple quiet-corpus promotion.
+
+Future scheduled runs should avoid repeating these crypto, CLI, Judson,
+small-helper, and `hexad.py` probes as blind corpus-growth candidates. The
+most useful follow-up remains explicit symbolic/calculus classification for
+the computational-mathematics solution files, or direct backend work on one
+of the existing NTL/libcxx, PolyBoRi/BRiAL, graph, PARI/cypari2, or
+Singular frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
