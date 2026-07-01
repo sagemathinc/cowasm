@@ -16998,6 +16998,50 @@ targets. Useful follow-up work is either focused backend/runtime triage for
 the named clusters or a different namespace with confirmed non-skipped
 passing coverage.
 
+Follow-up pure-helper frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries after the modular hypergeometric helper promotion.
+
+A fresh absent-file prompt list was regenerated from the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree, then several small
+frontier slices were probed directly with runner version 74. The probes are
+stored under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex/`:
+
+```text
+mixed-low-prompt-probe.sqlite3: 6 passed, 33 failed, 87 skipped
+stats-extra-probe.sqlite3:      47 passed, 95 failed, 847 skipped
+pure-lowcount-probe.sqlite3:    0 passed, 27 failed, 208 skipped
+misc-pure-probe.sqlite3:        6 passed, 129 failed, 201 skipped
+```
+
+The same pass reran the already-promoted geometry/group slice as a sanity
+check:
+
+```text
+geometry-group-probe.sqlite3: 793 passed, 0 failed, 231 skipped
+```
+
+That clean slice covers files already present in the current corpus, so it is
+not a new promotion candidate.
+
+The unpromoted probes were skipped-only or blocked by broader dependency and
+runtime clusters: lie-conformal affine examples import the unavailable graph
+Cython backend; pbori random-polynomial examples need the missing PolyBoRi
+extension; discrete Gaussian lattice setup reaches symbolic-expression
+dependencies and dependent name failures; several finite-field and polynomial
+setup paths still hit the known NTL/libcxx ostream trap; poset helpers need
+graph-backed `posets` startup support; nil-Coxeter examples need Weyl-group
+startup surface; and sandpile, hyperbolic geometry, Voronoi, and quaternion
+helpers are not narrow metadata-only promotions.
+
+Future scheduled runs should not repeat these exact mixed low-prompt,
+stats/HMM, pure-lowcount, or miscellaneous pure-helper batches as blind
+corpus-growth targets. Useful follow-up work is focused backend/runtime triage
+for the named clusters, or a different absent namespace with confirmed
+non-skipped passing coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
