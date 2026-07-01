@@ -182,6 +182,7 @@ src/sage/libs/ntl/error.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
 src/sage/geometry/linear_expression.py
+src/sage/geometry/pseudolines.py
 src/sage/geometry/polyhedron/base_number_field.py
 src/sage/geometry/polyhedron/cdd_file_format.py
 src/sage/geometry/polyhedron/lattice_euclidean_group_element.py

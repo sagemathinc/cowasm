@@ -16000,6 +16000,33 @@ All persisted block rows carry `tags = optional,needs:sage.libs.homfly` and
 curated corpus because it is skipped-only under the default browser-compatible
 profile.
 
+Focused pseudoline geometry corpus-growth pass:
+
+```text
+pseudolines.py: 72 passed, 0 failed, 6 skipped
+```
+
+That one-file direct validation adds `sage/geometry/pseudolines.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 863 non-comment
+entries. The file adds runnable browser-profile coverage for pseudoline
+arrangement construction, equality, display helpers, permutations, sweep
+behavior, and related validation paths. Its skipped blocks already carry
+explicit `# needs sage.plot`, `# needs sage.combinat`, or `# not tested`
+metadata, so no new WASI source tags or startup namespace changes were
+required.
+
+Direct frontier probing first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex/pseudolines.sqlite3`.
+The same geometry/numerical/homology sampling pass kept
+`sage/geometry/hyperbolic_space/hyperbolic_constants.py` out because it has no
+doctest blocks, kept `sage/homology/chains.py` and
+`sage/homology/homology_vector_space_with_basis.py` out because they are
+skipped-only under the default profile, and kept
+`sage/numerical/linear_functions.pyx` out because it timed out in
+number-field setup. `sage/geometry/relative_interior.py` still has a broad
+runnable failure cluster and remains outside the quiet dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
