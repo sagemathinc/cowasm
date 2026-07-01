@@ -871,6 +871,7 @@ src/sage/symbolic/symbols.py
 src/sage/games/sudoku.py
 src/sage/games/quantumino.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
+src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/linsolve_doctest.py

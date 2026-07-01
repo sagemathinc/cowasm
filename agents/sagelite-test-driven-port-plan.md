@@ -17241,6 +17241,48 @@ per-file timeout and `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, but was interrupted
 before completion because it was still early in the file list. The focused
 hard-failure rerun is the completed validation for this narrow promotion.
 
+Focused computational-math combinatorics solution promotion pass:
+
+This pass promotes
+`sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py`
+into the curated browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 888
+non-comment entries. The pass first probed several compact absent namespaces
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-targeted/`.
+The compact utility/module batch found no promotion candidate: most files were
+skipped-only, `sage/misc/map_threaded.py` exited with `SIGSEGV`, and
+`sage/coding/two_weight_db.py` reproduced the existing NTL/libcxx ostream
+`memory access out of bounds` trap during namespace startup. A pure-math helper
+batch was also mostly skipped-only; its active failures were graph/PBoRi
+frontiers in `hochschild_lattice.py`, `bubble_shuffle.py`,
+`partial_cube.py`, and `pbori/blocks.py`.
+
+The productive probe was the computational-math solution batch. Before the
+namespace fix, `sol/combinat_doctest.py` recorded:
+
+```text
+combinat_doctest.py: 30 passed, 21 failed, 0 skipped
+```
+
+The failures were mostly missing common Sage startup names that are already
+available in the installed runtime. The Sagelite doctest namespace now seeds
+`Arrangements`, `OrderedSetPartitions`, `AlternatingSignMatrices`,
+`BinaryTree`, and `GL`. After that, the only remaining mismatches were the
+two `AlternatingSignMatrices(2)` and `(3)` list-of-matrices display layouts,
+which are recorded in the WASI source patch as explicit `# known bug` skips.
+
+Focused validation against a freshly rebuilt patched source tree used a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-targeted/combinat-final.sqlite3`:
+
+```text
+combinat_doctest.py: 49 passed, 0 failed, 2 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. Skip grouping
+records the two display-layout deferrals under `deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

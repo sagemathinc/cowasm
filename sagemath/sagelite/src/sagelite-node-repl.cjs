@@ -858,6 +858,8 @@ def __cowasm_resolve_core_lazy_namespace(namespace):
 def __cowasm_seed_common_doctest_globals(namespace):
     imports = (
         ("sage.combinat.combination", ("Combinations",)),
+        ("sage.combinat.alternating_sign_matrix", ("AlternatingSignMatrices",)),
+        ("sage.combinat.binary_tree", ("BinaryTree",)),
         ("sage.combinat.combinat", ("fibonacci", "stirling_number2")),
         ("sage.combinat.free_module", ("CombinatorialFreeModule",)),
         ("sage.combinat.composition", ("Composition",)),
@@ -868,9 +870,9 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partition", "Partitions")),
         ("sage.combinat.perfect_matching", ("PerfectMatching",)),
-        ("sage.combinat.permutation", ("Permutation", "Permutations")),
+        ("sage.combinat.permutation", ("Arrangements", "Permutation", "Permutations")),
         ("sage.combinat.regular_sequence", ("RegularSequenceRing",)),
-        ("sage.combinat.set_partition_ordered", ("OrderedSetPartition",)),
+        ("sage.combinat.set_partition_ordered", ("OrderedSetPartition", "OrderedSetPartitions")),
         ("sage.combinat.species.recursive_species", ("CombinatorialSpecies",)),
         ("sage.combinat.symmetric_group_algebra", ("SymmetricGroupAlgebra",)),
         ("sage.combinat.tableau", ("SemistandardTableaux", "StandardTableau", "StandardTableaux", "Tableau", "Tableaux")),
@@ -980,6 +982,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.functions.transcendental", ("dickman_rho",)),
         ("sage.functions.other", ("floor", "real_part")),
         ("sage.groups.abelian_gps.abelian_group", ("AbelianGroup",)),
+        ("sage.groups.matrix_gps.linear", ("GL",)),
         ("sage.homology.chain_complex", ("ChainComplex",)),
         ("sage.logic.all", ("propcalc", "SymbolicLogic")),
         ("sage.misc.functional", ("sqrt",)),
