@@ -15637,6 +15637,41 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Scheduled 2026-07-01 follow-up frontier audit:
+
+Follow-up sampling from CoWasm commit
+`fc0a03c24759ca276c1912672c9f4966d923339a` did not find another narrow clean
+runnable promotion candidate. The probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-codex-next-function-field/`,
+`.tmp/current-run/scheduled-2026-07-01-codex-small-absent/`,
+`.tmp/current-run/scheduled-2026-07-01-codex-pure-small/`, and
+`.tmp/current-run/scheduled-2026-07-01-codex-books-small/`.
+
+The broader rational function-field/ring-helper probe reported
+`543 passed, 128 failed, 299 skipped`. The candidate-ranking query found no
+clean non-skipped files: `all.py` had no doctest blocks, `differential.py` and
+`place_rational.py` were skipped-only, and the runnable files hit existing
+frontiers. Those frontiers include NTL/libcxx `memory access out of bounds`
+traps for finite-field function-field setup, `_ZNK3NTL11ZZ_pContext7restoreEv`
+dylink import failures, 60-second timeouts in rational function-field
+ideal/order setup, and polynomial/localization fallout behind unavailable
+`pexpect` or `sage.rings.polynomial.plural`.
+
+Three low-count absent-file probes also produced no promotion candidate. The
+utility batch reported `0 passed, 7 failed, 76 skipped`: most files were
+skipped-only and `repl/inputhook.py` is still a host-inputhook mismatch. The
+pure combinatorics/category batch reported `0 passed, 34 failed, 244 skipped`:
+most candidates were skipped-only, while `q_bernoulli.pyx` hit the same
+NTL/libcxx trap and `sine_gordon.py` remains graph-frontier coverage. The
+small book/example batch reported `2 passed, 10 failed, 25 skipped`: the only
+runnable file in that sample, `sol/integration_doctest.py`, is not yet quiet.
+
+No curated corpus entry was added in this pass. The useful next promotion work
+is likely either a targeted source-tagging pass for one high-pass-count file
+such as `derivation.py` or `localization.py`, or runtime work on the recurring
+NTL/libcxx/dylink boundary before returning to function-field and finite-field
+functionality.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
