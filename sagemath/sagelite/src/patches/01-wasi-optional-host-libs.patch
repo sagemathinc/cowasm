@@ -8700,3 +8700,41 @@ diff -urN a/src/sage/algebras/steenrod/steenrod_algebra_bases.py b/src/sage/alge
          72 x 72 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
          sage: x = convert_to_milnor_matrix(20, 'wood_y')
          sage: y = convert_from_milnor_matrix(20, 'wood_y')
+diff -urN -U0 a/src/sage/modules/fp_graded/free_element.py b/src/sage/modules/fp_graded/free_element.py
+--- a/src/sage/modules/fp_graded/free_element.py
++++ b/src/sage/modules/fp_graded/free_element.py
+@@ -224 +224 @@
+-            sage: v = x.vector_presentation(); v
++            sage: v = x.vector_presentation(); v                                   # needs sage.matrix.matrix_mod2_dense
+@@ -226 +226 @@
+-            sage: type(v)
++            sage: type(v)                                                          # needs sage.matrix.matrix_mod2_dense
+@@ -228 +228 @@
+-            sage: M.gen(0).vector_presentation()
++            sage: M.gen(0).vector_presentation()                                   # needs sage.matrix.matrix_mod2_dense
+@@ -230 +230 @@
+-            sage: M.gen(1).vector_presentation()
++            sage: M.gen(1).vector_presentation()                                   # needs sage.matrix.matrix_mod2_dense
+@@ -234 +234 @@
+-            sage: v in V
++            sage: v in V                                                           # needs sage.matrix.matrix_mod2_dense
+@@ -237 +237 @@
+-            sage: M.element_from_coordinates(v, 7) == x
++            sage: M.element_from_coordinates(v, 7) == x                            # needs sage.matrix.matrix_mod2_dense
+@@ -244 +244 @@
+-            sage: x_ = sum( [c*b for (c,b) in zip(v, basis)] ); x_
++            sage: x_ = sum( [c*b for (c,b) in zip(v, basis)] ); x_                 # needs sage.matrix.matrix_mod2_dense
+@@ -246 +246 @@
+-            sage: x__ = M.linear_combination(zip(basis, v)); x__
++            sage: x__ = M.linear_combination(zip(basis, v)); x__                  # needs sage.matrix.matrix_mod2_dense
+@@ -248 +248 @@
+-            sage: x == x_ == x__
++            sage: x == x_ == x__                                                   # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/modules/fp_graded/free_morphism.py b/src/sage/modules/fp_graded/free_morphism.py
+--- a/src/sage/modules/fp_graded/free_morphism.py
++++ b/src/sage/modules/fp_graded/free_morphism.py
+@@ -203,2 +203,2 @@
+-            sage: pres = Hom(F1, F2)([v])
+-            sage: pres.fp_module()
++            sage: pres = Hom(F1, F2)([v])                                          # needs sage.matrix.matrix_mod2_dense
++            sage: pres.fp_module()                                                 # needs sage.matrix.matrix_mod2_dense

@@ -16528,6 +16528,41 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused fp-graded free element/morphism corpus-growth pass:
+
+```text
+free_element.py: 43 passed, 0 failed, 9 skipped
+free_morphism.py: 52 passed, 0 failed, 2 skipped
+```
+
+That two-file make-target validation adds
+`sage/modules/fp_graded/free_element.py` and
+`sage/modules/fp_graded/free_morphism.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 876 non-comment
+entries. The files add default-profile coverage for finitely presented graded
+module element arithmetic and free morphism presentation helpers.
+
+Direct adjacent fp-graded probing first recorded 198 passed, 55 failed, and
+1059 skipped blocks across the remaining compact package files. The active
+failure clusters are still dominated by the missing
+`sage.matrix.matrix_mod2_dense` backend and dependent setup-name fallout in
+the broader Steenrod fp-graded module/morphism files. The added WASI source
+patch therefore classifies only the narrow vector-presentation and
+presentation-construction examples that instantiate that mod-2 dense matrix
+backend as `# needs sage.matrix.matrix_mod2_dense`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+two-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal/free-fp-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`1c93903432519490691ab1a5a3e0b8593fb0e389`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 74,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records 11
+`optional:sage.matrix.matrix_mod2_dense` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -706,7 +706,9 @@ src/sage/parallel/reference.py
 src/sage/sat/solvers/dimacs.py
 src/sage/sat/solvers/picosat.py
 src/sage/sat/solvers/satsolver.pyx
+src/sage/modules/fp_graded/free_element.py
 src/sage/modules/fp_graded/free_homspace.py
+src/sage/modules/fp_graded/free_morphism.py
 src/sage/modules/fp_graded/steenrod/profile.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
