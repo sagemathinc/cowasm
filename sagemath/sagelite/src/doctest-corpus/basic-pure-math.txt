@@ -831,6 +831,7 @@ src/sage/plot/scatter_plot.py
 src/sage/plot/text.py
 src/sage/plot/plot3d/transform.pyx
 src/sage/plot/plot3d/texture.py
+src/sage/plot/plot3d/tachyon.py
 src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py

@@ -15228,6 +15228,51 @@ clusters: `sage/repl/inputhook.py` requires IPython, `toy_buchberger.py` and
 object-model gaps, and `rings/homset.py` plus `rings/ideal_monoid.py` still
 reach the known NTL dynamic-link/trap boundary.
 
+Focused Tachyon helper corpus-growth pass:
+
+```text
+tachyon.py: 335 passed, 0 failed, 69 skipped
+```
+
+That one-file make-target validation adds `sage/plot/plot3d/tachyon.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 857 non-comment
+entries. The dashboard gains runnable default-profile coverage for Tachyon
+scene construction, light and texture setup, primitive string generation,
+camera validation, surface mesh helpers, and parametric path generation while
+keeping actual external rendering behind explicit browser-profile dependency
+metadata.
+
+Direct sampling first recorded 335 passed blocks, 21 focused failures, and 48
+skips. The failures were narrow boundaries: direct `show(...)`, `save(...)`,
+`save_image(...)`, and rich-output rendering call the external Tachyon
+renderer through subprocess paths; the introductory `sphere(...)` and
+`line3d(...)` examples depend on the stripped plot3d shape backend; and the
+animation setup depends on ImageMagick. The added WASI source patch marks
+those prompts as `# needs subprocess`, `# needs sage.plot.plot3d`, or
+`# optional -- ImageMagick`, preserving the non-rendering Tachyon helper
+coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active/tachyon/tachyon-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`be44061c08350dac673c669161481ec5e62f1f95`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records the new subprocess and plot3d
+boundaries alongside existing scheme, symbolic, ImageMagick, known-bug, and
+long-time skips.
+
+The same active sampling batch kept adjacent candidates out of the quiet
+corpus: `plot3d/introduction.py` and `plot3d/all.py` contributed zero doctest
+blocks, while `float_doctest.py`, `recequadiff_doctest.py`,
+`combinat_doctest.py`, `mpoly_doctest.py`, and `complex_roots.py` still expose
+broader symbolic, combinatorics-startup, plural/Singular, pexpect, and
+PARI/cypari2 object-model clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
