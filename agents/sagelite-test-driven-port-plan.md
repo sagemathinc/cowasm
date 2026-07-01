@@ -3275,6 +3275,40 @@ batch were skipped-only; the runnable failures clustered around symbolic
 manifold imports, species startup aliases, Hilbert-series startup names,
 poset/species constructors, and broader category behavior.
 
+Follow-up frontier audit on 2026-07-01:
+
+No new quiet corpus candidate was found in the probed REPL/doctest, plot/SAT,
+crypto/data-structure, low-prompt utility, book-doctest, combinatorics,
+rich-output, and small algebra batches. The checked corpus currently has 854
+non-comment entries; several clean files found by direct sampling were already
+present, including the REPL/doctest utility files
+`sage/repl/configuration.py`, `sage/repl/display/fancy_repr.py`,
+`sage/repl/display/util.py`, `sage/repl/rich_output/buffer.py`,
+`sage/repl/rich_output/output_basic.py`, `sage/doctest/marked_output.py`, and
+`sage/doctest/util.py`, plus the rich-output backend files
+`sage/repl/rich_output/backend_doctest.py`,
+`sage/repl/rich_output/display_manager.py`,
+`sage/repl/rich_output/preferences.py`, and
+`sage/repl/rich_output/pretty_print.py`.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/`. The batches
+`plot-sat-logic-sample.sqlite3`, `crypto-data-sample.sqlite3`, and
+`low-prompt-utility-sample.sqlite3` were skipped-only or empty except for
+already-present clean files. `low-prompt-math-sample.sqlite3`,
+`book-frontier-sample.sqlite3`, `pure-combinat-sample.sqlite3`, and
+`algebra-small-sample.sqlite3` exposed broader symbolic, PARI/cypari2,
+species, design, Lie-conformal, or quaternion backend clusters rather than
+narrow corpus-growth tags. The rich-output formatter and IPython test probes
+remain outside the quiet dashboard because their failures are dominated by
+IPython-backed shell setup; adding them would currently contribute only a few
+default-profile passing blocks after broad skips.
+
+One attempted 45-file absent-frontier batch was stopped after staying silent
+for several minutes and did not create a SQLite database. Future scheduled
+runs should avoid broad unordered batches in this frontier; sample smaller
+coherent namespaces or target one known cluster explicitly.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
