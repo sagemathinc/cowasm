@@ -55,6 +55,31 @@ diff -urN a/src/sage/libs/homfly.pyx b/src/sage/libs/homfly.pyx
          sage: from sage.libs.homfly import homfly_polynomial_dict
          sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
          sage: homfly_polynomial_dict(trefoil)
+diff -urN a/src/sage/misc/reset.pyx b/src/sage/misc/reset.pyx
+--- a/src/sage/misc/reset.pyx
++++ b/src/sage/misc/reset.pyx
+@@ -25,11 +25,13 @@
+ 
+     EXAMPLES::
+ 
++        sage: # needs sage.symbolic
+         sage: x = 5
+         sage: reset()
+         sage: x                                                                         # needs sage.symbolic
+         x
+ 
++        sage: # needs IPython
+         sage: fn = tmp_filename(ext='.py')
+         sage: sage.misc.reset.EXCLUDE.add('fn')
+         sage: with open(fn, 'w') as f:
+@@ -90,6 +92,7 @@
+ 
+     EXAMPLES::
+ 
++        sage: # needs sage.symbolic
+         sage: x = 10; y = 15/3; QQ='red'
+         sage: QQ
+         'red'
 diff -urN a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build

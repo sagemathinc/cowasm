@@ -16738,6 +16738,32 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records one `optional:sage.libs.pari` block
 for the discriminant example at `reconstruction.py:88`.
 
+Follow-up reset metadata pass:
+
+No curated corpus entry was added in this pass. The `sage/misc/reset.pyx`
+frontier is now explicitly classified as skipped-only under the default
+browser-compatible profile instead of reporting missing-module failures.
+Direct probing before the metadata change recorded 13 passed, 12 failed, and
+10 skipped blocks, with the active clusters split between unavailable
+`sage.symbolic.expression` reset/restore behavior and unavailable IPython
+attach-file support.
+
+The WASI patch now tags the reset, attach, and restore doctest groups with
+their required optional dependencies. Focused validation rebuilt a fresh
+patched Sagelite source copy and ran `make -C sagemath/sagelite
+test-sage-doctest-corpus` against a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=45`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-goal3/reset-make.sqlite3`.
+The result was:
+
+```text
+reset.pyx: 0 passed, 0 failed, 35 skipped
+```
+
+The file remains outside the curated corpus because it contributes no
+non-skipped browser-profile coverage, but the previous reset-related
+failure cluster is now queryable as explicit optional dependency metadata.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
