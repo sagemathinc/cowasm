@@ -15383,6 +15383,33 @@ That clean run covered `sage/repl/configuration.py`, the small
 rich-output doctest helpers already present in the corpus, so there is no
 additional REPL/display promotion work in that pocket.
 
+Follow-up scheduled absent-file audit:
+
+```text
+support/frontier probe: 4 passed, 25 failed, 83 skipped
+tiny fresh probe: 6 passed, 13 failed, 6 skipped
+```
+
+No new corpus file was promoted in this audit. The checked probes wrote
+SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-01-codex3/probe/` and sampled fresh
+low-count files across doctest helpers, homology helpers, calculus, root
+systems, dense matrix backends, CLI helpers, interfaces, GAP wrappers, Judson
+exercise files, and plane-quartic scheme helpers.
+
+Most passing files were empty or skipped-only under existing browser-profile
+metadata, including `sage/homology/tests.py`, `sage/misc/profiler.py`,
+`sage/calculus/functions.py`, `sage/combinat/root_system/coxeter_group.py`,
+the RDF/CDF dense matrix files, several CLI/Judson helpers, and small
+interface wrappers. The non-promoted runnable failures remain broader
+frontier work: GAP files still require the unavailable
+`sage.libs.gap.libgap`, quaternion element pickling examples need heavier
+quaternion/number-field/symbolic startup coverage, and the plane-quartic
+helpers use `QuarticCurve` from source files that are present in the patched
+tree but not currently importable from the installed Sagelite runtime
+resources. The plane-quartic pocket should wait for an explicit schemes
+packaging pass rather than a doctest namespace seed.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
