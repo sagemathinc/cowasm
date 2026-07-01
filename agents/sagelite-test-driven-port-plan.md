@@ -16961,6 +16961,43 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the eight deferred blocks
 under `optional:sage.libs.pari`.
 
+Follow-up low-prompt frontier audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries after the modular hypergeometric helper promotion.
+
+A fresh current absent-file prompt list was regenerated from the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree, then several compact
+frontier slices were probed directly with runner version 74:
+
+```text
+game-stats-probe.sqlite3:       0 passed, 53 failed, 382 skipped
+low-count-helper-probe.sqlite3: 0 passed, 1 failed, 38 skipped
+pure-helper-batch.sqlite3:      13 passed, 28 failed, 144 skipped
+infra-crypto-probe.sqlite3:     12 passed, 26 failed, 237 skipped
+book-examples-probe.sqlite3:    27 passed, 4 failed, 0 skipped
+```
+
+The probes are stored under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next/`. Most clean
+files in these batches were skipped-only or zero-block under the default
+browser-compatible profile, so they were not promoted. The active failures
+were broader backend or runtime clusters rather than narrow corpus-growth
+targets: `hexad.py` imports symbolic-expression support before its examples
+can run; `coding/two_weight_db.py` reaches the known NTL/libcxx finite-field
+trap; `homology_group.py` hits an internal module/import TypeError while
+constructing `HomologyGroup`; `manifolds/structure.py` needs symbolic support;
+`parallel/use_fork.py` exercises process/fork boundaries; and the
+computational-mathematics number-theory doctest still has polynomial coercion
+display drift plus symbolic and cypari2/PARI object-model failures.
+
+Future scheduled runs should not resample these exact low-prompt, stats,
+infrastructure, crypto/coding, or Judson/book batches as blind corpus-growth
+targets. Useful follow-up work is either focused backend/runtime triage for
+the named clusters or a different namespace with confirmed non-skipped
+passing coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
