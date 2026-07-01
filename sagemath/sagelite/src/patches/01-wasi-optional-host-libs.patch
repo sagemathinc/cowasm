@@ -9021,3 +9021,30 @@ diff -urN -U0 a/src/sage/repl/inputhook.py b/src/sage/repl/inputhook.py
 -        sage: uninstall()
 +        sage: from sage.repl.inputhook import uninstall                       # needs IPython
 +        sage: uninstall()                                                     # needs IPython
+diff -urN -U0 a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fraction.py
+--- a/src/sage/rings/continued_fraction.py
++++ b/src/sage/rings/continued_fraction.py
+@@ -121,0 +122 @@
++    sage: # needs sage.rings.number_field
+@@ -156,0 +158 @@
++    sage: # needs sage.rings.number_field
+@@ -628,0 +631 @@
++            sage: # needs sage.rings.number_field
+@@ -1331,0 +1335 @@
++            sage: # needs sage.rings.number_field
+@@ -1368,0 +1373 @@
++            sage: # needs sage.rings.number_field
+@@ -1703,0 +1709 @@
++            sage: # needs sage.rings.number_field
+@@ -1915,0 +1922 @@
++            sage: # needs sage.rings.number_field
+@@ -1946,0 +1954 @@
++            sage: # needs sage.rings.number_field
+@@ -2374,0 +2383 @@
++        sage: # needs sage.symbolic
+@@ -2552,0 +2562 @@
++        sage: # needs sage.symbolic
+@@ -2565,0 +2576 @@
++        sage: # needs sage.rings.number_field
+@@ -2581,0 +2593 @@
++        sage: # needs sage.rings.number_field

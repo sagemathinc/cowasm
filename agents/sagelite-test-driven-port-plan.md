@@ -17176,6 +17176,37 @@ backend/runtime triage for the NTL ostream and `list_clone` stack clusters, or
 explicit startup/dependency classification for symbolic and number-field
 frontiers before attempting to promote those files.
 
+Focused continued-fraction dependency classification pass:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+886 non-comment entries.
+
+The active-frontier `continued_fraction.py` timeout at
+`K.<sqrt2> = QuadraticField(2)` is now classified as browser-profile
+number-field coverage instead of an unbounded file-level timeout. The added
+WASI source patch marks the module's remaining contiguous number-field setup
+groups with `# needs sage.rings.number_field`, and marks two symbolic
+continued-fraction helper groups with `# needs sage.symbolic`. This turns the
+previous timeout and dependent missing-name failures into explicit skip
+metadata.
+
+Focused validation against the patched build tree records:
+
+```text
+continued_fraction.py: 204 passed, 12 failed, 221 skipped
+```
+
+The saved database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continued-fraction-after-more-tags.sqlite3`.
+The remaining failures are no longer startup/dependency classification noise:
+they are 9 output mismatches in large continued-fraction numerator,
+denominator, and real-quotient precision examples, plus 3
+`ContinuedFraction_periodic` `_xa` attribute mismatches. A focused
+`functional.py --line 246` rerun still times out while constructing
+`r = (x+1)/(x-1)`, so that polynomial fraction-field runtime issue remains a
+separate follow-up target and is not tagged as an optional dependency here.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
