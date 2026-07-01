@@ -14497,6 +14497,29 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up absent-candidate audit pass:
+
+Fresh sampling first confirmed that recent `promote-candidates.sql` rows from
+current-run SQLite artifacts had already been consumed into the 827-entry
+curated corpus, leaving only temporary smoke files outside
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. A broad low-count
+absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-06-30-goal2/small-batch-a.sqlite3`
+was interrupted after the parent runner made no SQLite schema progress, so the
+pass switched to isolated one-file probes with short worker timeouts.
+
+Those 24 focused probes covered 207 doctest blocks: 1 passed, 28 failed, and
+178 skipped. No clean non-skipped promotion candidate surfaced. Most small
+helpers were skipped-only under existing browser-profile metadata, including
+low-count cpython, database, coding, category, calculus, homology, knot,
+PARI-conversion, species, and plotting wrappers. The runnable failures were
+real triage clusters rather than narrow corpus-growth fixes: graph-backend
+imports in `sage/matroids/advanced.py` and
+`sage/combinat/posets/bubble_shuffle.py`, `pytest` and doctest-controller
+dependencies in `sage/doctest/__main__.py`, and PARI/FLINT conversion failures
+in `sage/libs/pari/convert_flint.pyx` and
+`sage/libs/pari/convert_sage_real_double.pyx`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
