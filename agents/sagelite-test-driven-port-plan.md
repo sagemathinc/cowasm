@@ -18114,6 +18114,37 @@ CoWasm commit `0af66421071f268499012a9c5cdb64dc46ebcc15`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 75.
 
+Follow-up bubble/shuffle graph-boundary classification pass on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in this scheduled pass. A
+fresh low-count utility probe was clean but skipped-only:
+
+```text
+lowcount-utility-probe.sqlite3: 0 passed, 0 failed, 62 skipped
+```
+
+A midsize pure-helper probe also found no promotion candidate. Most sampled
+category, root-system, coding, knot, symmetric-function, and package-directory
+files were skipped-only; the only active failure cluster was
+`sage/combinat/posets/bubble_shuffle.py`, which recorded 15 graph-boundary
+failures before tagging. Importing the module reaches the stripped
+`sage.graphs` backend through `DiGraph`/`Graph`, and the remaining failures
+were dependent missing names from the same doctest groups.
+
+The WASI source patch now marks the six bubble/shuffle doctest groups as
+`# needs sage.graphs`, so future exploratory dashboards record this as an
+explicit browser-profile dependency boundary instead of active import/name
+failures. A focused rerun against the patched build source recorded:
+
+```text
+bubble_shuffle.py: 0 passed, 0 failed, 15 skipped
+sage -t passed: 0 passed, 0 failed, 15 skipped
+```
+
+The saved block-failure cluster query is empty, and `skips-by-reason.sql`
+groups all 15 blocks under `optional:sage.graphs`. The new patch hunk
+dry-runs cleanly against the Sagelite source checkout.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

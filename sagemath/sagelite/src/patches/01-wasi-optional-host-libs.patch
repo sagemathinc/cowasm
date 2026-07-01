@@ -9266,6 +9266,21 @@ diff -urN -U0 a/src/sage/combinat/shard_order.py b/src/sage/combinat/shard_order
 +        sage: # needs sage.graphs
 @@ -213,0 +221 @@
 +        sage: # needs sage.graphs
+diff -urN -U0 a/src/sage/combinat/posets/bubble_shuffle.py b/src/sage/combinat/posets/bubble_shuffle.py
+--- a/src/sage/combinat/posets/bubble_shuffle.py
++++ b/src/sage/combinat/posets/bubble_shuffle.py
+@@ -48,0 +49 @@
++        sage: # needs sage.graphs
+@@ -72,0 +74 @@
++        sage: # needs sage.graphs
+@@ -114,0 +117 @@
++        sage: # needs sage.graphs
+@@ -164,0 +168 @@
++        sage: # needs sage.graphs
+@@ -194,0 +199 @@
++        sage: # needs sage.graphs
+@@ -219,0 +225 @@
++        sage: # needs sage.graphs
 diff -urN -U0 a/src/sage/schemes/generic/point.py b/src/sage/schemes/generic/point.py
 --- a/src/sage/schemes/generic/point.py
 +++ b/src/sage/schemes/generic/point.py
