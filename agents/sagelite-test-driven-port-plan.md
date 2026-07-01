@@ -3412,6 +3412,45 @@ integration setup and mixed-integer linear-programming startup/backend
 boundaries. The Judson abstract-algebra exercise files exposed zero doctest
 blocks in this runner, so they should not be added as corpus entries.
 
+Follow-up scheduled coding/numerical/frontier audit on 2026-07-01:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 888 non-comment entries, and the fresh probes wrote SQLite dashboards
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex2/`.
+
+The coding framework probe in `coding/framework.sqlite3` recorded
+`59 passed, 0 failed, 692 skipped` across abstract-code, channel, encoder,
+decoder, no-metric linear-code, parity-check, and Huffman source-coding files.
+`doctest-corpus-candidates.py` printed no uncovered candidate: the only clean
+runnable file was `sage/coding/source_coding/huffman.py`, which is already in
+the curated corpus. The adjacent coding construction probe in
+`coding/constructions.sqlite3` likewise found no new candidate, recording
+`63 passed, 0 failed, 267 skipped`; its runnable catalog and Huffman files
+are already covered, while Hamming, Golay, parity-check, and construction
+helpers remain skipped-only under the default browser-compatible coding
+module/finite-ring requirements.
+
+The numerical/probability probe in `numerical-probability.sqlite3` is not a
+promotion source. It recorded `49 passed, 166 failed, 89 skipped`: the
+linear-functions file timed out at the `QuadraticField(5, 'sqrt5')` setup,
+the linear-tensor files exposed broad constructor/backend failure clusters,
+and the probability/statistics front-door files were empty or skipped-only.
+
+The small-utility probe in `small-utilities.sqlite3` recorded only one
+passing doctest against eight failures and 55 skipped blocks. Most sampled
+database, NumPy/SymPy, lazy-import, map-threaded, profiler, and sphinxify
+helpers were skipped-only; `sage/doctest/__main__.py` still has a focused CLI
+failure cluster. The parent Node process segfaulted after printing the failed
+summary for this batch, so this remains useful runner-lifecycle evidence but
+not corpus-growth data.
+
+The low-prompt modular-form probe in `modform-low.sqlite3` also has no
+promotable coverage. `j_invariant.py`, `tests.py`, and `weight1.py` were
+skipped-only; `half_integral.py` recorded seven runnable failures; and
+`theta.py` hit the known NTL/libcxx `memory access out of bounds` trap while
+computing `theta_qexp(100, 't', GF(2))`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
