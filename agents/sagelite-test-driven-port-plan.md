@@ -18174,6 +18174,50 @@ The saved block-failure cluster query is empty, and `skips-by-reason.sql`
 groups all 15 blocks under `optional:sage.graphs`. The new patch hunk
 dry-runs cleanly against the Sagelite source checkout.
 
+Follow-up front-door and low-prompt frontier audit on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in this scheduled pass. A
+plot-frontier probe covering `sage/plot/colors.py`, `misc.py`,
+`multigraphics.py`, `step.py`, and the hyperbolic plot helpers was clean but
+skipped-only:
+
+```text
+plot-frontier.sqlite3: 0 passed, 0 failed, 602 skipped
+```
+
+The skipped blocks are dominated by already-explicit browser-profile
+boundaries, especially `sage.symbolic` in the hyperbolic plotting helpers. A
+small helper probe covering absent C/Python, monoid, and data-structure files
+was also skipped-only or empty:
+
+```text
+small-helpers.sqlite3: 0 passed, 0 failed, 22 skipped
+```
+
+The monoid skips are explicit `sage.combinat` and `sage.groups` boundaries,
+while the C/Python and bitset/search helper files had no runnable extracted
+blocks. A CLI/config front-door probe across `sage/version.py`,
+`config_test.py`, `env_test.py`, and compact `sage/cli` command modules
+recorded zero extracted blocks, so those files remain outside the curated
+corpus.
+
+A low-prompt absent-file probe found only backend-boundary failures and no
+passing blocks:
+
+```text
+low-prompt-zero-optional.sqlite3: 0 passed, 7 failed, 37 skipped
+```
+
+The block clusters were the existing focused cypari2/PARI object-model gap in
+`sage/libs/pari/convert_flint.pyx`, missing `cypari2.convert` support in
+`convert_sage_real_double.pyx`, and weighted-projective startup/backend gaps
+around `WeightedProjectiveSpace`. A small Judson abstract-algebra book probe
+also added no runnable blocks; one mistyped source path recorded a
+`FileNotFoundError`, and `cosets-sage-exercises.py` hit a worker `SIGSEGV`.
+These results argue against promoting zero-pass front-door or documentation
+files, and the next pass should either choose a different namespace or tackle
+one of the explicit PARI/weighted-projective/runtime clusters directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
