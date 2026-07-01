@@ -841,6 +841,7 @@ src/sage/quadratic_forms/quadratic_form__variable_substitutions.py
 src/sage/quadratic_forms/random_quadraticform.py
 src/sage/quadratic_forms/special_values.py
 src/sage/schemes/overview.py
+src/sage/schemes/generic/point.py
 src/sage/schemes/elliptic_curves/kodaira_symbol.py
 src/sage/schemes/elliptic_curves/mod5family.py
 src/sage/schemes/plane_quartics/quartic_constructor.py

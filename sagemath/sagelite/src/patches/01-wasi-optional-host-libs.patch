@@ -9266,6 +9266,21 @@ diff -urN -U0 a/src/sage/combinat/shard_order.py b/src/sage/combinat/shard_order
 +        sage: # needs sage.graphs
 @@ -213,0 +221 @@
 +        sage: # needs sage.graphs
+diff -urN -U0 a/src/sage/schemes/generic/point.py b/src/sage/schemes/generic/point.py
+--- a/src/sage/schemes/generic/point.py
++++ b/src/sage/schemes/generic/point.py
+@@ -167 +167 @@
+-            sage: SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2)
++            sage: SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2)                 # needs sage.rings.polynomial.plural
+@@ -193 +193 @@
+-            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2); pt
++            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2); pt        # needs sage.rings.polynomial.plural
+@@ -196 +196 @@
+-            sage: pt._repr_()
++            sage: pt._repr_()                                                       # needs sage.rings.polynomial.plural
+@@ -211 +211 @@
+-            sage: pt.prime_ideal()
++            sage: pt.prime_ideal()                                                  # needs sage.rings.polynomial.plural
 diff -urN -U0 a/src/sage/schemes/plane_quartics/quartic_constructor.py b/src/sage/schemes/plane_quartics/quartic_constructor.py
 --- a/src/sage/schemes/plane_quartics/quartic_constructor.py
 +++ b/src/sage/schemes/plane_quartics/quartic_constructor.py

@@ -18079,6 +18079,41 @@ metadata records CoWasm commit `ed5020fd9125a334cd8def73116fa680dfb95a26`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, and runner version 75.
 
+Focused generic scheme-point corpus-growth pass on 2026-07-01:
+
+The checked corpus now has 897 non-comment entries after promoting
+`src/sage/schemes/generic/point.py`.
+
+A fresh low-count absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-current-agent/`
+sampled scheme, algebra, topology, combinatorics, polynomial, database, and
+modular helpers. Most sampled files were skipped-only or had broader startup
+and backend clusters. The narrow promotion target was `point.py`, which
+recorded 31 passing scheme-point blocks and four prime-ideal representation
+failures. Those failures occur because printing multivariate ideals imports
+`sage.rings.polynomial.plural`, which is still outside the stripped
+browser-compatible profile.
+
+The WASI source patch now marks those four projective prime-ideal display and
+`prime_ideal()` checks as `# needs sage.rings.polynomial.plural`, preserving
+the integer-spectrum and ordinary scheme-point coverage as runnable default
+profile doctests. Focused strict validation rebuilt a fresh patched Sagelite
+source copy and ran the one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-current-agent/point-make.sqlite3`:
+
+```text
+point.py: 31 passed, 0 failed, 4 skipped
+sage -t passed: 31 passed, 0 failed, 4 skipped
+```
+
+The saved block- and file-failure cluster queries are empty.
+`skips-by-reason.sql` groups all four skipped blocks under
+`optional:sage.rings.polynomial.plural`. The latest-run metadata records
+CoWasm commit `0af66421071f268499012a9c5cdb64dc46ebcc15`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 75.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
