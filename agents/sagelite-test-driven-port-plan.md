@@ -18305,6 +18305,51 @@ commit `e9c54f9bfd4c2862fb8ca7ce3d860adb9dcc43ff`, Sagelite source/package
 commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
 version 75, and a 100% non-skipped pass rate.
 
+Follow-up low-prompt frontier audit on 2026-07-01:
+
+No new quiet runnable corpus candidate was found in this scheduled pass after
+subtracting the current curated corpus from each probe database with
+`doctest-corpus-candidates.py`. The current checked dashboard file at
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` was zero bytes, so
+candidate selection used focused probes against the patched
+`sagemath/sagelite/build/wasi-sdk` source copy instead of saved dashboard
+ranking.
+
+The probes covered compact generic-scheme, numerical/probability/stats,
+typeset/helper, low-prompt category/coding/algebra, and final 19-35-prompt
+frontier batches. Aggregate focused results were:
+
+```text
+schemes-generic-probe: 532 passed, 176 failed, 319 skipped across 9 files
+numerical-probability-stats-probe: 481 passed, 166 failed, 61 skipped across 10 files
+stats-typeset-probe: 47 passed, 95 failed, 198 skipped across 7 files
+small-helper-probe: 0 passed, 0 failed, 48 skipped across 10 files
+low-prompt-pure-probe: 4 passed, 26 failed, 105 skipped across 10 files
+last-low-prompt-probe: 5 passed, 112 failed, 226 skipped across 18 files
+```
+
+The clean runnable files in these batches, such as `schemes/overview.py`,
+`elliptic_curves/kodaira_symbol.py`, `mod5family.py`, `gauss_legendre.pyx`,
+`knapsack.py`, `probability_distribution.pyx`, `random_variable.py`,
+`basic_stats.py`, and `discrete_gaussian_polynomial.py`, were already present
+in the curated corpus. Unpromoted files were either skipped-only or failed in
+existing broader boundary clusters: `sage.rings.polynomial.plural` for generic
+scheme subschemes, mixed-integer programming startup/backend coverage for
+linear tensor doctests, discrete Gaussian lattice failures, quaternion algebra
+startup plus dense-integer-matrix/number-field boundaries, FLINT-backed q-adic
+initialization, pbori/BRiAL namespace gaps, symbolic callable-vector startup,
+PARI object-model drift in totally real field enumeration, and graph/MIP
+boundaries in the book and poset samples.
+
+A focused trial seed for `QuaternionAlgebra` did not change the failing
+`quaternion_algebra_cython.pyx` line reruns, indicating the import path is not
+available in the current WASI runtime startup surface. The next productive pass
+should either refresh a full nonzero dashboard database for ranking or tackle
+one of the explicit clusters directly, with the generic-scheme
+`sage.rings.polynomial.plural` boundary and numerical mixed-integer-programming
+startup cluster being the most concentrated sources of otherwise-runnable
+blocks in this audit.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
