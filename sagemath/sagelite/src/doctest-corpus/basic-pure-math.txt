@@ -320,6 +320,8 @@ src/sage/combinat/set_partition.py
 src/sage/combinat/shuffle.py
 src/sage/combinat/species/library.py
 src/sage/combinat/species/functorial_composition_species.py
+src/sage/combinat/species/species.py
+src/sage/combinat/species/structure.py
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py

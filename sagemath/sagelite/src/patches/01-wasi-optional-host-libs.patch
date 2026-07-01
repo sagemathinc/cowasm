@@ -1552,7 +1552,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,225 @@
+@@ -253,74 +253,226 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1652,6 +1652,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    import sage.coding.codes_catalog as codes
 +    import sage.combinat.designs.design_catalog as designs
 +    from sage.combinat.species.all import species
++    from sage.combinat.species.recursive_species import CombinatorialSpecies
 +    import sage.dynamics.cellular_automata.catalog as cellular_automata
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import catalan_number, stirling_number2
@@ -7988,6 +7989,17 @@ diff -urN a/src/sage/combinat/species/recursive_species.py b/src/sage/combinat/s
 @@ -32,4 +32,4 @@
 -            sage: F = CombinatorialSpecies()
 +            sage: F = CombinatorialSpecies()  # random
+             doctest:warning...
+             DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+             See https://github.com/sagemath/sage/issues/38544 for details.
+diff -urN a/src/sage/combinat/species/species.py b/src/sage/combinat/species/species.py
+--- a/src/sage/combinat/species/species.py
++++ b/src/sage/combinat/species/species.py
+@@ -142,6 +142,6 @@
+             sage: X = species.SingletonSpecies()
+             sage: E = species.EmptySetSpecies()
+-            sage: L = CombinatorialSpecies()
++            sage: L = CombinatorialSpecies()  # random
              doctest:warning...
              DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
              See https://github.com/sagemath/sage/issues/38544 for details.

@@ -15016,6 +15016,45 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records the existing `sage.graphs` and
 `sage.modules` browser-profile boundaries.
 
+Focused base-species/structure corpus-growth pass:
+
+```text
+species.py: 118 passed, 0 failed, 24 skipped
+structure.py: 94 passed, 0 failed, 6 skipped
+```
+
+That two-file make-target validation adds `sage/combinat/species/species.py`
+and `sage/combinat/species/structure.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 852
+non-comment entries. The pass expands default browser-compatible coverage for
+the deprecated base combinatorial-species constructor, equality, restriction,
+wrapper, relabeling, and structure/isotype error-path examples while retaining
+existing graph, FLINT, module, symbolic, and permutation-group dependency
+skips.
+
+The doctest runner now seeds `CombinatorialSpecies` in the common startup
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity after a Sagelite package rebuild. This clears the focused
+`NameError: name 'CombinatorialSpecies' is not defined` clusters in
+`species.py` and `structure.py`. The added WASI source patch marks one
+warning-output constructor example in `species.py` as `# random`, matching the
+existing `recursive_species.py` handling where the lightweight doctest runner
+does not compare the deprecation warning text reliably.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+refreshing a fresh patched Sagelite source copy, with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-cont/species-structure-make-rerun.sqlite3`.
+The latest-run summary records CoWasm commit
+`b3a4964c61b49f4a796a17dcb8779425199c1b2d`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. Fresh adjacent sampling reconfirmed that
+`product_species.py` still hits a dynamic-loader `memcpy` offset trap while
+resolving optional coding lazy imports, and `sage/combinat/species/misc.py`
+remains skipped-only under existing browser-profile metadata.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
