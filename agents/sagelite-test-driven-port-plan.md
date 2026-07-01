@@ -15964,6 +15964,42 @@ All persisted block rows carry `tags = optional,needs:brial` and
 `skip_reason = optional:brial`. The file remains outside the curated corpus
 because it is skipped-only under the default browser-compatible profile.
 
+Follow-up HOMFLY side-module frontier metadata pass:
+
+The focused `sage/libs/homfly.pyx` doctest groups are now tagged with
+standalone `# needs sage.libs.homfly` directives in the WASI Sagelite source
+patch. The baseline focused probe wrote
+`.tmp/current-run/homfly-frontier-probe/homfly.sqlite3` and recorded:
+
+```text
+sage -t failed: 2 passed, 4 failed, 0 skipped
+```
+
+The active failure cluster was the missing optional module
+`sage.libs.homfly`; the remaining failures were dependent `NameError` fallout
+from the skipped imports. A broader `sage/databases/cubic_hecke_db.py` probe
+also reached HOMFLY-adjacent examples, but its failures were dominated by GAP,
+graph-backend, and cubic-Hecke database boundaries, so it was not treated as a
+HOMFLY-only metadata candidate.
+
+Focused validation rebuilt a clean patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` against a temporary
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/homfly-frontier-probe/homfly-tagged.sqlite3`.
+The run used CoWasm commit `e01db9a00759c4ab85fe7bfaca4aa5e2ef82647c`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 73. The direct doctest result is:
+
+```text
+sage -t passed: 0 passed, 0 failed, 6 skipped
+```
+
+All persisted block rows carry `tags = optional,needs:sage.libs.homfly` and
+`skip_reason = optional:sage.libs.homfly`. The file remains outside the
+curated corpus because it is skipped-only under the default browser-compatible
+profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
