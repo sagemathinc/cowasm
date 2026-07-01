@@ -14904,6 +14904,48 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records existing PARI, symbolic,
 number-field, and geometry/polyhedron dependency boundaries.
 
+Focused combinatorial-species corpus-growth pass:
+
+```text
+set_species.py: 28 passed, 0 failed, 5 skipped
+empty_species.py: 32 passed, 0 failed, 5 skipped
+subset_species.py: 35 passed, 0 failed, 7 skipped
+cycle_species.py: 37 passed, 0 failed, 7 skipped
+sum_species.py: 40 passed, 0 failed, 5 skipped
+```
+
+That five-file make-target validation adds
+`sage/combinat/species/set_species.py`,
+`sage/combinat/species/empty_species.py`,
+`sage/combinat/species/subset_species.py`,
+`sage/combinat/species/cycle_species.py`, and
+`sage/combinat/species/sum_species.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 845
+non-comment entries. The default browser-compatible profile gains direct
+coverage for ordinary set, empty, subset, cycle, and sum species constructors,
+enumeration, generating-series, and structure-operation examples, while
+retaining existing explicit skips for permutation-group, module, FLINT, graph,
+and deferred equality dependencies.
+
+Fresh compact sampling first checked low-prompt support files and a medium
+pure-Python batch. Most nearby files were skipped-only under existing
+browser-profile metadata. Rejected runnable probes exposed broader clusters:
+`sage/coding/two_weight_db.py` and `sage/rings/bernoulli_mod_p.pyx` still hit
+the known NTL/libcxx ostream trap, `sage/schemes/plane_quartics/*.py` and
+`sage/homology/homology_group.py` have real block-level failures, and
+`sage/algebras/nil_coxeter_algebra.py` currently fails all focused runnable
+examples.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary five-file corpus, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-active/species-promotion-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`c7d92bb3588602181771710a972920256bac9a69`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
