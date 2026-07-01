@@ -14665,6 +14665,36 @@ profile, runner version 73, and a 100% non-skipped pass rate. The saved block-
 and file-failure cluster queries are empty; skip grouping records four
 `optional:sage.graphs` blocks and one existing `long time` block.
 
+Focused two-graph corpus-growth pass:
+
+```text
+twographs.py: 8 passed, 0 failed, 27 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/designs/twographs.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 831
+non-comment entries. The default browser-compatible profile gains direct
+coverage for `TwoGraph` construction, non-graph two-graph validation,
+complement plumbing, and small descendant helpers while leaving graph-backed
+Petersen, line-graph, strongly-regular, Taylor, and projective-plane examples
+behind explicit dependency metadata.
+
+Fresh sampling first checked compact absent wrappers and low-prompt helper
+files; most were zero-block, skipped-only, or hit broader backend clusters
+such as the known NTL/libcxx trap in coding-table setup. The two-graph file
+was the narrow promotion candidate because its only failures were untagged
+`graphs` startup examples in the descendant tests. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-next/twographs-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`9c030cd9a6d9d66bded29834f29f5747c4a16d9a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; skip grouping records six new `optional:sage.graphs` blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

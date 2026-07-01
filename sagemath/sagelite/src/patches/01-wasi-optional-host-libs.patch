@@ -7946,3 +7946,25 @@ diff -urN a/src/sage/combinat/designs/steiner_quadruple_systems.py b/src/sage/co
          ....:             print("Something is wrong !")
      """
      n = B.n_points()
+diff -urN a/src/sage/combinat/designs/twographs.py b/src/sage/combinat/designs/twographs.py
+--- a/src/sage/combinat/designs/twographs.py
++++ b/src/sage/combinat/designs/twographs.py
+@@ -284,13 +284,13 @@
+-        sage: T8 = graphs.CompleteGraph(8).line_graph()
+-        sage: v = T8.vertices(sort=True)[0]
++        sage: T8 = graphs.CompleteGraph(8).line_graph()                           # needs sage.graphs
++        sage: v = T8.vertices(sort=True)[0]                                        # needs sage.graphs
+         sage: twograph_descendant(T8, v) == T8.twograph().descendant(v)                 # needs sage.modules
+         True
+-        sage: twograph_descendant(T8, v).is_strongly_regular(parameters=True)
++        sage: twograph_descendant(T8, v).is_strongly_regular(parameters=True)      # needs sage.graphs
+         (27, 16, 10, 8)
+-        sage: p = graphs.PetersenGraph()
+-        sage: twograph_descendant(p, 5)
++        sage: p = graphs.PetersenGraph()                                           # needs sage.graphs
++        sage: twograph_descendant(p, 5)                                            # needs sage.graphs
+         Graph on 9 vertices
+-        sage: twograph_descendant(p, 5, name=True)
++        sage: twograph_descendant(p, 5, name=True)                                 # needs sage.graphs
+         descendant of Petersen graph at 5: Graph on 9 vertices
+     """
