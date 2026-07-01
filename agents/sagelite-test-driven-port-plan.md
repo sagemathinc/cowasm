@@ -14559,6 +14559,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records five
 `optional:sage.rings.finite_rings` blocks.
 
+Follow-up absent-frontier audit on 2026-07-01 found no new promotable
+default-profile corpus candidate.
+
+The probes used direct `sage -t` against the patched Sagelite source tree with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` set to
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`, writing dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01/`.
+
+The first algebra/category batch
+(`algebra-category-probe.sqlite3`) covered compact absent algebra and category
+files. It produced 167 passed blocks, 460 failed blocks, and 4 skipped blocks,
+with no clean non-skipped promotion candidate. The failures were broad
+clusters in finite GCA, Jordan/group algebra, Lie algebra examples, finite
+fields, principal ideal domains, and unique factorization domains, including
+the existing NTL/libcxx trap and timeout-prone polynomial/category paths.
+
+The standalone helper and book-doctest batches
+(`small-standalone-probe.sqlite3`, `helper-probe.sqlite3`, and
+`book-probe.sqlite3`) were dominated by skipped-only or zero-block files. The
+runnable failures were not narrow corpus-growth work: plane quartic
+construction imports the unavailable Singular-backed projective-curve stack,
+GAP helper files require the stripped GAP interface, and the computational
+mathematics integration/LP/ODE examples hit broader symbolic, optimization, or
+calculus boundaries.
+
+The mixed low-count sweep (`mixed-lowcount-probe.sqlite3`) covered small graph,
+FLINT, ARB, Singular, modular, category, ring, and matrix helpers. It recorded
+6 passed blocks, 23 failed blocks, and 78 skipped blocks. Most files were
+skipped-only under existing browser-profile metadata; the runnable failures
+clustered around graph imports, FLINT qsieve memory traps, ARB arithmetic
+output/backend behavior, Singular function factories, and hypergeometric
+helpers. These files should not be resampled as low-risk corpus-growth
+candidates until one of those runtime or source-boundary clusters changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
