@@ -18382,6 +18382,35 @@ metadata. The latest-run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 75,
 and about 7 seconds of elapsed time.
 
+Focused generic homset corpus-growth pass on 2026-07-01:
+
+```text
+homset.py: 83 passed, 0 failed, 55 skipped
+```
+
+This pass promotes `sage/schemes/generic/homset.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 903
+non-comment entries. A focused generic-scheme probe first recorded
+`homset.py` as `84 passed, 22 failed, 32 skipped`; the failures were narrow
+browser-profile boundaries in scheme point construction and optional geometry
+backends.
+
+The WASI source patch now marks Singular-backed affine point calls, plural
+subscheme/coercion examples, elliptic-curve point enumeration, toric point
+enumeration, and the current product-projective startup-signature drift with
+explicit doctest metadata. Focused strict validation rebuilt a fresh patched
+Sagelite source copy and ran a one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01/homset-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+records the newly deferred blocks under `sage.rings.polynomial.plural`,
+`sage.libs.singular`, `sage.schemes.elliptic_curves`, `sage.schemes.toric`,
+and `deferred:known bug`. The latest-run metadata records CoWasm commit
+`5837c48adc8e6124902c9a2b4086ce3bd60c6114`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 75,
+and about 7 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -9315,6 +9315,82 @@ diff -urN -U0 a/src/sage/schemes/generic/point.py b/src/sage/schemes/generic/poi
 @@ -211 +211 @@
 -            sage: pt.prime_ideal()
 +            sage: pt.prime_ideal()                                                  # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/homset.py
+--- a/src/sage/schemes/generic/homset.py
++++ b/src/sage/schemes/generic/homset.py
+@@ -260 +260 @@
+-            sage: A2(4,5)
++            sage: A2(4,5)                                                            # needs sage.libs.singular
+@@ -357,2 +357,2 @@
+-            sage: C = A.subscheme(x*y - 1)
+-            sage: H = C.Hom(C); H
++            sage: C = A.subscheme(x*y - 1)                                           # needs sage.rings.polynomial.plural
++            sage: H = C.Hom(C); H                                                    # needs sage.rings.polynomial.plural
+@@ -364 +364 @@
+-            sage: H(1)
++            sage: H(1)                                                                # needs sage.rings.polynomial.plural
+@@ -465,5 +465,5 @@
+-            sage: H = A.subscheme(z)
+-            sage: L = A.subscheme([z, y + z])
+-            sage: A(QQ)._coerce_map_from_(H(QQ))
+-            True
+-            sage: H(QQ)._coerce_map_from_(L(QQ))                                        # needs sage.libs.singular
++            sage: H = A.subscheme(z)                                                  # needs sage.rings.polynomial.plural
++            sage: L = A.subscheme([z, y + z])                                         # needs sage.rings.polynomial.plural
++            sage: A(QQ)._coerce_map_from_(H(QQ))                                      # needs sage.rings.polynomial.plural
++            True
++            sage: H(QQ)._coerce_map_from_(L(QQ))                                      # needs sage.libs.singular sage.rings.polynomial.plural
+@@ -471 +471 @@
+-            sage: L(QQ).has_coerce_map_from(H(QQ))                                      # needs sage.libs.singular
++            sage: L(QQ).has_coerce_map_from(H(QQ))                                    # needs sage.libs.singular sage.rings.polynomial.plural
+@@ -473 +473 @@
+-            sage: A(CC)._coerce_map_from_(H(QQ))                                        # needs sage.rings.real_mpfr
++            sage: A(CC)._coerce_map_from_(H(QQ))                                      # needs sage.rings.real_mpfr sage.rings.polynomial.plural
+@@ -475 +475 @@
+-            sage: H(CC)._coerce_map_from_(L(RR))                                        # needs sage.libs.singular sage.rings.real_mpfr
++            sage: H(CC)._coerce_map_from_(L(RR))                                      # needs sage.libs.singular sage.rings.real_mpfr sage.rings.polynomial.plural
+@@ -509,8 +509,8 @@
+-            sage: PP1 = ProductProjectiveSpaces(ZZ, [2,1], 'x')
+-            sage: PP1(QQ)._coerce_map_from_(PP1(ZZ))
++            sage: PP1 = ProductProjectiveSpaces(ZZ, [2,1], 'x')                       # known bug
++            sage: PP1(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
+             True
+-            sage: PP2 = ProductProjectiveSpaces(QQ, [1,2], 'x')
+-            sage: PP2(QQ)._coerce_map_from_(PP1(ZZ))
++            sage: PP2 = ProductProjectiveSpaces(QQ, [1,2], 'x')                       # known bug
++            sage: PP2(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
+             False
+-            sage: PP3 = ProductProjectiveSpaces(QQ, [2,1], 'y')
+-            sage: PP3(QQ)._coerce_map_from_(PP1(ZZ))
++            sage: PP3 = ProductProjectiveSpaces(QQ, [2,1], 'y')                       # known bug
++            sage: PP3(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
+@@ -531,2 +531,2 @@
+-            sage: X = P.subscheme([x - y])
+-            sage: P(1,1) == X(1,1)
++            sage: X = P.subscheme([x - y])                                           # needs sage.rings.polynomial.plural
++            sage: P(1,1) == X(1,1)                                                   # needs sage.rings.polynomial.plural
+@@ -545 +545 @@
+-            sage: A(0) == 0
++            sage: A(0) == 0                                                          # needs sage.libs.singular
+@@ -647,2 +647,2 @@
+-            sage: E = EllipticCurve(GF(19), [1, 0])
+-            sage: list(E.point_homset())
++            sage: E = EllipticCurve(GF(19), [1, 0])                                  # needs sage.schemes.elliptic_curves
++            sage: list(E.point_homset())                                             # needs sage.schemes.elliptic_curves
+@@ -653 +653 @@
+-            sage: _ == list(E)
++            sage: _ == list(E)                                                       # needs sage.schemes.elliptic_curves
+@@ -655 +655 @@
+-            sage: E.point_homset().cardinality()
++            sage: E.point_homset().cardinality()                                     # needs sage.schemes.elliptic_curves
+@@ -674,2 +674,2 @@
+-            sage: P1 = toric_varieties.P1(base_ring=GF(3))
+-            sage: list(P1.point_homset())
++            sage: P1 = toric_varieties.P1(base_ring=GF(3))                           # needs sage.schemes.toric
++            sage: list(P1.point_homset())                                            # needs sage.schemes.toric
+@@ -677 +677 @@
+-            sage: P1.point_homset().cardinality()
++            sage: P1.point_homset().cardinality()                                    # needs sage.schemes.toric
 diff -urN -U0 a/src/sage/schemes/generic/scheme.py b/src/sage/schemes/generic/scheme.py
 --- a/src/sage/schemes/generic/scheme.py
 +++ b/src/sage/schemes/generic/scheme.py
