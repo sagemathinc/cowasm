@@ -16027,6 +16027,56 @@ skipped-only under the default profile, and kept
 number-field setup. `sage/geometry/relative_interior.py` still has a broad
 runnable failure cluster and remains outside the quiet dashboard.
 
+Scheduled 2026-07-01 helper, numerical, geometry, and ring frontier audit:
+
+Fresh probing from CoWasm commit `52de15e456a9d62acda3172cf5e3f6033a2cc911`
+did not find a new quiet non-skipped promotion candidate, so the curated
+corpus remains at 863 non-comment entries. The probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-01-next/` using the current patched
+Sagelite source copy, node profile, runner version 73, and 90-second per-file
+timeouts.
+
+The category-example probe recorded `0 passed, 0 failed, 154 skipped` across
+`sage/categories/examples/algebras_with_basis.py`,
+`filtered_modules_with_basis.py`, `graded_modules_with_basis.py`,
+`with_realizations.py`, and `finite_dimensional_algebras_with_basis.py`.
+These files remain skipped-only under the default browser-compatible profile.
+
+The helper probe recorded `0 passed, 0 failed, 6 skipped` across
+`sage/cpython/builtin_types.pyx`, `sage/cpython/string.pyx`,
+`sage/misc/copying.py`, `sage/misc/map_threaded.py`,
+`sage/misc/mathml.py`, and `sage/misc/pager.py`. The only persisted rows were
+skips from `string.pyx` and `map_threaded.py`, so no corpus entry was added.
+
+The numerical probe recorded `11 passed, 62 failed, 89 skipped`. The backend
+test wrappers exposed no blocks, `optimize.py` was skipped-only, and
+`linear_tensor.py` remains outside the quiet dashboard with failures dominated
+by startup `NameError` fallout plus smaller `AttributeError` and output-drift
+clusters.
+
+The geometry probe recorded `207 passed, 315 failed, 33 skipped`.
+`toric_lattice.py`, `newton_polygon.py`, and `cone_critical_angles.py` all
+have broad runnable failure clusters dominated by startup names, missing
+optional backends, and display drift. `hyperplane_arrangement/hyperplane.py`
+timed out at `QuadraticField(2)`, and
+`hyperplane_arrangement/affine_subspace.py` reached the known
+`matrix2.Matrix.echelonize_ring` WASM function-signature mismatch.
+
+The lightweight ring probe recorded `392 passed, 85 failed, 21 skipped`.
+`cc.py`, `commutative_algebra.py`, and `imaginary_unit.py` expose no blocks.
+`ideal_monoid.py` and `derivation.py` have useful runnable coverage but still
+fail through dependent setup names, missing `sage.rings.polynomial.plural`,
+missing `pexpect`, constructor-signature drift, and output mismatches.
+`homset.py` reaches the known NTL `ZZ_pContext.restore` dynamic-link import
+boundary while constructing `k[]`.
+
+No curated corpus entry was added in this pass. The highest-leverage next
+work is still targeted runtime/backend work rather than one-off corpus
+promotion: matrix function-signature mismatches, NTL context imports,
+polynomial/plural availability tagging, and focused startup seeding for large
+geometry/ring files whose early setup failures currently cause broad
+dependent-name fallout.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
