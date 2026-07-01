@@ -846,6 +846,7 @@ src/sage/schemes/overview.py
 src/sage/schemes/generic/scheme.py
 src/sage/schemes/generic/homset.py
 src/sage/schemes/generic/ambient_space.py
+src/sage/schemes/generic/divisor_group.py
 src/sage/schemes/generic/point.py
 src/sage/schemes/generic/spec.py
 src/sage/schemes/elliptic_curves/kodaira_symbol.py

@@ -95,6 +95,17 @@ diff -urN a/src/sage/libs/homfly.pyx b/src/sage/libs/homfly.pyx
          sage: from sage.libs.homfly import homfly_polynomial_dict
          sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
          sage: homfly_polynomial_dict(trefoil)
+diff -urN a/src/sage/schemes/generic/divisor_group.py b/src/sage/schemes/generic/divisor_group.py
+--- a/src/sage/schemes/generic/divisor_group.py
++++ b/src/sage/schemes/generic/divisor_group.py
+@@ -173,6 +173,7 @@
+ 
+         TESTS::
+ 
++            sage: # needs sage.schemes.elliptic_curves
+             sage: C = EllipticCurve([2, 1])
+             sage: E = EllipticCurve([1, 2])
+             sage: C.divisor_group()._coerce_map_from_(E.divisor_group())
 diff -urN a/src/sage/misc/reset.pyx b/src/sage/misc/reset.pyx
 --- a/src/sage/misc/reset.pyx
 +++ b/src/sage/misc/reset.pyx

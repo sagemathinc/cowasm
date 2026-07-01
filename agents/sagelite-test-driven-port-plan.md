@@ -18411,6 +18411,32 @@ and `deferred:known bug`. The latest-run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 75,
 and about 7 seconds of elapsed time.
 
+Focused generic divisor-group corpus-growth pass on 2026-07-01:
+
+```text
+divisor_group.py: 30 passed, 0 failed, 22 skipped
+```
+
+This pass promotes `sage/schemes/generic/divisor_group.py` into the curated
+browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 904
+non-comment entries. A focused remaining-generic-scheme probe first recorded
+`divisor_group.py` as `30 passed, 9 failed, 13 skipped`; all nine failures
+were the elliptic-curve divisor coercion block, while the generic `Spec(ZZ)`
+divisor group examples already passed.
+
+The WASI source patch now marks that elliptic-curve coercion block as
+`# needs sage.schemes.elliptic_curves`. Focused strict validation rebuilt a
+fresh patched Sagelite source copy and ran a one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-divisor-group/divisor-group.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+records nine newly deferred blocks under `optional:sage.schemes.elliptic_curves`
+alongside the file's pre-existing real-field and curve metadata. The latest-run
+metadata records CoWasm commit `d502a63838f465d7257e43b7843d7dc8a87fb713`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, runner version 75, and about 6 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
