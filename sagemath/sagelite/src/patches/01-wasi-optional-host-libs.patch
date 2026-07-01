@@ -6862,6 +6862,33 @@ diff -urN a/src/sage/plot/circle.py b/src/sage/plot/circle.py
 @@ -391 +391 @@
 -        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent
 +        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/plot3d/texture.py b/src/sage/plot/plot3d/texture.py
+--- a/src/sage/plot/plot3d/texture.py
++++ b/src/sage/plot/plot3d/texture.py
+@@ -11 +11 @@
+-    sage: sage.plot.plot3d.base.Graphics3d().texture_set()
++    sage: sage.plot.plot3d.base.Graphics3d().texture_set()                          # needs sage.plot.plot3d
+@@ -16,2 +16,2 @@
+-    sage: G = tetrahedron(color='red') + tetrahedron(color='yellow') + tetrahedron(color='red', opacity=0.5)
+-    sage: [t for t in G.texture_set() if t.color == colors.red] # we should have two red textures
++    sage: G = tetrahedron(color='red') + tetrahedron(color='yellow') + tetrahedron(color='red', opacity=0.5)  # needs sage.plot.plot3d
++    sage: [t for t in G.texture_set() if t.color == colors.red] # we should have two red textures  # needs sage.plot.plot3d
+@@ -19 +19 @@
+-    sage: [t for t in G.texture_set() if t.color == colors.yellow] # ...and one yellow
++    sage: [t for t in G.texture_set() if t.color == colors.yellow] # ...and one yellow  # needs sage.plot.plot3d
+@@ -24,3 +24,3 @@
+-    sage: T = tetrahedron(color='red', opacity=0.5)
+-    sage: t = T.get_texture()
+-    sage: t.opacity
++    sage: T = tetrahedron(color='red', opacity=0.5)                                 # needs sage.plot.plot3d
++    sage: t = T.get_texture()                                                       # needs sage.plot.plot3d
++    sage: t.opacity                                                                 # needs sage.plot.plot3d
+@@ -28 +28 @@
+-    sage: T # should be translucent
++    sage: T # should be translucent                                                 # needs sage.plot.plot3d
+@@ -426 +426 @@
+-            sage: sum([dodecahedron(center=[2.5*x, 0, 0], color=(1, 0, 0, x/10)) for x in range(11)]).show(aspect_ratio=[1,1,1], frame=False, zoom=2)
++            sage: sum([dodecahedron(center=[2.5*x, 0, 0], color=(1, 0, 0, x/10)) for x in range(11)]).show(aspect_ratio=[1,1,1], frame=False, zoom=2)  # needs sage.plot.plot3d
 diff -urN a/src/sage/plot/complex_plot.pyx b/src/sage/plot/complex_plot.pyx
 --- a/src/sage/plot/complex_plot.pyx
 +++ b/src/sage/plot/complex_plot.pyx

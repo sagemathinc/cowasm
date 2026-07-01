@@ -15150,6 +15150,40 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; skip grouping records only the `sage.symbolic` boundary.
 
+Focused 3D texture helper corpus-growth pass:
+
+```text
+texture.py: 53 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds `sage/plot/plot3d/texture.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 855
+non-comment entries. The dashboard gains runnable default-profile coverage for
+the texture ID generator, color parsing, texture construction, equality,
+string conversion, X3D, Tachyon, and Jmol formatting helpers while keeping the
+shape-constructor examples behind the existing `sage.plot.plot3d` optional
+backend boundary.
+
+Direct sampling first recorded 53 passed blocks, 9 focused failures, and no
+skips. The failures were all in examples that use `Graphics3d`,
+`tetrahedron(...)`, or `dodecahedron(...).show(...)`; importing the shape
+module currently reaches the missing `sage.ext.interpreters.wrapper_rdf`
+runtime dependency, so the WASI source patch classifies those examples as
+`# needs sage.plot.plot3d` instead of expanding the default startup surface.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-codex/texture-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`bdeb9e298eefabd18fea5803fe137e17047f3118`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 73,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups all nine deferred examples
+under `optional:sage.plot.plot3d`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
