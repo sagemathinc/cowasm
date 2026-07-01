@@ -17596,6 +17596,46 @@ corpus-growth runs should avoid repeating the support, small-support,
 medium-pure, and low-prompt batches from this pass unless the goal is direct
 runtime/backend triage for their recorded failure clusters.
 
+Follow-up continued-fraction and low-count frontier audit on 2026-07-01:
+
+This scheduled pass rechecked the active `continued_fraction.py` frontier and
+then sampled fresh low-doctest-count files that are not already listed in the
+curated corpus. A default-profile direct rerun against the current patched
+source tree confirms that `sage/rings/continued_fraction.py` is clean under
+the browser-compatible profile:
+
+```text
+continued_fraction.py: 203 passed, 0 failed, 234 skipped
+```
+
+The rerun wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-continued-fraction-default-rerun.sqlite3`
+and records doctest runner version 75. Earlier optional-symbolic probe
+databases for the same file still show failures in high-precision symbolic
+continued-fraction numerator, denominator, and quotient examples, but those
+blocks are correctly outside the default profile after the current
+`# needs sage.symbolic` and `# needs sage.rings.number_field` tags are applied.
+Because `continued_fraction.py` is already in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, no corpus change
+was needed.
+
+The fresh low-count sampling pass produced no new promotable source file. The
+`scheduled-2026-07-01-small-absent-batch.sqlite3` probe found mostly
+skipped-only or zero-block files; the only runnable source candidates were
+blocked by an NTL/libcxx ostream trap in `sage/coding/two_weight_db.py` and by
+`sage.libs.singular.function` import requirements in
+`sage/schemes/plane_quartics/quartic_constructor.py`. The corrected
+`scheduled-2026-07-01-pure-small-corrected.sqlite3` probe likewise found only
+skipped-only helpers plus two real failure clusters: doctest CLI startup paths
+that need `pytest`, multiprocessing/tempfile support, and `DocTestDefaults`
+seeding work, and `sage/combinat/posets/hochschild_lattice.py` examples that
+depend on graph/poset startup globals and graph backend imports.
+
+This pass leaves the corpus unchanged and records the useful frontier instead:
+future low-count sampling should skip those exact skipped-only batches unless
+the goal is explicit dependency tagging, graph-backend triage, or doctest CLI
+runtime work.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
