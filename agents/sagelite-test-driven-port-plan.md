@@ -17338,6 +17338,52 @@ symbolic/calculus startup classification for the computational-math solution
 files, graph and quaternion backend work for the algebra failures, or explicit
 metadata/backend packaging for elliptic-curve database and PolyBoRi frontiers.
 
+Scheduled low-prompt follow-up audit on 2026-07-01:
+
+No curated corpus entry was added in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+888 non-comment entries.
+
+Two fresh direct probes were written under `/home/user/cowasm/.tmp/` to check
+whether small unlisted files had become safe browser-profile promotion
+candidates after the latest corpus-growth work.
+
+The utility/runtime probe in `sagelite-utility-growth-20260701.sqlite3`
+recorded 10 skipped-only files and no runnable blocks:
+`sage/stats/distributions/discrete_gaussian_integer.pyx`,
+`sage/stats/intlist.pyx`, `sage/cpython/cython_metaclass.pyx`,
+`sage/cpython/string.pyx`, `sage/repl/user_globals.py`,
+`sage/misc/map_threaded.py`, `sage/misc/cython.py`,
+`sage/misc/gperftools.py`, `sage/misc/package_dir.py`, and
+`sage/misc/sphinxify.py`. Most examples are hidden by explicit optional or
+`# needs` metadata in the default browser-compatible profile, so adding these
+files would only inflate skipped coverage.
+
+The absent low-prompt probe in `sagelite-lowprompt-growth-20260701.sqlite3`
+recorded 11 skipped-only files and one file-level error:
+
+```text
+skipped_only: 45 skipped blocks across 11 files
+file_error:   sage/coding/two_weight_db.py
+```
+
+The skipped-only files were
+`sage/graphs/base/overview.py`, `sage/matroids/advanced.py`,
+`sage/crypto/cipher.py`, `sage/databases/odlyzko.py`,
+`sage/modular/modform/tests.py`, `sage/plot/step.py`,
+`sage/topology/simplicial_complex_catalog.py`,
+`sage/topology/simplicial_set_catalog.py`, `sage/databases/sloane.py`,
+`sage/modular/buzzard.py`, and `sage/tests/lazy_imports.py`.
+`sage/coding/two_weight_db.py` reproduced the existing NTL/libcxx
+`memory access out of bounds` trap while resolving coding-bound lazy imports
+during namespace startup; it remains a backend/runtime follow-up rather than
+a corpus-growth target.
+
+Future scheduled runs should not repeat these utility/runtime and low-prompt
+batches as blind promotion candidates. A better next pass is to either work
+directly on the NTL/libcxx ostream trap or sample a different absent-file band
+with known non-skipped passing blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
