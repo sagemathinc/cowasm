@@ -19495,6 +19495,41 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused finite graded-commutative algebra corpus-growth pass on 2026-07-02:
+
+```text
+finite_gca.py: 95 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/finite_gca.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 919
+non-comment entries. A fresh algebra-frontier probe first recorded
+`finite_gca.py` as a high-signal startup namespace cluster, with 97 failures
+caused by the upstream examples using `GradedCommutativeAlgebra(...)` without
+a local import.
+
+The doctest runner now seeds the lightweight `GradedCommutativeAlgebra`
+constructor in the common startup namespace, and the WASI `sage.all` patch
+exposes the same constructor for REPL parity after a Sagelite package rebuild.
+That clears the finite-dimensional backend examples. The remaining two
+examples intentionally omit `max_degree`, which routes through the broader
+commutative DGA implementation and imports the unavailable
+`sage.rings.polynomial.plural` backend; those examples are tagged as explicit
+`# needs sage.rings.polynomial.plural` skips.
+
+Focused strict validation rebuilt a fresh patched Sagelite source copy and
+then used `make -C sagemath/sagelite test-sage-doctest-corpus` with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-finite-gca/finite-gca-final2.sqlite3`.
+The latest-run summary records CoWasm commit
+`15ed4aa11ca41712ea4b007703dc5afaf6247bc6`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the newly deferred
+examples under `optional:sage.rings.polynomial.plural`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
