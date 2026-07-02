@@ -7,8 +7,12 @@ extern void* dlsym(void* handle, const char* symbol);
 typedef int (*STRING_SIZE)(const char*);
 typedef int (*RTTI_MATCHES)();
 typedef int (*C_ADD)(int);
+typedef int (*CONST_CHAR_TYPEINFO_IMPORTED)();
 
 int main() {
+  void* libcxx_handle = dlopen("./libcxx.so", 2);
+  assert(libcxx_handle != 0);
+
   void* handle1 = dlopen("./lib.so", 2);
   void* handle2 = dlopen("./lib.so", 2);
   assert(handle1 != 0);
@@ -35,6 +39,12 @@ int main() {
   assert(c_add != 0);
   printf("c_add(31) = %d\n", c_add(31));
   assert(c_add(31) == 42);
+
+  CONST_CHAR_TYPEINFO_IMPORTED const_char_typeinfo_imported =
+      (CONST_CHAR_TYPEINFO_IMPORTED)dlsym(c_handle, "const_char_typeinfo_imported");
+  assert(const_char_typeinfo_imported != 0);
+  printf("const_char_typeinfo_imported() = %d\n", const_char_typeinfo_imported());
+  assert(const_char_typeinfo_imported() == 1);
 
   printf("C++ runtime test passed!\n");
 }

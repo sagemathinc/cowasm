@@ -1159,6 +1159,32 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
    )
  endforeach
 
+diff -urN a/src/sage/rings/finite_rings/meson.build b/src/sage/rings/finite_rings/meson.build
+--- a/src/sage/rings/finite_rings/meson.build
++++ b/src/sage/rings/finite_rings/meson.build
+@@ -74,6 +74,14 @@
+   'hom_finite_field_givaro': files('hom_finite_field_givaro.pyx'),
+ }
+
++cowasm_libcxx_link_args = []
++if is_wasi
++  cowasm_libcxx_path = meson.get_external_property('cowasm_libcxx', '')
++  if cowasm_libcxx_path != ''
++    cowasm_libcxx_link_args = [cowasm_libcxx_path]
++  endif
++endif
++
+ foreach name, pyx : extension_data_cpp
+   py.extension_module(
+     name,
+@@ -90,5 +98,6 @@
+       inc_rings_finite,
+     ],
+     dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl],
++    link_args: cowasm_libcxx_link_args,
+   )
+ endforeach
+
 diff -urN a/src/sage/rings/polynomial/meson.build b/src/sage/rings/polynomial/meson.build
 --- a/src/sage/rings/polynomial/meson.build
 +++ b/src/sage/rings/polynomial/meson.build

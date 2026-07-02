@@ -17,6 +17,7 @@ CXX_DATA_EXPORT(cowasm_ZTISt14overflow_error, _ZTISt14overflow_error)
 CXX_DATA_EXPORT(cowasm_ZTISt15underflow_error, _ZTISt15underflow_error)
 CXX_DATA_EXPORT(cowasm_ZTISt20bad_array_new_length, _ZTISt20bad_array_new_length)
 CXX_DATA_EXPORT(cowasm_ZTINSt3__217__assoc_sub_stateE, _ZTINSt3__217__assoc_sub_stateE)
+CXX_DATA_EXPORT(cowasm_ZTIPKc, _ZTIPKc)
 
 CXX_DATA_EXPORT(cowasm_ZTVSt9bad_alloc, _ZTVSt9bad_alloc)
 CXX_DATA_EXPORT(cowasm_ZTVSt11logic_error, _ZTVSt11logic_error)

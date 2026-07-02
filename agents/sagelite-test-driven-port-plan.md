@@ -22360,6 +22360,34 @@ option controls both corpus normalization and source-existence filtering. The
 standalone smoke fixture now asserts that a caller-supplied source root
 overrides database run metadata and suppresses fixture-only near-miss rows.
 
+Follow-up finite-ring libcxx RTTI link pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. A file-error frontier row for
+`src/sage/libs/ntl/ntl_GF2EContext.pyx` exposed a loader/runtime gap while
+constructing `ntl.GF2X([1,1,0,1])`: importing
+`sage.rings.finite_rings.element_givaro` required the C++ ABI data symbol
+`_ZTIPKc`, but the loaded native-library set did not provide
+`__WASM_EXPORT___ZTIPKc`.
+
+The libcxx WASI side module now exports the `_ZTIPKc` data wrapper, and the
+focused C++ dylink runtime smoke imports and dereferences that symbol through a
+side module to keep the loader path covered. Sagelite's WASI source patch now
+links the finite-ring C++ extension group against the CoWasm `libcxx.so`
+side module, which records `libcxx.so` in the dylink metadata for
+`element_givaro`, `element_ntl_gf2e`, and `hom_finite_field_givaro`. The
+Electron manifest contract now includes the copied
+`site-packages/sage/rings/finite_rings/libcxx.so` runtime resource.
+
+Validation used `make -C core/libcxx test-wasi-sdk-standalone`,
+`make -C core/dylink/test/cxx-runtime clean test-wasi-sdk-next`, and
+`make -C sagemath/sagelite test-wasi-sdk-standalone` after a clean Sagelite
+WASI refresh. A focused rerun of
+`sage -t --line 36 src/sage/libs/ntl/ntl_GF2EContext.pyx` no longer records a
+file-level unresolved `_ZTIPKc` loader crash; it now reaches a normal
+block-level `ModuleNotFoundError` for the unavailable
+`sage.matrix.matrix_mod2_dense` dependency, which is a separate matrix-profile
+frontier.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -105,6 +105,7 @@ test -s "$dist_dir/libcxx.so"
 "$objdump" -h "$dist_dir/libcxx.so" | grep 'dylink.0'
 for export in \
   __WASM_EXPORT___ZSt7nothrow \
+  __WASM_EXPORT___ZTIPKc \
   __WASM_EXPORT___ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ifstreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \

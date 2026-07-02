@@ -7,9 +7,13 @@ WASI_SDK_CLANGXX = ${BIN}/wasi-sdk-clang++-next
 WASI_SDK_OBJDUMP = ${BIN}/wasi-sdk-llvm-objdump-next
 WASI_SDK_STRINGS = ${BIN}/wasi-sdk-llvm-strings-next
 LIBCXX_WASM = ../../../libcxx/dist/wasm
+LIBCXX_WASI_SDK = ../../../libcxx/dist/wasi-sdk
 
 ${LIBCXX_WASM}/libcxx.so:
 	cd ../../../libcxx && make wasm
+
+${LIBCXX_WASI_SDK}/libcxx.so:
+	cd ../../../libcxx && make test-wasi-sdk-standalone
 
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
@@ -80,12 +84,18 @@ build/wasi-sdk/c-lib.so: c-lib.c
 		c-lib.c \
 		-o build/wasi-sdk/c-lib.so
 
-build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/lib.so build/wasi-sdk/c-lib.so
+build/wasi-sdk/libcxx.so: ${LIBCXX_WASI_SDK}/libcxx.so
+	mkdir -p build/wasi-sdk
+	cp ${LIBCXX_WASI_SDK}/libcxx.so build/wasi-sdk/libcxx.so
+
+build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/lib.so build/wasi-sdk/c-lib.so build/wasi-sdk/libcxx.so
 	${WASI_SDK_OBJDUMP} -h build/wasi-sdk/lib.so | grep 'dylink\.0'
 	${WASI_SDK_OBJDUMP} -h build/wasi-sdk/c-lib.so | grep 'dylink\.0'
 	${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep '^string_size$$'
 	${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep '^rtti_matches$$'
 	${WASI_SDK_STRINGS} build/wasi-sdk/c-lib.so | grep '^c_add$$'
+	${WASI_SDK_STRINGS} build/wasi-sdk/c-lib.so | grep '^const_char_typeinfo_imported$$'
+	${WASI_SDK_STRINGS} build/wasi-sdk/libcxx.so | grep '^__WASM_EXPORT___ZTIPKc$$'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep 'needed_dynlibs'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/c-lib.so | grep 'needed_dynlibs'
 	touch build/wasi-sdk/.checked
