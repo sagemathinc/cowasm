@@ -22388,6 +22388,44 @@ block-level `ModuleNotFoundError` for the unavailable
 `sage.matrix.matrix_mod2_dense` dependency, which is a separate matrix-profile
 frontier.
 
+Follow-up finite-field NTL/libcxx frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh focused probes wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-ntl-gf2e/` and
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-finite-fields/`
+using the current patched Sagelite source copy and runner version 83.
+
+The `src/sage/libs/ntl/ntl_GF2EContext.pyx` follow-up from the libcxx RTTI
+link pass is not a narrow promotion candidate yet. A full-file rerun records:
+
+```text
+sage -t failed: 0 passed, 1 failed, 0 skipped
+```
+
+The line-36 rerun confirms the resolved loader crash now reports a block-level
+`ModuleNotFoundError` for `sage.matrix.matrix_mod2_dense`, but the next
+dependent finite-field arithmetic example at line 45 still exits the worker
+with the NTL/libcxx `TerminalError` ostream `memory access out of bounds`
+trap. Since the file's examples are all finite-field context construction and
+arithmetic checks, broad skip tagging would add little useful runnable
+coverage.
+
+`src/sage/categories/finite_fields.py` shows the same active runtime frontier.
+Its first full-file rerun fails at the large `GF(2^2000)` zeta example with
+the same NTL/libcxx ostream trap. A temporary local source-copy experiment
+that skipped only that large-field block immediately exposed the next
+extension-field construction failure at `GF((2, 10))`, again in the same
+NTL/libcxx trap cluster. That confirms this category file should not be
+re-sampled as a simple corpus-growth target until the finite-field NTL error
+path or profile boundary changes.
+
+The current wide candidate scans still report no uncovered clean runnable
+files and no compact near misses after excluding broad startup `NameError`
+failures. The remaining useful work in this area is runtime triage for the
+finite-field NTL/libcxx error-reporting path, plus the separate
+`sage.matrix.matrix_mod2_dense` matrix-profile boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
