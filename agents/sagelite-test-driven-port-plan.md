@@ -3764,6 +3764,47 @@ properly skipped by its `# needs sage.libs.homfly` tags; older near-miss rows
 for that file in historical SQLite artifacts are stale and should not be used
 as promotion evidence.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex-port-plan/book-cli/`
+against the current patched Sagelite source copy.
+
+The computational-mathematics book probe first exposed a direct-run path
+mistake: repo-relative `src/sage/...` arguments are resolved against the
+current CoWasm checkout, not the patched Sagelite source root, unless the make
+target expands them. The corrected absolute-path rerun recorded
+`542 passed, 503 failed, 14 skipped`. Its only clean runnable row was
+`sage/tests/books/computational_mathematics_with_sagemath/numbertheory_doctest.py`,
+which is already present in the curated corpus. The remaining book files are
+not narrow promotion targets: failures cluster around symbolic startup,
+plotting/calculus setup, graph backends, SciPy/real-field matrix gaps, and the
+known NTL/libcxx trap in finite-field polynomial examples.
+
+The best near-miss from that batch,
+`sage/tests/books/computational_mathematics_with_sagemath/float_doctest.py`,
+recorded `126 passed, 13 failed, 2 skipped`, but those failures mix symbolic
+interval setup, SciPy-backed determinant paths, real-ball output drift, and an
+interval attribute gap. It should stay outside the quiet corpus until one of
+those clusters is addressed explicitly rather than by broad source tagging.
+
+Additional focused probes produced no promotable coverage. Small CLI/front
+door files such as `sage/cli/*.py`, `sage/all_cmdline.py`,
+`sage/all_test.py`, and `sage/config_test.py` extracted zero doctest blocks.
+A compact small-helper probe was either skipped-only or failed in PARI/PBORI
+backend helpers. A category-example probe across the remaining
+algebra-with-basis example files recorded `0 passed, 0 failed, 101 skipped`,
+confirming that those files are dependency-boundary coverage rather than
+useful default-profile corpus entries.
+
+A broad historical SQLite scan should pass
+`--source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk` to
+`doctest-corpus-candidates.py`; without that override it can still print the
+synthetic `src/sage/example/real_candidate.py` fixture from the helper test
+database. With the current source-root override, the scan prints no uncovered
+candidate rows.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
