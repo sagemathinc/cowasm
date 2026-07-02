@@ -20963,6 +20963,53 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused adjacent-frontier audit on 2026-07-02:
+
+This pass did not promote a new corpus file. It sampled compact adjacent
+CPython, NTL, misc/structure, and category files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-6/` and
+found no clean runnable file outside the current 948-entry corpus.
+
+The CPython and small NTL probe records:
+
+```text
+sage -t failed: 89 passed, 31 failed, 6 skipped
+```
+
+The runnable coverage all came from `sage/libs/ntl/ntl_mat_ZZ.pyx`, but its 30
+block failures are one matrix-conversion cluster:
+`AttributeError: 'sage.matrix.matrix_generic_dense.Matrix_generic_dense' object has no attribute '__dict__'`.
+The adjacent `ntl_ZZ_pContext.pyx` file still hits the existing NTL/libcxx
+ostream `memory access out of bounds` trap while constructing `ntl.ZZ_p(12,c)`.
+The sampled CPython and NTL helper files either had no extracted blocks or no
+passing runnable blocks, so they do not improve the dashboard.
+
+The misc/structure probe records a clean but skipped-only run:
+
+```text
+sage -t passed: 0 passed, 0 failed, 86 skipped
+```
+
+It covered `sage/misc/cython.py`, `sage/misc/reset.pyx`,
+`sage/misc/proof.py`, `sage/misc/mathml.py`, and small `sage/structure`
+helpers. These are not good corpus-growth candidates yet because they add no
+non-skipped assertions under the default browser-compatible profile.
+
+The category probe records:
+
+```text
+sage -t failed: 0 passed, 5 failed, 279 skipped
+```
+
+`coalgebras.py` and the sampled category example files are skipped-only. The
+finite-field, field, commutative-ring, ring, and quotient-field files reach
+known runtime boundaries before recording block rows: two NTL/libcxx ostream
+traps, two 120-second polynomial/category timeouts, and one
+`Maximum call stack size exceeded` trampoline recursion. These files should be
+revisited only after the finite-field/NTL and category polynomial setup
+clusters are addressed or after narrower source tags expose a meaningful
+non-skipped subset.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
