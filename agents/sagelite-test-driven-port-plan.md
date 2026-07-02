@@ -21421,6 +21421,40 @@ legacy-schema SQLite probe covering all four helper modes, and clean,
 near-miss, zero-block, skipped-only, and detailed file-error scans across the
 current `.tmp/current-run` databases with `--ignore-invalid --quiet-invalid`.
 
+Continuation absent-source frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A wide scan over accumulated
+scratch SQLite probes with
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--min-passed 1 --paths-only --dedupe-paths --ignore-invalid --quiet-invalid`
+printed no real uncovered clean runnable source rows. Without the explicit
+`--source-root`, old synthetic candidate-helper fixture databases can still
+report their fixture `src/sage/example/real_candidate.py`, so scheduled
+frontier scans should keep passing the patched Sagelite source root.
+
+Three fresh direct probes wrote SQLite dashboards under
+`.tmp/current-run/`:
+
+```text
+scheduled-2026-07-02-next-small.sqlite3: 0 passed, 0 failed, 11 skipped
+scheduled-2026-07-02-algebra-category.sqlite3: 3 passed, 39 failed, 65 skipped
+scheduled-2026-07-02-utility-doctest.sqlite3: 3 passed, 9 failed, 38 skipped
+```
+
+The low-prompt batch was entirely skipped-only or no-block coverage, including
+`repl/prompts.py`, `interfaces/gfan.py`, `matroids/advanced.py`,
+`misc/sagedoc_conf.py`, Cunningham/modular-form helpers, and two Judson book
+exercise files. The algebra/category batch confirmed that several adjacent
+category files remain skipped-only, while runnable failures in affine and N2
+Lie conformal algebras still route through graph-backed Lie construction,
+cypari2 number-field object-model gaps, and dependent missing-name blocks;
+`quaternion_algebra_cython.pyx` remains blocked by quaternion startup/import
+and matrix backend gaps. The utility/doctest batch was mostly skipped-only or
+empty, with the only runnable failures in the computational-mathematics
+integration doctest coming from symbolic startup names (`var`, `x`) and
+`numerical_integral`, so it should not be treated as a narrow browser-profile
+tagging candidate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
