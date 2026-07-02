@@ -21099,6 +21099,37 @@ queries are empty; `skips-by-reason.sql` groups the sixteen skipped blocks
 under `sage.libs.gap`, `sage.rings.finite_rings`, and
 `sage.rings.number_field`.
 
+Focused interface-magic corpus-growth pass on 2026-07-02:
+
+```text
+interface_magic.py: 7 passed, 0 failed, 26 skipped
+```
+
+This pass promotes `sage/repl/interface_magic.py` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 951
+non-comment entries. A fresh compact absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-9/`
+found no new clean runnable candidate, but identified `interface_magic.py` as
+a narrow REPL helper near miss: its runnable line/cell magic factory examples
+passed, while the two failing setup pairs imported Sage's IPython test shell
+before already-optional GAP cell executions.
+
+The WASI source patch now marks those two `get_test_shell` setup pairs as
+`# needs IPython`, matching the browser-compatible profile where IPython is
+not shipped. Focused direct validation wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-9/interface-magic-direct.sqlite3`.
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-9/interface-magic-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`7ed71529e41ece7c822f4bd72b98d99e7a1eaf8d`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the skipped blocks under
+`sage.libs.gap`, `ipython`, `not tested`, and `sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

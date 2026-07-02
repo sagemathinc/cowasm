@@ -10051,3 +10051,16 @@ diff -urN -U0 a/src/sage/interfaces/genus2reduction.py b/src/sage/interfaces/gen
 @@ -403 +403 @@
 -            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
 +            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)  # needs sage.libs.pari
+diff -urN -U0 a/src/sage/repl/interface_magic.py b/src/sage/repl/interface_magic.py
+--- a/src/sage/repl/interface_magic.py
++++ b/src/sage/repl/interface_magic.py
+@@ -208,2 +208,2 @@
+-            sage: from sage.repl.interpreter import get_test_shell
+-            sage: shell = get_test_shell()
++            sage: from sage.repl.interpreter import get_test_shell                         # needs IPython
++            sage: shell = get_test_shell()                                                # needs IPython
+@@ -253,2 +253,2 @@
+-            sage: from sage.repl.interpreter import get_test_shell
+-            sage: shell = get_test_shell()
++            sage: from sage.repl.interpreter import get_test_shell                         # needs IPython
++            sage: shell = get_test_shell()                                                # needs IPython
