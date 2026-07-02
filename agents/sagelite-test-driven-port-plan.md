@@ -19725,6 +19725,26 @@ across CLI, coding, crypto, database, group, interface, Homfly, misc, REPL,
 and NumPy/SymPy test helpers. These files should not be resampled for corpus
 growth unless the default browser-compatible skip policy changes.
 
+Follow-up frontier tooling pass on 2026-07-02:
+
+No new quiet corpus candidate was promoted. Fresh absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followon/probes/`
+mostly reinforced the current frontier: small helper and mid-sized pure-file
+batches were skipped-only; the symmetric-function/combinatorics batch recorded
+`0 passed, 0 failed, 337 skipped`; the plain utility batch exposed the existing
+Hochschild-lattice failure cluster; the REPL/algebra batch recorded runnable
+coverage but mixed IPython/attach, temporary-file/load, and algebra-startup
+failures; and the mixed module/algebra/category batch hit broad module,
+logging-backend, group-algebra, and WASM trap clusters.
+
+The `doctest-corpus-candidates.py` helper now accepts multiple SQLite
+databases in one process, adds a database column for attributed multi-database
+output, supports `--ignore-invalid` for interrupted empty probe databases, and
+caches corpus normalization by source root. With
+`--source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk`, a broad
+scan over `.tmp/current-run` skipped stale empty or pre-source-root databases
+and printed no uncovered real Sagelite promotion rows.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

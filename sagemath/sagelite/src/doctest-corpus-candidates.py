@@ -18,7 +18,12 @@ def parse_args() -> argparse.Namespace:
             "after subtracting entries already listed in the curated corpus."
         )
     )
-    parser.add_argument("database", type=Path, help="doctest SQLite database")
+    parser.add_argument(
+        "database",
+        type=Path,
+        nargs="+",
+        help="doctest SQLite database; pass more than one to scan several runs",
+    )
     parser.add_argument(
         "--corpus",
         type=Path,
@@ -51,6 +56,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="include clean files outside the src/sage source tree",
     )
+    parser.add_argument(
+        "--ignore-invalid",
+        action="store_true",
+        help="skip missing, empty, or non-Sagelite databases during multi-database scans",
+    )
     args = parser.parse_args()
     if args.paths_only and args.include_header:
         parser.error("--paths-only cannot be combined with --include-header")
@@ -82,19 +92,20 @@ def require_doctest_schema(database: Path, db: sqlite3.Connection) -> None:
 
 
 def normalize_path(path: str, source_root: Path | None) -> str:
+    text = path.replace(os.sep, "/")
+    if text.startswith("src/sage/"):
+        return posixpath.normpath(text)
+
+    marker = "/src/sage/"
+    if marker in text:
+        return posixpath.normpath("src/sage/" + text.split(marker, 1)[1])
+
     candidate = Path(path)
-    if source_root is not None:
+    if source_root is not None and candidate.is_absolute():
         try:
             return candidate.resolve().relative_to(source_root.resolve()).as_posix()
         except ValueError:
             pass
-
-    text = path.replace(os.sep, "/")
-    marker = "/src/sage/"
-    if marker in text:
-        return "src/sage/" + text.split(marker, 1)[1]
-    if text.startswith("src/sage/"):
-        return text
     return posixpath.normpath(text)
 
 
@@ -179,29 +190,55 @@ def candidate_rows(
 
 def main() -> int:
     args = parse_args()
-    if not args.database.exists():
-        raise SystemExit(f"database not found: {args.database}")
-    with sqlite3.connect(args.database) as db:
-        require_doctest_schema(args.database, db)
-        run_id, db_source_root = latest_run_metadata(db)
-        source_root = args.source_root or db_source_root
-        covered = read_corpus(args.corpus, source_root)
-        rows = candidate_rows(
-            db,
-            run_id,
-            covered,
-            source_root,
-            args.min_passed,
-            args.include_non_sage,
-        )
-
+    show_database = len(args.database) > 1 and not args.paths_only
+    covered_by_source_root: dict[Path | None, set[str]] = {}
     if args.include_header:
-        print("path\ttotal_blocks\tpassed_blocks\tskipped_blocks\trunnable_blocks\tduration_ms")
-    for row in rows:
-        if args.paths_only:
-            print(row[0])
-        else:
-            print("\t".join(str(value) for value in row))
+        columns = [
+            "path",
+            "total_blocks",
+            "passed_blocks",
+            "skipped_blocks",
+            "runnable_blocks",
+            "duration_ms",
+        ]
+        if show_database:
+            columns.insert(0, "database")
+        print("\t".join(columns))
+
+    for database in args.database:
+        try:
+            if not database.exists():
+                raise SystemExit(f"database not found: {database}")
+            with sqlite3.connect(database) as db:
+                require_doctest_schema(database, db)
+                run_id, db_source_root = latest_run_metadata(db)
+                source_root = args.source_root or db_source_root
+                if source_root not in covered_by_source_root:
+                    covered_by_source_root[source_root] = read_corpus(
+                        args.corpus, source_root
+                    )
+                covered = covered_by_source_root[source_root]
+                rows = candidate_rows(
+                    db,
+                    run_id,
+                    covered,
+                    source_root,
+                    args.min_passed,
+                    args.include_non_sage,
+                )
+        except (sqlite3.DatabaseError, SystemExit) as error:
+            if args.ignore_invalid:
+                print(f"warning: skipping {database}: {error}", file=sys.stderr)
+                continue
+            raise
+
+        for row in rows:
+            if args.paths_only:
+                print(row[0])
+            elif show_database:
+                print("\t".join(str(value) for value in (database, *row)))
+            else:
+                print("\t".join(str(value) for value in row))
     return 0
 
 
