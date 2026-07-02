@@ -18496,6 +18496,46 @@ commit `54b04edb6dbe0357bb3df0658dce1d030b800a74`, Sagelite source/package
 commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
 version 75, and about 6 seconds of elapsed time.
 
+Follow-up frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found in the probed CLI, category-example,
+low-prompt helper, Lie-conformal, pure-helper, and utility batches. The
+checked `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus
+remains at 906 non-comment entries after the previous Lie-conformal basis
+promotion.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-agent/probes/`.
+The CLI front-door batch in `cli.sqlite3` had zero extracted doctest blocks,
+so files such as `sage/cli/eval_cmd.py`, `run_file_cmd.py`, and
+`version_cmd.py` should not be added as corpus entries. The category-example
+batch in `category-examples.sqlite3` was skipped-only, recording 431 skipped
+blocks across the remaining absent examples for algebras-with-basis,
+filtered/graded modules, Hopf algebras, Lie algebras, sets, and
+with-realizations.
+
+The low-prompt helper batch in `low-prompt-helpers.sqlite3` recorded
+5 passed, 33 failed, and 13 skipped blocks. Its failures are backend
+boundaries rather than narrow promotion work: missing eclib homspace and
+PolyBoRi modules, cypari2 object-model gaps, disabled FLINT integer
+polynomial initialization, and GAP/libgap imports. The Lie-conformal frontier
+batch in `lie-conformal-frontier.sqlite3` recorded 40 passed, 48 failed, and
+42 skipped blocks; the failure clusters are dominated by graph-backed affine
+construction, `QQbar` coercion/cache behavior, and dependent missing-name
+failures after those setup blocks, so broader runtime/source work is needed
+before promoting those implementation files.
+
+The pure-helper batch in `pure-lowprompt.sqlite3` was mostly skipped-only and
+failed on broader poset, nil-Coxeter, and NTL/libcxx Bernoulli clusters. The
+small utility batch in `utility-small.sqlite3` found only zero-block front
+doors and skipped-only SAT/package coverage; two sampled data-structure paths
+were stale for the current patched source tree and produced file-not-found
+errors. Future scheduled runs should avoid repeating these exact batches
+unless the graph, PolyBoRi, eclib/GAP, NTL/libcxx, or Lie-conformal
+number-field boundaries change. Smaller coherent probes in a new namespace, or
+a direct fix for one of those named clusters, are more likely to move the
+dashboard forward.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
