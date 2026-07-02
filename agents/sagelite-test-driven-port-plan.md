@@ -21346,6 +21346,35 @@ duration, status, and `failure_class`. Validation used
 `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a targeted
 synthetic SQLite check for the new mode.
 
+Follow-up low-prompt frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal4/` sampled
+low-prompt source files, medium-prompt pure helper files, and adjacent plot,
+stats, and numerical helpers. The low-prompt batch recorded 0 passed, 4
+failed, and 65 skipped blocks; the medium batch recorded 13 passed, 28 failed,
+and 231 skipped blocks; and the plot/numerical batch recorded 30 passed, 149
+failed, and 354 skipped blocks.
+
+Most low-prompt rows remain skipped-only in the browser profile. The useful
+near misses are still too broad for quiet promotion: `homology_group.py`
+groups around current additive-abelian-group construction failures, while
+`manifolds/structure.py` reaches the symbolic-expression boundary and then
+records dependent missing-name failures. Plot helpers are skipped-only, and
+the sampled numerical backend files expose wider linear-tensor/backend
+failures rather than a narrow tag-only promotion.
+
+The file-error candidate helper now has an opt-in `--include-failure-detail`
+flag. Default output is unchanged, but diagnostic scans can append one-line
+`failure_detail` text, which makes stale source-root/file-read errors and
+runtime/import frontiers distinguishable without dropping into raw SQLite.
+The implementation tolerates older doctest databases without a
+`files.failure_detail` column. Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, default and detailed
+`--file-errors` scans across recent scratch databases, and a detailed
+`--near-misses --max-failed 20` scan against the fresh medium-prompt probe.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

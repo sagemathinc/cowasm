@@ -98,6 +98,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--include-failure-detail",
+        action="store_true",
+        help=(
+            "append one-line failure_detail text when printing diagnostic "
+            "candidate modes"
+        ),
+    )
+    parser.add_argument(
         "--max-failed",
         type=int,
         default=10,
@@ -210,6 +218,17 @@ def latest_run_metadata(db: sqlite3.Connection) -> tuple[int, Path | None]:
     return run_id, Path(source_root) if source_root else None
 
 
+def files_table_has_column(db: sqlite3.Connection, column: str) -> bool:
+    return any(
+        name == column
+        for _cid, name, *_rest in db.execute("pragma table_info(files)")
+    )
+
+
+def one_line_detail(detail: str) -> str:
+    return " ".join(detail.replace("\t", " ").splitlines()).strip()
+
+
 def candidate_rows(
     db: sqlite3.Connection,
     run_id: int,
@@ -222,10 +241,15 @@ def candidate_rows(
     zero_blocks: bool,
     file_errors: bool,
     max_failed: int,
-) -> list[tuple[str, int, int, int, int, int, int, str, str]]:
+) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
+    failure_detail_expr = (
+        "coalesce(failure_detail, '')"
+        if files_table_has_column(db, "failure_detail")
+        else "''"
+    )
     if file_errors:
         rows = db.execute(
-            """
+            f"""
             select
               path,
               total_blocks,
@@ -235,7 +259,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, '')
+              coalesce(failure_class, ''),
+              {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'error'
@@ -248,7 +273,7 @@ def candidate_rows(
         ).fetchall()
     elif zero_blocks:
         rows = db.execute(
-            """
+            f"""
             select
               path,
               total_blocks,
@@ -258,7 +283,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, '')
+              coalesce(failure_class, ''),
+              {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'passed'
@@ -274,7 +300,7 @@ def candidate_rows(
         ).fetchall()
     elif skipped_only:
         rows = db.execute(
-            """
+            f"""
             select
               path,
               total_blocks,
@@ -284,7 +310,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, '')
+              coalesce(failure_class, ''),
+              {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'passed'
@@ -301,7 +328,7 @@ def candidate_rows(
         ).fetchall()
     elif near_misses:
         rows = db.execute(
-            """
+            f"""
             select
               path,
               total_blocks,
@@ -311,7 +338,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, '')
+              coalesce(failure_class, ''),
+              {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'failed'
@@ -329,7 +357,7 @@ def candidate_rows(
         ).fetchall()
     else:
         rows = db.execute(
-            """
+            f"""
             select
               path,
               total_blocks,
@@ -339,7 +367,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, '')
+              coalesce(failure_class, ''),
+              {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'passed'
@@ -356,7 +385,18 @@ def candidate_rows(
         ).fetchall()
 
     candidates = []
-    for path, total, passed, failed, skipped, runnable, duration, status, failure in rows:
+    for (
+        path,
+        total,
+        passed,
+        failed,
+        skipped,
+        runnable,
+        duration,
+        status,
+        failure,
+        failure_detail,
+    ) in rows:
         relative_path = normalize_path(path, source_root)
         if not include_non_sage and not relative_path.startswith("src/sage/"):
             continue
@@ -375,19 +415,31 @@ def candidate_rows(
                 duration,
                 status,
                 failure,
+                one_line_detail(failure_detail),
             )
         )
     return candidates
 
 
 def row_sort_key(
-    row: tuple[str, int, int, int, int, int, int, str, str],
+    row: tuple[str, int, int, int, int, int, int, str, str, str],
     near_misses: bool,
     skipped_only: bool,
     zero_blocks: bool,
     file_errors: bool,
 ) -> tuple[int, int, int, int, str, str]:
-    path, _total, passed, failed, skipped, _runnable, duration, _status, _failure = row
+    (
+        path,
+        _total,
+        passed,
+        failed,
+        skipped,
+        _runnable,
+        duration,
+        _status,
+        _failure,
+        _detail,
+    ) = row
     if file_errors:
         failure = row[8]
         return (failed, skipped, duration, passed, failure, path)
@@ -407,7 +459,7 @@ def main() -> int:
     show_database = len(args.database) > 1 and not args.paths_only
     covered_by_source_root: dict[Path | None, set[str]] = {}
     collected_rows: list[
-        tuple[Path, tuple[str, int, int, int, int, int, int, str, str]]
+        tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
     ] = []
     if args.include_header:
         columns = [
@@ -432,6 +484,8 @@ def main() -> int:
             or args.file_errors
         ):
             columns.extend(["status", "failure_class"])
+            if args.include_failure_detail:
+                columns.append("failure_detail")
         if show_database:
             columns.insert(0, "database")
         print("\t".join(columns))
@@ -477,7 +531,7 @@ def main() -> int:
 
     if args.dedupe_paths:
         best_by_path: dict[
-            str, tuple[Path, tuple[str, int, int, int, int, int, int, str, str]]
+            str, tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
         ] = {}
         for database, row in collected_rows:
             path = row[0]
@@ -512,17 +566,18 @@ def main() -> int:
 
 
 def print_row(
-    row: tuple[str, int, int, int, int, int, int, str, str],
+    row: tuple[str, int, int, int, int, int, int, str, str, str],
     database: Path,
     show_database: bool,
     args: argparse.Namespace,
 ) -> None:
     if args.paths_only:
         print(row[0])
-    elif show_database:
-        print("\t".join(str(value) for value in (database, *row)))
     elif args.near_misses or args.skipped_only or args.zero_blocks or args.file_errors:
-        print("\t".join(str(value) for value in row))
+        values = row if args.include_failure_detail else row[:-1]
+        if show_database:
+            values = (database, *values)
+        print("\t".join(str(value) for value in values))
     else:
         (
             path,
@@ -534,18 +589,22 @@ def print_row(
             duration,
             _status,
             _failure,
+            _detail,
         ) = row
+        values = (
+            path,
+            total,
+            passed,
+            skipped,
+            runnable,
+            duration,
+        )
+        if show_database:
+            values = (database, *values)
         print(
             "\t".join(
                 str(value)
-                for value in (
-                    path,
-                    total,
-                    passed,
-                    skipped,
-                    runnable,
-                    duration,
-                )
+                for value in values
             )
         )
 
