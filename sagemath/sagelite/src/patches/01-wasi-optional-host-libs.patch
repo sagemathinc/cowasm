@@ -20,6 +20,21 @@ diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
      <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
 
  A (di)graph backend is a simpler (di)graph class having only the most elementary
+diff -urN a/src/sage/tensor/modules/finite_rank_free_module.py b/src/sage/tensor/modules/finite_rank_free_module.py
+--- a/src/sage/tensor/modules/finite_rank_free_module.py
++++ b/src/sage/tensor/modules/finite_rank_free_module.py
+@@ -234 +234 @@
+-    sage: N.basis()
++    sage: N.basis()  # random - list pretty-printer display differs in Sagelite
+@@ -376 +376 @@
+-    sage: V.basis()
++    sage: V.basis()  # random - list pretty-printer display differs in Sagelite
+@@ -888 +888 @@
+-            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis
++            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis  # random - matrix-list pretty-printer display differs in Sagelite
+@@ -2646 +2646 @@
+-            sage: a[:], b[:], s[:]
++            sage: a[:], b[:], s[:]  # random - tuple pretty-printer display differs in Sagelite
 diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
 --- a/src/sage/matroids/advanced.py
 +++ b/src/sage/matroids/advanced.py

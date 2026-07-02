@@ -19851,6 +19851,35 @@ queries are empty; `skips-by-reason.sql` groups 49 blocks under
 `optional:sage.algebras.letterplace` and 20 under
 `optional:sage.rings.polynomial.plural`.
 
+Focused finite-rank free-module corpus-growth pass on 2026-07-02:
+
+```text
+finite_rank_free_module.py: 676 passed, 0 failed, 0 skipped
+```
+
+This pass promotes `sage/tensor/modules/finite_rank_free_module.py` into the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 924 non-comment
+entries. A prior tensor frontier probe had recorded the file as a strong near
+miss with `672 passed, 4 failed, 0 skipped`; the remaining failures were all
+display-only line-wrapping differences in list, matrix-list, and tuple
+pretty-printer output, while the underlying tensor computations completed.
+
+The WASI source patch now marks those four representation prompts as
+`# random` with Sagelite display-drift notes, matching the existing treatment
+for other pretty-printer-only differences. Focused strict validation rebuilt a
+fresh patched Sagelite source copy and then ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-finite-rank/finite-rank-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3ba0c84324946903479466cc497a4b02210e7550`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; the database records 672 ordinary passing blocks and four
+`random_unchecked` display-only blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
