@@ -91,6 +91,7 @@ src/sage/cpython/debug.pyx
 src/sage/cpython/getattr.pyx
 src/sage/cpython/dict_del_by_value.pyx
 src/sage/cpython/string.pxd
+src/sage/crypto/mq/mpolynomialsystemgenerator.py
 src/sage/crypto/public_key/key_exchange/finite_field_diffie_hellman.py
 src/sage/coding/bounds_catalog.py
 src/sage/coding/channels_catalog.py
@@ -121,6 +122,7 @@ src/sage/ext/memory.pyx
 src/sage/game_theory/cooperative_game.py
 src/sage/game_theory/parser.py
 src/sage/games/sudoku_backtrack.pyx
+src/sage/interacts/library_cython.pyx
 src/sage/features/all.py
 src/sage/features/__init__.py
 src/sage/features/bitness.py

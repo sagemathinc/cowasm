@@ -20452,6 +20452,44 @@ symbolic vector examples, the q-adic FLINT initializer boundary, and broader
 remain outside the quiet corpus until a focused pass turns one of those
 clusters into explicit browser-profile skips or real passing coverage.
 
+Continuation frontier audit on 2026-07-02 promoted two small clean runnable
+files from a fresh mixed probe. The initial tiny utility batch was clean but
+skipped-only:
+
+```text
+tiny-utility.sqlite3: 0 passed, 0 failed, 52 skipped
+```
+
+The mixed frontier probe recorded:
+
+```text
+mixed-frontier.sqlite3: 38 passed, 36 failed, 89 skipped
+```
+
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --min-passed 1` identified
+`sage/crypto/mq/mpolynomialsystemgenerator.py` with `29 passed, 0 failed,
+1 skipped` and `sage/interacts/library_cython.pyx` with `4 passed, 0 failed,
+11 skipped`, so both are now promoted into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. Nearby files stay
+outside the quiet corpus: `totallyreal_data.pyx` still hits the PARI
+`convert_sage_real_mpfr` signature-mismatch cluster, `backend_number_field.py`
+times out in a number-field polyhedron setup example, and
+`matroids/database_collections.py` plus `interacts/library.py` still have
+active block-level failures.
+
+Focused strict make-level validation for the two promoted files used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_JOBS=1` with
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal/promoted-two-make.sqlite3`.
+It recorded:
+
+```text
+sage -t passed: 33 passed, 0 failed, 12 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
