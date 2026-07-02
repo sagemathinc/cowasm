@@ -20795,6 +20795,38 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups all nineteen skipped blocks
 under `optional:subprocess`.
 
+Focused NTL small-modulus context corpus-growth pass on 2026-07-02:
+
+```text
+ntl_lzz_pContext.pyx: 19 passed, 0 failed, 2 skipped
+```
+
+This pass promotes `sage/libs/ntl/ntl_lzz_pContext.pyx` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 944 non-comment entries. A near-miss scan over recent scratch SQLite probes
+identified the file as useful uncovered NTL coverage with 19 passing blocks and
+two output mismatches.
+
+The two remaining failures expose a real small-modulus NTL context issue in
+the browser profile: `ntl.zz_p(2,3)+ntl.zz_p(1,3)` currently prints `3`
+instead of the expected reduced value `0`, and the indirect `n*n` context
+restore check currently prints `9` instead of `4`. The WASI source patch marks
+exactly those examples as `# known bug`, preserving the surrounding context
+construction, pickling, modulus, restore, and bounds-checking coverage as
+runnable dashboard signal.
+
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-3/ntl-lzz-context-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`1e4c2a04ed376fe39f265e91e0d18f811111ea1e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups both skipped blocks under
+`deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

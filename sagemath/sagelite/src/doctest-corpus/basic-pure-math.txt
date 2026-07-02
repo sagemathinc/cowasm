@@ -206,6 +206,7 @@ src/sage/libs/mpmath/utils.pyx
 src/sage/libs/sirocco.pyx
 src/sage/libs/pari/convert_gmp.pyx
 src/sage/libs/ntl/error.pyx
+src/sage/libs/ntl/ntl_lzz_pContext.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
 src/sage/geometry/linear_expression.py
