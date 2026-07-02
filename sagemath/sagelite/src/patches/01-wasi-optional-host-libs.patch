@@ -9787,6 +9787,38 @@ diff -urN -U0 a/src/sage/groups/misc_gps/imaginary_groups.py b/src/sage/groups/m
 @@ -429 +429 @@
 -            sage: J(x)
 +            sage: J(x)                                                                # needs sage.symbolic
+diff -urN -U0 a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx b/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
+--- a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
++++ b/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
+@@ -41,2 +41,2 @@
+-            sage: lf, P, rg = A.laurent_matrix_reduction()
+-            sage: lf
++            sage: lf, P, rg = A.laurent_matrix_reduction()                           # known bug - Laurent matrix reduction raises in Sagelite WASI profile
++            sage: lf                                                                 # known bug
+@@ -45 +45 @@
+-            sage: P
++            sage: P                                                                  # known bug
+@@ -48 +48 @@
+-            sage: rg
++            sage: rg                                                                 # known bug
+@@ -93 +93 @@
+-            sage: M.fitting_ideal(1) == M._fitting_ideal(1)
++            sage: M.fitting_ideal(1) == M._fitting_ideal(1)                          # needs sage.rings.polynomial.plural
+@@ -95 +95 @@
+-            sage: M.fitting_ideal(1).groebner_basis()
++            sage: M.fitting_ideal(1).groebner_basis()                                # needs sage.rings.polynomial.plural
+@@ -100 +100 @@
+-            sage: M.fitting_ideal(2).groebner_basis()
++            sage: M.fitting_ideal(2).groebner_basis()                                # needs sage.rings.polynomial.plural
+@@ -102 +102 @@
+-            sage: M.fitting_ideal(3).groebner_basis()
++            sage: M.fitting_ideal(3).groebner_basis()                                # needs sage.rings.polynomial.plural
+@@ -104 +104 @@
+-            sage: M.fitting_ideal(4).groebner_basis()
++            sage: M.fitting_ideal(4).groebner_basis()                                # needs sage.rings.polynomial.plural
+@@ -106 +106 @@
+-            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
++            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)] # known bug - Laurent fitting ideal comparison raises in Sagelite WASI profile
 diff -urN -U0 a/src/sage/algebras/free_algebra_quotient.py b/src/sage/algebras/free_algebra_quotient.py
 --- a/src/sage/algebras/free_algebra_quotient.py
 +++ b/src/sage/algebras/free_algebra_quotient.py

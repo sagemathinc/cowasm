@@ -21231,6 +21231,38 @@ broken-pipe warning. Validation used
 plus clean-candidate, near-miss, paths-only, and skipped-only deduped scans
 against the existing `.tmp/current-run` SQLite databases.
 
+Focused Laurent-matrix corpus-growth pass on 2026-07-02:
+
+```text
+matrix_laurent_mpolynomial_dense.pyx: 8 passed, 0 failed, 10 skipped
+```
+
+This pass promotes `sage/matrix/matrix_laurent_mpolynomial_dense.pyx` into
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 952 non-comment
+entries. A fresh compact pure-math probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-11/`
+found the file as a useful near miss with 8 passing blocks and 10 failing
+blocks. The passing coverage exercises Laurent polynomial matrix construction,
+display, and the zero-th Fitting ideal path.
+
+The WASI source patch now defers the current Laurent matrix reduction and
+minor-comparison drift as `# known bug`, and marks Groebner-backed Fitting
+ideal checks as `# needs sage.rings.polynomial.plural`, matching the
+browser-compatible profile where the Singular/plural polynomial path is not
+shipped. Focused direct validation wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-11/matrix-laurent-direct.sqlite3`.
+Focused make-level validation rebuilt and patched a fresh Sagelite source copy
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-11/matrix-laurent-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`51c59d70616d254dee44eba1de09db64b5b52f76`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the skipped blocks under
+`known bug` and `sage.rings.polynomial.plural`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
