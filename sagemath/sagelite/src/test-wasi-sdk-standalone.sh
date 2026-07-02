@@ -2720,6 +2720,31 @@ if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
 fi
+doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
+touch "$doctest_candidate_helper_empty_db"
+doctest_candidate_helper_quiet_stderr="$("$src_dir/doctest-corpus-candidates.py" \
+  --ignore-invalid \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_empty_db" \
+  2>&1)"
+if [ -n "$doctest_candidate_helper_quiet_stderr" ]; then
+  printf '%s\n' "$doctest_candidate_helper_quiet_stderr" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --quiet-invalid emitted skipped-database noise."
+fi
+set +e
+doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_quiet_guard_status=$?
+set -e
+if [ "$doctest_candidate_helper_quiet_guard_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_quiet_guard" | grep -Fq -- "--quiet-invalid requires --ignore-invalid"; then
+  printf '%s\n' "$doctest_candidate_helper_quiet_guard" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --quiet-invalid guard did not fire."
+fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"

@@ -20699,6 +20699,34 @@ FLINT qsieve, elliptic-curve database data, hyperelliptic and cyclic-cover
 constructors, graph algorithms, and pbori/half-integral modular-form startup
 namespaces.
 
+Candidate-helper hygiene pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. A wide scan over recent
+`.tmp/current-run` SQLite probes with `doctest-corpus-candidates.py
+--source-root sagemath/sagelite/build/wasi-sdk --min-passed 1 --paths-only
+--ignore-invalid` found no uncovered clean runnable source rows, but old
+interrupted probes produced empty-database warnings that made scheduled audit
+logs noisy.
+
+The helper now supports `--quiet-invalid`, which requires `--ignore-invalid`
+and suppresses skipped-database warnings while preserving the default warning
+behavior. The Makefile wrapper can pass it through
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS`, so broad scratch-database scans can use:
+
+```sh
+python3 sagemath/sagelite/src/doctest-corpus-candidates.py \
+  --source-root sagemath/sagelite/build/wasi-sdk \
+  --min-passed 1 \
+  --paths-only \
+  --ignore-invalid \
+  --quiet-invalid \
+  .tmp/current-run/*.sqlite3 .tmp/current-run/*/*.sqlite3
+```
+
+Focused validation confirmed the helper still reports the synthetic real
+candidate fixture, rejects `--quiet-invalid` without `--ignore-invalid`, and
+prints nothing for the current wide scan when there is no uncovered candidate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

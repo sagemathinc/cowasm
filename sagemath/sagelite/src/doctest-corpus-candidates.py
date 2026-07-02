@@ -61,9 +61,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
     )
+    parser.add_argument(
+        "--quiet-invalid",
+        action="store_true",
+        help="with --ignore-invalid, suppress skipped-database warnings",
+    )
     args = parser.parse_args()
     if args.paths_only and args.include_header:
         parser.error("--paths-only cannot be combined with --include-header")
+    if args.quiet_invalid and not args.ignore_invalid:
+        parser.error("--quiet-invalid requires --ignore-invalid")
     return args
 
 
@@ -228,7 +235,8 @@ def main() -> int:
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
-                print(f"warning: skipping {database}: {error}", file=sys.stderr)
+                if not args.quiet_invalid:
+                    print(f"warning: skipping {database}: {error}", file=sys.stderr)
                 continue
             raise
 
