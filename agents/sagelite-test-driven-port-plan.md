@@ -22067,6 +22067,27 @@ under the default browser-compatible profile, and `output_catalog.py` extracts
 no doctest blocks. The probe database is
 `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/repl-support-probe.sqlite3`.
 
+Follow-up candidate Makefile hygiene pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The checked
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` dashboard file was
+empty, so the direct saved SQL queries still report missing-table parse errors
+until a corpus run repopulates the schema. The checked
+`doctest-corpus-candidates.py` helper already supports strict and lenient
+database validation; the make-level candidate entrypoints now default to the
+lenient `--ignore-invalid` path through
+`SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS`.
+
+With the default setting, both
+`make -C sagemath/sagelite sage-doctest-candidates` and
+`make -C sagemath/sagelite sage-doctest-candidate-paths` exit successfully and
+print a concise warning for the empty dashboard instead of breaking scheduled
+frontier scans. Setting
+`SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS=` restores strict helper behavior and
+still fails with the explicit `empty doctest database` diagnostic. Focused
+validation also ran `py_compile` on `doctest-corpus-candidates.py` and
+`bash -n` on `test-wasi-sdk-standalone.sh`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
