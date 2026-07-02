@@ -202,6 +202,7 @@ src/sage/libs/gap/saved_workspace.py
 src/sage/libs/gsl/array.pyx
 src/sage/libs/lrcalc/lrcalc.py
 src/sage/libs/mpmath/utils.pyx
+src/sage/libs/sirocco.pyx
 src/sage/libs/pari/convert_gmp.pyx
 src/sage/libs/ntl/error.pyx
 src/sage/geometry/abc.pyx
@@ -233,6 +234,8 @@ src/sage/groups/perm_gps/partn_ref/refinement_lists.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_matrices.pyx
 src/sage/interfaces/abc.py
 src/sage/interfaces/ecm.py
+src/sage/interfaces/jmoldata.py
+src/sage/interfaces/khoca.py
 src/sage/interfaces/tab_completion.py
 src/sage/interfaces/gnuplot.py
 src/sage/interfaces/quit.py

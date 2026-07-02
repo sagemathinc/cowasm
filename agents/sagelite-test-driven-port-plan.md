@@ -20490,6 +20490,38 @@ sage -t passed: 33 passed, 0 failed, 12 skipped
 
 The saved block- and file-failure cluster queries are empty for that database.
 
+Focused interface/library smoke corpus-growth pass on 2026-07-02:
+
+```text
+jmoldata.py: 22 passed, 0 failed, 6 skipped
+sirocco.pyx: 10 passed, 0 failed, 8 skipped
+khoca.py: 5 passed, 0 failed, 16 skipped
+```
+
+This pass promotes `sage/interfaces/jmoldata.py`,
+`sage/libs/sirocco.pyx`, and `sage/interfaces/khoca.py` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 937 non-comment entries. A fresh low-prompt unseen-source probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal2/` recorded
+these three files as the only clean uncovered candidates in the batch.
+Adjacent sampled files remain outside the quiet corpus: GAP-backed matrix and
+modular abelian-variety files, cyclic-cover construction, q-adic FLINT, pbori,
+weighted-projective, hyperelliptic, product-projective, manifold, and graph
+decomposition helpers still have active failures or timeouts, while several
+backend wrappers are skipped-only.
+
+Focused strict make-level validation used a temporary three-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal2/promoted-three-make.sqlite3`.
+It recorded:
+
+```text
+sage -t passed: 37 passed, 0 failed, 30 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
