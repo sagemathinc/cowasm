@@ -18799,6 +18799,51 @@ candidate. The skip clusters are broad `sage.groups`, `sage.graphs`,
 corpus-growth runs should avoid repeating these exact low-count batches as
 blind promotion candidates unless one of those dependency boundaries changes.
 
+Function-field Hermite-form promotion and frontier audit on 2026-07-02:
+
+A fresh categories frontier probe checked small absent `sage/categories`
+modules and examples:
+`g_sets.py`, `finite_crystals.py`,
+`finitely_generated_lie_conformal_algebras.py`, `bialgebras.py`,
+`lambda_bracket_algebras_with_basis.py`, and five
+`sage/categories/examples` modules. It recorded `0 passed, 0 failed, 148
+skipped`, so there was no runnable promotion candidate. The skipped clusters
+are broad category, combinatorics, graph, module, and Lie-conformal dependency
+boundaries.
+
+A low-level arithmetic/module probe then checked absent Cython and numeric
+helpers. Most candidates were skipped-only, while
+`sage/libs/arb/arith.pyx` recorded `3 passed, 5 failed, 0 skipped`. The active
+cluster is the existing disabled FLINT integer-polynomial side module:
+importing `sage.libs.arb.arith` reaches
+`sage.rings.polynomial.polynomial_integer_dense_flint`, so even the Bernoulli
+examples cannot be promoted without either splitting the import dependency or
+deferring the file under that backend boundary. The `bernoulli(-1)` diagnostic
+also differs from the upstream text because the active fallback is
+`sage.libs.flint.arith_sage.bernoulli_number`.
+
+A mixed NTL/combinatorics/function-field probe found one clean runnable
+candidate. `src/sage/rings/function_field/hermite_form_polynomial.pyx`
+recorded `21 passed, 0 failed, 0 skipped`, and
+`doctest-corpus-candidates.py --min-passed 1` reported it as the only absent
+promotion candidate in that database. It is now promoted into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated browser-profile corpus to 910 non-comment entries. Focused validation
+with a direct one-file `sage -t` recorded `21 passed, 0 failed, 0 skipped`.
+The full make-level corpus target then completed with known failures allowed
+and recorded `57750 passed, 16 failed, 19323 skipped` in
+`.tmp/current-run/scheduled-2026-07-02-hermite-promotion/full-corpus/sagelite-doctests.sqlite3`;
+the promoted Hermite-form file was clean in that run as well. The latest
+block-level failure clusters were rational `sqrt`/`log` fallback differences,
+category additional-structure drift, combinatorial word object drift,
+`schemes/generic/homset.py` setup/backend failures, `misc/banner.py` version
+output drift, and `tests/test_deprecation.py` warning formatting. The same
+mixed probe also recorded known broader blockers: an NTL/Givaro unresolved C++
+RTTI symbol while loading `element_givaro`, an NTL/libcxx memory trap through
+`ntl_ZZ_p`, and two `ntl_lzz_pContext.pyx` output mismatches. Those files
+should stay out of blind promotion batches until the NTL finite-field runtime
+boundary changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
