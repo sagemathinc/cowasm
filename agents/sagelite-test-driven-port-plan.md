@@ -21657,6 +21657,37 @@ clusters are five `optional:sage.graphs` rows and four
 `doctest-corpus-candidates.py` prints no promotion candidate for that database
 after the corpus entry is listed.
 
+Follow-up projective dynamics helper corpus-growth pass on 2026-07-02:
+
+This pass promoted
+`src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx` into the
+curated `basic-pure-math.txt` corpus, bringing the corpus to 961 non-comment
+entries. The file was the only compact near miss in the recent scratch
+dashboard sweep, initially recording 18 passing blocks and eight startup-name
+failures in examples that instantiate `DynamicalSystem_projective`.
+
+Those failures all route through
+`sage.dynamics.arithmetic_dynamics.projective_ds`, which imports the
+fork/alarm-backed `sage.parallel.use_fork` stack and fails in the browser
+profile at the unavailable `cysignals.alarm` module. The WASI patch now marks
+the constructor examples and their dependent checks as
+`# needs cysignals.alarm`, preserving the passing low-level helper coverage
+while keeping fork/alarm-dependent projective dynamics out of the default
+browser dashboard.
+
+Focused strict make-target validation rebuilt a fresh patched Sagelite source
+tree from the checked-in patch and recorded:
+
+```text
+sage -t passed: 18 passed, 0 failed, 8 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-02-projective-helper/make.sqlite3`. Its
+skip cluster is eight `optional:cysignals.alarm` rows, and
+`doctest-corpus-candidates.py` prints no promotion candidate for that database
+after the corpus entry is listed.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

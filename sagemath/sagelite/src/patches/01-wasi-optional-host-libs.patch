@@ -10293,3 +10293,26 @@ diff -urN -U0 a/src/sage/groups/group.pyx b/src/sage/groups/group.pyx
 -            sage: F.<a,b> = FreeGroup()
 +            sage: # needs sage.groups
 +            sage: F.<a,b> = FreeGroup()
+diff -urN -U0 a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
+--- a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
++++ b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
+@@ -49,2 +49,2 @@
+-        sage: f = DynamicalSystem_projective([x^2-2*y^2, y^2])
+-        sage: _fast_possible_periods(f, False)
++        sage: f = DynamicalSystem_projective([x^2-2*y^2, y^2])                       # needs cysignals.alarm
++        sage: _fast_possible_periods(f, False)                                       # needs cysignals.alarm
+@@ -57,2 +57,2 @@
+-        sage: f = DynamicalSystem_projective([x^2-y^2, y^2])
+-        sage: sorted(_fast_possible_periods(f, True))
++        sage: f = DynamicalSystem_projective([x^2-y^2, y^2])                         # needs cysignals.alarm
++        sage: sorted(_fast_possible_periods(f, True))                                # needs cysignals.alarm
+@@ -65,2 +65,2 @@
+-        sage: f = DynamicalSystem_projective([-360*x^3 + 760*x*z^2, y^3 - 604*y*z^2 + 240*z^3, 240*z^3])
+-        sage: _fast_possible_periods(f, False)
++        sage: f = DynamicalSystem_projective([-360*x^3 + 760*x*z^2, y^3 - 604*y*z^2 + 240*z^3, 240*z^3])  # needs cysignals.alarm
++        sage: _fast_possible_periods(f, False)                                       # needs cysignals.alarm
+@@ -280,2 +280,2 @@
+-        sage: f = DynamicalSystem_projective([x^2 - y^2, y^2], domain=P)
+-        sage: _all_periodic_points(f)
++        sage: f = DynamicalSystem_projective([x^2 - y^2, y^2], domain=P)             # needs cysignals.alarm
++        sage: _all_periodic_points(f)                                                # needs cysignals.alarm
