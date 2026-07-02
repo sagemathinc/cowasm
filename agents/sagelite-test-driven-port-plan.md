@@ -21765,6 +21765,39 @@ for any of the four probe databases, so future scheduled runs should avoid
 repeating these exact batches unless the graph, symbolic, number-field,
 polynomial, coding, or vector backend profile changes.
 
+Focused floating-point book-doctest corpus-growth pass on 2026-07-02:
+
+```text
+float_doctest.py: 37 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 963
+non-comment entries. The default browser-compatible profile gains book-level
+coverage for real-field precision, binary significands, floating recurrence
+iteration, high-precision convergence, and interval arithmetic.
+
+Direct sampling first recorded 38 passed blocks, ten focused failures, and no
+skips. The failures were the symbolic recurrence-solving examples that use
+`var(...)`, `solve(...)`, and `simplify_full()` from Sage's symbolic stack.
+The added WASI source patch marks that symbolic recurrence chain as
+`# needs sage.symbolic` while preserving the surrounding floating-point
+examples as runnable default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02/float/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4c865f2e32b103106dbab6bce071af5603723f0b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the 11 deferred blocks
+under `optional:sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

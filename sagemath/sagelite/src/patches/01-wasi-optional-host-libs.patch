@@ -7070,6 +7070,37 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/com
    [1 0 0]  [0 1 0]  [1 0 0]  [ 0  1  0]  [0 0 1]  [0 1 0]  [0 0 1]
    [0 1 0]  [1 0 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [0 1 0]
 
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
+@@ -51 +51 @@
+-  sage: var("u0 u1 u2 alpha beta gamma n")
++  sage: var("u0 u1 u2 alpha beta gamma n")                                      # needs sage.symbolic
+@@ -59,3 +59,3 @@
+-  sage: u2 = recurrence(u1,u0)
+-  sage: s = [u2==solGen(2),u1==solGen(1),u0==solGen(0)]
+-  sage: t = [s[i].substitute(u0=2,u1=-4) for i in range(0,3)]
++  sage: u2 = recurrence(u1,u0)                                                  # needs sage.symbolic
++  sage: s = [u2==solGen(2),u1==solGen(1),u0==solGen(0)]                         # needs sage.symbolic
++  sage: t = [s[i].substitute(u0=2,u1=-4) for i in range(0,3)]                   # needs sage.symbolic
+@@ -65 +65 @@
+-  sage: solve(t,alpha,beta,gamma)
++  sage: solve(t,alpha,beta,gamma)                                               # needs sage.symbolic
+@@ -70,4 +70,4 @@
+-  sage: alpha=0
+-  sage: beta = -3/4*gamma
+-  sage: final=solGen(n)-recurrence(solGen(n-1),solGen(n-2))
+-  sage: final.simplify_full()
++  sage: alpha=0                                                                 # needs sage.symbolic
++  sage: beta = -3/4*gamma                                                       # needs sage.symbolic
++  sage: final=solGen(n)-recurrence(solGen(n-1),solGen(n-2))                    # needs sage.symbolic
++  sage: final.simplify_full()                                                   # needs sage.symbolic
+@@ -102 +102 @@
+-  sage: var("x")
++  sage: var("x")                                                                # needs sage.symbolic
+@@ -104 +104 @@
+-  sage: solve(x==recurrence(x,x),x)
++  sage: solve(x==recurrence(x,x),x)                                             # needs sage.symbolic
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphtheory_doctest.py
