@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 76;
+const doctestRunnerVersion = 77;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -208,6 +208,7 @@ function parseDoctestArgs(args, invocationCwd) {
     tmpDirRoot: process.env.COWASM_SAGELITE_DOCTEST_TMPDIR
       ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_TMPDIR)
       : null,
+    jobs: parseDoctestJobs(process.env.COWASM_SAGELITE_DOCTEST_JOBS || "1"),
     files: [],
   };
   for (let i = 0; i < args.length; i += 1) {
@@ -236,6 +237,14 @@ function parseDoctestArgs(args, invocationCwd) {
       options.timeoutSeconds = Number(args[i]);
     } else if (arg.startsWith("--timeout=")) {
       options.timeoutSeconds = Number(arg.slice("--timeout=".length));
+    } else if (arg === "-j" || arg === "--jobs") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error(`${arg} requires a positive job count`);
+      }
+      options.jobs = parseDoctestJobs(args[i], arg);
+    } else if (arg.startsWith("--jobs=")) {
+      options.jobs = parseDoctestJobs(arg.slice("--jobs=".length), "--jobs");
     } else if (arg === "--long" || arg === "-l") {
       options.long = true;
     } else if (arg === "--optional") {
@@ -293,6 +302,9 @@ function parseDoctestArgs(args, invocationCwd) {
   if (!Number.isFinite(options.timeoutSeconds) || options.timeoutSeconds < 0) {
     throw new Error("timeout must be a nonnegative number of seconds");
   }
+  if (!Number.isInteger(options.jobs) || options.jobs < 1) {
+    throw new Error("jobs must be a positive integer");
+  }
   if (options.files.length === 0) {
     throw new Error("sage -t requires at least one file");
   }
@@ -317,6 +329,13 @@ function parseDoctestArgs(args, invocationCwd) {
 function parseDoctestLine(value) {
   if (!/^[1-9][0-9]*$/.test(value)) {
     throw new Error("--line requires a positive integer source line number");
+  }
+  return Number(value);
+}
+
+function parseDoctestJobs(value, optionName = "jobs") {
+  if (!/^[1-9][0-9]*$/.test(String(value))) {
+    throw new Error(`${optionName} requires a positive integer`);
   }
   return Number(value);
 }
@@ -363,43 +382,22 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
   const tmpDir = fs.mkdtempSync(path.join(tmpDirRoot, ".sagelite-doctest-"));
   const begin = Date.now();
   try {
-    for (const [index, file] of options.files.entries()) {
-      const resultPath = path.join(tmpDir, `result-${index}.json`);
-      const statePath = path.join(tmpDir, `state-${index}.json`);
-      const workerOptionsPath = path.join(tmpDir, `worker-${index}.json`);
-      const fileBegin = Date.now();
-      try {
-        try {
-          await runDoctestFileWorker({
-            workerOptionsPath,
-            file,
-            resultPath,
-            statePath,
-            long: options.long,
-            optional: options.optional,
-            optionalFeatures: options.optionalFeatures,
-            blockKeys: options.blockKeys,
-            lines: options.lines,
-            sourceRoot: options.sourceRoot,
-            invocationCwd,
-            resourceRoot: pythonOptions.resourceRoot,
-            timeoutSeconds: options.timeoutSeconds,
-          });
-          appendDoctestFiles(run, readJsonFile(resultPath));
-        } catch (err) {
-          const before = run.files.length;
-          appendDoctestFiles(run, readJsonFile(resultPath));
-          if (run.files.length === before) {
-            const state = readJsonFile(statePath);
-            const failedPath =
-              state && typeof state.current_file === "string" ? state.current_file : file;
-            appendDoctestErrorFile(run, failedPath, err, Date.now() - fileBegin, state);
-          }
+    const results = await runDoctestFileTasks({
+      files: options.files,
+      jobs: Math.min(options.jobs, options.files.length),
+      tmpDir,
+      options,
+      invocationCwd,
+      resourceRoot: pythonOptions.resourceRoot,
+    });
+    for (const result of results) {
+      if (Array.isArray(result.files)) {
+        for (const file of result.files) {
+          run.files.push(file);
         }
-      } finally {
-        for (const filePath of [workerOptionsPath, resultPath, statePath]) {
-          fs.rmSync(filePath, { force: true });
-        }
+      }
+      if (result.errorFile) {
+        run.files.push(result.errorFile);
       }
     }
     run.status = "finished";
@@ -424,6 +422,93 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
   return run.status === "passed" ? 0 : 1;
+}
+
+async function runDoctestFileTasks({
+  files,
+  jobs,
+  tmpDir,
+  options,
+  invocationCwd,
+  resourceRoot,
+}) {
+  const results = new Array(files.length);
+  let nextIndex = 0;
+  async function workerLoop() {
+    while (true) {
+      const index = nextIndex;
+      nextIndex += 1;
+      if (index >= files.length) {
+        return;
+      }
+      results[index] = await runDoctestFileTask({
+        index,
+        file: files[index],
+        tmpDir,
+        options,
+        invocationCwd,
+        resourceRoot,
+      });
+    }
+  }
+  await Promise.all(Array.from({ length: jobs }, () => workerLoop()));
+  return results;
+}
+
+async function runDoctestFileTask({
+  index,
+  file,
+  tmpDir,
+  options,
+  invocationCwd,
+  resourceRoot,
+}) {
+  const resultPath = path.join(tmpDir, `result-${index}.json`);
+  const statePath = path.join(tmpDir, `state-${index}.json`);
+  const workerOptionsPath = path.join(tmpDir, `worker-${index}.json`);
+  const fileBegin = Date.now();
+  try {
+    try {
+      await runDoctestFileWorker({
+        workerOptionsPath,
+        file,
+        resultPath,
+        statePath,
+        long: options.long,
+        optional: options.optional,
+        optionalFeatures: options.optionalFeatures,
+        blockKeys: options.blockKeys,
+        lines: options.lines,
+        sourceRoot: options.sourceRoot,
+        invocationCwd,
+        resourceRoot,
+        timeoutSeconds: options.timeoutSeconds,
+      });
+      const parsed = readJsonFile(resultPath);
+      return { index, files: parsed && Array.isArray(parsed.files) ? parsed.files : [] };
+    } catch (err) {
+      const parsed = readJsonFile(resultPath);
+      if (parsed && Array.isArray(parsed.files) && parsed.files.length > 0) {
+        return { index, files: parsed.files };
+      }
+      const state = readJsonFile(statePath);
+      const failedPath =
+        state && typeof state.current_file === "string" ? state.current_file : file;
+      return {
+        index,
+        errorFile: makeDoctestErrorFile(
+          failedPath,
+          err,
+          Date.now() - fileBegin,
+          state,
+        ),
+      };
+    }
+  } finally {
+    for (const filePath of [workerOptionsPath, resultPath, statePath]) {
+      fs.rmSync(filePath, { force: true });
+    }
+  }
 }
 
 async function runDoctestWorker(args, invocationCwd, pythonOptions) {
@@ -571,10 +656,10 @@ function appendDoctestFiles(run, parsed) {
   }
 }
 
-function appendDoctestErrorFile(run, failedPath, err, durationMs, state = null) {
+function makeDoctestErrorFile(failedPath, err, durationMs, state = null) {
   const rawDetail = String(err && err.stack ? err.stack : err);
   const detail = doctestStateDiagnostic(state, rawDetail);
-  run.files.push({
+  return {
     path: failedPath,
     status: "error",
     total_blocks: 0,
@@ -587,7 +672,7 @@ function appendDoctestErrorFile(run, failedPath, err, durationMs, state = null) 
     failure_class: classifyDoctestHostError(err),
     failure_detail: detail,
     blocks: [],
-  });
+  };
 }
 
 function doctestStateDiagnostic(state, detail) {

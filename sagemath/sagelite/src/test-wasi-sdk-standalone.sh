@@ -1921,6 +1921,65 @@ if [ "$doctest_file_directive_skip_count" != "1" ]; then
   sqlite3 "$doctest_file_directive_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t file-directive doctest smoke did not record file-level skip metadata."
 fi
+doctest_parallel_a_file="$probe_dir/sagelite-doctest-parallel-a.py"
+doctest_parallel_b_file="$probe_dir/sagelite-doctest-parallel-b.py"
+doctest_parallel_db="$probe_dir/sagelite-doctest-parallel.sqlite3"
+doctest_parallel_log="$dist_dir/doctest-parallel.log"
+cat >"$doctest_parallel_a_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: 20 + 22
+    42
+"""
+PY
+cat >"$doctest_parallel_b_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: 6 * 7
+    42
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --jobs 2 \
+      --sqlite "$doctest_parallel_db" \
+      "$doctest_parallel_a_file" "$doctest_parallel_b_file" \
+      >"$doctest_parallel_log" 2>&1
+doctest_parallel_status=$?
+set -e
+if [ "$doctest_parallel_status" -eq 124 ]; then
+  tail -120 "$doctest_parallel_log" >&2
+  record_blocker "sagelite-blocked: sage -t parallel doctest smoke timed out after $node_import_timeout; see $doctest_parallel_log for the first runtime blocker."
+fi
+if [ "$doctest_parallel_status" -ne 0 ]; then
+  tail -120 "$doctest_parallel_log" >&2
+  sqlite3 "$doctest_parallel_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t parallel doctest smoke failed; see $doctest_parallel_log for the first runtime blocker."
+fi
+doctest_parallel_counts="$(sqlite3 "$doctest_parallel_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_parallel_counts" != "passed|2|2|0|0" ]; then
+  cat "$doctest_parallel_log" >&2
+  sqlite3 "$doctest_parallel_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t parallel doctest smoke wrote unexpected SQLite counts: $doctest_parallel_counts"
+fi
+doctest_parallel_file_count="$(sqlite3 "$doctest_parallel_db" "select count(*) from files where status = 'passed' and total_blocks = 1 and passed_blocks = 1;")"
+if [ "$doctest_parallel_file_count" != "2" ]; then
+  cat "$doctest_parallel_log" >&2
+  sqlite3 "$doctest_parallel_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t parallel doctest smoke did not record both file results."
+fi
+doctest_parallel_order="$(sqlite3 "$doctest_parallel_db" "select group_concat(path, '|') from (select path from files order by id);")"
+if [ "$doctest_parallel_order" != "$doctest_parallel_a_file|$doctest_parallel_b_file" ]; then
+  cat "$doctest_parallel_log" >&2
+  sqlite3 "$doctest_parallel_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t parallel doctest smoke did not preserve input file order."
+fi
 doctest_expected_line="$(grep -nF 'sage: 2^5' "$doctest_smoke_file" | head -n 1 | cut -d: -f1)"
 doctest_recorded_line="$(sqlite3 "$doctest_smoke_db" "select start_line from blocks where source like '2^5%' limit 1;")"
 if [ "$doctest_recorded_line" != "$doctest_expected_line" ]; then

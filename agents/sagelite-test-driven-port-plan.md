@@ -34,6 +34,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - skips `# long time` unless `--long` is passed;
   - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
     `--timeout`, and `--sqlite`;
+  - supports `--jobs`/`-j` and `COWASM_SAGELITE_DOCTEST_JOBS` for parallel
+    per-file worker execution while preserving one SQLite run and input-order
+    file rows;
   - supports `--block-key` reruns for a specific persisted SQLite block key;
   - supports `--line` reruns for a specific source line, which gives a direct
     reproduction path for file-level crashes whose state breadcrumbs identify
@@ -18737,6 +18740,28 @@ file-failure cluster queries are empty. Latest-run metadata records CoWasm
 commit `9f7c9f74d24152f28c5e43b2f0d650a300c46c89`, Sagelite source/package
 commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
 version 76, and about 6 seconds of elapsed time.
+
+Parallel corpus runner pass on 2026-07-02:
+
+Sagelite's Node doctest mode now runs file-level worker processes through a
+bounded internal scheduler. `sage -t --jobs N ...` and
+`COWASM_SAGELITE_DOCTEST_JOBS=N` execute up to `N` independent per-file
+workers at a time, then aggregate the result JSON in the original input order
+before writing the single SQLite run. This keeps the existing single-writer
+SQLite contract and preserves deterministic file row ordering while using the
+already-isolated process boundary for parallelism.
+
+The `sagemath/sagelite` corpus target now defaults
+`SAGELITE_DOCTEST_JOBS` to 4 and passes it to the runner as
+`COWASM_SAGELITE_DOCTEST_JOBS`, so scheduled corpus runs can use four workers
+without changing call sites. Focused validation first ran a direct two-file
+`sage -t --jobs 2` smoke under
+`/home/user/cowasm/.tmp/current-run/parallel-smoke/parallel.sqlite3`, then ran
+the make-level corpus target with its default four-job setting against the same
+two absolute-path fixtures. Both runs recorded `2 passed, 0 failed, 0 skipped`
+and preserved file row order. The standalone Sagelite smoke now includes its
+own two-file `--jobs 2` SQLite check so future package validation covers the
+parallel scheduler path. Runner version is now 77.
 
 ## Phase 5: Subprocess Strategy
 
