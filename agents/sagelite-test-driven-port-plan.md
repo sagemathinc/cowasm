@@ -20627,6 +20627,50 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the three skipped blocks under
 `optional:subprocess`.
 
+Focused Jupyter kernel installer corpus-growth pass on 2026-07-02:
+
+```text
+install.py: 34 passed, 0 failed, 6 skipped
+```
+
+This pass promotes `sage/repl/ipython_kernel/install.py` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 941 non-comment entries. Fresh absent-source probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next-goal/` first
+found no clean uncovered candidates in low and mid-low prompt-count batches:
+
+```text
+low-probe.sqlite3: 7 passed, 90 failed, 278 skipped
+midlow-probe.sqlite3: 22 passed, 260 failed, 552 skipped
+```
+
+A targeted utility/interface probe recorded substantial runnable coverage but
+no clean uncovered candidates:
+
+```text
+utility-probe.sqlite3: 288 passed, 657 failed, 1178 skipped
+```
+
+The closest useful near miss was `sage/repl/ipython_kernel/install.py`, with
+34 passing blocks, five existing `threejs` skips, and one missing
+`jupyter_client` failure in `SageKernelSpec.check()`. The WASI source patch now
+marks that Jupyter kernel-discovery check as `# needs jupyter_client`, keeping
+local kernel-spec construction, symlink, JSON, and prerequisite-helper coverage
+runnable in the default node profile without counting Jupyter client discovery
+as browser-profile compatibility.
+
+Focused validation rebuilt and patched a fresh Sagelite source copy through the
+make-level corpus path, using a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next-goal/ipython-install-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3400c513c389b024db0213f3fa447f401d8c28aa`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups five blocks under
+`optional:threejs` and one block under `optional:jupyter_client`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -146,6 +146,12 @@ diff -urN a/src/sage/misc/reset.pyx b/src/sage/misc/reset.pyx
          sage: x = 10; y = 15/3; QQ='red'
          sage: QQ
          'red'
+diff -urN a/src/sage/repl/ipython_kernel/install.py b/src/sage/repl/ipython_kernel/install.py
+--- a/src/sage/repl/ipython_kernel/install.py
++++ b/src/sage/repl/ipython_kernel/install.py
+@@ -253 +253 @@
+-            sage: SageKernelSpec.check()  # random
++            sage: SageKernelSpec.check()  # random  # needs jupyter_client
 diff -urN a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build
