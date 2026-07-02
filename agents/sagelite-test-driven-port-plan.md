@@ -3555,6 +3555,37 @@ were skipped-only; Lie-conformal implementation files still route through the
 stripped graph backend; and combinatorics, crypto, and test helper probes were
 mostly skipped-only or hit known NTL/libcxx and process/display boundaries.
 
+Focused Galois permutation group corpus-growth pass:
+
+```text
+galois_group_perm.py: 5 passed, 0 failed, 26 skipped
+```
+
+That one-file focused validation adds `sage/groups/galois_group_perm.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 911
+non-comment entries. The file adds compact default-profile coverage for
+permutation-backed Galois group construction and display while leaving the
+number-field and GAP-backed examples under their existing optional metadata.
+
+Exploratory group-helper sampling first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/probes/groups-small.sqlite3`.
+The saved `doctest-corpus-candidates.py` helper classified
+`galois_group_perm.py` as the only uncovered clean runnable candidate in that
+batch. `binary_dihedral.py` and `dual_abelian_group_element.py` were
+skipped-only under the default profile, while `pickling_overrides.py` still
+has a real GAP-backed startup/dependent-name failure cluster.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/galois-group/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`e4226bd124b13f50db5eb2e8758fb0c52de6ff46`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 80,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
