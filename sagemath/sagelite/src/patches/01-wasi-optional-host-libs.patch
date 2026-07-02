@@ -729,6 +729,11 @@ diff -urN a/src/sage/rings/function_field/riemann_roch.pyx b/src/sage/rings/func
          sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
          sage: pl = C([2,8,1]).place()
          sage: dS, ds = riemann_roch._divisor_to_inverted_ideals(2*pl)
+diff -urN -U0 a/src/sage/rings/function_field/constructor.py b/src/sage/rings/function_field/constructor.py
+--- a/src/sage/rings/function_field/constructor.py
++++ b/src/sage/rings/function_field/constructor.py
+@@ -161,0 +162 @@
++            sage: # needs sage.libs.pari
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py

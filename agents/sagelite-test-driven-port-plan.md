@@ -19595,6 +19595,43 @@ cluster queries are empty, and `skips-by-reason.sql` groups the skips under
 `optional:sage.matrix.matrix_integer_dense` and
 `optional:sage.matrix.matrix_integer_dense,sage.symbolic`.
 
+Focused function-field constructor corpus-growth pass on 2026-07-02:
+
+```text
+constructor.py: 28 passed, 0 failed, 14 skipped
+```
+
+That one-file strict make-target validation adds
+`sage/rings/function_field/constructor.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 921
+non-comment entries. A fresh medium-prompt pure-math probe first identified
+the file as a near miss with 31 passing blocks and three failures in the
+issue-16530 function-field extension check. Those examples reach unported
+PARI/cypari2 factorization and object-model paths after
+`K.extension(y^2 - x)`, so the WASI source patch now marks the contiguous
+setup block as `# needs sage.libs.pari`.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after rebuilding a fresh patched Sagelite source
+copy, with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-autonext/function-field-constructor-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the newly deferred issue-16530 examples under
+`optional:sage.libs.pari`.
+
+The same scheduled pass rejected three probe batches as non-promotable. The
+Judson/modular/function-field batch recorded zero runnable book-exercise
+blocks, skipped-only modular helpers, modular startup failures behind
+`sage.matrix.matrix_integer_dense`, and the known NTL/libcxx ostream trap in
+`function_field/derivations.py`. The compact mixed pure-math batch found only
+skipped-only helpers plus graph, PolyBoRi, and NTL finite-field backend
+clusters. The medium-prompt batch kept finite-field, design, partition
+refinement, algebra, and book files out of the quiet corpus because they were
+skipped-only or exposed broader GAP, graph, matrix, or algebra backend
+failures; `function_field/constructor.py` was the only narrow promotion
+target.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
