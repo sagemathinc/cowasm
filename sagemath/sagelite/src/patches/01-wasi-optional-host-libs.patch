@@ -10511,3 +10511,536 @@ diff -urN -U0 a/src/sage/libs/arb/arith.pyx b/src/sage/libs/arb/arith.pyx
 +        "FLINT integer polynomial side module is disabled on CoWasm WASI "
 +        "until its initializer no longer terminates the Node.js worker"
 +    )
+diff -urN -U0 a/src/sage/libs/ntl/ntl_ZZ_p.pyx b/src/sage/libs/ntl/ntl_ZZ_p.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_p.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_p.pyx
+@@ -45,6 +45,11 @@
+ ZZ_sage = IntegerRing()
+ 
+ 
++cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++
++
+ def ntl_ZZ_p_random_element(v):
+     """
+     Return a random number modulo p.
+@@ -117,17 +122,20 @@
+                 self.x = (<ntl_ZZ_p>v).x
+             elif isinstance(v, int):
+                 PyLong_to_ZZ(&temp, v)
++                restore_ZZ_p_context(self.c)
+                 self.x = ZZ_to_ZZ_p(temp)
+             elif isinstance(v, Integer):
+                 mpz_to_ZZ(&temp, (<Integer>v).value)
++                restore_ZZ_p_context(self.c)
+                 self.x = ZZ_to_ZZ_p(temp)
+             elif isinstance(v, Rational):
+                 mpz_to_ZZ(&num, (<Integer>v.numerator()).value)
+                 mpz_to_ZZ(&den, (<Integer>v.denominator()).value)
++                restore_ZZ_p_context(self.c)
+                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
+             else:
+                 str_v = str(v)  # can cause modulus to change; Issue #25790
+-                self.c.restore_c()
++                restore_ZZ_p_context(self.c)
+                 ccreadstr(self.x, str_v)
+ 
+     def __cinit__(self, v=None, modulus=None):
+@@ -148,14 +156,14 @@
+             return
+         if isinstance(modulus, ntl_ZZ_pContext_class):
+             self.c = <ntl_ZZ_pContext_class>modulus
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+         else:
+             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+ 
+     cdef ntl_ZZ_p _new(self):
+         cdef ntl_ZZ_p r
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         r = ntl_ZZ_p.__new__(ntl_ZZ_p)
+         r.c = self.c
+         return r
+@@ -197,7 +205,7 @@
+             sage: ntl.ZZ_p(7,192).__repr__()
+             '7'
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return ccrepr(self.x)
+ 
+     def __richcmp__(ntl_ZZ_p self, other, int op):
+@@ -216,7 +224,7 @@
+             sage: ntl.ZZ_p(35r, c) == 2
+             True
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+ 
+         if op != Py_EQ and op != Py_NE:
+             raise TypeError("integers mod p are not ordered")
+@@ -239,7 +247,7 @@
+         """
+         cdef ntl_ZZ_p r = self._new()
+         sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_inv(r.x, self.x)
+         sig_off()
+         return r
+@@ -259,7 +267,7 @@
+         elif self.c is not (<ntl_ZZ_p>other).c:
+             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
+         y = other
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_mul(r.x, self.x, y.x)
+         return r
+ 
+@@ -278,7 +286,7 @@
+         elif self.c is not (<ntl_ZZ_p>other).c:
+             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
+         cdef ntl_ZZ_p r = self._new()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_sub(r.x, self.x, (<ntl_ZZ_p>other).x)
+         return r
+ 
+@@ -298,7 +306,7 @@
+             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
+         y = other
+         sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_add(r.x, self.x, y.x)
+         sig_off()
+         return r
+@@ -313,7 +321,7 @@
+         """
+         cdef ntl_ZZ_p r = ntl_ZZ_p(modulus=self.c)
+         sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_negate(r.x, self.x)
+         sig_off()
+         return r
+@@ -328,7 +336,7 @@
+         """
+         cdef ntl_ZZ_p r = ntl_ZZ_p(modulus=self.c)
+         sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_power(r.x, self.x, e)
+         sig_off()
+         return r
+@@ -354,7 +362,7 @@
+ 
+         AUTHOR: David Harvey (2006-08-05)
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return ZZ_p_to_int(self.x)
+ 
+     def _get_as_int_doctest(self):
+@@ -371,7 +379,7 @@
+             sage: type(i)
+             <... 'int'>
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return self.get_as_int()
+ 
+     cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
+@@ -380,7 +388,7 @@
+ 
+         AUTHOR: David Harvey (2006-08-05)
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         self.x = int_to_ZZ_p(value)
+ 
+     def _set_from_int_doctest(self, value):
+@@ -399,7 +407,7 @@
+             sage: x
+             3
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         self.set_from_int(int(value))
+ 
+     def lift(self):
+@@ -415,7 +423,7 @@
+             <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+         """
+         cdef ntl_ZZ r = ntl_ZZ()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         r.x = ZZ_p_rep(self.x)
+         return r
+ 
+@@ -431,7 +439,7 @@
+             20
+         """
+         cdef ntl_ZZ r = ntl_ZZ()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_p_modulus( &r.x, &self.x )
+         return r
+ 
+@@ -476,7 +484,7 @@
+             sage: type(x._integer_())
+             <class 'sage.rings.integer.Integer'>
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ZZ_c rep = ZZ_p_rep(self.x)
+         cdef Integer ans = Integer.__new__(Integer)
+         ZZ_to_mpz(ans.value, &rep)
+@@ -500,7 +508,7 @@
+         from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+ 
+         cdef ZZ_c rep
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         rep = ZZ_p_rep(self.x)
+         cdef Integer ans = Integer.__new__(Integer)
+         ZZ_to_mpz(ans.value, &rep)
+diff -urN -U0 a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+@@ -38,6 +38,11 @@
+ from sage.libs.gmp.mpz cimport *
+ 
+ 
++cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++
++
+ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
+     cdef ntl_ZZ_p y
+     sig_off()
+@@ -106,13 +111,13 @@
+             for i, x in enumerate(v):
+                 if not isinstance(x, ntl_ZZ_p):
+                     cc = ntl_ZZ_p(x, self.c)
+-                    self.c.restore_c()
++                    restore_ZZ_p_context(self.c)
+                 else:
+                     cc = x
+                 ZZ_pX_SetCoeff(self.x, i, cc.x)
+         elif v is not None:
+             s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus; Issue #25790
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+             ccreadstr(self.x, s)
+ 
+     def __cinit__(self, v=None, modulus=None):
+@@ -133,14 +138,14 @@
+             return
+         if isinstance(modulus, ntl_ZZ_pContext_class):
+             self.c = <ntl_ZZ_pContext_class>modulus
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+         elif modulus is not None:
+             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(ntl_ZZ(modulus))
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+ 
+     cdef ntl_ZZ_pX _new(self):
+         cdef ntl_ZZ_pX r
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         r.c = self.c
+         return r
+@@ -168,7 +173,7 @@
+             sage: x.__repr__()
+             '[1 0 3]'
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return ccrepr(self.x)
+ 
+     def __copy__(self):
+@@ -219,7 +224,7 @@
+             raise IndexError("index (i=%s) must be >= 0" % i)
+         cdef ntl_ZZ_p _a
+         _a = ntl_ZZ_p(a,self.c)
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_SetCoeff(self.x, i, _a.x)
+ 
+     cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value) noexcept:
+@@ -228,7 +233,7 @@
+ 
+         AUTHOR: David Harvey (2006-08-05)
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_SetCoeff_long(self.x, i, value)
+ 
+     def _setitem_from_int_doctest(self, i, value):
+@@ -243,7 +248,7 @@
+             sage: x
+             [2 3 4 0 0 2]
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         self.setitem_from_int(i, value)
+ 
+     def __getitem__(self, long i):
+@@ -260,7 +265,7 @@
+         cdef ntl_ZZ_p r
+         r = ntl_ZZ_p.__new__(ntl_ZZ_p)
+         r.c = self.c
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         if i < 0:
+             r.set_from_int(0)
+         else:
+@@ -275,7 +280,7 @@
+ 
+         AUTHOR: David Harvey (2006-08-05)
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ZZ_p_c r
+         cdef long l = 0
+         sig_on()
+@@ -316,7 +321,7 @@
+             <class 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
+         """
+         # could be sped up.
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef Py_ssize_t i
+         return [self[i] for i from 0 <= i <= self.degree()]
+ 
+@@ -582,7 +587,7 @@
+             sage: f != 0
+             True
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+ 
+         if op != Py_EQ and op != Py_NE:
+             raise TypeError("polynomials are not ordered")
+@@ -611,7 +616,7 @@
+             sage: f.is_zero()
+             False
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return bool(ZZ_pX_IsZero(self.x))
+ 
+     def is_one(self):
+@@ -628,7 +633,7 @@
+             sage: f.is_one()
+             True
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return bool(ZZ_pX_IsOne(self.x))
+ 
+     def is_monic(self):
+@@ -650,7 +655,7 @@
+             sage: f.is_monic()
+             False
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         if ZZ_pX_IsZero(self.x):
+             return False
+         return bool(ZZ_p_IsOne(ZZ_pX_LeadCoeff(self.x)))
+@@ -667,7 +672,7 @@
+             [18 0 0 19]
+         """
+         cdef ntl_ZZ_pX r = self._new()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_negate(r.x, self.x)
+         return r
+ 
+@@ -730,7 +735,7 @@
+         cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
+         ZZ_mul(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
+         cdef ntl_ZZ_pContext_class new_c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(new_c_p)
+-        new_c.restore_c()
++        restore_ZZ_p_context(new_c)
+         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         ans.c = new_c
+         ZZ_pX_left_pshift(ans.x, self.x, n.x, new_c.x)
+@@ -744,7 +749,7 @@
+         cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
+         ZZ_div(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
+         cdef ntl_ZZ_pContext_class new_c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(new_c_p)
+-        new_c.restore_c()
++        restore_ZZ_p_context(new_c)
+         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         ans.c = new_c
+         ZZ_pX_right_pshift(ans.x, self.x, n.x, new_c.x)
+@@ -796,7 +801,7 @@
+             sage: f.xgcd(g)
+             ([1], [13], [4])
+             """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ntl_ZZ_pX s = self._new()
+         cdef ntl_ZZ_pX t = self._new()
+         cdef ntl_ZZ_pX r = self._new()
+@@ -829,7 +834,7 @@
+             sage: f.degree()
+             0
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         return ZZ_pX_deg(self.x)
+ 
+     def leading_coefficient(self):
+@@ -846,7 +851,7 @@
+             sage: f.leading_coefficient()
+             0
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         #return ZZ_pX_LeadCoeff(self.x)
+         cdef long i
+         i = ZZ_pX_deg(self.x)
+@@ -866,7 +871,7 @@
+             sage: f.constant_term()
+             0
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         #return ZZ_pX_ConstTerm(self.x)
+         return self[0]
+ 
+@@ -890,7 +895,7 @@
+             sage: f is g
+             False
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_SetX(self.x)
+         #ZZ_pX_clear(self.x)
+         #ZZ_pX_SetCoeff_long(self.x, 1, 1)
+@@ -940,7 +945,7 @@
+             sage: (a*b).convert_to_modulus(ntl.ZZ_pContext(5^2))
+             [1 9 8 24 6]
+         """
+-        c.restore_c()
++        restore_ZZ_p_context(c)
+         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         ZZ_pX_conv_modulus(ans.x, self.x, c.x)
+         ans.c = c
+@@ -992,7 +997,7 @@
+         """
+         current_randstate().set_seed_ntl(False)
+ 
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ZZ_pX_c** v
+         cdef ntl_ZZ_pX r
+         cdef long* e
+@@ -1038,7 +1043,7 @@
+         """
+         current_randstate().set_seed_ntl(False)
+ 
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ZZ_p_c** v
+         cdef ntl_ZZ_p r
+         cdef long i, n
+@@ -1271,7 +1276,7 @@
+             sage: f.trace_mod(mod)
+             3
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
+         r.c = self.c
+         sig_on()
+@@ -1303,7 +1308,7 @@
+             ValueError: polynomial must be monic.
+         """
+         # This function should be redone to use TraceVec, which requires improving the wrapper for vec_ZZ_p
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         if not self.is_monic():
+             raise ValueError("polynomial must be monic.")
+         sig_on()
+@@ -1325,7 +1330,7 @@
+             sage: f.resultant(g)
+             0
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
+         r.c = self.c
+         sig_on()
+@@ -1352,7 +1357,7 @@
+             sage: f.charpoly_mod(mod)
+             [11 1 8 14 1]
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
+         r.c = self.c
+         sig_on()
+@@ -1375,7 +1380,7 @@
+             sage: f.discriminant()
+             1
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef long m
+ 
+         c = ~self.leading_coefficient()
+@@ -1444,7 +1449,7 @@
+             sage: f
+             []
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_clear(self.x)
+ 
+     def preallocate_space(self, long n):
+@@ -1466,7 +1471,7 @@
+             sage: f
+             [1 2 3 0 0 0 0 0 0 0 5]
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         sig_on()
+         self.x.SetMaxLength(n)
+         #ZZ_pX_preallocate_space(&self.x, n)
+diff -urN -U0 a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
+--- a/src/sage/libs/ntl/ntl_GF2X.pyx
++++ b/src/sage/libs/ntl/ntl_GF2X.pyx
+@@ -134,7 +134,10 @@
+         from sage.rings.finite_rings.element_givaro import FiniteField_givaroElement
+         from sage.rings.finite_rings.element_ntl_gf2e import FiniteField_ntl_gf2eElement
+         from sage.rings.finite_rings.finite_field_base import FiniteField
+-        from sage.rings.polynomial.polynomial_gf2x import Polynomial_GF2X
++        try:
++            from sage.rings.polynomial.polynomial_gf2x import Polynomial_GF2X
++        except ModuleNotFoundError:
++            Polynomial_GF2X = None
+ 
+         cdef long _x
+ 
+@@ -152,7 +155,7 @@
+         if isinstance(x, Integer):
+             #binary repr, reversed, and "["..."]" added
+             x="["+x.binary()[::-1].replace(""," ")+"]"
+-        elif isinstance(x, Polynomial_GF2X):
++        elif Polynomial_GF2X is not None and isinstance(x, Polynomial_GF2X):
+             x = x.list() # this is slow but cimport leads to circular imports
+         elif isinstance(x, FiniteField):
+             if x.characteristic() == 2:

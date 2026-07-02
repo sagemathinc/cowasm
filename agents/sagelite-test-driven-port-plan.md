@@ -22496,6 +22496,53 @@ Validation used `make -C core/dylink test-wasi-sdk-next`, a full serial
 Sagelite standalone rebuild/smoke, and the focused `ntl_GF2EContext.pyx`
 line-45 rerun against the rebuilt Sagelite resources.
 
+Follow-up NTL split-side-module context restore pass on 2026-07-02:
+
+The focused `ntl_GF2EContext.pyx` line-45 frontier moved from worker aborts
+to the expected Python-level mismatched-field diagnostic. The root cause was
+that `ntl_ZZ_pContext.restore_c()` ran in the context side module, while
+`ntl_ZZ_p` and `ntl_ZZ_pX` operations need the NTL `ZZ_p` modulus restored in
+their own side modules. The WASI source patch now reconstructs a local
+`ZZ_pContext_c` from the stored modulus in both `ntl_ZZ_p.pyx` and
+`ntl_ZZ_pX.pyx` before calling NTL `ZZ_p`/`ZZ_pX` APIs.
+
+A second narrow fix avoids importing `polynomial_gf2x` from
+`ntl_GF2X.__init__` unless that type is actually available. This lets
+`ntl_GF2X(GF(2^8, 'a'))` use the finite-field modulus path without tripping
+the currently disabled `sage.matrix.matrix_mod2_dense` dependency.
+
+Validation notes:
+
+```text
+make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
+now applies the patch and completes compile/install/side-module audit, but the
+run stops at the existing free-module Node smoke crash before the
+Electron-resource copy step, so it records `sagelite-blocked` rather than a
+final `sagelite-ok` line. Because that blocker prevents `sage -t` from finding
+`dist/wasi-sdk/electron-resources`, the line-45 expression was validated
+directly against the staged install with the same `PYTHONPATH` style used by
+the standalone Node import smokes:
+
+```text
+ntl.GF2E(2, GF(2^8,'a')) + ntl.GF2E([0,1], ctx)
+```
+
+now prints:
+
+```text
+ValueError
+You cannot perform arithmetic with elements in different fields.
+```
+
+The previously captured SQLite checkpoints remain useful for comparison:
+`.tmp/current-run/ntl-gf2e-final/line45.sqlite3` reached the `ntl_ZZ_pX`
+abort after the first `ntl_ZZ_p` fix, and
+`.tmp/current-run/ntl-gf2e-final2/line45.sqlite3` reached the
+`polynomial_gf2x`/`matrix_mod2_dense` import boundary before the lazy import
+fix.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
