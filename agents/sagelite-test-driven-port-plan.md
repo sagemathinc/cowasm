@@ -18763,6 +18763,42 @@ and preserved file row order. The standalone Sagelite smoke now includes its
 own two-file `--jobs 2` SQLite check so future package validation covers the
 parallel scheduler path. Runner version is now 77.
 
+Follow-up low-count skipped-only audit on 2026-07-02:
+
+No new quiet runnable corpus candidate was found in two compact low-prompt
+probe batches. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+909 non-comment entries after this audit.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-lowcount-probe/probes/`.
+The first batch, `lowcount.sqlite3`, checked absent REPL, coding, crypto,
+database, plotting, misc, and test helpers:
+`sage/repl/prompts.py`, `sage/coding/two_weight_db.py`,
+`sage/crypto/cipher.py`, `sage/misc/sagedoc_conf.py`,
+`sage/databases/cunningham_tables.py`, `sage/databases/odlyzko.py`,
+`sage/plot/step.py`, `sage/misc/map_threaded.py`,
+`sage/databases/sloane.py`, `sage/tests/lazy_imports.py`, and
+`sage/tests/sympy.py`. It recorded `0 passed, 0 failed, 34 skipped`; the
+candidate helper returned no absent clean runnable file. The skips were
+expected browser-profile boundaries such as symbolic support, optional
+database packages, broad `sage.all` lazy-import checks, SymPy, Sloane,
+Cunningham tables, `sage.combinat`, `sage.modules`, and finite-field/GAP
+coding dependencies.
+
+The second batch, `monoids-topology.sqlite3`, checked adjacent monoid,
+topology, category, homology, and documentation helpers:
+`sage/monoids/monoid.py`, `sage/monoids/hecke_monoid.py`,
+`sage/topology/simplicial_complex_catalog.py`,
+`sage/topology/simplicial_set_catalog.py`, `sage/categories/groupoid.py`,
+`sage/tests/finite_poset.py`, `sage/homology/tests.py`, and
+`sage/misc/sphinxify.py`. It recorded `0 passed, 0 failed, 66 skipped`, and
+`doctest-corpus-candidates.py --min-passed 1` again returned no promotion
+candidate. The skip clusters are broad `sage.groups`, `sage.graphs`,
+`sage.modules`, `sage.combinat`, and Sphinx boundaries. Future scheduled
+corpus-growth runs should avoid repeating these exact low-count batches as
+blind promotion candidates unless one of those dependency boundaries changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
