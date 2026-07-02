@@ -20921,6 +20921,48 @@ side module, ZZ_p wrappers hit the NTL/libcxx ostream trap, and matrix
 wrappers remain blocked by missing matrix-mod2 or dense-matrix attribute
 behavior rather than narrow corpus tags.
 
+Focused strict make-level validation for the promoted GF2 wrapper rebuilt and
+patched a fresh Sagelite source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-ntl-gf2-validate/ntl-gf2-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4e1d9a07afa67e35d206a488a62fa036ea0b4695`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+Focused NTL integer-polynomial wrapper corpus-growth pass on 2026-07-02:
+
+```text
+ntl_ZZX.pyx: 223 passed, 0 failed, 0 skipped
+```
+
+This pass promotes `sage/libs/ntl/ntl_ZZX.pyx` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 948
+non-comment entries. A fresh adjacent NTL wrapper probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-ntl-followup/`
+identified `ntl_ZZX.pyx` as the only clean uncovered candidate in the batch;
+`doctest-corpus-candidates.py` reported 223 passed runnable blocks and no
+skips or failures for that file.
+
+The same probe kept nearby wrappers out of the corpus for existing runtime
+boundaries: `ntl_lzz_p.pyx` traps in the NTL/libcxx ostream path while trying
+to report a modular inverse error, and `ntl_GF2X.pyx` plus
+`ntl_GF2EContext.pyx` fail at the Givaro finite-ring side-module RTTI
+dependency `_ZTIPKc`.
+
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-ntl-zzx/ntl-zzx-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4e1d9a07afa67e35d206a488a62fa036ea0b4695`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
