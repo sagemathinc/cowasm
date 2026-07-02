@@ -19185,6 +19185,53 @@ Both targets use the existing `SAGELITE_DOCTEST_DB`,
 scheduled scans a stable make-level entrypoint for tabular dashboard review and
 path-only promotion input while keeping actual corpus edits explicit.
 
+Follow-up coding, utility, and low-count frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. The checked corpus remains at 911
+non-comment entries, and `doctest-corpus-candidates.py --min-passed 1`
+printed no uncovered clean runnable candidates for the fresh probe databases
+under `.tmp/current-run/scheduled-2026-07-02-goal4/`.
+
+The coding/crypto/data-structure probe recorded:
+
+```text
+coding-crypto-data.sqlite3: 0 passed, 0 failed, 799 skipped
+```
+
+The skipped-only files were coding and crypto front-door modules such as
+`abstract_code.py`, `channel.py`, `decoder.py`, `encoder.py`,
+`code_constructions.py`, `classical_cipher.py`, `cryptosystem.py`, and
+`crypto/util.py`; the sampled `data_structures` Cython helpers extracted no
+doctest blocks.
+
+The utility mixed probe recorded:
+
+```text
+utility-mixed.sqlite3: 31 passed, 231 failed, 767 skipped
+```
+
+Its active blockers are broader runtime/startup clusters rather than narrow
+promotion candidates: `lrcalc.py` has many backend failures,
+`module_functors.py` and `cellular_basis.py` hit the existing
+`TypeError: attribute name must be string, not ''` module/category path,
+`games/hexad.py` has dependent missing `M` state after setup failures,
+`algebras/group_algebra.py` has broad algebra startup/backend drift, and
+`rings/homset.py` reaches the known NTL dynamic-link boundary while resolving
+`_ZNK3NTL11ZZ_pContext7restoreEv`.
+
+A final low-count helper probe recorded:
+
+```text
+small-final.sqlite3: 0 passed, 0 failed, 148 skipped
+```
+
+It covered small Cython, coding, modular-symbol, ring-extension, REPL, and
+profiling helpers; all were skipped-only under the default browser-compatible
+profile. Future blind promotion scans should skip these three batches unless
+the goal is to work directly on the NTL dynamic-link boundary, the module
+functor/category runtime cluster, or explicit dependency tagging for the
+front-door coding/crypto modules.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
