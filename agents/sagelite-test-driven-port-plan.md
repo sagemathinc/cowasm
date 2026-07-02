@@ -21329,6 +21329,23 @@ mode against a zero-block candidate row. Validation used
 a synthetic helper database covering both default and `--zero-blocks` output,
 and `--zero-blocks --dedupe-paths` against the fresh goal3 probe databases.
 
+Follow-up file-error frontier tooling pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The candidate helper now has a
+`--file-errors` mode for listing absent files whose latest run failed at file
+scope before producing a clean runnable promotion row. This complements the
+existing clean-candidate, near-miss, skipped-only, and zero-block reports by
+making runtime/import/timeout frontiers auditable without hand-running
+`file-coverage-shape.sql` or losing source-root filtering.
+
+The standalone smoke fixture now includes a synthetic existing
+`error_candidate.py` row with `status = 'error'` and verifies that
+`doctest-corpus-candidates.py --file-errors` reports it with block counts,
+duration, status, and `failure_class`. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a targeted
+synthetic SQLite check for the new mode.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

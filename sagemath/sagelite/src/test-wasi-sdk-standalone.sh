@@ -2700,6 +2700,7 @@ doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
@@ -2748,7 +2749,19 @@ insert into files (
   0,
   0,
   5
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py',
+  'error',
+  0,
+  0,
+  0,
+  0,
+  15
 );
+update files
+set failure_class = 'ModuleNotFoundError'
+where path = '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py';
 SQL
 doctest_candidate_helper_output="$("$src_dir/doctest-corpus-candidates.py" \
   --corpus "$doctest_candidate_helper_corpus" \
@@ -2775,6 +2788,15 @@ if [ "$doctest_candidate_helper_zero_blocks" != "src/sage/example/zero_candidate
   printf '%s\n' "$doctest_candidate_helper_zero_blocks" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --zero-blocks did not report empty clean files."
+fi
+doctest_candidate_helper_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors" != "src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --file-errors did not report file-scope failures."
 fi
 doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
 touch "$doctest_candidate_helper_empty_db"
