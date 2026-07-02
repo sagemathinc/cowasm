@@ -18707,6 +18707,37 @@ Useful next work is a targeted fix for one recorded cluster, especially the
 timeout, or one of the startup-namespace clusters from the scheme/numerical
 probes.
 
+Focused C-callable coercion-map fix and corpus-growth pass on 2026-07-02:
+
+The `sage/structure/coerce_maps.pyx` `CCallableConvertMap` doctest crash was
+caused by taking a `void*` pointer to a `cpdef` test helper and calling it
+through the stricter `Element (*)(Parent, object)` C function-pointer type.
+Native builds tolerated that cast, but the WASM function table trapped at the
+indirect call with a function-signature mismatch. The WASI source patch now
+splits the helper into a typed `cdef` implementation used by
+`CCallableConvertMap` and a Python-visible wrapper used by doctests.
+
+Focused validation rebuilt a fresh patched Sagelite source copy with
+`make -C sagemath/sagelite test-wasi-sdk-standalone`, which passed through
+Meson configure/compile/install, Node import, Electron resources, smoke,
+relocated smoke, and follow-up recording. The exact prior crash reproduction,
+`sage -t --line 442 .../src/sage/structure/coerce_maps.pyx`, now records
+`1 passed, 0 failed, 0 skipped`. A full direct file run records
+`80 passed, 0 failed, 37 skipped`, with skips grouped under symbolic,
+finite-field, and deferred-not-implemented metadata.
+
+The clean file is now promoted into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated browser-profile corpus to 909 non-comment entries. Make-level strict
+validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-ccallable/make/coerce-maps-make.sqlite3`;
+it also recorded `80 passed, 0 failed, 37 skipped`. The saved block- and
+file-failure cluster queries are empty. Latest-run metadata records CoWasm
+commit `9f7c9f74d24152f28c5e43b2f0d650a300c46c89`, Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
+version 76, and about 6 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

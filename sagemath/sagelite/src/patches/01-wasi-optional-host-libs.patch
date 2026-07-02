@@ -9555,3 +9555,19 @@ diff -urN -U0 a/src/sage/matrix/matrix_double_sparse.pyx b/src/sage/matrix/matri
 @@ -142 +142 @@
 -            sage: (A - L*L.H).norm(1) < 1e-10
 +            sage: (A - L*L.H).norm(1) < 1e-10                                         # needs scipy
+diff -urN -U0 a/src/sage/structure/coerce_maps.pyx b/src/sage/structure/coerce_maps.pyx
+--- a/src/sage/structure/coerce_maps.pyx
++++ b/src/sage/structure/coerce_maps.pyx
+@@ -481 +481,5 @@
+-cpdef Element _ccall_test_function(codomain, x):
++cdef Element _ccall_test_function_impl(Parent codomain, object x):
++    return codomain(x*x*x-x)
++
++
++def _ccall_test_function(codomain, x):
+@@ -496 +500 @@
+-    return codomain(x*x*x-x)
++    return _ccall_test_function_impl(codomain, x)
+@@ -514 +518 @@
+-    return CCallableConvertMap(domain, domain, <void*>&_ccall_test_function, name)
++    return CCallableConvertMap(domain, domain, <void*>&_ccall_test_function_impl, name)
