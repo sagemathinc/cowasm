@@ -21180,6 +21180,36 @@ probe databases, and `--skipped-only` against the historical helper batch,
 which reports the skipped-only absent files without treating them as promotion
 candidates.
 
+Follow-up dated scratch-probe audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. The current dated scratch probes in
+`/home/user/cowasm/.tmp/current-run/` were scanned with the clean-candidate,
+near-miss, skipped-only, and coverage-shape tooling. The clean-candidate helper
+reported only its header row, meaning every clean runnable row in these probes
+is already covered by `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`.
+The compact near-miss scan with `--near-misses --max-failed 5 --min-passed 1`
+also reported only its header row, so there is no narrow uncovered failing file
+with passing default-profile blocks in this dated batch.
+
+The file-coverage summaries classify the active probes as follows:
+`scheduled-2026-07-02-small-game-numerical.sqlite3`,
+`scheduled-jul2-plot-stats-probe.sqlite3`, and
+`scheduled-jul2-small-probe.sqlite3` still contain clean runnable rows, but
+those rows are duplicate coverage already present in the curated corpus. The
+remaining dated batches are skipped-only, zero-block, or broad-failure probes:
+CPython/misc, double-vector/matrix, function-field/ring, REPL helpers, and
+low-prompt algebra/combinatorics mostly add no runnable default-profile
+assertions; the medium pure probe has three broad failing files dominated by
+symbolic, geometry, and p-adic/runtime clusters rather than corpus-growth tags.
+The skipped-only helper mode reports 34 absent skipped-only files across the
+dated scratch databases, which should remain outside the quiet corpus unless a
+future profile enables those optional boundaries.
+
+Validation used `file-coverage-summary.sql` against the dated scratch
+databases plus `doctest-corpus-candidates.py` in default, `--near-misses`, and
+`--skipped-only` modes with the current corpus and patched
+`sagemath/sagelite/build/wasi-sdk` source root.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
