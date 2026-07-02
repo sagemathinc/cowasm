@@ -20107,6 +20107,32 @@ default-profile result:
 galois_group_perm.py: 5 passed, 0 failed, 26 skipped
 ```
 
+Focused external-software doctest infrastructure pass on 2026-07-02:
+
+```text
+external.py: 35 passed, 0 failed, 30 skipped
+```
+
+This pass promotes `sage/doctest/external.py` to the curated corpus, bringing
+direct browser-profile coverage to Sage's external-software feature registry.
+The file previously failed every runnable import with
+`OSError: [Errno 28] Invalid argument` because `AvailableSoftware` allocated
+`multiprocessing.Array` shared state at module import time. The WASI source
+patch now keeps native Sage's multiprocessing-backed shared arrays on normal
+platforms but uses simple in-process lists for feature bookkeeping under
+`sys.platform == "wasi"`, where the doctest runner is already single-process
+inside each isolated worker.
+
+Focused strict validation rebuilt and patched a fresh Sagelite source copy and
+ran `make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-external-make.sqlite3`. The latest-run
+summary records CoWasm commit `3f6fd309883df21de13ed9f6459e2cf2b4a28f6a`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 82, and a 100% non-skipped pass rate. The saved
+block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

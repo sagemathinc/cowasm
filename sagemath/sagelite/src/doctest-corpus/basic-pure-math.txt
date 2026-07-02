@@ -792,6 +792,7 @@ src/sage/matrix/strassen.pyx
 src/sage/matrix/symplectic_basis.py
 src/sage/matrix/tests.py
 src/sage/doctest/check_tolerance.py
+src/sage/doctest/external.py
 src/sage/doctest/fixtures.py
 src/sage/doctest/marked_output.py
 src/sage/doctest/rif_tol.py
