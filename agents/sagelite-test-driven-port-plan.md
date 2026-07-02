@@ -22030,6 +22030,43 @@ QQbar, PBoRi, and ring-extension helpers were skipped-only. The compact
 functions probe confirmed `functions/prime_pi.pyx` and `functions/min_max.py`
 are skipped-only under the default browser-compatible profile.
 
+Follow-up doctest and REPL frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was promoted. A wide rescan of recent non-empty
+SQLite dashboards under `.tmp/current-run` with
+`doctest-corpus-candidates.py` printed no uncovered clean runnable files
+against the current 964-entry `basic-pure-math.txt` corpus.
+
+Fresh focused probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/` confirmed
+that the remaining adjacent doctest-controller and REPL-support files should
+not be repeated as simple corpus-growth candidates without a source, runtime,
+or profile change.
+
+The doctest infrastructure probe recorded:
+
+```text
+sage -t failed: 308 passed, 740 failed, 86 skipped
+```
+
+`control.py`, `reporting.py`, `sources.py`, and `forker.py` all remain
+failure-heavy. The dominant failure classes are `NameError` and
+`ModuleNotFoundError`, reflecting Sage's controller/worker startup assumptions
+rather than a narrow optional-backend boundary. The probe database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/doctest-infra-probe.sqlite3`.
+
+The REPL support probe recorded:
+
+```text
+sage -t failed: 21 passed, 98 failed, 95 skipped
+```
+
+`backend_ipython.py` and `display/formatter.py` are still dominated by
+IPython/startup-name failures; `image.py` and `user_globals.py` are skipped-only
+under the default browser-compatible profile, and `output_catalog.py` extracts
+no doctest blocks. The probe database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/repl-support-probe.sqlite3`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
