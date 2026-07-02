@@ -21626,6 +21626,37 @@ skip clusters are eleven `optional:sage.groups` rows, four
 `doctest-corpus-candidates.py` prints no promotion candidate for that database
 after the corpus entry is listed.
 
+Follow-up Lie conformal algebra factory corpus-growth pass on 2026-07-02:
+
+This pass promoted
+`src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py` into the
+curated `basic-pure-math.txt` corpus, bringing the corpus to 960 non-comment
+entries. The file was a compact near miss from the algebra frontier dashboard:
+its pure Virasoro and rational betagamma factory examples already worked, while
+the remaining failures were the same browser-profile boundaries used by the
+neighboring Lie conformal algebra modules.
+
+The WASI patch now marks the affine `sl_2` constructor paragraph as
+`# needs sage.graphs`, because it imports the graph-backed classical Lie
+algebra stack, and marks the `QQbar` betagamma paragraph as
+`# needs sage.rings.number_field`, matching the existing `QQbar`/`AA` tags in
+the Lie conformal algebra corpus.
+
+Focused validation first ran the patched file directly and then used the
+strict make target with a one-file scratch corpus, rebuilding a fresh patched
+Sagelite source tree from the checked-in patch. The make validation recorded:
+
+```text
+sage -t passed: 20 passed, 0 failed, 9 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-02-lie-conformal/make.sqlite3`. Its skip
+clusters are five `optional:sage.graphs` rows and four
+`optional:sage.rings.number_field` rows, and
+`doctest-corpus-candidates.py` prints no promotion candidate for that database
+after the corpus entry is listed.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

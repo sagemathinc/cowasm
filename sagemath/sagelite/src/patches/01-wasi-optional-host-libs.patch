@@ -6384,6 +6384,36 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py
+@@ -137 +137 @@
+-    sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h', 'f'))
++    sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h', 'f'))  # needs sage.graphs
+@@ -138 +138 @@
+-    sage: R.gens()
++    sage: R.gens()                                                              # needs sage.graphs
+@@ -140 +140 @@
+-    sage: R.inject_variables()
++    sage: R.inject_variables()                                                  # needs sage.graphs
+@@ -142 +142 @@
+-    sage: e.bracket(f.T())
++    sage: e.bracket(f.T())                                                      # needs sage.graphs
+@@ -144 +144 @@
+-    sage: e.T(3)
++    sage: e.T(3)                                                                # needs sage.graphs
+@@ -273 +273 @@
+-        sage: V = LieConformalAlgebra(QQbar, betagamma_dict, names=('a','b'), weights=(1,0), central_elements=('K',))
++        sage: V = LieConformalAlgebra(QQbar, betagamma_dict, names=('a','b'), weights=(1,0), central_elements=('K',))  # needs sage.rings.number_field
+@@ -274 +274 @@
+-        sage: V.category()
++        sage: V.category()                                                      # needs sage.rings.number_field
+@@ -276 +276 @@
+-        sage: V.inject_variables()
++        sage: V.inject_variables()                                              # needs sage.rings.number_field
+@@ -278 +278 @@
+-        sage: a.bracket(b)
++        sage: a.bracket(b)                                                      # needs sage.rings.number_field
 diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
 --- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
 +++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
