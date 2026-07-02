@@ -19370,6 +19370,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the newly deferred
 examples under `optional:sage.symbolic`.
 
+Focused permutation-refinement corpus-growth pass on 2026-07-02:
+
+```text
+refinement_matrices.pyx: 24 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/perm_gps/partn_ref/refinement_matrices.pyx` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 916
+non-comment entries. A fresh mixed absent-file probe first identified it as
+the only uncovered clean runnable candidate in the batch, with its sole skip
+coming from the upstream `long time` random-test example.
+
+The same probe kept several nearby helper files out of the quiet corpus:
+`sage/rings/polynomial/hilbert.pyx` is blocked by the disabled FLINT integer
+polynomial side module, unavailable Singular/plural-backed setup, and
+dependent missing-name failures; `sage/groups/matrix_gps/pickling_overrides.py`
+is blocked by the unavailable GAP/libgap matrix-group stack; and adjacent
+category, rigged-configuration, vector, symmetric-function, finite-ring,
+function-field, abelian-group, and reset helpers were skipped-only under the
+default browser-compatible profile.
+
+Focused strict validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-refinement-matrices/refinement-matrices.sqlite3`.
+The latest-run summary records CoWasm commit
+`a6c555787909b0cb25f75721a403140518e9f193`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 81,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the skipped random test
+under `long time`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
