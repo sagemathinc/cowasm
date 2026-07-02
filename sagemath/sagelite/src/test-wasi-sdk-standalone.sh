@@ -1888,6 +1888,8 @@ EXAMPLES::
     sage: 1 / 0
     skipped by the file-level doctest directive
 """
+
+raise RuntimeError("file-level skipped doctests should not load module globals")
 PY
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \

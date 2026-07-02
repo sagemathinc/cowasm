@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 75;
+const doctestRunnerVersion = 76;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1827,9 +1827,9 @@ def __cowasm_run_file(filename):
         with open(filename, "r", encoding="utf-8") as f:
             original = f.read()
         file_directive_source = __cowasm_file_directive_source(original)
-        __cowasm_note_state(filename, "load_namespace", source=None, expected=None)
         parser = doctest.DocTestParser()
-        namespace = __cowasm_namespace(filename)
+        namespace = None
+        pending_namespace = {}
         __cowasm_note_state(filename, "initialize_runner", source=None, expected=None)
         checker = __CowasmOutputChecker()
         runner = __CowasmRecordingRunner(
@@ -1845,7 +1845,13 @@ def __cowasm_run_file(filename):
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
             converted, standalone_directives, inline_directives, inline_sources = __cowasm_convert_prompts(docstring)
-            test = parser.get_doctest(converted, namespace, name, filename, line_offset)
+            test = parser.get_doctest(
+                converted,
+                namespace if namespace is not None else pending_namespace,
+                name,
+                filename,
+                line_offset,
+            )
             if not test.examples:
                 continue
             for example in test.examples:
@@ -2039,6 +2045,11 @@ def __cowasm_run_file(filename):
                         example.options[doctest.SKIP] = True
                 previous_physical_end_line = physical_end_line
             __cowasm_note_state(filename, "run_doctest", name, line_offset, None, None)
+            if any(not example.options.get(doctest.SKIP, False) for example in test.examples):
+                if namespace is None:
+                    __cowasm_note_state(filename, "load_namespace", source=None, expected=None)
+                    namespace = __cowasm_namespace(filename)
+                test.globs = namespace
             before = time.time()
             old_showwarning = warnings.showwarning
             warnings.showwarning = __cowasm_doctest_showwarning

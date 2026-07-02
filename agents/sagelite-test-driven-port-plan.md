@@ -18536,6 +18536,28 @@ number-field boundaries change. Smaller coherent probes in a new namespace, or
 a direct fix for one of those named clusters, are more likely to move the
 dashboard forward.
 
+Skipped-only namespace-load fix on 2026-07-02:
+
+A compact helper probe first recorded `sage/coding/two_weight_db.py` as a
+false file-level NTL/libcxx `wasm_trap` during the doctest runner's tested
+module namespace load, even though the file-level
+`# sage.doctest: needs sage.libs.gap sage.modules sage.rings.finite_rings`
+directive made both extracted blocks skipped in the browser-compatible
+profile. The runner now parses and classifies doctest examples before loading
+tested module globals, then loads those globals only when at least one example
+actually needs execution. This preserves skipped-block metadata while avoiding
+startup side effects for skipped-only files.
+
+Focused validation reran `two_weight_db.py` with runner version 76 and recorded
+`0 passed, 0 failed, 2 skipped`; `skips-by-reason.sql` groups both blocks under
+`optional:sage.libs.gap,sage.modules,sage.rings.finite_rings`. A synthetic
+file-level directive smoke with a top-level `RuntimeError` also passed as
+skipped-only, proving skipped-only files are not imported for module globals.
+The original compact helper batch rerun changed from
+`0 passed, 1 failed, 51 skipped` to `0 passed, 0 failed, 53 skipped`, and
+`make -C sagemath/sagelite test-wasi-sdk-standalone` passed with the expanded
+standalone file-directive smoke.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
