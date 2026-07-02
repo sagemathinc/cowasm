@@ -20671,6 +20671,34 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups five blocks under
 `optional:threejs` and one block under `optional:jupyter_client`.
 
+Follow-up low-prompt absent-source frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Two fresh absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal3/` found no
+uncovered clean runnable source rows after subtracting the current 941-entry
+curated corpus:
+
+```text
+low-prompt-batch.sqlite3: 6 passed, 64 failed, 168 skipped
+mid-prompt-batch.sqlite3: 20 passed, 246 failed, 564 skipped
+```
+
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--min-passed 1` printed no candidate for either database, and a wider
+`--ignore-invalid --paths-only` scan over existing `.tmp/current-run`
+SQLite probes likewise found no real uncovered source candidate in the current
+patched build tree.
+
+The low-prompt batch grouped as 37 skipped-only files, eight zero-block files,
+14 files needing triage, and one file-level FLINT `qsieve` memory trap. The
+mid-prompt batch grouped as 48 skipped-only files, five zero-block files,
+22 files needing triage, and five file-level errors. Active failure clusters
+remain in the already-known backend/frontier areas: GAP/libgap imports,
+PolyBoRi, Singular-backed polynomial ideals, NTL/libcxx finite-field setup,
+FLINT qsieve, elliptic-curve database data, hyperelliptic and cyclic-cover
+constructors, graph algorithms, and pbori/half-integral modular-form startup
+namespaces.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
