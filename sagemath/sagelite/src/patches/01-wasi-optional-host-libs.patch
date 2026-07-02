@@ -9948,3 +9948,12 @@ diff -urN -U0 a/src/sage/interfaces/gap_workspace.py b/src/sage/interfaces/gap_w
 +        sage: name1 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]  # needs subprocess
 +        sage: name2 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]  # needs subprocess
 +        sage: assert name1 == name2                                                    # needs subprocess
+diff -urN -U0 a/src/sage/rings/polynomial/msolve.py b/src/sage/rings/polynomial/msolve.py
+--- a/src/sage/rings/polynomial/msolve.py
++++ b/src/sage/rings/polynomial/msolve.py
+@@ -144 +144 @@
+-        sage: I = sage.rings.ideal.Katsura(R,3)
++        sage: I = sage.rings.ideal.Katsura(R,3)  # optional - msolve
+@@ -253 +253 @@
+-        sage: I.variety(ComplexField(100))
++        sage: I.variety(ComplexField(100))  # needs sage.rings.polynomial.plural

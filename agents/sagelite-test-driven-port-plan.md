@@ -20727,6 +20727,39 @@ Focused validation confirmed the helper still reports the synthetic real
 candidate fixture, rejects `--quiet-invalid` without `--ignore-invalid`, and
 prints nothing for the current wide scan when there is no uncovered candidate.
 
+Focused msolve polynomial-interface corpus-growth pass on 2026-07-02:
+
+```text
+msolve.py: 27 passed, 0 failed, 26 skipped
+```
+
+This pass promotes `sage/rings/polynomial/msolve.py` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 942
+non-comment entries. Fresh low-risk absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan/` first
+found only skipped-only files plus one failing `psage.py` interface stub, and
+a small book/category probe was also skipped-only in the browser profile. A
+near-miss scan over existing scratch databases identified `msolve.py` as the
+highest-value uncovered row with runnable coverage.
+
+The WASI source patch now marks the untagged `Katsura` setup line as
+`# optional - msolve`, matching the dependent msolve examples, and marks the
+untagged complex-variety example as
+`# needs sage.rings.polynomial.plural`, matching the stripped polynomial
+backend dependency that raises `ModuleNotFoundError` in the browser profile.
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan/msolve-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`0b283a9a21dae61429bf907736515f68961f840c`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups 25 blocks under
+`optional:msolve` and one block under
+`optional:sage.rings.polynomial.plural`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
