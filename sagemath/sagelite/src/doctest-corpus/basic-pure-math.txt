@@ -205,6 +205,7 @@ src/sage/geometry/polyhedron/cdd_file_format.py
 src/sage/geometry/polyhedron/lattice_euclidean_group_element.py
 src/sage/geometry/polyhedron/misc.py
 src/sage/graphs/dot2tex_utils.py
+src/sage/graphs/graph_decompositions/fast_digraph.pyx
 src/sage/groups/abelian_gps/abelian_group.py
 src/sage/groups/abelian_gps/abelian_group_element.py
 src/sage/groups/abelian_gps/abelian_group_morphism.py

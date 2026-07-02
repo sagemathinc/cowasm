@@ -19404,6 +19404,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the skipped random test
 under `long time`.
 
+Focused graph-decomposition helper corpus-growth pass on 2026-07-02:
+
+```text
+fast_digraph.pyx: 6 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/graphs/graph_decompositions/fast_digraph.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 917
+non-comment entries. A fresh small absent-file probe first identified it as
+the only clean promotion candidate in a mixed utility, graph, matrix,
+function-field, and category batch. The six skipped blocks are already
+classified by upstream metadata: five examples require `sage.misc.cython`,
+and the remaining popcount helper is marked `# not tested`.
+
+The same probe kept adjacent graph and algebra files out of the quiet corpus:
+`lovasz_theta.py`, `graph_generators_pyx.pyx`, `graph_editor.py`,
+`print_graphs.py`, `bandwidth.pyx`, and `partial_cube.py` still have active
+default-profile failures or optional frontend/dependency barriers;
+`rings/polynomial/ideal.py` timed out in Singular/Groebner setup; and compact
+matrix, numpy-vector, symbolic-data, Cython-metaclass, and root-system helpers
+were skipped-only under their existing optional metadata.
+
+Focused strict validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/fast-digraph-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4bf3a3462a989e1d4273466a9f6a8527051b08e4`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 81,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the skipped examples under
+`optional:sage.misc.cython` and `deferred:not tested`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
