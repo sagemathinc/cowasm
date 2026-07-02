@@ -9790,3 +9790,18 @@ diff -urN -U0 a/src/sage/algebras/free_algebra.py b/src/sage/algebras/free_algeb
 +            sage: # needs sage.rings.polynomial.plural
 @@ -939,0 +955 @@
 +            sage: # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/graphs/print_graphs.py b/src/sage/graphs/print_graphs.py
+--- a/src/sage/graphs/print_graphs.py
++++ b/src/sage/graphs/print_graphs.py
+@@ -104 +104 @@
+-        sage: P = graphs.PetersenGraph()
++        sage: P = graphs.PetersenGraph()                                             # needs sage.graphs
+@@ -105 +105 @@
+-        sage: print(print_graph_ps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))
++        sage: print(print_graph_ps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))  # needs sage.graphs
+@@ -157 +157 @@
+-        sage: P = graphs.PetersenGraph()
++        sage: P = graphs.PetersenGraph()                                             # needs sage.graphs
+@@ -158 +158 @@
+-        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))
++        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))  # needs sage.graphs
