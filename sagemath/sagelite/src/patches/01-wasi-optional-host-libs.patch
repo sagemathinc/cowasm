@@ -9839,6 +9839,24 @@ diff -urN -U0 a/src/sage/graphs/print_graphs.py b/src/sage/graphs/print_graphs.p
 @@ -158 +158 @@
 -        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))
 +        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))  # needs sage.graphs
+diff -urN -U0 a/src/sage/groups/matrix_gps/linear_gap.py b/src/sage/groups/matrix_gps/linear_gap.py
+--- a/src/sage/groups/matrix_gps/linear_gap.py
++++ b/src/sage/groups/matrix_gps/linear_gap.py
+@@ -18 +18 @@
+-        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
++        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap  # needs sage.libs.gap
+@@ -20 +20 @@
+-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
++        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)                         # needs sage.libs.gap
+diff -urN -U0 a/src/sage/groups/matrix_gps/named_group_gap.py b/src/sage/groups/matrix_gps/named_group_gap.py
+--- a/src/sage/groups/matrix_gps/named_group_gap.py
++++ b/src/sage/groups/matrix_gps/named_group_gap.py
+@@ -47 +47 @@
+-            sage: from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap
++            sage: from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap  # needs sage.libs.gap
+@@ -48 +48 @@
+-            sage: isinstance(G, NamedMatrixGroup_gap)
++            sage: isinstance(G, NamedMatrixGroup_gap)                                 # needs sage.libs.gap
 diff -urN -U0 a/src/sage/tensor/modules/free_module_automorphism.py b/src/sage/tensor/modules/free_module_automorphism.py
 --- a/src/sage/tensor/modules/free_module_automorphism.py
 +++ b/src/sage/tensor/modules/free_module_automorphism.py

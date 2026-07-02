@@ -20231,6 +20231,36 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups all fourteen skipped blocks
 under `optional:sage.libs.gap`.
 
+Focused matrix-GAP smoke corpus-growth pass on 2026-07-02:
+
+```text
+linear_gap.py: 1 passed, 0 failed, 2 skipped
+named_group_gap.py: 1 passed, 0 failed, 2 skipped
+```
+
+This pass promotes `sage/groups/matrix_gps/linear_gap.py` and
+`sage/groups/matrix_gps/named_group_gap.py` into the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 931 non-comment
+entries. A fresh small-file probe had already shown that the runnable
+`GL(...)` constructor prompts pass in the default node profile, while each
+file's remaining failures were GAP-specific class imports and `isinstance`
+checks. The WASI source patch now classifies those four prompts as
+`# needs sage.libs.gap`, preserving the constructor smoke coverage while
+keeping the stripped libgap boundary explicit.
+
+Focused validation rebuilt and patched a fresh Sagelite source copy through
+the make-level corpus dependency path, then ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-plan/matrix-gap-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`f88abf81709403cc8577323177292122b5826c30`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The focused database records no block-level
+failures and no file-level errors; all four skipped blocks are grouped under
+`optional:sage.libs.gap`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
