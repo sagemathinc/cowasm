@@ -21455,6 +21455,32 @@ integration doctest coming from symbolic startup names (`var`, `x`) and
 `numerical_integral`, so it should not be treated as a narrow browser-profile
 tagging candidate.
 
+Follow-up modular cusp corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/modular/cusps.py` into the curated
+`basic-pure-math.txt` corpus. The file was a stable near miss in the modular
+frontier dashboards and still reproduced as `124 passed, 6 failed, 19 skipped`
+against the current runtime before tagging. The remaining failures were not
+new core arithmetic regressions: two PARI object-model examples require a
+broader cypari2/PARI surface, three `Gamma0` examples require the modular
+arithgroup layer that is not part of the browser-profile startup namespace,
+and one tuple/matrix display example differs in Sagelite's WASI formatting.
+
+The WASI patch now marks those examples as explicit `sage.libs.pari`,
+`sage.modular.arithgroup`, or known-bug skips. A focused rerun records:
+
+```text
+sage -t passed: 123 passed, 0 failed, 26 skipped
+```
+
+Validation also ran the make corpus target with a one-file scratch corpus,
+which rebuilt the patched Sagelite source tree and reproduced the same
+`cusps.py` result in
+`.tmp/current-run/scheduled-2026-07-02-goal5/cusps-make.sqlite3`. The fresh
+skip clusters are the intended PARI, modular arithgroup, and known-bug
+buckets, and `doctest-corpus-candidates.py` prints no promotion candidate for
+the new database after `cusps.py` is listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

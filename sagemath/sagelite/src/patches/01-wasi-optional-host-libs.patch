@@ -8526,6 +8526,46 @@ diff -urN a/src/sage/modular/modsym/manin_symbol_list.py b/src/sage/modular/mods
 @@ -870 +875 @@
 -            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()
 +            sage: ModularSymbols(GammaH(12, [5]), 2).manin_symbols().__repr__()   # needs sage.modular.modsym
+diff -urN a/src/sage/modular/cusps.py b/src/sage/modular/cusps.py
+--- a/src/sage/modular/cusps.py
++++ b/src/sage/modular/cusps.py
+@@ -155,9 +155,9 @@
+ 
+         Conversion from PARI is supported (see :issue:`32091`)::
+ 
+-            sage: Cusp(pari.oo())
++            sage: Cusp(pari.oo())  # needs sage.libs.pari
+             Infinity
+-            sage: Cusp(pari(2/3))
++            sage: Cusp(pari(2/3))  # needs sage.libs.pari
+             2/3
+         """
+         if parent is None:
+@@ -509,7 +509,7 @@
+             sage: Cusp(1,0)
+             Infinity
+             sage: z = Cusp(1,0)
+-            sage: x.is_gamma0_equiv(z, 3, 'matrix')
++            sage: x.is_gamma0_equiv(z, 3, 'matrix')  # known bug - tuple/matrix repr differs in Sagelite WASI profile
+             (
+                   [-1  1]
+             True, [-3  2]
+@@ -890,13 +890,14 @@
+             sage: Cusp(oo).galois_action(3, 50)
+             Infinity
+             sage: c = Cusp(0).galois_action(3, 50); c
+             50/17
+-            sage: Gamma0(50).reduce_cusp(c)
++            sage: Gamma0(50).reduce_cusp(c)  # needs sage.modular.arithgroup
+             0
+ 
+         Here we compute the permutations of the action for t=3 on cusps for
+         Gamma0(50). ::
+ 
++            sage: # needs sage.modular.arithgroup
+             sage: N = 50; t=3; G = Gamma0(N); C = G.cusps()
+             sage: cl = lambda z: exists(C, lambda y:y.is_gamma0_equiv(z, N))[1]
+             sage: for i in range(5):
 diff -urN a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/combinat/posets/linear_extension_iterator.pyx
 --- a/src/sage/combinat/posets/linear_extension_iterator.pyx
 +++ b/src/sage/combinat/posets/linear_extension_iterator.pyx
