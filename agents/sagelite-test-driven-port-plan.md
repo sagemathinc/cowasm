@@ -3586,6 +3586,38 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh focused probes wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal/`.
+
+The group-helper probe found clean runnable coverage only in files already
+present in the curated corpus:
+`sage/groups/group_exp.py`, `sage/groups/misc_gps/imaginary_groups.py`,
+`sage/groups/abelian_gps/values.py`,
+`sage/groups/abelian_gps/element_base.py`,
+`sage/groups/additive_abelian/qmodnz.py`, and
+`sage/groups/additive_abelian/qmodnz_element.py`. The uncovered group files in
+that batch still need broader work: `generic.py`, `group.pyx`, and
+`misc_gps/argument_groups.py` failed on symbolic, elliptic-curve,
+presentation/free-group, and argument-group display clusters, while
+`misc_gps/misc_groups.py` exposed no doctest blocks.
+
+The compact arithmetic/ring helper probe found no promotion candidate.
+`factorint_pari.pyx`, `factorint_flint.pyx`, `qqbar_decorators.py`, and
+`finite_rings/galois_group.py` were skipped-only in the default profile.
+`libs/arb/arith.pyx`, `bernoulli_mod_p.pyx`, and the sampled NTL context files
+hit ARB/NTL/finite-ring backend or dynamic-link clusters instead of narrow
+tagging work.
+
+Additional focused probes were also not promotion sources. The sampled
+category files were skipped-only; the elliptic-curve helper slice exposed
+elliptic-curve construction/backend failures; the small compatibility-test
+batch was skipped-only; and the coding utility batch was skipped-only. Future
+scheduled runs should avoid repeating these exact batches unless the symbolic,
+elliptic-curve, ARB/NTL, finite-ring, or coding-module backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
