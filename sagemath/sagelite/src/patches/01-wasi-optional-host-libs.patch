@@ -983,6 +983,33 @@ diff -urN a/src/sage/libs/ntl/ntl_ZZX.pyx b/src/sage/libs/ntl/ntl_ZZX.pyx
          sig_on()
          try:
              ZZX_quo_rem(&self.x, &other.x, &r, &q)
+diff -urN a/src/sage/libs/ntl/ntl_mat_GF2.pyx b/src/sage/libs/ntl/ntl_mat_GF2.pyx
+--- a/src/sage/libs/ntl/ntl_mat_GF2.pyx
++++ b/src/sage/libs/ntl/ntl_mat_GF2.pyx
+@@ -414,2 +414,2 @@
+-            sage: first_nonzero_indices = [Abar._sage_().row(i).nonzero_positions()[0] for i in range(A.rank())]
+-            sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(A.rank()-1))
++            sage: first_nonzero_indices = [Abar._sage_().row(i).nonzero_positions()[0] for i in range(A.rank())]  # needs sage.matrix.matrix_mod2_dense
++            sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(A.rank()-1))           # needs sage.matrix.matrix_mod2_dense
+@@ -420 +420 @@
+-            sage: all(Abar._sage_().row(i).nonzero_positions() == [] for i in range(A.rank(), Abar.NumRows()))
++            sage: all(Abar._sage_().row(i).nonzero_positions() == [] for i in range(A.rank(), Abar.NumRows()))   # needs sage.matrix.matrix_mod2_dense
+@@ -571 +571 @@
+-            sage: A_image = A.image().matrix()
++            sage: A_image = A.image().matrix()                                                                  # needs sage.matrix.matrix_mod2_dense
+@@ -573 +573 @@
+-            sage: A_image.row_space() == Abar_image.row_space()
++            sage: A_image.row_space() == Abar_image.row_space()                                                  # needs sage.matrix.matrix_mod2_dense
+@@ -578,2 +578,2 @@
+-            sage: first_nonzero_indices = [row.nonzero_positions()[0] for row in Abar_image.rows()]
+-            sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(Abar_image.nrows() - 1))
++            sage: first_nonzero_indices = [row.nonzero_positions()[0] for row in Abar_image.rows()]              # needs sage.matrix.matrix_mod2_dense
++            sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(Abar_image.nrows() - 1)) # needs sage.matrix.matrix_mod2_dense
+@@ -603,2 +603,2 @@
+-            sage: K_a = A.kernel().matrix()
+-            sage: K_a.row_space() == K_abar._sage_().row_space()
++            sage: K_a = A.kernel().matrix()                                                                    # needs sage.matrix.matrix_mod2_dense
++            sage: K_a.row_space() == K_abar._sage_().row_space()                                                # needs sage.matrix.matrix_mod2_dense
 diff -urN a/src/sage/matrix/meson.build b/src/sage/matrix/meson.build
 --- a/src/sage/matrix/meson.build
 +++ b/src/sage/matrix/meson.build

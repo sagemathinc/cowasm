@@ -21481,6 +21481,32 @@ skip clusters are the intended PARI, modular arithgroup, and known-bug
 buckets, and `doctest-corpus-candidates.py` prints no promotion candidate for
 the new database after `cusps.py` is listed in the corpus.
 
+Follow-up NTL GF(2) matrix corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/libs/ntl/ntl_mat_GF2.pyx` into the curated
+`basic-pure-math.txt` corpus. The file was a high-signal near miss in the NTL
+frontier dashboards, with 101 passing blocks and six failures from conversion
+paths that require the unavailable `sage.matrix.matrix_mod2_dense` runtime
+module.
+
+The WASI patch now marks those row-space, image-space, and kernel comparison
+examples as explicit `# needs sage.matrix.matrix_mod2_dense` skips. Focused
+strict validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a one-file scratch corpus after rebuilding a fresh patched source tree and
+recorded:
+
+```text
+sage -t passed: 98 passed, 0 failed, 9 skipped
+```
+
+A broad strict full-corpus probe under
+`.tmp/current-run/scheduled-2026-07-02-ntl-mat-gf2/full-corpus.sqlite3`
+confirmed the new `ntl_mat_GF2.pyx` line-420 dependency before the final tag,
+but also exposed unrelated existing frontier failures in integer vectors,
+matroids, categories, rich-output formatting, and stats, followed by a Node
+shutdown segfault. The focused one-file make run is the clean validation for
+this promotion; the broader scratch database remains useful frontier data.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -208,6 +208,7 @@ src/sage/libs/sirocco.pyx
 src/sage/libs/pari/convert_gmp.pyx
 src/sage/libs/ntl/error.pyx
 src/sage/libs/ntl/ntl_GF2.pyx
+src/sage/libs/ntl/ntl_mat_GF2.pyx
 src/sage/libs/ntl/ntl_ZZ.pyx
 src/sage/libs/ntl/ntl_ZZX.pyx
 src/sage/libs/ntl/ntl_lzz_pContext.pyx
