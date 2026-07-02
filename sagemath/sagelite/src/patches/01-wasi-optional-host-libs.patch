@@ -6261,6 +6261,34 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
+--- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
++++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py
+@@ -30 +30 @@
+-        sage: R = lie_conformal_algebras.Virasoro(QQbar);R
++        sage: R = lie_conformal_algebras.Virasoro(QQbar);R                         # needs sage.rings.number_field
+@@ -40,10 +40,10 @@
+-        sage: R = lie_conformal_algebras.Affine(QQ, 'A1')
+-        sage: R.0
++        sage: R = lie_conformal_algebras.Affine(QQ, 'A1')                         # needs sage.graphs
++        sage: R.0                                                                 # needs sage.graphs
+         B[alpha[1]]
+-        sage: R._repr_generator(R.0)
++        sage: R._repr_generator(R.0)                                              # needs sage.graphs
+         'B[alpha[1]]'
+-        sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h','f'))
+-        sage: R.0
++        sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h','f')) # needs sage.graphs
++        sage: R.0                                                                 # needs sage.graphs
+         e
+-        sage: R._repr_generator(R.0)
++        sage: R._repr_generator(R.0)                                              # needs sage.graphs
+         'e'
+@@ -58,2 +58,2 @@
+-            sage: V = lie_conformal_algebras.Affine(QQ,'A1')
+-            sage: TestSuite(V).run()
++            sage: V = lie_conformal_algebras.Affine(QQ,'A1')                      # needs sage.graphs
++            sage: TestSuite(V).run()                                              # needs sage.graphs
 diff -urN a/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py

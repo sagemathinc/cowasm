@@ -18466,6 +18466,36 @@ CoWasm commit `26419a169ae9e7363dc2327e73834361bbf6346d`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 75, and about 6 seconds of elapsed time.
 
+Focused lie-conformal basis corpus-growth pass on 2026-07-01:
+
+```text
+lie_conformal_algebra_with_basis.py: 3 passed, 0 failed, 9 skipped
+```
+
+This pass promotes
+`sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_basis.py`
+into the curated browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 906
+non-comment entries. Direct sampling first recorded 3 passed blocks and 9
+failed blocks: the `QQbar` Virasoro example hit the same number-field
+boundary already tagged in neighboring lie-conformal modules, while the
+affine `A1` examples import the stripped graph-backed Dynkin-diagram path.
+
+The WASI source patch now marks the `QQbar` example as
+`# needs sage.rings.number_field` and marks the affine setup plus dependent
+checks as `# needs sage.graphs`, preserving the rational Virasoro generator
+and representation examples as default-profile coverage. Focused strict
+validation rebuilt a fresh patched Sagelite source copy and ran a one-file
+corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-01-this-run/lie-conformal-with-basis-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups eight blocks under `optional:sage.graphs` and one block under
+`optional:sage.rings.number_field`. The latest-run metadata records CoWasm
+commit `54b04edb6dbe0357bb3df0658dce1d030b800a74`, Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
+version 75, and about 6 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
