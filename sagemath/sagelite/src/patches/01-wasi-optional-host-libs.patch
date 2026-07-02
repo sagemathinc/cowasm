@@ -9932,3 +9932,13 @@ diff -urN -U0 a/src/sage/tensor/modules/tensor_free_submodule.py b/src/sage/tens
 @@ -530 +530 @@
 -            sage: all(Y.retract(u.lift()) == u for u in e_Y)
 +            sage: all(Y.retract(u.lift()) == u for u in e_Y)                         # needs sage.libs.gap
+diff -urN -U0 a/src/sage/interfaces/gap_workspace.py b/src/sage/interfaces/gap_workspace.py
+--- a/src/sage/interfaces/gap_workspace.py
++++ b/src/sage/interfaces/gap_workspace.py
+@@ -56,3 +56,3 @@
+-        sage: name1 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]
+-        sage: name2 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]
+-        sage: assert name1 == name2
++        sage: name1 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]  # needs subprocess
++        sage: name2 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]  # needs subprocess
++        sage: assert name1 == name2                                                    # needs subprocess

@@ -20598,6 +20598,35 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups all sixteen skipped blocks
 under `optional:4ti2`.
 
+Focused GAP workspace corpus-growth pass on 2026-07-02:
+
+```text
+gap_workspace.py: 12 passed, 0 failed, 3 skipped
+```
+
+This pass promotes `sage/interfaces/gap_workspace.py` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 940
+non-comment entries. Follow-up feature/interface and low-prompt mixed probes
+first found only zero-block, skipped-only, or broader backend-boundary files.
+The useful narrow candidate was `gap_workspace.py`: its local workspace-name
+and directory cleanup doctests pass in the default node profile, while the only
+focused failures were the subprocess-backed cross-session filename stability
+check and its dependent assertion.
+
+The added WASI source patch marks those three lines as `# needs subprocess`,
+preserving the local filesystem/hash helper coverage without counting native
+child-process support as browser-profile compatibility. Focused make-level
+validation rebuilt and patched a fresh Sagelite source copy with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followup/gap-workspace-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`36549d2a09c34cd8540370e6393dfef5b9ae8252`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the three skipped blocks under
+`optional:subprocess`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
