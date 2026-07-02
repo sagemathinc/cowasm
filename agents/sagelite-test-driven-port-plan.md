@@ -20389,6 +20389,40 @@ quiet corpus because its examples need broader `NilCoxeterAlgebra`/Weyl group
 startup and backend triage before they produce useful browser-profile
 coverage.
 
+Continuation frontier audit on 2026-07-02 verified that the stale failed
+clusters in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-hermite-promotion/full-corpus/sagelite-doctests.sqlite3`
+are already clean against the current patched source. A focused rerun of the
+affected files records:
+
+```text
+sage -t passed: 1633 passed, 0 failed, 283 skipped
+```
+
+The focused database is
+`/tmp/sagelite-20260702-focused-failures.sqlite3`; it covers
+`sage/combinat/words/words.py`, `sage/misc/banner.py`,
+`sage/rings/rational.pyx`, `sage/tests/test_deprecation.py`,
+`sage/categories/category.py`, `sage/combinat/words/word_generators.py`, and
+`sage/schemes/generic/homset.py` with runner version 82 and a 100% non-skipped
+pass rate.
+
+The same continuation pass sampled another small uncovered frontier batch:
+`sage/repl/prompts.py`, `sage/misc/map_threaded.py`,
+`sage/misc/sphinxify.py`, `sage/categories/g_sets.py`,
+`sage/categories/groupoid.py`, `sage/monoids/monoid.py`,
+`sage/monoids/hecke_monoid.py`, `sage/combinat/species/misc.py`,
+`sage/homology/tests.py`, `sage/rings/ring_extension_homset.py`,
+`sage/tests/finite_poset.py`, `sage/doctest/parsing_test.py`,
+`sage/misc/profiler.py`, `sage/categories/bialgebras.py`,
+`sage/categories/examples/algebras_with_basis.py`, and
+`sage/categories/examples/graded_connected_hopf_algebras_with_basis.py`.
+That probe recorded `0 passed, 0 failed, 132 skipped` in
+`/tmp/sagelite-20260702-small-frontier.sqlite3`, so these files remain outside
+the quiet corpus until they expose runnable browser-profile coverage.
+Running `doctest-corpus-candidates.py --ignore-invalid --min-passed 1` across
+the fresh July 2 probe databases listed no clean uncovered candidates.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
