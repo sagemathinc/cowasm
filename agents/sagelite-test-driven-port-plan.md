@@ -19046,6 +19046,60 @@ scratch database now prints no candidate, the synthetic helper database prints
 only `src/sage/example/real_candidate.py`, the helper compiles with
 `python3 -m py_compile`, and `test-wasi-sdk-standalone.sh` passes `bash -n`.
 
+Follow-up absent-file frontier audit on 2026-07-02:
+
+No new corpus entry was promoted in this pass. The checked
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` artifact was an
+empty file during this run, so the sweep used focused direct probes against the
+current patched build tree instead of treating that dashboard as authoritative.
+
+Three fresh default-profile probes were written under
+`.tmp/current-run/scheduled-2026-07-02-goal2/`:
+
+```text
+fresh-small.sqlite3: 0 passed, 0 failed, 56 skipped
+helper-current.sqlite3: 0 passed, 0 failed, 30 skipped
+algebra-helper.sqlite3: 14 passed, 0 failed, 78 skipped
+```
+
+The first two probes covered current absent low-count helper files in `misc`,
+`plot`, `repl`, `tests`, `typeset`, `logic`, `cpython`, `doctest`, `modules`,
+`crypto`, `coding`, and `databases`; all were skipped-only or zero-block under
+the browser-compatible profile. The algebra-helper probe found clean runnable
+coverage in `sage/modules/fp_graded/free_homspace.py` and
+`sage/modules/fp_graded/steenrod/homspace.py`, but both files were already in
+the curated corpus, so `doctest-corpus-candidates.py --min-passed 1` correctly
+printed no promotion rows.
+
+A numeric/algebra probe recorded:
+
+```text
+numeric-current.sqlite3: 4 passed, 30 failed, 92 skipped
+```
+
+The useful blocker clusters from that probe are:
+
+- `quaternion_algebra_element.py` and
+  `quatalg/quaternion_algebra_cython.pyx` need focused quaternion startup and
+  backend triage before promotion. The first failures are missing
+  `QuaternionAlgebra` startup bindings, but the files also reach missing
+  `sage.matrix.matrix_integer_dense`, symbolic number-field setup, and
+  dependent missing-name failures, so this is not just a one-name namespace
+  fix.
+- `libs/pari/convert_flint.pyx` still reaches the focused cypari2/PARI
+  object-model boundary through matrix `__pari__()` conversion.
+- `libs/pari/convert_sage_real_double.pyx` imports the unavailable
+  `cypari2.convert` module before its direct real-double conversion examples
+  can run.
+- Adjacent real/complex double vector and matrix files remain skipped-only in
+  the default profile, along with `calculus/functions.py` and
+  `geometry/polyhedron/base_RDF.py`.
+
+Future promotion scans should continue computing absent files from the current
+corpus rather than relying on older `.tmp/current-run/*absent*` text caches,
+which predate many corpus-growth commits and can list files that are already
+covered.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
