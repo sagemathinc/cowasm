@@ -112,6 +112,16 @@ def parse_args() -> argparse.Namespace:
         help="maximum failed block count for --near-misses",
     )
     parser.add_argument(
+        "--exclude-block-failure-class",
+        action="append",
+        default=[],
+        metavar="CLASS[,CLASS...]",
+        help=(
+            "with --near-misses, suppress files whose failed blocks include "
+            "one of these failure_class values; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--min-runner-version",
         type=int,
         help=(
@@ -149,7 +159,19 @@ def parse_args() -> argparse.Namespace:
         parser.error("--max-failed must be positive")
     if args.min_runner_version is not None and args.min_runner_version < 1:
         parser.error("--min-runner-version must be positive")
+    if args.exclude_block_failure_class and not args.near_misses:
+        parser.error("--exclude-block-failure-class requires --near-misses")
+    args.exclude_block_failure_class = parse_csv_values(
+        args.exclude_block_failure_class
+    )
     return args
+
+
+def parse_csv_values(values: list[str]) -> list[str]:
+    parsed: list[str] = []
+    for value in values:
+        parsed.extend(part.strip() for part in value.split(",") if part.strip())
+    return parsed
 
 
 def require_doctest_schema(database: Path, db: sqlite3.Connection) -> None:
@@ -213,11 +235,30 @@ def source_candidate_exists(relative_path: str, source_root: Path | None) -> boo
     return (source_root / relative_path).exists()
 
 
-def runs_table_has_column(db: sqlite3.Connection, column: str) -> bool:
+def table_has_column(db: sqlite3.Connection, table: str, column: str) -> bool:
     return any(
         name == column
-        for _cid, name, *_rest in db.execute("pragma table_info(runs)")
+        for _cid, name, *_rest in db.execute(f"pragma table_info({table})")
     )
+
+
+def table_exists(db: sqlite3.Connection, table: str) -> bool:
+    return (
+        db.execute(
+            """
+            select 1
+            from sqlite_master
+            where type = 'table'
+              and name = ?
+            """,
+            (table,),
+        ).fetchone()
+        is not None
+    )
+
+
+def runs_table_has_column(db: sqlite3.Connection, column: str) -> bool:
+    return table_has_column(db, "runs", column)
 
 
 def latest_run_metadata(
@@ -255,9 +296,16 @@ def latest_run_metadata(
 
 
 def files_table_has_column(db: sqlite3.Connection, column: str) -> bool:
-    return any(
-        name == column
-        for _cid, name, *_rest in db.execute("pragma table_info(files)")
+    return table_has_column(db, "files", column)
+
+
+def can_filter_block_failure_classes(db: sqlite3.Connection) -> bool:
+    return (
+        table_exists(db, "blocks")
+        and files_table_has_column(db, "id")
+        and table_has_column(db, "blocks", "file_id")
+        and table_has_column(db, "blocks", "status")
+        and table_has_column(db, "blocks", "failure_class")
     )
 
 
@@ -277,6 +325,7 @@ def candidate_rows(
     zero_blocks: bool,
     file_errors: bool,
     max_failed: int,
+    excluded_block_failure_classes: list[str],
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -368,6 +417,25 @@ def candidate_rows(
             (run_id,),
         ).fetchall()
     elif near_misses:
+        block_failure_filter = ""
+        query_parameters: list[object] = [run_id, min_passed, max_failed]
+        if excluded_block_failure_classes:
+            if not can_filter_block_failure_classes(db):
+                raise SystemExit(
+                    "cannot filter block failure classes: database lacks "
+                    "compatible blocks/files metadata"
+                )
+            placeholders = ", ".join("?" for _ in excluded_block_failure_classes)
+            block_failure_filter = f"""
+              and not exists (
+                select 1
+                from blocks
+                where blocks.file_id = files.id
+                  and blocks.status = 'failed'
+                  and coalesce(blocks.failure_class, '') in ({placeholders})
+              )
+            """
+            query_parameters.extend(excluded_block_failure_classes)
         rows = db.execute(
             f"""
             select
@@ -387,6 +455,7 @@ def candidate_rows(
               and passed_blocks >= ?
               and failed_blocks between 1 and ?
               and total_blocks - skipped_blocks > 0
+              {block_failure_filter}
             order by
               failed_blocks,
               passed_blocks desc,
@@ -394,7 +463,7 @@ def candidate_rows(
               duration_ms,
               path
             """,
-            (run_id, min_passed, max_failed),
+            query_parameters,
         ).fetchall()
     else:
         rows = db.execute(
@@ -559,6 +628,7 @@ def main() -> int:
                     args.zero_blocks,
                     args.file_errors,
                     args.max_failed,
+                    args.exclude_block_failure_class,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:

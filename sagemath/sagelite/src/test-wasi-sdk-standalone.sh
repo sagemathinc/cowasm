@@ -2706,6 +2706,8 @@ mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
 touch "$doctest_candidate_helper_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
@@ -2714,6 +2716,7 @@ create table runs (
   runner_version integer
 );
 create table files (
+  id integer primary key,
   run_id integer,
   path text,
   status text,
@@ -2765,12 +2768,43 @@ insert into files (
   0,
   0,
   15
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py',
+  'failed',
+  3,
+  2,
+  1,
+  0,
+  30
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py',
+  'failed',
+  3,
+  2,
+  1,
+  0,
+  20
 );
 update files
 set
   failure_class = 'ModuleNotFoundError',
   failure_detail = 'No module named sage.example.optional_backend'
 where path = '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py';
+create table blocks (
+  file_id integer,
+  status text,
+  failure_class text
+);
+insert into blocks (file_id, status, failure_class)
+select id, 'failed', 'NameError'
+from files
+where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py';
+insert into blocks (file_id, status, failure_class)
+select id, 'failed', 'TypeError'
+from files
+where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py';
 SQL
 doctest_candidate_helper_output="$("$src_dir/doctest-corpus-candidates.py" \
   --corpus "$doctest_candidate_helper_corpus" \
@@ -2836,6 +2870,17 @@ if [ "$doctest_candidate_helper_file_error_details" != "src/sage/example/error_c
   printf '%s\n' "$doctest_candidate_helper_file_error_details" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-failure-detail did not report file-scope diagnostics."
+fi
+doctest_candidate_helper_near_misses_no_name_error="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --exclude-block-failure-class NameError \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_no_name_error" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_no_name_error" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-block-failure-class did not filter near misses."
 fi
 doctest_candidate_helper_legacy_db="$probe_dir/sagelite-doctest-legacy-candidate-helper.sqlite3"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_candidate.py"

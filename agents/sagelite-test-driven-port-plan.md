@@ -22191,6 +22191,42 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a current-runner skipped
 audit of the fresh HOMFLY database, and wide near-miss scans with
 `--min-runner-version 83`.
 
+Follow-up near-miss failure-class filter pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. A fresh direct rerun of the current
+near-miss frontier file
+`src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py`
+with runner version 83 records:
+
+```text
+sage -t failed: 3 passed, 9 failed, 0 skipped
+```
+
+The database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-integration/integration.sqlite3`.
+The failed blocks are all startup/dependency-name failures: one `var`
+`NameError`, six dependent `x` `NameError` rows, and two
+`numerical_integral` `NameError` rows. That confirms the file is still not a
+narrow browser-profile tagging candidate; tagging the dependency chain would
+leave only trivial setup and `N(pi/4)` coverage.
+
+The `doctest-corpus-candidates.py --near-misses` helper now accepts
+`--exclude-block-failure-class CLASS[,CLASS...]`, repeatable, so scheduled
+frontier scans can suppress files whose failed block rows include broad
+startup-name classes such as `NameError` while preserving the historical
+near-miss report by default. Against the fresh integration database, the
+ordinary current-runner near-miss scan reports `integration_doctest.py`, while
+the same scan with `--exclude-block-failure-class NameError` prints no rows.
+The standalone smoke fixture now covers this behavior with paired synthetic
+near misses, proving that excluding `NameError` still reports a sibling
+`TypeError` near miss.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, the focused integration
+near-miss scan with and without the new `NameError` exclusion, and a synthetic
+SQLite fixture matching the smoke-test schema.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
