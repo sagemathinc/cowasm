@@ -6190,6 +6190,17 @@ diff -urN a/src/sage/algebras/quaternion_algebra.py b/src/sage/algebras/quaterni
 @@ -13 +13 @@
 -        sage: sage.algebras.quaternion_algebra.unpickle_QuaternionAlgebra_v0(*t)
 +        sage: sage.algebras.quaternion_algebra.unpickle_QuaternionAlgebra_v0(*t)  # needs sage.matrix.matrix_integer_dense
+diff -urN a/src/sage/algebras/quaternion_algebra_element.py b/src/sage/algebras/quaternion_algebra_element.py
+--- a/src/sage/algebras/quaternion_algebra_element.py
++++ b/src/sage/algebras/quaternion_algebra_element.py
+@@ -16,0 +17 @@
++        sage: # needs sage.matrix.matrix_integer_dense
+@@ -32,0 +34 @@
++        sage: # needs sage.matrix.matrix_integer_dense
+@@ -46 +48,2 @@
+-        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j
++        sage: # needs sage.matrix.matrix_integer_dense
++        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j  # needs sage.symbolic
 diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factories.py
 --- a/src/sage/structure/set_factories.py
 +++ b/src/sage/structure/set_factories.py

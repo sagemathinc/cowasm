@@ -19563,6 +19563,38 @@ queries are empty, `skips-by-reason.sql` groups the newly deferred examples
 under `optional:sage.schemes`, and the candidate helper subtracts the newly
 promoted row from the focused validation database.
 
+Quaternion unpickle dependency-classification pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh low-count and algebra/category
+frontier probes under
+`.tmp/current-run/scheduled-2026-07-02-new-pass/` found no uncovered clean
+runnable candidates after subtracting the current 920-entry corpus:
+
+```text
+lowcount.sqlite3: 10 passed, 122 failed, 308 skipped
+algebra-category.sqlite3: 6 passed, 75 failed, 738 skipped
+```
+
+The closest small algebra target,
+`sage/algebras/quaternion_algebra_element.py`, was not a startup-namespace
+candidate. A direct probe showed that importing `QuaternionAlgebra` still
+requires the unavailable `sage.matrix.matrix_integer_dense` side module, so
+adding it to the WASI `sage.all` surface would make startup less reliable
+instead of expanding browser-profile coverage.
+
+The WASI source patch now classifies the three contiguous quaternion element
+unpickle example groups with standalone
+`# needs sage.matrix.matrix_integer_dense` directives, with the number-field
+setup also retaining `# needs sage.symbolic`. Strict one-file validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after rebuilding a fresh
+patched source copy, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-new-pass/quaternion-element-tags.sqlite3`;
+it recorded `0 passed, 0 failed, 15 skipped`. The saved block- and file-failure
+cluster queries are empty, and `skips-by-reason.sql` groups the skips under
+`optional:sage.matrix.matrix_integer_dense` and
+`optional:sage.matrix.matrix_integer_dense,sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
