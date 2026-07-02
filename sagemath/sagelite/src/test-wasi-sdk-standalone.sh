@@ -1866,7 +1866,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|35|28|0|7" ]; then
+if [ "$doctest_smoke_counts" != "passed|35|27|0|8" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -2397,7 +2397,7 @@ if [ "$doctest_deferred_count" != "3" ]; then
 fi
 doctest_skip_reason_clusters="$(sqlite3 "$doctest_smoke_db" <"$src_dir/doctest-sql/skips-by-reason.sql")"
 for expected_skip_reason in \
-  'optional:cowasm_smoke|skip|optional,needs:cowasm_smoke|1' \
+  'optional:cowasm_smoke|skip|optional,needs:cowasm_smoke|2' \
   'optional:magma|skip|optional,optional:magma|1' \
   'long time|skip|long time|1' \
   'deferred:known bug|skip|deferred,deferred:known bug|1' \

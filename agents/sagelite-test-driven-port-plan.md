@@ -21688,6 +21688,43 @@ skip cluster is eight `optional:cysignals.alarm` rows, and
 `doctest-corpus-candidates.py` prints no promotion candidate for that database
 after the corpus entry is listed.
 
+Follow-up ARB arithmetic corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/libs/arb/arith.pyx` into the curated
+`basic-pure-math.txt` corpus, bringing the corpus to 962 non-comment entries.
+The file had been a compact near miss because importing `sage.libs.arb.arith`
+eagerly initialized the disabled FLINT integer-polynomial side module, so even
+the Bernoulli doctests inherited an import failure from the unrelated Hilbert
+class polynomial helper.
+
+The WASI patch now removes the eager polynomial-extension imports from
+`sage.libs.arb.arith`, leaving the Bernoulli path importable. The
+`hilbert_class_polynomial` paragraph is marked `# needs sage.libs.flint`, and
+the WASI-only helper now fails lazily with the existing FLINT
+integer-polynomial disabled-module diagnostic if called despite that tag.
+
+Focused direct validation against the rebuilt runtime recorded:
+
+```text
+arith.pyx: 5 passed, 0 failed, 3 skipped
+```
+
+Focused strict make-target validation with a one-file scratch corpus also
+recorded:
+
+```text
+sage -t passed: 5 passed, 0 failed, 3 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-02-arb/arb-make.sqlite3`. Its skip cluster
+is three `optional:sage.libs.flint` rows, and
+`doctest-corpus-candidates.py` prints no promotion candidate for the focused
+database after the corpus entry is listed. The standalone smoke expectation was
+also updated to the current directive propagation semantics: the smoke fixture
+records `35` total blocks, `27` passed, and `8` skipped because the standalone
+`# needs cowasm_smoke` directive applies to both following contiguous examples.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

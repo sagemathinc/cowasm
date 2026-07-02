@@ -10316,3 +10316,26 @@ diff -urN -U0 a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx b
 -        sage: _all_periodic_points(f)
 +        sage: f = DynamicalSystem_projective([x^2 - y^2, y^2], domain=P)             # needs cysignals.alarm
 +        sage: _all_periodic_points(f)                                                # needs cysignals.alarm
+diff -urN -U0 a/src/sage/libs/arb/arith.pyx b/src/sage/libs/arb/arith.pyx
+--- a/src/sage/libs/arb/arith.pyx
++++ b/src/sage/libs/arb/arith.pyx
+@@ -17 +16,0 @@
+-from sage.libs.flint.acb_modular cimport acb_modular_hilbert_class_poly
+@@ -19,3 +17,0 @@
+-from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
+-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+-from sage.rings.integer_ring import ZZ
+@@ -74,0 +71 @@
++        sage: # needs sage.libs.flint
+@@ -80,5 +78,6 @@
+-    cdef long n = D
+-    cdef Polynomial_integer_dense_flint poly
+-    poly = PolynomialRing(ZZ, "x", implementation="FLINT")()
+-    acb_modular_hilbert_class_poly(poly._poly, n)
+-    return poly
++    from sage.rings.polynomial.polynomial_integer_dense_flint import Polynomial_integer_dense_flint  # noqa: F401
++
++    raise ImportError(
++        "FLINT integer polynomial side module is disabled on CoWasm WASI "
++        "until its initializer no longer terminates the Node.js worker"
++    )
