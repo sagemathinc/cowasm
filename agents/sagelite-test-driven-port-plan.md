@@ -20261,6 +20261,54 @@ and a 100% non-skipped pass rate. The focused database records no block-level
 failures and no file-level errors; all four skipped blocks are grouped under
 `optional:sage.libs.gap`.
 
+Focused affine-group corpus-growth pass on 2026-07-02:
+
+```text
+affine_group.py: 43 passed, 0 failed, 24 skipped
+```
+
+A fresh mixed absent-source probe first sampled compact database, modular,
+module-wrapper, monoid/category, topology, and ring helper files under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followup/`.
+It recorded `0 passed, 7 failed, 176 skipped`; the only active failures were
+the `sage/modular/modform/half_integral.py` examples calling the unavailable
+`half_integral_weight_modform_basis` startup name, so it produced no promotion
+candidate.
+
+The useful near miss was `sage/groups/affine_gps/affine_group.py`, which
+reran as `43 passed, 4 failed, 20 skipped` before annotation. The remaining
+failures were narrow backend boundaries: finite-field `G.an_element()` reached
+the currently focused cypari2/PARI object-model subset, and finite affine
+group iteration reached GAP-backed matrix-group enumeration. The WASI patch
+now marks those prompts as `# needs sage.libs.pari` and
+`# needs sage.libs.gap`, preserving the rational and structural affine-group
+coverage.
+
+This pass promotes `sage/groups/affine_gps/affine_group.py` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 932 non-comment entries. Focused strict validation rebuilt a fresh patched
+Sagelite source copy through the make-level corpus dependency path and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followup/affine-group-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`2408061262eccd1e7989abe8b052596a2a5ecf5e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups ten skipped blocks under
+`optional:sage.libs.gap`, six under `optional:sage.rings.finite_rings`, four
+under the existing `optional:sage.libs.gap,(for,gens)` directive wording,
+three under `optional:sage.libs.pari`, and one random GAP-backed block.
+
+A broad default corpus dashboard run was started against the updated checked
+corpus and scratch database
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followup/full-corpus.sqlite3`,
+but it was interrupted after confirming worker progress because it had not
+initialized a usable SQLite summary in the available run window. The focused
+strict make-level validation above is the checked validation for this
+promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

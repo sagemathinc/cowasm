@@ -9857,6 +9857,21 @@ diff -urN -U0 a/src/sage/groups/matrix_gps/named_group_gap.py b/src/sage/groups/
 @@ -48 +48 @@
 -            sage: isinstance(G, NamedMatrixGroup_gap)
 +            sage: isinstance(G, NamedMatrixGroup_gap)                                 # needs sage.libs.gap
+diff -urN -U0 a/src/sage/groups/affine_gps/affine_group.py b/src/sage/groups/affine_gps/affine_group.py
+--- a/src/sage/groups/affine_gps/affine_group.py
++++ b/src/sage/groups/affine_gps/affine_group.py
+@@ -316 +316 @@
+-            sage: g = G.an_element()
++            sage: g = G.an_element()                                                 # needs sage.libs.pari
+@@ -319 +319 @@
+-            sage: G.degree() == g.A().nrows() == g.A().ncols() == g.b().degree()
++            sage: G.degree() == g.A().nrows() == g.A().ncols() == g.b().degree()     # needs sage.libs.pari
+@@ -494 +494 @@
+-            sage: G.an_element() in G
++            sage: G.an_element() in G                                                # needs sage.libs.pari
+@@ -541 +541 @@
+-            sage: len([g for g in G]) == G.cardinality()  # indirect doctest
++            sage: len([g for g in G]) == G.cardinality()  # indirect doctest         # needs sage.libs.gap
 diff -urN -U0 a/src/sage/tensor/modules/free_module_automorphism.py b/src/sage/tensor/modules/free_module_automorphism.py
 --- a/src/sage/tensor/modules/free_module_automorphism.py
 +++ b/src/sage/tensor/modules/free_module_automorphism.py
