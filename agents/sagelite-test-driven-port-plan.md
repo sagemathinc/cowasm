@@ -21130,6 +21130,33 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the skipped blocks under
 `sage.libs.gap`, `ipython`, `not tested`, and `sage.symbolic`.
 
+Focused near-miss tooling pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh low-prompt probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-10/`
+sampled compact CPython, misc, category, monoid, homology, database, crypto,
+module, Judson exercise, combinatorics, and interface candidates. The compact
+helper batches were skipped-only or empty, while the combinatorics batch hit
+known NTL/libcxx, startup, and backend-boundary failures before recording
+useful passing coverage.
+
+The most compact near miss was `sage/interfaces/matlab.py`, which records
+`4 passed, 3 failed, 59 skipped`. The failures are not a narrow startup export
+issue: importing the module-level `matlab` binding fails in the browser profile
+because `sage.interfaces.expect` needs unavailable `pexpect`, and the remaining
+passing blocks are setup-only matrix/string examples. It stays outside the
+curated corpus until the interface/pexpect boundary is intentionally modeled or
+more useful helper coverage is exposed.
+
+The `doctest-corpus-candidates.py` helper now has a `--near-misses` mode with
+`--max-failed`, so future frontier audits can list absent failed files that
+still have runnable passing blocks without hand-writing SQLite queries. The
+default clean-candidate output is unchanged. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+the default helper query against `matlab-direct.sqlite3`, and
+`--near-misses --max-failed 5`, which reports `src/sage/interfaces/matlab.py`
+with 4 passing and 3 failing runnable blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

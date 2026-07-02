@@ -57,6 +57,20 @@ def parse_args() -> argparse.Namespace:
         help="include clean files outside the src/sage source tree",
     )
     parser.add_argument(
+        "--near-misses",
+        action="store_true",
+        help=(
+            "print failed files with at least --min-passed passing blocks "
+            "instead of clean promotion candidates"
+        ),
+    )
+    parser.add_argument(
+        "--max-failed",
+        type=int,
+        default=10,
+        help="maximum failed block count for --near-misses",
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -71,6 +85,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--paths-only cannot be combined with --include-header")
     if args.quiet_invalid and not args.ignore_invalid:
         parser.error("--quiet-invalid requires --ignore-invalid")
+    if args.max_failed < 1:
+        parser.error("--max-failed must be positive")
     return args
 
 
@@ -157,33 +173,67 @@ def candidate_rows(
     source_root: Path | None,
     min_passed: int,
     include_non_sage: bool,
-) -> list[tuple[str, int, int, int, int, int]]:
-    rows = db.execute(
-        """
-        select
-          path,
-          total_blocks,
-          passed_blocks,
-          skipped_blocks,
-          total_blocks - skipped_blocks as runnable_blocks,
-          duration_ms
-        from files
-        where run_id = ?
-          and status = 'passed'
-          and failed_blocks = 0
-          and passed_blocks >= ?
-          and total_blocks - skipped_blocks > 0
-        order by
-          passed_blocks desc,
-          skipped_blocks,
-          duration_ms,
-          path
-        """,
-        (run_id, min_passed),
-    ).fetchall()
+    near_misses: bool,
+    max_failed: int,
+) -> list[tuple[str, int, int, int, int, int, int, str, str]]:
+    if near_misses:
+        rows = db.execute(
+            """
+            select
+              path,
+              total_blocks,
+              passed_blocks,
+              failed_blocks,
+              skipped_blocks,
+              total_blocks - skipped_blocks as runnable_blocks,
+              duration_ms,
+              status,
+              coalesce(failure_class, '')
+            from files
+            where run_id = ?
+              and status = 'failed'
+              and passed_blocks >= ?
+              and failed_blocks between 1 and ?
+              and total_blocks - skipped_blocks > 0
+            order by
+              failed_blocks,
+              passed_blocks desc,
+              skipped_blocks,
+              duration_ms,
+              path
+            """,
+            (run_id, min_passed, max_failed),
+        ).fetchall()
+    else:
+        rows = db.execute(
+            """
+            select
+              path,
+              total_blocks,
+              passed_blocks,
+              failed_blocks,
+              skipped_blocks,
+              total_blocks - skipped_blocks as runnable_blocks,
+              duration_ms,
+              status,
+              coalesce(failure_class, '')
+            from files
+            where run_id = ?
+              and status = 'passed'
+              and failed_blocks = 0
+              and passed_blocks >= ?
+              and total_blocks - skipped_blocks > 0
+            order by
+              passed_blocks desc,
+              skipped_blocks,
+              duration_ms,
+              path
+            """,
+            (run_id, min_passed),
+        ).fetchall()
 
     candidates = []
-    for path, total, passed, skipped, runnable, duration in rows:
+    for path, total, passed, failed, skipped, runnable, duration, status, failure in rows:
         relative_path = normalize_path(path, source_root)
         if not include_non_sage and not relative_path.startswith("src/sage/"):
             continue
@@ -191,7 +241,19 @@ def candidate_rows(
             continue
         if relative_path in covered:
             continue
-        candidates.append((relative_path, total, passed, skipped, runnable, duration))
+        candidates.append(
+            (
+                relative_path,
+                total,
+                passed,
+                failed,
+                skipped,
+                runnable,
+                duration,
+                status,
+                failure,
+            )
+        )
     return candidates
 
 
@@ -204,10 +266,14 @@ def main() -> int:
             "path",
             "total_blocks",
             "passed_blocks",
-            "skipped_blocks",
-            "runnable_blocks",
-            "duration_ms",
         ]
+        if args.near_misses:
+            columns.extend(["failed_blocks", "skipped_blocks"])
+        else:
+            columns.append("skipped_blocks")
+        columns.extend(["runnable_blocks", "duration_ms"])
+        if args.near_misses:
+            columns.extend(["status", "failure_class"])
         if show_database:
             columns.insert(0, "database")
         print("\t".join(columns))
@@ -232,6 +298,8 @@ def main() -> int:
                     source_root,
                     args.min_passed,
                     args.include_non_sage,
+                    args.near_misses,
+                    args.max_failed,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
@@ -245,8 +313,33 @@ def main() -> int:
                 print(row[0])
             elif show_database:
                 print("\t".join(str(value) for value in (database, *row)))
-            else:
+            elif args.near_misses:
                 print("\t".join(str(value) for value in row))
+            else:
+                (
+                    path,
+                    total,
+                    passed,
+                    _failed,
+                    skipped,
+                    runnable,
+                    duration,
+                    _status,
+                    _failure,
+                ) = row
+                print(
+                    "\t".join(
+                        str(value)
+                        for value in (
+                            path,
+                            total,
+                            passed,
+                            skipped,
+                            runnable,
+                            duration,
+                        )
+                    )
+                )
     return 0
 
 
