@@ -241,6 +241,7 @@ src/sage/groups/perm_gps/partn_ref/refinement_matrices.pyx
 src/sage/interfaces/abc.py
 src/sage/interfaces/ecm.py
 src/sage/interfaces/four_ti_2.py
+src/sage/interfaces/genus2reduction.py
 src/sage/interfaces/gap_workspace.py
 src/sage/interfaces/jmoldata.py
 src/sage/interfaces/khoca.py

@@ -10005,3 +10005,48 @@ diff -urN -U0 a/src/sage/rings/convert/mpfi.pyx b/src/sage/rings/convert/mpfi.py
 @@ -326 +326 @@
 -        sage: RIF("1Xx", base=36)  # rel tol 1e-12
 +        sage: RIF("1Xx", base=36)  # known bug
+diff -urN -U0 a/src/sage/interfaces/genus2reduction.py b/src/sage/interfaces/genus2reduction.py
+--- a/src/sage/interfaces/genus2reduction.py
++++ b/src/sage/interfaces/genus2reduction.py
+@@ -240 +240 @@
+-        sage: R = genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)
++        sage: R = genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)  # needs sage.libs.pari
+@@ -241 +241 @@
+-        sage: R.conductor
++        sage: R.conductor  # needs sage.libs.pari
+@@ -243 +243 @@
+-        sage: factor(R.conductor)
++        sage: factor(R.conductor)  # needs sage.libs.pari
+@@ -248 +248 @@
+-        sage: factor(R.minimal_disc)
++        sage: factor(R.minimal_disc)  # needs sage.libs.pari
+@@ -255 +255 @@
+-        sage: R
++        sage: R  # needs sage.libs.pari
+@@ -275 +275 @@
+-        sage: R = genus2reduction(x^3 + x + 1, -2*x^5 - 3*x^2 + 2*x - 2)
++        sage: R = genus2reduction(x^3 + x + 1, -2*x^5 - 3*x^2 + 2*x - 2)  # needs sage.libs.pari
+@@ -276 +276 @@
+-        sage: factor(R.conductor)
++        sage: factor(R.conductor)  # needs sage.libs.pari
+@@ -279 +279 @@
+-        sage: factor(genus2reduction(x^3 + 1, -x^5 - 3*x^4 + 2*x^2 + 2*x - 2).conductor)
++        sage: factor(genus2reduction(x^3 + 1, -x^5 - 3*x^4 + 2*x^2 + 2*x - 2).conductor)  # needs sage.libs.pari
+@@ -281 +281 @@
+-        sage: factor(genus2reduction(x^3 + x + 1, x^5 + 2*x^4 + 2*x^3 + x^2 - x - 1).conductor)
++        sage: factor(genus2reduction(x^3 + x + 1, x^5 + 2*x^4 + 2*x^3 + x^2 - x - 1).conductor)  # needs sage.libs.pari
+@@ -286 +286 @@
+-        sage: genus2reduction(0, x^6 + 3*x^3 + 63)
++        sage: genus2reduction(0, x^6 + 3*x^3 + 63)  # needs sage.libs.pari
+@@ -318 +318 @@
+-        sage: genus2reduction(x^3-x^2-1, x^2 - x)
++        sage: genus2reduction(x^3-x^2-1, x^2 - x)  # needs sage.libs.pari
+@@ -360 +360 @@
+-            sage: genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)
++            sage: genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)  # needs sage.libs.pari
+@@ -380 +380 @@
+-            sage: genus2reduction(x^2 + 1, -5*x^5)
++            sage: genus2reduction(x^2 + 1, -5*x^5)  # needs sage.libs.pari
+@@ -403 +403 @@
+-            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
++            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)  # needs sage.libs.pari

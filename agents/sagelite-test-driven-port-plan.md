@@ -21010,6 +21010,37 @@ revisited only after the finite-field/NTL and category polynomial setup
 clusters are addressed or after narrower source tags expose a meaningful
 non-skipped subset.
 
+Focused genus-2 reduction interface corpus-growth pass on 2026-07-02:
+
+```text
+genus2reduction.py: 9 passed, 0 failed, 14 skipped
+```
+
+This pass promotes `sage/interfaces/genus2reduction.py` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 949 non-comment entries. Fresh low- and mid-prompt absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-7/`
+recorded no clean uncovered candidate, but identified `genus2reduction.py` as
+a compact near miss with runnable browser-profile helper coverage. The pure
+`divisors_to_string` examples and the interface representation pass, while the
+actual genus-2 reduction calls require the current unported PARI `Gen` object
+path.
+
+The WASI source patch now marks the PARI-backed reduction setup and dependent
+`R` assertions as `# needs sage.libs.pari`, preserving the helper coverage
+without treating missing PARI object-model support as browser-profile failure.
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-genus2reduction/genus2reduction-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`502c353345462276b6cbdce8f90d799237d54ba1`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups fourteen blocks under
+`optional:sage.libs.pari`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
