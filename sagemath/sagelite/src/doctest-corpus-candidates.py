@@ -82,6 +82,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--zero-blocks",
+        action="store_true",
+        help=(
+            "print clean files whose latest run extracted no doctest blocks, "
+            "for auditing empty frontier probes"
+        ),
+    )
+    parser.add_argument(
         "--max-failed",
         type=int,
         default=10,
@@ -100,8 +108,11 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.paths_only and args.include_header:
         parser.error("--paths-only cannot be combined with --include-header")
-    if args.near_misses and args.skipped_only:
-        parser.error("--near-misses cannot be combined with --skipped-only")
+    exclusive_modes = [args.near_misses, args.skipped_only, args.zero_blocks]
+    if sum(1 for enabled in exclusive_modes if enabled) > 1:
+        parser.error(
+            "--near-misses, --skipped-only, and --zero-blocks are mutually exclusive"
+        )
     if args.quiet_invalid and not args.ignore_invalid:
         parser.error("--quiet-invalid requires --ignore-invalid")
     if args.max_failed < 1:
@@ -194,9 +205,36 @@ def candidate_rows(
     include_non_sage: bool,
     near_misses: bool,
     skipped_only: bool,
+    zero_blocks: bool,
     max_failed: int,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str]]:
-    if skipped_only:
+    if zero_blocks:
+        rows = db.execute(
+            """
+            select
+              path,
+              total_blocks,
+              passed_blocks,
+              failed_blocks,
+              skipped_blocks,
+              total_blocks - skipped_blocks as runnable_blocks,
+              duration_ms,
+              status,
+              coalesce(failure_class, '')
+            from files
+            where run_id = ?
+              and status = 'passed'
+              and total_blocks = 0
+              and passed_blocks = 0
+              and failed_blocks = 0
+              and skipped_blocks = 0
+            order by
+              duration_ms,
+              path
+            """,
+            (run_id,),
+        ).fetchall()
+    elif skipped_only:
         rows = db.execute(
             """
             select
@@ -308,8 +346,11 @@ def row_sort_key(
     row: tuple[str, int, int, int, int, int, int, str, str],
     near_misses: bool,
     skipped_only: bool,
+    zero_blocks: bool,
 ) -> tuple[int, int, int, int, str]:
     path, _total, passed, failed, skipped, _runnable, duration, _status, _failure = row
+    if zero_blocks:
+        return (duration, skipped, failed, -passed, path)
     if skipped_only:
         return (skipped, duration, failed, -passed, path)
     if near_misses:
@@ -332,12 +373,12 @@ def main() -> int:
             "total_blocks",
             "passed_blocks",
         ]
-        if args.near_misses or args.skipped_only:
+        if args.near_misses or args.skipped_only or args.zero_blocks:
             columns.extend(["failed_blocks", "skipped_blocks"])
         else:
             columns.append("skipped_blocks")
         columns.extend(["runnable_blocks", "duration_ms"])
-        if args.near_misses or args.skipped_only:
+        if args.near_misses or args.skipped_only or args.zero_blocks:
             columns.extend(["status", "failure_class"])
         if show_database:
             columns.insert(0, "database")
@@ -365,6 +406,7 @@ def main() -> int:
                     args.include_non_sage,
                     args.near_misses,
                     args.skipped_only,
+                    args.zero_blocks,
                     args.max_failed,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
@@ -388,14 +430,16 @@ def main() -> int:
             path = row[0]
             current = best_by_path.get(path)
             if current is None or row_sort_key(
-                row, args.near_misses, args.skipped_only
-            ) < row_sort_key(current[1], args.near_misses, args.skipped_only):
+                row, args.near_misses, args.skipped_only, args.zero_blocks
+            ) < row_sort_key(
+                current[1], args.near_misses, args.skipped_only, args.zero_blocks
+            ):
                 best_by_path[path] = (database, row)
 
         for database, row in sorted(
             best_by_path.values(),
             key=lambda item: row_sort_key(
-                item[1], args.near_misses, args.skipped_only
+                item[1], args.near_misses, args.skipped_only, args.zero_blocks
             ),
         ):
             print_row(row, database, show_database, args)
@@ -412,7 +456,7 @@ def print_row(
         print(row[0])
     elif show_database:
         print("\t".join(str(value) for value in (database, *row)))
-    elif args.near_misses or args.skipped_only:
+    elif args.near_misses or args.skipped_only or args.zero_blocks:
         print("\t".join(str(value) for value in row))
     else:
         (

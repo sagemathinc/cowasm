@@ -2699,6 +2699,7 @@ doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
@@ -2713,6 +2714,7 @@ create table files (
   passed_blocks integer,
   failed_blocks integer,
   skipped_blocks integer,
+  failure_class text default '',
   duration_ms integer
 );
 insert into runs (id, source_root) values (1, '$doctest_candidate_helper_source_root');
@@ -2737,6 +2739,15 @@ insert into files (
   0,
   0,
   20
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py',
+  'passed',
+  0,
+  0,
+  0,
+  0,
+  5
 );
 SQL
 doctest_candidate_helper_output="$("$src_dir/doctest-corpus-candidates.py" \
@@ -2755,6 +2766,15 @@ if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]
   printf '%s\n' "$doctest_candidate_helper_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
+fi
+doctest_candidate_helper_zero_blocks="$("$src_dir/doctest-corpus-candidates.py" \
+  --zero-blocks \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_zero_blocks" != "src/sage/example/zero_candidate.py	0	0	0	0	0	5	passed	" ]; then
+  printf '%s\n' "$doctest_candidate_helper_zero_blocks" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --zero-blocks did not report empty clean files."
 fi
 doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
 touch "$doctest_candidate_helper_empty_db"

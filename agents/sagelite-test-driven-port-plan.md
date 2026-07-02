@@ -21263,6 +21263,37 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the skipped blocks under
 `known bug` and `sage.rings.polynomial.plural`.
 
+Follow-up zero-block frontier tooling pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Re-scanning the accumulated
+`.tmp/current-run` SQLite probes with the current corpus and patched source
+root reported no clean uncovered runnable candidates. The stale
+`sage/libs/homfly.pyx` near-miss row now resolves as skipped-only against the
+current patched source, confirming that the older database predates the
+browser-scope tag.
+
+Fresh probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal3/` sampled
+low-prompt utility, category, topology, database, Judson exercise, and helper
+files. The first mixed batch recorded `0 passed, 0 failed, 109 skipped`; the
+second utility/category batch recorded `3 passed, 42 failed, 108 skipped`,
+with one timeout in `sage/rings/polynomial/ideal.py` at a Groebner-basis
+example and broad failures in IPython-kernel and GAP helper files. The
+coverage-shape summary for the second batch grouped one file error, three
+files with failures, eleven skipped-only files, and four no-doctest-block
+files, so it did not expose a narrow promotion candidate.
+
+The `doctest-corpus-candidates.py` helper now has a `--zero-blocks` mode for
+listing absent files whose latest run completed cleanly but extracted no
+doctest blocks. This complements the existing clean-candidate,
+`--near-misses`, and `--skipped-only` reports, and makes empty frontier probes
+auditable without hand-running `file-coverage-shape.sql`. The standalone smoke
+fixture now includes the current `failure_class` column and checks the new
+mode against a zero-block candidate row. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+a synthetic helper database covering both default and `--zero-blocks` output,
+and `--zero-blocks --dedupe-paths` against the fresh goal3 probe databases.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
