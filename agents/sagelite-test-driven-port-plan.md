@@ -19975,6 +19975,47 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups four blocks under
 `optional:sage.graphs`.
 
+Follow-up absent low/medium-prompt frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A fresh sweep over the patched
+Sagelite source tree first sampled 64 absent files with 1-8 Sage prompts and
+recorded:
+
+```text
+sage -t failed: 8 passed, 68 failed, 190 skipped
+```
+
+The database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next-candidates/small-batch.sqlite3`.
+`doctest-corpus-candidates.py --include-header --ignore-invalid` printed no
+uncovered clean runnable source rows. The saved candidate summary grouped the
+run as 40 skipped-only files, 16 files needing triage, seven files with no
+doctest blocks, and one file-level error. The active clusters remain familiar
+backend boundaries: GAP imports, PARI/cypari2 conversion gaps, Singular and
+PolyBoRi modules, graph startup names, and a FLINT `qsieve_sage.pyx`
+`memory access out of bounds` trap at line 34.
+
+A second bounded probe sampled 48 absent files with 9-20 Sage prompts, skipping
+the most obvious `libs` and `interfaces` backend directories, and recorded:
+
+```text
+sage -t failed: 12 passed, 127 failed, 329 skipped
+```
+
+The database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next-candidates/medium-batch.sqlite3`.
+The candidate helper again printed no uncovered clean runnable source rows. The
+saved candidate summary grouped the run as 30 skipped-only files, 13 files
+needing triage, three files with no doctest blocks, and two file-level errors.
+The file-level errors reproduce the existing `sage/rings/polynomial/ideal.py`
+line-77 Groebner-basis timeout and expose a separate doctest parser
+infrastructure issue in `sage/doctest/__main__.py`, where Python's doctest
+parser rejects inconsistent leading whitespace in `_make_parser`. Runnable
+block failures are concentrated in the same optional/backend frontiers:
+PolyBoRi, elliptic-curve database data, graph/poset support, GAP/libgap,
+hyperelliptic curves, manifolds, symbolic integration, and affine
+Lie-conformal algebra graph imports.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
