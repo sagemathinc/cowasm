@@ -22088,6 +22088,40 @@ still fails with the explicit `empty doctest database` diagnostic. Focused
 validation also ran `py_compile` on `doctest-corpus-candidates.py` and
 `bash -n` on `test-wasi-sdk-standalone.sh`.
 
+Follow-up low-prompt frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh focused probes wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-next/`
+using the current patched Sagelite source copy and runner version 83.
+
+The small utility/frontier probe recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 153 skipped
+```
+
+It covered 18 uncovered low-prompt files including `cpython/string.pyx`,
+`crypto/cipher.py`, `misc/map_threaded.py`, `repl/inputhook.py`,
+`monoids/monoid.py`, `misc/sphinxify.py`, `coding/databases.py`,
+`coding/hamming_code.py`, `knots/gauss_code.py`, `crypto/lattice.py`, and
+`misc/package_dir.py`. The candidate helper reported no uncovered runnable
+rows: 15 files were skipped-only dependency-boundary checks and three files
+extracted zero blocks.
+
+The book/category-example probe recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 150 skipped
+```
+
+It covered 16 uncovered Judson book and category-example files. The Judson
+`.py` files extracted no runnable doctest blocks from their source text, while
+the category examples were skipped-only under existing browser-profile
+dependency tags for combinatorics, groups, graphs, and modules. These batches
+should not be repeated as corpus-growth candidates without a source, profile,
+or doctest-extraction change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
