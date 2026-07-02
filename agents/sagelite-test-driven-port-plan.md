@@ -21157,6 +21157,29 @@ the default helper query against `matlab-direct.sqlite3`, and
 `--near-misses --max-failed 5`, which reports `src/sage/interfaces/matlab.py`
 with 4 passing and 3 failing runnable blocks.
 
+Follow-up skipped-only frontier tooling pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh low-prompt and historical
+candidate probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-continuation/`
+recorded no clean uncovered candidate and no compact near miss with passing
+runnable blocks. The first low-prompt tranche recorded 0 passed, 4 failed, and
+18 skipped blocks; the second recorded 0 passed, 12 failed, and 27 skipped
+blocks. The historical helper batch was clean but skipped-only, recording 0
+passed, 0 failed, and 66 skipped blocks. A broader historical batch was mostly
+skipped-only, with `sage/combinat/posets/hochschild_lattice.py` still failing
+all 10 runnable blocks.
+
+The `doctest-corpus-candidates.py` helper now has a `--skipped-only` mode for
+auditing absent files that are clean but add no non-skipped default-profile
+assertions. This keeps the clean promotion and near-miss reports focused while
+still making dependency-boundary probes easy to summarize. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+the default and `--near-misses --max-failed 5` helper modes against the fresh
+probe databases, and `--skipped-only` against the historical helper batch,
+which reports the skipped-only absent files without treating them as promotion
+candidates.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

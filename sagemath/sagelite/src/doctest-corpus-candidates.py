@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""List clean Sagelite doctest candidates that are not in a corpus file."""
+"""List Sagelite doctest candidate files that are not in a corpus file."""
 
 from __future__ import annotations
 
@@ -65,6 +65,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--skipped-only",
+        action="store_true",
+        help=(
+            "print clean files whose latest run has only skipped blocks, "
+            "for auditing dependency-boundary coverage"
+        ),
+    )
+    parser.add_argument(
         "--max-failed",
         type=int,
         default=10,
@@ -83,6 +91,8 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.paths_only and args.include_header:
         parser.error("--paths-only cannot be combined with --include-header")
+    if args.near_misses and args.skipped_only:
+        parser.error("--near-misses cannot be combined with --skipped-only")
     if args.quiet_invalid and not args.ignore_invalid:
         parser.error("--quiet-invalid requires --ignore-invalid")
     if args.max_failed < 1:
@@ -174,9 +184,37 @@ def candidate_rows(
     min_passed: int,
     include_non_sage: bool,
     near_misses: bool,
+    skipped_only: bool,
     max_failed: int,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str]]:
-    if near_misses:
+    if skipped_only:
+        rows = db.execute(
+            """
+            select
+              path,
+              total_blocks,
+              passed_blocks,
+              failed_blocks,
+              skipped_blocks,
+              total_blocks - skipped_blocks as runnable_blocks,
+              duration_ms,
+              status,
+              coalesce(failure_class, '')
+            from files
+            where run_id = ?
+              and status = 'passed'
+              and passed_blocks = 0
+              and failed_blocks = 0
+              and skipped_blocks > 0
+              and total_blocks = skipped_blocks
+            order by
+              skipped_blocks,
+              duration_ms,
+              path
+            """,
+            (run_id,),
+        ).fetchall()
+    elif near_misses:
         rows = db.execute(
             """
             select
@@ -267,12 +305,12 @@ def main() -> int:
             "total_blocks",
             "passed_blocks",
         ]
-        if args.near_misses:
+        if args.near_misses or args.skipped_only:
             columns.extend(["failed_blocks", "skipped_blocks"])
         else:
             columns.append("skipped_blocks")
         columns.extend(["runnable_blocks", "duration_ms"])
-        if args.near_misses:
+        if args.near_misses or args.skipped_only:
             columns.extend(["status", "failure_class"])
         if show_database:
             columns.insert(0, "database")
@@ -299,6 +337,7 @@ def main() -> int:
                     args.min_passed,
                     args.include_non_sage,
                     args.near_misses,
+                    args.skipped_only,
                     args.max_failed,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
@@ -313,7 +352,7 @@ def main() -> int:
                 print(row[0])
             elif show_database:
                 print("\t".join(str(value) for value in (database, *row)))
-            elif args.near_misses:
+            elif args.near_misses or args.skipped_only:
                 print("\t".join(str(value) for value in row))
             else:
                 (
