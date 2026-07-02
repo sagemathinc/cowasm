@@ -19655,6 +19655,39 @@ live under
 `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/` for follow-up
 inspection.
 
+Focused free-algebra quotient corpus-growth pass on 2026-07-02:
+
+```text
+free_algebra_quotient.py: 74 passed, 0 failed, 2 skipped
+```
+
+That strict one-file make-target validation adds
+`sage/algebras/free_algebra_quotient.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 922
+non-comment entries. A near-miss scan of prior probe databases identified the
+file as `74 passed, 2 failed, 0 skipped`: the runnable quotient-algebra
+coverage was already healthy, with only a matrix tuple display mismatch and an
+illustrative `QuaternionAlgebra(...)` comparison blocking promotion.
+
+The WASI source patch now classifies the matrix tuple formatting drift as a
+deferred known bug and marks the faster quaternion backend comparison as
+`# needs sage.algebras.quaternion_algebra`. Earlier low-prompt helper probes in
+this pass found only skipped-only files under existing browser-profile
+metadata.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and then used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active2/free-algebra-quotient-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`795d21086850caef5c529cb51080d8e909c762ef`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups one block under
+`deferred:known bug` and one under
+`optional:sage.algebras.quaternion_algebra`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
