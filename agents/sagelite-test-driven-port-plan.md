@@ -19311,6 +19311,31 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/hexad-make-final.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused tensor-algebra corpus-growth pass on 2026-07-02:
+
+```text
+sage -t passed: 143 passed, 0 failed, 10 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/tensor_algebra.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 914
+non-comment entries. A fresh algebra-frontier probe first recorded
+`tensor_algebra.py` as close but not clean, with 143 passing blocks and ten
+missing-name failures around `SymmetricFunctions(QQ).m()`.
+
+Directly exposing `SymmetricFunctions` through the WASI `sage.all` startup
+namespace was rejected after a scratch resource-hash update made the worker
+fail at startup. The source patch instead marks the three symmetric-functions
+subgroups as `# needs sage.combinat.sf`, preserving the tensor algebra coverage
+while recording the broader symmetric-functions startup boundary explicitly.
+Focused strict validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-current-goal/tensor-final2.sqlite3`;
+`skips-by-reason.sql` groups all ten skipped blocks under
+`optional:sage.combinat.sf`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

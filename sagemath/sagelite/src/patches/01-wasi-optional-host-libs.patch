@@ -9654,3 +9654,12 @@ diff -urN -U0 a/src/sage/structure/coerce_maps.pyx b/src/sage/structure/coerce_m
 @@ -514 +518 @@
 -    return CCallableConvertMap(domain, domain, <void*>&_ccall_test_function, name)
 +    return CCallableConvertMap(domain, domain, <void*>&_ccall_test_function_impl, name)
+diff -urN -U0 a/src/sage/algebras/tensor_algebra.py b/src/sage/algebras/tensor_algebra.py
+--- a/src/sage/algebras/tensor_algebra.py
++++ b/src/sage/algebras/tensor_algebra.py
+@@ -101,0 +102 @@
++            sage: # needs sage.combinat.sf
+@@ -438,0 +440 @@
++            sage: # needs sage.combinat.sf
+@@ -458,0 +461 @@
++            sage: # needs sage.combinat.sf
