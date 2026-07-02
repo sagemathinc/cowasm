@@ -6047,6 +6047,11 @@ diff -urN a/src/sage/doctest/test.py b/src/sage/doctest/test.py
 @@ -564 +564 @@
 -    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",
 +    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",   # needs subprocess
+diff -urN a/src/sage/doctest/__main__.py b/src/sage/doctest/__main__.py
+--- a/src/sage/doctest/__main__.py
++++ b/src/sage/doctest/__main__.py
+@@ -28,0 +29 @@
++        sage: # needs pytest sage.doctest.control
 diff -urN a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
 --- a/src/sage/cpython/debug.pyx
 +++ b/src/sage/cpython/debug.pyx

@@ -19745,6 +19745,26 @@ caches corpus normalization by source root. With
 scan over `.tmp/current-run` skipped stale empty or pre-source-root databases
 and printed no uncovered real Sagelite promotion rows.
 
+Follow-up low-infrastructure frontier metadata pass on 2026-07-02:
+
+No corpus entry was promoted. A focused low-prompt infrastructure probe first
+found that `sage/doctest/__main__.py` had one passing block and eight failures
+caused by the unavailable `pytest` import and Sage doctest control stack. The
+WASI source patch now marks the parser-default block with
+`# needs pytest sage.doctest.control`, matching the existing browser-profile
+treatment of `sage.doctest.control` in `doctest/util.py`.
+
+The focused rerun of `sage/doctest/__main__.py` recorded `0 passed, 0 failed,
+9 skipped`, and the full small infrastructure batch recorded `0 passed,
+0 failed, 50 skipped` in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal/probes/low-infra-tagged.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py --min-passed 1 --paths-only` prints no candidate
+for that database. The skipped-only files in this batch should not be
+resampled as corpus-growth targets unless the default browser profile starts
+including optional doctest, IPython, Sphinx, symbolic, Cython, or profiling
+infrastructure.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
