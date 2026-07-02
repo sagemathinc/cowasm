@@ -9957,3 +9957,18 @@ diff -urN -U0 a/src/sage/rings/polynomial/msolve.py b/src/sage/rings/polynomial/
 @@ -253 +253 @@
 -        sage: I.variety(ComplexField(100))
 +        sage: I.variety(ComplexField(100))  # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/interfaces/tachyon.py b/src/sage/interfaces/tachyon.py
+--- a/src/sage/interfaces/tachyon.py
++++ b/src/sage/interfaces/tachyon.py
+@@ -777,0 +778 @@
++            sage: # needs subprocess
+@@ -791,0 +793 @@
++            sage: # needs subprocess
+@@ -848,0 +851 @@
++            sage: # needs subprocess
+@@ -875 +879 @@
+-            sage: tachyon_rt.version()  # random
++            sage: tachyon_rt.version()  # random  # needs subprocess
+@@ -877 +881 @@
+-            sage: tachyon_rt.version() >= '0.98.9'
++            sage: tachyon_rt.version() >= '0.98.9'  # needs subprocess

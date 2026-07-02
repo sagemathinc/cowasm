@@ -20760,6 +20760,41 @@ queries are empty; `skips-by-reason.sql` groups 25 blocks under
 `optional:msolve` and one block under
 `optional:sage.rings.polynomial.plural`.
 
+Focused Tachyon interface corpus-growth pass on 2026-07-02:
+
+```text
+tachyon.py: 6 passed, 0 failed, 19 skipped
+```
+
+This pass promotes `sage/interfaces/tachyon.py` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 943
+non-comment entries. Fresh utility and frontend probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-2/` first
+found no clean uncovered low-prompt candidate: many files were skipped-only,
+while broader candidates such as SQL database doctests, computational-math
+book examples, the IPython kernel, and renderer interfaces exposed backend or
+subprocess boundaries.
+
+`sage/interfaces/tachyon.py` was the narrow useful near miss. Its local
+interface object representation doctests run in the default node profile, but
+the renderer execution, usage, and version examples call the external Tachyon
+binary through subprocess-style host APIs. The WASI source patch now marks
+those executable blocks as `# needs subprocess`, preserving lightweight
+interface coverage without counting native process execution as browser-profile
+compatibility.
+
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-2/tachyon-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b0bd75dde36d7515f9602def6d327b4bd70416db`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups all nineteen skipped blocks
+under `optional:subprocess`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
