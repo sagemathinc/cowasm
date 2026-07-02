@@ -3703,6 +3703,32 @@ graph/poset backend clusters. Future scheduled runs should avoid repeating
 these exact batches unless the optional crypto, GAP/Singular/eclib, or graph
 backend profile changes.
 
+Focused Matlab interface helper corpus-growth pass:
+
+```text
+matlab.py: 4 passed, 0 failed, 62 skipped
+```
+
+That one-file make-target validation adds `sage/interfaces/matlab.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 953
+non-comment entries. Direct near-miss sampling first recorded three untagged
+startup-name failures where helper-method doctests used Sage's `matlab`
+interface object without a local import. Importing that object reaches the
+pexpect-backed external Matlab interface, so the WASI source patch marks
+those examples as explicit `# optional - matlab` coverage instead of adding
+`matlab` to the browser-compatible startup namespace.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after rebuilding and patching a fresh Sagelite
+source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active-matlab/matlab-make.sqlite3`.
+The latest-run summary records runner version 82 in the default node profile,
+a 100% non-skipped pass rate, and empty saved block- and file-failure cluster
+queries. `skips-by-reason.sql` groups the newly deferred examples under
+`optional:matlab`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

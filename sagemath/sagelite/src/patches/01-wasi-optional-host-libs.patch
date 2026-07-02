@@ -10083,6 +10083,18 @@ diff -urN -U0 a/src/sage/interfaces/genus2reduction.py b/src/sage/interfaces/gen
 @@ -403 +403 @@
 -            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
 +            sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)  # needs sage.libs.pari
+diff -urN -U0 a/src/sage/interfaces/matlab.py b/src/sage/interfaces/matlab.py
+--- a/src/sage/interfaces/matlab.py
++++ b/src/sage/interfaces/matlab.py
+@@ -199 +199 @@
+-            sage: matlab._read_in_file_command('/tmp/matlab_file')
++            sage: matlab._read_in_file_command('/tmp/matlab_file')                       # optional - matlab
+@@ -206 +206 @@
+-            sage: sm = matlab.sage2matlab_matrix_string(m)
++            sage: sm = matlab.sage2matlab_matrix_string(m)                               # optional - matlab
+@@ -276 +276 @@
+-            sage: matlab.strip_answer(s)
++            sage: matlab.strip_answer(s)                                                 # optional - matlab
 diff -urN -U0 a/src/sage/repl/interface_magic.py b/src/sage/repl/interface_magic.py
 --- a/src/sage/repl/interface_magic.py
 +++ b/src/sage/repl/interface_magic.py
