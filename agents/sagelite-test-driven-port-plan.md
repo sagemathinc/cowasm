@@ -20133,6 +20133,36 @@ Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 82, and a 100% non-skipped pass rate. The saved
 block- and file-failure cluster queries are empty.
 
+Follow-up absent-source frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active/probes/`
+sampled low-prompt helpers, doctest/misc/test helpers, compact combinatorics,
+and crypto utilities that were not useful promotion sources in the default
+browser-compatible profile.
+
+The helper batches were skipped-only or empty:
+
+```text
+low-prompt-helpers.sqlite3: 0 passed, 0 failed, 4 skipped
+misc-test-helpers.sqlite3: 0 passed, 0 failed, 40 skipped
+crypto-probe.sqlite3: 0 passed, 0 failed, 309 skipped
+```
+
+The compact combinatorics batch recorded runnable failures but no passing
+blocks:
+
+```text
+combinat-pure-probe.sqlite3: 0 passed, 16 failed, 91 skipped
+```
+
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--min-passed 1 --paths-only --ignore-invalid` printed no uncovered source rows
+for these four probe databases. The checked corpus remains at 927 non-comment
+entries. Future scheduled runs should avoid repeating these specific
+low-prompt helper, crypto, and compact combinatorics batches unless the
+browser-profile skip policy or graph/poset backend surface changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
