@@ -22122,6 +22122,42 @@ dependency tags for combinatorics, groups, graphs, and modules. These batches
 should not be repeated as corpus-growth candidates without a source, profile,
 or doctest-extraction change.
 
+Follow-up historical-dashboard audit on 2026-07-02:
+
+No new quiet corpus candidate was found. This pass checked the newest
+`/tmp/sagelite-20260702-*` SQLite artifacts against the current 964-entry
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus with
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`; the helper printed no
+uncovered clean runnable candidates for
+`/tmp/sagelite-20260702-small-frontier.sqlite3`,
+`/tmp/sagelite-20260702-focused-failures.sqlite3`, or
+`/tmp/sagelite-20260702-mid-sample-3.sqlite3`.
+
+The focused-failures database has no actual block- or file-failure clusters;
+its clean runnable rows (`rational.pyx`, `schemes/generic/homset.py`,
+`combinat/words/word_generators.py`, `categories/category.py`,
+`misc/banner.py`, `tests/test_deprecation.py`, and already-covered word
+frontend coverage) are all already present in the curated corpus. The
+small-frontier database is skipped-only or empty, and the mid-sample database
+has no promotion source: skipped-only files remain dependency-boundary
+coverage, while `groups/additive_abelian/additive_abelian_group.py` and
+`modules/submodule_helper.py` still fail through the broader matrix
+echelonization/import stack instead of a narrow optional-backend tag.
+
+A current focused rerun also confirmed that the historical
+`doctest/external.py` failures are stale. The checked corpus already contains
+`src/sage/doctest/external.py`, and a fresh direct run against the current
+patched source records:
+
+```text
+external.py: 35 passed, 0 failed, 30 skipped
+```
+
+Its skip clusters are the expected optional external-software feature checks,
+so older OSError rows from `/tmp/sagelite-20260702-mid-sample-3.sqlite3`
+should not be used as current triage evidence.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
