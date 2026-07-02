@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 77;
+const doctestRunnerVersion = 78;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -830,6 +830,19 @@ def __cowasm_doctest_showwarning(message, category, filename, lineno, file=None,
         file.write(output)
     else:
         sys.stdout.write(output)
+
+
+__cowasm_active_displayhook_globals = None
+__cowasm_displayhook_delegate = None
+
+
+def __cowasm_doctest_displayhook(value):
+    if __cowasm_displayhook_delegate is not None:
+        __cowasm_displayhook_delegate(value)
+    else:
+        sys.__displayhook__(value)
+    if value is not None and __cowasm_active_displayhook_globals is not None:
+        __cowasm_active_displayhook_globals["_"] = value
 
 
 def __cowasm_note_state(
@@ -2137,11 +2150,22 @@ def __cowasm_run_file(filename):
                     namespace = __cowasm_namespace(filename)
                 test.globs = namespace
             before = time.time()
+            global __cowasm_active_displayhook_globals
+            global __cowasm_displayhook_delegate
             old_showwarning = warnings.showwarning
+            old_displayhook = sys.displayhook
+            old_dunder_displayhook = sys.__displayhook__
             warnings.showwarning = __cowasm_doctest_showwarning
+            __cowasm_active_displayhook_globals = test.globs
+            __cowasm_displayhook_delegate = old_dunder_displayhook
+            sys.__displayhook__ = __cowasm_doctest_displayhook
             try:
                 result = runner.run(test, clear_globs=False)
             finally:
+                sys.displayhook = old_displayhook
+                sys.__displayhook__ = old_dunder_displayhook
+                __cowasm_displayhook_delegate = None
+                __cowasm_active_displayhook_globals = None
                 warnings.showwarning = old_showwarning
             attempted += result.attempted
             failed += result.failed

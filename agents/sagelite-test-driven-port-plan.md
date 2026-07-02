@@ -18844,6 +18844,53 @@ RTTI symbol while loading `element_givaro`, an NTL/libcxx memory trap through
 should stay out of blind promotion batches until the NTL finite-field runtime
 boundary changes.
 
+Doctest displayhook/global `_` pass on 2026-07-02:
+
+Sagelite's doctest runner now mirrors expression displayhook results into the
+active doctest globals under `_`. Python's standard doctest runner temporarily
+sets `sys.displayhook` from `sys.__displayhook__` while executing examples,
+but Sage doctests frequently already have a global `_` from earlier preparsed
+assignments. Without explicitly updating the doctest globals, later examples
+such as `_.parent()` resolved the stale global value instead of the previous
+displayed expression result. Runner version 78 temporarily wraps
+`sys.__displayhook__` during each doctest run, delegates normal output
+formatting, and stores the displayed value into the active namespace.
+
+Focused validation records:
+
+```text
+words.py: 390 passed, 0 failed, 23 skipped
+word_generators.py: 256 passed, 0 failed, 46 skipped
+```
+
+A strict two-file make-target corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`
+and `SAGELITE_DOCTEST_JOBS=2` recorded:
+
+```text
+sage -t passed: 646 passed, 0 failed, 69 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that focused
+dashboard at
+`.tmp/current-run/scheduled-2026-07-02-displayhook/words-make.sqlite3`.
+The standalone Sagelite doctest smoke now includes a `Word(...)` followed by
+`_.parent()` regression check, and a full
+`make -C sagemath/sagelite test-wasi-sdk-standalone` run passed through Meson
+configure/compile/install, Node import, Electron resources, smoke, relocated
+smoke, and follow-up recording.
+
+A compact rerun of the previously failing files records:
+
+```text
+sage -t failed: 1622 passed, 11 failed, 283 skipped
+```
+
+This clears the previous five combinatorial-word failures from the latest
+dashboard. The remaining clusters are rational `sqrt`/`log` fallback
+differences, category additional-structure drift, `schemes/generic/homset.py`
+setup/backend failures, `misc/banner.py` dictionary-order output drift, and
+`tests/test_deprecation.py` warning formatting.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
