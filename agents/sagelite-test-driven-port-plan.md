@@ -18661,6 +18661,52 @@ Useful next work is either a direct fix for the symbolic `stream.py` timeout or
 `functional.py` memory trap, or a smaller probe in a new namespace with
 non-skipped default-profile doctests.
 
+Follow-up focused frontier audit on 2026-07-02:
+
+No new quiet runnable corpus candidate was found in the next focused probe
+batches. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+908 non-comment entries after this audit.
+
+Fresh probes wrote SQLite dashboards under `/home/user/cowasm/.tmp/current-run/`:
+
+- `scheduled-2026-07-02-typeset/typeset.sqlite3` reran the already-covered
+  `sage/typeset` frontier and stayed clean with 197 passed, 0 failed, and
+  65 skipped blocks.
+- `scheduled-2026-07-02-functions/functions.sqlite3` checked the remaining
+  absent `sage/functions` files (`all.py`, `min_max.py`, `piecewise.py`,
+  `prime_pi.pyx`, and `transcendental.py`) and found only skipped or empty
+  default-profile coverage: 0 passed, 0 failed, and 458 skipped.
+- `scheduled-2026-07-02-small-candidates/small.sqlite3` checked small
+  prompt-count candidates from matroids, misc, modules, and categories, but
+  they were also skipped-only or empty: 0 passed, 0 failed, and 52 skipped.
+- `scheduled-2026-07-02-rich-output/rich-output.sqlite3` confirmed that
+  `backend_ipython.py` is not a quiet promotion candidate yet, with failures
+  dominated by `NameError` and `ModuleNotFoundError` clusters.
+- `scheduled-2026-07-02-structure/structure.sqlite3` found no promotion-ready
+  structure files; the runnable Cython paths still include the known
+  `coerce_maps.pyx` callable-conversion `wasm_signature_mismatch` and broader
+  `element.pyx`/`parent.pyx` mismatch clusters.
+- `scheduled-2026-07-02-tests/tests.sqlite3` kept the sampled Sage test
+  modules out of the corpus: `cmdline.py` is still noisy, while the other
+  sampled files are skipped-only or empty under the default profile.
+- `scheduled-2026-07-02-numerical/numerical.sqlite3` kept the absent numerical
+  helpers out of the corpus because `linear_functions.pyx` times out in
+  quadratic-field setup and the tensor helpers are dominated by startup-name
+  and output-mismatch clusters.
+- `scheduled-2026-07-02-schemes/schemes.sqlite3` found useful passing blocks
+  in `algebraic_scheme.py` and `morphism.py`, but both remain too noisy for
+  quiet promotion, with failures dominated by missing modules, startup names,
+  output drift, and type errors.
+
+Running `doctest-corpus-candidates.py --min-passed 1` against the skipped-only
+and scheme probe databases returned no absent clean runnable file. Future
+scheduled corpus-growth runs should avoid these batches as blind candidates.
+Useful next work is a targeted fix for one recorded cluster, especially the
+`coerce_maps.pyx` function-signature mismatch, the numerical quadratic-field
+timeout, or one of the startup-namespace clusters from the scheme/numerical
+probes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
