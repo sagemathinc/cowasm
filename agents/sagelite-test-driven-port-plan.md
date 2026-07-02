@@ -19797,6 +19797,31 @@ zero-block, skipped-only, or dominated by reset/session persistence,
 fork/parallel, optional backend, or Cython/Numpy metadata. These batches are
 frontier data rather than corpus-growth candidates.
 
+Follow-up low-count mixed frontier audit on 2026-07-02:
+
+No corpus entry was promoted. A fresh direct probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/probes/low-count-mixed.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 0 passed, 2 failed, 119 skipped
+```
+
+The skipped-only files were `sage/rings/factorint_pari.pyx`,
+`sage/misc/sphinxify.py`, `sage/rings/ring_extension_homset.py`,
+`sage/rings/qqbar_decorators.py`,
+`sage/combinat/root_system/braid_move_calculator.py`,
+`sage/modules/numpy_util.pyx`,
+`sage/rings/function_field/place_rational.py`, and
+`sage/quadratic_forms/quadratic_form__siegel_product.py`. The two file-level
+errors were the existing NTL/libcxx ostream `memory access out of bounds`
+cluster: `sage/rings/function_field/derivations.py` reached it while setting
+up a finite-field function field, and `sage/rings/bernoulli_mod_p.pyx` reached
+it from `bernoulli_mod_p(3)`. The checked
+`doctest-corpus-candidates.py` helper printed no uncovered clean source rows
+for this database, so these files should not be resampled as corpus-growth
+targets until the finite-field/NTL trap cluster changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
