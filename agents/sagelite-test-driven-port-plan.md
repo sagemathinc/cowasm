@@ -20904,6 +20904,23 @@ preserving `COWASM_SAGELITE_DOCTEST_DB` precedence. The standalone Sagelite
 smoke has a one-block env-var check so this scheduled-probe path remains
 covered.
 
+Focused NTL GF2 wrapper corpus-growth pass on 2026-07-02:
+
+```text
+ntl_GF2.pyx: 50 passed, 0 failed, 0 skipped
+```
+
+This pass promotes `sage/libs/ntl/ntl_GF2.pyx` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 947
+non-comment entries. A focused NTL wrapper probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-agent-ntl/`
+identified `ntl_GF2.pyx` as the only clean runnable candidate in the batch.
+The same probe records adjacent NTL frontiers separately: GF2E wrappers hit
+the existing missing C++ RTTI typeinfo dependency in the Givaro finite-ring
+side module, ZZ_p wrappers hit the NTL/libcxx ostream trap, and matrix
+wrappers remain blocked by missing matrix-mod2 or dense-matrix attribute
+behavior rather than narrow corpus tags.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
