@@ -242,6 +242,11 @@ def candidate_rows(
     file_errors: bool,
     max_failed: int,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
+    failure_class_expr = (
+        "coalesce(failure_class, '')"
+        if files_table_has_column(db, "failure_class")
+        else "''"
+    )
     failure_detail_expr = (
         "coalesce(failure_detail, '')"
         if files_table_has_column(db, "failure_detail")
@@ -259,13 +264,13 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               {failure_detail_expr}
             from files
             where run_id = ?
               and status = 'error'
             order by
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               duration_ms,
               path
             """,
@@ -283,7 +288,7 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               {failure_detail_expr}
             from files
             where run_id = ?
@@ -310,7 +315,7 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               {failure_detail_expr}
             from files
             where run_id = ?
@@ -338,7 +343,7 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               {failure_detail_expr}
             from files
             where run_id = ?
@@ -367,7 +372,7 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              coalesce(failure_class, ''),
+              {failure_class_expr},
               {failure_detail_expr}
             from files
             where run_id = ?

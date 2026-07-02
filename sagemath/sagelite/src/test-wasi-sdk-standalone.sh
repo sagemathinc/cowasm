@@ -2811,6 +2811,89 @@ if [ "$doctest_candidate_helper_file_error_details" != "src/sage/example/error_c
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-failure-detail did not report file-scope diagnostics."
 fi
+doctest_candidate_helper_legacy_db="$probe_dir/sagelite-doctest-legacy-candidate-helper.sqlite3"
+touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_candidate.py"
+sqlite3 "$doctest_candidate_helper_legacy_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text
+);
+create table files (
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id, source_root) values (1, '$doctest_candidate_helper_source_root');
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py',
+  'passed',
+  2,
+  2,
+  0,
+  0,
+  10
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py',
+  'passed',
+  0,
+  0,
+  0,
+  0,
+  5
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/near_miss_candidate.py',
+  'failed',
+  3,
+  2,
+  1,
+  0,
+  20
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py',
+  'error',
+  0,
+  0,
+  0,
+  0,
+  15
+);
+SQL
+doctest_candidate_helper_legacy_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_legacy_db")"
+if [ "$doctest_candidate_helper_legacy_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_legacy_paths" >&2
+  sqlite3 "$doctest_candidate_helper_legacy_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not tolerate legacy files tables."
+fi
+for legacy_mode in "--near-misses" "--zero-blocks" "--file-errors"; do
+  doctest_candidate_helper_legacy_mode_paths="$("$src_dir/doctest-corpus-candidates.py" \
+    $legacy_mode \
+    --paths-only \
+    --corpus "$doctest_candidate_helper_corpus" \
+    "$doctest_candidate_helper_legacy_db")"
+  case "$legacy_mode:$doctest_candidate_helper_legacy_mode_paths" in
+    "--near-misses:src/sage/example/near_miss_candidate.py"|"--zero-blocks:src/sage/example/zero_candidate.py"|"--file-errors:src/sage/example/error_candidate.py") ;;
+    *)
+      printf '%s\n' "$doctest_candidate_helper_legacy_mode_paths" >&2
+      sqlite3 "$doctest_candidate_helper_legacy_db" ".dump" >&2 || true
+      record_blocker "sagelite-blocked: doctest-corpus-candidates $legacy_mode did not tolerate legacy files tables."
+      ;;
+  esac
+done
 doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
 touch "$doctest_candidate_helper_empty_db"
 doctest_candidate_helper_quiet_stderr="$("$src_dir/doctest-corpus-candidates.py" \

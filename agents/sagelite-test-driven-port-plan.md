@@ -21375,6 +21375,26 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, default and detailed
 `--file-errors` scans across recent scratch databases, and a detailed
 `--near-misses --max-failed 20` scan against the fresh medium-prompt probe.
 
+Follow-up legacy candidate-helper compatibility pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Re-scanning accumulated scratch
+SQLite probes exposed a helper compatibility issue instead: older Sagelite
+doctest databases can have a `files` table without `failure_class`, while the
+current clean-candidate, near-miss, skipped-only, zero-block, and file-error
+reports all selected that column. The helper already tolerated missing
+`failure_detail`; it now applies the same fixed empty-string fallback for
+missing `failure_class`, so stale but otherwise valid scratch databases do not
+abort multi-database frontier scans.
+
+The standalone smoke fixture now includes a legacy candidate-helper database
+with no diagnostic columns and checks clean, `--near-misses`, `--zero-blocks`,
+and `--file-errors` path output against that schema. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a focused
+legacy-schema SQLite probe covering all four helper modes, and clean,
+near-miss, zero-block, skipped-only, and detailed file-error scans across the
+current `.tmp/current-run` databases with `--ignore-invalid --quiet-invalid`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
