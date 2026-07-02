@@ -19688,6 +19688,43 @@ queries are empty; `skips-by-reason.sql` groups one block under
 `deferred:known bug` and one under
 `optional:sage.algebras.quaternion_algebra`.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Three fresh focused probes wrote
+SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-working/probes/`,
+and the checked `doctest-corpus-candidates.py` helper printed no real
+uncovered source rows for any of them. A wider recent-database scan likewise
+found only the synthetic
+`.tmp/current-run/scheduled-2026-07-02-make-candidates/candidates.sqlite3`
+fixture row, `src/sage/example/real_candidate.py`, which is not present in
+the patched Sagelite source tree and is not a promotion candidate.
+
+The graph/topology/geometry/group/category probe recorded only skipped-only
+or failing files. `graphs/asteroidal_triples.pyx`,
+`graphs/partial_cube.py`, and `algebras/quatalg/quaternion_algebra_cython.pyx`
+failed before contributing any passing blocks, while the topology catalogs,
+`geometry/polyhedron/base_RDF.py`, `groups/perm_gps/partn_ref/double_coset.pyx`,
+`categories/finite_crystals.py`, and
+`categories/finitely_generated_lie_conformal_algebras.py` were skipped-only
+under existing default-profile tags.
+
+The compact coding/crypto/modular/polynomial probe was also not promotable:
+coding, crypto, database, and modular-symbol helper files were skipped-only,
+`modular/arithgroup/congroup.pyx` still needs the unavailable
+`sage.matrix.matrix_integer_dense` backend, and
+`rings/polynomial/pbori/blocks.py` still needs the stripped PolyBoRi module.
+The only file with runnable passing blocks, `rings/polynomial/hilbert.pyx`,
+recorded `6 passed, 18 failed, 0 skipped`; its failures depend on the disabled
+FLINT integer-polynomial side module plus Singular/plural-backed Hilbert
+series setup, so it is broader backend work rather than a narrow tagging
+promotion.
+
+A low-prompt absent-file sweep recorded `0 passed, 0 failed, 79 skipped`
+across CLI, coding, crypto, database, group, interface, Homfly, misc, REPL,
+and NumPy/SymPy test helpers. These files should not be resampled for corpus
+growth unless the default browser-compatible skip policy changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
