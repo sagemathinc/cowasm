@@ -652,6 +652,12 @@ diff -urN a/src/sage/libs/braiding.pyx b/src/sage/libs/braiding.pyx
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
+@@ -11 +11 @@
+-    sage: import_statements("TensorAlgebra")
++    sage: import_statements("TensorAlgebra")                                      # needs sage.algebras.tensor_algebra
+@@ -54 +54 @@
+-    sage: interacts
++    sage: interacts                                                               # needs sage.symbolic
 @@ -211,4 +211,8 @@
      Suppress C-level startup chatter from optional runtimes in wheel installs.
      """

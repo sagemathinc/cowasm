@@ -3516,6 +3516,42 @@ batch found skipped-only modular-form helper files, `qadic_flint_FM.pyx` and
 `qadic_flint_FP.pyx` blocked by the disabled FLINT integer-polynomial side
 module, and no uncovered clean candidate beyond the Drinfeld tutorial.
 
+Focused Sage startup front-door corpus-growth pass:
+
+```text
+all.py: 13 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds `sage/all.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 908
+non-comment entries. Direct sampling first recorded 13 passed blocks and two
+focused failures: `import_statements("TensorAlgebra")` could not resolve the
+unpackaged tensor-algebra surface in the stripped browser-compatible profile,
+and the lazy `interacts` repr imported the unavailable symbolic expression
+stack.
+
+The added WASI source patch marks those examples as
+`# needs sage.algebras.tensor_algebra` and `# needs sage.symbolic`,
+preserving the rest of the startup/import doctests as default-profile
+coverage. Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after rebuilding a fresh patched Sagelite source
+copy, with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex/all-py/make-rerun.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the two deferred examples under their explicit
+optional dependency tags.
+
+The same scheduled pass rejected several adjacent probe batches rather than
+adding skipped-only or noisy coverage. The scheme/numerical probe found broad
+`sage.rings.polynomial.plural` and numerical backend failure clusters; small
+interface, PARI, ring-extension, GAP, FLINT, and double-matrix helpers were
+skipped-only or failed at unavailable optional backends; category examples
+were skipped-only; Lie-conformal implementation files still route through the
+stripped graph backend; and combinatorics, crypto, and test helper probes were
+mostly skipped-only or hit known NTL/libcxx and process/display boundaries.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
