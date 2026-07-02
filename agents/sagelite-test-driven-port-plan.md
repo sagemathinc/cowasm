@@ -21985,6 +21985,51 @@ A full dry-run of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` still applies cleanly after the added hunk.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex-final/`
+using runner version 83 against the current patched Sagelite source copy.
+`doctest-corpus-candidates.py` printed no real uncovered candidate rows across
+the probe databases.
+
+A grouped rerun of already-covered algebra helpers confirmed the current
+corpus entries remain quiet:
+
+```text
+sage -t passed: 1120 passed, 0 failed, 89 skipped
+```
+
+The checked files were `associated_graded.py`, `finite_gca.py`,
+`free_algebra.py`, `free_algebra_element.py`,
+`free_algebra_quotient.py`, `jordan_algebra.py`, and
+`tensor_algebra.py`. They are already listed in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, so this was a
+coverage confirmation rather than a promotion.
+
+Several absent-file batches should not be repeated without a source, runtime,
+or profile change. The absent algebra batch recorded 86 passed blocks, 859
+failures, and 15 skips: `commutative_dga.py`,
+`q_commuting_polynomials.py`, `cellular_basis.py`, `group_algebra.py`, and
+`free_algebra_quotient_element.py` have broad runnable failure clusters, while
+`quaternion_algebra_element.py` is skipped-only and `all.py`/`catalog.py` have
+no extracted blocks. Feature test wrappers such as `cddlib_test.py`,
+`gap_test.py`, `pari_test.py`, `planarity_test.py`, `sat_test.py`,
+`lrs_test.py`, `topcom_test.py`, `sloane_database_test.py`, and
+`standard.py` also extracted no doctest blocks.
+
+Low-prompt mixed probes likewise produced no promotion source. The
+PARI/PBoRi batch recorded no passing blocks and eight failures in
+`convert_sage_real_double.pyx`, `convert_flint.pyx`, and `pbori/blocks.py`;
+the SymPy/NumPy, Guava, modular-symbol, and cluster-interaction files in that
+batch were skipped-only or empty. The modules/rings probe recorded six passed
+blocks, 36 failures, and 70 skips: `function_field/derivations.py` still hits
+the known NTL/libcxx WASM trap, `number_field/small_primes_of_degree_one.py`
+has a broader number-field failure cluster, and the sampled NumPy/vector,
+QQbar, PBoRi, and ring-extension helpers were skipped-only. The compact
+functions probe confirmed `functions/prime_pi.pyx` and `functions/min_max.py`
+are skipped-only under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
