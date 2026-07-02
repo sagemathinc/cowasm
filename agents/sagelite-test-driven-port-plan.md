@@ -20016,6 +20016,56 @@ PolyBoRi, elliptic-curve database data, graph/poset support, GAP/libgap,
 hyperelliptic curves, manifolds, symbolic integration, and affine
 Lie-conformal algebra graph imports.
 
+Follow-up low-prompt real-source audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A broad local scan of existing
+SQLite scratch dashboards with
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--min-passed 1 --paths-only --ignore-invalid` printed no uncovered real
+Sagelite source rows. Running the same helper without a current-source
+override can still surface stale synthetic fixture rows such as
+`src/sage/example/real_candidate.py` from temporary candidate-tooling smoke
+databases, so future promotion scans should keep the explicit source-root
+override when sweeping mixed `.tmp` artifacts.
+
+Fresh bounded probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-next/`
+sampled absent real source files with low and medium doctest prompt counts.
+The low-prompt real batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 121 skipped
+```
+
+The medium real batch recorded:
+
+```text
+sage -t failed: 0 passed, 1 failed, 207 skipped
+```
+
+Its only file-level failure was the already-documented
+`sage/combinat/q_bernoulli.pyx` NTL/libcxx finite-field trap at line 44:
+`x = PolynomialRing(GF(2),'x').gen()`. The saved file-error cluster groups it
+as `wasm_trap` with `RuntimeError: memory access out of bounds` in the
+`libcxx.so` ostream sentry frame reached from `ntl_ZZ_p`.
+
+A final selected batch of lightweight package/reset helpers, category
+examples, vector-double wrappers, combinatorial species helpers, and Judson
+book examples recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 311 skipped
+```
+
+The file-coverage summaries classify the fresh probes as 40 skipped-only
+files, four zero-block Judson snippets, and one known NTL/libcxx file-level
+error. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+926 non-comment entries. These exact skipped-only helper/category/species
+batches should not be repeated for corpus growth unless the browser-profile
+skip policy changes; the useful next work is either a direct NTL/libcxx
+finite-field runtime fix or a fresh search in a different absent-source band.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
