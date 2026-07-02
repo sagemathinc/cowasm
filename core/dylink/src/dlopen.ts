@@ -1297,12 +1297,7 @@ export default class DlopenManger {
       (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
     }
 
-    if (
-      instance.exports.__wasm_call_ctors != null &&
-      !path.endsWith("/libcxx.so") &&
-      path != "libcxx.so" &&
-      path != "./libcxx.so"
-    ) {
+    if (instance.exports.__wasm_call_ctors != null) {
       log("calling __wasm_call_ctors for dynamic library");
       (instance.exports.__wasm_call_ctors as CallableFunction)();
     }

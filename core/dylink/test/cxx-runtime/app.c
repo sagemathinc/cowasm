@@ -6,6 +6,8 @@ extern void* dlsym(void* handle, const char* symbol);
 
 typedef int (*STRING_SIZE)(const char*);
 typedef int (*RTTI_MATCHES)();
+typedef int (*OSTREAM_FORMATS)();
+typedef int (*CERR_WRITES)();
 typedef int (*C_ADD)(int);
 typedef int (*CONST_CHAR_TYPEINFO_IMPORTED)();
 
@@ -31,6 +33,16 @@ int main() {
   assert(rtti_matches != 0);
   printf("rtti_matches() = %d\n", rtti_matches());
   assert(rtti_matches() == 1);
+
+  OSTREAM_FORMATS ostream_formats = (OSTREAM_FORMATS)dlsym(handle1, "ostream_formats");
+  assert(ostream_formats != 0);
+  printf("ostream_formats() = %d\n", ostream_formats());
+  assert(ostream_formats() == 1);
+
+  CERR_WRITES cerr_writes = (CERR_WRITES)dlsym(handle1, "cerr_writes");
+  assert(cerr_writes != 0);
+  printf("cerr_writes() = %d\n", cerr_writes());
+  assert(cerr_writes() == 1);
 
   void* c_handle = dlopen("./c-lib.so", 2);
   assert(c_handle != 0);

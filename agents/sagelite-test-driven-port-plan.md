@@ -22465,6 +22465,37 @@ Broadly skip-tagging `ntl_GF2EContext.pyx` would add little useful dashboard
 coverage because the remaining examples are all finite-field context
 construction or arithmetic checks.
 
+Follow-up libcxx standard-stream constructor pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The focused C++ dylink runtime
+smoke now covers side-module `std::ostringstream` formatting and `std::cerr`
+writes in addition to the existing `std::string`, RTTI, and C++ ABI data-symbol
+checks. That reproduced the same `basic_ostream::sentry` memory trap seen in
+the Sagelite NTL `TerminalError` path: ordinary stream objects worked, but
+global standard streams were never initialized because the dynamic loader
+special-cased `libcxx.so` out of `__wasm_call_ctors`.
+
+The dylink loader now runs constructors for `libcxx.so` like other side
+modules. The focused C++ runtime smoke passes and proves `std::cerr` can be
+used from a wasi-sdk C++ side module after `libcxx.so` is loaded. A focused
+Sagelite rerun of
+
+```text
+sage -t --line 45 sagemath/sagelite/build/wasi-sdk/src/sage/libs/ntl/ntl_GF2EContext.pyx
+```
+
+now gets past the libcxx stream trap. The remaining file-level failure is the
+underlying NTL `TerminalError` abort in the invalid `ZZ_p` modulus path,
+recorded as `RuntimeError: unreachable` at
+`ntl_ZZ_p.cpython-314-wasm32-wasi.so.NTL::TerminalError(char const*)`.
+That keeps the next finite-field runtime frontier focused on NTL exception
+configuration and Sage's NTL error callback rather than C++ standard-stream
+initialization.
+
+Validation used `make -C core/dylink test-wasi-sdk-next`, a full serial
+Sagelite standalone rebuild/smoke, and the focused `ntl_GF2EContext.pyx`
+line-45 rerun against the rebuilt Sagelite resources.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
