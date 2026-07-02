@@ -20856,6 +20856,33 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups four blocks under
 `deferred:known bug` and three blocks under `optional:sage.symbolic`.
 
+Focused NTL integer wrapper corpus-growth pass on 2026-07-02:
+
+```text
+ntl_ZZ.pyx: 76 passed, 0 failed, 0 skipped
+```
+
+This pass promotes `sage/libs/ntl/ntl_ZZ.pyx` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 946
+non-comment entries. A fresh prompt-ranked absent-file probe under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-5/`
+identified `ntl_ZZ.pyx` as the only clean runnable candidate in a mixed
+modules, numerical, coding, algebra, poset, and NTL batch. The nearby numeric
+optimization and module files still fail around missing
+`MixedIntegerLinearProgram` startup/backend coverage, while coding examples
+in that batch are skipped-only under the browser profile.
+
+Focused strict make-level validation rebuilt and patched a fresh Sagelite
+source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-5/ntl-zz-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`81f52a8f719bd2aecc501d1753e65954a482c3d3`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
