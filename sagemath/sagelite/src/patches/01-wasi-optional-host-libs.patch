@@ -9722,3 +9722,38 @@ diff -urN -U0 a/src/sage/algebras/free_algebra_quotient.py b/src/sage/algebras/f
 @@ -390 +390 @@
 -        sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)  # much fast than the above
 +        sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)  # much fast than the above      # needs sage.algebras.quaternion_algebra
+diff -urN -U0 a/src/sage/algebras/free_algebra.py b/src/sage/algebras/free_algebra.py
+--- a/src/sage/algebras/free_algebra.py
++++ b/src/sage/algebras/free_algebra.py
+@@ -36,0 +37 @@
++    sage: # needs sage.algebras.letterplace
+@@ -55,0 +57 @@
++    sage: # needs sage.algebras.letterplace
+@@ -75,0 +78 @@
++    sage: # needs sage.algebras.letterplace
+@@ -87,0 +91 @@
++    sage: # needs sage.algebras.letterplace
+@@ -99,0 +104 @@
++    sage: # needs sage.algebras.letterplace
+@@ -111,0 +117 @@
++    sage: # needs sage.algebras.letterplace
+@@ -126,0 +133 @@
++    sage: # needs sage.algebras.letterplace
+@@ -225,0 +233 @@
++        sage: # needs sage.algebras.letterplace
+@@ -236,0 +245 @@
++        sage: # needs sage.algebras.letterplace
+@@ -280,0 +290 @@
++            sage: # needs sage.algebras.letterplace
+@@ -350,0 +361 @@
++            sage: # needs sage.algebras.letterplace
+@@ -577,0 +589 @@
++            sage: # needs sage.algebras.letterplace
+@@ -589,0 +602 @@
++            sage: # needs sage.algebras.letterplace
+@@ -726,0 +740 @@
++            sage: # needs sage.algebras.letterplace
+@@ -917,0 +932 @@
++            sage: # needs sage.rings.polynomial.plural
+@@ -939,0 +955 @@
++            sage: # needs sage.rings.polynomial.plural
