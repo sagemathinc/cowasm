@@ -19530,6 +19530,39 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the newly deferred
 examples under `optional:sage.rings.polynomial.plural`.
 
+Focused function-field Riemann-Roch corpus-growth pass on 2026-07-02:
+
+```text
+riemann_roch.pyx: 3 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/function_field/riemann_roch.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 920
+non-comment entries. A fresh small pure-math frontier probe first found no
+already-clean unpromoted candidate, but identified `riemann_roch.pyx` as a
+near miss: its linear-algebra helper examples passed, while a contiguous
+projective-curve setup block failed at the unavailable generic schemes
+boundary and then cascaded through dependent missing names.
+
+The WASI source patch now marks that curve setup block with
+`# needs sage.schemes`, matching adjacent generic-scheme metadata while
+preserving the runnable function-field ideal conversion coverage in the
+default browser-compatible profile.
+
+Focused strict validation rebuilt a fresh patched Sagelite source copy and
+then used `make -C sagemath/sagelite test-sage-doctest-corpus` with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-followup/riemann-roch-final.sqlite3`.
+The latest-run summary records CoWasm commit
+`c3a12b1f8343050b166370c73bf20bb828459e80`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, `skips-by-reason.sql` groups the newly deferred examples
+under `optional:sage.schemes`, and the candidate helper subtracts the newly
+promoted row from the focused validation database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
