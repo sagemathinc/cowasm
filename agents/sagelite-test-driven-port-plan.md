@@ -19100,6 +19100,57 @@ corpus rather than relying on older `.tmp/current-run/*absent*` text caches,
 which predate many corpus-growth commits and can list files that are already
 covered.
 
+Additional absent-file frontier audit on 2026-07-02:
+
+No new corpus entry was promoted in this pass. Fresh direct probes were written
+under `.tmp/current-run/scheduled-2026-07-02-goal3/probes/` against the current
+patched build tree, and `doctest-corpus-candidates.py --min-passed 1` printed
+no uncovered clean runnable candidates from the resulting databases.
+
+The low-count helper probe recorded:
+
+```text
+mixed-small.sqlite3: 1 passed, 8 failed, 57 skipped
+```
+
+Most files in that batch were skipped-only under browser-profile tags. The
+only active failures came from `sage/doctest/__main__.py`, which currently
+needs unavailable `pytest` support and doctest-driver startup bindings before
+it can be considered for promotion.
+
+A broader algebra, combinatorics, and function-field probe recorded:
+
+```text
+algebra-combinat.sqlite3: 68 passed, 138 failed, 95 skipped
+```
+
+The useful blockers were the known NTL/libcxx `memory access out of bounds`
+finite-field path in function-field examples, a function-field order timeout,
+graph-backed combinatorics skip-only files, and path-tableaux semantic
+failures. `toy_buchberger.py` has runnable passing blocks, but still has
+non-skipped failures, so it remains outside the quiet corpus.
+
+A second uncovered mixed probe recorded:
+
+```text
+actual-absent-mixed2.sqlite3: 20 passed, 32 failed, 269 skipped
+actual-absent-book-examples.sqlite3: 5 passed, 50 failed, 0 skipped
+```
+
+The combinatorics, crypto, coding, and plotting candidates in that mixed probe
+were skipped-only except for `interfaces/tachyon.py` and
+`symbolic/benchmark.py`, which still have active failures. The book-example
+probe found zero-block Judson files and active symbolic, linear-programming,
+and recurrence-equation failures in the computational-mathematics examples.
+
+Several clean rows observed while sanity-checking the probes, including
+plotting helpers, stats distribution helpers, `games/sudoku.py`, typeset
+helpers, and `matroids/utilities.py`, are already present in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`; the candidate
+helper correctly filtered them out. Future scheduled scans should continue
+using the helper output as the promotion source of truth rather than manually
+promoting clean rows from mixed probe summaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
