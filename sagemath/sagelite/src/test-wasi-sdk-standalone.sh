@@ -2702,13 +2702,16 @@ done
 doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
+doctest_candidate_helper_override_source_root="$probe_dir/candidate-override-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
+mkdir -p "$doctest_candidate_helper_override_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
+touch "$doctest_candidate_helper_override_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
@@ -2932,6 +2935,18 @@ if [ "$doctest_candidate_helper_near_misses_no_name_error" != "src/sage/example/
   printf '%s\n' "$doctest_candidate_helper_near_misses_no_name_error" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-block-failure-class did not filter near misses."
+fi
+doctest_candidate_helper_near_misses_override_root="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --exclude-block-failure-class NameError \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_override_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_near_misses_override_root" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_override_root" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --source-root did not suppress fixture-only near misses."
 fi
 doctest_candidate_helper_legacy_db="$probe_dir/sagelite-doctest-legacy-candidate-helper.sqlite3"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_candidate.py"

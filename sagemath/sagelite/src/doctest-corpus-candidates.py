@@ -34,7 +34,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--source-root",
         type=Path,
-        help="Sagelite source root; defaults to the latest run metadata",
+        help=(
+            "Sagelite source root for corpus normalization and source-existence "
+            "filtering; defaults to each database's latest run metadata"
+        ),
     )
     parser.add_argument(
         "--min-passed",

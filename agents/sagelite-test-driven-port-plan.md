@@ -22335,6 +22335,31 @@ file-error fixture for bounded detail output, the fresh mixed low-prompt
 probe, saved block-failure and skip-reason SQL queries against that probe, and
 a current-runner wide file-error scan with bounded details.
 
+Follow-up explicit source-root scan audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A wide current-runner scan across
+recent `.tmp/current-run` and `/tmp/sagelite-20260702-*` dashboards with
+`--source-root sagemath/sagelite/build/wasi-sdk`, `--min-runner-version 83`,
+and existing stale-source filters found no uncovered clean runnable files and
+no compact near misses after excluding `NameError` block failures. The
+explicit source-root override is important for scheduled audits that include
+synthetic smoke-test SQLite fixtures: it keeps fixture-only paths such as
+`src/sage/example/...` out of mixed near-miss reports by requiring the
+normalized candidate path to exist in the caller-supplied Sagelite source tree.
+
+The same scan still reports real file-error frontier rows, including
+NTL/libcxx context traps, finite-field and polynomial-category traps, and
+timeouts in quotient-field or number-field-backed examples. Skipped-only scans
+continue to be dominated by explicit optional backend boundaries for PARI,
+FLINT, NTL, graph, plotting, topology, coding, and category files, so the next
+high-value work remains either runtime/linker triage or a deliberately scoped
+profile expansion rather than automatic corpus promotion.
+
+The `doctest-corpus-candidates.py --source-root` help now states that the
+option controls both corpus normalization and source-existence filtering. The
+standalone smoke fixture now asserts that a caller-supplied source root
+overrides database run metadata and suppresses fixture-only near-miss rows.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
