@@ -18891,6 +18891,36 @@ differences, category additional-structure drift, `schemes/generic/homset.py`
 setup/backend failures, `misc/banner.py` dictionary-order output drift, and
 `tests/test_deprecation.py` warning formatting.
 
+Doctest warning and literal-dict output pass on 2026-07-02:
+
+Sagelite's doctest runner now runs doctests that expect warning output under a
+scoped `warnings.simplefilter("always", Warning)` context. This keeps repeated
+Sage deprecation examples from being suppressed by Python's warning registry
+after an earlier doctest triggered the same warning location. The output
+checker also accepts equal single-line literal dict output independent of
+insertion order, matching Sage doctest intent for version metadata dictionaries
+without broad text normalization. Runner version is now 79.
+
+Focused serial validation records:
+
+```text
+banner.py: 1 passed, 0 failed, 0 skipped
+test_deprecation.py: 1 passed, 0 failed, 0 skipped
+```
+
+A compact rerun of the previous five-file failure dashboard now records:
+
+```text
+sage -t failed: 978 passed, 9 failed, 214 skipped
+```
+
+This clears the `misc/banner.py` dictionary-order drift and
+`tests/test_deprecation.py` repeated-warning formatting cluster. The remaining
+clusters are the rational `sqrt`/`log` fallback differences, category
+additional-structure drift, and `schemes/generic/homset.py` setup/backend
+failures. A full `make -C sagemath/sagelite test-wasi-sdk-standalone` run also
+passed after updating the standalone doctest smoke to cover repeated warnings.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

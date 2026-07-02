@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 78;
+const doctestRunnerVersion = 79;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -843,6 +843,15 @@ def __cowasm_doctest_displayhook(value):
         sys.__displayhook__(value)
     if value is not None and __cowasm_active_displayhook_globals is not None:
         __cowasm_active_displayhook_globals["_"] = value
+
+
+def __cowasm_doctest_expects_warning(test):
+    for example in test.examples:
+        if example.options.get(doctest.SKIP, False):
+            continue
+        if "Warning:" in getattr(example, "want", ""):
+            return True
+    return False
 
 
 def __cowasm_note_state(
@@ -1768,6 +1777,8 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             return True
         if self.__check_warning_output(want, got, optionflags):
             return True
+        if self.__check_literal_dict_output(want, got):
+            return True
         if self.__check_exception_line_output(want, got, optionflags):
             return True
         if self.__check_traceback_output(want, got, optionflags):
@@ -1800,6 +1811,18 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             r"\\1doctest:...: \\2: ",
             text,
         )
+
+    def __check_literal_dict_output(self, want, got):
+        want = want.strip()
+        got = got.strip()
+        if not want.startswith("{") or not want.endswith("}"):
+            return False
+        if not got.startswith("{") or not got.endswith("}"):
+            return False
+        try:
+            return ast.literal_eval(want) == ast.literal_eval(got)
+        except (SyntaxError, ValueError, TypeError):
+            return False
 
     def __check_exception_line_output(self, want, got, optionflags):
         want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]
@@ -2152,9 +2175,14 @@ def __cowasm_run_file(filename):
             before = time.time()
             global __cowasm_active_displayhook_globals
             global __cowasm_displayhook_delegate
+            warning_context = None
             old_showwarning = warnings.showwarning
             old_displayhook = sys.displayhook
             old_dunder_displayhook = sys.__displayhook__
+            if __cowasm_doctest_expects_warning(test):
+                warning_context = warnings.catch_warnings()
+                warning_context.__enter__()
+                warnings.simplefilter("always", Warning)
             warnings.showwarning = __cowasm_doctest_showwarning
             __cowasm_active_displayhook_globals = test.globs
             __cowasm_displayhook_delegate = old_dunder_displayhook
@@ -2167,6 +2195,8 @@ def __cowasm_run_file(filename):
                 __cowasm_displayhook_delegate = None
                 __cowasm_active_displayhook_globals = None
                 warnings.showwarning = old_showwarning
+                if warning_context is not None:
+                    warning_context.__exit__(None, None, None)
             attempted += result.attempted
             failed += result.failed
         duration_ms = int((time.time() - started) * 1000)
