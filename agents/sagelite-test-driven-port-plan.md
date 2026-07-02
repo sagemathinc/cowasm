@@ -20309,6 +20309,39 @@ initialized a usable SQLite summary in the available run window. The focused
 strict make-level validation above is the checked validation for this
 promotion.
 
+Follow-up frontier audit on 2026-07-02 found no new promotable uncovered
+corpus entry in the sampled low-prompt, matrix/group, book/test, topology,
+database, plotting, and lightweight algebra batches. Fresh probe databases
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/` recorded:
+
+```text
+low-prompt-batch.sqlite3: 0 passed, 0 failed, 53 skipped
+matrix-group-batch.sqlite3: 0 passed, 18 failed, 28 skipped
+books-tests-batch.sqlite3: 0 passed, 0 failed, 26 skipped
+filtered-small-batch.sqlite3: 0 passed, 0 failed, 58 skipped
+plot-algebra-batch.sqlite3: 2 passed, 64 failed, 273 skipped
+```
+
+Running `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --min-passed 1
+--paths-only --ignore-invalid` over these five databases printed no uncovered
+clean runnable source rows. The skipped-only batches cover small helpers and
+interfaces such as `sage/cpython/string.pyx`, `sage/coding/two_weight_db.py`,
+`sage/crypto/cipher.py`, small database wrappers, topology catalogs, category
+helpers, hyperbolic plotting helpers, and REPL/user-global helpers. The active
+matrix/group failures are still GAP/libgap startup and stripped-backend
+boundaries, including `symplectic_gap.py` and `libgap_group.py`.
+
+The only sampled file with any passing uncovered blocks was
+`sage/algebras/free_algebra_quotient_element.py`, but it recorded only two
+passing blocks against thirty-three failures. The failures are dominated by
+missing `sage.algebras.free_algebra_quotient` startup/module exposure and
+dependent missing quaternion basis names, so it is not a good blind promotion
+candidate. `sage/algebras/nil_coxeter_algebra.py` also remains outside the
+quiet corpus because its examples need broader `NilCoxeterAlgebra`/Weyl group
+startup and backend triage before they produce useful browser-profile
+coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
