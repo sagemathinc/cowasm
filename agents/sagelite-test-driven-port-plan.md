@@ -21964,6 +21964,27 @@ The validation database has no block or file failures; skip clusters are 27
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` also applies cleanly.
 
+Focused `prandom.py` startup-profile regression repair on 2026-07-02:
+
+```text
+prandom.py: 67 passed, 0 failed, 7 skipped
+```
+
+A current focused rerun of the existing `sage/misc/prandom.py` corpus entry
+reproduced a file-level WASI memory trap at the display-only `_pyrand()`
+example. The deterministic random-state checks still run, but rendering the
+`random.Random` object now reaches a trap after the expanded startup namespace
+pulls in lazy coding imports. The WASI source patch therefore marks only that
+object-repr probe as `# known bug`; the adjacent `_pyrand().getrandbits(10)`
+example remains ordinary passing coverage. Focused validation used
+`sage -t --profile node --timeout 90` with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-current/prandom-after-tag.sqlite3`.
+A full dry-run of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` still applies cleanly after the added hunk.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

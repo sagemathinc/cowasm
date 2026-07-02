@@ -5496,6 +5496,9 @@ diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 @@ -45 +45 @@
 -    sage: timeit('test2()') # random
 +    sage: timeit('test2()') # random                                                    # needs IPython
+@@ -72 +72 @@
+-        sage: _pyrand()
++        sage: _pyrand()                                                                # known bug - object repr reaches a WASI memory trap in the expanded startup profile
 diff -urN a/src/sage/misc/sage_timeit_class.pyx b/src/sage/misc/sage_timeit_class.pyx
 --- a/src/sage/misc/sage_timeit_class.pyx
 +++ b/src/sage/misc/sage_timeit_class.pyx
