@@ -21596,6 +21596,36 @@ Its skip clusters are two `deferred:known bug` rows and five
 `optional:sage.libs.pari` rows, and `doctest-corpus-candidates.py` prints no
 promotion candidate for that database after the corpus entry is listed.
 
+Follow-up group base corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/groups/group.pyx` into the curated
+`basic-pure-math.txt` corpus, bringing the corpus to 959 non-comment entries.
+The file was the most compact high-pass near miss in the accumulated groups
+frontier dashboards and reproduced against the current runtime as `35 passed,
+7 failed, 9 skipped`.
+
+The remaining failures were all in finite-presentation examples:
+`groups.presentation.Cyclic(1)` and two `FreeGroup` presentation checks. Those
+are already outside the browser-compatible profile under the existing
+`sage.groups` dependency bucket, so the WASI patch now adds standalone
+`# needs sage.groups` directives for the three contiguous doctest paragraphs.
+
+Focused validation first ran the patched file directly and then used the
+strict make target with a one-file scratch corpus, rebuilding a fresh patched
+Sagelite source tree from the checked-in patch. The make validation recorded:
+
+```text
+sage -t passed: 35 passed, 0 failed, 16 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-02-group/group-make-fixed.sqlite3`. Its
+skip clusters are eleven `optional:sage.groups` rows, four
+`optional:sage.modules` rows, and one combined
+`optional:sage.libs.gap,sage.modules,sage.rings.finite_rings` row, and
+`doctest-corpus-candidates.py` prints no promotion candidate for that database
+after the corpus entry is listed.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

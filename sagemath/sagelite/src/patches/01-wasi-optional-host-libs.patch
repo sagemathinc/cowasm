@@ -10248,3 +10248,18 @@ diff -urN -U0 a/src/sage/rings/polynomial/polydict.pyx b/src/sage/rings/polynomi
 +            sage: ans = p.rich_compare(p, op_EQ)                                      # random
 @@ -1938,0 +1939 @@
 +            sage: # needs sage.libs.singular
+diff -urN -U0 a/src/sage/groups/group.pyx b/src/sage/groups/group.pyx
+--- a/src/sage/groups/group.pyx
++++ b/src/sage/groups/group.pyx
+@@ -178 +178,2 @@
+-            sage: groups.presentation.Cyclic(1).is_trivial()
++            sage: # needs sage.groups
++            sage: groups.presentation.Cyclic(1).is_trivial()
+@@ -181 +182,2 @@
+-            sage: G.<a,b> = FreeGroup('a, b')
++            sage: # needs sage.groups
++            sage: G.<a,b> = FreeGroup('a, b')
+@@ -188 +190,2 @@
+-            sage: F.<a,b> = FreeGroup()
++            sage: # needs sage.groups
++            sage: F.<a,b> = FreeGroup()
