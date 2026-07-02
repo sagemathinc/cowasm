@@ -19168,6 +19168,23 @@ both tabular and path-only output. Focused validation ran
 `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a synthetic
 SQLite helper probe covering both output modes.
 
+Candidate-helper Makefile entrypoint pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The candidate helper is now exposed
+through read-only Sagelite make targets:
+
+```sh
+make -C sagemath/sagelite sage-doctest-candidates
+make -C sagemath/sagelite sage-doctest-candidate-paths
+```
+
+Both targets use the existing `SAGELITE_DOCTEST_DB`,
+`SAGELITE_DOCTEST_CORPUS`, and `SAGELITE_DOCTEST_SOURCE` variables, plus
+`SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED` and
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS` for helper-specific filtering. This gives
+scheduled scans a stable make-level entrypoint for tabular dashboard review and
+path-only promotion input while keeping actual corpus edits explicit.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

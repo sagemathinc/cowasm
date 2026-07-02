@@ -12,6 +12,8 @@ SAGELITE_DOCTEST_PROFILE ?= node
 SAGELITE_DOCTEST_TIMEOUT ?= 0
 SAGELITE_DOCTEST_JOBS ?= 4
 SAGELITE_DOCTEST_ALLOW_FAILURES ?= 1
+SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED ?= 1
+SAGELITE_DOCTEST_CANDIDATE_FLAGS ?=
 
 all: test-wasi-sdk-standalone
 
@@ -201,6 +203,19 @@ test-sage-doctest-corpus: ${BUILD_WASI_SDK}/.patched
 	  echo "Sagelite doctest corpus completed with doctest failures; results are in ${SAGELITE_DOCTEST_DB}." >&2; \
 	  if [ "${SAGELITE_DOCTEST_ALLOW_FAILURES}" != "1" ]; then exit "$$status"; fi; \
 	fi
+
+.PHONY: sage-doctest-candidates
+sage-doctest-candidates:
+	python3 ${SRC}/doctest-corpus-candidates.py \
+	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
+	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
+	  --min-passed "${SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED}" \
+	  ${SAGELITE_DOCTEST_CANDIDATE_FLAGS} \
+	  "${SAGELITE_DOCTEST_DB}"
+
+.PHONY: sage-doctest-candidate-paths
+sage-doctest-candidate-paths: SAGELITE_DOCTEST_CANDIDATE_FLAGS += --paths-only
+sage-doctest-candidate-paths: sage-doctest-candidates
 
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
