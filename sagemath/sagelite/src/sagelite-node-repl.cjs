@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 80;
+const doctestRunnerVersion = 81;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1828,9 +1828,35 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         if not got.startswith("{") or not got.endswith("}"):
             return False
         try:
-            return ast.literal_eval(want) == ast.literal_eval(got)
+            want_tree = ast.parse(want, mode="eval")
+            got_tree = ast.parse(got, mode="eval")
+            return self.__canonical_literal_node(want_tree) == self.__canonical_literal_node(got_tree)
         except (SyntaxError, ValueError, TypeError):
             return False
+
+    def __canonical_literal_node(self, node):
+        if isinstance(node, ast.Expression):
+            return self.__canonical_literal_node(node.body)
+        if isinstance(node, ast.Constant):
+            return ("constant", node.value)
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+            value = ast.literal_eval(node)
+            return ("constant", value)
+        if isinstance(node, ast.List):
+            return ("list", tuple(self.__canonical_literal_node(item) for item in node.elts))
+        if isinstance(node, ast.Tuple):
+            return ("tuple", tuple(self.__canonical_literal_node(item) for item in node.elts))
+        if isinstance(node, ast.Dict):
+            items = []
+            for key, value in zip(node.keys, node.values):
+                if key is None:
+                    raise ValueError("dictionary unpacking is not supported")
+                items.append((
+                    self.__canonical_literal_node(key),
+                    self.__canonical_literal_node(value),
+                ))
+            return ("dict", frozenset(items))
+        raise ValueError(f"unsupported literal output node: {type(node).__name__}")
 
     def __check_exception_line_output(self, want, got, optionflags):
         want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]

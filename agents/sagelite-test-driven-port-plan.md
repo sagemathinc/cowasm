@@ -19259,6 +19259,32 @@ dictionary-like output comparison in the doctest runner or add explicit
 browser-profile metadata for those representation-order examples before
 promoting the file.
 
+Lrcalc dictionary-output normalization and corpus promotion pass on
+2026-07-02:
+
+The doctest runner now normalizes dictionary-shaped expected and actual output
+through an AST canonicalizer after ordinary doctest matching fails. This keeps
+dictionary item order irrelevant even for Sage-style output whose keys are
+displayed as list or tuple structures, such as the lrcalc partition dictionaries
+that are not valid `ast.literal_eval` dictionaries because Python lists are
+unhashable keys.
+
+With the existing `@cowasm/lrcalc-python` runtime resource staged, the focused
+lrcalc rerun now records:
+
+```text
+lrcalc.py: 50 passed, 0 failed, 0 skipped
+```
+
+`src/sage/libs/lrcalc/lrcalc.py` is promoted into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. Focused validation
+used the make-target corpus runner with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-lrcalc-corpus-after-dict.sqlite3`, also
+recording `50 passed, 0 failed, 0 skipped`. The standalone Sagelite smoke
+passes after adding a regression fixture for Sage-style dictionary keys; the
+runner version is now 81.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
