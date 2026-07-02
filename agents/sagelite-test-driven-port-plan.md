@@ -34,6 +34,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - skips `# long time` unless `--long` is passed;
   - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
     `--timeout`, and `--sqlite`;
+  - supports both `COWASM_SAGELITE_DOCTEST_DB` and the make-target-facing
+    `SAGELITE_DOCTEST_DB` for direct `sage -t` SQLite output, with the
+    CoWasm-prefixed variable taking precedence;
   - supports `--jobs`/`-j` and `COWASM_SAGELITE_DOCTEST_JOBS` for parallel
     per-file worker execution while preserving one SQLite run and input-order
     file rows;
@@ -20882,6 +20885,24 @@ The latest-run summary records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
+
+Focused direct-runner SQLite environment pass on 2026-07-02:
+
+Direct frontier probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-agent/` did not find
+a new quiet runnable corpus candidate beyond the current 946-entry corpus.
+Small CLI helper files exposed zero doctest blocks; compact crypto,
+data-structure, misc, test, homology, REPL, interface, database, category,
+coding, and knot batches were skipped-only under the default
+browser-compatible profile.
+
+The probes did expose a workflow footgun: direct `sage -t` already accepted
+`COWASM_SAGELITE_DOCTEST_DB`, while make-target examples throughout this plan
+use `SAGELITE_DOCTEST_DB`. The direct doctest runner now accepts
+`SAGELITE_DOCTEST_DB` as an alias when no `--sqlite` flag is passed, while
+preserving `COWASM_SAGELITE_DOCTEST_DB` precedence. The standalone Sagelite
+smoke has a one-block env-var check so this scheduled-probe path remains
+covered.
 
 ## Phase 5: Subprocess Strategy
 

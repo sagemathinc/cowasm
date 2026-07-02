@@ -1753,6 +1753,9 @@ done
 doctest_smoke_file="$probe_dir/sagelite-doctest-smoke.py"
 doctest_smoke_db="$probe_dir/sagelite-doctest-smoke.sqlite3"
 doctest_smoke_log="$dist_dir/doctest-smoke.log"
+doctest_env_db_file="$probe_dir/sagelite-doctest-env-db.py"
+doctest_env_db="$probe_dir/sagelite-doctest-env-db.sqlite3"
+doctest_env_db_log="$dist_dir/doctest-env-db.log"
 cat >"$doctest_smoke_file" <<'PY'
 r"""
 EXAMPLES::
@@ -1836,6 +1839,14 @@ EXAMPLES::
     42
 """
 PY
+cat >"$doctest_env_db_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: 11 + 31
+    42
+"""
+PY
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
@@ -1859,6 +1870,31 @@ if [ "$doctest_smoke_counts" != "passed|35|28|0|7" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
+fi
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  COWASM_SAGELITE_DOCTEST_DB="" \
+  SAGELITE_DOCTEST_DB="$doctest_env_db" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t "$doctest_env_db_file" \
+      >"$doctest_env_db_log" 2>&1
+doctest_env_db_status=$?
+set -e
+if [ "$doctest_env_db_status" -eq 124 ]; then
+  tail -120 "$doctest_env_db_log" >&2
+  record_blocker "sagelite-blocked: sage -t doctest env-db smoke timed out after $node_import_timeout; see $doctest_env_db_log for the first runtime blocker."
+fi
+if [ "$doctest_env_db_status" -ne 0 ]; then
+  tail -120 "$doctest_env_db_log" >&2
+  record_blocker "sagelite-blocked: sage -t doctest env-db smoke failed; see $doctest_env_db_log for the first runtime blocker."
+fi
+doctest_env_db_counts="$(sqlite3 "$doctest_env_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_env_db_counts" != "passed|1|1|0|0" ]; then
+  cat "$doctest_env_db_log" >&2
+  sqlite3 "$doctest_env_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest env-db smoke wrote unexpected SQLite counts: $doctest_env_db_counts"
 fi
 doctest_sagelite_package_commit_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from runs where sagelite_package_commit is not null and sagelite_package_commit = sagelite_source_commit;")"
 if [ "$doctest_sagelite_package_commit_count" != "1" ]; then

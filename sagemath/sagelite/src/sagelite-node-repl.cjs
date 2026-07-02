@@ -191,9 +191,11 @@ async function createSagelitePython({ manifest, resourceRoot, sagelitePythonEnv 
 }
 
 function parseDoctestArgs(args, invocationCwd) {
+  const envDbPath =
+    process.env.COWASM_SAGELITE_DOCTEST_DB || process.env.SAGELITE_DOCTEST_DB;
   const options = {
-    dbPath: process.env.COWASM_SAGELITE_DOCTEST_DB
-      ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_DB)
+    dbPath: envDbPath
+      ? path.resolve(invocationCwd, envDbPath)
       : path.resolve(invocationCwd, "sagelite-doctest-results.sqlite3"),
     timeoutSeconds: 0,
     long: false,
