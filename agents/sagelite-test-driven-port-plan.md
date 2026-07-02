@@ -19438,6 +19438,31 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the skipped examples under
 `optional:sage.misc.cython` and `deferred:not tested`.
 
+Focused sum-of-squares corpus-growth pass on 2026-07-02:
+
+```text
+sum_of_squares.pyx: 35 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/rings/sum_of_squares.pyx` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 918
+non-comment entries. A fresh mixed medium-prompt probe identified it as the
+only clean runnable promotion candidate in a batch of crypto, category,
+topology, homology, and arithmetic helpers; most adjacent files were
+skipped-only under existing optional metadata, while `bernoulli_mod_p.pyx`
+still reaches the known NTL/libcxx memory trap.
+
+Focused strict validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next2/sum-of-squares-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d3befed9f49a521e8631ed4fb4344f4102d6bece`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 81,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
