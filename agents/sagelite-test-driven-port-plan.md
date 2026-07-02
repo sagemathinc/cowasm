@@ -21041,6 +21041,30 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups fourteen blocks under
 `optional:sage.libs.pari`.
 
+Follow-up low-prompt frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Two fresh absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-8/`
+sampled low-prompt source files that are still outside the current 949-entry
+curated corpus:
+
+```text
+lowprompt-batch.sqlite3: 1 passed, 29 failed, 61 skipped
+midlow-batch.sqlite3: 23 passed, 224 failed, 475 skipped
+```
+
+Running `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --min-passed 1` across the new probe
+databases printed no clean uncovered candidates. The useful near misses were
+not narrow startup-name fixes: `sage/schemes/plane_conics/constructor.py`
+needs the Singular-backed projective-curve stack before its `Conic`
+constructor can be exposed safely, hyperelliptic helpers need broader
+curve/Jacobian startup and backend support, PBori files still depend on the
+unavailable `sage.rings.polynomial.pbori.pbori` extension, and the modular
+theta probe reaches the known NTL/libcxx ostream trap. These files remain
+outside the quiet browser-profile corpus until those backend clusters are
+addressed or narrower source tags expose meaningful non-skipped subsets.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
