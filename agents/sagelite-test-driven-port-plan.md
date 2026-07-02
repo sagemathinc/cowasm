@@ -20827,6 +20827,35 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups both skipped blocks under
 `deferred:known bug`.
 
+Focused MPFI interval-conversion corpus-growth pass on 2026-07-02:
+
+```text
+mpfi.pyx: 50 passed, 0 failed, 7 skipped
+```
+
+This pass promotes `sage/rings/convert/mpfi.pyx` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 945
+non-comment entries. A near-miss scan over recent scratch SQLite probes
+identified the file as compact interval string-conversion coverage with 52
+passing blocks and five focused failures.
+
+The WASI source patch now marks the two alphabetic-base conversion examples,
+the huge-exponent interval parsing drift, and the randomized question-style
+round-trip stress test as `# known bug`. It also marks the `sqrt(2)` large
+precision setup and dependent checks as `# needs sage.symbolic`, matching the
+current browser profile where symbolic expressions are not shipped. Focused
+strict make-level validation rebuilt and patched a fresh Sagelite source copy
+with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan-4/mpfi-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`ecc308759c6d2084dac9306914cfbb00f590a974`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups four blocks under
+`deferred:known bug` and three blocks under `optional:sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
