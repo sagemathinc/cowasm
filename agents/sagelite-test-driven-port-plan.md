@@ -21725,6 +21725,46 @@ also updated to the current directive propagation semantics: the smoke fixture
 records `35` total blocks, `27` passed, and `8` skipped because the standalone
 `# needs cowasm_smoke` directive applies to both following contiguous examples.
 
+Follow-up active frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+962 non-comment entries, and fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/` with runner version 83.
+
+The small catalog/wrapper probe in
+`scheduled-2026-07-02-active-catalog/catalog-probe.sqlite3` recorded
+`0 passed, 0 failed, 23 skipped`: `modular/modsym/ghlist.py` was skipped-only,
+while `dynamics/cellular_automata/catalog.py`,
+`dynamics/cellular_automata/all.py`, `algebras/catalog.py`,
+`algebras/all.py`, and `libs/mpmath/all.py` exposed no doctest blocks.
+
+The mixed low-count helper probe in
+`scheduled-2026-07-02-active-lowcount/probe.sqlite3` recorded
+`0 passed, 0 failed, 39 skipped`: `cpython/cython_metaclass.pyx`,
+`homology/tests.py`, `tests/finite_poset.py`, and `modules/numpy_util.pyx`
+were skipped-only, while the sampled REPL, CLI, misc, and doctest parser
+helpers exposed no blocks.
+
+The Lie-conformal/category probe in
+`scheduled-2026-07-02-active-algebra/probe.sqlite3` recorded
+`3 passed, 24 failed, 83 skipped`. Category files in the batch were skipped-only.
+The runnable Lie-conformal implementation failures are broader graph and
+number-field/cypari2 boundaries: `affine_lie_conformal_algebra.py` imports the
+stripped graph-backed Lie algebra stack, and `n2_lie_conformal_algebra.py`
+depends on number-field setup before most later examples can run.
+
+The medium low-prompt math probe in
+`scheduled-2026-07-02-active-medium/probe.sqlite3` recorded
+`3 passed, 48 failed, 119 skipped`. Six sampled combinatorics, vector, and
+coding files were skipped-only. The runnable failures clustered around
+symbolic callable vectors, graph planarity, number-field enumeration, and a
+polynomial-element stack overflow reached by a Gross-Zagier coefficient
+example. `doctest-corpus-candidates.py` printed no uncovered clean candidate
+for any of the four probe databases, so future scheduled runs should avoid
+repeating these exact batches unless the graph, symbolic, number-field,
+polynomial, coding, or vector backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
