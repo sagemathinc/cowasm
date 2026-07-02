@@ -19151,6 +19151,23 @@ helper correctly filtered them out. Future scheduled scans should continue
 using the helper output as the promotion source of truth rather than manually
 promoting clean rows from mixed probe summaries.
 
+Candidate-helper path output pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The frontier notes above point to
+`doctest-corpus-candidates.py` as the source of truth for promotion scans, so
+the helper now has a `--paths-only` mode that prints only normalized candidate
+paths, one per line. The default tab-separated output remains unchanged for
+dashboard inspection, while `--paths-only` gives scheduled scan scripts a
+stable append/filter input without needing to parse numeric columns.
+
+The standalone Sagelite smoke now exercises the new mode with the same
+synthetic SQLite fixture that verifies source-root existence filtering:
+`real_candidate.py` is retained and `missing_candidate.py` is filtered from
+both tabular and path-only output. Focused validation ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a synthetic
+SQLite helper probe covering both output modes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

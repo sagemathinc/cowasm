@@ -42,11 +42,19 @@ def parse_args() -> argparse.Namespace:
         help="print a tab-separated header row",
     )
     parser.add_argument(
+        "--paths-only",
+        action="store_true",
+        help="print only normalized candidate paths, one per line",
+    )
+    parser.add_argument(
         "--include-non-sage",
         action="store_true",
         help="include clean files outside the src/sage source tree",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.paths_only and args.include_header:
+        parser.error("--paths-only cannot be combined with --include-header")
+    return args
 
 
 def require_doctest_schema(database: Path, db: sqlite3.Connection) -> None:
@@ -190,7 +198,10 @@ def main() -> int:
     if args.include_header:
         print("path\ttotal_blocks\tpassed_blocks\tskipped_blocks\trunnable_blocks\tduration_ms")
     for row in rows:
-        print("\t".join(str(value) for value in row))
+        if args.paths_only:
+            print(row[0])
+        else:
+            print("\t".join(str(value) for value in row))
     return 0
 
 

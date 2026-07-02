@@ -2700,6 +2700,15 @@ if [ "$doctest_candidate_helper_output" != "src/sage/example/real_candidate.py	2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not filter missing source-root candidates."
 fi
+doctest_candidate_helper_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
+fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"
