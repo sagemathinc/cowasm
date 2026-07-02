@@ -19765,6 +19765,38 @@ resampled as corpus-growth targets unless the default browser profile starts
 including optional doctest, IPython, Sphinx, symbolic, Cython, or profiling
 infrastructure.
 
+Follow-up active scheduled audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A stale full-corpus dashboard at
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-hermite-promotion/full-corpus/sagelite-doctests.sqlite3`
+still records 16 block failures across seven files, but a direct rerun of
+those exact files against the current patched source and runner recorded a
+clean aggregate:
+
+```text
+sage -t passed: 1633 passed, 0 failed, 283 skipped
+```
+
+The rerun database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active/probes/current-failures-rerun.sqlite3`.
+The cleaned files are `sage/categories/category.py`,
+`sage/combinat/words/word_generators.py`, `sage/combinat/words/words.py`,
+`sage/misc/banner.py`, `sage/rings/rational.pyx`,
+`sage/schemes/generic/homset.py`, and `sage/tests/test_deprecation.py`.
+
+Fresh absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active/probes/`
+did not produce an uncovered clean runnable source row after subtracting the
+current 922-entry corpus. The category/algebra/CLI probe found clean category
+plumbing rows, but each was already present in the corpus; the adjacent
+algebra files exposed broad plural-backend, free-algebra, group-algebra, and
+commutative-DGA clusters, while `categories/pushout.py` reproduced the known
+NTL/libcxx ostream trap in Laurent-polynomial construction. The misc,
+structure, monoid, parallel, SAT, low-prompt, and mid-small mixed probes were
+zero-block, skipped-only, or dominated by reset/session persistence,
+fork/parallel, optional backend, or Cython/Numpy metadata. These batches are
+frontier data rather than corpus-growth candidates.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
