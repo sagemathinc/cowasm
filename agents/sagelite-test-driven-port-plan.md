@@ -20522,6 +20522,51 @@ sage -t passed: 37 passed, 0 failed, 30 skipped
 
 The saved block- and file-failure cluster queries are empty for that database.
 
+Focused calculus ODE corpus-growth pass on 2026-07-02:
+
+```text
+ode.pyx: 34 passed, 0 failed, 17 skipped
+```
+
+This pass promotes `sage/calculus/ode.pyx` into the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 938 non-comment
+entries. Fresh absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active/` first found
+no candidate in low-prompt and mid-prompt batches:
+
+```text
+lowprompt-sample.sqlite3: 0 passed, 4 failed, 82 skipped
+midprompt-sample.sqlite3: 75 passed, 289 failed, 507 skipped
+```
+
+The utility-mid probe recorded:
+
+```text
+utility-mid-sample.sqlite3: 176 passed, 308 failed, 622 skipped
+```
+
+`doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --min-passed 1` classified
+`src/sage/calculus/ode.pyx` as the only uncovered clean runnable candidate in
+that database. Nearby sampled files remain outside the quiet corpus:
+`rings/homset.py` hits an NTL `ZZ_pContext.restore` import/linkage boundary,
+`modules/ore_module_element.py` times out in an Ore quotient-module setup,
+`algebras/cellular_basis.py` traps in a cyclotomic-field path, and several
+fusion-ring, Buchberger, msolve, MPFI conversion, module-functor, letterplace,
+and path-tableau files still have active block-level failures.
+
+Focused strict make-level validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-active/ode-make.sqlite3`.
+It recorded:
+
+```text
+sage -t passed: 34 passed, 0 failed, 17 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

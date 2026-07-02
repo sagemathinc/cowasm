@@ -52,6 +52,7 @@ src/sage/arith/functions.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/calculus/ode.pyx
 src/sage/calculus/transforms/dwt.pyx
 src/sage/calculus/transforms/dft.py
 src/sage/calculus/transforms/fft.pyx
