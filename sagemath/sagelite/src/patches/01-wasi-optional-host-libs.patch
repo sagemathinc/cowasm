@@ -9854,3 +9854,48 @@ diff -urN -U0 a/src/sage/tensor/modules/free_module_automorphism.py b/src/sage/t
 @@ -1086 +1086 @@
 -            sage: a.charpoly('T')
 +            sage: a.charpoly('T')                                                    # needs sage.libs.pari
+diff -urN -U0 a/src/sage/tensor/modules/tensor_free_submodule.py b/src/sage/tensor/modules/tensor_free_submodule.py
+--- a/src/sage/tensor/modules/tensor_free_submodule.py
++++ b/src/sage/tensor/modules/tensor_free_submodule.py
+@@ -85 +85 @@
+-        sage: Sym012345M(t) is t
++        sage: Sym012345M(t) is t                                                     # needs sage.libs.gap
+@@ -319 +319 @@
+-            sage: Sym0123x45M(e[0]*e[0]*e[0]*e[0]*e[1]*e[2])
++            sage: Sym0123x45M(e[0]*e[0]*e[0]*e[0]*e[1]*e[2])                         # needs sage.libs.gap
+@@ -326 +326 @@
+-            sage: t = Sym0123x45M(e[0]*e[0]*e[0]*e[0]*e[1]*e[2] + e[0]*e[0]*e[0]*e[0]*e[2]*e[1]); t.disp()
++            sage: t = Sym0123x45M(e[0]*e[0]*e[0]*e[0]*e[1]*e[2] + e[0]*e[0]*e[0]*e[0]*e[2]*e[1]); t.disp()  # needs sage.libs.gap
+@@ -328 +328 @@
+-            sage: t.parent()._name
++            sage: t.parent()._name                                                   # needs sage.libs.gap
+@@ -437 +437 @@
+-            sage: r = Y.reduce(t); r
++            sage: r = Y.reduce(t); r                                                 # needs sage.libs.gap
+@@ -439 +439 @@
+-            sage: r.disp()
++            sage: r.disp()                                                           # needs sage.libs.gap
+@@ -441 +441 @@
+-            sage: r.parent()._name
++            sage: r.parent()._name                                                   # needs sage.libs.gap
+@@ -455 +455 @@
+-            sage: Y.reduce(t)
++            sage: Y.reduce(t)                                                        # needs sage.libs.gap
+@@ -466 +466 @@
+-            sage: all(Y.reduce(u.lift()) == 0 for u in Y.basis('e'))
++            sage: all(Y.reduce(u.lift()) == 0 for u in Y.basis('e'))                 # needs sage.libs.gap
+@@ -513 +513 @@
+-            sage: Y.retract(t)
++            sage: Y.retract(t)                                                       # needs sage.libs.gap
+@@ -521 +521 @@
+-            sage: y = Y.retract(t); y
++            sage: y = Y.retract(t); y                                                # needs sage.libs.gap
+@@ -523 +523 @@
+-            sage: y.disp()
++            sage: y.disp()                                                           # needs sage.libs.gap
+@@ -525 +525 @@
+-            sage: y.parent()._name
++            sage: y.parent()._name                                                   # needs sage.libs.gap
+@@ -530 +530 @@
+-            sage: all(Y.retract(u.lift()) == u for u in e_Y)
++            sage: all(Y.retract(u.lift()) == u for u in e_Y)                         # needs sage.libs.gap

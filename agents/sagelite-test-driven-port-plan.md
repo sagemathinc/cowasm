@@ -20194,6 +20194,43 @@ queries are empty; `skips-by-reason.sql` groups eight blocks under
 `optional:sage.libs.pari`, including the three newly classified charpoly
 examples and the five existing polynomial/factorization examples.
 
+Focused tensor free-submodule corpus-growth pass on 2026-07-02:
+
+```text
+tensor_free_submodule.py: 90 passed, 0 failed, 14 skipped
+```
+
+This pass promotes `sage/tensor/modules/tensor_free_submodule.py` into the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 929 non-comment
+entries. A fresh adjacent tensor probe first recorded the file as a narrow
+near miss with `90 passed, 14 failed, 0 skipped`; every active failure was in
+the submodule examples that call tensor symmetrization/reduction/retraction
+paths backed by `sage.groups.perm_gps.permgroup_named.SymmetricGroup`, which
+imports the stripped GAP/libgap backend.
+
+The WASI source patch now classifies those fourteen prompts as
+`# needs sage.libs.gap`, preserving the runnable tensor-submodule coverage
+while keeping the permutation-group backend boundary explicit. The same tensor
+probe also confirmed that `tensor_with_indices.py` is skipped-only under the
+current profile, while `free_module_morphism.py`, `free_module_tensor.py`, and
+`comp.py` still have broader matrix signature-mismatch, GAP-backed
+symmetrization, and tensor display/backend clusters; they should stay out of
+blind promotion batches until those runtime boundaries change.
+
+Focused validation rebuilt and patched a fresh Sagelite source copy through
+the make-level corpus dependency path, then ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-tensor-submodule/tensor-submodule-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`0201f5dce7cb049ff87dc88d03d67c5e47548f03`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups all fourteen skipped blocks
+under `optional:sage.libs.gap`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
