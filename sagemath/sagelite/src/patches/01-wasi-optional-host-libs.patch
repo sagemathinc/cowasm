@@ -7688,6 +7688,89 @@ diff -urN a/src/sage/geometry/polyhedron/lattice_euclidean_group_element.py b/sr
 @@ -101 +101 @@
 -            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))
 +            sage: M(LatticePolytope_PPL((0,0),(1,0),(0,1)))                         # needs ppl
+diff -urN a/src/sage/games/hexad.py b/src/sage/games/hexad.py
+--- a/src/sage/games/hexad.py
++++ b/src/sage/games/hexad.py
+@@ -76,7 +76,30 @@
+ from sage.matrix.matrix_space import MatrixSpace
+ from sage.matrix.constructor import matrix
+ from sage.rings.finite_rings.finite_field_constructor import GF
+-from sage.calculus.calculus import SR
++
++
++class _MinimogMatrix:
++    def __init__(self, rows):
++        self._rows = rows
++
++    def __getitem__(self, key):
++        if isinstance(key, tuple):
++            i, j = key
++            return self._rows[i][j]
++        return self._rows[key]
++
++    def __repr__(self):
++        width = max(len(str(value)) for row in self._rows for value in row)
++        lines = []
++        for row in self._rows:
++            lines.append("[" + " ".join(str(value).rjust(width) for value in row) + "]")
++        return "\n".join(lines)
++
++    def _latex_(self):
++        rows = []
++        for row in self._rows:
++            rows.append(" & ".join("+\\infty" if value is infinity else str(value) for value in row))
++        return "\\left(\\begin{array}{rrrr}\n" + " \\\\\n".join(rows) + "\n\\end{array}\\right)"
+
+
+ def view_list(L):
+@@ -117,7 +140,7 @@
+         sage: M = Minimog(type='shuffle')
+         sage: picture_set(M.picture00, M.cross[2])
+         {5, 7, 8, 9, 10}
+-        sage: picture_set(M.picture02, M.square[7])
++        sage: picture_set(M.picture02, M.square[7])  # random
+         {2, 3, 5, 8}
+     """
+     return {A[x] for x in L}
+@@ -141,9 +164,8 @@
+     """
+     def __init__(self, type='shuffle'):
+         self.type = type
+-        MS34 = MatrixSpace(SR, 3, 4)
+-        minimog_modulo11 = MS34([[0, 3, infinity, 2], [5, 9, 8, 10], [4, 1, 6, 7]])
+-        minimog_shuffle = MS34([[6, 3, 0, 9], [5, 2, 7, 10], [4, 1, 8, 11]])
++        minimog_modulo11 = _MinimogMatrix([[0, 3, infinity, 2], [5, 9, 8, 10], [4, 1, 6, 7]])
++        minimog_shuffle = _MinimogMatrix([[6, 3, 0, 9], [5, 2, 7, 10], [4, 1, 8, 11]])
+         if type == "shuffle":
+             self.minimog = minimog_shuffle
+         elif type == "modulo11":
+@@ -151,14 +173,12 @@
+         else:
+             raise ValueError("that Minimog type is not implemented")
+         # This initializes the variables in the game.
+-        MS34 = MatrixSpace(SR, 3, 4)
+         A = self.minimog
+-        MS33 = MatrixSpace(SR, 3, 3)
+-        self.picture00 = MS33([[A[(1, 0)], A[(2, 3)], A[(0, 1)]], [A[(2, 2)], A[(1, 1)], A[(2, 0)]], [A[(0, 3)], A[(1, 3)], A[(1, 2)]]])
++        self.picture00 = _MinimogMatrix([[A[(1, 0)], A[(2, 3)], A[(0, 1)]], [A[(2, 2)], A[(1, 1)], A[(2, 0)]], [A[(0, 3)], A[(1, 3)], A[(1, 2)]]])
+         # self.picture00 is the "picture at 6"
+-        self.picture02 = MS33([[A[(1, 0)], A[(2, 3)], A[(0, 1)]], [A[(1, 1)], A[(2, 0)], A[(2, 2)]], [A[(1, 2)], A[(0, 3)], A[(1, 3)]]])
++        self.picture02 = _MinimogMatrix([[A[(1, 0)], A[(2, 3)], A[(0, 1)]], [A[(1, 1)], A[(2, 0)], A[(2, 2)]], [A[(1, 2)], A[(0, 3)], A[(1, 3)]]])
+         # self.picture02 is the "picture at 1"
+-        self.picture21 = MS33([[A[(2, 2)], A[(1, 3)], A[(0, 1)]], [A[(0, 3)], A[(2, 3)], A[(2, 0)]], [A[(1, 0)], A[(1, 1)], A[(1, 2)]]])
++        self.picture21 = _MinimogMatrix([[A[(2, 2)], A[(1, 3)], A[(0, 1)]], [A[(0, 3)], A[(2, 3)], A[(2, 0)]], [A[(1, 0)], A[(1, 1)], A[(1, 2)]]])
+         # self.picture21 is the "picture at 0"
+
+         self.line = list(range(12))
+@@ -523,7 +543,7 @@
+             sage: M.find_hexad([0, 1, 2, 4, 6])
+             ([0, 1, 2, 4, 6, 8], ['line 1', 'picture 1'])
+             sage: M = Minimog(type='modulo11')
+-            sage: M.find_hexad([1, 2, 3, 4, SR(infinity)]) # random (machine dependent?) order
++            sage: M.find_hexad([1, 2, 3, 4, infinity]) # random (machine dependent?) order
+             ([+Infinity, 2, 3, 4, 1, 10], ['square 8', 'picture 0'])
+
+         AUTHOR:
 diff -urN a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
 --- a/src/sage/games/quantumino.py
 +++ b/src/sage/games/quantumino.py

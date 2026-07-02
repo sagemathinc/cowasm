@@ -19285,6 +19285,32 @@ recording `50 passed, 0 failed, 0 skipped`. The standalone Sagelite smoke
 passes after adding a regression fixture for Sage-style dictionary keys; the
 runner version is now 81.
 
+Focused hexad game corpus-growth pass on 2026-07-02:
+
+```text
+sage -t passed: 53 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/games/hexad.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 913
+non-comment entries. Direct sampling first recorded a symbolic import barrier:
+`hexad.py` imported `SR` through `sage.calculus.calculus` only to build small
+MINIMOG matrices containing integers and `+Infinity`, which pulled in the
+unavailable `sage.symbolic.expression` module under the default
+browser-compatible profile.
+
+The WASI source patch now uses a tiny private matrix wrapper for the MINIMOG
+and picture matrices, preserving Python integer and `infinity` values,
+matrix-style text/LaTeX display, tuple indexing, and hashability without
+importing symbolic calculus. One set-display-order example is marked
+`# random`. Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after rebuilding a fresh patched source copy, with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/hexad-make-final.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
