@@ -20423,6 +20423,35 @@ the quiet corpus until they expose runnable browser-profile coverage.
 Running `doctest-corpus-candidates.py --ignore-invalid --min-passed 1` across
 the fresh July 2 probe databases listed no clean uncovered candidates.
 
+Continuation frontier audit on 2026-07-02 sampled another two uncovered
+small-file batches under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-continuation/`.
+The first batch covered Judson exercise helpers, pbori frontend/random
+helpers, modular-form and hyperelliptic-adjacent files, and recorded:
+
+```text
+frontier-batch-a.sqlite3: 10 passed, 61 failed, 81 skipped
+```
+
+The second batch covered category examples, symmetric-function helpers, root
+braid moves, module/vector symbolic helpers, one q-adic FLINT file, rigged
+configuration bijections, and nil-Coxeter algebra, and recorded:
+
+```text
+frontier-batch-b.sqlite3: 2 passed, 122 failed, 336 skipped
+```
+
+Running `doctest-corpus-candidates.py --ignore-invalid --min-passed 1` across
+both fresh databases printed no uncovered clean runnable source rows. The
+first batch's active failures cluster around unavailable pbori, hyperelliptic,
+weighted-projective, graph/poset, and NTL-backed modular paths. The second
+batch confirms that many category and combinatorics helper files are currently
+skipped-only in the browser profile, while the active uncovered failures are
+symbolic vector examples, the q-adic FLINT initializer boundary, and broader
+`NilCoxeterAlgebra`/Weyl-group startup and backend work. These files should
+remain outside the quiet corpus until a focused pass turns one of those
+clusters into explicit browser-profile skips or real passing coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
