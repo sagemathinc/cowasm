@@ -21507,6 +21507,33 @@ matroids, categories, rich-output formatting, and stats, followed by a Node
 shutdown segfault. The focused one-file make run is the clean validation for
 this promotion; the broader scratch database remains useful frontier data.
 
+Follow-up octonion algebra corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/algebras/octonion_algebra.pyx` into the curated
+`basic-pure-math.txt` corpus. The file was the best high-pass near miss in the
+accumulated algebra frontier dashboards, with 225 passing blocks and seven
+failures. The failures were dependency-boundary examples rather than new
+octonion arithmetic regressions: five symbolic square-root or metric-suite
+paths, one PARI-backed number-field kernel path through derivations, and one
+`ExteriorAlgebra` startup/module exposure path.
+
+The WASI patch now marks those examples as explicit `sage.symbolic`,
+`sage.libs.pari`, or `sage.algebras.clifford_algebra` skips. A direct focused
+rerun and the make-target validation with a one-file scratch corpus both
+recorded:
+
+```text
+sage -t passed: 225 passed, 0 failed, 7 skipped
+```
+
+The make-target run rebuilt the patched Sagelite source tree from the
+checked-in patch and wrote
+`.tmp/current-run/scheduled-2026-07-02-octonion/octonion-make.sqlite3`. Its
+skip clusters are five `optional:sage.symbolic`, one
+`optional:sage.libs.pari`, and one
+`optional:sage.algebras.clifford_algebra`; after adding the corpus entry,
+`doctest-corpus-candidates.py` prints no promotion candidate for that database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

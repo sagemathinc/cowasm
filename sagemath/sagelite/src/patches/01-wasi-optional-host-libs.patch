@@ -10175,3 +10175,27 @@ diff -urN -U0 a/src/sage/repl/interface_magic.py b/src/sage/repl/interface_magic
 -            sage: shell = get_test_shell()
 +            sage: from sage.repl.interpreter import get_test_shell                         # needs IPython
 +            sage: shell = get_test_shell()                                                # needs IPython
+diff -urN -U0 a/src/sage/algebras/octonion_algebra.pyx b/src/sage/algebras/octonion_algebra.pyx
+--- a/src/sage/algebras/octonion_algebra.pyx
++++ b/src/sage/algebras/octonion_algebra.pyx
+@@ -441 +441 @@
+-            sage: elt.norm()
++            sage: elt.norm()                                                            # needs sage.symbolic
+@@ -464 +464 @@
+-            sage: elt.abs()
++            sage: elt.abs()                                                             # needs sage.symbolic
+@@ -598 +598 @@
+-            sage: elt.norm()
++            sage: elt.norm()                                                            # needs sage.symbolic
+@@ -601 +601 @@
+-            sage: elt.norm()
++            sage: elt.norm()                                                            # needs sage.symbolic
+@@ -706 +706 @@
+-        sage: len(O.derivations_basis())
++        sage: len(O.derivations_basis())                                                # needs sage.libs.pari
+@@ -754 +754 @@
+-            sage: OctonionAlgebra(ExteriorAlgebra(QQ, 3))
++            sage: OctonionAlgebra(ExteriorAlgebra(QQ, 3))                                # needs sage.algebras.clifford_algebra
+@@ -780 +780 @@
+-            sage: TestSuite(O).run()
++            sage: TestSuite(O).run()                                                     # needs sage.symbolic
