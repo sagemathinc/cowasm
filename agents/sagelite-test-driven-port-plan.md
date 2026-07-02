@@ -3805,6 +3805,26 @@ synthetic `src/sage/example/real_candidate.py` fixture from the helper test
 database. With the current source-root override, the scan prints no uncovered
 candidate rows.
 
+Follow-up low-count doctest frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 964 non-comment entries. A fresh historical candidate scan across recent
+2026-07-02 helper and probe databases, with
+`--source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk`, printed no
+uncovered candidate rows.
+
+A focused low-count direct probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-current-lowprobe.sqlite3`
+against the current patched Sagelite source copy. The files
+`sage/repl/prompts.py`, `sage/misc/sagedoc_conf.py`,
+`sage/cpython/getattr.pxd`, and `sage/doctest/parsing_test.py` extracted zero
+runnable doctest blocks; `sage/rings/integer_fake.pxd` extracted one skipped
+block and no runnable blocks. `sage/doctest/tests/tolerance.rst` recorded
+`1 passed, 6 failed, 0 skipped`, but those six failures are intentional
+negative tolerance-checker fixtures whose source text says they should fail.
+They should not be promoted into the quiet browser-profile corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
