@@ -21065,6 +21065,40 @@ theta probe reaches the known NTL/libcxx ostream trap. These files remain
 outside the quiet browser-profile corpus until those backend clusters are
 addressed or narrower source tags expose meaningful non-skipped subsets.
 
+Focused matrix-group startup corpus-growth pass on 2026-07-02:
+
+```text
+named_group.py: 15 passed, 0 failed, 16 skipped
+```
+
+This pass promotes `sage/groups/matrix_gps/named_group.py` into the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to
+950 non-comment entries. Fresh low-count absent-file probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-active/`
+first found no clean candidate in small CLI, PARI conversion, GAP, homology,
+category-example, REPL, topology, plotting, crypto, and helper batches. The
+useful narrow miss was `named_group.py`: its only failures were the two
+top-level `SL(...)` examples, while existing optional tags already kept
+finite-field and GAP-backed matrix-group checks out of the default browser
+profile.
+
+The doctest runner now seeds `SL` next to the existing `GL` constructor from
+`sage.groups.matrix_gps.linear`, and the WASI `sage.all` startup patch exposes
+both constructors for rebuilt Sagelite packages. Focused direct validation
+wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-active/named-group-after-sl.sqlite3`.
+Focused strict make-level validation rebuilt and patched a fresh source copy
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-active/named-group-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`acec9a57b5c158711c735a2fbc14eb26f68d78d7`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the sixteen skipped blocks
+under `sage.libs.gap`, `sage.rings.finite_rings`, and
+`sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
