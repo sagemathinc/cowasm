@@ -21820,6 +21820,47 @@ The saved block- and file-failure cluster queries are empty; the new skip is
 recorded under `deferred:known bug`, alongside the existing symbolic and NumPy
 dependency skips.
 
+Follow-up small-frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh focused probes under
+`.tmp/current-run/scheduled-2026-07-02-goal/` produced no uncovered clean
+promotion candidates when rescanned with `doctest-corpus-candidates.py` against
+the current 963-entry `basic-pure-math.txt` corpus.
+
+The game/probability probe recorded:
+
+```text
+sage -t passed: 110 passed, 0 failed, 42 skipped
+```
+
+`sage/games/hexad.py` and `sage/games/quantumino.py` were both clean in the
+current runtime, but they are already listed in the curated corpus. The
+zero-block `sage/games/all.py` and `sage/probability/all.py` helpers add no
+runnable coverage.
+
+The compact mixed probe recorded:
+
+```text
+sage -t failed: 5 passed, 12 failed, 103 skipped
+```
+
+Most sampled absent files were skipped-only dependency-boundary checks. The
+only runnable near miss was `sage/homology/homology_group.py`, whose failures
+come from `HomologyGroup(...)` construction through the additive abelian group
+stack (`TypeError: attribute name must be string, not ''`) rather than from a
+simple optional-import boundary.
+
+The wrapper/utility probe recorded:
+
+```text
+sage -t failed: 1 passed, 15 failed, 56 skipped
+```
+
+`sage/libs/ntl/ntl_GF2EContext.pyx` stops at a side-module unresolved C++ RTTI
+symbol (`_ZTIPKc`) pulled in through the Givaro finite-ring path, and
+`sage/libs/gap/assigned_names.py` remains a GAP-boundary near miss. The other
+sampled utility files were skipped-only.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
