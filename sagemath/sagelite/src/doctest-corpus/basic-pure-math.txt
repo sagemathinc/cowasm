@@ -764,6 +764,7 @@ src/sage/modules/fp_graded/steenrod/morphism.py
 src/sage/modules/fp_graded/steenrod/module.py
 src/sage/modules/fp_graded/steenrod/profile.py
 src/sage/modules/free_module_homspace.py
+src/sage/modules/free_module_pseudohomspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
 src/sage/modules/multi_filtered_vector_space.py
