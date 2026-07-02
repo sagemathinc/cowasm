@@ -20066,6 +20066,47 @@ batches should not be repeated for corpus growth unless the browser-profile
 skip policy changes; the useful next work is either a direct NTL/libcxx
 finite-field runtime fix or a fresh search in a different absent-source band.
 
+Focused standalone-directive parser pass on 2026-07-02:
+
+No new runnable corpus entry was promoted. Fresh mid-band absent-source probes
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-agent-next/`
+sampled compact crypto, knot, combinatorics, ring, plotting, geometry, and
+Judson book files. The main batch recorded:
+
+```text
+sage -t failed: 2 passed, 30 failed, 225 skipped
+```
+
+Most sampled files were skipped-only under the default browser-compatible
+profile. `sage/rings/bernoulli_mod_p.pyx` hit the known NTL/libcxx
+`memory access out of bounds` trap through `ntl_ZZ_pX`, while
+`sage/combinat/posets/bubble_shuffle.py` and
+`sage/geometry/voronoi_diagram.py` exposed broader graph/startup/backend
+failure clusters rather than narrow promotion work. A utility/front-door probe
+found several zero-block or skipped-only files and exposed a runner parser edge
+case in `sage/doctest/__main__.py`.
+
+Runner version 82 now blanks directive-only prompt lines before handing a
+docstring to Python's `doctest.DocTestParser`, while preserving the directive
+metadata for the next real prompt. It also carries a standalone directive
+through intervening prose and a one-line physical gap, covering Sage docstrings
+where a directive-only prompt guards a narrative test section or a standalone
+`...` placeholder. This changes `sage/doctest/__main__.py` from a
+file-level `ValueError` during `parse_doctest` to an explicit skipped-only
+classification:
+
+```text
+__main__.py: 0 passed, 0 failed, 9 skipped
+```
+
+The same regression pass reran the already-promoted
+`sage/groups/galois_group_perm.py` file and preserved its previous clean
+default-profile result:
+
+```text
+galois_group_perm.py: 5 passed, 0 failed, 26 skipped
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

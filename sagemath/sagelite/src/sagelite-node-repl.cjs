@@ -1407,6 +1407,7 @@ def __cowasm_convert_prompts(text):
                     active_directive_source,
                     source,
                 )
+                line = "\\n"
             else:
                 inline_directive_source = __cowasm_inline_directive_source(source)
                 if inline_directive_source:
@@ -1433,8 +1434,7 @@ def __cowasm_convert_prompts(text):
                         )
                 if active_directive_source:
                     standalone_directives[lineno] = active_directive_source
-        elif not line.strip():
-            active_directive_source = None
+                    active_directive_source = None
         line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
         line = re.sub(r"(?m)^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         line = re.sub(
@@ -2073,7 +2073,7 @@ def __cowasm_run_file(filename):
                     active_directive_source
                     and previous_physical_end_line is not None
                     and start_line is not None
-                    and start_line > previous_physical_end_line + 1
+                    and start_line > previous_physical_end_line + 2
                 ):
                     active_directive_source = None
                 mapped_directive_source = (
