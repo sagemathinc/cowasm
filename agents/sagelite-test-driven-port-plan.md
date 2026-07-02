@@ -18988,6 +18988,45 @@ queries are empty for
 A full `make -C sagemath/sagelite test-wasi-sdk-standalone` run also passed,
 including a new standalone namespace-leak regression fixture.
 
+Frontier audit after the namespace restoration pass on 2026-07-02:
+
+Three live absent-file probes found no new clean runnable promotion candidate,
+but they narrow the next sampling frontier. The low-count probe at
+`.tmp/current-run/scheduled-2026-07-02-active/probes/small-absent.sqlite3`
+covered ten absent helper files and recorded `0 passed, 0 failed, 43 skipped`;
+all files were skipped-only under the default browser-compatible profile. The
+mid-count probe at
+`.tmp/current-run/scheduled-2026-07-02-active/probes/mid-absent.sqlite3`
+recorded `13 passed, 34 failed, 264 skipped`; most files were skipped-only,
+while `homology_group.py`, `manifolds/structure.py`, and
+`combinat/posets/bubble_shuffle.py` exposed real semantic/startup failures.
+The no-broad-directive probe at
+`.tmp/current-run/scheduled-2026-07-02-active/probes/nodirective-absent.sqlite3`
+recorded `15 passed, 144 failed, 120 skipped`, with no promote candidates from
+`doctest-corpus-candidates.py --min-passed 1`.
+
+The useful blocker clusters from those probes are:
+
+- `hochschild_lattice.py` first needs `posets`/`simplicial_complexes` startup
+  names, but the underlying fan and lattice paths import the stripped graph
+  backend (`sage.graphs.generic_graph_pyx`), so it should not be promoted until
+  the graph boundary changes or the graph-backed examples are explicitly
+  tagged.
+- `bernoulli_mod_p.pyx` and `polynomial_ring_homomorphism.pyx` still hit the
+  known NTL/libcxx ostream `memory access out of bounds` trap through
+  `ntl_ZZ_pX`/`ntl_ZZ_p`, so they should stay out of blind promotion batches.
+- `free_algebra_quotient_element.py` is dominated by
+  `sage.algebras.free_algebra_quotient` import/startup failures followed by
+  dependent missing generator names; this is a possible focused startup-module
+  triage target, not a corpus-growth candidate.
+- `nil_coxeter_algebra.py` is dominated by missing `NilCoxeterAlgebra` startup
+  names and `WeylGroup(...)` coverage, which should be handled alongside the
+  broader Weyl/GAP-backed algebra boundary.
+- Several low-count graph, crypto, REPL, category-example, plot, and species
+  files now record skipped-only dashboards under the default profile. Future
+  promotion scans should prefer files with observed runnable blocks, not just
+  static `sage:` prompt counts.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
