@@ -3668,6 +3668,41 @@ A grouped probe of `games/sudoku.py`, `numerical/knapsack.py`, and
 entries are quiet, recording 407 passed blocks and 15 skipped blocks, but
 `doctest-corpus-candidates.py` correctly printed no uncovered candidates.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 952 non-comment entries, and fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-new/`.
+
+The interface/library wrapper probe in `libs-probe/probe.sqlite3` recorded
+one passing block, 65 failed blocks, and 12 skipped blocks across small
+interface and C-library wrapper files. `interfaces/gfan.py`,
+`interfaces/magma_free.py`, and `libs/homfly.pyx` were skipped-only under the
+default browser profile. The runnable failures in `interfaces/psage.py`,
+`libs/eclib/constructor.py`, `libs/gap/context_managers.py`,
+`libs/gap/assigned_names.py`, `libs/gap/operations.py`, and
+`libs/singular/function_factory.py` cluster around unavailable GAP,
+Singular, eclib, and interface backend behavior rather than narrow
+corpus-growth tags.
+
+The compact `sage/crypto` probe in `crypto-probe/probe.sqlite3` recorded
+113 skipped blocks and no runnable blocks across `cipher.py`, `lattice.py`,
+`lfsr.py`, `stream.py`, and `sboxes.py`, so those files remain outside the
+quiet dashboard for now. A documentation-style Judson abstract-algebra probe
+in `judson-probe/probe.sqlite3` extracted zero doctest blocks from the sampled
+exercise files, confirming they are not useful corpus entries for the current
+runner.
+
+The combinatorics/posets probe in `combinat-posets-probe/probe.sqlite3`
+recorded no passing blocks, 48 failed blocks, and 123 skipped blocks. The
+skipped-only files were `d_complete.py`, `tamari_lattices.py`,
+`nu_tamari_lattice.py`, and `subword_complex_c.pyx`; the runnable failures in
+`bubble_shuffle.py`, `hochschild_lattice.py`, and `mobile.py` remain broader
+graph/poset backend clusters. Future scheduled runs should avoid repeating
+these exact batches unless the optional crypto, GAP/Singular/eclib, or graph
+backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
