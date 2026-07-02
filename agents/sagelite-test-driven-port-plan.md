@@ -20567,6 +20567,37 @@ sage -t passed: 34 passed, 0 failed, 17 skipped
 
 The saved block- and file-failure cluster queries are empty for that database.
 
+Focused 4ti2 interface corpus-growth pass on 2026-07-02:
+
+```text
+four_ti_2.py: 38 passed, 0 failed, 16 skipped
+```
+
+This pass promotes `sage/interfaces/four_ti_2.py` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 939
+non-comment entries. A fresh mixed absent-source probe first sampled compact
+group, crypto, modular, plotting, coding, function-field, interface, scheme,
+homology, manifold, module, ring, algebra, polyhedron, and parallel helpers
+under `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex-continuation/`.
+The first mixed batch found no clean uncovered candidates. The second batch
+recorded `four_ti_2.py` as the only clean uncovered runnable row, while
+nearby files remained skipped-only or blocked by existing PARI, Singular,
+symbolic, NTL/libcxx finite-field, plotting, or algebra backend clusters.
+
+No WASI source patch was needed: upstream optional metadata already classifies
+the external 4ti2 executable calls as `# optional - 4ti2`, while the local
+interface construction and file-format helpers run in the default node
+profile. Focused strict make-level validation used a temporary one-file corpus
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex-continuation/four-ti-two-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`326474eb51a117a5af74ff9edcaa59cfccde5337`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups all sixteen skipped blocks
+under `optional:4ti2`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
