@@ -19880,6 +19880,41 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; the database records 672 ordinary passing blocks and four
 `random_unchecked` display-only blocks.
 
+Follow-up low-helper frontier audit on 2026-07-02:
+
+No corpus entry was promoted in this pass. A fresh absent-file sweep under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-port/`
+first sampled small infrastructure, REPL, topology, category, monoid,
+species, and knot helper files. The direct run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 108 skipped
+```
+
+The skipped-only database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-port/low-helper-candidates.sqlite3`.
+
+A broader low-prompt pure-helper probe then recorded:
+
+```text
+sage -t failed: 19 passed, 146 failed, 431 skipped
+```
+
+The mixed database is
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-port/broader-helper-candidates.sqlite3`.
+The checked `doctest-corpus-candidates.py --min-passed 1 --paths-only
+--ignore-invalid` helper printed no uncovered clean source rows across both
+databases. The only files with runnable passing blocks still have active
+non-skipped failures: `rings/polynomial/hilbert.pyx` remains at
+`6 passed, 18 failed` in the existing polynomial/Singular backend frontier,
+`homology/homology_group.py` records `5 passed, 12 failed, 6 skipped`,
+`integration_doctest.py` records `3 passed, 9 failed`, and the pbori helper
+files still depend on the stripped PolyBoRi module. `rings/polynomial/ideal.py`
+also reproduced a 90-second timeout in the one-polynomial Groebner-basis
+example at line 77. Future scans should not treat these low-helper batches as
+blind corpus-growth targets until the relevant optional backend or polynomial
+runtime clusters change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
