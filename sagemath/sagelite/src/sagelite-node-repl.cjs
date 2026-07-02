@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 82;
+const doctestRunnerVersion = 83;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1691,6 +1691,9 @@ def __cowasm_namespace(filename):
 def __cowasm_restore_protected_namespace(namespace, protected_namespace):
     if protected_namespace is None:
         return
+    for name in list(namespace):
+        if name not in protected_namespace:
+            namespace.pop(name, None)
     for name, value in protected_namespace.items():
         if namespace.get(name) is not value:
             namespace[name] = value

@@ -21534,6 +21534,40 @@ skip clusters are five `optional:sage.symbolic`, one
 `optional:sage.algebras.clifford_algebra`; after adding the corpus entry,
 `doctest-corpus-candidates.py` prints no promotion candidate for that database.
 
+Follow-up polynomial dictionary corpus-growth pass on 2026-07-02:
+
+This pass promoted `src/sage/rings/polynomial/polydict.pyx` into the curated
+`basic-pure-math.txt` corpus. The file was the highest-pass remaining
+polynomial near miss in the scratch dashboards, initially recording 371
+passing blocks with failures around three separate issues: whole-file `.pyx`
+fallback state leaking `O = TermOrder()` into later power-series examples,
+runtime warning-location drift in the deprecated `sortkey=None` check, and a
+Singular-backed multivariate polynomial type expectation.
+
+The WASI patch now renames the doctest-local term order variable from `O` to
+`order`, marks the warning-format-only assignment as `# random`, and adds a
+standalone `# needs sage.libs.singular` directive for the contiguous
+libSingular expectation. The doctest runner also bumps to version 83 and now
+removes names introduced by one split docstring before restoring the protected
+startup namespace for the next split docstring; the standalone namespace-leak
+fixture covers both overwritten Sage globals and newly introduced globals.
+
+Focused validation records:
+
+```text
+polydict.pyx: 376 passed, 0 failed, 16 skipped
+```
+
+The make-target validation rebuilt the patched source tree and wrote
+`.tmp/current-run/scheduled-2026-07-02-polydict/polydict-make.sqlite3`, whose
+file row is clean with 392 total blocks, 376 passed, 0 failed, and 16 skipped.
+The strict `SAGELITE_DOCTEST_ALLOW_FAILURES=0` make run observed the existing
+Node shutdown segfault after the clean doctest result had already been written;
+the default dashboard-mode make run completed successfully and wrote
+`.tmp/current-run/scheduled-2026-07-02-polydict/polydict-make-allow.sqlite3`.
+Skip clusters are twelve `optional:sage.combinat`, three
+`optional:sage.libs.singular`, and one `optional:sage.rings.finite_rings`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -2258,6 +2258,7 @@ r"""
 EXAMPLES::
 
     sage: from gmpy2 import *
+    sage: cowasm_shadow_leak = 17
 """
 
 r"""
@@ -2267,6 +2268,10 @@ EXAMPLES::
     5/3
     sage: log(QQ(125), 5)
     3
+    sage: cowasm_shadow_leak
+    Traceback (most recent call last):
+    ...
+    NameError: name 'cowasm_shadow_leak' is not defined
 """
 PY
 set +e
@@ -2288,8 +2293,8 @@ if [ "$doctest_namespace_leak_status" -ne 0 ]; then
   sqlite3 "$doctest_namespace_leak_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace-leak doctest smoke failed; see $doctest_namespace_leak_log for the first runtime blocker."
 fi
-doctest_namespace_leak_count="$(sqlite3 "$doctest_namespace_leak_db" "select count(*) from blocks where status = 'passed' and source in ('sqrt(QQ(25)/QQ(9))' || char(10), 'log(QQ(125), 5)' || char(10));")"
-if [ "$doctest_namespace_leak_count" != "2" ]; then
+doctest_namespace_leak_count="$(sqlite3 "$doctest_namespace_leak_db" "select count(*) from blocks where status = 'passed' and source in ('sqrt(QQ(25)/QQ(9))' || char(10), 'log(QQ(125), 5)' || char(10), 'cowasm_shadow_leak' || char(10));")"
+if [ "$doctest_namespace_leak_count" != "3" ]; then
   cat "$doctest_namespace_leak_log" >&2
   sqlite3 "$doctest_namespace_leak_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace-leak doctest smoke did not restore Sage globals between Cython docstrings."

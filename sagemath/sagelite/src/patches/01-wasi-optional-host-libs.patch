@@ -10199,3 +10199,28 @@ diff -urN -U0 a/src/sage/algebras/octonion_algebra.pyx b/src/sage/algebras/octon
 @@ -780 +780 @@
 -            sage: TestSuite(O).run()
 +            sage: TestSuite(O).run()                                                     # needs sage.symbolic
+diff -urN -U0 a/src/sage/rings/polynomial/polydict.pyx b/src/sage/rings/polynomial/polydict.pyx
+--- a/src/sage/rings/polynomial/polydict.pyx
++++ b/src/sage/rings/polynomial/polydict.pyx
+@@ -323,2 +323,2 @@
+-            sage: O = TermOrder()
+-            sage: p1.rich_compare(PolyDict({(0,): 1}), op_EQ, O.sortkey)
++            sage: order = TermOrder()
++            sage: p1.rich_compare(PolyDict({(0,): 1}), op_EQ, order.sortkey)
+@@ -326 +326 @@
+-            sage: p1.rich_compare(p2, op_EQ, O.sortkey)
++            sage: p1.rich_compare(p2, op_EQ, order.sortkey)
+@@ -328 +328 @@
+-            sage: p1.rich_compare(p2, op_NE, O.sortkey)
++            sage: p1.rich_compare(p2, op_NE, order.sortkey)
+@@ -330 +330 @@
+-            sage: p1.rich_compare(p2, op_LT, O.sortkey)
++            sage: p1.rich_compare(p2, op_LT, order.sortkey)
+@@ -335 +335 @@
+-            sage: p3.rich_compare(p4, op_LT, O.sortkey)
++            sage: p3.rich_compare(p4, op_LT, order.sortkey)
+@@ -343 +343 @@
+-            sage: ans = p.rich_compare(p, op_EQ)
++            sage: ans = p.rich_compare(p, op_EQ)                                      # random
+@@ -1938,0 +1939 @@
++            sage: # needs sage.libs.singular
