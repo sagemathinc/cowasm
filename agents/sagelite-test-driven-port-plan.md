@@ -22158,6 +22158,39 @@ Its skip clusters are the expected optional external-software feature checks,
 so older OSError rows from `/tmp/sagelite-20260702-mid-sample-3.sqlite3`
 should not be used as current triage evidence.
 
+Follow-up runner-version candidate-filter pass on 2026-07-02:
+
+No new quiet corpus candidate was promoted. The older
+`homfly-frontier-probe/homfly.sqlite3` near-miss row came from doctest runner
+version 73 and is stale under the current runner. A fresh direct rerun with
+runner version 83 records:
+
+```text
+homfly.pyx: 0 passed, 0 failed, 6 skipped
+```
+
+The skipped rows are the expected `optional:sage.libs.homfly` blocks after
+standalone `# needs` propagation, so `homfly.pyx` is a skipped-only optional
+backend boundary rather than a current near miss.
+
+The `doctest-corpus-candidates.py` helper now has an opt-in
+`--min-runner-version` filter. Historical dashboards remain readable by
+default, but frontier scans can require current runner metadata to avoid
+surfacing obsolete failure rows after doctest-runner behavior changes. With
+`--min-runner-version 83`, the wide near-miss scan of recent `.tmp/current-run`
+and `/tmp/sagelite-20260702-*` dashboards drops the stale HOMFLY row; the only
+remaining current-runner near miss in that scan is
+`src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py`.
+Its failures are startup-name gaps for symbolic/numerical integration helpers
+such as `var`, `x`, and `numerical_integral`, so it is not a narrow corpus
+promotion candidate without a deliberate symbolic/numerical profile expansion.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a current-runner skipped
+audit of the fresh HOMFLY database, and wide near-miss scans with
+`--min-runner-version 83`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

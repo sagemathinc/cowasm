@@ -2710,7 +2710,8 @@ touch "$doctest_candidate_helper_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
   id integer primary key,
-  source_root text
+  source_root text,
+  runner_version integer
 );
 create table files (
   run_id integer,
@@ -2724,7 +2725,7 @@ create table files (
   failure_detail text default '',
   duration_ms integer
 );
-insert into runs (id, source_root) values (1, '$doctest_candidate_helper_source_root');
+insert into runs (id, source_root, runner_version) values (1, '$doctest_candidate_helper_source_root', 83);
 insert into files (
   run_id, path, status, total_blocks, passed_blocks, failed_blocks,
   skipped_blocks, duration_ms
@@ -2787,6 +2788,26 @@ if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]
   printf '%s\n' "$doctest_candidate_helper_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
+fi
+doctest_candidate_helper_min_runner_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --min-runner-version 80 \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_min_runner_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_min_runner_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --min-runner-version filtered out a current runner."
+fi
+doctest_candidate_helper_stale_runner_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --min-runner-version 100 \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_stale_runner_paths" ]; then
+  printf '%s\n' "$doctest_candidate_helper_stale_runner_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --min-runner-version reported a stale runner."
 fi
 doctest_candidate_helper_zero_blocks="$("$src_dir/doctest-corpus-candidates.py" \
   --zero-blocks \

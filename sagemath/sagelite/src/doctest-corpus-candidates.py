@@ -112,6 +112,14 @@ def parse_args() -> argparse.Namespace:
         help="maximum failed block count for --near-misses",
     )
     parser.add_argument(
+        "--min-runner-version",
+        type=int,
+        help=(
+            "scan only the latest run whose runner_version is at least this "
+            "value; databases without runner_version metadata produce no rows"
+        ),
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -139,6 +147,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--quiet-invalid requires --ignore-invalid")
     if args.max_failed < 1:
         parser.error("--max-failed must be positive")
+    if args.min_runner_version is not None and args.min_runner_version < 1:
+        parser.error("--min-runner-version must be positive")
     return args
 
 
@@ -203,15 +213,41 @@ def source_candidate_exists(relative_path: str, source_root: Path | None) -> boo
     return (source_root / relative_path).exists()
 
 
-def latest_run_metadata(db: sqlite3.Connection) -> tuple[int, Path | None]:
-    row = db.execute(
-        """
-        select id, source_root
-        from runs
-        order by id desc
-        limit 1
-        """
-    ).fetchone()
+def runs_table_has_column(db: sqlite3.Connection, column: str) -> bool:
+    return any(
+        name == column
+        for _cid, name, *_rest in db.execute("pragma table_info(runs)")
+    )
+
+
+def latest_run_metadata(
+    db: sqlite3.Connection,
+    min_runner_version: int | None,
+) -> tuple[int, Path | None] | None:
+    if min_runner_version is not None:
+        if not runs_table_has_column(db, "runner_version"):
+            return None
+        row = db.execute(
+            """
+            select id, source_root
+            from runs
+            where runner_version >= ?
+            order by id desc
+            limit 1
+            """,
+            (min_runner_version,),
+        ).fetchone()
+        if row is None:
+            return None
+    else:
+        row = db.execute(
+            """
+            select id, source_root
+            from runs
+            order by id desc
+            limit 1
+            """
+        ).fetchone()
     if row is None:
         raise SystemExit("no doctest runs found in database")
     run_id, source_root = row
@@ -501,7 +537,10 @@ def main() -> int:
                 raise SystemExit(f"database not found: {database}")
             with sqlite3.connect(database) as db:
                 require_doctest_schema(database, db)
-                run_id, db_source_root = latest_run_metadata(db)
+                metadata = latest_run_metadata(db, args.min_runner_version)
+                if metadata is None:
+                    continue
+                run_id, db_source_root = metadata
                 source_root = args.source_root or db_source_root
                 if source_root not in covered_by_source_root:
                     covered_by_source_root[source_root] = read_corpus(
