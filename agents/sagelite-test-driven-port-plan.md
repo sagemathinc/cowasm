@@ -3618,6 +3618,53 @@ batch was skipped-only; and the coding utility batch was skipped-only. Future
 scheduled runs should avoid repeating these exact batches unless the symbolic,
 elliptic-curve, ARB/NTL, finite-ring, or coding-module backend profile changes.
 
+Follow-up scheduled frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under `/home/user/cowasm/.tmp/current-run/` and used runner version 82 against
+the current patched Sagelite source copy.
+
+A direct CLI lifecycle check on the already-covered `sage/all.py` entry exited
+cleanly and recorded:
+
+```text
+all.py: 13 passed, 0 failed, 2 skipped
+```
+
+The historical SQLite candidate scan also produced no real uncovered
+promotion row. Its only candidate was the synthetic
+`src/sage/example/real_candidate.py` fixture from the make-candidates test
+database, so it was ignored.
+
+Several focused absent-file probes should not be repeated without a runtime,
+profile, or source-patch change:
+
+- `scheduled-2026-07-02-cpython-misc-lowprompt.sqlite3` recorded 18 skipped
+  blocks and no runnable blocks across small CPython and misc helpers.
+- `scheduled-2026-07-02-double-vector-matrix.sqlite3` recorded 65 skipped
+  blocks and no runnable blocks across double-vector and dense double-matrix
+  helpers.
+- `scheduled-2026-07-02-repl-small.sqlite3` recorded 43 skipped blocks and no
+  runnable blocks across small REPL/doctest helpers.
+- `scheduled-2026-07-02-lowprompt-algebra-combinat.sqlite3` recorded no
+  passing blocks, 53 failed blocks, and 160 skipped blocks. The failures
+  cluster around unavailable graph-backed posets, Symmetrica/GAP-backed
+  nil-Coxeter startup, quaternion integer-matrix support, and the existing
+  NTL/libcxx function-field trap.
+- `scheduled-2026-07-02-medium-pure-probe.sqlite3` recorded 22 passed blocks,
+  248 failed blocks, and 250 skipped blocks, with no clean file candidate.
+  Its failures are dominated by symbolic, polyhedron, species/dynamic-link,
+  p-adic NTL, and calculus startup/backend clusters.
+- `scheduled-2026-07-02-function-field-ring-probe.sqlite3` recorded no
+  passing blocks, two file-level failures, and 131 skipped blocks. The
+  failures were a timeout in `function_field/element_rational.pyx` and the
+  existing NTL/libcxx trap in `function_field/place.py`.
+
+A grouped probe of `games/sudoku.py`, `numerical/knapsack.py`, and
+`probability/probability_distribution.pyx` reconfirmed those current corpus
+entries are quiet, recording 407 passed blocks and 15 skipped blocks, but
+`doctest-corpus-candidates.py` correctly printed no uncovered candidates.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
