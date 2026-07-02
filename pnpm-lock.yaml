@@ -1586,6 +1586,9 @@ importers:
       '@cowasm/cysignals':
         specifier: workspace:*
         version: link:../cysignals
+      '@cowasm/lrcalc-python':
+        specifier: workspace:*
+        version: link:../lrcalc-python
       '@cowasm/memory-allocator':
         specifier: workspace:*
         version: link:../memory-allocator

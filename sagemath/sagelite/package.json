@@ -36,6 +36,7 @@
     "@cowasm/conway-polynomials": "workspace:*",
     "@cowasm/cypari2": "workspace:*",
     "@cowasm/cysignals": "workspace:*",
+    "@cowasm/lrcalc-python": "workspace:*",
     "@cowasm/memory-allocator": "workspace:*",
     "@cowasm/primecountpy": "workspace:*"
   },

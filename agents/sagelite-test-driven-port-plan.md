@@ -19232,6 +19232,33 @@ the goal is to work directly on the NTL dynamic-link boundary, the module
 functor/category runtime cluster, or explicit dependency tagging for the
 front-door coding/crypto modules.
 
+Lrcalc runtime-resource integration pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Sagelite now stages the existing
+`@cowasm/lrcalc-python` WASI package into Electron-shaped resources as
+`deps/lrcalc`, records it in manifest schema version 145, and checks it in
+both direct Node and relocated Electron resource smokes with
+`lrcalc.lrcoef([2, 1], [1], [2]) == 1`. This clears the previous
+`ModuleNotFoundError: lrcalc` startup barrier from the lrcalc frontier without
+broadening the browser profile to subprocess-backed interfaces.
+
+Focused validation used `make -C sagemath/sagelite test-wasi-sdk-standalone`,
+which passed through the Meson build, Node import probes, doctest runner
+smokes, Electron-shaped resources, and relocated-resource smoke. A focused
+rerun of `sage/libs/lrcalc/lrcalc.py` against the rebuilt resources recorded:
+
+```text
+lrcalc.py: 41 passed, 9 failed, 0 skipped
+```
+
+Before staging the resource the same file recorded `1 passed, 49 failed,
+0 skipped`. The remaining nine failures are all `output_mismatch` rows caused
+by deterministic dictionary-order display drift in `mult`, `skew`, `coprod`,
+and `mult_schubert` examples, so future lrcalc work should either normalize
+dictionary-like output comparison in the doctest runner or add explicit
+browser-profile metadata for those representation-order examples before
+promoting the file.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

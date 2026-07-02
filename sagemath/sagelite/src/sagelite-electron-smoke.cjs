@@ -781,6 +781,13 @@ assert rho.cycle_type() == [3]
 assert Permutation([2, 3, 1]).order() == 3
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
+    console.log("sagelite-electron-start lrcalc Python extension smoke");
+    await python.exec(String.raw`
+import lrcalc
+
+assert lrcalc.lrcoef([2, 1], [1], [2]) == 1
+`);
+    console.log("sagelite-electron-ok lrcalc Python extension smoke");
     console.log("sagelite-electron-start partition and composition method smoke");
     await python.exec(String.raw`
 import sage.all
