@@ -21210,6 +21210,27 @@ databases plus `doctest-corpus-candidates.py` in default, `--near-misses`, and
 `--skipped-only` modes with the current corpus and patched
 `sagemath/sagelite/build/wasi-sdk` source root.
 
+Follow-up candidate-report dedupe tooling pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. Re-scanning the existing
+`.tmp/current-run` SQLite databases with the current corpus and patched source
+root still reports no clean uncovered runnable candidate. The repeated
+near-miss rows are now easier to audit: `doctest-corpus-candidates.py` supports
+`--dedupe-paths`, which keeps the best row per normalized source path across
+multi-database scans while leaving the default output unchanged. In
+`--near-misses --max-failed 5` mode, the dated scratch set collapses to five
+unresolved paths: `sage/interfaces/matlab.py`, `sage/libs/homfly.pyx`,
+`sage/rings/padics/unramified_extension_generic.py`,
+`sage/libs/arb/arith.pyx`, and
+`sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`.
+
+The helper also installs normal Unix `SIGPIPE` behavior so large skipped-only
+reports can be piped through tools such as `head` without a Python
+broken-pipe warning. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+plus clean-candidate, near-miss, paths-only, and skipped-only deduped scans
+against the existing `.tmp/current-run` SQLite databases.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

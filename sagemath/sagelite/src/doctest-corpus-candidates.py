@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 import posixpath
+import signal
 import sqlite3
 import sys
 from pathlib import Path
@@ -55,6 +56,14 @@ def parse_args() -> argparse.Namespace:
         "--include-non-sage",
         action="store_true",
         help="include clean files outside the src/sage source tree",
+    )
+    parser.add_argument(
+        "--dedupe-paths",
+        action="store_true",
+        help=(
+            "when scanning several databases, print only the best row for each "
+            "normalized candidate path"
+        ),
     )
     parser.add_argument(
         "--near-misses",
@@ -295,10 +304,28 @@ def candidate_rows(
     return candidates
 
 
+def row_sort_key(
+    row: tuple[str, int, int, int, int, int, int, str, str],
+    near_misses: bool,
+    skipped_only: bool,
+) -> tuple[int, int, int, int, str]:
+    path, _total, passed, failed, skipped, _runnable, duration, _status, _failure = row
+    if skipped_only:
+        return (skipped, duration, failed, -passed, path)
+    if near_misses:
+        return (failed, -passed, skipped, duration, path)
+    return (-passed, skipped, failed, duration, path)
+
+
 def main() -> int:
+    if hasattr(signal, "SIGPIPE"):
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     args = parse_args()
     show_database = len(args.database) > 1 and not args.paths_only
     covered_by_source_root: dict[Path | None, set[str]] = {}
+    collected_rows: list[
+        tuple[Path, tuple[str, int, int, int, int, int, int, str, str]]
+    ] = []
     if args.include_header:
         columns = [
             "path",
@@ -347,40 +374,76 @@ def main() -> int:
                 continue
             raise
 
-        for row in rows:
-            if args.paths_only:
-                print(row[0])
-            elif show_database:
-                print("\t".join(str(value) for value in (database, *row)))
-            elif args.near_misses or args.skipped_only:
-                print("\t".join(str(value) for value in row))
-            else:
-                (
-                    path,
-                    total,
-                    passed,
-                    _failed,
-                    skipped,
-                    runnable,
-                    duration,
-                    _status,
-                    _failure,
-                ) = row
-                print(
-                    "\t".join(
-                        str(value)
-                        for value in (
-                            path,
-                            total,
-                            passed,
-                            skipped,
-                            runnable,
-                            duration,
-                        )
-                    )
-                )
+        if args.dedupe_paths:
+            collected_rows.extend((database, row) for row in rows)
+        else:
+            for row in rows:
+                print_row(row, database, show_database, args)
+
+    if args.dedupe_paths:
+        best_by_path: dict[
+            str, tuple[Path, tuple[str, int, int, int, int, int, int, str, str]]
+        ] = {}
+        for database, row in collected_rows:
+            path = row[0]
+            current = best_by_path.get(path)
+            if current is None or row_sort_key(
+                row, args.near_misses, args.skipped_only
+            ) < row_sort_key(current[1], args.near_misses, args.skipped_only):
+                best_by_path[path] = (database, row)
+
+        for database, row in sorted(
+            best_by_path.values(),
+            key=lambda item: row_sort_key(
+                item[1], args.near_misses, args.skipped_only
+            ),
+        ):
+            print_row(row, database, show_database, args)
     return 0
 
 
+def print_row(
+    row: tuple[str, int, int, int, int, int, int, str, str],
+    database: Path,
+    show_database: bool,
+    args: argparse.Namespace,
+) -> None:
+    if args.paths_only:
+        print(row[0])
+    elif show_database:
+        print("\t".join(str(value) for value in (database, *row)))
+    elif args.near_misses or args.skipped_only:
+        print("\t".join(str(value) for value in row))
+    else:
+        (
+            path,
+            total,
+            passed,
+            _failed,
+            skipped,
+            runnable,
+            duration,
+            _status,
+            _failure,
+        ) = row
+        print(
+            "\t".join(
+                str(value)
+                for value in (
+                    path,
+                    total,
+                    passed,
+                    skipped,
+                    runnable,
+                    duration,
+                )
+            )
+        )
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except BrokenPipeError:
+        sys.stdout = open(os.devnull, "w")
+        sys.exit(0)
