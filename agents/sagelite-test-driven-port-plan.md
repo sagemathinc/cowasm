@@ -18558,6 +18558,37 @@ The original compact helper batch rerun changed from
 `make -C sagemath/sagelite test-wasi-sdk-standalone` passed with the expanded
 standalone file-directive smoke.
 
+Follow-up low-level frontier audit on 2026-07-02:
+
+No new quiet runnable corpus candidate was found in the low-level utility and
+low-prompt mixed probes. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+906 non-comment entries after the skipped-only namespace-load fix.
+
+Fresh probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/probes/`. The
+low-level utility probe in `lowlevel-utilities.sqlite3` recorded 472 skipped
+blocks, five zero-block files, and two file-level errors: a
+`data_structures/stream.py` timeout at `Stream_taylor.__eq__` line 1179 after
+the symbolic rational-function setup `h = Stream_taylor((x^3 + x^2) / (x + 1),
+False)`, and a `misc/functional.py` WASM `memory access out of bounds` trap at
+`functional.denominator` line 246 during the symbolic setup `r =
+(x+1)/(x-1)`.
+
+The low-prompt mixed probe in `lowprompt-mixed.sqlite3` recorded 83 skipped
+blocks across 13 skipped-only files and two zero-block files. The skipped
+clusters are broad dependency boundaries such as `sage.groups`,
+`sage.combinat`, plotting, NumPy, and Sphinx/Jupyter support rather than
+narrow default-profile promotion work. Running
+`doctest-corpus-candidates.py --min-passed 1` against both probe databases
+returned no absent clean runnable file.
+
+Future scheduled corpus-growth runs should avoid repeating these exact
+low-level utility and low-prompt mixed batches as blind promotion candidates.
+Useful next work is either a direct fix for the symbolic `stream.py` timeout or
+`functional.py` memory trap, or a smaller probe in a new namespace with
+non-skipped default-profile doctests.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
