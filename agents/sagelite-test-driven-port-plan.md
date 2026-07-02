@@ -19915,6 +19915,38 @@ example at line 77. Future scans should not treat these low-helper batches as
 blind corpus-growth targets until the relevant optional backend or polynomial
 runtime clusters change.
 
+Focused non-solution number-theory book corpus-growth pass on 2026-07-02:
+
+```text
+numbertheory_doctest.py: 27 passed, 0 failed, 4 skipped
+```
+
+This pass promotes
+`sage/tests/books/computational_mathematics_with_sagemath/numbertheory_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 925
+non-comment entries. A mixed book/algebra/combinatorics/plot probe first
+recorded the file as a near miss with `27 passed, 4 failed, 0 skipped`; the
+remaining failures were finite-field set-display order drift, a finite-field
+coercion diagnostic drift, one harmonic-number comparison that routes through
+the stripped symbolic expression stack, and a modular discrete-log example
+that still needs the broader PARI/cypari2 object model.
+
+The WASI source patch now classifies those prompts as a random display check,
+a known diagnostic drift, `sage.symbolic`, and `sage.libs.pari` respectively.
+Focused strict validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-sagelite-goal/numbertheory-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3e0941aae35cb904fb045f7cd4d2d5909b00a0d2`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups two blocks under
+`optional:sage.libs.pari`, one under `optional:sage.symbolic`, and one under
+`deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
