@@ -3729,6 +3729,41 @@ a 100% non-skipped pass rate, and empty saved block- and file-failure cluster
 queries. `skips-by-reason.sql` groups the newly deferred examples under
 `optional:matlab`.
 
+Follow-up live frontier audit on 2026-07-02:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-codex-live/probes/`
+against the current patched Sagelite source copy. A historical candidate scan
+across `.tmp/current-run` produced only the synthetic
+`src/sage/example/real_candidate.py` fixture from the candidate-helper test
+database, so it was ignored.
+
+Several focused batches should not be repeated without a runtime, profile, or
+source-patch change:
+
+- `structure-small.sqlite3` and `frontdoor-small.sqlite3` extracted zero
+  doctest blocks from the remaining small `sage.structure` and
+  `sage.data_structures` front-door/helper files.
+- `mixed-low-count.sqlite3` extracted zero doctest blocks from low-prompt
+  catalog, misc, scheme, tensor, and memcheck helpers.
+- `medium-coding-functions.sqlite3`, `homfly-current.sqlite3`, and
+  `lowlevel-helpers.sqlite3` were skipped-only under the default
+  browser-compatible profile, covering optional primecountpy, finite-field
+  coding, NumPy, HOMFLY, CPython, SymPy, and NumPy helper paths.
+- `small-standalone-15-20.sqlite3` was skipped-only or empty except for
+  `sage/rings/function_field/derivations.py`, which still hits the known
+  NTL/libcxx `memory access out of bounds` trap through function-field setup.
+- `pure-math-frontier.sqlite3` was skipped-only or empty except for
+  `sage/algebras/quatalg/quaternion_algebra_cython.pyx`, whose failures are a
+  real quaternion-algebra backend cluster rather than narrow corpus-growth
+  tagging.
+
+This pass also reconfirmed that current-source `sage/libs/homfly.pyx` is now
+properly skipped by its `# needs sage.libs.homfly` tags; older near-miss rows
+for that file in historical SQLite artifacts are stale and should not be used
+as promotion evidence.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
