@@ -22253,6 +22253,29 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a wide current-runner scan
 with `--file-errors --exclude-file-failure-class FileNotFoundError`, and a
 synthetic SQLite fixture checking both the new filter and its argument guard.
 
+Follow-up file-error detail filter pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. The file-error frontier still
+contains real runtime rows after stale source-root noise is removed, including
+current-runner NTL/libcxx `wasm_trap` rows and timeout diagnostics, so the
+useful next work remains runtime triage rather than corpus growth.
+
+The `doctest-corpus-candidates.py --file-errors` helper now accepts repeatable
+`--exclude-file-failure-detail TEXT[,TEXT...]` filters. The match is applied
+to the same one-line normalized `failure_detail` text printed by
+`--include-failure-detail`, which lets scheduled scans suppress stale harness
+details such as obsolete source-root probes without dropping every row in a
+broad failure class. The standalone smoke fixture covers the new filter with
+paired file-error rows whose classes differ from their details.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a synthetic SQLite fixture
+for the new detail filter, and a current-runner `.tmp/current-run` scan with
+`--file-errors --include-failure-detail --min-runner-version 83
+--exclude-file-failure-detail 'bad source root' --exclude-file-failure-detail
+'obsolete source root'`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

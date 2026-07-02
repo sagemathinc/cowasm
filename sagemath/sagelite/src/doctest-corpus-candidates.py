@@ -132,6 +132,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--exclude-file-failure-detail",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --file-errors, suppress files whose one-line failure_detail "
+            "contains one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--min-runner-version",
         type=int,
         help=(
@@ -173,11 +183,16 @@ def parse_args() -> argparse.Namespace:
         parser.error("--exclude-block-failure-class requires --near-misses")
     if args.exclude_file_failure_class and not args.file_errors:
         parser.error("--exclude-file-failure-class requires --file-errors")
+    if args.exclude_file_failure_detail and not args.file_errors:
+        parser.error("--exclude-file-failure-detail requires --file-errors")
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
     )
     args.exclude_file_failure_class = parse_csv_values(
         args.exclude_file_failure_class
+    )
+    args.exclude_file_failure_detail = parse_csv_values(
+        args.exclude_file_failure_detail
     )
     return args
 
@@ -342,6 +357,7 @@ def candidate_rows(
     max_failed: int,
     excluded_block_failure_classes: list[str],
     excluded_file_failure_classes: list[str],
+    excluded_file_failure_details: list[str],
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -533,6 +549,12 @@ def candidate_rows(
         failure_detail,
     ) in rows:
         relative_path = normalize_path(path, source_root)
+        one_line_failure_detail = one_line_detail(failure_detail)
+        if file_errors and any(
+            detail in one_line_failure_detail
+            for detail in excluded_file_failure_details
+        ):
+            continue
         if not include_non_sage and not relative_path.startswith("src/sage/"):
             continue
         if not source_candidate_exists(relative_path, source_root):
@@ -550,7 +572,7 @@ def candidate_rows(
                 duration,
                 status,
                 failure,
-                one_line_detail(failure_detail),
+                one_line_failure_detail,
             )
         )
     return candidates
@@ -655,6 +677,7 @@ def main() -> int:
                     args.max_failed,
                     args.exclude_block_failure_class,
                     args.exclude_file_failure_class,
+                    args.exclude_file_failure_detail,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:

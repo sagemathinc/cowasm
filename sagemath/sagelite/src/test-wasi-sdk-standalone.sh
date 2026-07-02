@@ -2899,6 +2899,17 @@ if [ "$doctest_candidate_helper_file_errors_no_file_not_found" != "src/sage/exam
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-failure-class did not filter file errors."
 fi
+doctest_candidate_helper_file_errors_no_optional_detail="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --exclude-file-failure-detail optional_backend \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors_no_optional_detail" != "src/sage/example/stale_harness_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors_no_optional_detail" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-failure-detail did not filter file errors."
+fi
 doctest_candidate_helper_near_misses_no_name_error="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
   --exclude-block-failure-class NameError \
