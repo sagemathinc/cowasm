@@ -22296,6 +22296,45 @@ for the new detail filter, and a current-runner `.tmp/current-run` scan with
 --exclude-file-failure-detail 'bad source root' --exclude-file-failure-detail
 'obsolete source root'`.
 
+Follow-up bounded file-error diagnostic pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. A fresh mixed low-prompt probe under
+`.tmp/current-run/scheduled-2026-07-02-goal-plan-continuation/` recorded:
+
+```text
+sage -t failed: 0 passed, 11 failed, 50 skipped
+```
+
+The skipped-only files were `sage/modular/modform/submodule.py`,
+`sage/rings/padics/relative_ramified_CA.pyx`,
+`sage/rings/padics/relative_ramified_CR.pyx`,
+`sage/tests/finite_poset.py`, and
+`sage/quadratic_forms/quadratic_form__genus.py`. Their skipped rows are
+already explicit optional backend boundaries for PARI, FLINT, NTL, graphs,
+and modules. The only runnable file,
+`sage/manifolds/differentiable/examples/symplectic_space.py`, failed all
+blocks with startup `NameError` chains for the `manifolds` catalog and
+dependent `M`, `omega`, `Q_M_qp`, and `T` state. That makes it a broader
+manifold startup/profile decision rather than a narrow browser-profile corpus
+promotion.
+
+The same pass addressed a dashboard usability issue exposed by current
+file-error scans: `--include-failure-detail` can emit very long single-line
+stderr traces for NTL/libcxx traps and timeouts. The
+`doctest-corpus-candidates.py` helper now supports
+`--failure-detail-limit CHARS`, which truncates printed diagnostic details
+without changing filtering semantics. Existing scripts remain unbounded by
+default. A current wide file-error scan with `--failure-detail-limit 160`
+now keeps the frontier readable while still showing the file, failure class,
+state breadcrumb, and leading diagnostic context.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a synthetic SQLite
+file-error fixture for bounded detail output, the fresh mixed low-prompt
+probe, saved block-failure and skip-reason SQL queries against that probe, and
+a current-runner wide file-error scan with bounded details.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

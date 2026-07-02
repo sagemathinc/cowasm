@@ -106,6 +106,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--failure-detail-limit",
+        type=int,
+        default=0,
+        metavar="CHARS",
+        help=(
+            "when printing failure details, truncate them to this many "
+            "characters; 0 leaves details unbounded"
+        ),
+    )
+    parser.add_argument(
         "--max-failed",
         type=int,
         default=10,
@@ -179,6 +189,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--max-failed must be positive")
     if args.min_runner_version is not None and args.min_runner_version < 1:
         parser.error("--min-runner-version must be positive")
+    if args.failure_detail_limit < 0:
+        parser.error("--failure-detail-limit must be non-negative")
     if args.exclude_block_failure_class and not args.near_misses:
         parser.error("--exclude-block-failure-class requires --near-misses")
     if args.exclude_file_failure_class and not args.file_errors:
@@ -341,6 +353,14 @@ def can_filter_block_failure_classes(db: sqlite3.Connection) -> bool:
 
 def one_line_detail(detail: str) -> str:
     return " ".join(detail.replace("\t", " ").splitlines()).strip()
+
+
+def printable_detail(detail: str, limit: int) -> str:
+    if limit == 0 or len(detail) <= limit:
+        return detail
+    if limit <= 3:
+        return "." * limit
+    return detail[: limit - 3].rstrip() + "..."
 
 
 def candidate_rows(
@@ -737,7 +757,10 @@ def print_row(
     if args.paths_only:
         print(row[0])
     elif args.near_misses or args.skipped_only or args.zero_blocks or args.file_errors:
-        values = row if args.include_failure_detail else row[:-1]
+        if args.include_failure_detail:
+            values = (*row[:-1], printable_detail(row[-1], args.failure_detail_limit))
+        else:
+            values = row[:-1]
         if show_database:
             values = (database, *values)
         print("\t".join(str(value) for value in values))

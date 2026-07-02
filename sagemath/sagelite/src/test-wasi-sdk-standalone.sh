@@ -2888,6 +2888,18 @@ src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError	No mo
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-failure-detail did not report file-scope diagnostics."
 fi
+doctest_candidate_helper_file_error_details_limited="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --include-failure-detail \
+  --failure-detail-limit 20 \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_error_details_limited" != "src/sage/example/stale_harness_error.py	0	0	0	0	0	12	error	FileNotFoundError	stale probe used...
+src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError	No module named s..." ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_error_details_limited" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --failure-detail-limit did not bound file-scope diagnostics."
+fi
 doctest_candidate_helper_file_errors_no_file_not_found="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
   --exclude-file-failure-class FileNotFoundError \
