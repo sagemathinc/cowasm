@@ -2706,6 +2706,7 @@ mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
 touch "$doctest_candidate_helper_corpus"
@@ -2770,6 +2771,15 @@ insert into files (
   15
 ), (
   1,
+  '$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py',
+  'error',
+  0,
+  0,
+  0,
+  0,
+  12
+), (
+  1,
   '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py',
   'failed',
   3,
@@ -2792,6 +2802,11 @@ set
   failure_class = 'ModuleNotFoundError',
   failure_detail = 'No module named sage.example.optional_backend'
 where path = '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py';
+update files
+set
+  failure_class = 'FileNotFoundError',
+  failure_detail = 'stale probe used an obsolete source root'
+where path = '$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py';
 create table blocks (
   file_id integer,
   status text,
@@ -2856,7 +2871,8 @@ doctest_candidate_helper_file_errors="$("$src_dir/doctest-corpus-candidates.py" 
   --file-errors \
   --corpus "$doctest_candidate_helper_corpus" \
   "$doctest_candidate_helper_db")"
-if [ "$doctest_candidate_helper_file_errors" != "src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError" ]; then
+if [ "$doctest_candidate_helper_file_errors" != "src/sage/example/stale_harness_error.py	0	0	0	0	0	12	error	FileNotFoundError
+src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError" ]; then
   printf '%s\n' "$doctest_candidate_helper_file_errors" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --file-errors did not report file-scope failures."
@@ -2866,10 +2882,22 @@ doctest_candidate_helper_file_error_details="$("$src_dir/doctest-corpus-candidat
   --include-failure-detail \
   --corpus "$doctest_candidate_helper_corpus" \
   "$doctest_candidate_helper_db")"
-if [ "$doctest_candidate_helper_file_error_details" != "src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError	No module named sage.example.optional_backend" ]; then
+if [ "$doctest_candidate_helper_file_error_details" != "src/sage/example/stale_harness_error.py	0	0	0	0	0	12	error	FileNotFoundError	stale probe used an obsolete source root
+src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError	No module named sage.example.optional_backend" ]; then
   printf '%s\n' "$doctest_candidate_helper_file_error_details" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-failure-detail did not report file-scope diagnostics."
+fi
+doctest_candidate_helper_file_errors_no_file_not_found="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --exclude-file-failure-class FileNotFoundError \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors_no_file_not_found" != "src/sage/example/error_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors_no_file_not_found" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-failure-class did not filter file errors."
 fi
 doctest_candidate_helper_near_misses_no_name_error="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \

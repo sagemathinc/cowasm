@@ -22227,6 +22227,32 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, the focused integration
 near-miss scan with and without the new `NameError` exclusion, and a synthetic
 SQLite fixture matching the smoke-test schema.
 
+Follow-up file-error failure-class filter pass on 2026-07-02:
+
+No corpus entry was promoted in this pass. A current-runner wide scan across
+recent `.tmp/current-run` and `/tmp/sagelite-20260702-*` dashboards with
+`--min-runner-version 83` found no uncovered clean runnable candidates. The
+same scan in `--near-misses` mode with `--exclude-block-failure-class
+NameError` found no compact near misses, confirming that the previous
+integration-doctest `NameError` startup chain is not hiding a narrow promotion
+candidate.
+
+The file-error frontier still has useful runtime/import/timeout rows, but the
+raw report was polluted by stale harness `FileNotFoundError` probes from older
+bad source-root runs. The `doctest-corpus-candidates.py --file-errors` helper
+now accepts repeatable `--exclude-file-failure-class CLASS[,CLASS...]`, so
+scheduled scans can suppress those stale harness rows while preserving real
+frontier diagnostics such as NTL/libcxx traps, unresolved side-module symbols,
+recursive trampoline stack overflow, and timeout rows. The standalone smoke
+fixture now covers this behavior with paired `FileNotFoundError` and
+`ModuleNotFoundError` file-error rows.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a wide current-runner scan
+with `--file-errors --exclude-file-failure-class FileNotFoundError`, and a
+synthetic SQLite fixture checking both the new filter and its argument guard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

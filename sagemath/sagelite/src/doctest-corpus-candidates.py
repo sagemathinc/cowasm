@@ -122,6 +122,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--exclude-file-failure-class",
+        action="append",
+        default=[],
+        metavar="CLASS[,CLASS...]",
+        help=(
+            "with --file-errors, suppress files whose file-scope failure_class "
+            "matches one of these values; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--min-runner-version",
         type=int,
         help=(
@@ -161,8 +171,13 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.exclude_block_failure_class and not args.near_misses:
         parser.error("--exclude-block-failure-class requires --near-misses")
+    if args.exclude_file_failure_class and not args.file_errors:
+        parser.error("--exclude-file-failure-class requires --file-errors")
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
+    )
+    args.exclude_file_failure_class = parse_csv_values(
+        args.exclude_file_failure_class
     )
     return args
 
@@ -326,6 +341,7 @@ def candidate_rows(
     file_errors: bool,
     max_failed: int,
     excluded_block_failure_classes: list[str],
+    excluded_file_failure_classes: list[str],
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -338,6 +354,14 @@ def candidate_rows(
         else "''"
     )
     if file_errors:
+        file_failure_filter = ""
+        query_parameters: list[object] = [run_id]
+        if excluded_file_failure_classes:
+            placeholders = ", ".join("?" for _ in excluded_file_failure_classes)
+            file_failure_filter = f"""
+              and {failure_class_expr} not in ({placeholders})
+            """
+            query_parameters.extend(excluded_file_failure_classes)
         rows = db.execute(
             f"""
             select
@@ -354,12 +378,13 @@ def candidate_rows(
             from files
             where run_id = ?
               and status = 'error'
+              {file_failure_filter}
             order by
               {failure_class_expr},
               duration_ms,
               path
             """,
-            (run_id,),
+            query_parameters,
         ).fetchall()
     elif zero_blocks:
         rows = db.execute(
@@ -629,6 +654,7 @@ def main() -> int:
                     args.file_errors,
                     args.max_failed,
                     args.exclude_block_failure_class,
+                    args.exclude_file_failure_class,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
