@@ -21861,6 +21861,33 @@ symbol (`_ZTIPKc`) pulled in through the Givaro finite-ring path, and
 `sage/libs/gap/assigned_names.py` remains a GAP-boundary near miss. The other
 sampled utility files were skipped-only.
 
+Focused session-helper corpus-growth pass on 2026-07-02:
+
+```text
+session.pyx: 30 passed, 0 failed, 31 skipped
+```
+
+This pass promoted `src/sage/misc/session.pyx` into the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 964
+non-comment entries. The file had been a persistent near miss with useful
+session save/load coverage but failures from `reset()` restoring unavailable
+symbolic state, one Cython helper that needs `pkgconfig`, and verbose
+`save_session(...)` output that is unstable under the seeded Sagelite doctest
+namespace.
+
+The WASI source patch now marks the reset-dependent session paragraphs as
+`# needs sage.symbolic`, the `cython_lambda(...)` paragraph as `# needs
+pkgconfig`, and the verbose namespace-sensitive save examples as known bugs.
+Focused strict make-target validation rebuilt a fresh patched Sagelite source
+tree with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-goal-2026-07-02-session/session-make.sqlite3`.
+The validation database has no block or file failures; skip clusters are 27
+`optional:sage.symbolic`, two `optional:pkgconfig`, and two
+`deferred:known bug` rows. A full dry-run of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` also applies cleanly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

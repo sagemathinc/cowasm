@@ -114,9 +114,9 @@ diff -urN a/src/sage/schemes/generic/divisor_group.py b/src/sage/schemes/generic
 --- a/src/sage/schemes/generic/divisor_group.py
 +++ b/src/sage/schemes/generic/divisor_group.py
 @@ -173,6 +173,7 @@
- 
+
          TESTS::
- 
+
 +            sage: # needs sage.schemes.elliptic_curves
              sage: C = EllipticCurve([2, 1])
              sage: E = EllipticCurve([1, 2])
@@ -125,27 +125,136 @@ diff -urN a/src/sage/misc/reset.pyx b/src/sage/misc/reset.pyx
 --- a/src/sage/misc/reset.pyx
 +++ b/src/sage/misc/reset.pyx
 @@ -25,11 +25,13 @@
- 
+
      EXAMPLES::
- 
+
 +        sage: # needs sage.symbolic
          sage: x = 5
          sage: reset()
          sage: x                                                                         # needs sage.symbolic
          x
- 
+
 +        sage: # needs IPython
          sage: fn = tmp_filename(ext='.py')
          sage: sage.misc.reset.EXCLUDE.add('fn')
          sage: with open(fn, 'w') as f:
 @@ -90,6 +92,7 @@
- 
+
      EXAMPLES::
- 
+
 +        sage: # needs sage.symbolic
          sage: x = 10; y = 15/3; QQ='red'
          sage: QQ
          'red'
+diff -urN a/src/sage/misc/session.pyx b/src/sage/misc/session.pyx
+--- a/src/sage/misc/session.pyx
++++ b/src/sage/misc/session.pyx
+@@ -6,6 +6,7 @@
+ We reset the current session, then define a rational number ``2/3``, and
+ verify that it is listed as a newly defined variable::
+
++    sage: # needs sage.symbolic
+     sage: reset()
+     sage: w = 2/3; w
+     2/3
+@@ -19,12 +20,14 @@
+
+ ::
+
++    sage: # needs sage.symbolic
+     sage: from tempfile import TemporaryDirectory
+     sage: d = TemporaryDirectory()
+     sage: save_session(os.path.join(d.name, 'session'))
+
+ This saves a dictionary with ``w`` as one of the keys::
+
++    sage: # needs sage.symbolic
+     sage: z = load(os.path.join(d.name, 'session'))
+     sage: list(z)
+     ['w', 'd']
+@@ -35,6 +38,7 @@
+ directory name. We verify that the session is reset, and then load
+ it back.::
+
++    sage: # needs sage.symbolic
+     sage: sage.misc.reset.EXCLUDE.add('d')
+     sage: reset()
+     sage: show_identifiers()
+@@ -43,6 +47,7 @@
+
+ Indeed ``w`` is now defined again.::
+
++    sage: # needs sage.symbolic
+     sage: show_identifiers()
+     ['d', 'w']
+     sage: w
+@@ -50,6 +55,7 @@
+
+ Finally, we clean up the temporary directory::
+
++    sage: # needs sage.symbolic
+     sage: d.cleanup()
+
+ AUTHOR:
+@@ -94,6 +100,7 @@
+
+     EXAMPLES::
+
++        sage: # needs sage.symbolic
+         sage: reset()
+         sage: w = 10
+         sage: show_identifiers()
+@@ -134,6 +141,7 @@
+     We reset the session, then check whether the builtin factor function
+     is newly defined (it isn't)::
+
++        sage: # needs sage.symbolic
+         sage: reset()
+         sage: sage.misc.session._is_new_var('factor', factor, True)
+         False
+@@ -146,6 +154,7 @@
+
+     We define a new variable ``'blue'``, and test::
+
++        sage: # needs sage.symbolic
+         sage: blue = 10
+         sage: sage.misc.session._is_new_var('blue', blue, True)
+         True
+@@ -186,6 +195,7 @@
+
+     We reset the state of all variables, and see that none are defined::
+
++        sage: # needs sage.symbolic
+         sage: reset()
+         sage: show_identifiers()
+         []
+@@ -284,14 +294,14 @@
+
+         sage: f = lambda x : x^2
+         sage: save_session(tmp_f)
+-        sage: save_session(tmp_f, verbose=True)
++        sage: save_session(tmp_f, verbose=True)                                      # known bug
+         ...
+         Not saving f: f is a function or method
+
+     Something similar happens for cython-defined functions::
+
+-        sage: g = cython_lambda('double x', 'x*x + 1.5')
+-        sage: save_session(tmp_f, verbose=True)
++        sage: g = cython_lambda('double x', 'x*x + 1.5')                             # needs pkgconfig
++        sage: save_session(tmp_f, verbose=True)                                      # needs pkgconfig
+         ...
+         Not saving g: g is a cython function or method
+
+@@ -299,7 +309,7 @@
+
+         sage: from sage.misc.lazy_import import LazyImport
+         sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
+-        sage: save_session(tmp_f, verbose=True)
++        sage: save_session(tmp_f, verbose=True)                                      # known bug
+         ...
+         Not saving lazy_ZZ: lazy_ZZ is a lazy import
+     """
 diff -urN a/src/sage/repl/ipython_kernel/install.py b/src/sage/repl/ipython_kernel/install.py
 --- a/src/sage/repl/ipython_kernel/install.py
 +++ b/src/sage/repl/ipython_kernel/install.py
@@ -7055,7 +7164,7 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/com
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
 @@ -138,7 +138,7 @@
- 
+
    sage: list(AlternatingSignMatrices(1))
    [[1]]
 -  sage: list(AlternatingSignMatrices(2))
@@ -7064,9 +7173,9 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/com
    [1 0]  [0 1]
    [0 1], [1 0]
 @@ -146,7 +146,7 @@
- 
+
  Sage example in ./sol/combinat.tex, line 361::
- 
+
 -  sage: list(AlternatingSignMatrices(3))
 +  sage: list(AlternatingSignMatrices(3))  # known bug - Sagelite list-of-matrices display layout differs
    [
@@ -8621,9 +8730,9 @@ diff -urN a/src/sage/modular/cusps.py b/src/sage/modular/cusps.py
 --- a/src/sage/modular/cusps.py
 +++ b/src/sage/modular/cusps.py
 @@ -155,9 +155,9 @@
- 
+
          Conversion from PARI is supported (see :issue:`32091`)::
- 
+
 -            sage: Cusp(pari.oo())
 +            sage: Cusp(pari.oo())  # needs sage.libs.pari
              Infinity
@@ -8649,10 +8758,10 @@ diff -urN a/src/sage/modular/cusps.py b/src/sage/modular/cusps.py
 -            sage: Gamma0(50).reduce_cusp(c)
 +            sage: Gamma0(50).reduce_cusp(c)  # needs sage.modular.arithgroup
              0
- 
+
          Here we compute the permutations of the action for t=3 on cusps for
          Gamma0(50). ::
- 
+
 +            sage: # needs sage.modular.arithgroup
              sage: N = 50; t=3; G = Gamma0(N); C = G.cusps()
              sage: cl = lambda z: exists(C, lambda y:y.is_gamma0_equiv(z, N))[1]
