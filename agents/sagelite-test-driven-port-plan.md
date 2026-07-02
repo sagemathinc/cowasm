@@ -19632,6 +19632,29 @@ skipped-only or exposed broader GAP, graph, matrix, or algebra backend
 failures; `function_field/constructor.py` was the only narrow promotion
 target.
 
+Follow-up scheduled sampling on 2026-07-02 found no new quiet runnable corpus
+candidate among several plot, probability, logic, monoid, SAT, coding,
+function, structure, misc, homology, matrix, and numerical probes. The most
+useful clean probe groups were already present in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`: probability and
+logic recorded `531 passed, 0 failed, 7 skipped`; structure helpers recorded
+`410 passed, 0 failed, 161 skipped`; misc helpers recorded `293 passed, 0
+failed, 62 skipped`; and matrix helpers recorded `147 passed, 0 failed, 21
+skipped`. The checked `doctest-corpus-candidates.py` helper printed no
+uncovered promotion rows for the matrix helper database.
+
+The same pass kept the newly sampled missing files out of the curated corpus:
+plot, monoid/SAT, coding, and function helpers were skipped-only or zero-block
+under the default browser-compatible profile; missing structure and misc
+helpers were zero-block or hit the existing
+`polynomial_number_field` memory trap through `sage/misc/functional.py`; the
+homology sample was dominated by skipped-only files plus
+`homology_group.py` failures; and numerical linear-function/tensor helpers
+timed out or exposed broad linear-tensor failure clusters. The probe databases
+live under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-next/` for follow-up
+inspection.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
