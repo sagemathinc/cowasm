@@ -18921,6 +18921,42 @@ additional-structure drift, and `schemes/generic/homset.py` setup/backend
 failures. A full `make -C sagemath/sagelite test-wasi-sdk-standalone` run also
 passed after updating the standalone doctest smoke to cover repeated warnings.
 
+Doctest namespace restoration pass on 2026-07-02:
+
+Sagelite's doctest runner now restores protected Sage startup bindings between
+extracted docstrings while preserving ordinary state within each docstring.
+This prevents helper examples such as `from gmpy2 import *` in one Cython
+docstring from rebinding names like `sqrt` and `log` for later docstrings in
+the same file. Runner version is now 80.
+
+Focused validation first used an artificial `rational.pyx` fixture with two
+triple-quoted docstrings: the first imports all `gmpy2` names, and the second
+checks `sqrt(QQ(25)/QQ(9))` and `log(QQ(125), 5)`. It recorded:
+
+```text
+sage -t passed: 3 passed, 0 failed, 0 skipped
+```
+
+A full `rational.pyx` rerun then recorded:
+
+```text
+rational.pyx: 472 passed, 0 failed, 113 skipped
+```
+
+A compact rerun of the previous five-file failure dashboard now records:
+
+```text
+sage -t passed: 987 passed, 0 failed, 214 skipped
+```
+
+This clears the rational `sqrt`/`log` fallback differences, category
+additional-structure drift, and `schemes/generic/homset.py` setup/backend
+failures from the compact dashboard. The saved block- and file-failure cluster
+queries are empty for
+`.tmp/current-run/scheduled-2026-07-02-namespace-restore/previous-failures.sqlite3`.
+A full `make -C sagemath/sagelite test-wasi-sdk-standalone` run also passed,
+including a new standalone namespace-leak regression fixture.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

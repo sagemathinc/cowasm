@@ -2203,6 +2203,50 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_namespace_leak_db="$probe_dir/sagelite-doctest-namespace-leak.sqlite3"
+doctest_namespace_leak_log="$dist_dir/doctest-namespace-leak.log"
+doctest_namespace_leak_file="$probe_dir/rational.pyx"
+cat >"$doctest_namespace_leak_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: from gmpy2 import *
+"""
+
+r"""
+EXAMPLES::
+
+    sage: sqrt(QQ(25)/QQ(9))
+    5/3
+    sage: log(QQ(125), 5)
+    3
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_namespace_leak_db" "$doctest_namespace_leak_file" \
+      >"$doctest_namespace_leak_log" 2>&1
+doctest_namespace_leak_status=$?
+set -e
+if [ "$doctest_namespace_leak_status" -eq 124 ]; then
+  tail -120 "$doctest_namespace_leak_log" >&2
+  record_blocker "sagelite-blocked: sage -t namespace-leak doctest smoke timed out after $node_import_timeout; see $doctest_namespace_leak_log for the first runtime blocker."
+fi
+if [ "$doctest_namespace_leak_status" -ne 0 ]; then
+  tail -120 "$doctest_namespace_leak_log" >&2
+  sqlite3 "$doctest_namespace_leak_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t namespace-leak doctest smoke failed; see $doctest_namespace_leak_log for the first runtime blocker."
+fi
+doctest_namespace_leak_count="$(sqlite3 "$doctest_namespace_leak_db" "select count(*) from blocks where status = 'passed' and source in ('sqrt(QQ(25)/QQ(9))' || char(10), 'log(QQ(125), 5)' || char(10));")"
+if [ "$doctest_namespace_leak_count" != "2" ]; then
+  cat "$doctest_namespace_leak_log" >&2
+  sqlite3 "$doctest_namespace_leak_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t namespace-leak doctest smoke did not restore Sage globals between Cython docstrings."
+fi
 doctest_stats_namespace_db="$probe_dir/sagelite-doctest-stats-namespace.sqlite3"
 doctest_stats_namespace_log="$dist_dir/doctest-stats-namespace.log"
 doctest_stats_namespace_file="$probe_dir/sagelite-doctest-stats-namespace.py"

@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 79;
+const doctestRunnerVersion = 80;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1685,6 +1685,14 @@ def __cowasm_namespace(filename):
     return namespace
 
 
+def __cowasm_restore_protected_namespace(namespace, protected_namespace):
+    if protected_namespace is None:
+        return
+    for name, value in protected_namespace.items():
+        if namespace.get(name) is not value:
+            namespace[name] = value
+
+
 class __CowasmRecordingRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1951,6 +1959,7 @@ def __cowasm_run_file(filename):
         file_directive_source = __cowasm_file_directive_source(original)
         parser = doctest.DocTestParser()
         namespace = None
+        protected_namespace = None
         pending_namespace = {}
         __cowasm_note_state(filename, "initialize_runner", source=None, expected=None)
         checker = __CowasmOutputChecker()
@@ -1965,6 +1974,7 @@ def __cowasm_run_file(filename):
         selected_blocks = 0
         __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
+            __cowasm_restore_protected_namespace(namespace, protected_namespace)
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
             converted, standalone_directives, inline_directives, inline_sources = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(
@@ -2171,6 +2181,7 @@ def __cowasm_run_file(filename):
                 if namespace is None:
                     __cowasm_note_state(filename, "load_namespace", source=None, expected=None)
                     namespace = __cowasm_namespace(filename)
+                    protected_namespace = dict(namespace)
                 test.globs = namespace
             before = time.time()
             global __cowasm_active_displayhook_globals
