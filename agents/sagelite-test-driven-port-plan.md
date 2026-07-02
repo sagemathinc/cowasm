@@ -20163,6 +20163,37 @@ entries. Future scheduled runs should avoid repeating these specific
 low-prompt helper, crypto, and compact combinatorics batches unless the
 browser-profile skip policy or graph/poset backend surface changes.
 
+Focused free-module automorphism corpus-growth pass on 2026-07-02:
+
+```text
+free_module_automorphism.py: 258 passed, 0 failed, 8 skipped
+```
+
+This pass promotes `sage/tensor/modules/free_module_automorphism.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 928 non-comment
+entries. A previous tensor frontier probe had recorded the file as a strong
+near miss with `257 passed, 4 failed, 5 skipped`: one display-only tuple/list
+line-wrapping difference and three characteristic-polynomial examples that
+route through the currently focused cypari2/PARI object-model subset.
+
+The WASI source patch now marks the tuple/list display example as `# random`
+with a Sagelite display-drift note and marks the number-field charpoly examples
+as `# needs sage.libs.pari`, matching the existing PARI classification on the
+same file's factorized characteristic-polynomial and minimal-polynomial
+examples. Focused strict validation rebuilt a fresh patched Sagelite source
+copy and ran `make -C sagemath/sagelite test-sage-doctest-corpus` with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-continuation/free-module-automorphism-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3a52e30b53f1332a12eef5a69a698566255a2218`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 82,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups eight blocks under
+`optional:sage.libs.pari`, including the three newly classified charpoly
+examples and the five existing polynomial/factorization examples.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

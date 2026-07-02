@@ -9839,3 +9839,18 @@ diff -urN -U0 a/src/sage/graphs/print_graphs.py b/src/sage/graphs/print_graphs.p
 @@ -158 +158 @@
 -        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))
 +        sage: print(print_graph_eps(P.vertices(sort=True), P.edges(sort=True), sage.graphs.generic_graph_pyx.spring_layout_fast(P)))  # needs sage.graphs
+diff -urN -U0 a/src/sage/tensor/modules/free_module_automorphism.py b/src/sage/tensor/modules/free_module_automorphism.py
+--- a/src/sage/tensor/modules/free_module_automorphism.py
++++ b/src/sage/tensor/modules/free_module_automorphism.py
+@@ -240 +240 @@
+-        sage: a[:], b[:], s[:]
++        sage: a[:], b[:], s[:]                                                       # random - Sagelite WASI tuple/list display wrapping differs
+@@ -1082 +1082 @@
+-            sage: a.characteristic_polynomial()
++            sage: a.characteristic_polynomial()                                      # needs sage.libs.pari
+@@ -1084 +1084 @@
+-            sage: a.charpoly()
++            sage: a.charpoly()                                                       # needs sage.libs.pari
+@@ -1086 +1086 @@
+-            sage: a.charpoly('T')
++            sage: a.charpoly('T')                                                    # needs sage.libs.pari
