@@ -19336,6 +19336,40 @@ test-sage-doctest-corpus` with a temporary one-file corpus,
 `skips-by-reason.sql` groups all ten skipped blocks under
 `optional:sage.combinat.sf`.
 
+Focused imaginary-group corpus-growth pass on 2026-07-02:
+
+```text
+imaginary_groups.py: 65 passed, 0 failed, 20 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/misc_gps/imaginary_groups.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 915
+non-comment entries. Direct group/homology/geometry sampling first recorded
+65 passing blocks and two failures in `imaginary_groups.py`: `_repr_short_()`
+imports the symbolic ring through `parent_to_repr_short(...)`, and the
+`J(x)` constructor check uses an unseeded symbolic variable.
+
+The added WASI source patch marks those two examples as
+`# needs sage.symbolic`, matching the file's adjacent symbolic constructor and
+complex-field examples while preserving the purely integer imaginary-group
+coverage in the default browser-compatible profile. The same sampling batch
+kept group, homology, toric-lattice, and hyperplane-arrangement helpers out of
+the quiet corpus because they were skipped-only, had broad runnable failures,
+or reached existing matrix runtime traps.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-goal-continuation/imaginary-groups-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`5628a1d54b6ae3edca93e0ea8d7eca1f2c870be3`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 81,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the newly deferred
+examples under `optional:sage.symbolic`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

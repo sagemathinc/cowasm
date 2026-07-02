@@ -9663,3 +9663,12 @@ diff -urN -U0 a/src/sage/algebras/tensor_algebra.py b/src/sage/algebras/tensor_a
 +            sage: # needs sage.combinat.sf
 @@ -458,0 +461 @@
 +            sage: # needs sage.combinat.sf
+diff -urN -U0 a/src/sage/groups/misc_gps/imaginary_groups.py b/src/sage/groups/misc_gps/imaginary_groups.py
+--- a/src/sage/groups/misc_gps/imaginary_groups.py
++++ b/src/sage/groups/misc_gps/imaginary_groups.py
+@@ -360 +360 @@
+-            sage: J._repr_short_()
++            sage: J._repr_short_()                                                    # needs sage.symbolic
+@@ -429 +429 @@
+-            sage: J(x)
++            sage: J(x)                                                                # needs sage.symbolic
