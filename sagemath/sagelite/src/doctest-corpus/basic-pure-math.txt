@@ -751,6 +751,7 @@ src/sage/tensor/modules/reflexive_module.py
 src/sage/tensor/modules/tensor_free_submodule_basis.py
 src/sage/tensor/modules/tensor_free_module.py
 src/sage/modular/modform/eis_series_cython.pyx
+src/sage/modular/drinfeld_modform/tutorial.py
 src/sage/modular/modsym/apply.pyx
 src/sage/modular/modsym/g1list.py
 src/sage/modular/hypergeometric_misc.pyx

@@ -3480,6 +3480,42 @@ Node process still segfaulted after printing the successful summary, so the
 database is a checked passing dashboard while the make process exit remains
 runner-lifecycle evidence.
 
+Focused Drinfeld modular-form tutorial corpus-growth pass:
+
+```text
+tutorial.py: 12 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/modular/drinfeld_modform/tutorial.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 907
+non-comment entries. Direct sampling first recorded six passing blocks and a
+six-block startup-name cluster because the tutorial uses
+`DrinfeldModularForms(...)` from Sage's startup namespace without a local
+import.
+
+The doctest runner now seeds `DrinfeldModularForms` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched source copy. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-port-plan/drinfeld-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`5034ef18964192e674cfb76989dc15e4666238aa`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 76,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same scheduled pass rejected nearby frontier probes rather than adding
+skipped-only or noisy coverage. The full `steenrod_algebra.py` front door still
+has a large `sage.matrix.matrix_mod2_dense` backend cluster plus output and
+element-category drift, so only the already-promoted multiplication helpers
+remain in the quiet Steenrod dashboard for now. A low-prompt modular/p-adic
+batch found skipped-only modular-form helper files, `qadic_flint_FM.pyx` and
+`qadic_flint_FP.pyx` blocked by the disabled FLINT integer-polynomial side
+module, and no uncovered clean candidate beyond the Drinfeld tutorial.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -1775,7 +1775,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,230 @@
+@@ -253,74 +253,231 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1918,6 +1918,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.logic.all import SymbolicLogic, propcalc
++    from sage.modular.drinfeld_modform.ring import DrinfeldModularForms
 +    from sage.modular.modsym.g1list import G1list
 +    from sage.modular.modsym.p1list import P1List
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
