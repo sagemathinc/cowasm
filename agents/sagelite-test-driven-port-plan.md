@@ -22426,6 +22426,45 @@ failures. The remaining useful work in this area is runtime triage for the
 finite-field NTL/libcxx error-reporting path, plus the separate
 `sage.matrix.matrix_mod2_dense` matrix-profile boundary.
 
+Follow-up NTL GF(2^8) constructor isolation on 2026-07-02:
+
+No corpus entry was promoted in this pass. Fresh focused probes wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-02-continued/`.
+
+The `src/sage/libs/ntl/ntl_GF2EContext.pyx` line-45 failure was narrowed from
+the full mismatched-field doctest to the earlier finite-field constructor step.
+A focused rerun of
+
+```text
+sage -t --line 45 sagemath/sagelite/build/wasi-sdk/src/sage/libs/ntl/ntl_GF2EContext.pyx
+```
+
+still records a file-level `wasm_trap`, but a staged prompt-by-prompt probe
+shows the worker exits while evaluating:
+
+```text
+F = GF(2^8, 'a')
+```
+
+before reaching either `ntl.GF2E(2, F)` or the expected mismatched-context
+addition. The preserved stack is still the NTL/libcxx ostream cluster:
+`NTL::TerminalError` in `ntl_ZZ_p` tries to print through
+`std::ostream::sentry` in `libcxx.so` and traps with
+`memory access out of bounds`. This means the actionable frontier is not the
+final `GF2E` arithmetic diagnostic; it is the NTL-backed finite-field
+constructor path reaching a `ZZ_p` conversion with invalid global modulus
+state before Sage can raise a normal Python exception.
+
+The installed Sagelite source still initializes the NTL error callback from
+`sage.libs.ntl.__init__`, and the CoWasm NTL headers define
+`NTL_EXCEPTIONS`, so the next runtime pass should focus on why the
+constructor path reaches `TerminalError` at all, plus why the current
+side-module C++ iostream fallback traps while formatting that diagnostic.
+Broadly skip-tagging `ntl_GF2EContext.pyx` would add little useful dashboard
+coverage because the remaining examples are all finite-field context
+construction or arithmetic checks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
