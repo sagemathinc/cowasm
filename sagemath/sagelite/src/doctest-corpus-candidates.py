@@ -101,6 +101,14 @@ def read_corpus(corpus: Path, source_root: Path | None) -> set[str]:
     return entries
 
 
+def source_candidate_exists(relative_path: str, source_root: Path | None) -> bool:
+    if source_root is None or not relative_path.startswith("src/sage/"):
+        return True
+    if not source_root.exists():
+        return True
+    return (source_root / relative_path).exists()
+
+
 def latest_run_metadata(db: sqlite3.Connection) -> tuple[int, Path | None]:
     row = db.execute(
         """
@@ -152,6 +160,8 @@ def candidate_rows(
     for path, total, passed, skipped, runnable, duration in rows:
         relative_path = normalize_path(path, source_root)
         if not include_non_sage and not relative_path.startswith("src/sage/"):
+            continue
+        if not source_candidate_exists(relative_path, source_root):
             continue
         if relative_path in covered:
             continue

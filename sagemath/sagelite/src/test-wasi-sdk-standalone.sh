@@ -2647,6 +2647,59 @@ for expected_candidate_status in \
     record_blocker "sagelite-blocked: corpus-candidate-summary query missed $expected_candidate_status."
   fi
 done
+doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite3"
+doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
+doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
+mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
+touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
+touch "$doctest_candidate_helper_corpus"
+sqlite3 "$doctest_candidate_helper_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text
+);
+create table files (
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id, source_root) values (1, '$doctest_candidate_helper_source_root');
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py',
+  'passed',
+  2,
+  2,
+  0,
+  0,
+  10
+), (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/missing_candidate.py',
+  'passed',
+  3,
+  3,
+  0,
+  0,
+  20
+);
+SQL
+doctest_candidate_helper_output="$("$src_dir/doctest-corpus-candidates.py" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_output" != "src/sage/example/real_candidate.py	2	2	0	2	10" ]; then
+  printf '%s\n' "$doctest_candidate_helper_output" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not filter missing source-root candidates."
+fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"

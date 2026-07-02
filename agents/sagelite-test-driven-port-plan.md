@@ -19027,6 +19027,25 @@ The useful blocker clusters from those probes are:
   promotion scans should prefer files with observed runnable blocks, not just
   static `sage:` prompt counts.
 
+Candidate-helper source-existence hygiene pass on 2026-07-02:
+
+No new corpus entry was promoted in this pass. Re-sweeping current July 2
+probe databases with `doctest-corpus-candidates.py --min-passed 1` produced
+no uncovered clean runnable candidates. Widening to older local probe
+databases surfaced only the artificial
+`src/sage/example/new_candidate.py` scratch path from
+`.tmp/current-run/candidate-helper/mixed.sqlite3`.
+
+The candidate helper now drops normalized `src/sage/...` rows that do not
+exist under an available recorded `source_root`, while still allowing old
+databases whose source tree has been removed to be inspected through path
+normalization. The standalone Sagelite smoke now includes a synthetic SQLite
+regression where `real_candidate.py` is retained and
+`missing_candidate.py` is filtered. Focused validation confirmed the stale
+scratch database now prints no candidate, the synthetic helper database prints
+only `src/sage/example/real_candidate.py`, the helper compiles with
+`python3 -m py_compile`, and `test-wasi-sdk-standalone.sh` passes `bash -n`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
