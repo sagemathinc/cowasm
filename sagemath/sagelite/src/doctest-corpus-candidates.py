@@ -71,6 +71,15 @@ def parse_args() -> argparse.Namespace:
         help="include clean files outside the src/sage source tree",
     )
     parser.add_argument(
+        "--include-covered",
+        action="store_true",
+        help=(
+            "include rows already listed in the corpus; useful for auditing "
+            "probe results without changing the default promotion-candidate "
+            "subtraction"
+        ),
+    )
+    parser.add_argument(
         "--include-doctest-self-tests",
         action="store_true",
         help=(
@@ -475,6 +484,7 @@ def candidate_rows(
     excluded_path_prefixes: tuple[str, ...],
     include_skip_reasons: bool,
     require_source_root_path: bool,
+    include_covered: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -735,7 +745,7 @@ def candidate_rows(
             continue
         if not source_candidate_exists(relative_path, source_root):
             continue
-        if relative_path in covered:
+        if not include_covered and relative_path in covered:
             continue
         candidates.append(
             (
@@ -861,6 +871,7 @@ def main() -> int:
                     args.excluded_path_prefixes,
                     args.include_skip_reasons,
                     args.require_source_root_path,
+                    args.include_covered,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:

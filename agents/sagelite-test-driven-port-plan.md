@@ -23488,6 +23488,37 @@ and the make-level `sage-doctest-candidates` entrypoint with
 --require-source-root-path --file-errors --include-failure-detail
 --failure-detail-limit 160'`.
 
+Follow-up compact frontier pass on 2026-07-03:
+
+No new corpus entry was promoted. A regenerated current-source uncovered list
+showed that several low-count probe files from older scratch notes had already
+been promoted. A direct low-prompt probe over those stale rows recorded clean
+results for existing corpus entries such as `src/sage/libs/arb/arith.pyx`,
+`src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx`, and
+`src/sage/rings/polynomial/padics/polynomial_padic_flat.py`, but the checked
+candidate helper correctly printed no uncovered promotion rows.
+
+Two fresh current-source batches wrote
+`.tmp/current-run/scheduled-2026-07-03-followup/current-unlisted-low.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-03-followup/current-unlisted-low2.sqlite3`.
+They did not surface a clean uncovered runnable candidate. The first batch
+found only covered clean runnable rows, skipped-only dependency rows, and
+frontier failures in PARI, PBori, symbolic, Symmetrica, hyperelliptic-curve,
+and tutorial integration examples. The second batch confirmed broader algebra,
+GAP, graph, polynomial, and schemes files remain dependency, startup-name, or
+timeout frontiers rather than safe promotion candidates.
+
+The candidate helper now supports `--include-covered` for audit scans where a
+direct probe reports a clean row but the default promotion scan suppresses it
+because it is already listed in the corpus. The default behavior is unchanged:
+covered rows remain excluded unless the flag is passed. Validation used
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, the current
+`src/sage/libs/arb/arith.pyx` probe to confirm default suppression versus
+`--include-covered`, and a synthetic SQLite fixture proving that covered rows
+are reported only with the new flag.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

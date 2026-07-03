@@ -2707,6 +2707,7 @@ for expected_candidate_status in \
 done
 doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
+doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
 doctest_candidate_helper_override_source_root="$probe_dir/candidate-override-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
@@ -2720,6 +2721,7 @@ touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_err
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
 touch "$doctest_candidate_helper_override_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_corpus"
+printf '%s\n' "src/sage/example/real_candidate.py" >"$doctest_candidate_helper_covered_corpus"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
   id integer primary key,
@@ -2919,6 +2921,25 @@ if [ "$doctest_candidate_helper_modern_metadata_paths" != "src/sage/example/real
   printf '%s\n' "$doctest_candidate_helper_modern_metadata_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --require-run-metadata did not accept modern run metadata."
+fi
+doctest_candidate_helper_covered_default="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_covered_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_covered_default" ]; then
+  printf '%s\n' "$doctest_candidate_helper_covered_default" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress covered rows by default."
+fi
+doctest_candidate_helper_include_covered="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --include-covered \
+  --corpus "$doctest_candidate_helper_covered_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_include_covered" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_include_covered" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --include-covered did not report covered clean rows."
 fi
 doctest_candidate_helper_zero_blocks="$("$src_dir/doctest-corpus-candidates.py" \
   --zero-blocks \
