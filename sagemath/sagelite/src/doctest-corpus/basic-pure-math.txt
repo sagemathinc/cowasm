@@ -265,6 +265,7 @@ src/sage/groups/galois_group_perm.py
 src/sage/groups/group.pyx
 src/sage/groups/group_exp.py
 src/sage/groups/matrix_gps/linear.py
+src/sage/groups/matrix_gps/finitely_generated.py
 src/sage/groups/matrix_gps/linear_gap.py
 src/sage/groups/matrix_gps/named_group.py
 src/sage/groups/matrix_gps/named_group_gap.py

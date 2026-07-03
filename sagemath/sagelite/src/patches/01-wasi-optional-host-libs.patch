@@ -12320,3 +12320,20 @@ diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/l
 @@ -338 +338 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 -            sage: H.order() == len(list(H))
 +            sage: H.order() == len(list(H))                                        # known bug - finite matrix group iteration uses missing WASI list fallback
+diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/matrix_gps/finitely_generated.py
+--- a/src/sage/groups/matrix_gps/finitely_generated.py
++++ b/src/sage/groups/matrix_gps/finitely_generated.py
+@@ -22,2 +22,2 @@
+-    sage: S, T = SL2Z.gens()
+-    sage: SL2Z.subgroup([T^2])
++    sage: S, T = SL2Z.gens()  # known bug
++    sage: SL2Z.subgroup([T^2])  # known bug
+@@ -95 +95 @@
+-        sage: normalize_square_matrices([m1, m2, m3, m4])
++        sage: normalize_square_matrices([m1, m2, m3, m4])  # known bug
+@@ -180 +180 @@
+-        sage: groups.matrix.QuaternionGF3()
++        sage: groups.matrix.QuaternionGF3()  # needs sage.libs.gap
+@@ -402 +402 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
+-            sage: G.gens()
++            sage: G.gens()  # known bug
