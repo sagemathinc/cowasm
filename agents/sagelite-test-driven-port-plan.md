@@ -4332,6 +4332,40 @@ function-signature mismatch errors before useful file-level coverage can be
 recorded. `sage/misc/persist.pyx` remains a real follow-up cluster with 111
 passed, 14 failed, and 26 skipped blocks.
 
+Focused GF(2) polynomial corpus-growth pass:
+
+```text
+polynomial_gf2x.pyx: 31 passed, 0 failed, 12 skipped
+```
+
+That one-file focused validation adds
+`sage/rings/polynomial/polynomial_gf2x.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1036
+non-comment entries. A broad near-miss scan across current-run SQLite
+dashboards identified this as a compact source target with 31 passing blocks
+and 12 failures. The failures were explicit browser-profile boundaries:
+`pari(f)` reaches the focused PARI/cypari2 object-model gap, and the
+`GF2X_Build*Irred_list(...)` helper examples import the unavailable
+`sage.matrix.matrix_mod2_dense` backend before the helper names are bound.
+
+The added WASI source patch marks those examples with
+`# needs sage.libs.pari` and `# needs sage.matrix.matrix_mod2_dense`,
+preserving the ordinary GF(2) polynomial construction, indexing, slicing, and
+arithmetic coverage as runnable default-profile doctests. Focused validation
+used direct `sage -t` against the patched Sagelite source tree with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` set to the build source copy and wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-assistant/polynomial-gf2x-after-tags.sqlite3`.
+The saved block- and file-failure cluster queries are empty, the full WASI
+source patch dry-runs against `/home/user/sagelite`, and
+`doctest-corpus-candidates.py` prints no promotion row after subtracting the
+updated corpus.
+
+The same pass found no source-corpus promotion candidates in small
+scheme/coding/SAT/modular-hecke, compact combinatorics/rigged-configuration,
+Judson book, or recent current-run archive probes. The only clean uncovered
+non-source documentation row was `src/doc/en/tutorial/afterword.rst`; it was
+left out because the current curated corpus is still `src/sage`-scoped.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -11916,6 +11916,44 @@ diff -urN -U0 a/src/sage/matrix/action.pyx b/src/sage/matrix/action.pyx
 @@ -530 +530 @@
 -            sage: A._act_(m, f)
 +            sage: A._act_(m, f)                                                       # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/rings/polynomial/polynomial_gf2x.pyx b/src/sage/rings/polynomial/polynomial_gf2x.pyx
+--- a/src/sage/rings/polynomial/polynomial_gf2x.pyx
++++ b/src/sage/rings/polynomial/polynomial_gf2x.pyx
+@@ -100 +100 @@
+-            sage: pari(f)
++            sage: pari(f)  # needs sage.libs.pari
+@@ -305,2 +305,2 @@
+-        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list
+-        sage: GF2X_BuildIrred_list(2)
++        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list  # needs sage.matrix.matrix_mod2_dense
++        sage: GF2X_BuildIrred_list(2)                                                  # needs sage.matrix.matrix_mod2_dense
+@@ -308 +308 @@
+-        sage: GF2X_BuildIrred_list(3)
++        sage: GF2X_BuildIrred_list(3)                                                  # needs sage.matrix.matrix_mod2_dense
+@@ -310 +310 @@
+-        sage: GF2X_BuildIrred_list(4)
++        sage: GF2X_BuildIrred_list(4)                                                  # needs sage.matrix.matrix_mod2_dense
+@@ -312 +312 @@
+-        sage: GF(2)['x'](GF2X_BuildIrred_list(33))
++        sage: GF(2)['x'](GF2X_BuildIrred_list(33))                                     # needs sage.matrix.matrix_mod2_dense
+@@ -329,3 +329,3 @@
+-        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list, GF2X_BuildSparseIrred_list
+-        sage: all([GF2X_BuildSparseIrred_list(n) == GF2X_BuildIrred_list(n)
+-        ....:      for n in range(1,33)])
++        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list, GF2X_BuildSparseIrred_list  # needs sage.matrix.matrix_mod2_dense
++        sage: all([GF2X_BuildSparseIrred_list(n) == GF2X_BuildIrred_list(n)             # needs sage.matrix.matrix_mod2_dense
++        ....:      for n in range(1,33)])                                               # needs sage.matrix.matrix_mod2_dense
+@@ -333 +333 @@
+-        sage: GF(2)['x'](GF2X_BuildSparseIrred_list(33))
++        sage: GF(2)['x'](GF2X_BuildSparseIrred_list(33))                                # needs sage.matrix.matrix_mod2_dense
+@@ -350,2 +350,2 @@
+-        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildRandomIrred_list
+-        sage: GF2X_BuildRandomIrred_list(2)
++        sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildRandomIrred_list  # needs sage.matrix.matrix_mod2_dense
++        sage: GF2X_BuildRandomIrred_list(2)                                                 # needs sage.matrix.matrix_mod2_dense
+@@ -353 +353 @@
+-        sage: GF2X_BuildRandomIrred_list(3) in [[1, 1, 0, 1], [1, 0, 1, 1]]
++        sage: GF2X_BuildRandomIrred_list(3) in [[1, 1, 0, 1], [1, 0, 1, 1]]                 # needs sage.matrix.matrix_mod2_dense
 diff -urN -U0 a/src/sage/rings/pari_ring.py b/src/sage/rings/pari_ring.py
 --- a/src/sage/rings/pari_ring.py
 +++ b/src/sage/rings/pari_ring.py
