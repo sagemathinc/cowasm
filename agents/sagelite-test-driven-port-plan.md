@@ -24711,6 +24711,31 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after the file is listed in the corpus.
 
+Low-prompt frontier audit on 2026-07-03 after the Drinfeld ring promotion:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,012
+non-comment entries. Two fresh direct Sagelite probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-03-codex-next/`.
+
+The `lowprompt.sqlite3` probe checked twelve small unlisted files across
+cpython, coding, crypto, databases, modular forms, plotting, PARI-backed
+factorization, and Sage test helpers. It was clean but entirely skipped,
+recording `0 passed, 0 failed, 41 skipped`, so it does not improve runnable
+browser-profile coverage.
+
+The `moderate.sqlite3` probe checked fourteen moderate low-prompt files. It
+recorded `0 passed, 10 failed, 122 skipped`; all failures came from
+`sage/combinat/posets/hochschild_lattice.py`. The actionable cluster there is
+not a tag-only promotion: examples depend on the unavailable graph/poset
+startup surface (`posets`, `simplicial_complexes`, and
+`sage.graphs.generic_graph_pyx`), and later examples cascade from those missing
+objects. `doctest-corpus-candidates.py` printed no promotion row across both
+new probes with the current corpus and run metadata requirement.
+
+Future scheduled runs should avoid repeating these low-prompt slices until the
+graph-backed poset startup surface changes. They are useful as dependency
+boundary evidence, but they do not add non-skipped corpus coverage today.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
