@@ -22788,6 +22788,33 @@ two-file `test-sage-doctest-corpus` make run with
 `SAGELITE_DOCTEST_ALLOW_FAILURES=0`; the saved block- and file-failure
 cluster queries are empty for the two promoted files.
 
+Follow-up NTL GF2 wrapper corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 177 passed, 0 failed, 5 skipped
+```
+
+That two-file focused validation adds `sage/libs/ntl/ntl_GF2E.pyx` and
+`sage/libs/ntl/ntl_GF2X.pyx` to the curated corpus. Focused reruns recorded
+`ntl_GF2E.pyx: 69 passed, 0 failed, 1 skipped` and
+`ntl_GF2X.pyx: 108 passed, 0 failed, 4 skipped`.
+
+The WASI patch classifies the remaining split-module NTL GF(2) wrapper gaps:
+the `GF2XHexOutput` flag is not shared with `GF2E` representation across side
+modules, PARI finite-field elements still lose their GF(2) polynomial state
+when routed through `ntl_GF2X`, the generic GF(2) polynomial coercion fallback
+string-parses to zero, and one `_sage_()` conversion has generator-name display
+drift. The first `ntl_GF2E(a, k)` example is marked `# random` instead of
+skipped so the assignment still seeds the following context doctests while
+accepting the known bad representation.
+
+Validation used a patch dry-run against `/home/user/sagelite`, focused direct
+`sage -t --timeout 90` reruns for both files, and a strict two-file
+`test-sage-doctest-corpus` make run with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`.
+The saved block- and file-failure cluster queries are empty for the two-file
+run, and `doctest-corpus-candidates.py` prints no promotion rows after the
+files are listed in `basic-pure-math.txt`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
