@@ -22733,6 +22733,29 @@ clean `20 passed` result. The strict one-file make corpus run also recorded
 `doctest-corpus-candidates.py` printed no promotion rows after the file was
 listed in `basic-pure-math.txt`.
 
+Follow-up NTL ZZ_p wrapper corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 102 passed, 0 failed, 0 skipped
+```
+
+That two-file focused validation adds `sage/libs/ntl/ntl_ZZ_p.pyx` and
+`sage/libs/ntl/ntl_ZZ_pContext.pyx` to the curated corpus. A fresh NTL
+neighbor batch after the split-side-module context fixes recorded
+`ntl_ZZ_p.pyx: 68 passed, 0 failed, 0 skipped` and
+`ntl_ZZ_pContext.pyx: 34 passed, 0 failed, 0 skipped`, so the default-profile
+dashboard now includes basic `ZZ_p` arithmetic and context restore coverage.
+
+The same probe kept adjacent NTL files out of the quiet corpus:
+`ntl_GF2E.pyx` and `ntl_GF2X.pyx` still have block-level output mismatches,
+while `ntl_GF2EX.pyx`, `ntl_ZZ_pE.pyx`, `ntl_ZZ_pEContext.pyx`, and
+`ntl_lzz_p.pyx` still reach `NTL::TerminalError` file-level traps through
+extension-polynomial or local-modulus operations. Focused validation used
+direct `sage -t --timeout 90` against the patched source tree and a strict
+two-file `test-sage-doctest-corpus` make run with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`; the saved block- and file-failure
+cluster queries are empty for the two promoted files.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -221,6 +221,8 @@ src/sage/libs/ntl/ntl_GF2EContext.pyx
 src/sage/libs/ntl/ntl_mat_GF2.pyx
 src/sage/libs/ntl/ntl_ZZ.pyx
 src/sage/libs/ntl/ntl_ZZX.pyx
+src/sage/libs/ntl/ntl_ZZ_p.pyx
+src/sage/libs/ntl/ntl_ZZ_pContext.pyx
 src/sage/libs/ntl/ntl_lzz_pContext.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
