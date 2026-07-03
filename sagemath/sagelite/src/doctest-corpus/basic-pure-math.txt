@@ -65,6 +65,8 @@ src/sage/rings/semirings/tropical_polynomial.py
 src/sage/rings/semirings/tropical_semiring.pyx
 src/sage/rings/valuation/trivial_valuation.py
 src/sage/rings/valuation/scaled_valuation.py
+src/sage/rings/valuation/value_group.py
+src/sage/rings/valuation/valuation_space.py
 src/sage/arith/srange.pyx
 src/sage/arith/functions.pyx
 src/sage/arith/power.pyx

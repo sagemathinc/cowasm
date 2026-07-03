@@ -24527,6 +24527,49 @@ skipped-only. Future scheduled runs should avoid repeating these exact compact
 slices until the PBoRi, scheme/hyperelliptic, Singular/GAP, or polynomial
 Groebner backend profile changes.
 
+Focused valuation corpus-growth pass on 2026-07-03:
+
+```text
+value_group.py: 100 passed, 0 failed, 9 skipped
+valuation_space.py: 198 passed, 0 failed, 3 skipped
+```
+
+That two-file make-target validation adds
+`sage/rings/valuation/value_group.py` and
+`sage/rings/valuation/valuation_space.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,010
+non-comment entries. The fresh rings-frontier probe in
+`.tmp/current-run/scheduled-2026-07-03-late/rings-frontier.sqlite3` first
+identified both files as uncovered clean runnable candidates, while adjacent
+unlisted rings files remained broader frontiers: asymptotic helper modules
+had block-level mismatches, `asymptotic_expansion_generators.py` hit a WASM
+signature-mismatch path, `fraction_field.py` and `ideal.py` timed out in
+polynomial setup, and `homset.py` reached the known NTL
+`ZZ_pContext.restore` dynamic-link boundary.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=2`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-late/valuation-promotion.sqlite3`.
+The latest-run summary records CoWasm commit
+`2b6c300d2a8d30086b4d9f4885f72632e08eec77`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+`298 passed, 0 failed, 12 skipped`, and a 100% non-skipped pass rate. The
+saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the two valuation
+files are listed in the corpus.
+
+The same scheduled pass also sampled several no-promotion frontiers under
+`.tmp/current-run/scheduled-2026-07-03-late/`. The
+`algebra-category-coding.sqlite3` probe found no uncovered clean candidate:
+unlisted algebra files still depend on graph, group, matroid, GAP, or
+finite-field backends, while the clean data-structure rows were already in
+the corpus. The `utility.sqlite3` probe was mostly empty or skipped-only and
+recorded `data_structures/stream.py` as a WASM signature-mismatch frontier.
+The `category-combinat.sqlite3` probe was skipped-only except for two
+poset-dependency failures. The `coding-crypto.sqlite3` probe was clean but
+entirely skipped under existing coding and crypto dependency metadata.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
