@@ -24239,6 +24239,34 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after subtracting the updated corpus.
 
+Follow-up compact no-promotion audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. Fresh current-runner probes wrote
+SQLite dashboards under
+`.tmp/current-run/codex-2026-07-03-followup/` and
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata --dedupe-paths` printed no uncovered clean runnable
+candidate across them.
+
+The CLI batch (`cli-small.sqlite3`) had no extracted doctest blocks. The
+Drinfeld-module batch (`drinfeld-small.sqlite3`) recorded 1,443 skipped blocks
+and no runnable default-profile coverage; its skips are dominated by
+`needs:sage.rings.finite_rings`, optional tags, and existing deferred known-bug
+metadata. The small utility/database/coding batches (`utility-small.sqlite3`
+and `coding-small.sqlite3`) recorded another 178 skipped blocks and no passing
+runnable blocks, with boundaries in optional database packages, Cython,
+symbolic plotting, GAP/modules/finite-rings coding support, combinatorics, and
+number-field helpers.
+
+The plotting/geometry batch (`plot-small.sqlite3`) recorded 2 passed, 38
+failed, and 150 skipped blocks. The plot helper files are skipped-only under
+symbolic/plot tags. The runnable geometry failures are not narrow promotion
+targets: `surface3d_generators.py` expects the symbolic `surfaces` constructor
+surface, while `voronoi_diagram.py` currently has a module-startup cluster
+around `VoronoiDiagram`/dependent state plus polyhedron/plot examples. Future
+frontier scans should skip these exact slices until the symbolic surface,
+finite-ring Drinfeld-module, or geometry startup/polyhedron boundaries change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
