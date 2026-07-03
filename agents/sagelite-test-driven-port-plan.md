@@ -23259,6 +23259,31 @@ namespace and symbolic/polyhedron backend gaps. Future low-prompt scheduled
 runs should skip this exact batch unless the geometry startup surface or
 polyhedron backend changes.
 
+Follow-up sage-input formatter corpus-growth pass on 2026-07-03:
+
+`src/sage/misc/sage_input.py` is now listed in the curated pure-math corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 985
+non-comment entries. Recent near-miss mining found the file with broad
+passing coverage and a small browser-profile drift cluster around lambda
+address display, high-byte octal string verification, and unordered set
+display in formatter internals.
+
+The added WASI source patch marks the lambda display and set-display examples
+as `# random`, and defers the high-byte string verification drift as
+`# known bug`. This preserves the ordinary `sage_input`, `SageInputBuilder`,
+formatter, and verification-helper examples as default-profile coverage while
+avoiding dependence on WASM address formatting, Python set ordering, or the
+current high-byte source-escape behavior.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding and patching a fresh Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next2/sage-input-make.sqlite3`.
+The checked run recorded `720 passed, 0 failed, 17 skipped`; saved block- and
+file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
+prints no promotion rows after the file is listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

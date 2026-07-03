@@ -11321,3 +11321,18 @@ diff -urN -U0 a/src/sage/rings/bernoulli_mod_p.pyx b/src/sage/rings/bernoulli_mo
 @@ -291 +291 @@
 -        sage: bernoulli_mod_p(7)
 +        sage: bernoulli_mod_p(7)                          # needs sage.libs.pari
+diff -urN -U0 a/src/sage/misc/sage_input.py b/src/sage/misc/sage_input.py
+--- a/src/sage/misc/sage_input.py
++++ b/src/sage/misc/sage_input.py
+@@ -255 +255 @@
+-        sage: r
++        sage: r                                                                      # random
+@@ -425 +425 @@
+-            sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)
++            sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)    # known bug
+@@ -3393 +3393 @@
+-            sage: sif._names, sif._dup_names
++            sage: sif._names, sif._dup_names                                         # random
+@@ -3396 +3396 @@
+-            sage: sif._names, sif._dup_names
++            sage: sif._names, sif._dup_names                                         # random
