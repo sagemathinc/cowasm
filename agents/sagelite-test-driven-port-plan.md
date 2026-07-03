@@ -23954,6 +23954,43 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after subtracting the updated corpus.
 
+Focused matrix-action corpus-growth pass:
+
+```text
+action.pyx: 100 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/action.pyx` to the
+curated pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1000
+non-comment entries. The file adds default-profile coverage for matrix action
+construction, coercion behavior, matrix/matrix and matrix/vector action
+dispatch, and scheme point/polymap action plumbing over the existing matrix
+and projective-space startup surface.
+
+A focused matrix frontier probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-auto/matrix-next.sqlite3`, where
+`action.pyx` was the most compact near miss with 100 passing blocks, four
+failed blocks, and five existing skips. The failures came from two projective
+polymap examples that construct morphisms through
+`sage.rings.polynomial.plural`, plus their dependent action checks after the
+setup variable was not created. The WASI source patch now marks those four
+examples as `# needs sage.rings.polynomial.plural`, preserving the matrix
+action coverage while recording the noncommutative polynomial backend boundary
+as explicit skip metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-auto/action-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`f9cd9b20858954d2288aed6fe2d4d53a940a1861`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

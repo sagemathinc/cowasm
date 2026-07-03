@@ -11517,3 +11517,18 @@ diff -urN -U0 a/src/sage/matrix/matrix_generic_sparse.pyx b/src/sage/matrix/matr
 @@ -237 +237 @@
 -            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
 +            sage: m.matrix_from_rows_and_columns([1,2],[0,3])                        # known bug
+diff -urN -U0 a/src/sage/matrix/action.pyx b/src/sage/matrix/action.pyx
+--- a/src/sage/matrix/action.pyx
++++ b/src/sage/matrix/action.pyx
+@@ -454 +454 @@
+-            sage: f = H([x^2 + y^2, y^2])
++            sage: f = H([x^2 + y^2, y^2])                                            # needs sage.rings.polynomial.plural
+@@ -457 +457 @@
+-            sage: A._act_(m, f)
++            sage: A._act_(m, f)                                                       # needs sage.rings.polynomial.plural
+@@ -527 +527 @@
+-            sage: f = H([x^2 + y^2, y^2])
++            sage: f = H([x^2 + y^2, y^2])                                            # needs sage.rings.polynomial.plural
+@@ -530 +530 @@
+-            sage: A._act_(m, f)
++            sage: A._act_(m, f)                                                       # needs sage.rings.polynomial.plural
