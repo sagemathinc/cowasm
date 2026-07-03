@@ -26812,6 +26812,47 @@ The matroid files still depend on broad matroid catalog/graph startup names
 and optional finite-ring/combinat support, so they should not be added to the
 quiet browser-profile corpus without deeper backend work.
 
+Follow-up graph, plot3d, and numerical-backend frontier audit later on
+2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict runner-87 candidate scan over the existing
+nonempty `.tmp/current-run/` dashboards, using
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths`, printed no
+uncovered clean runnable candidate.
+
+Two fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-03-codex26/` then sampled remaining
+unprobed graph, plot3d, and numerical-backend files from the current patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree:
+
+```text
+graph-frontier.sqlite3:          27 passed, 269 failed, 142 skipped
+plot-numerical-frontier.sqlite3: 22 passed, 221 failed, 479 skipped
+```
+
+A strict promotion-candidate scan over both fresh databases, with
+`--ignore-invalid --quiet-invalid` for scratch-database hygiene, printed no
+uncovered clean runnable candidate. The skipped-only rows were explicit
+browser-profile dependency boundaries: `graphs/chrompoly.pyx` and
+`graphs/matchpoly.pyx` need graph/FLINT and sometimes symbolic support, while
+`plot3d/implicit_plot3d.py`, `plot3d/implicit_surface.pyx`, and
+`plot3d/parametric_surface.pyx` are entirely symbolic-backed in the default
+profile.
+
+The live near misses are broader backend or startup-surface work rather than
+narrow corpus metadata additions. `graphs/graph_decompositions/cutwidth.pyx`
+has 20 passing blocks but fails mostly on the unavailable `graphs` catalog and
+`Graph` startup names, matching the existing profile boundary that keeps
+graph-constructor coverage tagged as `needs sage.graphs`.
+`graphs/independent_sets.pyx` and `graphs/graph_decompositions/graph_products.pyx`
+mix the same graph startup gap with output drift and optional import failures.
+`plot3d/shapes2.py` reaches 20 passing blocks before 3D object setup names and
+rendering repr mismatches dominate. `numerical/backends/matrix_sdp_backend.pyx`
+and `numerical/backends/generic_sdp_backend.pyx` remain SDP/MIP backend
+frontiers with missing solver constructors and backend-specific setup names.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
