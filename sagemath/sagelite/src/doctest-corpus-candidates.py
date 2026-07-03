@@ -198,6 +198,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--require-source-root-path",
+        action="store_true",
+        help=(
+            "include absolute file rows only when the recorded path is under "
+            "the selected source root; useful when scanning old scratch "
+            "databases that were run against a different checkout"
+        ),
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -320,6 +329,19 @@ def source_candidate_exists(relative_path: str, source_root: Path | None) -> boo
     if not source_root.exists():
         return True
     return (source_root / relative_path).exists()
+
+
+def source_path_matches_root(path: str, source_root: Path | None) -> bool:
+    if source_root is None:
+        return True
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        return True
+    try:
+        candidate.resolve().relative_to(source_root.resolve())
+    except ValueError:
+        return False
+    return True
 
 
 def table_has_column(db: sqlite3.Connection, table: str, column: str) -> bool:
@@ -452,6 +474,7 @@ def candidate_rows(
     excluded_file_failure_details: list[str],
     excluded_path_prefixes: tuple[str, ...],
     include_skip_reasons: bool,
+    require_source_root_path: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -695,6 +718,10 @@ def candidate_rows(
         failure,
         failure_detail,
     ) in rows:
+        if require_source_root_path and not source_path_matches_root(
+            path, source_root
+        ):
+            continue
         relative_path = normalize_path(path, source_root)
         one_line_failure_detail = one_line_detail(failure_detail)
         if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
@@ -833,6 +860,7 @@ def main() -> int:
                     args.exclude_file_failure_detail,
                     args.excluded_path_prefixes,
                     args.include_skip_reasons,
+                    args.require_source_root_path,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:

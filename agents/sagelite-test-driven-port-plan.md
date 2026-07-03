@@ -23451,6 +23451,43 @@ skipped-only under the current browser-compatible profile, so FLINT factoring
 coverage should be handled as a separate runtime/tagging task rather than as
 low-risk corpus growth.
 
+Follow-up source-root-filter reporting pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 989
+non-comment entries. A fresh moderate-prompt probe over eight unlisted
+combinatorics, algebra, and category files wrote
+`.tmp/current-run/scheduled-2026-07-03-goal/probe.sqlite3` and recorded `2
+passed, 135 failed, 132 skipped`. The runnable failures were broad startup or
+dependency clusters, while `cluster_complex.py`, `tamari_lattices.py`, and
+`coxeter_group_algebras.py` were skipped-only under existing optional
+combinatorics/module reasons.
+
+The current saved-database near-miss scan still has no clean uncovered
+runnable candidates. Its only compact near miss was
+`src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`, with one
+passing setup prompt followed by cascading startup-name failures. A direct
+reproduction with explicit `HyperellipticCurve` and `Jacobian` imports then
+hit the absent `sage.rings.polynomial.plural` module, so this is a schemes
+backend/dependency frontier rather than a safe namespace promotion.
+
+The candidate helper now supports `--require-source-root-path`, which keeps
+absolute file rows only when the recorded path is actually under the selected
+Sagelite source root. This makes multi-database file-error audits less noisy
+when old scratch databases contain normalized `src/sage/...` paths from a
+different checkout. On the current scratch set, combining this flag with
+`--file-errors`, `--require-run-metadata`, and `--min-runner-version 83`
+reduced the deduped file-error frontier from 46 rows to 30 rows while
+preserving real current-source runtime/linkage failures.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, a synthetic SQLite
+fixture proving that `--require-source-root-path` filters only the outside-root
+absolute row, a current scratch file-error scan with and without the new flag,
+and the make-level `sage-doctest-candidates` entrypoint with
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS='--require-run-metadata
+--require-source-root-path --file-errors --include-failure-detail
+--failure-detail-limit 160'`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
