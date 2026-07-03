@@ -26671,6 +26671,42 @@ were `sage/rings/polynomial/pbori/blocks.py`, which starts at the unavailable
 `declare_ring`/`main_test` state; this is a BRiAl/PBoRi packaging frontier
 rather than a narrow corpus metadata promotion.
 
+Follow-up asymptotic/data/module frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A fresh direct Sagelite probe under
+`.tmp/current-run/scheduled-2026-07-03-current/` sampled absent
+source-minus-corpus files from data structures, asymptotic rings,
+module-with-basis helpers, category examples, and sets:
+
+```text
+asymptotic-data-modules.sqlite3: 599 passed, 837 failed, 1101 skipped
+```
+
+The strict promotion-candidate scan over that database with
+`doctest-corpus-candidates.py --require-run-metadata --dedupe-paths` printed
+no uncovered clean runnable candidates. The skipped-only rows were explicit
+optional browser-profile boundaries:
+`sage/modules/with_basis/cell_module.py` needs `sage.combinat`,
+`sage/modules/with_basis/invariant.py` needs `sage.groups`,
+`sage/categories/examples/finite_coxeter_groups.py` needs combinat/groups,
+`sage/categories/examples/sets_cat.py` needs PARI, and
+`sage/sets/real_set.py` needs real-field, symbolic, or SymPy support.
+
+The zero-block files were
+`sage/data_structures/binary_search.pyx`,
+`sage/data_structures/bitset_base.pyx`, and
+`sage/categories/examples/coxeter_groups.py`. The runnable failures are
+broader frontiers rather than narrow metadata additions:
+`sage/rings/asymptotic/misc.py` has 120 passing blocks but remains blocked by
+symbolic/startup-name and parent-construction failures;
+`sage/modules/with_basis/indexed_element.pyx` has 147 passing blocks but
+cascades through missing setup names such as `C`, `DC3`, `E2`, `L`, and `TL`;
+`sage/rings/asymptotic/term_monoid.py` has a large asymptotic-ring failure
+cluster; and `sage/rings/asymptotic/growth_group.py` still reaches a
+file-level WASM memory trap while resolving coding lazy imports for generated
+method indexes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
