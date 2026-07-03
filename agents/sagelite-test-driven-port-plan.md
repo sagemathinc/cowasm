@@ -25464,6 +25464,44 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/weighted-point-make.sqlite3`.
 The strict make-target run recorded `35 passed, 0 failed, 0 skipped`.
 
+Follow-up compact frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,020 non-comment entries. Fresh direct probes used the current patched source
+root, node profile, runner version 84, CoWasm commit
+`edeba5284537746d12c5bd6e48c7cf4090d9acc2`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The small helper probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-new/small-probe.sqlite3`
+and recorded `0 passed, 0 failed, 39 skipped` across compact crypto,
+database, misc, modular, SymPy, and topology helpers. The compact
+category/library probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-new/compact-probe.sqlite3`
+and recorded `0 passed, 2 failed, 39 skipped`; nearly all rows were
+skipped-only dependency-boundary coverage, while
+`sage/libs/pari/convert_sage_real_double.pyx` failed both live blocks in the
+PARI real-double conversion surface. The misc infrastructure probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-new/misc-infra.sqlite3`
+and recorded `0 passed, 0 failed, 86 skipped` for `misc/cython.py` and
+`misc/reset.pyx`. The crypto/algebra probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-new/crypto-algebra.sqlite3`
+and recorded `2 passed, 33 failed, 118 skipped`; the only live runnable
+coverage came from `free_algebra_quotient_element.py`, whose failure cluster
+is broad rather than a narrow startup-name or dependency-tag fix.
+
+Running `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --ignore-invalid --quiet-invalid --dedupe-paths`
+over the current `scheduled-2026-07-03-new` SQLite artifacts printed no
+uncovered clean runnable candidate rows. The skipped-only audit confirmed that
+the apparent low-prompt files are mostly already classified under explicit
+optional, `needs`, long-time, or deferred metadata, including graph, module,
+finite-ring, symbolic, PARI, FLINT, NumPy/SciPy, IPython, and package-specific
+database boundaries. Future scheduled runs should avoid this exact compact
+frontier unless one of those backend profiles changes or a targeted live
+failure cluster is selected for triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
