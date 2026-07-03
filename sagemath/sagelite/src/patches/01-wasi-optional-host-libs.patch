@@ -12202,3 +12202,67 @@ diff -urN -U0 a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/i
 @@ -3830 +3830 @@
 -            sage: q.J_covariant().factor()
 +            sage: q.J_covariant().factor()                                                # needs sage.libs.singular
+diff --git a/src/sage/combinat/matrices/dancing_links.pyx b/src/sage/combinat/matrices/dancing_links.pyx
+--- a/src/sage/combinat/matrices/dancing_links.pyx
++++ b/src/sage/combinat/matrices/dancing_links.pyx
+@@ -15 +15 @@
+-    sage: x.number_of_solutions()
++    sage: x.number_of_solutions()                                                   # needs cysignals.alarm
+@@ -25 +25 @@
+-    sage: sorted(map(sorted, x.all_solutions()))
++    sage: sorted(map(sorted, x.all_solutions()))                                    # needs cysignals.alarm
+@@ -30 +30 @@
+-    sage: sorted(x.one_solution(ncpus=2)) # random
++    sage: sorted(x.one_solution(ncpus=2)) # random                                  # needs cysignals.alarm
+@@ -601 +601 @@
+-            sage: sorted(d.one_solution()) in solutions
++            sage: sorted(d.one_solution()) in solutions                             # needs cysignals.alarm
+@@ -606 +606 @@
+-            sage: sorted(d.one_solution(ncpus=2)) in solutions
++            sage: sorted(d.one_solution(ncpus=2)) in solutions                      # needs cysignals.alarm
+@@ -612 +612 @@
+-            sage: sorted(d.one_solution(ncpus=2, column=4)) in solutions
++            sage: sorted(d.one_solution(ncpus=2, column=4)) in solutions            # needs cysignals.alarm
+@@ -619 +619 @@
+-            sage: d.one_solution() is None
++            sage: d.one_solution() is None                                          # needs cysignals.alarm
+@@ -624 +624 @@
+-            sage: [d.one_solution(column=i) for i in range(6)]
++            sage: [d.one_solution(column=i) for i in range(6)]                      # needs cysignals.alarm
+@@ -635,2 +635,2 @@
+-            sage: solution = dlx.one_solution()
+-            sage: subsets = [set(rows[i]) for i in solution]
++            sage: solution = dlx.one_solution()                                     # needs cysignals.alarm
++            sage: subsets = [set(rows[i]) for i in solution]                        # needs cysignals.alarm
+@@ -640 +640 @@
+-            sage: set.union(*subsets)
++            sage: set.union(*subsets)                                               # needs cysignals.alarm
+@@ -643 +643 @@
+-            sage: any(p.intersection(q) for p,q in combinations(subsets, 2))
++            sage: any(p.intersection(q) for p,q in combinations(subsets, 2))        # needs cysignals.alarm
+@@ -693,2 +693,2 @@
+-            sage: S = d.all_solutions()
+-            sage: sorted(sorted(s) for s in S)
++            sage: S = d.all_solutions()                                             # needs cysignals.alarm
++            sage: sorted(sorted(s) for s in S)                                      # needs cysignals.alarm
+@@ -704 +704 @@
+-            sage: dlx.number_of_solutions()
++            sage: dlx.number_of_solutions()                                         # needs cysignals.alarm
+@@ -706 +706 @@
+-            sage: sorted(sorted(s) for s in dlx.all_solutions(ncpus=2))
++            sage: sorted(sorted(s) for s in dlx.all_solutions(ncpus=2))             # needs cysignals.alarm
+@@ -748 +748 @@
+-            sage: d.all_solutions()
++            sage: d.all_solutions()                                                 # needs cysignals.alarm
+@@ -753 +753 @@
+-            sage: [d.all_solutions(column=i) for i in range(6)]
++            sage: [d.all_solutions(column=i) for i in range(6)]                     # needs cysignals.alarm
+@@ -814 +814 @@
+-            sage: x.number_of_solutions()
++            sage: x.number_of_solutions()                                           # needs cysignals.alarm
+@@ -821 +821 @@
+-            sage: x.number_of_solutions(ncpus=2, column=3)
++            sage: x.number_of_solutions(ncpus=2, column=3)                          # needs cysignals.alarm
+@@ -829 +829 @@
+-            sage: d.number_of_solutions()
++            sage: d.number_of_solutions()                                           # needs cysignals.alarm

@@ -25811,6 +25811,40 @@ to the corpus. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 86.
 
+Follow-up dancing-links corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 217 passed, 0 failed, 36 skipped
+```
+
+This pass promotes `sage/combinat/matrices/dancing_links.pyx`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,028
+non-comment entries. A compact matrix/design combinatorics probe first
+recorded the file as a strong near miss with 217 passing blocks, 21 block
+failures, and 15 skips. The failures clustered around Sage parallel helper
+paths that import the unavailable `cysignals.alarm` module when
+`one_solution`, `all_solutions`, and `number_of_solutions` are called with
+implicit CPU detection or explicit parallel execution, plus dependent
+local-name cascades from those skipped setup examples.
+
+The WASI source patch now tags those exact parallel/alarm examples as
+`# needs cysignals.alarm`, leaving the serial dancing-links solver
+construction, representation, iteration, search, restriction, reinitialization,
+copying, pickling, and solver conversion metadata live in the default node
+profile. The same probe kept nearby `latin.py`, `evenly_distributed_sets.pyx`,
+`descent_algebra.py`, and `constellation.py` out as skipped-only files, and
+kept `ext_rep.py` and `colored_permutations.py` out because they hit existing
+runtime/linkage frontiers rather than narrow doctest metadata fixes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next/dancing-links-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
