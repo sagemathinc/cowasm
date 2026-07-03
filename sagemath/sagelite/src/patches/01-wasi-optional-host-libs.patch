@@ -11859,3 +11859,9 @@ diff -urN -U0 a/src/sage/modular/drinfeld_modform/element.py b/src/sage/modular/
 -        return self.polynomial().degrees()[-1] % (q-1)
 +        degrees = self.polynomial().degrees()
 +        return degrees[len(degrees) - 1] % (q-1)
+diff -urN -U0 a/src/sage/groups/matrix_gps/orthogonal.py b/src/sage/groups/matrix_gps/orthogonal.py
+--- a/src/sage/groups/matrix_gps/orthogonal.py
++++ b/src/sage/groups/matrix_gps/orthogonal.py
+@@ -436 +436 @@
+-        sage: groups.matrix.SO(2, 3, e=1)
++        sage: groups.matrix.SO(2, 3, e=1)                                              # needs sage.groups

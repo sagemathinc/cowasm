@@ -24931,6 +24931,42 @@ against the current patched Sagelite source tree. Running
 confirming candidate subtraction is behaving correctly for this already-covered
 clean namespace.
 
+Follow-up orthogonal matrix group corpus-growth pass on 2026-07-03:
+
+```text
+orthogonal.py: 37 passed, 0 failed, 34 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/matrix_gps/orthogonal.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,014
+non-comment entries. The file adds default-profile coverage for generic
+orthogonal-group construction over finite fields and complex fields,
+invariant-form handling, latex/repr output, matrix membership checks, and
+error paths.
+
+A fresh mixed probe first recorded the file as a compact near miss with 37
+passing blocks, one `NameError`, and 33 skips. The single failure was the
+upstream startup-catalog example `groups.matrix.SO(2, 3, e=1)`. In the WASI
+browser profile, the `groups` catalog currently routes through
+`sage.groups.matrix_gps.all`, which imports GAP-backed matrix-group pickling
+overrides and fails on unavailable `sage.libs.gap.libgap`, so the WASI source
+patch now marks that example as `# needs sage.groups` rather than exposing the
+full catalog at startup.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through
+`make -C sagemath/sagelite test-sage-doctest-corpus`, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-active/orthogonal-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`f2fc993f7df508d95f16fb73dffd957fe2b41ac0`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata` prints no uncovered
+promotion row after the file is listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
