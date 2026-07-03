@@ -25234,6 +25234,27 @@ graph, and GLPK-backed linear-programming surfaces. Running
 --ignore-invalid --quiet-invalid --dedupe-paths` across all three new
 databases printed no uncovered clean runnable row.
 
+Follow-up geometry/function-field frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,017 non-comment entries. A fresh focused probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-followup-agent/probes/geometry-functionfield.sqlite3`
+and recorded `10 passed, 55 failed, 96 skipped` across compact geometry,
+polyhedron, and function-field helpers. The polyhedron RDF helpers and
+`place_rational.py` were skipped-only under existing optional metadata.
+`function_field/extensions.py` still has broader function-field morphism,
+factorization, and dependent-name clusters.
+
+`sage/geometry/voronoi_diagram.py` initially looked like a narrow startup
+candidate because its focused failures were missing `VoronoiDiagram` plus
+dependent local names. A temporary local validation showed why it should stay
+outside the browser-profile corpus: importing `VoronoiDiagram` reaches
+`sage.geometry.triangulation.point_configuration`, whose top-level `pexpect`
+import is TOPCOM/subprocess-specific; after locally deferring that import for
+diagnosis, the first RDF point-configuration doctest trapped in
+`real_mpfr...mpfr_strtofr`. This file should not be promoted until the
+TOPCOM import boundary and the RDF real-number trap are handled explicitly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
