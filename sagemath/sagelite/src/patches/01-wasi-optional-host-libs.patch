@@ -11865,3 +11865,9 @@ diff -urN -U0 a/src/sage/groups/matrix_gps/orthogonal.py b/src/sage/groups/matri
 @@ -436 +436 @@
 -        sage: groups.matrix.SO(2, 3, e=1)
 +        sage: groups.matrix.SO(2, 3, e=1)                                              # needs sage.groups
+diff -urN -U0 a/src/sage/groups/matrix_gps/unitary.py b/src/sage/groups/matrix_gps/unitary.py
+--- a/src/sage/groups/matrix_gps/unitary.py
++++ b/src/sage/groups/matrix_gps/unitary.py
+@@ -21 +21 @@
+-    sage: G.base_ring()
++    sage: G.base_ring()                                                                 # needs sage.rings.finite_rings

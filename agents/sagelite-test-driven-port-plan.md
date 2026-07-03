@@ -25181,6 +25181,25 @@ Future scheduled runs should avoid this exact modular/schemes/arithmetic
 batch unless the startup namespace, weighted-projective point setup behavior,
 or elliptic-curve matrix backend changes.
 
+Follow-up unitary matrix-group corpus-growth pass on 2026-07-03:
+
+This pass promoted one corpus entry; the curated corpus now has 1,017
+non-comment entries after adding `src/sage/groups/matrix_gps/unitary.py`.
+The source-minus-corpus scan had identified the file as a compact near miss:
+`G = SU(3,5)` was correctly skipped under `sage.rings.finite_rings`, but the
+dependent `G.base_ring()` example lacked the same tag and failed with a missing
+local setup name. The WASI source patch now marks that dependent example as
+`# needs sage.rings.finite_rings`.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus`, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-unitary/unitary-make.sqlite3`.
+The strict make-target run rebuilt the patched Sagelite source copy and
+recorded `6 passed, 0 failed, 52 skipped`, 100% non-skipped pass rate, and
+empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
