@@ -144,6 +144,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--include-skip-tags",
+        action="store_true",
+        help=(
+            "with --skipped-only, append distinct block tags so optional, "
+            "needs, and deferred boundaries can be audited without raw SQLite "
+            "queries"
+        ),
+    )
+    parser.add_argument(
         "--only-skip-reason",
         action="append",
         default=[],
@@ -151,6 +160,26 @@ def parse_args() -> argparse.Namespace:
         help=(
             "with --skipped-only, report only files whose distinct block skip "
             "reasons contain one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--only-skip-tag",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --skipped-only, report only files whose distinct block tags "
+            "contain one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--exclude-skip-tag",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --skipped-only, suppress files whose distinct block tags "
+            "contain one of these substrings; may be repeated"
         ),
     )
     parser.add_argument(
@@ -335,10 +364,18 @@ def parse_args() -> argparse.Namespace:
         parser.error("--only-file-failure-detail requires --file-errors")
     if args.include_skip_reasons and not args.skipped_only:
         parser.error("--include-skip-reasons requires --skipped-only")
+    if args.include_skip_tags and not args.skipped_only:
+        parser.error("--include-skip-tags requires --skipped-only")
+    if args.include_skip_reasons and args.include_skip_tags:
+        parser.error("--include-skip-reasons cannot be combined with --include-skip-tags")
     if args.only_skip_reason and not args.skipped_only:
         parser.error("--only-skip-reason requires --skipped-only")
     if args.exclude_skip_reason and not args.skipped_only:
         parser.error("--exclude-skip-reason requires --skipped-only")
+    if args.only_skip_tag and not args.skipped_only:
+        parser.error("--only-skip-tag requires --skipped-only")
+    if args.exclude_skip_tag and not args.skipped_only:
+        parser.error("--exclude-skip-tag requires --skipped-only")
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
     )
@@ -357,6 +394,8 @@ def parse_args() -> argparse.Namespace:
     args.only_file_failure_detail = parse_csv_values(args.only_file_failure_detail)
     args.only_skip_reason = parse_csv_values(args.only_skip_reason)
     args.exclude_skip_reason = parse_csv_values(args.exclude_skip_reason)
+    args.only_skip_tag = parse_csv_values(args.only_skip_tag)
+    args.exclude_skip_tag = parse_csv_values(args.exclude_skip_tag)
     args.excluded_path_prefixes = (
         ()
         if args.include_doctest_self_tests
@@ -547,6 +586,16 @@ def can_read_block_skip_reasons(db: sqlite3.Connection) -> bool:
     )
 
 
+def can_read_block_tags(db: sqlite3.Connection) -> bool:
+    return (
+        table_exists(db, "blocks")
+        and files_table_has_column(db, "id")
+        and table_has_column(db, "blocks", "file_id")
+        and table_has_column(db, "blocks", "status")
+        and table_has_column(db, "blocks", "tags")
+    )
+
+
 def one_line_detail(detail: str) -> str:
     return " ".join(detail.replace("\t", " ").splitlines()).strip()
 
@@ -557,6 +606,34 @@ def printable_detail(detail: str, limit: int) -> str:
     if limit <= 3:
         return "." * limit
     return detail[: limit - 3].rstrip() + "..."
+
+
+def grouped_skipped_block_metadata(
+    db: sqlite3.Connection,
+    run_id: int,
+    path: str,
+    column: str,
+    split_commas: bool,
+) -> str:
+    values: set[str] = set()
+    rows = db.execute(
+        f"""
+        select distinct coalesce(blocks.{column}, '')
+        from blocks
+        join files on files.id = blocks.file_id
+        where files.run_id = ?
+          and files.path = ?
+          and blocks.status = 'skipped'
+          and coalesce(blocks.{column}, '') != ''
+        """,
+        (run_id, path),
+    ).fetchall()
+    for (value,) in rows:
+        if split_commas:
+            values.update(part.strip() for part in value.split(",") if part.strip())
+        elif value.strip():
+            values.add(value.strip())
+    return ", ".join(sorted(values))
 
 
 def candidate_rows(
@@ -581,8 +658,11 @@ def candidate_rows(
     only_file_failure_details: list[str],
     only_skip_reasons: list[str],
     excluded_skip_reasons: list[str],
+    only_skip_tags: list[str],
+    excluded_skip_tags: list[str],
     excluded_path_prefixes: tuple[str, ...],
     include_skip_reasons: bool,
+    include_skip_tags: bool,
     require_source_root_path: bool,
     include_covered: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
@@ -640,22 +720,12 @@ def candidate_rows(
                 "cannot read skip reasons: database lacks compatible "
                 "blocks/files metadata"
             )
-        row_failure_detail_expr = """
-              coalesce(
-                (
-                  select group_concat(reason, ', ')
-                  from (
-                    select distinct coalesce(blocks.skip_reason, '') as reason
-                    from blocks
-                    where blocks.file_id = files.id
-                      and blocks.status = 'skipped'
-                      and coalesce(blocks.skip_reason, '') != ''
-                    order by reason
-                  )
-                ),
-                ''
-              )
-        """
+    if skipped_only and (include_skip_tags or only_skip_tags or excluded_skip_tags):
+        if not can_read_block_tags(db):
+            raise SystemExit(
+                "cannot read skip tags: database lacks compatible "
+                "blocks/files metadata"
+            )
     if file_errors:
         file_failure_filter = ""
         query_parameters: list[object] = [run_id]
@@ -866,6 +936,18 @@ def candidate_rows(
             continue
         relative_path = normalize_path(path, source_root)
         one_line_failure_detail = one_line_detail(failure_detail)
+        skip_reason_detail = one_line_failure_detail
+        if skipped_only and (
+            include_skip_reasons or only_skip_reasons or excluded_skip_reasons
+        ):
+            skip_reason_detail = grouped_skipped_block_metadata(
+                db, run_id, path, "skip_reason", False
+            )
+        skip_tag_detail = ""
+        if skipped_only and (include_skip_tags or only_skip_tags or excluded_skip_tags):
+            skip_tag_detail = grouped_skipped_block_metadata(
+                db, run_id, path, "tags", True
+            )
         if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
             continue
         if file_errors and any(
@@ -888,11 +970,19 @@ def candidate_rows(
         ):
             continue
         if skipped_only and only_skip_reasons and not any(
-            reason in one_line_failure_detail for reason in only_skip_reasons
+            reason in skip_reason_detail for reason in only_skip_reasons
         ):
             continue
         if skipped_only and any(
-            reason in one_line_failure_detail for reason in excluded_skip_reasons
+            reason in skip_reason_detail for reason in excluded_skip_reasons
+        ):
+            continue
+        if skipped_only and only_skip_tags and not any(
+            tag in skip_tag_detail for tag in only_skip_tags
+        ):
+            continue
+        if skipped_only and any(
+            tag in skip_tag_detail for tag in excluded_skip_tags
         ):
             continue
         if not include_non_sage and not relative_path.startswith("src/sage/"):
@@ -901,6 +991,10 @@ def candidate_rows(
             continue
         if not include_covered and relative_path in covered:
             continue
+        if skipped_only and include_skip_reasons:
+            one_line_failure_detail = skip_reason_detail
+        elif skipped_only and include_skip_tags:
+            one_line_failure_detail = skip_tag_detail
         candidates.append(
             (
                 relative_path,
@@ -983,6 +1077,8 @@ def main() -> int:
             columns.extend(["status", "failure_class"])
             if args.include_skip_reasons:
                 columns.append("skip_reasons")
+            elif args.include_skip_tags:
+                columns.append("skip_tags")
             elif args.include_failure_detail:
                 columns.append("failure_detail")
         if show_database:
@@ -1029,8 +1125,11 @@ def main() -> int:
                     args.only_file_failure_detail,
                     args.only_skip_reason,
                     args.exclude_skip_reason,
+                    args.only_skip_tag,
+                    args.exclude_skip_tag,
                     args.excluded_path_prefixes,
                     args.include_skip_reasons,
+                    args.include_skip_tags,
                     args.require_source_root_path,
                     args.include_covered,
                 )
@@ -1092,7 +1191,11 @@ def print_row(
     if args.paths_only:
         print(row[0])
     elif args.near_misses or args.skipped_only or args.zero_blocks or args.file_errors:
-        if args.include_failure_detail or args.include_skip_reasons:
+        if (
+            args.include_failure_detail
+            or args.include_skip_reasons
+            or args.include_skip_tags
+        ):
             values = (*row[:-1], printable_detail(row[-1], args.failure_detail_limit))
         else:
             values = row[:-1]

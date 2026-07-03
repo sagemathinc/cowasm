@@ -23991,6 +23991,29 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after subtracting the updated corpus.
 
+Follow-up skipped-tag candidate reporting pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The current frontier work needs
+finer skipped-only audit slices than grouped skip reasons alone provide,
+because a single skipped file can carry separate `needs:...`,
+`optional:...`, and deferred doctest tags.
+
+The `doctest-corpus-candidates.py` helper now supports skipped-only tag
+reporting and filters: `--include-skip-tags`, `--only-skip-tag TEXT`, and
+`--exclude-skip-tag TEXT`. These mirror the existing skipped-only reason
+reporting and filters while reading the runner's block-level `tags` column
+directly, so scheduled scans can ask for exact optional/deferred tag frontiers
+without raw SQLite queries. The make-level `sage-doctest-candidates`
+entrypoint passes the flags through via `SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, and a
+synthetic SQLite skipped-only fixture proving tag inclusion, positive
+filtering, and exclusion filtering. The standalone smoke fixture now covers
+the same tag paths and the parser guard for using `--only-skip-tag` outside
+`--skipped-only`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

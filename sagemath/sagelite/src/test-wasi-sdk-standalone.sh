@@ -2833,6 +2833,7 @@ create table blocks (
   status text,
   failure_class text,
   failure_detail text,
+  tags text,
   skip_reason text
 );
 insert into blocks (file_id, status, failure_class, failure_detail)
@@ -2843,12 +2844,12 @@ insert into blocks (file_id, status, failure_class, failure_detail)
 select id, 'failed', 'TypeError', 'unsupported coercion detail'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py';
-insert into blocks (file_id, status, skip_reason)
-select id, 'skipped', 'optional:sage.graphs'
+insert into blocks (file_id, status, tags, skip_reason)
+select id, 'skipped', 'needs:sage.graphs,optional:sage.graphs', 'optional:sage.graphs'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py';
-insert into blocks (file_id, status, skip_reason)
-select id, 'skipped', 'optional:sage.symbolic'
+insert into blocks (file_id, status, tags, skip_reason)
+select id, 'skipped', 'needs:sage.symbolic,optional:sage.symbolic', 'optional:sage.symbolic'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py';
 SQL
@@ -2961,6 +2962,16 @@ if [ "$doctest_candidate_helper_skipped_only_details" != "src/sage/example/skipp
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-skip-reasons did not report skipped-only dependency metadata."
 fi
+doctest_candidate_helper_skipped_only_tags="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --include-skip-tags \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_skipped_only_tags" != "src/sage/example/skipped_candidate.py	2	0	0	2	0	25	passed		needs:sage.graphs, needs:sage.symbolic, optional:sage.graphs, optional:sage.symbolic" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_tags" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --include-skip-tags did not report skipped-only tag metadata."
+fi
 doctest_candidate_helper_skipped_only_filtered="$("$src_dir/doctest-corpus-candidates.py" \
   --skipped-only \
   --only-skip-reason sage.symbolic \
@@ -3003,6 +3014,28 @@ if [ -n "$doctest_candidate_helper_skipped_only_excluded_match" ]; then
   printf '%s\n' "$doctest_candidate_helper_skipped_only_excluded_match" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-skip-reason reported excluded skipped-only rows."
+fi
+doctest_candidate_helper_skipped_only_tag_filtered="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --only-skip-tag needs:sage.symbolic \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_skipped_only_tag_filtered" != "src/sage/example/skipped_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_tag_filtered" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-skip-tag did not filter skipped-only tag rows."
+fi
+doctest_candidate_helper_skipped_only_tag_excluded="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --exclude-skip-tag optional:sage.graphs \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_skipped_only_tag_excluded" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_tag_excluded" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-skip-tag reported excluded skipped-only rows."
 fi
 doctest_candidate_helper_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
@@ -3278,6 +3311,19 @@ if [ "$doctest_candidate_helper_block_detail_guard_status" -eq 0 ] || \
   ! printf '%s\n' "$doctest_candidate_helper_block_detail_guard" | grep -Fq -- "--only-block-failure-detail requires --near-misses"; then
   printf '%s\n' "$doctest_candidate_helper_block_detail_guard" >&2
   record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-detail guard did not fire."
+fi
+set +e
+doctest_candidate_helper_skip_tag_guard="$("$src_dir/doctest-corpus-candidates.py" \
+  --only-skip-tag sage.symbolic \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_skip_tag_guard_status=$?
+set -e
+if [ "$doctest_candidate_helper_skip_tag_guard_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_skip_tag_guard" | grep -Fq -- "--only-skip-tag requires --skipped-only"; then
+  printf '%s\n' "$doctest_candidate_helper_skip_tag_guard" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-skip-tag guard did not fire."
 fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
