@@ -23214,6 +23214,28 @@ imports, Singular-backed and PARI-backed polynomial helpers, symbolic vector
 and quotient-module startup gaps, cellular-basis graph imports, and
 number-field/polyhedron runtime frontiers.
 
+Follow-up calculus interpolation corpus-growth pass on 2026-07-03:
+
+`src/sage/calculus/interpolation.pyx` is now listed in the curated pure-math
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 983 non-comment
+entries. A fresh absent-file probe over small coding, category, algebra,
+module, numerical, polyhedron, combinatorics, function, calculus, and
+polynomial helpers wrote
+`.tmp/current-run/scheduled-2026-07-03-more/probe2.sqlite3` and found
+`interpolation.pyx` as the only uncovered clean runnable row, with `66 passed,
+0 failed, 1 skipped`. The skipped row is outside the default
+browser-compatible profile, while the non-skipped examples exercise Sage's
+polynomial interpolation helpers without pulling in the broader symbolic
+calculus stack.
+
+The same probe kept the surrounding batch out of the quiet corpus. Coding and
+some symmetric-function files were skipped-only; finite-field and polyhedron
+helpers reached NTL/linker and allocation frontiers; and algebra, module,
+polyhedron, and toy Buchberger helpers exposed startup/backend failure
+clusters. Future low-prompt scheduled runs should skip this exact batch unless
+the NTL, polyhedron allocation, or algebra/module startup frontiers change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
