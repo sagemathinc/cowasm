@@ -24736,6 +24736,39 @@ Future scheduled runs should avoid repeating these low-prompt slices until the
 graph-backed poset startup surface changes. They are useful as dependency
 boundary evidence, but they do not add non-skipped corpus coverage today.
 
+Follow-up small-file frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,012
+non-comment entries. Five fresh direct Sagelite probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-03-agent/`.
+
+The category algebra example probe in `category-algebra-examples.sqlite3`
+checked five still-unlisted category example files and was clean but entirely
+skipped, recording `0 passed, 0 failed, 87 skipped`. The structure/misc probe
+in `structure-misc.sqlite3` recorded `28 passed, 0 failed, 23 skipped`, but
+the only runnable row was the already-covered `sage/typeset/symbols.py`; the
+unlisted structure and misc files in that batch were empty or skipped-only.
+The logic/stats/games sanity probe in `logic-stats-games.sqlite3` recorded
+`623 passed, 0 failed, 33 skipped`, confirming the current patched tree for
+already-covered modules such as `sage.logic.*`, `sage/stats/basic_stats.py`,
+and `sage/games/sudoku.py`.
+
+Two fresh unlisted small-file batches did not produce runnable promotion
+candidates. `small-unlisted.sqlite3` recorded `0 passed, 0 failed, 2 skipped`
+across documentation stubs and tiny modular, crypto, rings, and misc helper
+files. `mid-unlisted.sqlite3` recorded `0 passed, 0 failed, 139 skipped`
+across category, cpython, coding, topology, and root-system helpers whose
+doctests are currently dependency-boundary rows. Running
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata`
+across the five fresh databases printed no uncovered clean runnable files.
+
+Future scheduled runs should not repeat these small-file batches unless the
+default browser profile gains one of the skipped dependency surfaces
+(`sage.modules`, `sage.graphs`, `sage.rings.finite_rings`,
+`sage.misc.cython`, or symbolic support). The useful next frontier remains a
+fresh unaudited slice with real prompt coverage, or a focused backend/runtime
+fix for one of the larger high-prompt clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
