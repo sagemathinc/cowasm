@@ -25948,6 +25948,38 @@ the doctest. The final run row records CoWasm commit
 file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
 prints no promotion row after the file is added to the corpus.
 
+Follow-up no-candidate frontier sampling pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,031
+non-comment entries. A strict current-runner scan across same-day scratch
+databases with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 83 --dedupe-paths` printed no
+uncovered clean runnable candidates.
+
+Fresh probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex4/` checked
+nearby matrix-group, affine/projective scheme, low-prompt helper, and generic
+group frontiers. The low-prompt helper slices recorded no runnable promotion
+candidate: the first batch was entirely skipped-only with `0 passed, 0 failed,
+98 skipped`, while the second batch recorded `15 passed, 95 failed, 423
+skipped` and exposed symbolic, Singular/plural, and product-projective
+enumeration boundaries rather than narrow doctest metadata gaps. The
+matrix-group and affine scheme probe similarly stayed noisy: `matrix_group.py`,
+`isometries.py`, `affine_space.py`, and `affine_point.py` clustered around
+missing `MatrixGroup`/`GroupOfIsometries` startup names, GAP-backed group
+constructors, Singular/plural imports, and dependent local-name cascades.
+
+The generic group probe recorded substantial live coverage but no narrow
+promotion target: `generic.py` had 91 passing blocks with 15 failures,
+`group_semidirect_product.py` had 25 passing blocks with 30 failures, and
+`misc_gps/argument_groups.py` had 262 passing blocks with 36 failures. Their
+remaining failures cluster around broader startup and backend choices such as
+public `SymmetricGroup`/`MatrixGroup` constructors, GAP/free-group support,
+symbolic `SR` examples, and dependent setup-name cascades. Those files should
+not be promoted until the startup surface or backend dependency policy is
+expanded deliberately.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
