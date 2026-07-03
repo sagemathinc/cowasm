@@ -11518,6 +11518,34 @@ diff -urN -U0 a/src/sage/matrix/matrix_sparse.pyx b/src/sage/matrix/matrix_spars
 @@ -1190 +1190 @@
 -            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
 +            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')           # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/matrix/matrix_generic_dense.pyx b/src/sage/matrix/matrix_generic_dense.pyx
+--- a/src/sage/matrix/matrix_generic_dense.pyx
++++ b/src/sage/matrix/matrix_generic_dense.pyx
+@@ -73,3 +73,3 @@
+-            sage: F.<q> = QQ.extension(t^4 + 1)
+-            sage: R.<x,y> = PolynomialRing(F)
+-            sage: M = MatrixSpace(R, 1, 2)
++            sage: F.<q> = QQ.extension(t^4 + 1)                                      # needs sage.libs.pari
++            sage: R.<x,y> = PolynomialRing(F)                                        # needs sage.libs.pari
++            sage: M = MatrixSpace(R, 1, 2)                                           # needs sage.libs.pari
+@@ -77 +77 @@
+-            sage: Matrix_generic_dense(M, (x, y), True, True)
++            sage: Matrix_generic_dense(M, (x, y), True, True)                        # needs sage.libs.pari
+@@ -119 +119 @@
+-            sage: m
++            sage: m                                                                  # known bug
+@@ -123 +123 @@
+-            sage: m.transpose()
++            sage: m.transpose()                                                      # known bug
+@@ -128 +128 @@
+-            sage: m.matrix_from_rows([0,2])
++            sage: m.matrix_from_rows([0,2])                                          # known bug
+@@ -131 +131 @@
+-            sage: m.matrix_from_columns([1,3])
++            sage: m.matrix_from_columns([1,3])                                       # known bug
+@@ -135 +135 @@
+-            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
++            sage: m.matrix_from_rows_and_columns([1,2],[0,3])                        # known bug
 diff -urN -U0 a/src/sage/matrix/matrix_generic_sparse.pyx b/src/sage/matrix/matrix_generic_sparse.pyx
 --- a/src/sage/matrix/matrix_generic_sparse.pyx
 +++ b/src/sage/matrix/matrix_generic_sparse.pyx

@@ -4147,6 +4147,39 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
 after subtracting the updated corpus.
 
+Focused generic dense-matrix corpus-growth pass:
+
+```text
+matrix_generic_dense.pyx: 63 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds
+`sage/matrix/matrix_generic_dense.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1005
+non-comment entries. A focused matrix probe first recorded the file as the
+closest remaining compact matrix near miss with 63 passed blocks and 9
+failed blocks. Four failures were a PARI/cypari2 number-field setup chain for
+the `QQ.extension(t^4 + 1)` constructor test; the other five were finite-field
+extension generator display drift where the WASM runtime prints `x` instead
+of the upstream doctest's local name `z`.
+
+The WASI source patch now marks the number-field setup chain as
+`# needs sage.libs.pari` and the finite-field display checks as
+`# known bug`, preserving the generic dense matrix construction, copying,
+transpose, slicing, and element access coverage that already works in the
+default profile. Focused validation used `test-sage-doctest-corpus` after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-current-agent/matrix-generic-dense-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`600ad4e861c6fceae2fa81d46c71dfc20b4cbd62`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
+`/home/user/sagelite`, the saved block- and file-failure cluster queries are
+empty, and `doctest-corpus-candidates.py` prints no promotion row after
+subtracting the updated corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
