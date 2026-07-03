@@ -25706,6 +25706,42 @@ to the corpus. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 85.
 
+Follow-up product-projective scheme corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 125 passed, 0 failed, 28 skipped
+```
+
+This pass promotes `sage/schemes/product_projective/space.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,025
+non-comment entries. A current near-miss scan had recorded 125 passing blocks
+and 17 failures in this file. The failures were browser-profile backend
+boundaries rather than product-projective arithmetic regressions: Singular
+imports for projective point normalization, bounded-height enumeration, and
+finite-field rational point enumeration; plural-backed subscheme construction;
+and local-name cascades from those skipped setup examples. The WASI source
+patch now tags those exact examples with `# needs sage.libs.singular` or
+`# needs sage.rings.polynomial.plural`, leaving the constructor, coordinate
+ring, component, Segre, and basic scheme operations that run in the stripped
+profile as live doctest coverage.
+
+Focused validation first used a direct `sage -t --timeout 120` rerun against
+the patched source copy, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-product-projective/product-projective-space-direct.sqlite3`.
+The full WASI patch was then applied to a clean Sagelite source copy under
+`.tmp/current-run/scheduled-2026-07-03-product-projective/patch-apply` to
+confirm the new hunk is reproducible. Final validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-product-projective/product-projective-space-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records CoWasm commit
+`ae6c52380b8005f2a0cfd57e57284d95923d92ce`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+85.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
