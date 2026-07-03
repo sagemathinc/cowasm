@@ -26510,6 +26510,40 @@ doctests. Since the runner already imports tested module globals when a module
 can load cleanly, this remains a broader algebra/category startup or packaging
 frontier rather than a quiet browser-profile corpus addition.
 
+Follow-up mixed helper/algebra frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,038
+non-comment entries. Three fresh direct Sagelite probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-03-codex18/`:
+
+```text
+probe-batch.sqlite3:  13 skipped-only files, 2 empty files
+probe-batch2.sqlite3: 10 skipped-only files, 1 already-covered clean sanity row, 4 failing files
+probe-batch3.sqlite3: 15 skipped-only files
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+the three fresh databases printed no uncovered clean runnable candidates. The
+skipped-only rows cover low-prompt utility, coding, topology, knot, crypto,
+plot, REPL, category-example, species, matrix, and root-system files whose
+doctests are already explicitly outside the default browser-compatible
+profile. The clean runnable row,
+`sage/logic/propcalc.py: 54 passed, 0 failed, 0 skipped`, is already present
+in `basic-pure-math.txt`, so it was treated as a sanity check rather than a
+duplicate promotion.
+
+The live failures are broader frontiers rather than narrow metadata
+promotions. `affine_lie_conformal_algebra.py` records 1 passing block and 12
+failures dominated by unavailable `sage.graphs.generic_graph_pyx` imports and
+dependent missing doctest state. `n2_lie_conformal_algebra.py` records 2
+passing blocks, 12 failures, and 1 skip, with failures spanning number-field
+cypari2 object-model boundaries, `QQbar` coercion-cache duplication, and
+dependent missing algebra generators. `bubble_shuffle.py` and
+`hochschild_lattice.py` record no passing blocks; their failures require
+graph/poset startup or backend work before they can become useful quiet
+browser-profile corpus additions.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
