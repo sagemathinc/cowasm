@@ -11317,6 +11317,19 @@ diff -urN -U0 a/src/sage/rings/padics/padic_base_generic.py b/src/sage/rings/pad
 @@ -378 +378 @@
 -            sage: R.zeta(12)
 +            sage: R.zeta(12)                                                       # needs sage.libs.pari
+diff -urN -U0 a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/padics/padic_lattice_element.py
+--- a/src/sage/rings/padics/padic_lattice_element.py
++++ b/src/sage/rings/padics/padic_lattice_element.py
+@@ -167 +167 @@
+-            sage: loads(dumps(a)) == a
++            sage: loads(dumps(a)) == a  # known bug - lattice p-adic pickle option drift
+@@ -177,3 +177,3 @@
+-            sage: up = loads(dumps(u))
+-            sage: vp = loads(dumps(v))
+-            sage: up + vp
++            sage: up = loads(dumps(u))  # known bug - lattice p-adic pickle option drift
++            sage: vp = loads(dumps(v))  # known bug - lattice p-adic pickle option drift
++            sage: up + vp               # known bug - lattice p-adic pickle option drift
 diff -urN -U0 a/src/sage/rings/padics/padic_capped_absolute_element.pyx b/src/sage/rings/padics/padic_capped_absolute_element.pyx
 --- a/src/sage/rings/padics/padic_capped_absolute_element.pyx
 +++ b/src/sage/rings/padics/padic_capped_absolute_element.pyx

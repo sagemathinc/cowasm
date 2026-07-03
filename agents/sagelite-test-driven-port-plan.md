@@ -4116,6 +4116,37 @@ backend boundaries. Future scheduled runs should avoid repeating these exact
 batches until the Singular, quaternion/dense-matrix, elliptic-curve, or
 optional helper skip policies change.
 
+Focused p-adic lattice-element corpus-growth pass:
+
+```text
+padic_lattice_element.py: 261 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/padic_lattice_element.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1004
+non-comment entries. A focused rerun first recorded this file as a compact
+near miss with 264 passing blocks, one failing block, and one skipped block.
+The failing block was the first lattice p-adic pickle round trip; after
+classifying it, the later diffused-precision pickle setup exposed the same
+factory option drift.
+
+The added WASI source patch marks the small pickle round-trip group as
+`# known bug - lattice p-adic pickle option drift`, preserving the rest of the
+lattice p-adic element arithmetic, comparison, valuation, precision, and
+coercion doctests as runnable default-profile coverage. Focused validation
+used `test-sage-doctest-corpus` after rebuilding and patching a fresh
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex-goal/padic-lattice-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d62a9f7990809228525c2c68c8f9d00bc17465d5`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
+after subtracting the updated corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

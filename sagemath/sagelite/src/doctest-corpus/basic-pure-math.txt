@@ -45,6 +45,7 @@ src/sage/rings/power_series_mpoly.pyx
 src/sage/rings/puiseux_series_ring.py
 src/sage/rings/padics/padic_relaxed_errors.pyx
 src/sage/rings/padics/lattice_precision.py
+src/sage/rings/padics/padic_lattice_element.py
 src/sage/rings/padics/misc.py
 src/sage/rings/padics/tests.py
 src/sage/rings/padics/tutorial.py
