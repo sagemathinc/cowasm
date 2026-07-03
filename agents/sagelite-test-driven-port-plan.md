@@ -25551,6 +25551,31 @@ cluster with a small reproducer, or avoid these exact sampled batches unless
 the graph, modules/category, symbolic, NTL, Singular/plural, or polynomial
 backend profile changes.
 
+Follow-up Conway finite-ring corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 25 passed, 0 failed, 33 skipped
+```
+
+This pass promotes `sage/rings/finite_rings/conway_polynomials.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,021
+non-comment entries. The previous live `PCL.polynomial(4)` failure was the
+known split NTL ZZ_pEX side-module import frontier at
+`_ZNK3NTL11ZZ_pContext7restoreEv`; the WASI source patch now marks
+pseudo-Conway polynomial construction examples as `# needs sage.libs.ntl`.
+The full-file rerun also exposed the `_frobenius_shift` example as a
+PARI/cypari2 finite-field backend boundary, so that block is now marked
+`# needs sage.libs.pari`.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-ntl-tags/conway-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

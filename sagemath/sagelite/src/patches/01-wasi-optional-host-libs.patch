@@ -11884,3 +11884,79 @@ diff -urN -U0 a/src/sage/misc/persist.pyx b/src/sage/misc/persist.pyx
 @@ -1070 +1070 @@
 -        sage: if uid == 0:
 +        sage: if uid == 0:                                                              # known bug - WASI chmod no-access check still permits writes
+diff -urN -U0 a/src/sage/rings/finite_rings/conway_polynomials.py b/src/sage/rings/finite_rings/conway_polynomials.py
+--- a/src/sage/rings/finite_rings/conway_polynomials.py
++++ b/src/sage/rings/finite_rings/conway_polynomials.py
+@@ -139,2 +139,2 @@
+-        sage: PCL = PseudoConwayLattice(2, use_database=False)
+-        sage: PCL.polynomial(3)   # random
++        sage: PCL = PseudoConwayLattice(2, use_database=False)                         # needs sage.libs.ntl
++        sage: PCL.polynomial(3)   # random                                             # needs sage.libs.ntl
+@@ -166,2 +166,2 @@
+-            sage: PCL = PseudoConwayLattice(3)
+-            sage: PCL.polynomial(3)  # random
++            sage: PCL = PseudoConwayLattice(3)                                         # needs sage.libs.ntl
++            sage: PCL.polynomial(3)  # random                                          # needs sage.libs.ntl
+@@ -170,2 +170,2 @@
+-            sage: PCL = PseudoConwayLattice(5, use_database=False)
+-            sage: PCL.polynomial(12)  # random
++            sage: PCL = PseudoConwayLattice(5, use_database=False)                     # needs sage.libs.ntl
++            sage: PCL.polynomial(12)  # random                                         # needs sage.libs.ntl
+@@ -172 +172 @@
+-            sage: PCL.polynomial(6)   # random
++            sage: PCL.polynomial(6)   # random                                         # needs sage.libs.ntl
+@@ -174 +174 @@
+-            sage: PCL.polynomial(11)  # random
++            sage: PCL.polynomial(11)  # random                                         # needs sage.libs.ntl
+@@ -213,2 +213,2 @@
+-            sage: PCL = PseudoConwayLattice(2, use_database=False)
+-            sage: PCL.polynomial(3)   # random
++            sage: PCL = PseudoConwayLattice(2, use_database=False)                     # needs sage.libs.ntl
++            sage: PCL.polynomial(3)   # random                                         # needs sage.libs.ntl
+@@ -216 +216 @@
+-            sage: PCL.polynomial(4)   # random
++            sage: PCL.polynomial(4)   # random                                         # needs sage.libs.ntl
+@@ -218 +218 @@
+-            sage: PCL.polynomial(60)  # random
++            sage: PCL.polynomial(60)  # random                                         # needs sage.libs.ntl
+@@ -281,3 +281,3 @@
+-            sage: PCL = PseudoConwayLattice(2, use_database=False)
+-            sage: PCL.check_consistency(6)
+-            sage: PCL.check_consistency(60)  # long time
++            sage: PCL = PseudoConwayLattice(2, use_database=False)                     # needs sage.libs.ntl
++            sage: PCL.check_consistency(6)                                             # needs sage.libs.ntl
++            sage: PCL.check_consistency(60)  # long time                               # needs sage.libs.ntl
+diff -urN -U0 a/src/sage/rings/finite_rings/conway_polynomials.py b/src/sage/rings/finite_rings/conway_polynomials.py
+--- a/src/sage/rings/finite_rings/conway_polynomials.py
++++ b/src/sage/rings/finite_rings/conway_polynomials.py
+@@ -389,12 +389,12 @@
+-        sage: R.<x> = GF(2)[]
+-        sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
+-        sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
+-        sage: f12 = x^12 + x^10 + x^9 + x^8 + x^4 + x^2 + 1
+-        sage: K.<a> = GF(2^60, modulus='first_lexicographic')
+-        sage: x30 = f30.roots(K, multiplicities=False)[0]
+-        sage: x20 = f20.roots(K, multiplicities=False)[0]
+-        sage: x12 = f12.roots(K, multiplicities=False)[0]
+-        sage: generators = {2: x30, 3: x20, 5: x12}
+-        sage: from sage.rings.finite_rings.conway_polynomials import _frobenius_shift, _find_pow_of_frobenius
+-        sage: _frobenius_shift(K, generators)
+-        sage: _find_pow_of_frobenius(2, 30, x30, generators[2])
++        sage: R.<x> = GF(2)[]                                                          # needs sage.libs.pari
++        sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1  # needs sage.libs.pari
++        sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1  # needs sage.libs.pari
++        sage: f12 = x^12 + x^10 + x^9 + x^8 + x^4 + x^2 + 1                            # needs sage.libs.pari
++        sage: K.<a> = GF(2^60, modulus='first_lexicographic')                          # needs sage.libs.pari
++        sage: x30 = f30.roots(K, multiplicities=False)[0]                              # needs sage.libs.pari
++        sage: x20 = f20.roots(K, multiplicities=False)[0]                              # needs sage.libs.pari
++        sage: x12 = f12.roots(K, multiplicities=False)[0]                              # needs sage.libs.pari
++        sage: generators = {2: x30, 3: x20, 5: x12}                                    # needs sage.libs.pari
++        sage: from sage.rings.finite_rings.conway_polynomials import _frobenius_shift, _find_pow_of_frobenius  # needs sage.libs.pari
++        sage: _frobenius_shift(K, generators)                                          # needs sage.libs.pari
++        sage: _find_pow_of_frobenius(2, 30, x30, generators[2])                        # needs sage.libs.pari
+@@ -403 +403 @@
+-        sage: _find_pow_of_frobenius(2, 20, x20, generators[3])
++        sage: _find_pow_of_frobenius(2, 20, x20, generators[3])                        # needs sage.libs.pari
+@@ -405 +405 @@
+-        sage: _find_pow_of_frobenius(2, 12, x12, generators[5])
++        sage: _find_pow_of_frobenius(2, 12, x12, generators[5])                        # needs sage.libs.pari
