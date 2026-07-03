@@ -26579,6 +26579,34 @@ module/free-module path recorded in earlier audits. `rings/homset.py` reaches
 the existing NTL dynamic-import boundary at
 `ZZ_pContext.restore` while constructing `R.<x> = k[]`.
 
+Follow-up low-prompt utility/database frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. Two fresh direct Sagelite probe batches under
+`.tmp/current-run/scheduled-2026-07-03-codex20/` checked small uncovered files
+from the current patched `sagemath/sagelite/build/wasi-sdk/src/sage` tree:
+
+```text
+utility-low-prompt.sqlite3: 69 total, 0 passed, 0 failed, 69 skipped
+mixed-low-prompt.sqlite3:   48 total, 0 passed, 0 failed, 48 skipped
+```
+
+The file-level shape was 19 skipped-only files and 6 files with no extracted
+doctest blocks. A strict `doctest-corpus-candidates.py
+--require-run-metadata --require-source-root-path --min-runner-version 87
+--dedupe-paths` scan over both fresh databases printed no uncovered clean
+runnable candidate.
+
+The skipped-only files are explicit browser-profile boundaries rather than
+quiet corpus additions: Cython helpers depend on `sage.misc.cython`; topology,
+monoid, homology, and species helpers depend on graph/group/module/combinat
+coverage; `tests/numpy.py` and `misc/sphinxify.py` remain optional
+NumPy/Sphinx checks; the database helpers require optional data packages; and
+`misc/profiler.py` is entirely deferred as not-tested coverage. The empty
+files in this sample were REPL prompt/parsing helpers and Judson exercise
+files whose source text contains prompt-looking strings but no runnable
+Sagelite doctest blocks after extraction.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
