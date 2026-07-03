@@ -3891,6 +3891,42 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
 after subtracting the updated corpus.
 
+Focused p-adic printing corpus-growth pass:
+
+```text
+padic_printing.pyx: 109 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/padic_printing.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 968
+non-comment entries. A compact p-adic frontier probe first recorded
+`padic_printing.pyx` as the only non-skipped clean unlisted file in the sampled
+front-door/helper batch. The two skipped examples are already classified as
+`# needs sage.libs.ntl` in the patched source copy, so no new source tag was
+needed.
+
+The same probe keeps nearby p-adic files out of the quiet corpus for now:
+`factory.py` reaches a recursive lattice-precision/matrix display stack
+overflow, `padic_generic_element.pyx` still reaches the NTL `ZZ_p` modulus
+runtime trap through `padic_ZZ_pX_CR_element`, and `padic_valuation.py` reaches
+a number-field polynomial GCD memory trap. `all.py` and `precision_error.py`
+extract no blocks, while `padic_generic.py` remains skipped-only under
+`sage.rings.padics`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-active/padic-printing/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`7926c460c4d20b88835392d146cb200f9da5b761`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the two deferred blocks
+under `optional:sage.libs.ntl`. After the corpus entry is listed,
+`doctest-corpus-candidates.py` prints no promotion rows for the focused
+database.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
