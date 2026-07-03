@@ -26153,6 +26153,40 @@ support before its structure classes can be seeded. `sage/sandpiles/examples.py`
 is a public `sandpiles` startup-surface and graph/sandpile backend frontier,
 not a tag-only promotion.
 
+Follow-up cograph helper corpus-growth pass on 2026-07-03:
+
+```text
+cographs.py: 27 passed, 0 failed, 17 skipped
+```
+
+This pass promotes `sage/graphs/cographs.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,035
+non-comment entries. A fresh source-minus-corpus prompt-count list under
+`.tmp/current-run/scheduled-2026-07-03-codex10/` first drove two mixed probes.
+The first batch was skipped-only across small category, species, monoid,
+calculus, quadratic-form, and coding helpers. The second batch was mostly
+skipped-only, with live failures in free-algebra, group-algebra, planarity, and
+cograph files.
+
+`cographs.py` was the useful narrow case: direct `CoTree` helper examples
+already passed, while all failures came from doctests written through the
+public `graphs.cographs(...)` catalog name. The WASI patch now marks those
+graph-catalog examples as `# needs sage.graphs`, preserving the pure cotree
+data-structure coverage without importing Sage's broad graph catalog into the
+trimmed `sage.all` startup surface.
+
+Final validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex10/cographs-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The final run row records CoWasm commit
+`0a7eaa1d87e927f73743c8b00ece1a2e52c17a3c`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+44 extracted blocks, and a 100% non-skipped pass rate. The saved block- and
+file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
+prints no promotion row after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

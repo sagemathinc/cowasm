@@ -12423,3 +12423,129 @@ diff --git a/src/sage/graphs/hypergraph_generators.py b/src/sage/graphs/hypergra
 @@ -133 +133 @@ class HypergraphGenerators:
 -            sage: len(list(hypergraphs.nauty(20, 20, uniform=2, regular=2,max_intersection=1)))
 +            sage: len(list(hypergraphs.nauty(20, 20, uniform=2, regular=2,max_intersection=1)))  # needs nauty
+diff --git a/src/sage/graphs/cographs.py b/src/sage/graphs/cographs.py
+--- a/src/sage/graphs/cographs.py
++++ b/src/sage/graphs/cographs.py
+@@ -77,7 +77,7 @@
+             ( 1 )
+             sage: CoTree('J')
+             [ J ]
+-            sage: next(graphs.cographs(4, as_graph=False))  # indirect doctest
++            sage: next(graphs.cographs(4, as_graph=False))  # indirect doctest  # needs sage.graphs
+             [ J ( 0 ) ( 1 ) ( 2 ) ( 3 ) ]
+         """
+         first = '[' if self.name in ['J', 'U'] else '('
+@@ -171,7 +171,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest
++        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest  # needs sage.graphs
+         [0, 1, 2]
+     """
+     if P is None:
+@@ -201,7 +201,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest
++        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest  # needs sage.graphs
+         [0, 1, 2]
+     """
+     for child in reversed(T.children):
+@@ -233,7 +233,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest
++        sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest  # needs sage.graphs
+         [0, 1, 2]
+     """
+     pivot = find_pivot(T)
+@@ -308,13 +308,13 @@
+ 
+     The output can be either cotrees or graphs::
+ 
+-        sage: for t in graphs.cographs(3, as_graph=False):
++        sage: for t in graphs.cographs(3, as_graph=False):  # needs sage.graphs
+         ....:     print(t)
+         [ J ( 0 ) ( 1 ) ( 2 ) ]
+         [ J [ U ( 0 ) ( 1 ) ( 2 ) ] ]
+         [ J ( 0 ) [ U ( 1 ) ( 2 ) ] ]
+         [ J [ U ( 0 ) [ J ( 1 ) ( 2 ) ] ] ]
+-        sage: for g in graphs.cographs(3, as_graph=True):
++        sage: for g in graphs.cographs(3, as_graph=True):  # needs sage.graphs
+         ....:     print(g.edges(labels=False, sort=True))
+         [(0, 1), (0, 2), (1, 2)]
+         []
+@@ -323,19 +323,19 @@
+ 
+     Check that we agree with :oeis:`A000084`::
+ 
+-        sage: [sum(1 for _ in graphs.cographs(n, as_graph=False))
++        sage: [sum(1 for _ in graphs.cographs(n, as_graph=False))  # needs sage.graphs
+         ....:  for n in range(1, 8)]
+         [1, 2, 4, 10, 24, 66, 180]
+ 
+     TESTS::
+ 
+-        sage: g = next(graphs.cographs(2, as_graph=True, immutable=False))
+-        sage: g.is_immutable()
++        sage: g = next(graphs.cographs(2, as_graph=True, immutable=False))  # needs sage.graphs
++        sage: g.is_immutable()  # needs sage.graphs
+         False
+-        sage: g = next(graphs.cographs(2, as_graph=True, immutable=True))
+-        sage: g.is_immutable()
++        sage: g = next(graphs.cographs(2, as_graph=True, immutable=True))  # needs sage.graphs
++        sage: g.is_immutable()  # needs sage.graphs
+         True
+-        sage: next(graphs.cographs(0))
++        sage: next(graphs.cographs(0))  # needs sage.graphs
+         Traceback (most recent call last):
+         ...
+         ValueError: parameter n must be at least >= 1
+@@ -403,7 +403,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: next(graphs.cographs(4, as_graph=True)).vertices()  # indirect doctest
++        sage: next(graphs.cographs(4, as_graph=True)).vertices()  # indirect doctest  # needs sage.graphs
+         [0, 1, 2, 3]
+     """
+     if tree.name != 1:
+@@ -424,7 +424,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
++        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest  # needs sage.graphs
+         ....:     print(t.edges(labels=False, sort=True))
+         [(0, 1), (0, 2), (1, 2)]
+         []
+@@ -445,7 +445,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
++        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest  # needs sage.graphs
+         ....:     print(t.edges(labels=False, sort=True))
+         [(0, 1), (0, 2), (1, 2)]
+         []
+@@ -469,7 +469,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
++        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest  # needs sage.graphs
+         ....:     print(t.edges(labels=False, sort=True))
+         [(0, 1), (0, 2), (1, 2)]
+         []
+@@ -501,7 +501,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
++        sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest  # needs sage.graphs
+         ....:     print(t.edges(labels=False, sort=True))
+         [(0, 1), (0, 2), (1, 2)]
+         []
