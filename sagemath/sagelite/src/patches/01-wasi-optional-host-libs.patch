@@ -946,6 +946,12 @@ diff -urN -U0 a/src/sage/rings/function_field/constructor.py b/src/sage/rings/fu
 +++ b/src/sage/rings/function_field/constructor.py
 @@ -161,0 +162 @@
 +            sage: # needs sage.libs.pari
+diff -urN -U0 a/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py b/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
+--- a/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
++++ b/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
+@@ -67 +67 @@
+-        sage: CarlitzModule(A, F)
++        sage: CarlitzModule(A, F)  # known bug - Sagelite finite-field extension generator display drifts
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py

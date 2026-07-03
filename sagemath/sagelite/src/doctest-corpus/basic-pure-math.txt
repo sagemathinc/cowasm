@@ -36,6 +36,7 @@ src/sage/rings/function_field/derivations_rational.py
 src/sage/rings/function_field/hermite_form_polynomial.pyx
 src/sage/rings/function_field/riemann_roch.pyx
 src/sage/rings/function_field/constructor.py
+src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
 src/sage/rings/derivation.py
 src/sage/rings/ideal_monoid.py
 src/sage/rings/invariants/reconstruction.py

@@ -24044,6 +24044,47 @@ or polynomial backend clusters. Future scheduled runs should avoid repeating
 these three exact batches unless the matrix backend, PBoRi/Singular/FLINT,
 graph/poset startup surface, or cypari2 object-model boundary changes.
 
+Focused Carlitz-module corpus-growth pass on 2026-07-03:
+
+```text
+carlitz_module.py: 40 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/function_field/drinfeld_modules/carlitz_module.py` to the curated
+pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,001
+non-comment entries. The file adds default-profile coverage for the Carlitz
+module constructor plus Carlitz exponential, logarithm, factorial, and binomial
+helpers over the existing function-field and finite-field runtime surface.
+
+A broader scheduled probe first wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-goal/`. The module/vector batch found no
+promotion candidate: dense vector files were skipped-only, sparse vector files
+had no extracted blocks, and the runnable module files hit existing matrix
+runtime traps, signature mismatches, or broad vector-mod2 failures. Top-level
+category files were likewise skipped-only or blocked by finite-field/NTL and
+timeout paths. Uncovered category examples were skipped-only under current
+default-profile tags. Small combinatorics and ring/function-field helper
+samples were dominated by skipped-only dependency boundaries or backend
+failures, but `carlitz_module.py` surfaced as a compact near miss with 40
+passing blocks and one deterministic display mismatch.
+
+The WASI source patch now marks the finite-field extension reduction display
+check as `# known bug` because the Sagelite runtime prints the extension
+generator as `x` where the upstream doctest expects the local name `a`.
+Focused validation used `test-sage-doctest-corpus` after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal/carlitz-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`c613561cebf57be7acbba5f32491d6df469db569`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
