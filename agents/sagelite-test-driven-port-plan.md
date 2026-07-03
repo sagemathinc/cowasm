@@ -24836,6 +24836,41 @@ and a clean result with seven explicit dependency skips: six `sage.libs.gap`
 rows and one `sage.modules sage.rings.finite_rings` row. The saved block- and
 file-failure cluster queries are empty.
 
+Follow-up medium frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,013
+non-comment entries. Three fresh direct Sagelite probes wrote SQLite
+dashboards under
+`.tmp/current-run/scheduled-2026-07-03-next-frontier/`, and
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata --ignore-invalid --quiet-invalid` printed no uncovered
+clean runnable file across the new databases.
+
+The `mixed-small.sqlite3` probe checked ten low-prompt helper files across
+CPython, REPL, crypto, doctest parsing, species, categories, monoids, and
+miscellaneous helpers. It was clean but entirely skipped or empty, recording
+`0 passed, 0 failed, 42 skipped`.
+
+The `pure-mid.sqlite3` probe checked ten medium candidates and recorded
+`41 passed, 85 failed, 90 skipped`. The actionable-looking rows were not
+tag-only promotions: `sage/numerical/backends/logging_backend.py` is blocked
+by the unavailable `sage.numerical.backends.generic_backend`/GLPK surface,
+while `sage/combinat/posets/cartesian_product.py` cascades from missing
+`Poset` and `posets` startup names. A direct import probe confirmed that
+`sage.combinat.posets.posets` currently imports `sage.graphs.digraph`, which
+then fails on the stripped `sage.graphs.generic_graph_pyx` extension, so
+seeding those names would cross the current graph-backend boundary.
+
+The broader `broad-medium.sqlite3` probe checked 32 unlisted medium-prompt
+files outside the most obvious graph, scheme, interface, modular, PBoRi, and
+test-book paths. It recorded `148 passed, 640 failed, 74 skipped`. The
+dominant block-level classes were `NameError`, `ModuleNotFoundError`,
+`ImportError`, and `AttributeError`, with file-level runtime clusters around
+NTL `unreachable` traps, PARI real-MPFR conversion signature mismatch, and a
+number-field morphism memory trap. This slice is useful boundary evidence but
+not a clean corpus-growth target until one of the graph/poset, GLPK,
+NTL/PARI, or symbolic/module startup surfaces changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
