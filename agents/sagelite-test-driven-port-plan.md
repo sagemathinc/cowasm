@@ -22888,6 +22888,25 @@ Focused validation confirmed that the default make targets exit successfully
 and print no empty-database warning in the current placeholder-dashboard state,
 while the explicit strict override still reports `empty doctest database`.
 
+Follow-up doctest self-test candidate hygiene pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The only compact current-run
+near-miss after excluding `NameError` was
+`src/sage/doctest/tests/tolerance.rst`, which is a Sage doctest framework
+self-test fixture. Its source text intentionally contains failing examples to
+check tolerance diagnostics, so treating it as a normal browser-profile
+near-miss creates false scheduled-run noise.
+
+The `doctest-corpus-candidates.py` helper now excludes
+`src/sage/doctest/tests/` rows by default across promotion, near-miss,
+skipped-only, zero-block, and file-error modes. Runner debugging can still opt
+back in with `--include-doctest-self-tests`. Focused validation used
+`py_compile`, the default and opt-in near-miss scans against
+`.tmp/current-run/scheduled-2026-07-02-current-lowprobe.sqlite3`, the default
+`make -C sagemath/sagelite sage-doctest-candidates` target, and a synthetic
+SQLite fixture that confirms normal existing Sage paths still print while
+doctest self-test paths appear only with the opt-in flag.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

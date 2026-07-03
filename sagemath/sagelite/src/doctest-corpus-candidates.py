@@ -12,6 +12,9 @@ import sys
 from pathlib import Path
 
 
+DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -59,6 +62,14 @@ def parse_args() -> argparse.Namespace:
         "--include-non-sage",
         action="store_true",
         help="include clean files outside the src/sage source tree",
+    )
+    parser.add_argument(
+        "--include-doctest-self-tests",
+        action="store_true",
+        help=(
+            "include Sage doctest framework self-test fixtures, which are "
+            "excluded by default because several files intentionally fail"
+        ),
     )
     parser.add_argument(
         "--dedupe-paths",
@@ -208,6 +219,11 @@ def parse_args() -> argparse.Namespace:
     )
     args.exclude_file_failure_detail = parse_csv_values(
         args.exclude_file_failure_detail
+    )
+    args.excluded_path_prefixes = (
+        ()
+        if args.include_doctest_self_tests
+        else DEFAULT_EXCLUDED_PATH_PREFIXES
     )
     return args
 
@@ -381,6 +397,7 @@ def candidate_rows(
     excluded_block_failure_classes: list[str],
     excluded_file_failure_classes: list[str],
     excluded_file_failure_details: list[str],
+    excluded_path_prefixes: tuple[str, ...],
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -573,6 +590,8 @@ def candidate_rows(
     ) in rows:
         relative_path = normalize_path(path, source_root)
         one_line_failure_detail = one_line_detail(failure_detail)
+        if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
+            continue
         if file_errors and any(
             detail in one_line_failure_detail
             for detail in excluded_file_failure_details
@@ -701,6 +720,7 @@ def main() -> int:
                     args.exclude_block_failure_class,
                     args.exclude_file_failure_class,
                     args.exclude_file_failure_detail,
+                    args.excluded_path_prefixes,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
