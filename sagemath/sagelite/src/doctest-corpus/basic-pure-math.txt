@@ -61,6 +61,7 @@ src/sage/rings/padics/padic_extension_leaves.py
 src/sage/rings/padics/unramified_extension_generic.py
 src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/semirings/tropical_matrix.py
+src/sage/rings/semirings/tropical_polynomial.py
 src/sage/rings/semirings/tropical_semiring.pyx
 src/sage/rings/valuation/trivial_valuation.py
 src/sage/rings/valuation/scaled_valuation.py

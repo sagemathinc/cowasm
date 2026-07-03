@@ -24400,6 +24400,38 @@ The saved block- and file-failure cluster queries are empty, and
 in the corpus. The latest run summary records runner version 83 in the default
 node profile.
 
+Focused tropical polynomial corpus-growth pass:
+
+```text
+tropical_polynomial.py: 148 passed, 0 failed, 13 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/semirings/tropical_polynomial.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,008
+non-comment entries. A fresh compact uncovered probe first recorded the file
+as a near miss with 148 passing blocks and 13 failures; the failures were
+exactly the symbolic `piecewise_function()` examples and plotting examples,
+while tropical polynomial construction, arithmetic, roots, factorization, and
+interpolation semantics already ran in the browser-compatible profile.
+
+The WASI source patch now marks the five symbolic piecewise examples as
+`# needs sage.symbolic` and the eight plot/global-plot examples as
+`# needs sage.plot`, preserving the pure algebra coverage without treating
+the symbolic or plotting backends as default-profile failures. Focused
+validation rebuilt a fresh patched Sagelite source copy through
+`test-sage-doctest-corpus`, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-continuation/tropical-polynomial-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`fdca1066d1f4117bfdc0217be24a2cfd52a27c92`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, skip grouping records eight `sage.plot` skips and five
+`sage.symbolic` skips, and `doctest-corpus-candidates.py` prints no promotion
+row after the file is listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
