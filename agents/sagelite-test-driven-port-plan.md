@@ -26123,6 +26123,36 @@ the doctest. The final run row records CoWasm commit
 29 extracted blocks, and a 100% non-skipped pass rate. The saved block- and
 file-failure cluster queries are empty.
 
+Follow-up scheduled low-prompt frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,034
+non-comment entries. A strict current-runner scan across same-day SQLite
+dashboards with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` printed no
+uncovered clean runnable candidates after the hypergraph generator promotion.
+
+Fresh probes under `.tmp/current-run/scheduled-2026-07-03-codex9/` checked
+small absent files from the refreshed source-vs-corpus prompt-count list. The
+first mixed low-prompt batch was skipped-only or empty, recording `0 passed, 0
+failed, 55 skipped` across matroid, crypto, lazy-import, threaded-map,
+category, monoid, homology, and Judson exercise helpers. The second mixed
+batch recorded `8 passed, 46 failed, 162 skipped`: category-example,
+`qqbar_decorators.py`, knot Gauss-code, design, and graph-degree-sequence
+helpers were skipped-only, while the live failures were broader backend or
+startup frontiers rather than narrow metadata fixes.
+
+The checked near misses should stay out of the quiet browser-profile corpus for
+now. `sage/rings/polynomial/hilbert.pyx` still fails on the disabled FLINT
+integer-polynomial side-module import before its main Hilbert-series functions
+can be tested, in addition to Singular/plural-dependent examples.
+`sage/combinat/posets/bubble_shuffle.py` depends on the unavailable graph
+backend and public `posets`/`simplicial_complexes` startup names.
+`sage/manifolds/structure.py` imports symbolic-expression-backed manifold
+support before its structure classes can be seeded. `sage/sandpiles/examples.py`
+is a public `sandpiles` startup-surface and graph/sandpile backend frontier,
+not a tag-only promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
