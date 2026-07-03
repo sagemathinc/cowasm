@@ -25674,6 +25674,38 @@ the latest run metadata records CoWasm commit
 passes after updating the doctest smoke expectations for the new deferred
 `py2` block.
 
+Follow-up invariant-theory corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 864 passed, 0 failed, 24 skipped
+```
+
+This pass promotes `sage/rings/invariants/invariant_theory.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,024
+non-comment entries. Existing probe data had identified the file as a large
+near miss with 863 passing blocks and 20 failures. The WASI source patch now
+marks the exact browser-profile boundaries and display drifts: five
+transvectant examples requiring the stripped symbolic-expression stack, four
+multivariate factorization examples requiring the unavailable Singular-backed
+factorization path, one arithmetic-invariants dictionary display-order
+example as random, the positive-characteristic zero-division diagnostic as a
+known WASI text drift, and the ternary/quaternary biquadratic coefficient
+comparison mismatches as known invariant-coefficient drift. The remaining
+classical invariant and covariant computations stay live in the default node
+profile.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal4/invariant-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records CoWasm commit
+`aef69195805131042089197f41c1fb2b185a8116`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+85.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

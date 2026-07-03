@@ -11982,3 +11982,66 @@ diff -urN -U0 a/src/sage/misc/explain_pickle.py b/src/sage/misc/explain_pickle.p
 @@ -2837 +2837 @@
 -            sage: v.extend([3,1,4,1,5,9])
 +            sage: v.extend([3,1,4,1,5,9])                                         # known bug - WASI TypeError integer formatting drift
+diff -urN -U0 a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/invariants/invariant_theory.py
+--- a/src/sage/rings/invariants/invariant_theory.py
++++ b/src/sage/rings/invariants/invariant_theory.py
+@@ -205 +205 @@
+-        sage: transvectant(f, f, 4)
++        sage: transvectant(f, f, 4)                                                   # needs sage.symbolic
+@@ -218 +218 @@
+-        sage: transvectant(f, f, 4)
++        sage: transvectant(f, f, 4)                                                   # known bug - WASI zero-division diagnostic text
+@@ -222 +222 @@
+-        sage: transvectant(f, f, 4, scale='none')
++        sage: transvectant(f, f, 4, scale='none')                                     # needs sage.symbolic
+@@ -233 +233 @@
+-        sage: transvectant(f, f, 4)
++        sage: transvectant(f, f, 4)                                                   # needs sage.symbolic
+@@ -237 +237 @@
+-        sage: transvectant(f, f, 4, scale='none')
++        sage: transvectant(f, f, 4, scale='none')                                     # needs sage.symbolic
+@@ -256 +256 @@
+-        sage: transvectant(quintic, quintic, 2)
++        sage: transvectant(quintic, quintic, 2)                                      # needs sage.symbolic
+@@ -1230 +1230 @@
+-            sage: quadratic.dual().dual().form().factor()
++            sage: quadratic.dual().dual().form().factor()                                # needs sage.libs.singular
+@@ -1239 +1239 @@
+-            sage: q.dual().dual().form().factor()
++            sage: q.dual().dual().form().factor()                                        # needs sage.libs.singular
+@@ -1246 +1246 @@
+-            sage: q.dual().dual().form().factor()
++            sage: q.dual().dual().form().factor()                                        # needs sage.libs.singular
+@@ -2354 +2354 @@
+-            sage: quintic.arithmetic_invariants()
++            sage: quintic.arithmetic_invariants()                                           # random - dict display order
+@@ -3350 +3350 @@
+-            sage: q.Delta_invariant() == coeffs[3]
++            sage: q.Delta_invariant() == coeffs[3]                                          # known bug - WASI invariant coefficient drift
+@@ -3366 +3366 @@
+-            sage: q.Delta_prime_invariant() == coeffs[0]
++            sage: q.Delta_prime_invariant() == coeffs[0]                                    # known bug - WASI invariant coefficient drift
+@@ -3400 +3400 @@
+-            sage: q.Theta_invariant() == coeffs[2]
++            sage: q.Theta_invariant() == coeffs[2]                                          # known bug - WASI invariant coefficient drift
+@@ -3416 +3416 @@
+-            sage: q.Theta_prime_invariant() == coeffs[1]
++            sage: q.Theta_prime_invariant() == coeffs[1]                                    # known bug - WASI invariant coefficient drift
+@@ -3567 +3567 @@
+-            sage: q.Delta_invariant() == coeffs[4]
++            sage: q.Delta_invariant() == coeffs[4]                                          # known bug - WASI invariant coefficient drift
+@@ -3585 +3585 @@
+-            sage: q.Delta_prime_invariant() == coeffs[0]
++            sage: q.Delta_prime_invariant() == coeffs[0]                                    # known bug - WASI invariant coefficient drift
+@@ -3631 +3631 @@
+-            sage: q.Theta_invariant() == coeffs[3]
++            sage: q.Theta_invariant() == coeffs[3]                                          # known bug - WASI invariant coefficient drift
+@@ -3649 +3649 @@
+-            sage: q.Theta_prime_invariant() == coeffs[1]
++            sage: q.Theta_prime_invariant() == coeffs[1]                                    # known bug - WASI invariant coefficient drift
+@@ -3667 +3667 @@
+-            sage: q.Phi_invariant() == coeffs[2]
++            sage: q.Phi_invariant() == coeffs[2]                                            # known bug - WASI invariant coefficient drift
+@@ -3830 +3830 @@
+-            sage: q.J_covariant().factor()
++            sage: q.J_covariant().factor()                                                # needs sage.libs.singular

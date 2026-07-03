@@ -39,6 +39,7 @@ src/sage/rings/function_field/constructor.py
 src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
 src/sage/rings/derivation.py
 src/sage/rings/ideal_monoid.py
+src/sage/rings/invariants/invariant_theory.py
 src/sage/rings/invariants/reconstruction.py
 src/sage/rings/polynomial/polydict.pyx
 src/sage/rings/power_series_mpoly.pyx
