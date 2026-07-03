@@ -24373,6 +24373,33 @@ patched Sagelite source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and the latest
 run summary records runner version 83 in the default node profile.
 
+Focused PARI pseudo-ring corpus-growth pass:
+
+```text
+pari_ring.py: 35 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds `sage/rings/pari_ring.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,007
+non-comment entries. Fresh probing first recorded 35 passing blocks and 11
+failures in the PARI pseudo-ring wrapper because basic construction and repr
+work in the focused cypari2 subset, while pickling and arithmetic, inversion,
+power, and ordering operations still need broader PARI `Gen` object semantics.
+
+The WASI source patch now marks those operation examples as
+`# needs sage.libs.pari`, preserving the runnable construction coverage without
+counting the incomplete PARI object model as default browser-profile failures.
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next/pari-ring-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is listed
+in the corpus. The latest run summary records runner version 83 in the default
+node profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -11646,3 +11646,39 @@ diff -urN -U0 a/src/sage/matrix/action.pyx b/src/sage/matrix/action.pyx
 @@ -530 +530 @@
 -            sage: A._act_(m, f)
 +            sage: A._act_(m, f)                                                       # needs sage.rings.polynomial.plural
+diff -urN -U0 a/src/sage/rings/pari_ring.py b/src/sage/rings/pari_ring.py
+--- a/src/sage/rings/pari_ring.py
++++ b/src/sage/rings/pari_ring.py
+@@ -41 +41 @@
+-            sage: loads(f.dumps()) == f
++            sage: loads(f.dumps()) == f                                              # needs sage.libs.pari
+@@ -66 +66 @@
+-            sage: a + b
++            sage: a + b                                                              # needs sage.libs.pari
+@@ -78 +78 @@
+-            sage: b - a
++            sage: b - a                                                              # needs sage.libs.pari
+@@ -90 +90 @@
+-            sage: b * a
++            sage: b * a                                                              # needs sage.libs.pari
+@@ -102 +102 @@
+-            sage: b / a
++            sage: b / a                                                              # needs sage.libs.pari
+@@ -113 +113 @@
+-            sage: -a
++            sage: -a                                                                 # needs sage.libs.pari
+@@ -124 +124 @@
+-            sage: a^2
++            sage: a^2                                                                # needs sage.libs.pari
+@@ -137 +137 @@
+-            sage: ~a
++            sage: ~a                                                                 # needs sage.libs.pari
+@@ -149 +149 @@
+-            sage: a < b
++            sage: a < b                                                              # needs sage.libs.pari
+@@ -153 +153 @@
+-            sage: a > b
++            sage: a > b                                                              # needs sage.libs.pari
+@@ -213 +213 @@
+-            sage: R(5) <= R.random_element(5,13) < R(13)
++            sage: R(5) <= R.random_element(5,13) < R(13)                             # needs sage.libs.pari
