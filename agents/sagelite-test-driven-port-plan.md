@@ -23578,6 +23578,30 @@ against the fresh timeout and poset scratch databases, parser guard checks for
 using the new flags outside their required modes, and a make-level passthrough
 check for `--file-errors --only-file-failure-class timeout --paths-only`.
 
+Follow-up skipped-frontier exclusion pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The candidate-helper frontier
+filters now support `--exclude-skip-reason TEXT` with `--skipped-only`,
+mirroring the existing positive `--only-skip-reason` filter and the
+failure-frontier exclude filters. This makes dependency-boundary audits easier
+to stage incrementally, for example by asking for skipped-only rows while
+excluding already-understood graph, subprocess, or FLINT-only frontiers.
+
+The option matches against the grouped distinct skip reasons for each file and
+suppresses a file when any reason contains one of the configured substrings.
+It composes with `--only-skip-reason`, so a scan can first require one boundary
+class and then subtract a broader or already-triaged overlapping class. The
+make-level `sage-doctest-candidates` entrypoint passes the new flag through
+via `SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a synthetic SQLite fixture
+under `.tmp/current-run/scheduled-2026-07-03-skip-exclude/` covering matched,
+unmatched, and combined only-plus-exclude skipped-only filters, and a parser
+guard check proving `--exclude-skip-reason` is rejected outside
+`--skipped-only`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
