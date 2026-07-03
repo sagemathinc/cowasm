@@ -23660,6 +23660,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
 after subtracting the updated corpus.
 
+Focused misc-functional corpus-growth pass:
+
+```text
+functional.py: 89 passed, 0 failed, 338 skipped
+```
+
+That one-file make-target validation adds `sage/misc/functional.py` to the
+curated pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 992
+non-comment entries. The file adds default-profile coverage for common
+functional helpers such as numerator/denominator on exact rationals, integer
+square roots, generators, kernel/image wrappers, norms, rounding helpers, and
+other small coercion-facing utilities.
+
+The WASI source patch now classifies the file's browser-out-of-scope doctests
+before promotion: fraction-field polynomial numerator/denominator examples,
+Maxima/symbolic integral examples, symbolic logarithm edge cases, PARI-backed
+polynomial squarefree examples, and one known Sagelite warning-prefix
+normalization drift for `krull_dimension(QQ)`. This keeps the promoted file
+as runnable pure-math coverage instead of recording runtime traps in the
+fraction-field and polynomial squarefree paths.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next/functional-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3372004d4524ea8c2efe0a4127ee6b6d3494f7f6`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
+`/home/user/sagelite`, the saved block- and file-failure cluster queries are
+empty, and `doctest-corpus-candidates.py` prints no promotion rows after
+subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
