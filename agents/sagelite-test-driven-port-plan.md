@@ -4180,6 +4180,34 @@ and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
 empty, and `doctest-corpus-candidates.py` prints no promotion row after
 subtracting the updated corpus.
 
+Follow-up compact low-count frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. The current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1005 non-comment entries after subtracting the latest generic dense-matrix
+promotion.
+
+Three fresh current-runner probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-goal-next/`. The first low-count batch,
+`lowcount.sqlite3`, covered the first 45 uncovered files with 1-18 Sage/CPython
+prompts and recorded `1 passed, 40 failed, 140 skipped`; its only runnable
+near miss was `sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`
+with one passing setup block followed by missing hyperelliptic-curve startup
+names. The second compact batch, `lowcount2.sqlite3`, covered uncovered files
+with 19-35 prompts and recorded `28 passed, 327 failed, 535 skipped`, with
+the live failures dominated by GAP/PARI, qadic FLINT, number-field, elliptic,
+polynomial, and manifold backends. The middle 8-18 prompt batch,
+`midcompact.sqlite3`, recorded `7 passed, 122 failed, 380 skipped`; its
+runnable rows were hyperelliptic or Lie-conformal near misses, while most
+compact category, matrix, monoid, p-adic, plotting, symbolic, and modular
+helpers were skipped-only under existing browser-profile metadata.
+
+The candidate helper prints no uncovered clean runnable promotion rows across
+these dashboards. Future scheduled runs should avoid repeating these exact
+low-count slices unless the GAP/PARI object model, graph/poset startup surface,
+Singular/FLINT/PBoRi polynomial backends, qadic/p-adic extension support, or
+hyperelliptic/scheme startup namespace changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
