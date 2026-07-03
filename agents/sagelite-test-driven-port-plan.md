@@ -26010,6 +26010,38 @@ NTL `ZZ_pContext.restore` dynamic-link frontier before block rows can be
 completed. These files remain outside the quiet corpus pending real backend or
 startup-surface work, not doctest metadata-only fixes.
 
+Follow-up refreshed low-prompt frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,031
+non-comment entries. A refreshed source-vs-corpus prompt-count list under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex6/` was used to
+avoid stale absent-file rows from earlier same-day promotions. Three direct
+`sage -t --timeout 90` probes wrote:
+`low-prompt-frontier.sqlite3`, `low-prompt-frontier-2.sqlite3`, and
+`low-prompt-frontier-3.sqlite3`.
+
+The combined candidate-helper scan with `--source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --dedupe-paths` printed no uncovered clean runnable
+candidate. The probes covered 50 low-prompt absent files: 37 were skipped-only
+under existing optional or `# needs` tags, one extracted zero runnable blocks
+(`sage/graphs/all.py`), three runnable rows were already covered by the corpus
+(`sage/groups/matrix_gps/linear_gap.py`,
+`sage/groups/matrix_gps/named_group_gap.py`, and
+`sage/schemes/weighted_projective/weighted_projective_homset.py`), and nine
+files recorded live failures.
+
+The live failures are broader backend or startup frontiers rather than narrow
+promotion targets: PARI conversion helpers still hit `cypari2` object-model
+or missing-converter boundaries, GAP and PolyBoRi helpers import unavailable
+modules, graph and Hochschild-lattice examples need graph/poset startup and
+backend support, elliptic-curve database examples need optional database
+resources, and eclib constructor examples depend on the missing
+`sage.libs.eclib.homspace` module. The skipped-only rows mostly classify graph,
+GAP, FLINT, PARI, symbolic, Cython, database, Sphinx, NumPy, and SymEngine
+frontiers, so future scheduled passes should look beyond this compact
+low-prompt slice unless those backend profiles change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
