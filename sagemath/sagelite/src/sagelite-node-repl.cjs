@@ -1152,6 +1152,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
     except BaseException:
         pass
     try:
+        import sage.combinat.path_tableaux.catalog as path_tableaux
+        namespace.setdefault("path_tableaux", path_tableaux)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "path_tableaux"):
+                setattr(sage_all, "path_tableaux", path_tableaux)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
         from sage.crypto.all import key_exchange
         namespace.setdefault("key_exchange", key_exchange)
         try:

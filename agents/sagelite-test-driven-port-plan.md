@@ -23190,6 +23190,30 @@ function-field higher-derivation setup, so no additional WASI source tagging
 was needed. Saved block- and file-failure cluster queries are empty for the
 focused run.
 
+Follow-up path-tableaux Dyck-path corpus-growth pass on 2026-07-03:
+
+`src/sage/combinat/path_tableaux/dyck_path.py` is now listed in the curated
+pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 982 non-comment
+entries. A fresh finite-ring, polynomial, module, and combinatorics probe
+revisited the older path-tableau namespace cluster and found that
+`dyck_path.py` became a clean promotion candidate once the doctest startup
+namespace exposed Sage's documented `path_tableaux` catalog alias.
+
+The doctest runner now seeds `path_tableaux` from
+`sage.combinat.path_tableaux.catalog`, and the WASI `sage.all` patch exposes
+the same alias for rebuilt Sagelite resources. Focused validation recorded
+`52 passed, 0 failed, 0 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-next/dyck-corpus.sqlite3`; saved
+block- and file-failure cluster queries are empty, and the full WASI source
+patch dry-runs against `/home/user/sagelite`.
+
+The same pass sampled adjacent absent files without finding another promotion
+candidate. The main blocked clusters were finite-field/Conway polynomial NTL
+imports, Singular-backed and PARI-backed polynomial helpers, symbolic vector
+and quotient-module startup gaps, cellular-basis graph imports, and
+number-field/polyhedron runtime frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
