@@ -23038,6 +23038,36 @@ example. Future low-prompt scheduled runs should skip this exact batch unless
 one of those graph/GAP/PBORI/pexpect/qsieve frontiers changes, and should
 continue with a different namespace or a targeted runtime-port cluster.
 
+Follow-up CLI/REPL and scheme-helper absent audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. Rechecking the three newest
+low-prompt absent SQLite dashboards with
+`doctest-corpus-candidates.py --source-root ... --require-run-metadata`
+printed no uncovered clean runnable rows against the current
+978 non-comment-entry `basic-pure-math.txt` corpus. The only current near-miss
+remains `src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`,
+whose failures are startup-surface `NameError` rows rather than a clean
+dependency-boundary promotion.
+
+A fresh compact CLI/REPL/doc helper probe wrote
+`.tmp/current-run/scheduled-2026-07-03-cli-repl/probe.sqlite3` and extracted
+zero doctest blocks from `sage/cli/notebook_cmd_test.py`,
+`sage/cli/selftest.py`, `sage/repl/prompts.py`, and
+`sage/misc/sagedoc_conf.py`, so those files should remain outside the curated
+dashboard.
+
+A fresh scheme-helper probe wrote
+`.tmp/current-run/scheduled-2026-07-03-schemes-small/probe.sqlite3`, recording
+7 passed and 37 failed blocks across `ec_database.py`,
+`jacobian_homset_ramified.py`, `jacobian_homset_inert.py`, and
+`plane_conics/constructor.py`. The elliptic-curve database examples require
+the optional Cremona elliptic-curve database; the hyperelliptic Jacobian files
+need a broader `HyperellipticCurve`/`Jacobian` startup or dependency decision;
+and directly importing `Conic` reaches the stripped Singular-backed
+projective-curve stack. The four passing plane-conic blocks are only local
+setup prompts, so tagging every `Conic(...)` example would add skipped-heavy
+noise rather than useful default-profile coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
