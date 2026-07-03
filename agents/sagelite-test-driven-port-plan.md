@@ -26096,6 +26096,33 @@ the doctest. The saved block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py` prints no promotion row after the file is added
 to the corpus.
 
+Follow-up hypergraph generator corpus-growth pass on 2026-07-03:
+
+```text
+hypergraph_generators.py: 10 passed, 0 failed, 19 skipped
+```
+
+This pass promotes `sage/graphs/hypergraph_generators.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,034
+non-comment entries. A broad absent-file probe first recorded 10 passing
+blocks, 9 failures, and 10 skips; every failure was in the Nauty-backed
+`hypergraphs.nauty(...)` enumeration examples or dependent Fano-plane output.
+
+The WASI source patch now marks those examples as `# needs nauty`, preserving
+the pure Python `CompleteUniform` and `UniformRandomUniform` constructor
+coverage as live browser-profile tests while keeping the external `genbgL`
+subprocess boundary explicit. Final validation used `make -C
+sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex8/hypergraph-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The final run row records CoWasm commit
+`162f0602ef183c96caa6167f48c630cb766bb643`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+29 extracted blocks, and a 100% non-skipped pass rate. The saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

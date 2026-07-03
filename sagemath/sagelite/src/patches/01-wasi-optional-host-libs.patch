@@ -12395,3 +12395,31 @@ diff --git a/src/sage/rings/polynomial/complex_roots.py b/src/sage/rings/polynom
 @@ -255 +255 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
 -        sage: len(complex_roots(f))
 +        sage: len(complex_roots(f))  # needs sage.libs.pari
+diff --git a/src/sage/graphs/hypergraph_generators.py b/src/sage/graphs/hypergraph_generators.py
+--- a/src/sage/graphs/hypergraph_generators.py
++++ b/src/sage/graphs/hypergraph_generators.py
+@@ -11 +11 @@ method :meth:`~nauty`, which calls Brendan McKay's Nauty
+-    sage: list(hypergraphs.nauty(2, 2, connected=True))
++    sage: list(hypergraphs.nauty(2, 2, connected=True))                          # needs nauty
+@@ -104 +104 @@ class HypergraphGenerators:
+-            sage: list(hypergraphs.nauty(4, 2))
++            sage: list(hypergraphs.nauty(4, 2))                                  # needs nauty
+@@ -109 +109 @@ class HypergraphGenerators:
+-            sage: list(hypergraphs.nauty(2, 2, connected=True))
++            sage: list(hypergraphs.nauty(2, 2, connected=True))                  # needs nauty
+@@ -114 +114 @@ class HypergraphGenerators:
+-            sage: list(hypergraphs.nauty(3, 2, set_min_size=1))
++            sage: list(hypergraphs.nauty(3, 2, set_min_size=1))                  # needs nauty
+@@ -120,2 +120,2 @@ class HypergraphGenerators:
+-            sage: fano = next(hypergraphs.nauty(7, 7, uniform=3, max_intersection=1))
+-            sage: print(fano)
++            sage: fano = next(hypergraphs.nauty(7, 7, uniform=3, max_intersection=1))  # needs nauty
++            sage: print(fano)                                                     # needs nauty
+@@ -127,2 +127,2 @@ class HypergraphGenerators:
+-            sage: fano = next(hypergraphs.nauty(7, 7, regular=3, max_intersection=1))
+-            sage: print(fano)
++            sage: fano = next(hypergraphs.nauty(7, 7, regular=3, max_intersection=1))  # needs nauty
++            sage: print(fano)                                                     # needs nauty
+@@ -133 +133 @@ class HypergraphGenerators:
+-            sage: len(list(hypergraphs.nauty(20, 20, uniform=2, regular=2,max_intersection=1)))
++            sage: len(list(hypergraphs.nauty(20, 20, uniform=2, regular=2,max_intersection=1)))  # needs nauty
