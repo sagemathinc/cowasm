@@ -23173,6 +23173,23 @@ skips under `optional:sage.libs.pari`, and
 `doctest-corpus-candidates.py` prints no promotion rows after the file is
 listed in the corpus.
 
+Follow-up function-field derivation corpus-growth pass on 2026-07-03:
+
+`src/sage/rings/function_field/derivations.py` is now listed in the curated
+pure-math corpus. A fresh absent-file probe over small function-field, module,
+algebra, category, combinatorics, knot, and coding helpers found
+`derivations.py` as the only uncovered clean runnable row; the same probe kept
+symbolic callable-vector and Lie conformal algebra files out because they
+still expose startup, graph-backend, cypari2, or coercion-cache failures under
+the default browser profile.
+
+Focused validation with the current runner recorded `14 passed, 0 failed, 3
+skipped` in `/tmp/sagelite-20260703-derivations-focus.sqlite3`. The three
+skips are existing `optional:sage.rings.function_field` rows for algebraic
+function-field higher-derivation setup, so no additional WASI source tagging
+was needed. Saved block- and file-failure cluster queries are empty for the
+focused run.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
