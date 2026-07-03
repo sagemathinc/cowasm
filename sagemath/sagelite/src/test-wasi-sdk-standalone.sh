@@ -2960,6 +2960,27 @@ if [ "$doctest_candidate_helper_skipped_only_details" != "src/sage/example/skipp
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-skip-reasons did not report skipped-only dependency metadata."
 fi
+doctest_candidate_helper_skipped_only_filtered="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --only-skip-reason sage.symbolic \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_skipped_only_filtered" != "src/sage/example/skipped_candidate.py	2	0	0	2	0	25	passed	" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_filtered" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-skip-reason did not filter skipped-only dependency rows."
+fi
+doctest_candidate_helper_skipped_only_filtered_miss="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --only-skip-reason subprocess \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_skipped_only_filtered_miss" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_filtered_miss" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-skip-reason reported unrelated skipped-only rows."
+fi
 doctest_candidate_helper_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
   --corpus "$doctest_candidate_helper_corpus" \

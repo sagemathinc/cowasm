@@ -23534,6 +23534,21 @@ a strict one-file `test-sage-doctest-corpus` make run both recorded
 `.tmp/current-run/scheduled-2026-07-03-qsieve/make.sqlite3`. A full patch
 dry-run against `/home/user/sagelite` also applies.
 
+Follow-up skipped-boundary filter pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The next phase needs clearer
+separation between subprocess frontiers, optional dependency frontiers, and
+empty/noisy probes, so the candidate helper now supports
+`--only-skip-reason TEXT` with `--skipped-only`. This keeps the default
+candidate reports unchanged while allowing scans such as skipped-only
+`subprocess` or `sage.libs.flint` boundary audits without raw SQLite queries.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a synthetic SQLite
+fixture in the standalone smoke that checks both matching and non-matching
+`--only-skip-reason` skipped-only rows.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

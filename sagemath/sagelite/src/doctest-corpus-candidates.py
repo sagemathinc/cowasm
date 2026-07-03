@@ -144,6 +144,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--only-skip-reason",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --skipped-only, report only files whose distinct block skip "
+            "reasons contain one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--failure-detail-limit",
         type=int,
         default=0,
@@ -255,6 +265,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--exclude-file-failure-detail requires --file-errors")
     if args.include_skip_reasons and not args.skipped_only:
         parser.error("--include-skip-reasons requires --skipped-only")
+    if args.only_skip_reason and not args.skipped_only:
+        parser.error("--only-skip-reason requires --skipped-only")
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
     )
@@ -264,6 +276,7 @@ def parse_args() -> argparse.Namespace:
     args.exclude_file_failure_detail = parse_csv_values(
         args.exclude_file_failure_detail
     )
+    args.only_skip_reason = parse_csv_values(args.only_skip_reason)
     args.excluded_path_prefixes = (
         ()
         if args.include_doctest_self_tests
@@ -481,6 +494,7 @@ def candidate_rows(
     excluded_block_failure_classes: list[str],
     excluded_file_failure_classes: list[str],
     excluded_file_failure_details: list[str],
+    only_skip_reasons: list[str],
     excluded_path_prefixes: tuple[str, ...],
     include_skip_reasons: bool,
     require_source_root_path: bool,
@@ -532,7 +546,12 @@ def candidate_rows(
                 {failure_detail_expr}
               )
         """
-    if skipped_only and include_skip_reasons and can_read_block_skip_reasons(db):
+    if skipped_only and (include_skip_reasons or only_skip_reasons):
+        if not can_read_block_skip_reasons(db):
+            raise SystemExit(
+                "cannot read skip reasons: database lacks compatible "
+                "blocks/files metadata"
+            )
         row_failure_detail_expr = """
               coalesce(
                 (
@@ -741,6 +760,10 @@ def candidate_rows(
             for detail in excluded_file_failure_details
         ):
             continue
+        if skipped_only and only_skip_reasons and not any(
+            reason in one_line_failure_detail for reason in only_skip_reasons
+        ):
+            continue
         if not include_non_sage and not relative_path.startswith("src/sage/"):
             continue
         if not source_candidate_exists(relative_path, source_root):
@@ -868,6 +891,7 @@ def main() -> int:
                     args.exclude_block_failure_class,
                     args.exclude_file_failure_class,
                     args.exclude_file_failure_detail,
+                    args.only_skip_reason,
                     args.excluded_path_prefixes,
                     args.include_skip_reasons,
                     args.require_source_root_path,
