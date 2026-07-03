@@ -26607,6 +26607,39 @@ files in this sample were REPL prompt/parsing helpers and Judson exercise
 files whose source text contains prompt-looking strings but no runnable
 Sagelite doctest blocks after extraction.
 
+Follow-up utility/crypto/category frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. Existing runner-87 SQLite dashboards under
+`.tmp/current-run/` were rescanned with strict candidate filters before the
+new probes, and no uncovered clean runnable file was found. A refreshed
+source-minus-corpus prompt-count sample from the current patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree then drove two fresh direct
+Sagelite probe batches under
+`.tmp/current-run/scheduled-2026-07-03-codex21/`:
+
+```text
+probe-a.sqlite3: 2 passed, 23 failed, 625 skipped
+probe-b.sqlite3: 76 passed, 280 failed, 1687 skipped
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+both fresh databases printed no uncovered clean runnable candidate. The
+file-level shape was 33 skipped-only browser-profile boundary files, five
+block-failing files, and two file-level errors.
+
+The skipped-only rows cover utility, REPL, plotting, crypto, combinatorics,
+and category-example files whose current doctests are entirely tagged outside
+the default browser-compatible profile. The live failures remain broader
+frontiers rather than narrow corpus additions: `geometry/voronoi_diagram.py`
+starts with a missing constructor name, but a focused import smoke shows that
+`sage.geometry.voronoi_diagram` currently reaches missing `pexpect`;
+`categories/finite_fields.py` hits the known NTL
+`ZZ_pContext.restore` dynamic-link boundary; `categories/quotient_fields.py`
+times out in a polynomial extended-gcd example; and the sampled REPL files
+remain dominated by IPython/session semantics rather than pure-math coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
