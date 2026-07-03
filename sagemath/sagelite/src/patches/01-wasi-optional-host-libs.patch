@@ -11020,6 +11020,34 @@ diff -urN -U0 a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.py
          sig_on()
          self.x.SetMaxLength(n)
          #ZZ_pX_preallocate_space(&self.x, n)
+diff -urN -U0 a/src/sage/libs/ntl/ntl_GF2E.pyx b/src/sage/libs/ntl/ntl_GF2E.pyx
+--- a/src/sage/libs/ntl/ntl_GF2E.pyx
++++ b/src/sage/libs/ntl/ntl_GF2E.pyx
+@@ -34,0 +35,3 @@
++cdef inline void restore_GF2E_context(ntl_GF2EContext_class c) noexcept:
++    GF2E_init(c.m.x)
++
+@@ -65 +68 @@
+-    ctx.restore_c()
++    restore_GF2E_context(ctx)
+@@ -151 +154 @@
+-            self.c.restore_c()
++            restore_GF2E_context(self.c)
+@@ -154 +157 @@
+-            self.c.restore_c()
++            restore_GF2E_context(self.c)
+@@ -158 +161 @@
+-        self.c.restore_c()
++        restore_GF2E_context(self.c)
+@@ -199 +202 @@
+-        self.c.restore_c()
++        restore_GF2E_context(self.c)
+@@ -335 +338 @@
+-        self.c.restore_c()
++        restore_GF2E_context(self.c)
+@@ -464 +467 @@
+-        self.c.restore_c()
++        restore_GF2E_context(self.c)
 diff -urN -U0 a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
 --- a/src/sage/libs/ntl/ntl_GF2X.pyx
 +++ b/src/sage/libs/ntl/ntl_GF2X.pyx

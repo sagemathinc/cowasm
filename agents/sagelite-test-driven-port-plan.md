@@ -22566,6 +22566,40 @@ the current frontier; the fresh run passes that smoke and later finite-field,
 matrix, multivariate-polynomial, Laurent-polynomial, PARI-boundary,
 libbraiding, and lrcalc Node probes before finishing the standalone target.
 
+Follow-up GF2E split-side-module context restore pass on 2026-07-03:
+
+The `src/sage/libs/ntl/ntl_GF2EContext.pyx` file is now a clean curated corpus
+entry. A focused full-file rerun records:
+
+```text
+ntl_GF2EContext.pyx: 20 passed, 0 failed, 0 skipped
+```
+
+The remaining failure after the earlier `ZZ_p` split-side-module pass was that
+`ntl_GF2EContext.restore_c()` initialized the NTL `GF2E` modulus in the context
+side module, while `ntl_GF2E` operations and representation run in the
+`ntl_GF2E` side module. The symptom was Python-level success with incorrect
+zero-like output such as `[]` for nonzero `GF2E` values. The WASI source patch
+now restores the `GF2E` modulus locally inside `ntl_GF2E.pyx` with
+`GF2E_init(c.m.x)` before random element creation, construction, new element
+allocation, representation, comparison, and Sage conversion.
+
+Validation used:
+
+```text
+SAGELITE_MESON_COMPILE_JOBS=4 make -C sagemath/sagelite test-wasi-sdk-standalone
+COWASM_SAGELITE_DOCTEST_DB=.tmp/current-run/ntl-gf2e-after-local-restore.sqlite3 sagemath/sagelite/bin/sage -t sagemath/sagelite/build/wasi-sdk/src/sage/libs/ntl/ntl_GF2EContext.pyx
+SAGELITE_DOCTEST_CORPUS=.tmp/current-run/ntl-gf2e-local-restore/corpus.txt SAGELITE_DOCTEST_DB=.tmp/current-run/ntl-gf2e-local-restore/make.sqlite3 SAGELITE_DOCTEST_ALLOW_FAILURES=0 SAGELITE_DOCTEST_TIMEOUT=90 make -C sagemath/sagelite test-sage-doctest-corpus
+```
+
+The standalone target finished with
+`sagelite-ok meson configure compile install node import electron resources
+smoke relocated followups recorded`, and the focused SQLite rerun recorded the
+clean `20 passed` result. The strict one-file make corpus run also recorded
+`20 passed, 0 failed, 0 skipped`, and
+`doctest-corpus-candidates.py` printed no promotion rows after the file was
+listed in `basic-pure-math.txt`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
