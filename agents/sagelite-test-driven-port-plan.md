@@ -25146,6 +25146,41 @@ only, front-door files extracted zero blocks, and `parallel/decorate.py` plus
 runs should avoid repeating this compact utility batch unless the browser
 profile gains multiprocessing/fork/alarm support.
 
+Follow-up weighted-projective corpus-growth pass on 2026-07-03:
+
+This pass promoted one corpus entry; the curated corpus now has 1,016
+non-comment entries after adding
+`src/sage/schemes/weighted_projective/weighted_projective_space.py`. A fresh
+direct source-minus-corpus probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-frontier/modular-schemes-arith.sqlite3`
+with current patched source root metadata, node profile, runner version 83,
+CoWasm commit `6969f29f896cc22a812a15a2fe4b119100591b4b`, and Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`. The promoted file
+recorded `27 passed, 0 failed, 6 skipped`, and
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--ignore-invalid --quiet-invalid --dedupe-paths` printed it as the only clean
+uncovered runnable row from that database before the corpus update.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus`, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-frontier/weighted-projective-space-make.sqlite3`.
+The strict make-target run recorded `27 passed, 0 failed, 6 skipped`, 100%
+non-skipped pass rate, and empty saved block- and file-failure cluster
+queries.
+
+The same probe also documented nearby non-promotion boundaries. The modular
+files and `arith/long.pxd` were skipped-only under existing metadata, while
+`weighted_projective_point.py` failed mostly on missing local doctest setup
+names such as `WeightedProjectiveSpace`, `WP`, and dependent point variables.
+`ell_egros.py` remains blocked by the unavailable
+`sage.matrix.matrix_integer_dense` path plus dependent local-name cascades.
+Future scheduled runs should avoid this exact modular/schemes/arithmetic
+batch unless the startup namespace, weighted-projective point setup behavior,
+or elliptic-curve matrix backend changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
