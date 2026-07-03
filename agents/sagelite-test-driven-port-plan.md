@@ -22815,6 +22815,22 @@ The saved block- and file-failure cluster queries are empty for the two-file
 run, and `doctest-corpus-candidates.py` prints no promotion rows after the
 files are listed in `basic-pure-math.txt`.
 
+Follow-up homology group corpus metadata pass on 2026-07-03:
+
+`src/sage/homology/homology_group.py` is now listed in the curated corpus as a
+metadata-clean near-miss promotion. A focused current-runtime rerun before the
+tagging pass recorded `5 passed, 12 failed, 6 skipped`; every failure routed
+through ZZ free-module submodule construction and the current integer-matrix
+echelon fallback, with small reproducers such as `matrix(ZZ, 4, 4,
+0).echelon_form()` looping through sparse/dense fallback until the runtime
+raises `TypeError: module name must be a string`.
+
+The WASI source patch classifies those ZZ homology examples as
+`# needs sage.modules`, matching the existing browser-profile boundary for
+module/free-module-backed homology computations. The remaining untagged import
+prompts still provide runnable coverage for the module entry point, while the
+AbelianGroup examples remain tagged as `# needs sage.groups`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

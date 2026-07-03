@@ -10465,6 +10465,46 @@ diff -urN -U0 a/src/sage/groups/group.pyx b/src/sage/groups/group.pyx
 -            sage: F.<a,b> = FreeGroup()
 +            sage: # needs sage.groups
 +            sage: F.<a,b> = FreeGroup()
+diff -urN -U0 a/src/sage/homology/homology_group.py b/src/sage/homology/homology_group.py
+--- a/src/sage/homology/homology_group.py
++++ b/src/sage/homology/homology_group.py
+@@ -37 +37 @@
+-        sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
++        sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H                                # needs sage.modules
+@@ -43 +43 @@
+-        sage: HomologyGroup(4, ZZ)
++        sage: HomologyGroup(4, ZZ)                                                     # needs sage.modules
+@@ -45 +45 @@
+-        sage: HomologyGroup(100, ZZ)
++        sage: HomologyGroup(100, ZZ)                                                   # needs sage.modules
+@@ -55 +55 @@
+-            sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
++            sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H                            # needs sage.modules
+@@ -72,2 +72,2 @@
+-            sage: H = HomologyGroup(7, ZZ, [4,4,4,4,4,7,7])
+-            sage: H._repr_()
++            sage: H = HomologyGroup(7, ZZ, [4,4,4,4,4,7,7])                           # needs sage.modules
++            sage: H._repr_()                                                          # needs sage.modules
+@@ -75 +75 @@
+-            sage: HomologyGroup(6, ZZ)
++            sage: HomologyGroup(6, ZZ)                                                 # needs sage.modules
+@@ -108,2 +108,2 @@
+-            sage: H = HomologyGroup(7, ZZ, [4,4,4,4,4,7,7])
+-            sage: H._latex_()
++            sage: H = HomologyGroup(7, ZZ, [4,4,4,4,4,7,7])                           # needs sage.modules
++            sage: H._latex_()                                                         # needs sage.modules
+@@ -111 +111 @@
+-            sage: latex(HomologyGroup(6, ZZ))
++            sage: latex(HomologyGroup(6, ZZ))                                         # needs sage.modules
+@@ -162 +162 @@
+-        sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
++        sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H                                # needs sage.modules
+@@ -166 +166 @@
+-        sage: HomologyGroup(4, ZZ)
++        sage: HomologyGroup(4, ZZ)                                                     # needs sage.modules
+@@ -169 +169 @@
+-        sage: # needs sage.libs.flint (otherwise timeout)
++        sage: # needs sage.libs.flint sage.modules (otherwise timeout)
 diff -urN -U0 a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
 --- a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
 +++ b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
