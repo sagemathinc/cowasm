@@ -24967,6 +24967,32 @@ queries are empty, and `doctest-corpus-candidates.py --source-root
 sagemath/sagelite/build/wasi-sdk --require-run-metadata` prints no uncovered
 promotion row after the file is listed in the corpus.
 
+Follow-up active frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,014
+non-comment entries after the orthogonal matrix-group promotion. Fresh focused
+probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex-active/`, and a
+scan of today's nonempty current-run SQLite artifacts with
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata --dedupe-paths`
+printed no uncovered clean runnable candidates.
+
+The front-door/catalog probe recorded zero extracted doctest blocks across
+`sage/logic/all.py`, small `sage.groups` front doors, game-theory catalogs,
+`sage/games/all.py`, and `sage/monoids/all.py`, so those files remain outside
+the curated dashboard. A separate logic probe confirmed all six concrete
+`sage.logic` modules are clean, but they are already listed in the corpus.
+The compact PARI conversion probe was also not a promotion source:
+`convert_flint.pyx` and `convert_sage_real_double.pyx` recorded four runnable
+failures with no passing blocks, while the MPFR, complex-double, and matrix
+conversion helpers were skipped-only under existing PARI/backend boundaries.
+
+Future scheduled runs should avoid repeating these exact front-door,
+already-covered logic, and PARI conversion batches unless the stripped
+browser-compatible profile changes. The next useful pass should sample a
+different source-minus-corpus namespace or target one of the recorded backend
+clusters explicitly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
