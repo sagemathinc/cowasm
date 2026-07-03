@@ -25372,6 +25372,45 @@ That strict make-target run rebuilt the patched Sagelite source copy, applied
 the updated WASI source patch, and recorded `3 passed, 0 failed, 0 skipped`
 with empty saved block- and file-failure cluster queries.
 
+Follow-up low-prompt frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,018 non-comment entries. Fresh direct probes used the current patched source
+root, node profile, runner version 83, CoWasm commit
+`eeebfc8cdf4b120ad26e8ae3ee73fc7e8f2ec866`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. A scan of all current
+`scheduled-2026-07-03*` SQLite artifacts with
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --ignore-invalid --quiet-invalid --dedupe-paths`
+printed no uncovered clean runnable rows after subtracting the current corpus.
+
+The first compact low-prompt probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-continuation2/frontier-probe.sqlite3`
+and recorded `0 passed, 0 failed, 38 skipped` across 12 files. The probe
+classified `categories/basic.py`, `categories/all.py`, `repl/prompts.py`, and
+`rings/polynomial/polynomial_compiled.pyx` as zero-block helpers. The remaining
+database, topology, homology, binary-dihedral, crypto, and complex-vector rows
+were skipped-only under existing optional metadata such as `sage.modules`,
+`sage.graphs`, `sage.libs.gap`, `sage.rings.number_field`, `sage.symbolic`,
+and package-specific database tags.
+
+The second low-prompt probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-continuation2/frontier-probe2.sqlite3`
+and recorded `4 passed, 24 failed, 212 skipped` across 23 files. Most rows were
+again skipped-only dependency-boundary coverage, including category example
+files gated by modules/groups/graphs, `stats/hmm/util.pyx` gated by NumPy,
+`coding/hamming_code.py` gated by modules and finite rings, and several graph,
+matroid, interface, and statistics helpers gated by their optional backends.
+The live failures were not narrow promotion candidates: `pbori/blocks.py`
+still depends on the unavailable `sage.rings.polynomial.pbori.pbori` module,
+`graphs/partial_cube.py` lacks the graph startup surface and has dependent
+local-name cascades, and `schemes/plane_conics/constructor.py` has four useful
+passing blocks but is dominated by missing `Conic` startup setup plus dependent
+local names. Future scheduled runs should avoid this exact low-prompt batch
+unless the graph, PBORI, conic, NumPy, or optional category backend profile
+changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
