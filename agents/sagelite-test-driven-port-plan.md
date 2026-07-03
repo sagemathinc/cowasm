@@ -26311,6 +26311,44 @@ semantics with 35 passing and 35 failing blocks. Skipped-only files such as
 small CPython/misc helpers are useful dependency-boundary data but do not add
 live non-skipped coverage to the dashboard.
 
+Follow-up mixed algebra and math-frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,036
+non-comment entries. Fresh direct Sagelite probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-active/`:
+
+```text
+mixed.sqlite3:         18 files, 0 passed, 0 failed, 140 skipped
+pure-ish.sqlite3:     20 files, 19 passed, 48 failed, 523 skipped
+math-frontier.sqlite3: 18 files, 30 passed, 66 failed, 474 skipped
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--source-root sagemath/sagelite/build/wasi-sdk --dedupe-paths` scan over the
+three fresh databases printed no uncovered clean runnable rows. The first
+probe was entirely skipped-only, mostly confirming already-tagged optional
+boundaries in CPython helpers, databases, modules, monoids, categories,
+combinatorics, modular forms, rings, quadratic forms, symbolic support, and
+finite-poset tests.
+
+The second probe kept the category and combinatorics example files
+skipped-only, while the two runnable algebra files exposed broad startup and
+object-model gaps rather than narrow browser-profile tags:
+`free_algebra_quotient_element.py` depends on the unavailable
+`sage.algebras.free_algebra_quotient` import plus `QuaternionAlgebra`
+startup state, and `lie_conformal_algebra_element.py` mixes carried-state
+failures with coercion-model/cache drift around `Algebraic Field`.
+
+The third probe found substantial live matrix coverage but no promotion
+candidate. `matrix_integer_dense_saturation.py` recorded 29 passing blocks and
+19 failures, dominated by unsupported `hermite_form(proof=...)`, dense-matrix
+attribute-model drift, and dependent missing-state checks. The same probe
+recorded two file-level runtime frontiers: `finite_field_prime_modn.py` times
+out while constructing `QuadraticField(337)` in a coercion-map doctest, and
+`binary_form_reduce.py` reaches the existing PARI real-MPFR conversion
+`wasm_signature_mismatch` during `covariant_z0(...)`. Other files in the
+batch were skipped-only under the default browser profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
