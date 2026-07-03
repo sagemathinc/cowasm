@@ -26741,6 +26741,39 @@ file in the fresh probes was `sage/misc/sagedoc_conf.py`, whose source
 contains prompt-looking text but no runnable Sagelite doctest blocks after
 extraction.
 
+Follow-up low-prompt utility and pure-math-adjacent audit later on
+2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. Two fresh direct Sagelite probe batches under
+`.tmp/current-run/scheduled-2026-07-03-codex24/` checked uncovered
+source-minus-corpus files from the current patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree:
+
+```text
+low-prompt-utility.sqlite3: 0 passed, 4 failed, 72 skipped
+low-mid-pure.sqlite3:       0 passed, 10 failed, 235 skipped
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+both fresh databases printed no uncovered clean runnable candidate. The
+file-level shape was 33 skipped-only browser-profile boundary files, four
+files with no extracted doctest blocks, and three block-failing files.
+
+The skipped-only rows cover optional database packages, REPL/IPython helpers,
+Cython support helpers, FLINT/PARI-backed factorization helpers, relative
+ramified p-adic helpers, and category/combinatorics examples whose doctests
+are currently entirely tagged outside the default browser-compatible profile.
+The live failure clusters remain broader frontiers rather than narrow corpus
+promotions: `sage/libs/pari/convert_flint.pyx` reaches the focused cypari2
+object-model boundary through matrix-to-PARI conversion,
+`sage/libs/pari/convert_sage_real_double.pyx` still depends on the missing
+`cypari2.convert` path, and
+`sage/combinat/posets/hochschild_lattice.py` starts with unavailable graph and
+startup names such as `posets`, `simplicial_complexes`, and
+`generic_graph_pyx`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
