@@ -24769,6 +24769,38 @@ default browser profile gains one of the skipped dependency surfaces
 fresh unaudited slice with real prompt coverage, or a focused backend/runtime
 fix for one of the larger high-prompt clusters.
 
+Follow-up low/mixed frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,012
+non-comment entries. Fresh direct Sagelite probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-new/`. The low-prompt mixed probe was
+clean but skipped-only, recording `0 passed, 0 failed, 35 skipped` across
+small CPython, misc, plotting, database, test, module, stats, and modular
+helper files. A book/helper probe recorded `4 passed, 0 failed, 60 skipped`,
+but its only runnable row was the already-covered `sage/matrix/tests.py`.
+
+A wider current absent-file probe across 60 files with 10-18 prompt
+occurrences recorded `22 passed, 240 failed, 427 skipped`. The useful compact
+near misses were not tag-only promotions: hyperelliptic and plane-conic files
+cascade from unavailable scheme constructors, integration examples require
+symbolic/numerical integration startup, pbori files depend on the unavailable
+pbori backend, IPython kernel examples depend on `ipykernel`, and GAP files
+depend on `sage.libs.gap.libgap`. A focused `Conic` import probe confirmed
+that `sage.schemes.plane_conics.constructor` currently imports
+`sage.libs.singular.function`, so exposing `Conic` in the startup namespace is
+not viable until the Singular boundary changes.
+
+Additional pure-looking and compact mixed probes also found no uncovered clean
+runnable candidate. The selected category, monoid, root-system, coding, and
+QQbar-helper batch was skipped-only, recording `0 passed, 0 failed,
+189 skipped`. The compact manifolds/Hilbert/books batch recorded `16 passed,
+99 failed, 142 skipped`; its best near misses were `sage/manifolds/structure.py`
+with symbolic-expression import failures and `sage/rings/polynomial/hilbert.pyx`
+with the disabled FLINT integer-polynomial side module plus Singular/plural
+dependencies. Running `doctest-corpus-candidates.py` over same-day probe
+databases with `--require-run-metadata` and invalid-database guards printed no
+uncovered clean runnable rows after subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
