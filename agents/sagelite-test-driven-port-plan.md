@@ -4085,6 +4085,37 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up low-prompt frontier audit on 2026-07-03:
+
+No new quiet corpus candidate was found. Fresh focused probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-03-next/`, using direct
+`sage -t` against the patched Sagelite source tree with the default node
+profile.
+
+The crypto/Cython helper probe in `crypto-cpython.sqlite3` recorded
+`0 passed, 0 failed, 81 skipped` across `sage/crypto/cipher.py`,
+`lfsr.py`, `lattice.py`, `stream.py`, `sage/cpython/string.pyx`, and
+`cython_metaclass.pyx`. The modular Hecke/form helper probe in
+`modular-hecke.sqlite3` likewise recorded only skipped blocks:
+`0 passed, 0 failed, 99 skipped` across the sampled `sage/modular/hecke`,
+`sage/modular/modform`, and `sage/modular/buzzard.py` helpers. The
+utility/doctest probe in `utility-doctest.sqlite3` recorded
+`0 passed, 0 failed, 40 skipped`; `repl/prompts.py` and
+`doctest/parsing_test.py` extracted no runnable blocks, and the remaining
+misc/test helpers were skipped-only.
+
+The small algebra/geometry probe in `algebra-geometry.sqlite3` recorded
+`9 passed, 41 failed, 46 skipped`, so it is not a corpus-growth source.
+`sage/schemes/plane_conics/constructor.py` looked like a narrow
+startup-namespace candidate because its failures were `Conic` name errors,
+but a direct import of `sage.schemes.plane_conics.constructor` reaches the
+unavailable `sage.libs.singular.function` module through projective-curve
+setup. The quaternion and elliptic-curve helpers in the same batch also hit
+broader quaternion, dense-matrix, quotient-ring, or elliptic-curve startup and
+backend boundaries. Future scheduled runs should avoid repeating these exact
+batches until the Singular, quaternion/dense-matrix, elliptic-curve, or
+optional helper skip policies change.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
