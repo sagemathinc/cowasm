@@ -23859,6 +23859,32 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after subtracting the updated corpus.
 
+Focused modular dense-matrix corpus-growth pass:
+
+```text
+matrix_modn_dense_double.pyx: 47 passed, 0 failed, 0 skipped
+matrix_modn_dense_float.pyx: 43 passed, 0 failed, 0 skipped
+```
+
+That two-file make-target validation adds
+`sage/matrix/matrix_modn_dense_double.pyx` and
+`sage/matrix/matrix_modn_dense_float.pyx` to the curated pure-math corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 997
+non-comment entries. The files add default-profile coverage for dense modular
+matrix arithmetic over the existing matrix runtime surface without new WASI
+source tags or startup namespace changes.
+
+A broader current-runner probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-codex/matrix-probe-2.sqlite3`; the
+saved candidate helper reported both modular dense-matrix files as uncovered
+clean runnable candidates and the saved block- and file-failure cluster
+queries were empty. Focused validation then used the
+`test-sage-doctest-corpus` make target against a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/modn-matrix-make.sqlite3`,
+recording 90 passed, 0 failed, and 0 skipped blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
