@@ -11474,3 +11474,19 @@ diff -urN -U0 a/src/sage/rings/polynomial/toy_buchberger.py b/src/sage/rings/pol
 @@ -128 +128 @@
 -    sage: sorted(gb)
 +    sage: sorted(gb)                                                                  # needs sage.libs.singular
+diff -urN -U0 a/src/sage/matrix/matrix_dense.pyx b/src/sage/matrix/matrix_dense.pyx
+--- a/src/sage/matrix/matrix_dense.pyx
++++ b/src/sage/matrix/matrix_dense.pyx
+@@ -77,5 +77,5 @@
+-            sage: var('x')
++            sage: var('x')                                                            # needs sage.symbolic
+             x
+-            sage: assume(x, 'real')
+-            sage: M = matrix([[0, -x], [x, 0]])
++            sage: assume(x, 'real')                                                   # needs sage.symbolic
++            sage: M = matrix([[0, -x], [x, 0]])                                       # needs sage.symbolic
+-            sage: M.transpose() == M
++            sage: M.transpose() == M                                                  # needs sage.symbolic
+@@ -283 +283 @@
+-            sage: derivative(u, x)
++            sage: derivative(u, x)                                                    # needs sage.symbolic

@@ -23825,6 +23825,40 @@ curated corpus (`function_mangling.pyx`, `lazy_string.pyx`, and
 with 26 passing blocks but broad parallel/fork behavior failures in the
 default browser-compatible profile.
 
+Focused dense-matrix corpus-growth pass:
+
+```text
+matrix_dense.pyx: 34 passed, 0 failed, 7 skipped
+```
+
+That one-file make-target validation adds
+`sage/matrix/matrix_dense.pyx` to the curated pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 995
+non-comment entries. The file adds default-profile coverage for dense matrix
+comparison, transpose and antitranspose behavior, unsafe reversal,
+elementwise product, and matrix derivative plumbing over the already-supported
+matrix startup surface.
+
+A broader current-runner probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-cont/filtered-broad.sqlite3`, where
+`matrix_dense.pyx` was the strongest near miss with 36 passing blocks and
+three missing symbolic startup helpers. The WASI source patch now marks the
+symbolic `var`/`assume` setup, its dependent transpose comparison, and the
+`derivative(u, x)` check as `# needs sage.symbolic`, preserving the dense
+matrix coverage while recording the symbolic boundary as explicit skip
+metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-cont/matrix-dense-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`03f685620e57b433d22f80acea5c517dc44e47a2`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
