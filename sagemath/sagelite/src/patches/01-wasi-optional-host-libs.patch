@@ -1038,13 +1038,19 @@ diff -urN a/src/sage/libs/symmetrica/meson.build b/src/sage/libs/symmetrica/meso
 diff -urN a/src/sage/libs/ntl/meson.build b/src/sage/libs/ntl/meson.build
 --- a/src/sage/libs/ntl/meson.build
 +++ b/src/sage/libs/ntl/meson.build
-@@ -86,6 +86,30 @@
+@@ -86,6 +86,36 @@
    'ntl_mat_ZZ': files('ntl_mat_ZZ.pyx'),
  }
 
 +cowasm_ntl_extension_dependencies = [py_dep, cysignals, gmp, m, ntl]
 +cowasm_ntl_link_args = []
 +cowasm_ntl_cpp_args = []
++if is_wasi
++  cowasm_libcxx_path = meson.get_external_property('cowasm_libcxx', '')
++  if cowasm_libcxx_path != ''
++    cowasm_ntl_link_args += [cowasm_libcxx_path]
++  endif
++endif
 +if is_wasi and gmp.found() and ntl.found() and gf2x.found()
 +  cowasm_gmp_incdir = gmp.get_variable(pkgconfig: 'includedir', default_value: '')
 +  cowasm_gmp_libdir = gmp.get_variable(pkgconfig: 'libdir', default_value: '')
@@ -1055,7 +1061,7 @@ diff -urN a/src/sage/libs/ntl/meson.build b/src/sage/libs/ntl/meson.build
 +    if cowasm_gmp_incdir != ''
 +      cowasm_ntl_cpp_args = ['-I' + cowasm_gmp_incdir]
 +    endif
-+    cowasm_ntl_link_args = [
++    cowasm_ntl_link_args += [
 +      '-Wl,-L' + cowasm_ntl_libdir,
 +      '-Wl,-L' + cowasm_gmp_libdir,
 +      '-Wl,-L' + cowasm_gf2x_libdir,
@@ -1069,7 +1075,7 @@ diff -urN a/src/sage/libs/ntl/meson.build b/src/sage/libs/ntl/meson.build
  foreach name, pyx : extension_data_cpp
    py.extension_module(
      name,
-@@ -99,6 +111,8 @@
+@@ -99,6 +129,8 @@
        inc_rings,
        inc_rings_finite,
      ],
@@ -10283,6 +10289,55 @@ diff -urN -U0 a/src/sage/libs/ntl/ntl_lzz_pContext.pyx b/src/sage/libs/ntl/ntl_l
 @@ -103 +103 @@
 -            sage: n*n ## indirect doctest
 +            sage: n*n ## indirect doctest  # known bug
+diff -urN -U0 a/src/sage/libs/ntl/ntl_lzz_p.pyx b/src/sage/libs/ntl/ntl_lzz_p.pyx
+--- a/src/sage/libs/ntl/ntl_lzz_p.pyx
++++ b/src/sage/libs/ntl/ntl_lzz_p.pyx
+@@ -53,0 +54,6 @@
++
++cdef inline void restore_zz_p_context(ntl_zz_pContext_class c) noexcept:
++    cdef zz_pContext_c local_context = zz_pContext_c(c.p)
++    local_context.restore()
++
++
+@@ -150 +156 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -162 +168 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -202 +208 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -219 +225 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -237 +243 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -254 +260 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -285 +291 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -315 +321 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -337 +343 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -377 +383 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -394 +400 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -410 +416 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+@@ -424 +430 @@
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
 diff -urN -U0 a/src/sage/rings/convert/mpfi.pyx b/src/sage/rings/convert/mpfi.pyx
 --- a/src/sage/rings/convert/mpfi.pyx
 +++ b/src/sage/rings/convert/mpfi.pyx

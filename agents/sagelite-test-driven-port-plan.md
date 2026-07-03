@@ -22831,6 +22831,43 @@ module/free-module-backed homology computations. The remaining untagged import
 prompts still provide runnable coverage for the module entry point, while the
 AbelianGroup examples remain tagged as `# needs sage.groups`.
 
+Follow-up NTL lzz_p split-side-module context restore pass on 2026-07-03:
+
+No new clean corpus row was promoted in this pass. A current frontier scan
+with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --min-runner-version 83` found no uncovered
+clean runnable candidates and no compact near misses after excluding
+`NameError`; the active file-error frontier still includes
+`src/sage/libs/ntl/ntl_lzz_p.pyx` trapping at local-modulus arithmetic.
+
+The WASI source patch now mirrors the earlier NTL split-side-module context
+strategy in `ntl_lzz_p.pyx`: `zz_pContext_c(c.p).restore()` is performed
+inside the `ntl_lzz_p` side module before construction, arithmetic,
+comparison, representation helpers, and mutation. The NTL Meson patch also
+passes the configured `cowasm_libcxx` side module into NTL extension link
+arguments so relinked NTL wrappers record `libcxx.so` in their dynamic-library
+metadata; without that metadata, directly importing the relinked `ntl_lzz_p`
+module failed on the C++ sized-delete symbol `_ZdlPvm`.
+
+Validation used:
+
+```text
+patch --dry-run -p1 < sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch
+SAGELITE_MESON_COMPILE_JOBS=4 make -C sagemath/sagelite test-wasi-sdk-standalone
+ninja -C sagemath/sagelite/build/wasi-sdk/cowasm-meson-build -j1 src/sage/libs/ntl/ntl_lzz_p.cpython-314-wasm32-wasi.so
+bin/wasi-sdk-llvm-strings-next sagemath/sagelite/build/wasi-sdk/cowasm-meson-build/src/sage/libs/ntl/ntl_lzz_p.cpython-314-wasm32-wasi.so | rg 'needed_dynlibs|libcxx'
+```
+
+The patch dry-run applies cleanly against `/home/user/sagelite`, and the
+targeted Ninja relink for `error`, `ntl_lzz_pContext`, and `ntl_lzz_p` succeeds
+with `libcxx.so` visible in the relinked module strings. A direct import probe
+is still blocked before reaching `ntl_lzz_p` because the failed standalone run
+cleared the temporary runtime tree and only a subset of dependent Sage
+extension modules has been rebuilt. The full standalone target is not a pass:
+at `SAGELITE_MESON_COMPILE_JOBS=4` it still records the known clustered Cython
+compile segfaults around matrix modules, and the single-job retry was
+interrupted before completion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
