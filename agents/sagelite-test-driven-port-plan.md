@@ -26640,6 +26640,37 @@ starts with a missing constructor name, but a focused import smoke shows that
 times out in a polynomial extended-gcd example; and the sampled REPL files
 remain dominated by IPython/session semantics rather than pure-math coverage.
 
+Follow-up low-prompt boundary audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict rescan of the fresh codex18 through
+codex21 runner-87 dashboards with
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` printed no
+uncovered clean runnable candidates. Four additional direct Sagelite probes
+under `.tmp/current-run/scheduled-2026-07-03-codex22/` then checked small
+source-minus-corpus files from the current patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree:
+
+```text
+low-prompt-mixed.sqlite3: 0 passed, 0 failed, 39 skipped
+category-examples.sqlite3: 0 passed, 0 failed, 115 skipped
+judson-exercises.sqlite3: 0 passed, 0 failed, 0 skipped
+utility-symbolic.sqlite3: 0 passed, 4 failed, 47 skipped
+```
+
+The strict promotion-candidate scan over the codex22 databases was empty. The
+skipped-only files are explicit optional or deferred browser-profile
+boundaries, including Cython self-tests, symbolic/SymPy/SymEngine helpers,
+optional database packages, BRiAl/PBoRi helpers, doctest-control fixtures, and
+category examples requiring broader combinat/module/group stacks. The Judson
+exercise files contain prompt-looking source text but currently extract no
+runnable Sagelite doctest blocks. The only live block failures in this pass
+were `sage/rings/polynomial/pbori/blocks.py`, which starts at the unavailable
+`sage.rings.polynomial.pbori.pbori` module and cascades into missing
+`declare_ring`/`main_test` state; this is a BRiAl/PBoRi packaging frontier
+rather than a narrow corpus metadata promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
