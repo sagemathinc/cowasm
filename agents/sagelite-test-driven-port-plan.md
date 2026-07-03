@@ -23602,6 +23602,28 @@ unmatched, and combined only-plus-exclude skipped-only filters, and a parser
 guard check proving `--exclude-skip-reason` is rejected outside
 `--skipped-only`.
 
+Follow-up block-detail frontier filter pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. A current-source clean-candidate
+scan across the scratch SQLite set found no uncovered runnable rows, so the
+curated corpus remains at 990 non-comment entries.
+
+The candidate-helper near-miss filters now support
+`--only-block-failure-detail TEXT` and `--exclude-block-failure-detail TEXT`.
+These mirror the file-error detail filters but operate on aggregated failed
+block `failure_detail` text, so scheduled frontier scans can directly isolate
+or subtract clusters such as startup-name gaps, coercion formatting details,
+or missing-backend diagnostics without ad hoc text filtering. The make-level
+`sage-doctest-candidates` entrypoint passes the new flags through via
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, synthetic SQLite fixtures
+covering positive, negative, CSV-style, parser-guard, and legacy-schema
+detail-filter behavior, and a make-level passthrough check with
+`--near-misses --only-block-failure-detail "No module named" --paths-only`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -200,6 +200,26 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--exclude-block-failure-detail",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --near-misses, suppress files whose block-level "
+            "failure_detail contains one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--only-block-failure-detail",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --near-misses, report only files whose block-level "
+            "failure_detail contains one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--exclude-file-failure-class",
         action="append",
         default=[],
@@ -301,6 +321,10 @@ def parse_args() -> argparse.Namespace:
         parser.error("--exclude-block-failure-class requires --near-misses")
     if args.only_block_failure_class and not args.near_misses:
         parser.error("--only-block-failure-class requires --near-misses")
+    if args.exclude_block_failure_detail and not args.near_misses:
+        parser.error("--exclude-block-failure-detail requires --near-misses")
+    if args.only_block_failure_detail and not args.near_misses:
+        parser.error("--only-block-failure-detail requires --near-misses")
     if args.exclude_file_failure_class and not args.file_errors:
         parser.error("--exclude-file-failure-class requires --file-errors")
     if args.only_file_failure_class and not args.file_errors:
@@ -319,6 +343,10 @@ def parse_args() -> argparse.Namespace:
         args.exclude_block_failure_class
     )
     args.only_block_failure_class = parse_csv_values(args.only_block_failure_class)
+    args.exclude_block_failure_detail = parse_csv_values(
+        args.exclude_block_failure_detail
+    )
+    args.only_block_failure_detail = parse_csv_values(args.only_block_failure_detail)
     args.exclude_file_failure_class = parse_csv_values(
         args.exclude_file_failure_class
     )
@@ -545,6 +573,8 @@ def candidate_rows(
     max_failed: int,
     excluded_block_failure_classes: list[str],
     only_block_failure_classes: list[str],
+    excluded_block_failure_details: list[str],
+    only_block_failure_details: list[str],
     excluded_file_failure_classes: list[str],
     only_file_failure_classes: list[str],
     excluded_file_failure_details: list[str],
@@ -729,6 +759,12 @@ def candidate_rows(
                     "cannot filter block failure classes: database lacks "
                     "compatible blocks/files metadata"
                 )
+        if excluded_block_failure_details or only_block_failure_details:
+            if not can_read_block_failure_details(db):
+                raise SystemExit(
+                    "cannot filter block failure details: database lacks "
+                    "compatible blocks/files metadata"
+                )
         if excluded_block_failure_classes:
             placeholders = ", ".join("?" for _ in excluded_block_failure_classes)
             block_failure_filter += f"""
@@ -839,6 +875,16 @@ def candidate_rows(
             continue
         if file_errors and only_file_failure_details and not any(
             detail in one_line_failure_detail for detail in only_file_failure_details
+        ):
+            continue
+        if near_misses and any(
+            detail in one_line_failure_detail
+            for detail in excluded_block_failure_details
+        ):
+            continue
+        if near_misses and only_block_failure_details and not any(
+            detail in one_line_failure_detail
+            for detail in only_block_failure_details
         ):
             continue
         if skipped_only and only_skip_reasons and not any(
@@ -975,6 +1021,8 @@ def main() -> int:
                     args.max_failed,
                     args.exclude_block_failure_class,
                     args.only_block_failure_class,
+                    args.exclude_block_failure_detail,
+                    args.only_block_failure_detail,
                     args.exclude_file_failure_class,
                     args.only_file_failure_class,
                     args.exclude_file_failure_detail,

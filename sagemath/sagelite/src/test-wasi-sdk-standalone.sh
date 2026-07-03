@@ -2832,14 +2832,15 @@ create table blocks (
   file_id integer,
   status text,
   failure_class text,
+  failure_detail text,
   skip_reason text
 );
-insert into blocks (file_id, status, failure_class)
-select id, 'failed', 'NameError'
+insert into blocks (file_id, status, failure_class, failure_detail)
+select id, 'failed', 'NameError', 'missing startup namespace value'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py';
-insert into blocks (file_id, status, failure_class)
-select id, 'failed', 'TypeError'
+insert into blocks (file_id, status, failure_class, failure_detail)
+select id, 'failed', 'TypeError', 'unsupported coercion detail'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py';
 insert into blocks (file_id, status, skip_reason)
@@ -3113,6 +3114,28 @@ if [ -n "$doctest_candidate_helper_near_misses_only_timeout" ]; then
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-class reported unrelated near misses."
 fi
+doctest_candidate_helper_near_misses_no_startup_detail="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --exclude-block-failure-detail startup \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_no_startup_detail" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_no_startup_detail" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-block-failure-detail did not filter near misses."
+fi
+doctest_candidate_helper_near_misses_only_coercion_detail="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --only-block-failure-detail coercion \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_only_coercion_detail" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_only_coercion_detail" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-detail did not filter near misses."
+fi
 doctest_candidate_helper_near_misses_with_class="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
   --exclude-block-failure-class NameError \
@@ -3242,6 +3265,19 @@ if [ "$doctest_candidate_helper_quiet_guard_status" -eq 0 ] || \
   ! printf '%s\n' "$doctest_candidate_helper_quiet_guard" | grep -Fq -- "--quiet-invalid requires --ignore-invalid"; then
   printf '%s\n' "$doctest_candidate_helper_quiet_guard" >&2
   record_blocker "sagelite-blocked: doctest-corpus-candidates --quiet-invalid guard did not fire."
+fi
+set +e
+doctest_candidate_helper_block_detail_guard="$("$src_dir/doctest-corpus-candidates.py" \
+  --only-block-failure-detail coercion \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_block_detail_guard_status=$?
+set -e
+if [ "$doctest_candidate_helper_block_detail_guard_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_block_detail_guard" | grep -Fq -- "--only-block-failure-detail requires --near-misses"; then
+  printf '%s\n' "$doctest_candidate_helper_block_detail_guard" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-detail guard did not fire."
 fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
