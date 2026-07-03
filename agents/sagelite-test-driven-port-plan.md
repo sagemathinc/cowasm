@@ -26853,6 +26853,44 @@ rendering repr mismatches dominate. `numerical/backends/matrix_sdp_backend.pyx`
 and `numerical/backends/generic_sdp_backend.pyx` remain SDP/MIP backend
 frontiers with missing solver constructors and backend-specific setup names.
 
+Follow-up low-prompt backend-boundary audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A fresh source-minus-corpus scan found 2,009 Sage
+source files outside the checked corpus, with 1,645 still not covered by the
+runner-87 scratch dashboards under `.tmp/current-run/`. A low-prompt slice of
+ten unprobed backend-adjacent files was run directly under
+`.tmp/current-run/scheduled-2026-07-03-codex27/`:
+
+```text
+low-prompt-frontier.sqlite3: 4 passed, 46 failed, 37 skipped
+```
+
+The strict promotion scan
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` printed no
+uncovered clean runnable candidate. There were no file-level runtime errors.
+The skipped-only files were explicit browser-profile dependency boundaries:
+`libs/homfly.pyx` needs `sage.libs.homfly`,
+`modular/modsym/hecke_operator.py` needs `sage.libs.flint`,
+`geometry/hyperplane_arrangement/check_freeness.py` needs
+`sage.libs.singular`, and
+`quadratic_forms/quadratic_form__siegel_product.py` needs `sage.libs.pari`
+and includes long-time coverage.
+
+The live failures are backend/startup-surface gaps rather than narrow metadata
+promotions. `groups/matrix_gps/symplectic_gap.py` is blocked by GAP-backed
+matrix-group constructors such as `Sp` and `FinitelyGeneratedMatrixGroup_gap`.
+`modular/modform/half_integral.py` is a pure setup-name cascade around
+`half_integral_weight_modform_basis`. `libs/singular/function_factory.py`
+requires the unavailable Singular function module. The PBoRi files
+`rings/polynomial/pbori/nf.py` and `rings/polynomial/pbori/frontend.py`
+depend on the missing `sage.rings.polynomial.pbori.pbori` extension and then
+cascade through setup names such as `x`, `declare_ring`, `normal_form`, and
+`polybori_start`. The small hyperelliptic Jacobian probe has two passing
+blocks but still starts from unavailable `HyperellipticCurve`/`Jacobian`
+constructors, so it belongs with the broader scheme backend frontier.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
