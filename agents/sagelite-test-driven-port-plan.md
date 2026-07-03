@@ -4022,6 +4022,38 @@ changes. The next useful pass should either sample a different namespace from
 the live source-minus-corpus list or target one of those backend clusters
 explicitly.
 
+Focused p-adic extension-leaves corpus-growth pass:
+
+```text
+padic_extension_leaves.py: 17 passed, 0 failed, 56 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/padic_extension_leaves.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 990
+non-comment entries. A focused p-adic frontier probe first recorded
+`eisenstein_extension_generic.py` and `padic_extension_leaves.py` as the only
+clean files in the sampled batch; `eisenstein_extension_generic.py` was
+already present, so only the extension-leaves file was promoted.
+
+The file required no new WASI source tags or startup namespace changes. Its
+skipped blocks are already grouped under explicit p-adic backend boundaries
+for NTL, FLINT, and polyhedron support. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-auto/padic-extension-leaves-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`8c236b4cb8bf9d26e72e7abec346817ea6c82b3d`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
+The same p-adic probe kept adjacent files outside the quiet dashboard:
+`padic_base_leaves.py`, `generic_nodes.py`, `relative_extension_leaves.py`,
+`pow_computer_relative.pyx`, and `pow_computer_flint.pyx` still have broad
+FLINT/NTL-backed setup, dependent-name, and output-drift clusters, while
+`padic_lattice_element_test.py` extracts no doctest blocks.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
