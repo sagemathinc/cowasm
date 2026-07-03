@@ -4366,6 +4366,35 @@ Judson book, or recent current-run archive probes. The only clean uncovered
 non-source documentation row was `src/doc/en/tutorial/afterword.rst`; it was
 left out because the current curated corpus is still `src/sage`-scoped.
 
+Follow-up species/design/algebra frontier audit on 2026-07-03:
+
+No new quiet corpus candidate was found. Fresh direct probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-03-now/` against the
+current patched Sagelite source tree, and
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+printed no uncovered clean runnable rows after subtracting the current
+1036-entry curated corpus.
+
+The species probe recorded `283 passed, 0 failed, 124 skipped`. Its runnable
+files, including `set_species.py`, `linear_order_species.py`,
+`characteristic_species.py`, `subset_species.py`, and `recursive_species.py`,
+are already present in the corpus; the truly absent species files sampled in
+that batch were skipped-only under existing FLINT-backed dependency tags. The
+designs probe likewise found only already-covered runnable coverage in
+`covering_design.py`; absent design helpers such as `difference_matrices.py`,
+`resolvable_bibd.py`, `group_divisible_designs.py`, `latin_squares.py`, and
+`block_design.py` were skipped-only under the current finite-ring/design
+backend profile.
+
+The compact algebra-helper probe is not a narrow corpus-growth source. It
+recorded `11 passed, 179 failed, 46 skipped`: nil-Coxeter and quaternion
+helpers were skipped-only, while free-algebra quotient, group-algebra,
+finite-dimensional algebra ideal, BGG-resolution, and symplectic-derivation
+helpers still expose broader startup/backend clusters. Future scheduled runs
+should avoid repeating these species, design, and compact algebra batches
+unless FLINT/finite-ring, combinatorial-design, or Lie/free-algebra backend
+support changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
