@@ -11293,3 +11293,30 @@ diff -urN -U0 a/src/sage/rings/padics/padic_floating_point_element.pyx b/src/sag
 +            sage: R.<w> = Zq(7^2,5)                                                # needs sage.libs.flint
 +            sage: x = R(7*w)                                                       # needs sage.libs.flint
 +            sage: x.exp(algorithm='newton')   # indirect doctest                   # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/bernoulli_mod_p.pyx b/src/sage/rings/bernoulli_mod_p.pyx
+--- a/src/sage/rings/bernoulli_mod_p.pyx
++++ b/src/sage/rings/bernoulli_mod_p.pyx
+@@ -63 +63 @@
+-        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(3)))
++        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(3)))     # needs sage.libs.pari
+@@ -65 +65 @@
+-        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(1000)))
++        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(1000)))  # needs sage.libs.pari
+@@ -74 +74 @@
+-        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(20000)))
++        sage: verify_bernoulli_mod_p(bernoulli_mod_p(next_prime(20000)))  # needs sage.libs.pari
+@@ -123 +123 @@
+-        sage: bernoulli_mod_p(37)
++        sage: bernoulli_mod_p(37)                         # needs sage.libs.pari
+@@ -271 +271 @@
+-        sage: bernoulli_mod_p(37)
++        sage: bernoulli_mod_p(37)                         # needs sage.libs.pari
+@@ -276 +276 @@
+-        sage: bernoulli_mod_p(31)
++        sage: bernoulli_mod_p(31)                         # needs sage.libs.pari
+@@ -286 +286 @@
+-        sage: bernoulli_mod_p(5)
++        sage: bernoulli_mod_p(5)                          # needs sage.libs.pari
+@@ -291 +291 @@
+-        sage: bernoulli_mod_p(7)
++        sage: bernoulli_mod_p(7)                          # needs sage.libs.pari

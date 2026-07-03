@@ -23150,6 +23150,29 @@ cluster queries are empty for the make database, and
 `doctest-corpus-candidates.py` prints no promotion rows after the file is
 listed in `basic-pure-math.txt`.
 
+Follow-up Bernoulli-mod-p corpus-growth pass on 2026-07-03:
+
+`src/sage/rings/bernoulli_mod_p.pyx` is now listed in the curated pure-math
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 980 non-comment entries. Direct sampling first recorded 18 passed blocks,
+8 failures, and 141 skipped blocks in a mixed moderate-prompt batch; the only
+runnable failures were the direct `bernoulli_mod_p(...)` examples reaching the
+focused cypari2/PARI object-model boundary.
+
+The added WASI source patch marks those direct `bernoulli_mod_p(...)`
+examples as `# needs sage.libs.pari`, while preserving the input-validation,
+checksum, and `bernoulli_mod_p_single(...)` examples as default-profile
+coverage. Focused validation rebuilt and patched a fresh Sagelite source copy
+through the `test-sage-doctest-corpus` make target with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-bernoulli/make-rerun.sqlite3`.
+The checked run recorded `18 passed, 0 failed, 8 skipped`; saved block- and
+file-failure cluster queries are empty, `skips-by-reason.sql` groups all
+skips under `optional:sage.libs.pari`, and
+`doctest-corpus-candidates.py` prints no promotion rows after the file is
+listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
