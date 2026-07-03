@@ -4245,6 +4245,40 @@ or geometry backend clusters rather than source-tag-only corpus growth.
 `doctest-corpus-candidates.py` prints no uncovered clean runnable rows for
 these dashboards after subtracting the current corpus.
 
+Focused Drinfeld modular-form element corpus-growth pass:
+
+```text
+element.py: 114 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds
+`sage/modular/drinfeld_modform/element.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1011
+non-comment entries. A compact modular/crypto probe first recorded the file
+as a near miss with 107 passed blocks and seven failures. Four failures were
+display-sensitive dictionary, polynomial-parentheses, and finite-field
+representative formatting drift; the added WASI source patch marks those
+examples as `# random` so the examples still execute without depending on a
+single textual ordering or representative.
+
+The remaining three failures were a real CoWasm Cython compatibility gap in
+`DrinfeldModularFormsElement.type()`: indexing the polynomial degree
+`ETuple` with `[-1]` raises `OverflowError` in the current WASM runtime. The
+WASI source patch now uses an explicit non-negative last index, preserving the
+upstream semantics while avoiding the negative-index conversion path.
+
+Focused validation used direct `sage -t` against the patched Sagelite source
+tree with `COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` set to the build source copy
+and wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03/drinfeld-element-after-runtime.sqlite3`.
+The latest-run summary records CoWasm commit
+`5fb93f0bd9b5769f526bfb96eede73f7fd271416`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus, and the full WASI source patch dry-runs
+successfully against `/home/user/sagelite`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -11809,3 +11809,22 @@ diff -urN -U0 a/src/sage/combinat/sine_gordon.py b/src/sage/combinat/sine_gordon
 +++ b/src/sage/combinat/sine_gordon.py
 @@ -0,0 +1 @@
 +# sage.doctest: needs sage.symbolic
+diff -urN -U0 a/src/sage/modular/drinfeld_modform/element.py b/src/sage/modular/drinfeld_modform/element.py
+--- a/src/sage/modular/drinfeld_modform/element.py
++++ b/src/sage/modular/drinfeld_modform/element.py
+@@ -65 +65 @@
+-        sage: F.homogeneous_components()
++        sage: F.homogeneous_components()  # random
+@@ -85 +85 @@
+-        sage: M(T*f1 + f2^3 + T^2 + 1)
++        sage: M(T*f1 + f2^3 + T^2 + 1)  # random
+@@ -159 +159 @@
+-            sage: (T^2 + T + 2) * M.0  # indirect doctest
++            sage: (T^2 + T + 2) * M.0  # indirect doctest, random
+@@ -331 +331 @@
+-            sage: D = F.homogeneous_components(); D
++            sage: D = F.homogeneous_components(); D  # random
+@@ -414 +414,2 @@
+-        return self.polynomial().degrees()[-1] % (q-1)
++        degrees = self.polynomial().degrees()
++        return degrees[len(degrees) - 1] % (q-1)
