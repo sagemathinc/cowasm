@@ -300,6 +300,7 @@ src/sage/combinat/dlx.py
 src/sage/combinat/matrices/dlxcpp.py
 src/sage/combinat/dyck_word.py
 src/sage/combinat/path_tableaux/dyck_path.py
+src/sage/combinat/path_tableaux/frieze.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/free_module.py
 src/sage/combinat/gelfand_tsetlin_patterns.py

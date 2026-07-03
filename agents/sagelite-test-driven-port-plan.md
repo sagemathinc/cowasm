@@ -23284,6 +23284,29 @@ The checked run recorded `720 passed, 0 failed, 17 skipped`; saved block- and
 file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
 prints no promotion rows after the file is listed in the corpus.
 
+Follow-up path-tableaux frieze corpus-growth pass on 2026-07-03:
+
+`src/sage/combinat/path_tableaux/frieze.py` is now listed in the curated
+pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 986
+non-comment entries. A fresh combinatorics probe wrote
+`.tmp/current-run/scheduled-2026-07-03-scout/combinat-small.sqlite3` and found
+`frieze.py` as the only uncovered clean runnable row, with `39 passed`, `0
+failed`, and `23 skipped`. The skipped examples are existing optional
+number-field, plot, symbolic, and real-field rows, while the default
+browser-compatible profile still covers ordinary frieze-pattern construction
+and arithmetic.
+
+Focused direct validation recorded `39 passed, 0 failed, 23 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-scout/frieze-focus.sqlite3`. Strict
+make-level validation with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and `SAGELITE_DOCTEST_TIMEOUT=90`
+recorded the same counts in
+`.tmp/current-run/scheduled-2026-07-03-scout/frieze-make.sqlite3`; saved
+block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion rows after the file is
+listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
