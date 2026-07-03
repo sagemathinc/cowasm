@@ -4054,6 +4054,37 @@ The same p-adic probe kept adjacent files outside the quiet dashboard:
 FLINT/NTL-backed setup, dependent-name, and output-drift clusters, while
 `padic_lattice_element_test.py` extracts no doctest blocks.
 
+Focused p-adic lattice/tutorial corpus-growth pass:
+
+```text
+lattice_precision.py: 426 passed, 0 failed, 37 skipped
+tutorial.py: 42 passed, 0 failed, 3 skipped
+```
+
+That two-file make-target validation adds
+`sage/rings/padics/lattice_precision.py` and
+`sage/rings/padics/tutorial.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1003
+non-comment entries. A focused p-adic frontier probe first recorded both
+files as clean uncovered runnable candidates, with no new WASI source tags or
+startup namespace changes required.
+
+The same probe kept nearby extension-element files out of the quiet dashboard:
+`padic_ext_element.pyx`, `padic_ZZ_pX_element.pyx`,
+`padic_ZZ_pX_CA_element.pyx`, `padic_ZZ_pX_CR_element.pyx`, and
+`padic_ZZ_pX_FM_element.pyx` are skipped-only under existing p-adic backend
+tags, while `padic_lattice_element.py` remains a near miss with one
+diagnostic failure around inconsistent `names`/`print_ram_name` validation.
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/padic-promoted/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`ab45dcf711b92bf8a5bb7e10fc282862b2453184`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
