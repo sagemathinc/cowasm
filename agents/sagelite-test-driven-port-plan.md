@@ -25200,6 +25200,40 @@ The strict make-target run rebuilt the patched Sagelite source copy and
 recorded `6 passed, 0 failed, 52 skipped`, 100% non-skipped pass rate, and
 empty saved block- and file-failure cluster queries.
 
+Follow-up database/function/book frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,017 non-comment entries. Three fresh make-target probes used the current
+patched source root, node profile, runner version 83, CoWasm commit
+`2926443e0428b318029806c6e005c0c0fed4dd23`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The database/features/functions probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-db-functions/probe.sqlite3`
+and recorded `0 passed, 0 failed, 227 skipped`. Seven files were skipped-only
+under existing dependency metadata and three feature helper files extracted no
+doctest blocks, so this batch is not runnable corpus-growth material.
+
+The small mixed helper probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-small-mixed2/probe.sqlite3`
+and recorded `0 passed, 24 failed, 112 skipped`. Most files were skipped-only
+dependency-boundary rows. The only runnable failures were the GAP-backed matrix
+group helper files: `orthogonal_gap.py` and `symplectic_gap.py` failed on the
+missing `sage.libs.gap.libgap` import and dependent missing setup names such as
+`GO`, `SO`, `Sp`, and `G`. These files should stay out of the browser-profile
+corpus until the GAP-backed matrix-group surface changes.
+
+The small book/test probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-book-tests/probe.sqlite3`
+and recorded `4 passed, 28 failed, 21 skipped`. The Judson exercise files
+extracted zero blocks, while `integration_doctest.py` and `lp_doctest.py`
+remain boundary evidence for stripped symbolic/numerical-integration,
+graph, and GLPK-backed linear-programming surfaces. Running
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--ignore-invalid --quiet-invalid --dedupe-paths` across all three new
+databases printed no uncovered clean runnable row.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
