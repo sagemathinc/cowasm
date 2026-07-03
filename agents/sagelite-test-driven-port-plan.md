@@ -23796,6 +23796,35 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
 after subtracting the updated corpus.
 
+Follow-up scheduled frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. Three compact current-runner probe
+databases under `.tmp/current-run/scheduled-2026-07-03-auto/` found no
+uncovered clean runnable candidate after subtracting the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, which
+therefore remains at 994 non-comment entries.
+
+The algebra/calculus/category probe kept several broad frontiers visible:
+`sage/algebras/commutative_dga.py`, `sage/algebras/group_algebra.py`, and
+`sage/calculus/var.pyx` have runnable prefixes followed by large symbolic or
+algebraic failure clusters; `sage/algebras/splitting_algebra.py` still reaches
+the split NTL `ZZ_pContext.restore` dynamic-link boundary; and
+`sage/categories/commutative_rings.py` still reaches the
+`polynomial_number_field` maximum-call-stack trap in the `is_square()` path.
+Nearby `all.py`, catalog, and category helper files were zero-block or
+skipped-only under existing browser-profile tags.
+
+The small utility probes likewise produced no promotion candidate. Feature
+test shims and `all.py` modules were mostly zero-block; uncovered misc helpers
+such as `sage/misc/cython.py`, `sage/misc/map_threaded.py`, and
+`sage/misc/sphinxify.py` were skipped-only; and monoid, homology, and
+`real_set.py` probes were dependency-boundary skipped-only rows. The only
+clean runnable misc rows in that utility batch were already covered by the
+curated corpus (`function_mangling.pyx`, `lazy_string.pyx`, and
+`multireplace.py`). `sage/parallel/decorate.py` remains a compact near miss,
+with 26 passing blocks but broad parallel/fork behavior failures in the
+default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
