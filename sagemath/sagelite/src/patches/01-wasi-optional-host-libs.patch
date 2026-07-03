@@ -11960,3 +11960,10 @@ diff -urN -U0 a/src/sage/rings/finite_rings/conway_polynomials.py b/src/sage/rin
 @@ -405 +405 @@
 -        sage: _find_pow_of_frobenius(2, 12, x12, generators[5])
 +        sage: _find_pow_of_frobenius(2, 12, x12, generators[5])                        # needs sage.libs.pari
+diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py
+@@ -40 +40,2 @@
+-            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
++            sage: # needs sage.rings.polynomial.plural
++            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)

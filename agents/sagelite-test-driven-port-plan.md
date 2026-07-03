@@ -25613,6 +25613,35 @@ low-prompt batch unless the GAP matrix-group startup surface, quatalg/dense
 matrix runtime, Sympow elliptic-curve surface, modular arithmetic-group
 startup names, or polynomial Groebner backend profile changes.
 
+Follow-up hyperelliptic schemes corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 1 passed, 0 failed, 5 skipped
+```
+
+This pass promotes
+`sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,022
+non-comment entries. A focused near-miss probe had recorded one runnable pass
+and five `NameError` failures caused by the block's `HyperellipticCurve` and
+`Jacobian` startup names. Importing the constructor directly showed the real
+browser-profile boundary: hyperelliptic curve construction enters the
+unavailable `sage.rings.polynomial.plural` backend through the weighted
+projective scheme path. The WASI source patch now marks the contiguous
+Jacobian construction block as `# needs sage.rings.polynomial.plural`, leaving
+the finite-field polynomial setup as live coverage.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-active/jacobian-homset-ramified-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+the latest run metadata records CoWasm commit
+`2bb5854751732c0e2fd5c5fc439032fa65bc5d2a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+84.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
