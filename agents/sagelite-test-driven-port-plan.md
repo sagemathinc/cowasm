@@ -23011,6 +23011,33 @@ low-prompt scheduled runs should skip this exact batch unless cypari2/PARI
 conversion coverage changes, and should continue with a different namespace or
 a targeted PARI conversion port.
 
+Follow-up current low-prompt absent audit, second batch, on 2026-07-03:
+
+No corpus entry was promoted in this pass. The next 30 current-source
+low-prompt absent files were sampled into
+`.tmp/current-run/scheduled-2026-07-03-next/current-low-absent-batch-2.sqlite3`,
+recording 1 passed, 34 failed, and 106 skipped blocks. The candidate helper
+found no uncovered clean runnable rows under `--min-runner-version 83` with
+real-run metadata required.
+
+The only near-miss with a passing runnable block was
+`src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`; its five
+remaining failures are startup-surface `NameError` rows for
+`HyperellipticCurve`, `H`, `Jacobian`, and `JK`, so it is not a useful
+promotion target without a separate hyperelliptic-curve startup or dependency
+decision. Most other files in the batch were skipped-only under the default
+browser-compatible profile, including optional modular, database, plot, GAP,
+Numpy, topology, and PARI/MPFR conversion wrappers.
+
+The runnable failures in this batch are broader dependency/runtime frontiers:
+GAP-backed matrix group and documented-function rows, graph-backed
+`lovasz_theta` and graph-generator rows, PBORI import rows, `psage` rows that
+require `pexpect`, weighted-projective startup rows, and a file-level FLINT
+`qsieve_sage.pyx` `memory access out of bounds` trap at the `qsieve(n)`
+example. Future low-prompt scheduled runs should skip this exact batch unless
+one of those graph/GAP/PBORI/pexpect/qsieve frontiers changes, and should
+continue with a different namespace or a targeted runtime-port cluster.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
