@@ -24676,6 +24676,41 @@ Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 83, and a clean skipped-only result. The saved block-
 and file-failure cluster queries are empty.
 
+Focused Drinfeld modular form ring corpus-growth pass on 2026-07-03:
+
+```text
+ring.py: 144 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds
+`sage/modular/drinfeld_modform/ring.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,012
+non-comment entries. The file adds default-profile coverage for Drinfeld
+modular form ring construction, generators, coefficient forms, grading, and
+base-ring checks over the existing finite-field and function-field runtime
+surface.
+
+A fresh focused probe first recorded the module as a compact near miss after
+the already-promoted element-runtime fix: prime-field examples ran, while the
+remaining browser-profile failures were explicit dependency or diagnostic
+boundaries. The WASI source patch now marks the symbolic bare-`x` rank test
+as `# needs sage.symbolic`, multivariate quotient setup as
+`# needs sage.rings.polynomial.plural`, the `GF(2^3)` extension-field
+TestSuite block as `# needs sage.libs.ntl`, and three deterministic display
+or diagnostic drifts as `# known bug`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through
+`make -C sagemath/sagelite test-sage-doctest-corpus`, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-drinfeld-ring/ring-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`a136bb243d4dca23c2ba7306a3bec650ddac7ab7`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after the file is listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

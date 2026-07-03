@@ -838,6 +838,7 @@ src/sage/modular/modform/eis_series_cython.pyx
 src/sage/modular/modform/theta.py
 src/sage/modular/drinfeld_modform/tutorial.py
 src/sage/modular/drinfeld_modform/element.py
+src/sage/modular/drinfeld_modform/ring.py
 src/sage/modular/modsym/apply.pyx
 src/sage/modular/modsym/g1list.py
 src/sage/modular/hypergeometric_misc.pyx
