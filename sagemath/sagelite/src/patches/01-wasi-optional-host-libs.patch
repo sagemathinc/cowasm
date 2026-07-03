@@ -11432,3 +11432,45 @@ diff -urN -U0 a/src/sage/combinat/path_tableaux/path_tableau.py b/src/sage/combi
 @@ -358 +358 @@
 -            sage: t.orbit()
 +            sage: t.orbit()  # random - set display order is runtime-dependent
+diff -urN -U0 a/src/sage/rings/polynomial/toy_buchberger.py b/src/sage/rings/polynomial/toy_buchberger.py
+--- a/src/sage/rings/polynomial/toy_buchberger.py
++++ b/src/sage/rings/polynomial/toy_buchberger.py
+@@ -28,4 +28,4 @@
+-    sage: I = sage.rings.ideal.Katsura(P, 6)
+-    sage: g1 = buchberger(I)
+-    sage: g2 = buchberger_improved(I)
+-    sage: g3 = I.groebner_basis()
++    sage: I = sage.rings.ideal.Katsura(P, 6)                                          # needs sage.libs.singular
++    sage: g1 = buchberger(I)                                                          # needs sage.libs.singular
++    sage: g2 = buchberger_improved(I)                                                 # needs sage.libs.singular
++    sage: g3 = I.groebner_basis()                                                     # needs sage.libs.singular
+@@ -35 +35 @@
+-    sage: Ideal(g1).basis_is_groebner()
++    sage: Ideal(g1).basis_is_groebner()                                               # needs sage.libs.singular
+@@ -37 +37 @@
+-    sage: Ideal(g2).basis_is_groebner()
++    sage: Ideal(g2).basis_is_groebner()                                               # needs sage.libs.singular
+@@ -39 +39 @@
+-    sage: Ideal(g3).basis_is_groebner()
++    sage: Ideal(g3).basis_is_groebner()                                               # needs sage.libs.singular
+@@ -44 +44 @@
+-    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
++    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)                                         # needs sage.libs.singular
+@@ -52 +52 @@
+-    sage: I = sage.rings.ideal.Katsura(P)
++    sage: I = sage.rings.ideal.Katsura(P)                                             # needs sage.libs.singular
+@@ -54 +54 @@
+-    sage: I
++    sage: I                                                                           # needs sage.libs.singular
+@@ -57 +57 @@
+-    sage: buchberger(I)  # random
++    sage: buchberger(I)  # random                                                     # needs sage.libs.singular
+@@ -118 +118 @@
+-    sage: gb = buchberger(I)
++    sage: gb = buchberger(I)                                                          # needs sage.libs.singular
+@@ -125 +125 @@
+-    sage: gb = buchberger_improved(I)
++    sage: gb = buchberger_improved(I)                                                 # needs sage.libs.singular
+@@ -128 +128 @@
+-    sage: sorted(gb)
++    sage: sorted(gb)                                                                  # needs sage.libs.singular

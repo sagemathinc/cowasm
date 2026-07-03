@@ -23694,6 +23694,37 @@ and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
 empty, and `doctest-corpus-candidates.py` prints no promotion rows after
 subtracting the updated corpus.
 
+Focused toy-Buchberger corpus-growth pass:
+
+```text
+toy_buchberger.py: 30 passed, 0 failed, 21 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/toy_buchberger.py` to the curated pure-math corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 993
+non-comment entries. The file adds default-profile coverage for the
+educational S-polynomial, inter-reduction, and pair-selection helpers in the
+toy Buchberger implementation.
+
+The initial focused probe recorded `30 passed, 14 failed, 7 skipped`. The
+failures were concentrated in Katsura/Groebner-basis examples that construct
+Sage ideals through the current Singular/pexpect-backed path, plus cascading
+missing-name checks after those setup examples failed. The WASI source patch
+now marks those examples with `# needs sage.libs.singular`, preserving the
+pure helper coverage while recording the external polynomial-backend boundary
+as explicit skip metadata.
+
+Focused validation used a direct `sage -t` rerun after tagging, then the
+`test-sage-doctest-corpus` make target against a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next3/toy-buchberger-make.sqlite3`.
+The full WASI source patch dry-runs against `/home/user/sagelite`,
+`git diff --check` is clean for the tracked changes, and
+`doctest-corpus-candidates.py` prints no promotion rows after subtracting the
+updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
