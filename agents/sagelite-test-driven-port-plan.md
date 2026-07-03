@@ -23236,6 +23236,29 @@ polyhedron, and toy Buchberger helpers exposed startup/backend failure
 clusters. Future low-prompt scheduled runs should skip this exact batch unless
 the NTL, polyhedron allocation, or algebra/module startup frontiers change.
 
+Follow-up plot triangulation corpus-growth pass on 2026-07-03:
+
+`src/sage/plot/plot3d/tri_plot.py` is now listed in the curated pure-math
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 984 non-comment
+entries. A fresh absent-file probe over plot and geometry helpers wrote
+`.tmp/current-run/scheduled-2026-07-03-geometry-plot-probe/probe.sqlite3` and
+found `tri_plot.py` as the only uncovered clean runnable row, with `70 passed,
+0 failed, 0 skipped`.
+
+Focused validation through the `test-sage-doctest-corpus` make target used a
+temporary one-file corpus and `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, recording
+`70 passed, 0 failed, 0 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-tri-plot/make.sqlite3`. Saved block-
+and file-failure cluster queries are empty for the focused run.
+
+The same probe kept adjacent geometry and plotting files out of the quiet
+corpus. Hyperbolic arc/polygon helpers were skipped-only, while hyperbolic
+space, surface generator, and Voronoi diagram doctests exposed startup
+namespace and symbolic/polyhedron backend gaps. Future low-prompt scheduled
+runs should skip this exact batch unless the geometry startup surface or
+polyhedron backend changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
