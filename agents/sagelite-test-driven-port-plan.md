@@ -25576,6 +25576,43 @@ the doctest. The saved block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py` prints no promotion row after the file is added
 to the corpus.
 
+Follow-up low-prompt algebra/backend frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,021 non-comment entries. Fresh direct probes used the current patched source
+root, node profile, runner version 84, CoWasm commit
+`96b523737d21f32befe3878c80a6fe2137018733` at the start of the scheduled run,
+and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The low-risk utility/backend sweep wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal3/low-risk-a.sqlite3`
+and recorded `0 passed, 5 failed, 46 skipped`. All successful files were
+skipped-only or empty. The one live failure file,
+`sage/groups/matrix_gps/symplectic_gap.py`, remained a GAP-backed
+matrix-group startup boundary with `Sp`/`G` local-name cascades and a missing
+`sage.libs.gap.libgap` module.
+
+The math-frontier sweep wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal3/math-frontier-a.sqlite3`
+and recorded `0 passed, 35 failed, 77 skipped`. It did not expose any clean
+runnable promotion candidate. The live clusters were broad backend/startup
+boundaries: quaternion algebra helper imports missing the quatalg Cython
+module surface, dense matrix and symbolic dependencies in quaternion element
+helpers, Sympow examples missing `EllipticCurve`, modular arithmetic group
+examples missing `Gamma0` and degeneracy-coset helper startup names, and a
+`polynomial/ideal.py` Groebner-basis example timing out at line 77.
+
+Running `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --ignore-invalid --quiet-invalid --dedupe-paths`
+over both probe databases printed no uncovered clean runnable rows; the
+near-miss scan also printed no row because the failure files had zero passing
+default-profile blocks. Future scheduled runs should avoid this exact
+low-prompt batch unless the GAP matrix-group startup surface, quatalg/dense
+matrix runtime, Sympow elliptic-curve surface, modular arithmetic-group
+startup names, or polynomial Groebner backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
