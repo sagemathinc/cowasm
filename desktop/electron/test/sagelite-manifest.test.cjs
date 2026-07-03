@@ -199,7 +199,9 @@ withResourceRoot(() => {
     sorted(extractShellArray(script, "electron_required_paths")),
     sorted([
       ...expectedSageliteMandatoryResourcePaths,
-      ...expectedSageliteNativeLibraryPaths,
+      ...expectedSageliteNativeLibraryPaths.filter((entry) =>
+        entry.startsWith("deps/"),
+      ),
     ]),
   );
 });

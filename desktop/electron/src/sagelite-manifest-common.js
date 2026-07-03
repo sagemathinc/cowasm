@@ -32,6 +32,7 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
   "deps/libcxx/libcxx.so",
   "deps/primecountpy/primecountpy/libcxx.so",
   "site-packages/sage/libs/libcxx.so",
+  "site-packages/sage/libs/ntl/libcxx.so",
   "site-packages/sage/rings/finite_rings/libcxx.so",
 ]);
 
@@ -204,6 +205,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/set_partition.py",
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/set_partition_ordered.py",
+  "site-packages/sage/combinat/skew_tableau.py",
   "site-packages/sage/combinat/subword.py",
   "site-packages/sage/combinat/subset.py",
   "site-packages/sage/combinat/tableau.py",
@@ -265,7 +267,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 145,
+  schemaVersion: 146,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
