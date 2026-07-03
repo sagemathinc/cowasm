@@ -11072,3 +11072,17 @@ diff -urN -U0 a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
              x = x.list() # this is slow but cimport leads to circular imports
          elif isinstance(x, FiniteField):
              if x.characteristic() == 2:
+diff -urN -U0 a/src/sage/rings/padics/unramified_extension_generic.py b/src/sage/rings/padics/unramified_extension_generic.py
+--- a/src/sage/rings/padics/unramified_extension_generic.py
++++ b/src/sage/rings/padics/unramified_extension_generic.py
+@@ -320,2 +320,2 @@
+-            sage: R.<a> = Zq(37^8)
+-            sage: R.has_root_of_unity(144)
++            sage: R.<a> = Zq(37^8)                                                # needs sage.libs.flint
++            sage: R.has_root_of_unity(144)                                         # needs sage.libs.flint
+@@ -323 +323 @@
+-            sage: R.has_root_of_unity(89)
++            sage: R.has_root_of_unity(89)                                          # needs sage.libs.flint
+@@ -325 +325 @@
+-            sage: R.has_root_of_unity(11)
++            sage: R.has_root_of_unity(11)                                          # needs sage.libs.flint

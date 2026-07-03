@@ -3825,6 +3825,36 @@ block and no runnable blocks. `sage/doctest/tests/tolerance.rst` recorded
 negative tolerance-checker fixtures whose source text says they should fail.
 They should not be promoted into the quiet browser-profile corpus.
 
+Focused p-adic unramified-extension corpus-growth pass:
+
+```text
+unramified_extension_generic.py: 2 passed, 0 failed, 31 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/unramified_extension_generic.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 966
+non-comment entries. A fresh near-miss rerun first recorded two passing
+blocks, four failures, and 27 skips. The failures were the
+`Zq(37^8)` setup for `has_root_of_unity(...)` and the three dependent checks;
+the setup reaches the currently disabled FLINT integer-polynomial side module
+in the default browser-compatible profile.
+
+The added WASI source patch marks that setup and its dependent checks as
+`# needs sage.libs.flint`, matching the existing explicit NTL deferrals in
+the same file while preserving the two runnable unramified-extension helper
+blocks. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding and patching a fresh Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal/unramified-make-rerun.sqlite3`.
+The latest-run summary records CoWasm commit
+`e6caf1e50165723af3a111d095a3175d3aec5250`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the new deferred blocks under
+`optional:sage.libs.flint`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
