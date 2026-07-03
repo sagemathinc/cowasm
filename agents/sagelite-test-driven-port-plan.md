@@ -24993,6 +24993,51 @@ browser-compatible profile changes. The next useful pass should sample a
 different source-minus-corpus namespace or target one of the recorded backend
 clusters explicitly.
 
+Follow-up fresh source-minus-corpus audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,014 non-comment entries. Two fresh direct Sagelite probes wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-fresh-frontier/`.
+Both probes used the current patched source root, node profile, runner version
+83, CoWasm commit `412faf3658641013e23cb7e2de439a4b4f1d17b7`, and Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`. Running
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--ignore-invalid --quiet-invalid --dedupe-paths` across the new databases
+printed no uncovered clean runnable candidate.
+
+The first filtered untried batch, `untried-small.sqlite3`, recorded `8
+passed, 74 failed, 373 skipped`. Its runnable failures were boundary evidence:
+`sage/rings/finite_rings/residue_field_pari_ffelt.pyx` trapped in cypari2/PARI
+`Gen.__dealloc__` after `K.factor(10007)`,
+`sage/rings/finite_rings/finite_field_ntl_gf2e.py` hit the known GF2X side
+module import boundary, `sage/groups/perm_gps/partn_ref/data_structures.pyx`
+failed on missing local doctest setup names such as `limit`, and
+`sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py` cascaded from the
+current graph-backend boundary reached through `lie_algebras`. The clean rows
+were skipped-only dependency-boundary files, including PARI, coding, SAT,
+finite-ring, semimonomial-transformation, and symmetric-function helpers.
+
+The second mixed untried batch, `untried-mixed.sqlite3`, recorded `86 passed,
+296 failed, 1004 skipped`. Its best near misses were
+`sage/dynamics/arithmetic_dynamics/endPN_minimal_model.py` with `32 passed,
+32 failed, 1 skipped`, `sage/rings/polynomial/padics/polynomial_padic.py`
+with `28 passed, 25 failed, 16 skipped`,
+`sage/rings/function_field/jacobian_unique_hess.py` with `17 passed, 56
+failed`, plus smaller runnable slices in `exterior_algebra_groebner.pyx` and
+`calculus/tests.py`. These are not tag-only promotions: failures cluster around
+missing projective-dynamics startup names, p-adic polynomial parent/category
+behavior, function-field curve setup, exterior-algebra construction semantics,
+and symbolic-calculus names. The rest of the batch was skipped-only under
+existing `sage.combinat`, `sage.modules`, `sage.rings.finite_rings`,
+`sage.symbolic`, `sage.libs.pari`, plotting, long-time, or optional metadata.
+
+Future scheduled runs should avoid these exact filtered untried batches unless
+one of the recorded backend or startup surfaces changes. The remaining useful
+source-minus-corpus work is either a different namespace not covered by today's
+SQLite artifacts or a focused fix for one of the near-miss clusters above.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
