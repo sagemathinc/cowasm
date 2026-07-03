@@ -42,6 +42,7 @@ src/sage/rings/ideal_monoid.py
 src/sage/rings/invariants/invariant_theory.py
 src/sage/rings/invariants/reconstruction.py
 src/sage/rings/polynomial/polydict.pyx
+src/sage/rings/polynomial/laurent_polynomial_ring.py
 src/sage/rings/power_series_mpoly.pyx
 src/sage/rings/puiseux_series_ring.py
 src/sage/rings/padics/padic_relaxed_errors.pyx
