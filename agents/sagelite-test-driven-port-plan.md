@@ -22933,6 +22933,33 @@ near-miss scan, and the default `make -C sagemath/sagelite
 sage-doctest-candidates` and `sage-doctest-candidate-paths` audits against the
 current empty placeholder dashboard.
 
+Follow-up candidate real-run metadata filter pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. A wide current-run scratch scan
+still had one apparent clean uncovered row, `src/sage/repl/prompts.py`, but it
+came from `.tmp/current-run/doctest-self-test-filter-fixture.sqlite3`, a
+synthetic candidate-helper fixture with only minimal `runs` metadata. The
+real scheduled low-prompt database records the same file with zero extracted
+blocks, so the fixture row was not a valid corpus-growth signal.
+
+The `doctest-corpus-candidates.py` helper now supports
+`--require-run-metadata`, which scans only databases whose selected run has the
+modern real-run metadata columns populated: `started_at`, `git_commit`,
+`command`, `run_profile`, and `status`. Direct helper use remains
+legacy-compatible by default, while the Makefile candidate entrypoints now opt
+into the real-run filter through the default
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS`. This keeps scheduled wide scans from
+treating hand-built helper fixtures as promotion candidates without removing
+the existing legacy database audit path.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, both make-level candidate
+entrypoints against the current empty placeholder dashboard, the noisy
+multi-database scratch scan with and without `--require-run-metadata`, and a
+minimal SQLite fixture confirming that synthetic runs are suppressed until the
+modern run metadata columns are populated.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

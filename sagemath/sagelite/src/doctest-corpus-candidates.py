@@ -13,6 +13,13 @@ from pathlib import Path
 
 
 DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
+REQUIRED_RUN_METADATA_COLUMNS = (
+    "started_at",
+    "git_commit",
+    "command",
+    "run_profile",
+    "status",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -174,6 +181,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--require-run-metadata",
+        action="store_true",
+        help=(
+            "scan only databases with modern real-run metadata columns, "
+            "filtering synthetic helper fixtures while preserving legacy "
+            "compatibility by default"
+        ),
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -325,31 +341,42 @@ def runs_table_has_column(db: sqlite3.Connection, column: str) -> bool:
 def latest_run_metadata(
     db: sqlite3.Connection,
     min_runner_version: int | None,
+    require_run_metadata: bool,
 ) -> tuple[int, Path | None] | None:
+    filters = []
+    parameters: list[object] = []
+    if require_run_metadata:
+        if any(
+            not runs_table_has_column(db, column)
+            for column in REQUIRED_RUN_METADATA_COLUMNS
+        ):
+            return None
+        filters.extend(
+            f"coalesce({column}, '') != ''"
+            for column in REQUIRED_RUN_METADATA_COLUMNS
+        )
     if min_runner_version is not None:
         if not runs_table_has_column(db, "runner_version"):
             return None
-        row = db.execute(
-            """
-            select id, source_root
-            from runs
-            where runner_version >= ?
-            order by id desc
-            limit 1
-            """,
-            (min_runner_version,),
-        ).fetchone()
-        if row is None:
-            return None
-    else:
-        row = db.execute(
-            """
-            select id, source_root
-            from runs
-            order by id desc
-            limit 1
-            """
-        ).fetchone()
+        filters.append("runner_version >= ?")
+        parameters.append(min_runner_version)
+    where_clause = ""
+    if filters:
+        where_clause = "where " + " and ".join(filters)
+    row = db.execute(
+        f"""
+        select id, source_root
+        from runs
+        {where_clause}
+        order by id desc
+        limit 1
+        """,
+        parameters,
+    ).fetchone()
+    if min_runner_version is not None and row is None:
+        return None
+    if require_run_metadata and row is None:
+        return None
     if row is None:
         raise SystemExit("no doctest runs found in database")
     run_id, source_root = row
@@ -737,7 +764,9 @@ def main() -> int:
                 raise SystemExit(f"database not found: {database}")
             with sqlite3.connect(database) as db:
                 require_doctest_schema(database, db)
-                metadata = latest_run_metadata(db, args.min_runner_version)
+                metadata = latest_run_metadata(
+                    db, args.min_runner_version, args.require_run_metadata
+                )
                 if metadata is None:
                     continue
                 run_id, db_source_root = metadata

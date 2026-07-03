@@ -2867,6 +2867,40 @@ if [ -n "$doctest_candidate_helper_stale_runner_paths" ]; then
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --min-runner-version reported a stale runner."
 fi
+doctest_candidate_helper_synthetic_metadata_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --require-run-metadata \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_synthetic_metadata_paths" ]; then
+  printf '%s\n' "$doctest_candidate_helper_synthetic_metadata_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --require-run-metadata reported a synthetic helper fixture."
+fi
+sqlite3 "$doctest_candidate_helper_db" <<SQL
+alter table runs add column started_at text;
+alter table runs add column git_commit text;
+alter table runs add column command text;
+alter table runs add column run_profile text;
+alter table runs add column status text;
+update runs
+set
+  started_at = '2026-07-03T00:00:00.000Z',
+  git_commit = 'standalone-smoke-fixture',
+  command = 'sage -t src/sage/example/real_candidate.py',
+  run_profile = 'node',
+  status = 'passed';
+SQL
+doctest_candidate_helper_modern_metadata_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --require-run-metadata \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_modern_metadata_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_modern_metadata_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --require-run-metadata did not accept modern run metadata."
+fi
 doctest_candidate_helper_zero_blocks="$("$src_dir/doctest-corpus-candidates.py" \
   --zero-blocks \
   --corpus "$doctest_candidate_helper_corpus" \
