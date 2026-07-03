@@ -26774,6 +26774,44 @@ object-model boundary through matrix-to-PARI conversion,
 startup names such as `posets`, `simplicial_complexes`, and
 `generic_graph_pyx`.
 
+Follow-up unprobed low-prompt and heavy-frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict source-minus-corpus scan that also
+subtracted all files already present in runner-87 dashboards under
+`.tmp/current-run/` found only two remaining low-prompt files in the preferred
+pure-math-adjacent areas. Direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-03-codex25/` recorded:
+
+```text
+unprobed-low-prompt.sqlite3: 3 passed, 31 failed, 45 skipped
+widened-heavy-frontier.sqlite3: 193 passed, 137 failed, 254 skipped
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+both fresh databases printed no uncovered clean runnable candidate. The
+low-prompt probe confirmed that `rings/number_field/totallyreal_rel.py` is
+skipped-only in the default browser profile, while
+`rings/polynomial/pbori/parallel.py` remains on the BRiAl/PBoRi packaging
+frontier with a few setup blocks passing before unavailable PBoRi names
+cascade.
+
+The widened probe sampled remaining unprobed modular, number-field, geometry,
+and matroid files. The skipped-only files were explicit optional boundaries:
+`modular/modsym/element.py`, `modular/hecke/element.py`,
+`rings/number_field/structure.py`, and `rings/number_field/bdd_height.py`.
+The live failures were not narrow promotions. `modular/local_comp/liftings.py`
+is a near miss with 41 passing blocks, but the missing `SL2Z` setup-name
+cascade is mixed with PARI-backed matrix determinant gaps and one modular
+output drift. `rings/number_field/splitting_field.py` is dominated by
+number-field setup-name and constructor failures. The combinatorial polyhedron
+files expose geometry/polyhedron backend boundaries, including a captured
+file-level out-of-memory allocation breadcrumb at `list_of_faces.pyx:160`.
+The matroid files still depend on broad matroid catalog/graph startup names
+and optional finite-ring/combinat support, so they should not be added to the
+quiet browser-profile corpus without deeper backend work.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
