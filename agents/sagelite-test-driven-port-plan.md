@@ -24570,6 +24570,47 @@ The `category-combinat.sqlite3` probe was skipped-only except for two
 poset-dependency failures. The `coding-crypto.sqlite3` probe was clean but
 entirely skipped under existing coding and crypto dependency metadata.
 
+Follow-up no-promotion frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,010
+non-comment entries. A fresh scan of same-day SQLite artifacts with
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata`
+printed no uncovered clean promotion rows after subtracting the current
+curated corpus.
+
+Several focused probes wrote dashboards under
+`.tmp/current-run/scheduled-2026-07-03-more/`. The category-example probe in
+`category-examples-rerun.sqlite3` was clean but skipped-only, recording
+449 skipped blocks across higher category example modules that already carry
+dependency-boundary metadata. The low-level probe in `lowlevel.sqlite3`
+recorded 1,923 passing blocks in already-covered data-structure and rings
+helper files, plus the existing `arith/misc.py` polynomial-number-field
+`memory access out of bounds` trap at `__GCD_sequence(...)`. A focused
+make-target sanity rerun of those already-covered clean rows wrote
+`lowlevel-promotion-make.sqlite3` and passed with `1,923 passed, 0 failed,
+139 skipped`, confirming the current patched build tree but producing no new
+promotion candidate.
+
+Additional uncovered probes did not identify a small tag-only promotion. The
+`lowcount-uncovered.sqlite3` batch was entirely skipped-only across cpython,
+crypto, misc, monoid, category, ring-extension, coding, and quaternion-element
+frontiers. The `combinat-moderate.sqlite3` batch was skipped-only except for
+`sage/combinat/posets/bubble_shuffle.py`, which still has six default-profile
+failures. The `matrix-modules.sqlite3` batch exposed broader sparse-matrix and
+module frontiers rather than quiet candidates: `vector_mod2_dense.pyx` depends
+on the missing `sage.matrix.matrix_mod2_dense` backend, while
+`matrix_rational_sparse.pyx`, `matrix_modn_sparse.pyx`, `module_functors.py`,
+and `submodule_helper.py` have many failures across sparse matrix internals,
+rank/determinant keyword support, and focused cypari2 object-model limits. The
+`misc-repl.sqlite3` batch was skipped-only except for broad IPython/REPL
+display failures in `ipython_tests.py` and `display/formatter.py`.
+
+Future scheduled runs should avoid repeating these exact slices until the
+polynomial-number-field trap, matrix mod-2 backend, sparse-matrix internals,
+or REPL/IPython display profile changes. Better near-term targets are fresh
+unlisted files outside these audited frontiers, or a focused backend fix for
+one of the recorded clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
