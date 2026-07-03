@@ -52,6 +52,12 @@ side_module_audit_log="$dist_dir/side-module-audit.log"
 node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
 electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
 doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-10}"
+meson_compile_jobs="${SAGELITE_MESON_COMPILE_JOBS:-4}"
+
+if ! [[ "$meson_compile_jobs" =~ ^[1-9][0-9]*$ ]]; then
+  echo "SAGELITE_MESON_COMPILE_JOBS must be a positive integer" >&2
+  exit 2
+fi
 
 record_blocker() {
   local message="$1"
@@ -409,7 +415,7 @@ PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
 PKG_CONFIG="$pkg_config" \
-  meson compile -C "$build_dir/cowasm-meson-build" >"$dist_dir/meson-compile.log" 2>&1
+  meson compile -j "$meson_compile_jobs" -C "$build_dir/cowasm-meson-build" >"$dist_dir/meson-compile.log" 2>&1
 compile_status=$?
 set -e
 if [ "$compile_status" -ne 0 ]; then

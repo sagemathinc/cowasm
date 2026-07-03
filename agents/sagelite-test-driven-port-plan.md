@@ -22543,6 +22543,29 @@ abort after the first `ntl_ZZ_p` fix, and
 `polynomial_gf2x`/`matrix_mod2_dense` import boundary before the lazy import
 fix.
 
+Follow-up standalone validation stability pass on 2026-07-02:
+
+The Sagelite standalone script now caps Meson/Ninja compile parallelism for
+the WASM Cython build with `SAGELITE_MESON_COMPILE_JOBS`, defaulting to four
+jobs. This keeps the validation target from launching a full host-core count
+of concurrent `python-wasm` Cython workers, which reproduced as clustered
+`Bus error` and `Segmentation fault` failures around the rings Cython batch
+during a fresh non-interactive standalone rerun.
+
+With the cap in place, the same validation target rebuilt cleanly past the
+previous compile crash range, completed the staged install, passed the Node
+and `python-wasi-sdk` import ladders, copied and audited the Electron resource
+bundle, and completed the doctest smoke suite:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+This also confirms that the earlier stale `free module smoke` blocker is not
+the current frontier; the fresh run passes that smoke and later finite-field,
+matrix, multivariate-polynomial, Laurent-polynomial, PARI-boundary,
+libbraiding, and lrcalc Node probes before finishing the standalone target.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
