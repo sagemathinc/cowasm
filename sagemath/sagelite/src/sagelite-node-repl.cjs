@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 86;
+const doctestRunnerVersion = 87;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1201,6 +1201,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
             import sage.all as sage_all
             if not hasattr(sage_all, "designs"):
                 setattr(sage_all, "designs", designs)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
+        import sage.groups.groups_catalog as groups
+        namespace.setdefault("groups", groups)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "groups"):
+                setattr(sage_all, "groups", groups)
         except BaseException:
             pass
     except BaseException:

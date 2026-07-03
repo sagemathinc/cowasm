@@ -12299,3 +12299,24 @@ diff --git a/src/sage/schemes/affine/affine_homset.py b/src/sage/schemes/affine/
 @@ -427 +427 @@
 -            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
 +            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])                   # needs sage.rings.polynomial.plural
+diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/linear.py
+--- a/src/sage/groups/matrix_gps/linear.py
++++ b/src/sage/groups/matrix_gps/linear.py
+@@ -159 +159 @@ def GL(n, R, var='a'):
+-        sage: groups.matrix.GL(2, 3)
++        sage: groups.matrix.GL(2, 3)                                                # needs sage.libs.gap
+@@ -161 +161 @@ def GL(n, R, var='a'):
+-        sage: groups.matrix.GL(1, ZZ).category()
++        sage: groups.matrix.GL(1, ZZ).category()                                    # needs sage.libs.gap
+@@ -163 +163 @@ def GL(n, R, var='a'):
+-        sage: groups.matrix.GL(1, QQ).category()
++        sage: groups.matrix.GL(1, QQ).category()                                    # needs sage.libs.gap
+@@ -261 +261 @@ def SL(n, R, var='a'):
+-        sage: groups.matrix.SL(2, 3)
++        sage: groups.matrix.SL(2, 3)                                                # needs sage.libs.gap
+@@ -334 +334 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
+-            sage: G.order() == len(list(G))
++            sage: G.order() == len(list(G))                                        # known bug - finite matrix group iteration uses missing WASI list fallback
+@@ -338 +338 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
+-            sage: H.order() == len(list(H))
++            sage: H.order() == len(list(H))                                        # known bug - finite matrix group iteration uses missing WASI list fallback

@@ -25880,6 +25880,40 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
 after the file is added to the corpus.
 
+Follow-up linear matrix-group corpus-growth pass on 2026-07-03:
+
+```text
+linear.py: 35 passed, 0 failed, 38 skipped
+```
+
+This pass promotes `sage/groups/matrix_gps/linear.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,030
+non-comment entries. A prior matrix-groups probe had recorded 35 passing
+blocks, six failures, and 32 skips. The first failure cluster was startup
+namespace drift in examples that use Sage's public `groups.matrix` catalog;
+the doctest runner now seeds `groups` from `sage.groups.groups_catalog` in the
+common namespace and records the change under runner version 87.
+
+With that startup namespace fixed, the `groups.matrix` examples expose their
+real browser-profile dependency on `sage.libs.gap`, so the WASI source patch
+marks those catalog examples with explicit GAP needs tags. The remaining two
+failures are finite matrix-group iteration checks over `Integers(6)` that
+currently reach a missing WASI `list` fallback; those are recorded as
+`# known bug` skips while leaving the constructor, category, generator, and
+order computations that run in the stripped profile as live doctest coverage.
+
+Focused validation first used a direct `sage -t --timeout 120` rerun against
+the patched source copy, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex2/linear-tagged.sqlite3`.
+Final validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex2/linear-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
