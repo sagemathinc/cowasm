@@ -24611,6 +24611,37 @@ or REPL/IPython display profile changes. Better near-term targets are fresh
 unlisted files outside these audited frontiers, or a focused backend fix for
 one of the recorded clusters.
 
+Follow-up geometry-boundary tagging pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,010
+non-comment entries. Two fresh small-file probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-fresh/`. The first mixed batch was
+clean but entirely skipped or empty, recording `0 passed, 0 failed, 88
+skipped` across data-structure, crypto, category, monoid, modular, quadratic
+form, geometry, plot, matrix, and sparse-vector helpers. The second batch
+recorded `7 passed, 79 failed, 367 skipped`; its only clean runnable row,
+`sage/quadratic_forms/quadratic_form__mass.py`, was already listed in the
+corpus, while the uncovered `sage/geometry/relative_interior.py` failures were
+a polyhedron startup cascade.
+
+Direct reproduction showed that importing `Polyhedron` is not enough for
+`relative_interior.py`: constructing a simple segment reaches the missing
+`ppl` backend through `sage.geometry.polyhedron.backend_ppl`. The WASI source
+patch now gives `relative_interior.py` a file-level
+`# sage.doctest: needs sage.geometry.polyhedron` directive, matching the
+existing browser-profile boundary used by adjacent polyhedron doctests.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-fresh/relative-interior-make.sqlite3`.
+The checked run recorded `0 passed, 0 failed, 88 skipped`; the latest-run
+summary records CoWasm commit `eb017de6dfc6a7c3f71389dd890ec890af16a2ce`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 83, and a clean skipped-only result. The saved block-
+and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
