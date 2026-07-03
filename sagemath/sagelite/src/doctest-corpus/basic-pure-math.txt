@@ -266,6 +266,7 @@ src/sage/groups/group_exp.py
 src/sage/groups/matrix_gps/linear_gap.py
 src/sage/groups/matrix_gps/named_group.py
 src/sage/groups/matrix_gps/named_group_gap.py
+src/sage/groups/matrix_gps/symplectic.py
 src/sage/groups/affine_gps/affine_group.py
 src/sage/groups/misc_gps/imaginary_groups.py
 src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx
