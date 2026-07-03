@@ -23365,6 +23365,34 @@ existing optional `sage.graphs`/`sage.modules` rows, and
 `doctest-corpus-candidates.py` prints no promotion rows after both files are
 listed in the corpus.
 
+Follow-up skipped-only candidate reporting pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+989 non-comment entries. A current-runner scan across saved scratch SQLite
+databases with `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--min-runner-version 83` found no uncovered clean runnable candidates and no
+compact non-`NameError` near misses. A fresh low-prompt absent-file probe wrote
+`.tmp/current-run/scheduled-2026-07-03-cont/lowprompt-probe.sqlite3` and
+recorded `0 passed, 0 failed, 114 skipped` across 15 compact files, so the
+probe is dependency-boundary audit data rather than corpus-growth input.
+
+The candidate helper now supports `--include-skip-reasons` with
+`--skipped-only`, appending the distinct block-level skip reasons for each
+skipped-only row. This makes no-candidate frontier scans explain themselves
+directly; for example, the fresh low-prompt probe reports rows such as
+`src/sage/knots/gauss_code.py` with `optional:sage.graphs` and
+`src/sage/rings/qqbar_decorators.py` with
+`optional:sage.rings.number_field`. The make-level
+`sage-doctest-candidates` entrypoint accepts the flag through
+`SAGELITE_DOCTEST_CANDIDATE_FLAGS`. Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a synthetic skipped-only
+SQLite fixture, the expected parser guard for using `--include-skip-reasons`
+without `--skipped-only`, and a make-level skipped-only report against the
+fresh probe database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

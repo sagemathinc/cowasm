@@ -127,6 +127,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--include-skip-reasons",
+        action="store_true",
+        help=(
+            "with --skipped-only, append distinct block skip reasons so "
+            "dependency-boundary rows can be audited without raw SQLite queries"
+        ),
+    )
+    parser.add_argument(
         "--failure-detail-limit",
         type=int,
         default=0,
@@ -227,6 +235,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--exclude-file-failure-class requires --file-errors")
     if args.exclude_file_failure_detail and not args.file_errors:
         parser.error("--exclude-file-failure-detail requires --file-errors")
+    if args.include_skip_reasons and not args.skipped_only:
+        parser.error("--include-skip-reasons requires --skipped-only")
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
     )
@@ -403,6 +413,16 @@ def can_read_block_failure_details(db: sqlite3.Connection) -> bool:
     )
 
 
+def can_read_block_skip_reasons(db: sqlite3.Connection) -> bool:
+    return (
+        table_exists(db, "blocks")
+        and files_table_has_column(db, "id")
+        and table_has_column(db, "blocks", "file_id")
+        and table_has_column(db, "blocks", "status")
+        and table_has_column(db, "blocks", "skip_reason")
+    )
+
+
 def one_line_detail(detail: str) -> str:
     return " ".join(detail.replace("\t", " ").splitlines()).strip()
 
@@ -431,6 +451,7 @@ def candidate_rows(
     excluded_file_failure_classes: list[str],
     excluded_file_failure_details: list[str],
     excluded_path_prefixes: tuple[str, ...],
+    include_skip_reasons: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -476,6 +497,23 @@ def candidate_rows(
                   )
                 ),
                 {failure_detail_expr}
+              )
+        """
+    if skipped_only and include_skip_reasons and can_read_block_skip_reasons(db):
+        row_failure_detail_expr = """
+              coalesce(
+                (
+                  select group_concat(reason, ', ')
+                  from (
+                    select distinct coalesce(blocks.skip_reason, '') as reason
+                    from blocks
+                    where blocks.file_id = files.id
+                      and blocks.status = 'skipped'
+                      and coalesce(blocks.skip_reason, '') != ''
+                    order by reason
+                  )
+                ),
+                ''
               )
         """
     if file_errors:
@@ -551,7 +589,7 @@ def candidate_rows(
               duration_ms,
               status,
               {failure_class_expr},
-              {failure_detail_expr}
+              {row_failure_detail_expr}
             from files
             where run_id = ?
               and status = 'passed'
@@ -752,7 +790,9 @@ def main() -> int:
             or args.file_errors
         ):
             columns.extend(["status", "failure_class"])
-            if args.include_failure_detail:
+            if args.include_skip_reasons:
+                columns.append("skip_reasons")
+            elif args.include_failure_detail:
                 columns.append("failure_detail")
         if show_database:
             columns.insert(0, "database")
@@ -792,6 +832,7 @@ def main() -> int:
                     args.exclude_file_failure_class,
                     args.exclude_file_failure_detail,
                     args.excluded_path_prefixes,
+                    args.include_skip_reasons,
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
@@ -851,7 +892,7 @@ def print_row(
     if args.paths_only:
         print(row[0])
     elif args.near_misses or args.skipped_only or args.zero_blocks or args.file_errors:
-        if args.include_failure_detail:
+        if args.include_failure_detail or args.include_skip_reasons:
             values = (*row[:-1], printable_detail(row[-1], args.failure_detail_limit))
         else:
             values = row[:-1]

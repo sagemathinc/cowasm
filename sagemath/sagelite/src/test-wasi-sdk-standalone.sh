@@ -2713,6 +2713,7 @@ mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 mkdir -p "$doctest_candidate_helper_override_source_root/src/sage/example"
 touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
@@ -2771,6 +2772,15 @@ insert into files (
   5
 ), (
   1,
+  '$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py',
+  'passed',
+  2,
+  0,
+  0,
+  2,
+  25
+), (
+  1,
   '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py',
   'error',
   0,
@@ -2819,7 +2829,8 @@ where path = '$doctest_candidate_helper_source_root/src/sage/example/stale_harne
 create table blocks (
   file_id integer,
   status text,
-  failure_class text
+  failure_class text,
+  skip_reason text
 );
 insert into blocks (file_id, status, failure_class)
 select id, 'failed', 'NameError'
@@ -2829,6 +2840,14 @@ insert into blocks (file_id, status, failure_class)
 select id, 'failed', 'TypeError'
 from files
 where path = '$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py';
+insert into blocks (file_id, status, skip_reason)
+select id, 'skipped', 'optional:sage.graphs'
+from files
+where path = '$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py';
+insert into blocks (file_id, status, skip_reason)
+select id, 'skipped', 'optional:sage.symbolic'
+from files
+where path = '$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py';
 SQL
 doctest_candidate_helper_output="$("$src_dir/doctest-corpus-candidates.py" \
   --corpus "$doctest_candidate_helper_corpus" \
@@ -2909,6 +2928,16 @@ if [ "$doctest_candidate_helper_zero_blocks" != "src/sage/example/zero_candidate
   printf '%s\n' "$doctest_candidate_helper_zero_blocks" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --zero-blocks did not report empty clean files."
+fi
+doctest_candidate_helper_skipped_only_details="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --include-skip-reasons \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_skipped_only_details" != "src/sage/example/skipped_candidate.py	2	0	0	2	0	25	passed		optional:sage.graphs, optional:sage.symbolic" ]; then
+  printf '%s\n' "$doctest_candidate_helper_skipped_only_details" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --include-skip-reasons did not report skipped-only dependency metadata."
 fi
 doctest_candidate_helper_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
