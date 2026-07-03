@@ -23307,6 +23307,36 @@ block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py` prints no promotion rows after the file is
 listed in the corpus.
 
+Follow-up modular theta corpus-growth pass on 2026-07-03:
+
+`src/sage/modular/modform/theta.py` is now listed in the curated pure-math
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 987
+non-comment entries. A fresh small-prompt absent-file probe wrote
+`.tmp/current-run/scheduled-2026-07-03-smallfresh2/probe.sqlite3` and found
+`theta.py` as the only uncovered clean runnable row, with `15 passed`, `0
+failed`, and `0 skipped`.
+
+Focused direct validation recorded `15 passed, 0 failed, 0 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-smallfresh2/theta-focus.sqlite3`.
+Strict make-level validation with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and `SAGELITE_DOCTEST_TIMEOUT=90`
+recorded the same counts in
+`.tmp/current-run/scheduled-2026-07-03-smallfresh2/theta-make.sqlite3`; saved
+block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion rows after the file is
+listed in the corpus.
+
+The same scheduled pass ruled out several adjacent low-count batches for
+quiet corpus growth. `.tmp/current-run/scheduled-2026-07-03-smallfresh/probe.sqlite3`
+recorded `0 passed, 0 failed, 165 skipped` across modular, plotting, database,
+matrix, monoid, and book-example helpers. The low-level and misc/structure
+probes wrote `.tmp/current-run/scheduled-2026-07-03-lowlevel/probe.sqlite3`
+and `.tmp/current-run/scheduled-2026-07-03-misc-structure/probe.sqlite3`,
+respectively; their runnable failures cluster around broad Cython assertion,
+rich-output, pickle/persist, symbolic-functional, and `sagedoc` timeout
+frontiers rather than a narrow promotion target.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
