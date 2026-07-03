@@ -26214,6 +26214,35 @@ mathematics integration example needs symbolic `var`/`numerical_integral`
 startup support. No corpus file was added in this audit because every clean
 file was skipped-only or empty under the default browser-compatible profile.
 
+Follow-up mixed helper frontier audit later on 2026-07-03:
+
+```text
+repl-misc-batch.sqlite3:          3 empty files, 3 skipped-only files, 1 IPython-kernel missing-module file, 1 CLI selftest SIGBUS
+plot-stats-batch.sqlite3:         6 skipped-only files, 2 numerical-backend failing files
+modules-batch.sqlite3:            7 skipped-only files, 1 free-module/functor failing file
+categories-examples-batch.sqlite3: 7 skipped-only files
+mixed-small-batch.sqlite3:        7 skipped-only files, 4 failing files, 1 cyclic-cover timeout
+```
+
+This pass used fresh probes under
+`.tmp/current-run/scheduled-2026-07-03-codex12/` and kept the curated corpus at
+1,035 non-comment entries. Strict candidate scans over the new databases
+produced no promotion rows.
+
+The useful frontier notes are mostly dependency boundaries rather than narrow
+browser-profile additions. `sage/repl/ipython_kernel/kernel.py` still depends
+on unavailable `ipykernel`; CLI `selftest.py` exits the worker with SIGBUS;
+plot and category-example helpers are already classified as skipped-only; the
+numerical backend files miss the generic MIP backend or
+`MixedIntegerLinearProgram` startup surface; `module_functors.py` reaches a
+broader free-module construction failure at `ZZ^2`; quaternion and modular
+constructor probes depend on unavailable startup/backend surfaces; and
+`cyclic_covers/constructor.py` times out while constructing a PARI/curve-heavy
+cover. `schemes/plane_conics/constructor.py` initially looked like a possible
+`Conic` startup-name promotion, but explicitly importing `Conic` pulls in the
+Singular-backed projective-curve stack, so it remains out of the quiet
+browser-profile corpus for now.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
