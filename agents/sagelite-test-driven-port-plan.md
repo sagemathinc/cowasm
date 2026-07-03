@@ -25502,6 +25502,55 @@ database boundaries. Future scheduled runs should avoid this exact compact
 frontier unless one of those backend profiles changes or a targeted live
 failure cluster is selected for triage.
 
+Follow-up low/mid-prompt frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,020 non-comment entries. Fresh direct probes used the current patched source
+root, node profile, runner version 84, CoWasm commit
+`c7d3f319b3a0a49ed9a2df8b082588c1360df629`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Scanning all new SQLite artifacts
+under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal2/`
+with `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --ignore-invalid --quiet-invalid --dedupe-paths`
+printed no uncovered clean runnable candidate rows.
+
+The combinatorics and category probes recorded skipped-only coverage for the
+sampled symmetric-function, poset, crystal, group, and category-example files,
+including `combinat/sf/{homogeneous,elementary,monomial,classical}.py`,
+`combinat/lr_tableau.py`, `combinat/posets/{d_complete,elements,mobile}.py`,
+and `categories/examples/{hopf_algebras_with_basis,crystals,
+lie_algebras_with_basis,finite_coxeter_groups}.py`. Their skip tags were the
+existing browser-boundary metadata, mainly `sage.combinat`, `sage.modules`,
+`sage.graphs`, `sage.groups`, `sage.symbolic`, `lrcalc_python`, and `magma`.
+`bubble_shuffle.py` was the only live failure in that combinatorics slice; it
+clusters around `sage.graphs.generic_graph_pyx` plus dependent `posets` and
+`simplicial_complexes` startup names, so it is not a narrow promotion target
+until graph support changes.
+
+The low-prompt utility sweep wrote `low-broad.sqlite3` and recorded
+`0 passed, 0 failed, 81 skipped` across CLI, crypto, database, topology,
+species, ring-extension, profiler, and calculus helpers. The Judson book
+exercise probe extracted zero runnable blocks from the sampled files. The
+computational-math book probe had runnable coverage but was dominated by
+missing symbolic, numerical integration, and optimization startup surfaces.
+
+The mixed no-file-level-needs probe wrote `mixed-no-file-needs.sqlite3` and
+recorded `74 passed, 219 failed, 33 skipped`. It found useful near-miss counts
+in `affine_homset.py`, `complex_roots.py`, `module_functors.py`,
+`plot3d/platonic.py`, and `geometry/polyhedron/base_mutable.py`, but the live
+failures were broad clusters rather than startup-only fixes. Two files timed
+out in backend-heavy examples: `finite_field_prime_modn.py:111` at
+`QuadraticField(337)` and `function_field/order.py:19` at a maximal-order
+ideal display. The same pass also reproduced the NTL side-module import
+frontier `_ZNK3NTL11ZZ_pContext7restoreEv` in `conway_polynomials.py`; the
+utility/ring probe reproduced the same `wasm_link_error` in `rings/homset.py`.
+Future runs should either target that NTL context-restore loader/linkage
+cluster with a small reproducer, or avoid these exact sampled batches unless
+the graph, modules/category, symbolic, NTL, Singular/plural, or polynomial
+backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
