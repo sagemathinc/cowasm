@@ -26187,6 +26187,33 @@ the doctest. The final run row records CoWasm commit
 file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
 prints no promotion row after the file is added to the corpus.
 
+Follow-up low-prompt frontier audit later on 2026-07-03:
+
+```text
+low-prompt-batch.sqlite3:   11 skipped-only files, 2 failing PARI conversion files
+low-prompt-batch-2.sqlite3: 9 skipped-only files, 1 empty file, 2 failing GAP/pbori files
+domain-batch.sqlite3:       10 skipped-only files, 1 failing graph-backed poset file
+mid-pure-batch.sqlite3:     11 skipped-only files, 1 failing graph-backed Lie-conformal file
+broader-pure-batch.sqlite3: 15 skipped-only files, 1 failing graph-backed poset file
+book-tests-batch.sqlite3:   9 empty textbook files, 1 failing symbolic integration file
+```
+
+This pass used a fresh source-minus-corpus prompt-count frontier under
+`.tmp/current-run/scheduled-2026-07-03-codex11/`. The small unlisted files are
+now dominated by dependency-bound or already-tagged coverage rather than clean
+runnable candidates. Strict `doctest-corpus-candidates.py` scans over the fresh
+batch databases produced no promotion rows. An old probe row for
+`sage/repl/prompts.py` was rechecked against the current patched source and now
+extracts zero doctest blocks, so it is stale and not a valid promotion.
+
+The live failure clusters remain useful triage markers: PARI conversion reaches
+the focused `cypari2` object-model boundary, GAP and pbori files miss
+unavailable side modules, graph-backed poset and affine Lie-conformal examples
+still fail at the stripped graph import/startup surface, and the computational
+mathematics integration example needs symbolic `var`/`numerical_integral`
+startup support. No corpus file was added in this audit because every clean
+file was skipped-only or empty under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
