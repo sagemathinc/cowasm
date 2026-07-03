@@ -848,6 +848,7 @@ src/sage/matrix/matrix_double_sparse.pyx
 src/sage/matrix/echelon_matrix.pyx
 src/sage/matrix/matrix_cdv.pyx
 src/sage/matrix/matrix_dense.pyx
+src/sage/matrix/matrix_generic_sparse.pyx
 src/sage/matrix/matrix_modn_dense_double.pyx
 src/sage/matrix/matrix_modn_dense_float.pyx
 src/sage/matrix/matrix_misc.py

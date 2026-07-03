@@ -23885,6 +23885,40 @@ queries were empty. Focused validation then used the
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/modn-matrix-make.sqlite3`,
 recording 90 passed, 0 failed, and 0 skipped blocks.
 
+Focused generic sparse-matrix corpus-growth pass:
+
+```text
+matrix_generic_sparse.pyx: 92 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/matrix/matrix_generic_sparse.pyx` to the curated pure-math corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 998
+non-comment entries. The file adds default-profile coverage for generic
+sparse matrix construction, copying, arithmetic, nonzero-position helpers, and
+row/column extraction over the existing finite-field and polynomial matrix
+surface.
+
+A focused current-runner rerun first confirmed the compact near miss from the
+latest matrix probe: 92 passed blocks, five deterministic output mismatches,
+and one existing PARI skip. The mismatches all came from `K.<z> = GF(9)`
+displaying finite-field elements with generator name `x` in the WASM runtime
+instead of the upstream doctest's `z`. The WASI source patch now marks those
+five display checks as deferred `# known bug` metadata while preserving the
+setup and matrix operations as runnable coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-active/matrix-generic-sparse-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`82109e146aa3d81f9173cd522a8ad905baca979f`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the new deferred checks under
+`deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
