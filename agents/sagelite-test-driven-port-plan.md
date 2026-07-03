@@ -22960,6 +22960,25 @@ multi-database scratch scan with and without `--require-run-metadata`, and a
 minimal SQLite fixture confirming that synthetic runs are suppressed until the
 modern run metadata columns are populated.
 
+Follow-up absent-candidate sampling pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. A focused confirmation run over
+the already-covered typeset tail plus `sage/stats/basic_stats.py` and
+`sage/probability/random_variable.py` recorded 249 passed, 0 failed, and
+96 skipped blocks in
+`/home/user/cowasm/.tmp/current-run/typeset-stats-sample.sqlite3`; the saved
+block- and file-failure cluster queries were empty, but all runnable files in
+that batch were already present in `basic-pure-math.txt`.
+
+Further absent-file probes found no new clean runnable default-profile
+candidate. `sage/numerical/linear_functions.pyx` timed out at the
+`QuadraticField(5, 'sqrt5')` setup example, while small stats, plot support,
+category, CLI, low-level Cython, database, misc, homology, and book/test
+modules were either skipped-only or had no extracted doctest blocks. This
+keeps the next useful corpus-growth pass pointed away from the resampled
+optional-gated files and toward a different namespace or a targeted runtime
+cluster.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
