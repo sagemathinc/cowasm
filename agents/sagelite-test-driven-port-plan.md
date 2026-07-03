@@ -23425,6 +23425,32 @@ SQLite fixture, the expected parser guard for using `--include-skip-reasons`
 without `--skipped-only`, and a make-level skipped-only report against the
 fresh probe database.
 
+Manual compact-frontier scan on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 989
+non-comment entries. Focused direct probes against the current patched
+Sagelite source tree and runner version 83 covered compact absent files in
+CPython helpers, REPL prompts, misc helpers, monoids, categories, plotting,
+crypto, databases, topology catalogs, and small educational/test modules. The
+candidate helper reported no uncovered clean runnable rows.
+
+The useful audit result is that the sampled compact frontier is mostly
+dependency-boundary or empty coverage rather than promotion input. Skipped-only
+rows grouped under existing optional/deferred reasons such as
+`sage.misc.cython`, `sage.modules`, `sage.symbolic`, `sage.groups`,
+`sage.combinat`, `database_odlyzko_zeta`, `sphinx`, `sympy`, `sage.graphs`,
+and `deferred:not tested`. Several source files with apparent `sage:` prompts
+still extracted zero default-profile doctest blocks, including small CPython,
+doctest, SageDoc config, and Judson exercise helpers, so future scans should
+prefer SQLite coverage shape over raw prompt counts.
+
+One compact runtime frontier remains visible but was not tagged in this pass:
+`sage/libs/flint/qsieve_sage.pyx` reaches a file-scope `wasm_trap` while
+running `qsieve(n)` at line 34. The sibling `factorint_flint.pyx` probe is
+skipped-only under the current browser-compatible profile, so FLINT factoring
+coverage should be handled as a separate runtime/tagging task rather than as
+low-risk corpus growth.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
