@@ -26042,6 +26042,32 @@ GAP, FLINT, PARI, symbolic, Cython, database, Sphinx, NumPy, and SymEngine
 frontiers, so future scheduled passes should look beyond this compact
 low-prompt slice unless those backend profiles change.
 
+Follow-up term-order corpus-growth pass on 2026-07-03:
+
+```text
+term_order.py: 256 passed, 0 failed, 106 skipped
+```
+
+This pass promotes `sage/rings/polynomial/term_order.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,032
+non-comment entries. A same-day near-miss scan found the file with 256 passing
+blocks and 17 failures, all in the `termorder_from_singular` doctest section.
+The WASI source patch now marks that section's Singular-interface examples as
+`# needs sage.libs.singular`, preserving the pure Sage term-order parsing,
+comparison, construction, and display coverage as live browser-profile tests.
+
+Final validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex7/term-order-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The final run row records CoWasm commit
+`d2118c000573a773e148548286479d15d43ecfcf`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+362 extracted blocks, and a 100% non-skipped pass rate. The saved block- and
+file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
+prints no promotion row after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -12337,3 +12337,14 @@ diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/
 @@ -402 +402 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 -            sage: G.gens()
 +            sage: G.gens()  # known bug
+diff --git a/src/sage/rings/polynomial/term_order.py b/src/sage/rings/polynomial/term_order.py
+--- a/src/sage/rings/polynomial/term_order.py
++++ b/src/sage/rings/polynomial/term_order.py
+@@ -2159,0 +2160 @@
++        sage: # needs sage.libs.singular
+@@ -2173,0 +2175 @@
++        sage: # needs sage.libs.singular
+@@ -2190,0 +2193 @@
++        sage: # needs sage.libs.singular
+@@ -2212,0 +2216 @@
++        sage: # needs sage.libs.singular

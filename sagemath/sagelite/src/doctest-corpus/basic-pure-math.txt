@@ -670,6 +670,7 @@ src/sage/rings/polynomial/padics/polynomial_padic_flat.py
 src/sage/rings/polynomial/polynomial_ring_homomorphism.pyx
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/rings/polynomial/refine_root.pyx
+src/sage/rings/polynomial/term_order.py
 src/sage/rings/polynomial/toy_buchberger.py
 src/sage/rings/polynomial/toy_d_basis.py
 src/sage/rings/polynomial/toy_variety.py
