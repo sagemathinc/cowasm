@@ -3855,6 +3855,42 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the new deferred blocks under
 `optional:sage.libs.flint`.
 
+Focused p-adic base-generic corpus-growth pass:
+
+```text
+padic_base_generic.py: 40 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/padic_base_generic.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 967
+non-comment entries. A fresh adjacent p-adic sampling batch first recorded
+`padic_base_generic.py` as the only low-noise near miss: 40 passed, one
+failed, and three skipped blocks. The single failure was the
+`R.zeta(12)` root-of-unity example, which computes through finite-field zeta
+and reaches the current focused PARI/cypari2 object-model boundary in the
+default browser-compatible profile.
+
+The added WASI source patch marks that example as
+`# needs sage.libs.pari`, preserving the passing p-adic base-ring coverage
+without broadening browser-profile semantics. The same sampling batch kept
+`padic_base_leaves.py` and `generic_nodes.py` out of the quiet corpus because
+their remaining failures are broader clusters around relaxed p-adic
+FLINT-backed setup, dependent missing-name fallout, and TestSuite display or
+semantics drift; `padic_extension_generic.py`, `local_generic.py`, and
+`precision_error.py` currently add only skipped or zero-block coverage.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding and patching a fresh Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-padics/padic-base-generic-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b35c372e79b77f3b4d299a55e8bcf4d13b4f5665`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
+after subtracting the updated corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

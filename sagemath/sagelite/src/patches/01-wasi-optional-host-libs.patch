@@ -11086,3 +11086,9 @@ diff -urN -U0 a/src/sage/rings/padics/unramified_extension_generic.py b/src/sage
 @@ -325 +325 @@
 -            sage: R.has_root_of_unity(11)
 +            sage: R.has_root_of_unity(11)                                          # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/padic_base_generic.py b/src/sage/rings/padics/padic_base_generic.py
+--- a/src/sage/rings/padics/padic_base_generic.py
++++ b/src/sage/rings/padics/padic_base_generic.py
+@@ -378 +378 @@
+-            sage: R.zeta(12)
++            sage: R.zeta(12)                                                       # needs sage.libs.pari
