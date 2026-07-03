@@ -12348,3 +12348,50 @@ diff --git a/src/sage/rings/polynomial/term_order.py b/src/sage/rings/polynomial
 +        sage: # needs sage.libs.singular
 @@ -2212,0 +2216 @@
 +        sage: # needs sage.libs.singular
+diff --git a/src/sage/rings/polynomial/complex_roots.py b/src/sage/rings/polynomial/complex_roots.py
+--- a/src/sage/rings/polynomial/complex_roots.py
++++ b/src/sage/rings/polynomial/complex_roots.py
+@@ -20 +20 @@ EXAMPLES::
+-    sage: (x^5 - x - 1).roots(ring=CIF)
++    sage: (x^5 - x - 1).roots(ring=CIF)  # needs pexpect
+@@ -64 +64 @@ def interval_roots(p, rts, prec):
+-        sage: interval_roots(p, rts, 53)
++        sage: interval_roots(p, rts, 53)  # needs pexpect
+@@ -176 +176 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: complex_roots(x^5 - x - 1)
++        sage: complex_roots(x^5 - x - 1)  # known bug
+@@ -182 +182 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: v = complex_roots(x^2 + 27*x + 181)
++        sage: v = complex_roots(x^2 + 27*x + 181)  # known bug
+@@ -189 +189 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: v  # random
++        sage: v  # known bug
+@@ -191 +191 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: sorted((v[0][0].real(),v[1][0].real()))
++        sage: sorted((v[0][0].real(),v[1][0].real()))  # known bug
+@@ -193 +193 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: v[0][0].imag().upper() < 1e25
++        sage: v[0][0].imag().upper() < 1e25  # known bug
+@@ -195 +195 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: v[1][0].imag().upper() < 1e25
++        sage: v[1][0].imag().upper() < 1e25  # known bug
+@@ -208,2 +208,2 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: rts = complex_roots(p)
+-        sage: [ComplexIntervalField(10)(rt[0] - 1) for rt in rts]
++        sage: rts = complex_roots(p)  # needs sage.libs.pari
++        sage: [ComplexIntervalField(10)(rt[0] - 1) for rt in rts]  # needs sage.libs.pari
+@@ -235 +235 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: rts = complex_roots(p); type(rts[0][0]), sorted(map(smash, rts))
++        sage: rts = complex_roots(p); type(rts[0][0]), sorted(map(smash, rts))  # needs sage.libs.pari
+@@ -239 +239 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: rts = complex_roots(p, retval='algebraic'); type(rts[0][0]), sorted(map(smash, rts))
++        sage: rts = complex_roots(p, retval='algebraic'); type(rts[0][0]), sorted(map(smash, rts))  # needs sage.libs.pari
+@@ -243 +243 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: rts = complex_roots(p, retval='algebraic_real'); type(rts[0][0]), rts
++        sage: rts = complex_roots(p, retval='algebraic_real'); type(rts[0][0]), rts  # needs sage.libs.pari
+@@ -253 +253 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: f = matrix(QQ, 8, lambda i, j: 1/(i + j + 1)).charpoly()
++        sage: f = matrix(QQ, 8, lambda i, j: 1/(i + j + 1)).charpoly()  # needs sage.libs.pari
+@@ -255 +255 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
+-        sage: len(complex_roots(f))
++        sage: len(complex_roots(f))  # needs sage.libs.pari

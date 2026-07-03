@@ -26068,6 +26068,34 @@ the doctest. The final run row records CoWasm commit
 file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
 prints no promotion row after the file is added to the corpus.
 
+Follow-up complex-root isolation corpus-growth pass on 2026-07-03:
+
+```text
+complex_roots.py: 27 passed, 0 failed, 15 skipped
+```
+
+This pass promotes `sage/rings/polynomial/complex_roots.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,033
+non-comment entries. A same-day near-miss scan had recorded 27 passing blocks
+and 15 failures. The failures were all outside the default browser-compatible
+profile: pexpect-backed polynomial root paths, PARI/QQbar conversion examples,
+matrix characteristic-polynomial setup that currently reaches the PARI object
+model boundary, and a current squarefree-decomposition gap in this root
+isolation path.
+
+The WASI source patch now marks those exact examples as `# needs pexpect`,
+`# needs sage.libs.pari`, or deferred `# known bug`, preserving the interval
+disjointness and root-refinement helper coverage that runs cleanly under the
+default node profile. Final validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-complex-roots/complex-roots-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

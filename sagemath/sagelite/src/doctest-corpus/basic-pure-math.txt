@@ -661,6 +661,7 @@ src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/finite_rings/conway_polynomials.py
 src/sage/rings/pari_ring.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
+src/sage/rings/polynomial/complex_roots.py
 src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/cyclotomic.pyx
 src/sage/rings/polynomial/flatten.py
