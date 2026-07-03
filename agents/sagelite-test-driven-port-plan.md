@@ -25255,6 +25255,49 @@ diagnosis, the first RDF point-configuration doctest trapped in
 `real_mpfr...mpfr_strtofr`. This file should not be promoted until the
 TOPCOM import boundary and the RDF real-number trap are handled explicitly.
 
+Follow-up matrix/species/modular frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,017 non-comment entries. Fresh direct probes used the current patched
+source root, node profile, runner version 83, CoWasm commit
+`12b7133ae7d77c362cfc42103eee4c87c109338d`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. A scan of all 2026-07-03
+current-run SQLite artifacts with
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata --require-source-root-path`
+printed no uncovered clean promotion rows after subtracting the current
+corpus.
+
+The compact matrix/vector probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-live/matrix-vector/probe.sqlite3`
+and recorded `0 passed, 0 failed, 74 skipped` across NumPy-backed integer
+matrix/vector helpers, dense double-matrix helpers, and `numpy_util.pyx`. The
+skipped-only rows are grouped under explicit `optional:numpy`, `needs:scipy`,
+and `needs:sage.symbolic` metadata, so they remain dependency-boundary
+coverage rather than default-profile corpus entries.
+
+The combinatorial-species probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-live/species/probe.sqlite3`
+and recorded three skipped-only files plus one file-level runtime trap.
+`misc.py`, `permutation_species.py`, and `partition_species.py` are skipped
+under existing `sage.groups`, `sage.libs.flint`, and `sage.modules` tags.
+`product_species.py` reaches a `wasm_trap` in the
+`ProductSpeciesStructure.__repr__` example after an order-sensitive
+product-structure display mismatch, so it should not be retried as narrow
+source-tag-only corpus growth.
+
+The small modular probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-next-live/modular-small/probe.sqlite3`
+and recorded five skipped-only files plus two live failure clusters.
+`j_invariant.py`, `modsym/hecke_operator.py`, `buzzard.py`,
+`modform/submodule.py`, and `modform/ambient_g0.py` are skipped under
+explicit FLINT or PARI backend requirements. `modform/half_integral.py` still
+has a missing `half_integral_weight_modform_basis` startup-name cluster with
+no passing default-profile blocks, and `arithgroup/congroup.pyx` is blocked by
+`sage.matrix.matrix_integer_dense` plus dependent degeneracy-coset and
+`Gamma0` name failures. Future scheduled runs should avoid repeating these
+exact batches unless the NumPy/SciPy, species FLINT/module, matrix-integer,
+PARI/FLINT, or modular arithmetic-group backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
