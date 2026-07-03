@@ -25055,6 +25055,61 @@ one of the recorded backend or startup surfaces changes. The remaining useful
 source-minus-corpus work is either a different namespace not covered by today's
 SQLite artifacts or a focused fix for one of the near-miss clusters above.
 
+Follow-up skipped-boundary and rings frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,014 non-comment entries. Fresh direct Sagelite probes wrote SQLite dashboards
+under `/home/user/cowasm/.tmp/current-run/` using the current patched source
+root, node profile, runner version 83, CoWasm commit
+`8550f5df312b0cd44a93ea289b9270e580503083`, and Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The category-example probe
+`scheduled-2026-07-03-category-examples/category-examples.sqlite3` recorded
+`0 passed, 0 failed, 604 skipped` across 14 unlisted
+`sage/categories/examples/` files. The skips are existing optional or `needs`
+boundaries for `sage.combinat`, `sage.modules`, `sage.groups`,
+`sage.graphs`, `sage.libs.pari`, and `sage.libs.singular`, so this namespace
+should stay out of the runnable corpus until those surfaces change.
+
+The small-core and combinatorics probes were also not promotion sources.
+`scheduled-2026-07-03-small-core/small-core.sqlite3` recorded no runnable
+coverage, one `data_structures/stream.py` file-level
+`wasm_signature_mismatch` while deallocating `sage.misc.lazy_string`, and 23
+skips. `scheduled-2026-07-03-combinat-small/combinat-small.sqlite3` recorded
+`0 passed, 96 failed, 3717 skipped`: `abstract_tree.py` hit a
+deep-recursion/stack failure at `number_of_nodes_at_depth(2000)`,
+`graph_path.py` produced 95 runnable failures, and the other sampled
+combinatorics files were skipped-only under existing `sage.combinat`,
+`sage.modules`, `sage.graphs`, `sage.plot`, GAP, FLINT, PARI, long-time,
+random, and deferred-test tags.
+
+The crypto probe
+`scheduled-2026-07-03-crypto-small/crypto-small.sqlite3` recorded
+`0 passed, 0 failed, 1741 skipped` across ten unlisted crypto files. Those
+files are fully guarded by current dependency metadata, so future source-minus-
+corpus passes should not repeat that batch unless the browser profile exposes
+the required finite-field, module, or matrix dependencies.
+
+The rings probe `scheduled-2026-07-03-rings-small/rings-small.sqlite3`
+recorded `939 passed, 940 failed, 108 skipped`. The best near miss was
+`sage/rings/polynomial/term_order.py` with `256 passed, 17 failed, 89 skipped`;
+its failures cluster around unavailable Singular/pexpect startup paths and
+dependent missing setup names (`singular`, `T`), so it is not a tag-only
+promotion. Larger asymptotic, tropical, and q-integer-valued polynomial files
+remain deeper triage targets: failures include missing
+`sage.symbolic.expression`, a 60-second timeout in `growth_group.py`, a
+signature mismatch in `omega.py`, and many term-monoid/asymptotic semantic
+failures.
+
+Running `doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--ignore-invalid --quiet-invalid --dedupe-paths` across the fresh clean
+databases printed no uncovered runnable promotion candidates. Future scheduled
+runs should avoid the category-example, small-core, sampled combinatorics,
+crypto, and compact rings batches above unless one of their recorded dependency
+or runtime boundaries changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
