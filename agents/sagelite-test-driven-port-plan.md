@@ -4279,6 +4279,23 @@ queries are empty, `doctest-corpus-candidates.py` prints no promotion row
 after subtracting the updated corpus, and the full WASI source patch dry-runs
 successfully against `/home/user/sagelite`.
 
+Follow-up frontier-audit tooling pass on 2026-07-03: the recent
+`scheduled-2026-07-03-fresh-frontier` samples produced no uncovered clean
+runnable promotion candidates. The larger mixed sample recorded 14
+skipped-only files and six files with real runnable failures; the smaller
+sample likewise split into skipped-only rows, two block-failure clusters, and
+two file-level runtime errors. The failures are still broader graph, PARI/NTL,
+Groebner, arithmetic-dynamics, and calculus clusters rather than narrow
+source-tag-only corpus growth.
+
+The candidate helper now supports combining `--skipped-only`,
+`--include-skip-reasons`, and `--include-skip-tags` in one audit command. When
+both metadata flags are used, the tabular detail column is named
+`skip_metadata` and contains grouped `reasons:` and `tags:` values. Single-flag
+output remains backwards-compatible with the previous `skip_reasons` and
+`skip_tags` column names. This makes dependency-boundary sampling easier to
+review without running separate helper passes for the same SQLite dashboard.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

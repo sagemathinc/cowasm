@@ -366,8 +366,6 @@ def parse_args() -> argparse.Namespace:
         parser.error("--include-skip-reasons requires --skipped-only")
     if args.include_skip_tags and not args.skipped_only:
         parser.error("--include-skip-tags requires --skipped-only")
-    if args.include_skip_reasons and args.include_skip_tags:
-        parser.error("--include-skip-reasons cannot be combined with --include-skip-tags")
     if args.only_skip_reason and not args.skipped_only:
         parser.error("--only-skip-reason requires --skipped-only")
     if args.exclude_skip_reason and not args.skipped_only:
@@ -634,6 +632,15 @@ def grouped_skipped_block_metadata(
         elif value.strip():
             values.add(value.strip())
     return ", ".join(sorted(values))
+
+
+def combined_skip_metadata(skip_reasons: str, skip_tags: str) -> str:
+    parts = []
+    if skip_reasons:
+        parts.append(f"reasons: {skip_reasons}")
+    if skip_tags:
+        parts.append(f"tags: {skip_tags}")
+    return "; ".join(parts)
 
 
 def candidate_rows(
@@ -991,7 +998,11 @@ def candidate_rows(
             continue
         if not include_covered and relative_path in covered:
             continue
-        if skipped_only and include_skip_reasons:
+        if skipped_only and include_skip_reasons and include_skip_tags:
+            one_line_failure_detail = combined_skip_metadata(
+                skip_reason_detail, skip_tag_detail
+            )
+        elif skipped_only and include_skip_reasons:
             one_line_failure_detail = skip_reason_detail
         elif skipped_only and include_skip_tags:
             one_line_failure_detail = skip_tag_detail
@@ -1075,7 +1086,9 @@ def main() -> int:
             or args.file_errors
         ):
             columns.extend(["status", "failure_class"])
-            if args.include_skip_reasons:
+            if args.include_skip_reasons and args.include_skip_tags:
+                columns.append("skip_metadata")
+            elif args.include_skip_reasons:
                 columns.append("skip_reasons")
             elif args.include_skip_tags:
                 columns.append("skip_tags")
