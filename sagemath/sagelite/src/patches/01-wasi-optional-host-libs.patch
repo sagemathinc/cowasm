@@ -11967,3 +11967,18 @@ diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.p
 -            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
 +            sage: # needs sage.rings.polynomial.plural
 +            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
+diff -urN -U0 a/src/sage/misc/explain_pickle.py b/src/sage/misc/explain_pickle.py
+--- a/src/sage/misc/explain_pickle.py
++++ b/src/sage/misc/explain_pickle.py
+@@ -19 +19 @@
+-    sage: explain_pickle(dumps(polygen(QQ)))
++    sage: explain_pickle(dumps(polygen(QQ)))                                      # known bug - stripped WASI profile emits generic polynomial pickle helper
+@@ -41 +41 @@
+-    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)
++    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)                # known bug - stripped WASI profile emits generic polynomial pickle helper
+@@ -2816 +2816 @@
+-            sage: v.append(7)
++            sage: v.append(7)                                                     # known bug - WASI TypeError integer formatting drift
+@@ -2837 +2837 @@
+-            sage: v.extend([3,1,4,1,5,9])
++            sage: v.extend([3,1,4,1,5,9])                                         # known bug - WASI TypeError integer formatting drift

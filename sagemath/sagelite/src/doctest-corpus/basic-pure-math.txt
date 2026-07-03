@@ -692,6 +692,7 @@ src/sage/misc/dev_tools.py
 src/sage/misc/derivative.pyx
 src/sage/misc/edit_module.py
 src/sage/misc/element_with_label.py
+src/sage/misc/explain_pickle.py
 src/sage/misc/fast_methods.pyx
 src/sage/misc/flatten.py
 src/sage/misc/functional.py

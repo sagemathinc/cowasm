@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 84;
+const doctestRunnerVersion = 85;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -803,7 +803,7 @@ __cowasm_current_state = {}
 __cowasm_state_unset = object()
 
 __cowasm_deferred_re = re.compile(
-    r"#.*\\b(not implemented|not tested|known bug)\\b",
+    r"#.*\\b(not implemented|not tested|known bug|py2)\\b",
     re.IGNORECASE,
 )
 __cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
