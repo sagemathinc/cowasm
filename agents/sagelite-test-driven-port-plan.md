@@ -23725,6 +23725,42 @@ The full WASI source patch dry-runs against `/home/user/sagelite`,
 `doctest-corpus-candidates.py` prints no promotion rows after subtracting the
 updated corpus.
 
+Follow-up scheduled low-count frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. Fresh current-runner probes wrote
+SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-agent/` and
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata --dedupe-paths` printed no uncovered clean runnable
+candidate across them. The curated corpus therefore remains at 993
+non-comment entries after the toy-Buchberger promotion.
+
+The first regenerated low-count absent-source batch was skipped-only in the
+default browser-compatible profile. Representative grouped skip reasons were
+`optional:sage.misc.cython` for `src/sage/cpython/string.pyx`,
+`optional:ipython` for `src/sage/repl/inputhook.py`,
+`optional:numpy` for NumPy-backed dense matrix/vector helpers,
+`optional:sage.graphs`/`optional:sage.groups` for topology and category
+frontiers, and `optional:sage.modules`/`optional:sage.rings.finite_rings` for
+coding and combinatorics frontiers. A second pure-small batch likewise
+recorded only skipped blocks for files such as
+`src/sage/combinat/root_system/braid_move_calculator.py`,
+`src/sage/knots/gauss_code.py`, `src/sage/crypto/lattice.py`,
+`src/sage/combinat/sf/multiplicative.py`, and
+`src/sage/misc/package_dir.py`.
+
+The compact near misses remain broader frontiers rather than safe promotion
+targets. `src/sage/repl/load.py` records 17 passed blocks but still depends on
+`IPython`/`sage.repl.attach` for most `load()` examples and has output drift in
+the resulting error examples. `src/sage/repl/display/formatter.py`,
+`src/sage/calculus/expr.py`, and `src/sage/modules/module_functors.py` each
+have a small passing prefix followed by broad startup-name, symbolic, or module
+surface failures. The utility/coding/plot batch also re-confirmed runtime
+frontiers: `src/sage/modules/ore_module_element.py` timed out during
+Ore-module setup, while `src/sage/rings/homset.py` and
+`src/sage/rings/finite_rings/conway_polynomials.py` hit the known split NTL
+`ZZ_pContext.restore` dynamic-link boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
