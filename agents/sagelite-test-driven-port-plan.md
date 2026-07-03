@@ -26481,6 +26481,35 @@ running the doctest. The final run row records CoWasm commit
 file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
 prints no promotion row after the file is added to the corpus.
 
+Follow-up source-minus-corpus frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,038
+non-comment entries. A refreshed prompt-count list from the current patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` source tree drove five direct
+Sagelite probes under `.tmp/current-run/scheduled-2026-07-03-codex17/`:
+
+```text
+low-utility-batch.sqlite3:       10 skipped-only files
+combinat-root-batch.sqlite3:     10 skipped-only files
+stats-games-plot-batch.sqlite3:  4 skipped-only absent files, plus covered game/plot sanity rows
+actual-mid-batch.sqlite3:        8 skipped-only files, 2 empty Judson exercise files
+algebra-category-batch.sqlite3:  9 skipped-only files, 1 failing algebra file
+```
+
+The successful game and plot rows in `stats-games-plot-batch.sqlite3` were
+already present in `basic-pure-math.txt`, so they were treated as sanity checks
+rather than duplicate promotions. A strict
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+the fresh databases printed no uncovered clean runnable candidate.
+
+The live failure in `sage/algebras/affine_nil_temperley_lieb.py` is not a
+narrow tag-only near miss yet: it records zero passing blocks and cascades from
+missing `AffineNilTemperleyLiebTypeA`, `A`, and `a` names in class-local
+doctests. Since the runner already imports tested module globals when a module
+can load cleanly, this remains a broader algebra/category startup or packaging
+frontier rather than a quiet browser-profile corpus addition.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
