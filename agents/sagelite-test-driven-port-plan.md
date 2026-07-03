@@ -3927,6 +3927,37 @@ under `optional:sage.libs.ntl`. After the corpus entry is listed,
 `doctest-corpus-candidates.py` prints no promotion rows for the focused
 database.
 
+Focused p-adic power-computer corpus-growth pass:
+
+```text
+pow_computer.pyx: 88 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/padics/pow_computer.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 969
+non-comment entries. A focused p-adic frontier probe first recorded
+`pow_computer.pyx` as the only uncovered clean runnable candidate in an
+eight-file batch. The file adds default-profile coverage for p-adic
+power-computer construction and prime-power arithmetic without new WASI
+source tags or startup namespace changes.
+
+The same probe kept adjacent p-adic implementation files out of the quiet
+dashboard: `common_conversion.pyx` extracted no doctest blocks;
+`local_generic.py`, `local_generic_element.pyx`, `morphism.pyx`, and
+`pow_computer_ext.pyx` were skipped-only under the existing p-adic/NTL/FLINT
+dependency tags; `witt_vector.py` still has broad Singular, FLINT, symbolic,
+and dependent-name clusters; and `witt_vector_ring.py` reaches the known NTL
+`ZZ_pContext.restore` dynamic-link boundary. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-current/pow-computer-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b6eec499c06b02927f2098ea14656a8c20843947`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
