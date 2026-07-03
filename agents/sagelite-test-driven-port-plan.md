@@ -26707,6 +26707,40 @@ cluster; and `sage/rings/asymptotic/growth_group.py` still reaches a
 file-level WASM memory trap while resolving coding lazy imports for generated
 method indexes.
 
+Follow-up low/mid dependency-boundary audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A filtered strict candidate scan over 2,328
+nonempty runner-87 SQLite dashboards under `.tmp/current-run/` with
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` printed no
+uncovered clean runnable file.
+
+Two fresh direct Sagelite probe batches under
+`.tmp/current-run/scheduled-2026-07-03-codex23/` then checked uncovered
+low/mid prompt files in category, monoid, coding, crypto, homology, ring,
+vector, matrix, misc utility, and SAT helper areas:
+
+```text
+low-mid-frontier.sqlite3:    0 passed, 0 failed, 202 skipped
+small-utility-frontier.sqlite3: 0 passed, 0 failed, 93 skipped
+```
+
+All 23 probed files were skipped-only or empty in the default browser-profile
+run, so they remain outside the quiet corpus. The low/mid batch confirmed
+explicit dependency boundaries for combinat, graph, group, module,
+finite-ring, symbolic, NumPy, and SciPy coverage in files such as
+`categories/finite_crystals.py`, `monoids/monoid.py`,
+`coding/hamming_code.py`, `crypto/lfsr.py`, the dense double-vector helpers,
+and dense double/NumPy matrix helpers. The small utility batch likewise found
+only optional or deferred boundaries: symbolic/module needs in
+`misc/map_threaded.py`, Sphinx and editable-install boundaries in
+`misc/sphinxify.py` and `misc/package_dir.py`, not-tested profiler coverage,
+IPython/symbolic reset examples, and MIP-backed SAT examples. The only empty
+file in the fresh probes was `sage/misc/sagedoc_conf.py`, whose source
+contains prompt-looking text but no runnable Sagelite doctest blocks after
+extraction.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
