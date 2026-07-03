@@ -24014,6 +24014,36 @@ filtering, and exclusion filtering. The standalone smoke fixture now covers
 the same tag paths and the parser guard for using `--only-skip-tag` outside
 `--skipped-only`.
 
+Follow-up matrix and low-prompt frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,000 non-comment entries after the recent dense, sparse, and action
+matrix promotions.
+
+Fresh probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-current/`. The matrix top-level batch
+in `matrix-top-batch.sqlite3` confirms that the remaining broad matrix files
+are not narrow promotion targets: `special.py` records 398 passed, 91 failed,
+and 98 skipped blocks; `operation_table.py` records 74 passed, 83 failed, and
+30 skipped blocks; and `matrix_space.py` records 345 passed, 51 failed, and
+81 skipped blocks. The failures mix startup namespace gaps, matrix backend
+imports such as `sage.matrix.matrix_gap`, cypari2 object-model boundaries,
+and deterministic output mismatches. The same run keeps
+`compute_J_ideal.py` as skipped-only under PARI/minimal-polynomial tags, while
+`matrix0.pyx`, `matrix1.pyx`, and `matrix2.pyx` hit file-level stack,
+signature-mismatch, or timeout failures.
+
+Two low-prompt batches also found no useful promotion candidate.
+`mixed-lowprompt.sqlite3` is dominated by skipped-only PARI, FLINT, coding,
+quaternion, and finite-field helpers, with runnable failures only in
+`libs/pari/convert_sage_real_double.pyx` and `libs/gap/context_managers.py`.
+`pure-lowprompt.sqlite3` is mostly skipped-only combinatorics/ring coverage;
+its runnable failures are broader graph/poset startup, PBoRi, Singular/FLINT,
+or polynomial backend clusters. Future scheduled runs should avoid repeating
+these three exact batches unless the matrix backend, PBoRi/Singular/FLINT,
+graph/poset startup surface, or cypari2 object-model boundary changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
