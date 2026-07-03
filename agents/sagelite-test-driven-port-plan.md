@@ -4296,6 +4296,42 @@ output remains backwards-compatible with the previous `skip_reasons` and
 `skip_tags` column names. This makes dependency-boundary sampling easier to
 review without running separate helper passes for the same SQLite dashboard.
 
+Follow-up focused sampling on 2026-07-03: no additional quiet corpus candidate
+was found. The current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus has 1017
+non-comment entries. Direct `sage -t` sanity probes confirmed that several
+nearby files already promoted to the corpus still run cleanly in the default
+node profile, including `sage/sets/disjoint_union_enumerated_sets.py`,
+`sage/sets/set_from_iterator.py`, `sage/sets/disjoint_set.pyx`,
+`sage/sets/family.pyx`, `sage/sets/pythonclass.pyx`,
+`sage/combinat/integer_lists/nn.py`, `sage/combinat/combinatorial_map.py`, and
+`sage/combinat/debruijn_sequence.pyx`.
+
+The same sampling pass kept several missing files out of the quiet corpus
+because they currently add no non-skipped default-profile coverage:
+`sage/sets/real_set.py`, `sage/combinat/words/paths.py`,
+`sage/combinat/regular_sequence.py`, `sage/combinat/recognizable_series.py`,
+`sage/combinat/sloane_functions.py`, `sage/categories/examples/sets_cat.py`,
+`sage/categories/examples/algebras_with_basis.py`,
+`sage/categories/examples/finite_coxeter_groups.py`,
+`sage/categories/examples/crystals.py`, `sage/misc/cython.py`,
+`sage/misc/package_dir.py`, `sage/misc/randstate.pyx`,
+`sage/misc/reset.pyx`, and empty or zero-block helpers such as
+`sage/combinat/counting.py`, `sage/combinat/algebraic_combinatorics.py`,
+`sage/combinat/catalog_partitions.py`,
+`sage/combinat/positive_integer_semigroup_test.py`, `sage/combinat/family.py`,
+`sage/combinat/enumerated_sets.py`, `sage/misc/copying.py`,
+`sage/misc/pager.py`, `sage/misc/proof.py`, and `sage/misc/allocator.pyx`.
+
+The runnable missing module files sampled in this pass are not narrow
+promotion targets yet. `sage/modules/module_functors.py` records 6 passed and
+51 failed blocks, `sage/modules/submodule_helper.py` records 35 passed and 35
+failed blocks, and both `sage/modules/free_module_integer.py` and
+`sage/modules/matrix_morphism.py` still hit matrix-side runtime
+function-signature mismatch errors before useful file-level coverage can be
+recorded. `sage/misc/persist.pyx` remains a real follow-up cluster with 111
+passed, 14 failed, and 26 skipped blocks.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
