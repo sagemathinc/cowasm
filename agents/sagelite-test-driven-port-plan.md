@@ -25742,6 +25742,42 @@ to the corpus. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 85.
 
+Follow-up product-projective homset corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 10 passed, 0 failed, 16 skipped
+```
+
+This pass promotes `sage/schemes/product_projective/homset.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,026
+non-comment entries. A focused adjacent product-projective probe first
+recorded the file as the smallest near miss with three passing blocks and 14
+failures. The doctest runner now seeds `ProductProjectiveSpaces` in the common
+startup namespace, and the WASI `sage.all` patch exposes the same constructor
+for REPL parity on a fresh patched source copy. This clears the startup-name
+cluster in homset examples that use `ProductProjectiveSpaces(...)` without a
+local import.
+
+After the startup fix, the remaining failures were exact browser-profile
+boundaries: Singular-backed product-projective point normalization,
+plural-backed subscheme setup, and a finite-field point enumeration path that
+imports `cysignals.alarm`. The WASI source patch marks those examples with
+explicit `# needs ...` tags, leaving the import, constructor, base-change, and
+basic homset examples live in the default node profile.
+
+Focused validation first used a direct `sage -t --timeout 120` rerun against
+the patched source copy, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-follow-product/product-projective-homset-tagged.sqlite3`.
+Final validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-follow-product/product-projective-homset-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records node profile and runner version
+86.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
