@@ -11490,6 +11490,15 @@ diff -urN -U0 a/src/sage/matrix/matrix_dense.pyx b/src/sage/matrix/matrix_dense.
 @@ -283 +283 @@
 -            sage: derivative(u, x)
 +            sage: derivative(u, x)                                                    # needs sage.symbolic
+diff -urN -U0 a/src/sage/matrix/matrix_sparse.pyx b/src/sage/matrix/matrix_sparse.pyx
+--- a/src/sage/matrix/matrix_sparse.pyx
++++ b/src/sage/matrix/matrix_sparse.pyx
+@@ -820 +820 @@
+-            sage: derivative(m, x)
++            sage: derivative(m, x)                                                    # needs sage.symbolic
+@@ -1190 +1190 @@
+-            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
++            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')           # needs sage.rings.polynomial.plural
 diff -urN -U0 a/src/sage/matrix/matrix_generic_sparse.pyx b/src/sage/matrix/matrix_generic_sparse.pyx
 --- a/src/sage/matrix/matrix_generic_sparse.pyx
 +++ b/src/sage/matrix/matrix_generic_sparse.pyx

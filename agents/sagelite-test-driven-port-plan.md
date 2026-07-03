@@ -23919,6 +23919,41 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the new deferred checks under
 `deferred:known bug`.
 
+Focused sparse-matrix corpus-growth pass:
+
+```text
+matrix_sparse.pyx: 169 passed, 0 failed, 8 skipped
+```
+
+That one-file make-target validation adds
+`sage/matrix/matrix_sparse.pyx` to the curated pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 999
+non-comment entries. The file adds default-profile coverage for sparse matrix
+copying, indexing, transposition, subdivision, matrix-vector products, and
+structural helpers over the already-supported matrix runtime surface.
+
+A broader current-runner probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-goal-2/matrix-frontier.sqlite3`, where
+`matrix_sparse.pyx` was the most compact near miss with 169 passing blocks,
+two failed blocks, and six existing skips. The WASI source patch now marks the
+symbolic `derivative(m, x)` check as `# needs sage.symbolic` and the
+noncommutative `A.g_algebra(...)` setup as
+`# needs sage.rings.polynomial.plural`, preserving the sparse-matrix coverage
+while recording those optional dependency boundaries as explicit skip
+metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal-2/matrix-sparse-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`fa1f4ed1066d80c9c72ff0290f1c47beb5ca7973`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

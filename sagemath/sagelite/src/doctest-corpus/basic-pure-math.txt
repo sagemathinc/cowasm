@@ -851,6 +851,7 @@ src/sage/matrix/matrix_dense.pyx
 src/sage/matrix/matrix_generic_sparse.pyx
 src/sage/matrix/matrix_modn_dense_double.pyx
 src/sage/matrix/matrix_modn_dense_float.pyx
+src/sage/matrix/matrix_sparse.pyx
 src/sage/matrix/matrix_misc.py
 src/sage/matrix/misc.pyx
 src/sage/matrix/misc_flint.pyx
