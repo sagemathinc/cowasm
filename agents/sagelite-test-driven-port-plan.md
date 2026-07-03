@@ -25443,6 +25443,27 @@ make target with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and the run
 metadata records runner version 84.
 
+Follow-up weighted-projective point corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 35 passed, 0 failed, 0 skipped
+```
+
+This pass promotes
+`sage/schemes/weighted_projective/weighted_projective_point.py`, bringing the
+curated corpus to 1,020 non-comment entries. A fresh scheme-adjacent probe
+under `.tmp/current-run/scheduled-2026-07-03-codex/` found the file as the
+only clean uncovered row, with `35` passing default-profile blocks. The same
+probe kept adjacent affine, projective, and product-projective scheme helpers
+out of the quiet corpus because they still have substantial Singular/plural
+dependency clusters and other follow-on failures.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/weighted-point-make.sqlite3`.
+The strict make-target run recorded `35 passed, 0 failed, 0 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
