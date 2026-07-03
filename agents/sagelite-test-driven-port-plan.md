@@ -25845,6 +25845,41 @@ the doctest. The saved block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py` prints no promotion row after the file is added
 to the corpus.
 
+Follow-up affine homset corpus-growth pass on 2026-07-03:
+
+```text
+affine_homset.py: 30 passed, 0 failed, 27 skipped
+```
+
+This pass promotes `sage/schemes/affine/affine_homset.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,029
+non-comment entries. A compact affine/projective scheme probe first recorded
+the file as the smallest near miss with 30 passing blocks, 10 failures, and
+17 skips. The failures were browser-profile boundaries around plural-backed
+affine subscheme construction and dependent point-enumeration checks; adjacent
+affine/projective point and rational-point files still had broader
+normalization, enumeration, and WASM-trap clusters, so they remain outside the
+quiet corpus.
+
+The WASI source patch now marks the exact plural-backed setup and dependent
+checks with `# needs sage.rings.polynomial.plural`, while preserving finite
+field affine-space point enumeration and the non-plural homset helpers as live
+default-profile coverage. Existing `sage.libs.singular`, number-field,
+real-field, and complex-double tags continue to classify the heavier
+enumeration paths.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal/affine-homset-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The final run row records CoWasm commit
+`11c65176d6971dd496be1df1166697958b9b462e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 86,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

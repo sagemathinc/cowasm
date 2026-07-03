@@ -962,6 +962,7 @@ src/sage/schemes/generic/glue.py
 src/sage/schemes/generic/point.py
 src/sage/schemes/generic/spec.py
 src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py
+src/sage/schemes/affine/affine_homset.py
 src/sage/schemes/product_projective/homset.py
 src/sage/schemes/product_projective/morphism.py
 src/sage/schemes/product_projective/space.py
