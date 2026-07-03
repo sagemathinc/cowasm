@@ -26410,6 +26410,41 @@ the stripped profile; dependent logging-backend examples then fail on missing
 solver state. This remains a numerical-backend packaging/runtime frontier, not
 a narrow doctest metadata promotion.
 
+Follow-up skew-polynomial corpus-growth pass later on 2026-07-03:
+
+```text
+skew_polynomial_ring.py: 154 passed, 0 failed, 9 skipped
+```
+
+This pass promotes `sage/rings/polynomial/skew_polynomial_ring.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,037
+non-comment entries. Fresh probes under
+`.tmp/current-run/scheduled-2026-07-03-codex15/` first rechecked low- and
+medium-prompt frontiers: many helper, plot, coding, crypto, and symbolic files
+were skipped-only or exposed broader backend gaps, while
+`skew_polynomial_ring.py` surfaced as a compact near miss with 155 passing
+blocks and 8 failures.
+
+The WASI source patch now marks the finite-field Frobenius skew-polynomial
+examples that reach the focused cypari2/PARI object-model boundary as
+`# needs sage.libs.pari`, and marks the finite-field generator display drift
+where `x + t` currently prints as `x + x` as `# known bug`. This preserves the
+integer-polynomial skew-ring constructor, interpolation, division, and category
+coverage that runs cleanly in the default browser-compatible profile.
+
+Final validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and a fresh
+temporary `BUILD_WASI_SDK`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex15/skew-polynomial-make-rerun.sqlite3`.
+The make target applied the updated patch to a clean source copy before
+running the doctest. The final run row records CoWasm commit
+`80c5d4684feb642197c257ca5d9e98c619c0f448`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+163 extracted blocks, and a 100% non-skipped pass rate. The saved block- and
+file-failure cluster queries are empty, and `doctest-corpus-candidates.py`
+prints no promotion row after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

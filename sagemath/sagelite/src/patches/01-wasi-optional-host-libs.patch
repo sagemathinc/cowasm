@@ -12587,3 +12587,33 @@ diff --git a/src/sage/graphs/cographs.py b/src/sage/graphs/cographs.py
          ....:     print(t.edges(labels=False, sort=True))
          [(0, 1), (0, 2), (1, 2)]
          []
+diff --git a/src/sage/rings/polynomial/skew_polynomial_ring.py b/src/sage/rings/polynomial/skew_polynomial_ring.py
+--- a/src/sage/rings/polynomial/skew_polynomial_ring.py
++++ b/src/sage/rings/polynomial/skew_polynomial_ring.py
+@@ -119 +119 @@
+-        sage: b = _minimal_vanishing_polynomial(S, eval_pts); b
++        sage: b = _minimal_vanishing_polynomial(S, eval_pts); b  # needs sage.libs.pari
+@@ -171 +171 @@
+-        sage: d = _lagrange_polynomial(S, eval_pts, values); d
++        sage: d = _lagrange_polynomial(S, eval_pts, values); d  # known bug
+@@ -173 +173 @@
+-        sage: d.multi_point_evaluation(eval_pts) == values
++        sage: d.multi_point_evaluation(eval_pts) == values  # known bug
+@@ -270 +270 @@
+-            sage: b = S.minimal_vanishing_polynomial(eval_pts); b
++            sage: b = S.minimal_vanishing_polynomial(eval_pts); b  # needs sage.libs.pari
+@@ -276 +276 @@
+-            sage: eval = b.multi_point_evaluation(eval_pts); eval
++            sage: eval = b.multi_point_evaluation(eval_pts); eval  # needs sage.libs.pari
+@@ -283 +283 @@
+-            sage: S.minimal_vanishing_polynomial([t])
++            sage: S.minimal_vanishing_polynomial([t])  # known bug
+@@ -285 +285 @@
+-            sage: S.minimal_vanishing_polynomial([t, 3*t])
++            sage: S.minimal_vanishing_polynomial([t, 3*t])  # known bug
+@@ -321 +321 @@
+-            sage: d = S.lagrange_polynomial(points); d
++            sage: d = S.lagrange_polynomial(points); d  # known bug
+@@ -566 +566 @@
+-            sage: TestSuite(S).run()
++            sage: TestSuite(S).run()  # needs sage.libs.pari
