@@ -24346,6 +24346,33 @@ qadic_flint_FP.pyx: 0 passed, 0 failed, 22 skipped
 sage -t passed: 0 passed, 0 failed, 81 skipped
 ```
 
+Focused REPL load corpus-growth pass:
+
+```text
+load.py: 23 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds `sage/repl/load.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,006
+non-comment entries. Direct sampling first recorded 17 passing blocks and 13
+failures because ordinary `load(...)` imported `sage.repl.attach` to resolve
+the load path; that module imports IPython even when `attach=False`, so the
+stripped browser-compatible profile failed before `.py`, `.sage`, unknown
+extension, and missing-file load semantics could run.
+
+The WASI source patch now gives non-attach `load(...)` a small fallback for
+the default `SAGE_LOAD_ATTACH_PATH` search path when the attach module is
+blocked only by missing IPython. True attach examples remain tagged
+`# needs IPython`, preserving browser-profile coverage for ordinary file
+loading without claiming attach support. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/repl-load-make-fresh.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the latest
+run summary records runner version 83 in the default node profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

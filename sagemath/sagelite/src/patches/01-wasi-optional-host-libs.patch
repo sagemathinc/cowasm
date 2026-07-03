@@ -8,6 +8,53 @@ diff -urN a/src/sage/categories/euclidean_domains.py b/src/sage/categories/eucli
                  ....:     (x+1)^3*(x+2)^3*(x+3), (x+1)*(x+2)*(x+3),
                  ....:     (x+1)*(x+2)*(x+4)]))
                  [x + 3, x + 4, x^2 + 3*x + 2]
+diff -urN a/src/sage/repl/load.py b/src/sage/repl/load.py
+--- a/src/sage/repl/load.py
++++ b/src/sage/repl/load.py
+@@ -13,0 +14 @@
++import os
+@@ -18,0 +20,12 @@
++def _fallback_load_attach_path():
++    """
++    Return the default load path without importing the IPython-backed
++    attach machinery.
++    """
++    paths = [Path()]
++    for path in os.environ.get('SAGE_LOAD_ATTACH_PATH', '').split(':'):
++        if path:
++            paths.append(Path(path))
++    return paths
++
++
+@@ -179 +192 @@
+-        ....:     sage.repl.load.load(file.name, {}, attach=True)
++        ....:     sage.repl.load.load(file.name, {}, attach=True)                     # needs IPython
+@@ -181 +194 @@
+-        sage: file.name in attached_files()
++        sage: file.name in attached_files()                                           # needs IPython
+@@ -194,0 +208 @@
++        sage: # needs IPython
+@@ -235 +249,13 @@
+-        from sage.repl.attach import add_attached_file
++        from sage.repl.attach import add_attached_file, load_attach_mode, load_attach_path
++        load_debug_mode, attach_debug_mode = load_attach_mode()
++    else:
++        try:
++            from sage.repl.attach import load_attach_mode, load_attach_path
++        except ModuleNotFoundError as error:
++            if error.name != 'IPython':
++                raise
++            load_attach_path = _fallback_load_attach_path
++            load_debug_mode = False
++            attach_debug_mode = False
++        else:
++            load_debug_mode, attach_debug_mode = load_attach_mode()
+@@ -253 +278,0 @@
+-    from sage.repl.attach import load_attach_path
+@@ -269 +293,0 @@
+-        from sage.repl.attach import load_attach_mode
+@@ -271 +294,0 @@
+-        load_debug_mode, attach_debug_mode = load_attach_mode()
 diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
 --- a/src/sage/graphs/base/overview.py
 +++ b/src/sage/graphs/base/overview.py
