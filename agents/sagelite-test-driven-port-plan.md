@@ -3990,6 +3990,38 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the deferred blocks under
 `optional:sage.libs.pari` and `optional:sage.libs.flint`.
 
+Follow-up scheduled frontier audit on 2026-07-03:
+
+No new quiet corpus candidate was found. A scan of existing current-run SQLite
+artifacts with
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata`
+printed no uncovered clean rows after subtracting the current curated corpus.
+
+Fresh focused probes wrote SQLite dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-this/`. The
+low-count category and feature probes reconfirmed several already-covered
+clean files but added no new corpus entries. The truly absent category
+frontier was skipped-only in the default browser-compatible profile:
+finite-Coxeter, finite-poset, finite-permutation-group, crystal, and
+finite-dimensional algebra examples all record only explicit optional
+dependency skips or no doctest blocks.
+
+The small schemes probe is not a narrow startup-namespace promotion target.
+`sage/schemes/plane_conics/constructor.py` still fails because importing
+`Conic` reaches the unavailable `sage.libs.singular.function` module, so
+adding `Conic` to the default startup surface would make `sage.all` less
+reliable in the stripped profile. The elliptic-curve database examples need
+the optional Cremona/ellcurve database, and the hyperelliptic Jacobian homset
+files need broader hyperelliptic startup/backend work rather than simple
+source tags.
+
+Future scheduled runs should avoid repeating these exact low-count category,
+feature-test, CLI/REPL, and small-schemes batches unless the Singular,
+elliptic-curve database, graph/category, or hyperelliptic backend profile
+changes. The next useful pass should either sample a different namespace from
+the live source-minus-corpus list or target one of those backend clusters
+explicitly.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
