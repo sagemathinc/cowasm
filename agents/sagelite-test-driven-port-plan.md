@@ -4208,6 +4208,43 @@ low-count slices unless the GAP/PARI object model, graph/poset startup surface,
 Singular/FLINT/PBoRi polynomial backends, qadic/p-adic extension support, or
 hyperelliptic/scheme startup namespace changes.
 
+Follow-up scheduled frontier audit on 2026-07-03:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1008 non-comment entries, and fresh focused probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-03-followup/`.
+
+The p-adic relative-extension probe in `padic-relative/probe.sqlite3`
+recorded `0 passed, 87 failed, 42 skipped`. The four
+`relative_ramified_*` helper files are skipped-only under the existing p-adic
+backend metadata. `relative_extension_leaves.py` is not a narrow promotion
+target yet: its failures start with FLINT-backed `Qq(...)` setup and then
+cascade into dependent missing-name failures for `K`, `A`, `W`, `f`, and `g`.
+
+The PARI conversion probe in `pari-convert/probe.sqlite3` recorded
+`0 passed, 4 failed, 48 skipped`. Real/complex MPFR and matrix conversion
+helpers are skipped-only, while `convert_sage_real_double.pyx` and
+`convert_flint.pyx` still expose direct PARI/FLINT conversion failures without
+any passing default-profile coverage.
+
+The quadratic-form probes did not produce an uncovered promotion row.
+`quadratic/probe.sqlite3` recorded clean runnable coverage for
+`binary_qf.py`, `count_local_2.pyx`, and `quadratic_form__evaluate.pyx`, but
+all three files are already present in the curated corpus; the uncovered
+`quadratic_form__genus.py` and `quadratic_form__siegel_product.py` files are
+skipped-only. The follow-up `quadratic2/probe.sqlite3` recorded skipped-only
+coverage for `qfsolve.py` and `quadratic_form__automorphisms.py`, while
+`ternary.pyx` still has a 33-block runtime/backend failure cluster.
+
+The compact geometry probe in `geometry-compact/probe.sqlite3` recorded
+`0 passed, 38 failed, 61 skipped`. Hyperplane-arrangement, PALP normal-form,
+degree-sequence, and several graph helpers were skipped-only; the runnable
+failures in `hyperbolic_interface.py` and `graphs/planarity.pyx` remain graph
+or geometry backend clusters rather than source-tag-only corpus growth.
+`doctest-corpus-candidates.py` prints no uncovered clean runnable rows for
+these dashboards after subtracting the current corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
