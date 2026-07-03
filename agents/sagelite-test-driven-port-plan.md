@@ -26378,6 +26378,38 @@ out while constructing `QuadraticField(337)` in a coercion-map doctest, and
 `wasm_signature_mismatch` during `covariant_z0(...)`. Other files in the
 batch were skipped-only under the default browser profile.
 
+Follow-up helper and symmetric-function frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,036
+non-comment entries. Fresh direct Sagelite probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-codex14/`:
+
+```text
+helper-batch.sqlite3:        7 skipped-only files, 2 empty files
+crypto-coding-batch.sqlite3: 11 skipped-only files
+mid-helper-batch.sqlite3:    8 skipped-only files, 2 failing files
+sf-batch.sqlite3:            10 skipped-only symmetric-function files
+```
+
+A strict `doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+the four fresh databases printed no uncovered clean runnable candidates. The
+low-prompt helper, coding, crypto, database, plotting, category, monoid,
+homology, doctest-parser, and symmetric-function files are therefore recorded
+as skipped-only or empty browser-profile boundary data rather than promoted
+coverage.
+
+The only live failures were broader frontiers. `repl/display/formatter.py`
+recorded 6 passing blocks but 40 failures dominated by unavailable IPython
+test-shell/displayhook setup and dependent missing `shell` state. Tagging the
+entire IPython chain would leave only thin formatter scaffolding coverage, so
+it should wait for a more deliberate rich-output profile decision.
+`numerical/backends/logging_backend.py` recorded 4 passing blocks and 41
+failures because `sage.numerical.backends.generic_backend` is unavailable in
+the stripped profile; dependent logging-backend examples then fail on missing
+solver state. This remains a numerical-backend packaging/runtime frontier, not
+a narrow doctest metadata promotion.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
