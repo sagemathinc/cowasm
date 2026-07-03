@@ -24267,6 +24267,47 @@ around `VoronoiDiagram`/dependent state plus polyhedron/plot examples. Future
 frontier scans should skip these exact slices until the symbolic surface,
 finite-ring Drinfeld-module, or geometry startup/polyhedron boundaries change.
 
+Follow-up scheduled current-frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,005 non-comment entries. Fresh current-runner probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-03-goal-current/`.
+
+The small modular/category/ring probe recorded no runnable passing blocks.
+Most rows were skipped-only under existing optional metadata for groups, PARI,
+finite rings, symbolic plotting, and FLINT-backed modular forms. The only
+runnable failures were startup/import frontiers in
+`sage/modular/arithgroup/congroup.pyx` and
+`sage/modular/modform/half_integral.py`, including missing
+`sage.matrix.matrix_integer_dense` and absent half-integral modular-form
+helpers, so this batch is not a narrow corpus-growth target.
+
+The plot and geometry probe likewise found no promotion candidate. Hyperbolic,
+density, streamline, and 3D plot helpers were skipped-only under current plot
+or symbolic tags. The geometry rows repeated broader startup/backend
+frontiers: `hyperbolic_interface.py` had no passing runnable blocks,
+`surface3d_generators.py` still needs symbolic surface constructors, and
+`voronoi_diagram.py` retained only two local setup passes before its
+`VoronoiDiagram`/polyhedron/plot dependency failures.
+
+The numeric matrix/vector probe found one real near miss,
+`sage/matrix/matrix_integer_dense_saturation.py`, with 29 passed blocks and 19
+failed blocks. Its failures are matrix saturation and row-space semantics
+(`hermite_form(proof=...)`, `index_in_saturation`, sparse/dense fallback, and
+dependent missing state), not a simple optional-backend or display-boundary
+cluster. Adjacent real, complex, and NumPy dense vector/matrix files were
+skipped-only under existing browser-profile tags.
+
+The function-field and finite-ring probe recorded 33 passed, 65 failed, and
+141 skipped blocks. `function_field/order.py` and
+`finite_field_prime_modn.py` timed out in ideal/number-field setup,
+`finite_field_pari_ffelt.py` hit the current cypari2/PARI memory trap, and
+residue-field files exposed finite-field backend failures. The educational
+Judson book batch extracted zero runnable doctest blocks. Future scheduled
+runs should avoid repeating these exact slices until the matrix saturation,
+geometry/polyhedron, finite-field/PARI, or doctest-extraction frontiers change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
