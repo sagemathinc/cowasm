@@ -26544,6 +26544,41 @@ dependent missing algebra generators. `bubble_shuffle.py` and
 graph/poset startup or backend work before they can become useful quiet
 browser-profile corpus additions.
 
+Follow-up low/mid-count source-minus-corpus frontier audit later on
+2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A fresh prompt-count sample from the current
+patched `sagemath/sagelite/build/wasi-sdk/src/sage` tree drove four direct
+Sagelite probe batches under
+`.tmp/current-run/scheduled-2026-07-03-codex19/`:
+
+```text
+batch-a.sqlite3: 146 total, 0 passed, 0 failed, 146 skipped
+batch-b.sqlite3: 277 total, 6 passed, 18 failed, 253 skipped
+batch-c.sqlite3: 472 total, 2 passed, 83 failed, 387 skipped
+batch-d.sqlite3: 632 total, 13 passed, 134 failed, 486 skipped
+```
+
+The file-level shape was 52 skipped-only browser-profile boundary files, 7
+block-failing files, and one file-level dynamic-link error. A strict
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths` scan over
+the four fresh databases printed no uncovered clean runnable candidates.
+
+The live failures remain broad frontiers rather than narrow metadata
+promotions. `rings/polynomial/hilbert.pyx` starts at the disabled FLINT
+integer-polynomial side module and cascades into missing Hilbert-series
+functions and Singular state. The symbolic-vector and manifold-closure files
+are blocked on unavailable symbolic/manifold startup names such as `SR`,
+`var`, and `Manifold`, plus `sage.symbolic.expression`. `group_algebra.py` and
+`groups/perm_gps/constructor.py` depend on GAP/permutation-group packaging
+that is still outside the stripped browser profile. `module_functors.py`
+fails while constructing quotient module examples through the same broader
+module/free-module path recorded in earlier audits. `rings/homset.py` reaches
+the existing NTL dynamic-import boundary at
+`ZZ_pContext.restore` while constructing `R.<x> = k[]`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
