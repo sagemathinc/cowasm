@@ -24465,6 +24465,31 @@ The successful latest run records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
 and `0 passed, 0 failed, 104 skipped`.
 
+Follow-up compact frontier audit on 2026-07-03:
+
+No new quiet corpus candidate was found. A fresh historical scan of current
+same-day SQLite artifacts with
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata`
+printed no uncovered clean promotion rows after subtracting the current
+1,008-file curated corpus.
+
+Three direct focused probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-03-agent-now/`. The compact
+polynomial/PBoRi probe in `polynomial-small.sqlite3` recorded
+`1 passed, 13 failed, 0 skipped`: `pbori/blocks.py` and `pbori/nf.py` still
+fail on the missing `sage.rings.polynomial.pbori.pbori` backend and dependent
+names, while `polynomial/ideal.py` times out in univariate Groebner-basis
+setup. The modular/group/arrangement probe in `modular-group-small.sqlite3`
+was clean but skipped-only, recording `0 passed, 0 failed, 22 skipped` under
+existing FLINT, GAP/module/number-field, and Singular dependency tags. The
+scheme/geometry probe in `scheme-geometry-small.sqlite3` recorded
+`1 passed, 8 failed, 14 skipped`; the failures are weighted-projective and
+hyperelliptic startup-name cascades whose constructors currently import
+broader unavailable scheme backends, while `polyhedron/base_RDF.py` remains
+skipped-only. Future scheduled runs should avoid repeating these exact compact
+slices until the PBoRi, scheme/hyperelliptic, Singular/GAP, or polynomial
+Groebner backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
