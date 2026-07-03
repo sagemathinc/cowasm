@@ -24909,6 +24909,28 @@ Mandelbrot/Julia file similarly depends on plotting/startup names such as
 it remains a plotting/dynamics boundary rather than a tag-only corpus
 candidate.
 
+Focused logic corpus confirmation pass on 2026-07-03:
+
+```text
+sage -t passed: 494 passed, 0 failed, 2 skipped
+```
+
+That six-file direct validation reconfirms the current logic slice of
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` is quiet under the
+default node profile. The run covered `sage/logic/booleval.py`,
+`sage/logic/boolformula.py`, `sage/logic/logic.py`,
+`sage/logic/logicparser.py`, `sage/logic/logictable.py`, and
+`sage/logic/propcalc.py`; all six files were already present in the curated
+corpus, so no corpus or runtime patch was needed.
+
+The probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-logic/logic-probe.sqlite3`
+against the current patched Sagelite source tree. Running
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata` on that database prints no uncovered candidate rows,
+confirming candidate subtraction is behaving correctly for this already-covered
+clean namespace.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
