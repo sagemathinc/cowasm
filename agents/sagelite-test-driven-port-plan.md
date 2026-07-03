@@ -25411,6 +25411,38 @@ local names. Future scheduled runs should avoid this exact low-prompt batch
 unless the graph, PBORI, conic, NumPy, or optional category backend profile
 changes.
 
+Focused persistence utility corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 122 passed, 0 failed, 29 skipped
+```
+
+This pass promotes `sage/misc/persist.pyx`, bringing the curated corpus to
+1,019 non-comment entries. Fresh low-prompt sampling first confirmed that
+several nearby helpers remain skipped-only under existing optional metadata:
+`cpython/cython_metaclass.pyx`, `databases/odlyzko.py`,
+`tests/lazy_imports.py`, `misc/sphinxify.py`, `repl/inputhook.py`,
+`doctest/__main__.py`, `tests/finite_poset.py`, and
+`monoids/hecke_monoid.py`. The same probe kept `libs/eclib/constructor.py`
+out because it has no passing default-profile blocks without
+`sage.libs.eclib.homspace`, and kept
+`combinat/posets/hochschild_lattice.py` out because its focused failures
+route through graph and simplicial-complex surfaces.
+
+A misc/structure probe then found `persist.pyx` as useful browser-profile
+coverage. The doctest runner now seeds `CombinatorialObject` in the common
+startup namespace, and the WASI `sage.all` patch exposes the same name for
+REPL parity after a fresh Sagelite source patch. The added WASI source patch
+classifies two legacy Python-2 pickle `UnicodeDecodeError` diagnostic-position
+drifts and the WASI chmod no-access write-permission drift as deferred
+`# known bug` skips. Focused validation used the `test-sage-doctest-corpus`
+make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-active/persist-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the run
+metadata records runner version 84.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

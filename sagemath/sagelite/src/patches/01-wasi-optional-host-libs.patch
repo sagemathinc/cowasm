@@ -2347,7 +2347,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.species.recursive_species import CombinatorialSpecies
 +    import sage.dynamics.cellular_automata.catalog as cellular_automata
 +    from sage.combinat.combination import Combinations
-+    from sage.combinat.combinat import catalan_number, stirling_number2
++    from sage.combinat.combinat import CombinatorialObject, catalan_number, stirling_number2
 +    from sage.combinat.free_module import CombinatorialFreeModule
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
@@ -11872,3 +11872,15 @@ diff -urN -U0 a/src/sage/groups/matrix_gps/unitary.py b/src/sage/groups/matrix_g
 @@ -21 +21 @@
 -    sage: G.base_ring()
 +    sage: G.base_ring()                                                                 # needs sage.rings.finite_rings
+diff -urN -U0 a/src/sage/misc/persist.pyx b/src/sage/misc/persist.pyx
+--- a/src/sage/misc/persist.pyx
++++ b/src/sage/misc/persist.pyx
+@@ -818 +818 @@
+-        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
++        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
+@@ -1002 +1002 @@
+-        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
++        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
+@@ -1070 +1070 @@
+-        sage: if uid == 0:
++        sage: if uid == 0:                                                              # known bug - WASI chmod no-access check still permits writes

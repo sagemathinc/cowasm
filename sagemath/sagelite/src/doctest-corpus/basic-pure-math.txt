@@ -721,6 +721,7 @@ src/sage/misc/object_multiplexer.py
 src/sage/misc/package.py
 src/sage/misc/prandom.py
 src/sage/misc/parser.pyx
+src/sage/misc/persist.pyx
 src/sage/misc/python.py
 src/sage/misc/random_testing.py
 src/sage/misc/remote_file.py

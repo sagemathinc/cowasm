@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 83;
+const doctestRunnerVersion = 84;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -969,7 +969,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.combination", ("Combinations",)),
         ("sage.combinat.alternating_sign_matrix", ("AlternatingSignMatrices",)),
         ("sage.combinat.binary_tree", ("BinaryTree",)),
-        ("sage.combinat.combinat", ("fibonacci", "stirling_number2")),
+        ("sage.combinat.combinat", ("CombinatorialObject", "fibonacci", "stirling_number2")),
         ("sage.combinat.free_module", ("CombinatorialFreeModule",)),
         ("sage.combinat.gelfand_tsetlin_patterns", ("GelfandTsetlinPattern", "GelfandTsetlinPatterns")),
         ("sage.combinat.composition", ("Composition",)),
