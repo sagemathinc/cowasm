@@ -22979,6 +22979,38 @@ keeps the next useful corpus-growth pass pointed away from the resampled
 optional-gated files and toward a different namespace or a targeted runtime
 cluster.
 
+Follow-up current low-prompt absent audit on 2026-07-03:
+
+No corpus entry was promoted in this pass. A first low-prompt batch from older
+scratch lists produced clean rows for
+`sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx`,
+`sage/schemes/elliptic_curves/mod5family.py`, and
+`sage/tests/memcheck/run_tests_in_valgrind.py`, but all three files were
+already present in the current 983-entry `basic-pure-math.txt` corpus.
+
+After rebuilding the absent list from the current patched source tree and
+current corpus file, a focused 20-file batch recorded 0 passed, 4 failed, and
+23 skipped blocks in
+`.tmp/current-run/scheduled-2026-07-03-next/current-low-absent-batch.sqlite3`.
+The batch has no uncovered clean runnable rows. Thirteen files are skipped-only
+under the default browser profile, including low-prompt interfaces and optional
+database/coding helpers such as `sage/interfaces/gfan.py`,
+`sage/interfaces/magma_free.py`, `sage/databases/cunningham_tables.py`,
+`sage/coding/two_weight_db.py`, and `sage/coding/guava.py`. Five files are
+zero-block infrastructure or startup modules:
+`sage/cli/notebook_cmd_test.py`, `sage/cli/selftest.py`,
+`sage/repl/prompts.py`, `sage/misc/sagedoc_conf.py`, and `sage/graphs/all.py`.
+
+The only runnable failures in the refreshed batch are PARI conversion frontier
+rows. `sage/libs/pari/convert_flint.pyx` has two failed matrix `__pari__`
+examples that reach the current focused-cypari2 object-model limitation, and
+`sage/libs/pari/convert_sage_real_double.pyx` fails because
+`cypari2.convert` is unavailable and the expected
+`new_gen_from_real_double_element` helper is therefore not defined. Future
+low-prompt scheduled runs should skip this exact batch unless cypari2/PARI
+conversion coverage changes, and should continue with a different namespace or
+a targeted PARI conversion port.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
