@@ -11311,6 +11311,26 @@ diff -urN -U0 a/src/sage/rings/padics/unramified_extension_generic.py b/src/sage
 @@ -325 +325 @@
 -            sage: R.has_root_of_unity(11)
 +            sage: R.has_root_of_unity(11)                                          # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/qadic_flint_CA.pyx b/src/sage/rings/padics/qadic_flint_CA.pyx
+--- a/src/sage/rings/padics/qadic_flint_CA.pyx
++++ b/src/sage/rings/padics/qadic_flint_CA.pyx
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/qadic_flint_CR.pyx b/src/sage/rings/padics/qadic_flint_CR.pyx
+--- a/src/sage/rings/padics/qadic_flint_CR.pyx
++++ b/src/sage/rings/padics/qadic_flint_CR.pyx
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/qadic_flint_FM.pyx b/src/sage/rings/padics/qadic_flint_FM.pyx
+--- a/src/sage/rings/padics/qadic_flint_FM.pyx
++++ b/src/sage/rings/padics/qadic_flint_FM.pyx
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/qadic_flint_FP.pyx b/src/sage/rings/padics/qadic_flint_FP.pyx
+--- a/src/sage/rings/padics/qadic_flint_FP.pyx
++++ b/src/sage/rings/padics/qadic_flint_FP.pyx
+@@ -1,0 +2 @@
++# sage.doctest: needs sage.libs.flint
 diff -urN -U0 a/src/sage/rings/padics/padic_base_generic.py b/src/sage/rings/padics/padic_base_generic.py
 --- a/src/sage/rings/padics/padic_base_generic.py
 +++ b/src/sage/rings/padics/padic_base_generic.py

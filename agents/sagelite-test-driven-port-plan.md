@@ -24308,6 +24308,44 @@ Judson book batch extracted zero runnable doctest blocks. Future scheduled
 runs should avoid repeating these exact slices until the matrix saturation,
 geometry/polyhedron, finite-field/PARI, or doctest-extraction frontiers change.
 
+Follow-up qadic FLINT frontier tagging pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. Fresh probes under
+`.tmp/current-run/scheduled-2026-07-03-*` found no still-uncovered clean
+runnable row after subtracting the checked 1,005-file corpus and requiring
+modern run metadata.
+
+The root-system/combinatorics probe was skipped-only for most root-system
+helpers and exposed two broader runtime frontiers: a timeout in
+`root_lattice_realization_algebras.py` at the twisted Demazure-Lusztig
+operator example, and a `RangeError: Maximum call stack size exceeded` in
+`abstract_tree.py` at `T.number_of_nodes_at_depth(2000)`. The compact
+category/utility probe was also mostly skipped-only; its only runnable file,
+`combinat/posets/hochschild_lattice.py`, had no passing blocks and remains a
+poset startup/failure target rather than a narrow promotion.
+
+The utility/p-adic probe identified one dashboard hygiene fix. The four qadic
+FLINT files (`qadic_flint_CA.pyx`, `qadic_flint_CR.pyx`,
+`qadic_flint_FM.pyx`, and `qadic_flint_FP.pyx`) previously reported import
+and dependent `NameError` cascades because their doctests enter the disabled
+FLINT unramified p-adic side-module path. The WASI source patch now gives
+each file a file-level `# sage.doctest: needs sage.libs.flint` directive, so
+default browser-profile probes classify this backend boundary as skipped
+metadata instead of failures.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through the
+`test-sage-doctest-corpus` make target and ran a four-file qadic corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_JOBS=4`. The result was:
+
+```text
+qadic_flint_CA.pyx: 0 passed, 0 failed, 19 skipped
+qadic_flint_CR.pyx: 0 passed, 0 failed, 23 skipped
+qadic_flint_FM.pyx: 0 passed, 0 failed, 17 skipped
+qadic_flint_FP.pyx: 0 passed, 0 failed, 22 skipped
+sage -t passed: 0 passed, 0 failed, 81 skipped
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
