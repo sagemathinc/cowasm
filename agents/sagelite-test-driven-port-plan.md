@@ -23100,6 +23100,29 @@ projective-curve stack. The four passing plane-conic blocks are only local
 setup prompts, so tagging every `Conic(...)` example would add skipped-heavy
 noise rather than useful default-profile coverage.
 
+Follow-up Symmetrica backend-boundary pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. A fresh mixed absent-file probe in
+`.tmp/current-run/scheduled-2026-07-03-codex-goal/probe.sqlite3` recorded 11
+passed, 62 failed, and 86 skipped blocks across small group, poset, Lie
+conformal algebra, hyperelliptic, polynomial, matrix, Symmetrica, and book
+doctest files. The probe found no uncovered clean runnable row. The main
+runnable clusters were broad startup/backend frontiers: Singular-backed
+polynomial ideals timed out, hyperelliptic and poset examples needed broader
+startup namespaces, and Symmetrica wrapper examples failed because
+`sage.libs.symmetrica.symmetrica` is not present in the stripped WASI profile.
+
+The WASI source patch now marks `sage.libs.symmetrica.kostka` and
+`sage.libs.symmetrica.sc` doctests with file-level
+`# sage.doctest: needs sage.libs.symmetrica` directives. This keeps the
+existing lazy `sage.libs.all` Symmetrica import behavior while recording the
+wrapper doctests as an explicit optional backend boundary instead of
+`ModuleNotFoundError` failures. A focused rerun over `kostka.pxi` and `sc.pxi`
+recorded `0 passed, 0 failed, 25 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-codex-goal/symmetrica-tags.sqlite3`,
+all under `optional:sage.libs.symmetrica`; a full patch dry-run against
+`/home/user/sagelite` still applies.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
