@@ -25778,6 +25778,39 @@ the doctest. The saved block- and file-failure cluster queries are empty, and
 to the corpus. The latest run metadata records node profile and runner version
 86.
 
+Follow-up product-projective morphism corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 80 passed, 0 failed, 30 skipped
+```
+
+This pass promotes `sage/schemes/product_projective/morphism.py`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,027
+non-comment entries. A focused adjacent product-projective probe had recorded
+the file as a compact near miss with 80 passing blocks, 7 failures, and 23
+skips. All failures were the same browser-profile boundary already seen in
+nearby product-projective files: point normalization imports
+`sage.libs.singular.function`, with two dependent examples cascading from
+skipped setup names. The WASI source patch now tags those exact morphism
+examples as `# needs sage.libs.singular`, leaving morphism construction,
+representation, equality, coordinate access, and basic scheme-map behavior
+live in the default node profile.
+
+Focused validation first applied the full WASI patch to a clean Sagelite
+source copy under
+`.tmp/current-run/scheduled-2026-07-03-morphism/patch-apply`. Final validation
+used `make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and `SAGELITE_DOCTEST_JOBS=1`, writing
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-morphism/product-projective-morphism-make.sqlite3`.
+The make target rebuilt a fresh patched Sagelite source tree before running
+the doctest. The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records CoWasm commit
+`a9082920823e22962a99d1cd54fecff0045daaf0`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+86.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
