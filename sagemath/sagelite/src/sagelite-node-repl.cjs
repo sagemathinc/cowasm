@@ -1133,6 +1133,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.schemes.affine.affine_space", ("AffineSpace",)),
         ("sage.schemes.generic.spec", ("Spec",)),
         ("sage.schemes.projective.projective_space", ("ProjectiveSpace",)),
+        ("sage.schemes.weighted_projective.weighted_projective_space", ("WeightedProjectiveSpace",)),
     )
     for module_name, names in imports:
         try:

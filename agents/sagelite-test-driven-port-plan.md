@@ -25334,6 +25334,44 @@ no passing default-profile blocks, and `arithgroup/congroup.pyx` is blocked by
 exact batches unless the NumPy/SciPy, species FLINT/module, matrix-integer,
 PARI/FLINT, or modular arithmetic-group backend profile changes.
 
+Follow-up weighted-projective homset corpus-growth pass on 2026-07-03:
+
+This pass promoted one corpus entry; the curated corpus now has 1,018
+non-comment entries after adding
+`src/sage/schemes/weighted_projective/weighted_projective_homset.py`. A fresh
+source-minus-corpus scan under
+`.tmp/current-run/scheduled-2026-07-03-goal-plan/` first confirmed that many
+remaining low-prompt files are still skipped-only browser-boundary coverage.
+The low mixed probe recorded `0 passed, 0 failed, 61 skipped` across
+`cpython/string.pyx`, `plot/step.py`, `misc/map_threaded.py`,
+`monoids/monoid.py`, `categories/groupoid.py`,
+`rings/ring_extension_homset.py`, `categories/bialgebras.py`, and
+`categories/examples/algebras_with_basis.py`.
+
+The second mixed probe found the narrow promotion candidate:
+`weighted_projective_homset.py` failed only because the lightweight startup
+namespace did not expose `WeightedProjectiveSpace`, while the dependent homset
+examples were otherwise valid. The doctest runner now seeds
+`WeightedProjectiveSpace`, and the WASI `sage.all` patch exposes the same
+constructor for REPL parity after a Sagelite rebuild. The same probe kept
+`combinat/rigged_configurations/bijection.py`,
+`combinat/crystals/bkk_crystals.py`, and
+`tests/combinatorial_hopf_algebras.py` as skipped-only dependency-boundary
+files. It also kept
+`algebras/lie_conformal_algebras/lie_conformal_algebra_element.py` out of the
+quiet corpus: the file has useful runnable coverage (`17 passed`) but still
+clusters around graph-backed affine Lie conformal algebra imports,
+QQbar cache-identity drift, and dependent missing local names.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus`, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal-plan/weighted-homset-make.sqlite3`.
+That strict make-target run rebuilt the patched Sagelite source copy, applied
+the updated WASI source patch, and recorded `3 passed, 0 failed, 0 skipped`
+with empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
