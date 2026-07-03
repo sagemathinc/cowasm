@@ -24871,6 +24871,44 @@ number-field morphism memory trap. This slice is useful boundary evidence but
 not a clean corpus-growth target until one of the graph/poset, GLPK,
 NTL/PARI, or symbolic/module startup surfaces changes.
 
+Follow-up continuation frontier audit on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,013 non-comment entries. Three fresh direct Sagelite probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-03-continuation/`, using
+the current patched source root, node profile, and runner version 83. Running
+`doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata --ignore-invalid
+--quiet-invalid --dedupe-paths` across the three fresh databases printed no
+uncovered clean runnable file.
+
+The low-dependency small-file batch in `frontier-a.sqlite3` was clean but
+entirely dependency-boundary coverage, recording `0 passed, 0 failed, 91
+skipped`. The mixed category/algebra/statistics batch in `frontier-b.sqlite3`
+recorded `0 passed, 7 failed, 183 skipped`; the failures were the known graph
+backend boundary in `sage/combinat/posets/bubble_shuffle.py` plus a
+polynomial-ideal Groebner example that timed out at
+`sage/rings/polynomial/ideal.py:77`.
+
+After subtracting the files already present in older `.tmp/current-run`
+probe databases, the remaining compact prompt-bearing frontier was also not a
+promotion source. `frontier-c.sqlite3` recorded `49 passed, 146 failed, 242
+skipped`. Its only compact near misses were `sage/matroids/rank_matroid.py`
+with `29 passed, 21 failed, 0 skipped`, and
+`sage/dynamics/complex_dynamics/mandel_julia.py` with `20 passed, 25 failed,
+7 skipped`. The matroid failures cluster around the unavailable
+`sage.graphs.generic_graph_pyx` import path reached by
+`sage.matroids.advanced`, missing `matroids` startup namespace examples, base
+matroid `is_valid`/hash behavior, and dependent pickling diagnostic drift. A
+temporary source-copy tagging experiment confirmed that marking those blocks
+at the current `sage.matroids`/`sage.graphs` boundary makes the file
+skipped-only (`0 passed, 0 failed, 50 skipped`), so it is not useful to promote
+until the browser profile exposes a real matroid or graph surface. The
+Mandelbrot/Julia file similarly depends on plotting/startup names such as
+`mandelbrot_plot`, `julia_plot`, `external_ray`, and `kneading_sequence`, so
+it remains a plotting/dynamics boundary rather than a tag-only corpus
+candidate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
