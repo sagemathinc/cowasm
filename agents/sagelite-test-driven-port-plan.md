@@ -22868,6 +22868,26 @@ at `SAGELITE_MESON_COMPILE_JOBS=4` it still records the known clustered Cython
 compile segfaults around matrix modules, and the single-job retry was
 interrupted before completion.
 
+Follow-up candidate scan quiet-invalid hygiene pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The current checkout again has an
+empty `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` placeholder
+because the resource tree was cleared by an interrupted standalone validation
+run. Direct `sage` invocations fail before startup with
+`Sagelite Electron resources not found; set COWASM_SAGELITE_ELECTRON_RESOURCES`,
+and direct saved SQL queries still fail until a full corpus run repopulates
+the dashboard schema.
+
+The make-level candidate entrypoints now default
+`SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS` to
+`--ignore-invalid --quiet-invalid`. This keeps scheduled
+`sage-doctest-candidates` and `sage-doctest-candidate-paths` audits quiet when
+the only configured dashboard is an empty transient file, while preserving the
+strict diagnostic path by setting `SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS=`.
+Focused validation confirmed that the default make targets exit successfully
+and print no empty-database warning in the current placeholder-dashboard state,
+while the explicit strict override still reports `empty doctest database`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
