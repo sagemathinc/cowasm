@@ -23123,6 +23123,33 @@ recorded `0 passed, 0 failed, 25 skipped` in
 all under `optional:sage.libs.symmetrica`; a full patch dry-run against
 `/home/user/sagelite` still applies.
 
+Follow-up q-Bernoulli corpus-growth pass on 2026-07-03:
+
+`src/sage/combinat/q_bernoulli.pyx` is now listed in the curated pure-math
+corpus. A fresh low-prompt combinatorics probe wrote
+`.tmp/current-run/scheduled-2026-07-03-matrix-dense/combinat.sqlite3` and
+found `q_bernoulli.pyx` as the only uncovered clean runnable row, with
+`13 passed, 0 failed, 2 skipped`. The two skipped examples are existing
+`# needs sage.libs.flint` comparisons against classical Bernoulli helpers, so
+the default browser profile still gets useful q-Bernoulli polynomial coverage
+without treating FLINT-backed checks as runtime failures.
+
+The same probe kept adjacent combinatorics files out of the quiet corpus:
+`species/misc.py`, `root_system/coxeter_group.py`,
+`root_system/braid_move_calculator.py`, `sf/multiplicative.py`, and
+`designs/difference_matrices.py` were skipped-only, while
+`posets/bubble_shuffle.py` and `posets/hochschild_lattice.py` failed on the
+current graph/poset startup surface. Earlier matrix/vector, category-example,
+and utility probes in `.tmp/current-run/scheduled-2026-07-03-matrix-dense/`
+were also skipped-only under the default profile.
+
+Validation used a focused direct rerun and a strict one-file
+`test-sage-doctest-corpus` make run with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`.
+Both recorded `13 passed, 0 failed, 2 skipped`; saved block- and file-failure
+cluster queries are empty for the make database, and
+`doctest-corpus-candidates.py` prints no promotion rows after the file is
+listed in `basic-pure-math.txt`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
