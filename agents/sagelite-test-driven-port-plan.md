@@ -23549,6 +23549,35 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a synthetic SQLite
 fixture in the standalone smoke that checks both matching and non-matching
 `--only-skip-reason` skipped-only rows.
 
+Follow-up failure-frontier filter pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. Fresh focused probes wrote
+`.tmp/current-run/scheduled-2026-07-03-next-frontier/*.sqlite3` and found no
+new uncovered clean runnable rows. Small misc, database, monoid, coding,
+plot/topology, category, and book/test batches were skipped-only, empty, or
+backend-frontier coverage. The useful runtime rows were diagnostic rather than
+promotion input: `src/sage/rings/polynomial/ideal.py` timed out while building
+a Groebner-basis ideal, and `src/sage/combinat/posets/bubble_shuffle.py` plus
+`src/sage/combinat/posets/hochschild_lattice.py` grouped under graph/poset
+startup import and namespace failures.
+
+The `doctest-corpus-candidates.py` helper now supports positive failure
+frontier filters: `--only-block-failure-class` for `--near-misses`,
+`--only-file-failure-class` for `--file-errors`, and
+`--only-file-failure-detail` for `--file-errors`. These complement the
+existing exclude filters and the skipped-only `--only-skip-reason` filter, so
+frontier audits can directly ask for only timeout, import, missing-module, or
+other diagnostic clusters without piping through ad hoc text filters. The
+make-level `sage-doctest-candidates` entrypoint passes the new flags through
+via `SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, direct filter checks
+against the fresh timeout and poset scratch databases, parser guard checks for
+using the new flags outside their required modes, and a make-level passthrough
+check for `--file-errors --only-file-failure-class timeout --paths-only`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

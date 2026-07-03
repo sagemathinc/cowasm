@@ -180,6 +180,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--only-block-failure-class",
+        action="append",
+        default=[],
+        metavar="CLASS[,CLASS...]",
+        help=(
+            "with --near-misses, report only files whose failed blocks include "
+            "one of these failure_class values; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--exclude-file-failure-class",
         action="append",
         default=[],
@@ -190,6 +200,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--only-file-failure-class",
+        action="append",
+        default=[],
+        metavar="CLASS[,CLASS...]",
+        help=(
+            "with --file-errors, report only files whose file-scope "
+            "failure_class matches one of these values; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--exclude-file-failure-detail",
         action="append",
         default=[],
@@ -197,6 +217,16 @@ def parse_args() -> argparse.Namespace:
         help=(
             "with --file-errors, suppress files whose one-line failure_detail "
             "contains one of these substrings; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--only-file-failure-detail",
+        action="append",
+        default=[],
+        metavar="TEXT[,TEXT...]",
+        help=(
+            "with --file-errors, report only files whose one-line "
+            "failure_detail contains one of these substrings; may be repeated"
         ),
     )
     parser.add_argument(
@@ -259,10 +289,16 @@ def parse_args() -> argparse.Namespace:
         parser.error("--failure-detail-limit must be non-negative")
     if args.exclude_block_failure_class and not args.near_misses:
         parser.error("--exclude-block-failure-class requires --near-misses")
+    if args.only_block_failure_class and not args.near_misses:
+        parser.error("--only-block-failure-class requires --near-misses")
     if args.exclude_file_failure_class and not args.file_errors:
         parser.error("--exclude-file-failure-class requires --file-errors")
+    if args.only_file_failure_class and not args.file_errors:
+        parser.error("--only-file-failure-class requires --file-errors")
     if args.exclude_file_failure_detail and not args.file_errors:
         parser.error("--exclude-file-failure-detail requires --file-errors")
+    if args.only_file_failure_detail and not args.file_errors:
+        parser.error("--only-file-failure-detail requires --file-errors")
     if args.include_skip_reasons and not args.skipped_only:
         parser.error("--include-skip-reasons requires --skipped-only")
     if args.only_skip_reason and not args.skipped_only:
@@ -270,12 +306,15 @@ def parse_args() -> argparse.Namespace:
     args.exclude_block_failure_class = parse_csv_values(
         args.exclude_block_failure_class
     )
+    args.only_block_failure_class = parse_csv_values(args.only_block_failure_class)
     args.exclude_file_failure_class = parse_csv_values(
         args.exclude_file_failure_class
     )
+    args.only_file_failure_class = parse_csv_values(args.only_file_failure_class)
     args.exclude_file_failure_detail = parse_csv_values(
         args.exclude_file_failure_detail
     )
+    args.only_file_failure_detail = parse_csv_values(args.only_file_failure_detail)
     args.only_skip_reason = parse_csv_values(args.only_skip_reason)
     args.excluded_path_prefixes = (
         ()
@@ -492,8 +531,11 @@ def candidate_rows(
     file_errors: bool,
     max_failed: int,
     excluded_block_failure_classes: list[str],
+    only_block_failure_classes: list[str],
     excluded_file_failure_classes: list[str],
+    only_file_failure_classes: list[str],
     excluded_file_failure_details: list[str],
+    only_file_failure_details: list[str],
     only_skip_reasons: list[str],
     excluded_path_prefixes: tuple[str, ...],
     include_skip_reasons: bool,
@@ -577,6 +619,12 @@ def candidate_rows(
               and {failure_class_expr} not in ({placeholders})
             """
             query_parameters.extend(excluded_file_failure_classes)
+        if only_file_failure_classes:
+            placeholders = ", ".join("?" for _ in only_file_failure_classes)
+            file_failure_filter += f"""
+              and {failure_class_expr} in ({placeholders})
+            """
+            query_parameters.extend(only_file_failure_classes)
         rows = db.execute(
             f"""
             select
@@ -659,14 +707,15 @@ def candidate_rows(
     elif near_misses:
         block_failure_filter = ""
         query_parameters: list[object] = [run_id, min_passed, max_failed]
-        if excluded_block_failure_classes:
+        if excluded_block_failure_classes or only_block_failure_classes:
             if not can_filter_block_failure_classes(db):
                 raise SystemExit(
                     "cannot filter block failure classes: database lacks "
                     "compatible blocks/files metadata"
                 )
+        if excluded_block_failure_classes:
             placeholders = ", ".join("?" for _ in excluded_block_failure_classes)
-            block_failure_filter = f"""
+            block_failure_filter += f"""
               and not exists (
                 select 1
                 from blocks
@@ -676,6 +725,18 @@ def candidate_rows(
               )
             """
             query_parameters.extend(excluded_block_failure_classes)
+        if only_block_failure_classes:
+            placeholders = ", ".join("?" for _ in only_block_failure_classes)
+            block_failure_filter += f"""
+              and exists (
+                select 1
+                from blocks
+                where blocks.file_id = files.id
+                  and blocks.status = 'failed'
+                  and coalesce(blocks.failure_class, '') in ({placeholders})
+              )
+            """
+            query_parameters.extend(only_block_failure_classes)
         rows = db.execute(
             f"""
             select
@@ -758,6 +819,10 @@ def candidate_rows(
         if file_errors and any(
             detail in one_line_failure_detail
             for detail in excluded_file_failure_details
+        ):
+            continue
+        if file_errors and only_file_failure_details and not any(
+            detail in one_line_failure_detail for detail in only_file_failure_details
         ):
             continue
         if skipped_only and only_skip_reasons and not any(
@@ -889,8 +954,11 @@ def main() -> int:
                     args.file_errors,
                     args.max_failed,
                     args.exclude_block_failure_class,
+                    args.only_block_failure_class,
                     args.exclude_file_failure_class,
+                    args.only_file_failure_class,
                     args.exclude_file_failure_detail,
+                    args.only_file_failure_detail,
                     args.only_skip_reason,
                     args.excluded_path_prefixes,
                     args.include_skip_reasons,

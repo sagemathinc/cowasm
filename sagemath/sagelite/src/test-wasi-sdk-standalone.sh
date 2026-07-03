@@ -3025,6 +3025,17 @@ if [ "$doctest_candidate_helper_file_errors_no_file_not_found" != "src/sage/exam
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-failure-class did not filter file errors."
 fi
+doctest_candidate_helper_file_errors_only_module_not_found="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --only-file-failure-class ModuleNotFoundError \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors_only_module_not_found" != "src/sage/example/error_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors_only_module_not_found" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-file-failure-class did not filter file errors."
+fi
 doctest_candidate_helper_file_errors_no_optional_detail="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
   --exclude-file-failure-detail optional_backend \
@@ -3036,6 +3047,17 @@ if [ "$doctest_candidate_helper_file_errors_no_optional_detail" != "src/sage/exa
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-failure-detail did not filter file errors."
 fi
+doctest_candidate_helper_file_errors_only_obsolete_detail="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --only-file-failure-detail obsolete \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors_only_obsolete_detail" != "src/sage/example/stale_harness_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors_only_obsolete_detail" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-file-failure-detail did not filter file errors."
+fi
 doctest_candidate_helper_near_misses_no_name_error="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
   --exclude-block-failure-class NameError \
@@ -3046,6 +3068,28 @@ if [ "$doctest_candidate_helper_near_misses_no_name_error" != "src/sage/example/
   printf '%s\n' "$doctest_candidate_helper_near_misses_no_name_error" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-block-failure-class did not filter near misses."
+fi
+doctest_candidate_helper_near_misses_only_type_error="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --only-block-failure-class TypeError \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_only_type_error" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_only_type_error" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-class did not filter near misses."
+fi
+doctest_candidate_helper_near_misses_only_timeout="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --only-block-failure-class timeout \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_near_misses_only_timeout" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_only_timeout" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-class reported unrelated near misses."
 fi
 doctest_candidate_helper_near_misses_with_class="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
