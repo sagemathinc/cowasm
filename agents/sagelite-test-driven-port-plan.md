@@ -26277,6 +26277,40 @@ cover. `schemes/plane_conics/constructor.py` initially looked like a possible
 Singular-backed projective-curve stack, so it remains out of the quiet
 browser-profile corpus for now.
 
+Follow-up low-count frontier audit later on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,036
+non-comment entries after the preceding GF2X polynomial promotion. A strict
+current-corpus scan over the fresh databases in
+`.tmp/current-run/scheduled-2026-07-03-codex13/` with
+`doctest-corpus-candidates.py --require-run-metadata --dedupe-paths
+--source-root sagemath/sagelite/build/wasi-sdk` printed no uncovered clean
+runnable candidates.
+
+The fresh probe set first sanity-checked the newly covered typeset frontier:
+`ascii_art.py`, `character_art.py`, `character_art_factory.py`, and
+`unicode_art.py` still record `142 passed, 0 failed, 65 skipped` together, but
+all four files are already present in the checked corpus. The remaining
+low-count probes were either skipped-only/empty or broader graph/module
+frontiers:
+
+```text
+low-count-batch.sqlite3:    12 files, 0 passed, 0 failed, 99 skipped
+misc-cpython-batch.sqlite3: 6 files, 0 passed, 0 failed, 291 skipped
+graph-plot-js.sqlite3:      1 file, 0 passed, 0 failed, 21 skipped
+next-tier-batch.sqlite3:    10 files, 61 passed, 199 failed, 141 skipped
+```
+
+The live failures in `next-tier-batch.sqlite3` remain unsuitable for a quiet
+browser-profile promotion. The dominant cluster is the public `graphs`
+startup/backend boundary across `graph_list.py`, `weakly_chordal.pyx`,
+`rankwidth.pyx`, `world_map.py`, `platonic_solids.py`, and
+`partial_cube.py`; `submodule_helper.py` reaches broader module/submodule
+semantics with 35 passing and 35 failing blocks. Skipped-only files such as
+`stats/intlist.pyx`, `modules/diamond_cutting.py`, `misc/randstate.pyx`, and
+small CPython/misc helpers are useful dependency-boundary data but do not add
+live non-skipped coverage to the dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
