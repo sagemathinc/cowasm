@@ -25110,6 +25110,42 @@ runs should avoid the category-example, small-core, sampled combinatorics,
 crypto, and compact rings batches above unless one of their recorded dependency
 or runtime boundaries changes.
 
+Follow-up homology frontier promotion on 2026-07-03:
+
+This pass promoted one corpus entry; the curated corpus now has 1,015
+non-comment entries after adding
+`src/sage/homology/chain_complex_morphism.py`. A direct focused topology and
+homology probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-topology-homology/topology-homology.sqlite3`
+with current patched source root metadata, node profile, runner version 83,
+CoWasm commit `1b435506f01d1f86f68379c0fb78fd89a423908f`, and Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`. The promoted file
+recorded `37 passed, 0 failed, 89 skipped`, and
+`doctest-corpus-candidates.py --source-root
+/home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--ignore-invalid --quiet-invalid --dedupe-paths` prints no uncovered clean
+runnable candidate from that database after the corpus update.
+
+The same probe is useful frontier evidence but not a broader topology
+promotion source. The sampled cell, cubical, delta, filtered simplicial,
+simplicial, and chain helper files were skipped-only under existing graph,
+module, optional, or backend dependency metadata. `moment_angle_complex.py`
+recorded 77 block failures cascading from missing startup names and the
+stripped graph backend. `chain_complex.py` recorded one file-level
+`wasm_signature_mismatch` while running `c.is_boundary()` at line 546 through
+matrix echelonization, so it remains a runtime/linkage triage target rather
+than a corpus entry.
+
+A separate compact stats, probability, typeset, parallel, and data-structure
+probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-stats-utilities/stats-utilities.sqlite3`
+and produced no promotion candidate. The stats Gaussian files were skipped-
+only, front-door files extracted zero blocks, and `parallel/decorate.py` plus
+`parallel/map_reduce.py` failed around unavailable `_multiprocessing` and
+`cysignals.alarm` support with dependent setup-name cascades. Future scheduled
+runs should avoid repeating this compact utility batch unless the browser
+profile gains multiprocessing/fork/alarm support.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
