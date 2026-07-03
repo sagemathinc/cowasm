@@ -11336,3 +11336,9 @@ diff -urN -U0 a/src/sage/misc/sage_input.py b/src/sage/misc/sage_input.py
 @@ -3396 +3396 @@
 -            sage: sif._names, sif._dup_names
 +            sage: sif._names, sif._dup_names                                         # random
+diff -urN -U0 a/src/sage/combinat/path_tableaux/path_tableau.py b/src/sage/combinat/path_tableaux/path_tableau.py
+--- a/src/sage/combinat/path_tableaux/path_tableau.py
++++ b/src/sage/combinat/path_tableaux/path_tableau.py
+@@ -358 +358 @@
+-            sage: t.orbit()
++            sage: t.orbit()  # random - set display order is runtime-dependent

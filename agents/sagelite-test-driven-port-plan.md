@@ -23337,6 +23337,34 @@ respectively; their runnable failures cluster around broad Cython assertion,
 rich-output, pickle/persist, symbolic-functional, and `sagedoc` timeout
 frontiers rather than a narrow promotion target.
 
+Follow-up path-tableaux core corpus-growth pass on 2026-07-03:
+
+`src/sage/combinat/path_tableaux/path_tableau.py` and
+`src/sage/combinat/path_tableaux/semistandard.py` are now listed in the
+curated pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 989
+non-comment entries. The fresh path-tableaux probe first exposed a narrow
+startup namespace cluster in `semistandard.py` and one unordered set-display
+drift in `path_tableau.py`.
+
+The doctest runner now seeds the standard semistandard tableau, semistandard
+skew-tableau, and Gelfand-Tsetlin constructors expected by these doctests:
+`SemistandardTableau`, `SemistandardSkewTableaux`,
+`GelfandTsetlinPattern`, and `GelfandTsetlinPatterns`. The WASI source patch
+also marks the `PathTableau.orbit()` set display as `# random`, since the
+mathematical orbit is stable but the printed set order is runtime-dependent.
+
+Focused direct validation recorded `176 passed, 0 failed, 3 skipped` in
+`.tmp/current-run/scheduled-2026-07-03-path-tableaux-next/probe-after.sqlite3`.
+Strict make-level validation rebuilt and patched a fresh Sagelite source copy
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_TIMEOUT=90`, recording the same counts in
+`.tmp/current-run/scheduled-2026-07-03-path-tableaux-next/path-tableaux-make.sqlite3`.
+Saved block- and file-failure cluster queries are empty, skip reasons are the
+existing optional `sage.graphs`/`sage.modules` rows, and
+`doctest-corpus-candidates.py` prints no promotion rows after both files are
+listed in the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
