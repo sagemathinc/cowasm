@@ -23761,6 +23761,41 @@ Ore-module setup, while `src/sage/rings/homset.py` and
 `src/sage/rings/finite_rings/conway_polynomials.py` hit the known split NTL
 `ZZ_pContext.restore` dynamic-link boundary.
 
+Focused polynomial-ring homomorphism corpus-growth pass:
+
+```text
+polynomial_ring_homomorphism.pyx: 30 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/polynomial_ring_homomorphism.pyx` to the curated
+pure-math corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 994
+non-comment entries. The file adds default-profile coverage for polynomial
+ring homomorphism construction, identity/coercion behavior, evaluation, and
+composition over the already-supported polynomial-ring surface.
+
+A focused small-file probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-goal/probe.sqlite3`; the saved
+candidate helper classified `polynomial_ring_homomorphism.pyx` as the only
+uncovered clean runnable candidate in that batch. Neighboring low-count files
+were either skipped-only under existing optional metadata or still broad
+frontiers: category and species helpers recorded only skipped blocks,
+`hilbert.pyx` retained Singular-backed failures, and
+`nil_coxeter_algebra.py`/`bubble_shuffle.py` remained startup or semantic
+failure clusters.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal/polynomial-ring-homomorphism-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`6193a54a7033b498d9c96e6ba0584d98dcf184d2`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
