@@ -24432,6 +24432,39 @@ queries are empty, skip grouping records eight `sage.plot` skips and five
 `sage.symbolic` skips, and `doctest-corpus-candidates.py` prints no promotion
 row after the file is listed in the corpus.
 
+Follow-up dependency-boundary tagging pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,008
+non-comment entries. A fresh mixed small-file probe under
+`.tmp/current-run/scheduled-2026-07-03-goal-work/mixed-small.sqlite3` was
+entirely skipped-only, recording 310 skipped blocks across cpython, misc,
+monoid, topology, category, and function frontiers under existing optional,
+needs, long-time, tolerance, and deferred tags.
+
+A second exact-combinatorics probe in
+`.tmp/current-run/scheduled-2026-07-03-goal-work/combinat-exact.sqlite3` found
+no runnable promotion candidate. Most files were skipped-only under existing
+combinatorics, module, graph, FLINT, lrcalc, or symbolic tags. The only
+default-profile failure rows were broader dependency frontiers with zero
+passing blocks: `sage/algebras/nil_coxeter_algebra.py`,
+`sage/combinat/posets/mobile.py`, and `sage/combinat/sine_gordon.py`.
+
+The WASI source patch now gives `nil_coxeter_algebra.py` and
+`posets/mobile.py` file-level `# sage.doctest: needs sage.combinat sage.graphs
+sage.modules` directives, and gives `sine_gordon.py` a file-level
+`# sage.doctest: needs sage.symbolic` directive. This turns root-system,
+graph-backed poset, and symbolic/plot-heavy NameError cascades into explicit
+skip metadata instead of noisy failure clusters.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran a
+three-file make-target corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, `SAGELITE_DOCTEST_JOBS=3`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-goal-work/dependency-boundary-make.sqlite3`.
+The successful latest run records CoWasm commit
+`5ee65e4e3125c1e07c25dd37d57c579867cdeb40`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and `0 passed, 0 failed, 104 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

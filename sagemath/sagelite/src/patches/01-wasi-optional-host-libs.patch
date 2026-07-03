@@ -11785,3 +11785,18 @@ diff -urN -U0 a/src/sage/rings/pari_ring.py b/src/sage/rings/pari_ring.py
 @@ -213 +213 @@
 -            sage: R(5) <= R.random_element(5,13) < R(13)
 +            sage: R(5) <= R.random_element(5,13) < R(13)                             # needs sage.libs.pari
+diff -urN -U0 a/src/sage/algebras/nil_coxeter_algebra.py b/src/sage/algebras/nil_coxeter_algebra.py
+--- a/src/sage/algebras/nil_coxeter_algebra.py
++++ b/src/sage/algebras/nil_coxeter_algebra.py
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.combinat sage.graphs sage.modules
+diff -urN -U0 a/src/sage/combinat/posets/mobile.py b/src/sage/combinat/posets/mobile.py
+--- a/src/sage/combinat/posets/mobile.py
++++ b/src/sage/combinat/posets/mobile.py
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.combinat sage.graphs sage.modules
+diff -urN -U0 a/src/sage/combinat/sine_gordon.py b/src/sage/combinat/sine_gordon.py
+--- a/src/sage/combinat/sine_gordon.py
++++ b/src/sage/combinat/sine_gordon.py
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.symbolic
