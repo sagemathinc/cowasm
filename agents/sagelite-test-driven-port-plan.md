@@ -22907,6 +22907,32 @@ back in with `--include-doctest-self-tests`. Focused validation used
 SQLite fixture that confirms normal existing Sage paths still print while
 doctest self-test paths appear only with the opt-in flag.
 
+Follow-up near-miss diagnostic aggregation pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. Recent saved July 3 probe databases
+still contain no uncovered clean runnable promotion candidates under
+`doctest-corpus-candidates.py --min-runner-version 83`; the only compact
+near-miss in that batch is
+`src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py`, whose
+failed blocks all group as `NameError` startup-surface gaps for
+`HyperellipticCurve`, `H`, `Jacobian`, and `JK`.
+
+The `doctest-corpus-candidates.py --near-misses` helper now reports aggregate
+failed-block `failure_class` metadata, and `--include-failure-detail` reports
+aggregate failed-block details when the database has block-level detail
+columns. Legacy databases without compatible block metadata keep the previous
+file-level fallback behavior. This makes scheduled near-miss scans immediately
+actionable instead of printing empty file-level failure columns for ordinary
+block failures.
+
+Focused validation used `py_compile` on
+`sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a synthetic SQLite
+near-miss fixture with block-level `TypeError` detail, the July 3 multi-DB
+near-miss scan, and the default `make -C sagemath/sagelite
+sage-doctest-candidates` and `sage-doctest-candidate-paths` audits against the
+current empty placeholder dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

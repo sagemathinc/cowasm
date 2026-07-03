@@ -2942,6 +2942,16 @@ if [ "$doctest_candidate_helper_near_misses_no_name_error" != "src/sage/example/
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-block-failure-class did not filter near misses."
 fi
+doctest_candidate_helper_near_misses_with_class="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --exclude-block-failure-class NameError \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_with_class" != "src/sage/example/near_miss_type_error.py	3	2	1	0	3	20	failed	TypeError" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_with_class" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --near-misses did not report block failure classes."
+fi
 doctest_candidate_helper_near_misses_override_root="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
   --exclude-block-failure-class NameError \

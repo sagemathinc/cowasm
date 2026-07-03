@@ -370,6 +370,12 @@ def can_filter_block_failure_classes(db: sqlite3.Connection) -> bool:
     )
 
 
+def can_read_block_failure_details(db: sqlite3.Connection) -> bool:
+    return can_filter_block_failure_classes(db) and table_has_column(
+        db, "blocks", "failure_detail"
+    )
+
+
 def one_line_detail(detail: str) -> str:
     return " ".join(detail.replace("\t", " ").splitlines()).strip()
 
@@ -409,6 +415,42 @@ def candidate_rows(
         if files_table_has_column(db, "failure_detail")
         else "''"
     )
+    row_failure_class_expr = failure_class_expr
+    row_failure_detail_expr = failure_detail_expr
+    if near_misses and can_filter_block_failure_classes(db):
+        row_failure_class_expr = f"""
+              coalesce(
+                (
+                  select group_concat(class, ', ')
+                  from (
+                    select distinct coalesce(blocks.failure_class, '') as class
+                    from blocks
+                    where blocks.file_id = files.id
+                      and blocks.status = 'failed'
+                      and coalesce(blocks.failure_class, '') != ''
+                    order by class
+                  )
+                ),
+                {failure_class_expr}
+              )
+        """
+    if near_misses and can_read_block_failure_details(db):
+        row_failure_detail_expr = f"""
+              coalesce(
+                (
+                  select group_concat(detail, char(10) || '---' || char(10))
+                  from (
+                    select distinct coalesce(blocks.failure_detail, '') as detail
+                    from blocks
+                    where blocks.file_id = files.id
+                      and blocks.status = 'failed'
+                      and coalesce(blocks.failure_detail, '') != ''
+                    order by detail
+                  )
+                ),
+                {failure_detail_expr}
+              )
+        """
     if file_errors:
         file_failure_filter = ""
         query_parameters: list[object] = [run_id]
@@ -528,8 +570,8 @@ def candidate_rows(
               total_blocks - skipped_blocks as runnable_blocks,
               duration_ms,
               status,
-              {failure_class_expr},
-              {failure_detail_expr}
+              {row_failure_class_expr},
+              {row_failure_detail_expr}
             from files
             where run_id = ?
               and status = 'failed'
