@@ -25980,6 +25980,36 @@ symbolic `SR` examples, and dependent setup-name cascades. Those files should
 not be promoted until the startup surface or backend dependency policy is
 expanded deliberately.
 
+Follow-up low-prompt frontier sampling pass on 2026-07-03:
+
+No corpus entry was promoted in this pass; the curated corpus remains at 1,031
+non-comment entries. A first probe over `sage/cli` helpers plus already-covered
+`sage/misc/temporary_file.py` and `sage/misc/verbose.py` confirmed that the
+two misc files are still clean but already present in
+`basic-pure-math.txt`, while the CLI command modules extracted zero doctest
+blocks under the current runner.
+
+Fresh unlisted low-prompt probes under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex5/` then checked
+small CPython, crypto, plotting, coding, category-example, and module helper
+files. The skipped-only frontier is now recorded in SQLite: examples include
+`sage/cpython/string.pyx` and `sage/cpython/cython_metaclass.pyx` gated on
+`sage.misc.cython`, `sage/plot/step.py` and `sage/plot/misc.py` gated on
+`sage.symbolic`, `sage/coding/hamming_code.py` gated on modules and finite
+rings, `sage/combinat/root_system/braid_move_calculator.py` gated on deferred
+or GAP-only coverage, and symmetric-function/category-example files gated on
+`sage.combinat`, `sage.modules`, Magma, or symbolic support.
+
+A final helper probe found no narrow near miss. `sage/numerical/backends/logging_backend.py`
+recorded 4 passing blocks and 41 failures dominated by the unavailable
+`sage.numerical.backends.generic_backend`/GLPK solver path plus dependent
+startup names. `sage/modules/module_functors.py` recorded 6 passing blocks and
+51 failures dominated by quotient/free-module construction errors and
+dependent local-name cascades. `sage/rings/homset.py` still reaches the known
+NTL `ZZ_pContext.restore` dynamic-link frontier before block rows can be
+completed. These files remain outside the quiet corpus pending real backend or
+startup-surface work, not doctest metadata-only fixes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
