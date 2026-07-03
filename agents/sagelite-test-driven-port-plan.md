@@ -3958,6 +3958,38 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Focused p-adic element corpus-growth pass on 2026-07-03:
+
+```text
+sage -t passed: 228 passed, 0 failed, 44 skipped
+```
+
+That four-file make-target validation adds
+`sage/rings/padics/padic_capped_absolute_element.pyx`,
+`sage/rings/padics/padic_capped_relative_element.pyx`,
+`sage/rings/padics/padic_fixed_mod_element.pyx`, and
+`sage/rings/padics/padic_floating_point_element.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 975
+non-comment entries. A focused p-adic neighbor batch first recorded these
+files as compact near misses with 228 passing blocks and 23 failures. The
+failures grouped into PARI/cypari2 conversion examples and unramified
+`Zq(7^2,5)` setup plus dependent exponential checks that require the currently
+disabled FLINT integer-polynomial side module.
+
+The added WASI source patch marks those examples as explicit
+`# needs sage.libs.pari` and `# needs sage.libs.flint` browser-profile skips,
+preserving runnable capped-absolute, capped-relative, fixed-modulus, and
+floating-point p-adic arithmetic coverage. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary four-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-continuation/padic-elements-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`e1f28f84fb0aa58dcd481042f58aaa089643efef`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.libs.pari` and `optional:sage.libs.flint`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

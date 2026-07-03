@@ -44,6 +44,10 @@ src/sage/rings/padics/padic_relaxed_errors.pyx
 src/sage/rings/padics/misc.py
 src/sage/rings/padics/tests.py
 src/sage/rings/padics/padic_base_generic.py
+src/sage/rings/padics/padic_capped_absolute_element.pyx
+src/sage/rings/padics/padic_capped_relative_element.pyx
+src/sage/rings/padics/padic_fixed_mod_element.pyx
+src/sage/rings/padics/padic_floating_point_element.pyx
 src/sage/rings/padics/padic_printing.pyx
 src/sage/rings/padics/pow_computer.pyx
 src/sage/rings/padics/eisenstein_extension_generic.py

@@ -11092,3 +11092,76 @@ diff -urN -U0 a/src/sage/rings/padics/padic_base_generic.py b/src/sage/rings/pad
 @@ -378 +378 @@
 -            sage: R.zeta(12)
 +            sage: R.zeta(12)                                                       # needs sage.libs.pari
+diff -urN -U0 a/src/sage/rings/padics/padic_capped_absolute_element.pyx b/src/sage/rings/padics/padic_capped_absolute_element.pyx
+--- a/src/sage/rings/padics/padic_capped_absolute_element.pyx
++++ b/src/sage/rings/padics/padic_capped_absolute_element.pyx
+@@ -77 +77 @@
+-        sage: R(pari(1/2))
++        sage: R(pari(1/2))                                                         # needs sage.libs.pari
+@@ -133 +133 @@
+-            sage: R = ZpCA(5, 10); a = R(17); pari(a)  # indirect doctest
++            sage: R = ZpCA(5, 10); a = R(17); pari(a)  # indirect doctest          # needs sage.libs.pari
+@@ -480,3 +480,3 @@
+-            sage: R.<w> = Zq(7^2,5)
+-            sage: x = R(7*w)
+-            sage: x.exp(algorithm='newton')   # indirect doctest
++            sage: R.<w> = Zq(7^2,5)                                                # needs sage.libs.flint
++            sage: x = R(7*w)                                                       # needs sage.libs.flint
++            sage: x.exp(algorithm='newton')   # indirect doctest                   # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/padic_capped_relative_element.pyx b/src/sage/rings/padics/padic_capped_relative_element.pyx
+--- a/src/sage/rings/padics/padic_capped_relative_element.pyx
++++ b/src/sage/rings/padics/padic_capped_relative_element.pyx
+@@ -131 +131 @@
+-        sage: R(pari(R(5252)))
++        sage: R(pari(R(5252)))                                                     # needs sage.libs.pari
+@@ -140 +140 @@
+-        sage: R(pari(R(0,5)))
++        sage: R(pari(R(0,5)))                                                       # needs sage.libs.pari
+@@ -203 +203 @@
+-            sage: R = Zp(17, 10); a = ~R(14); pari(a)  # indirect doctest
++            sage: R = Zp(17, 10); a = ~R(14); pari(a)  # indirect doctest          # needs sage.libs.pari
+@@ -218 +218 @@
+-            sage: R = Zp(5, 10); a = R(17); pari(a)  # indirect doctest
++            sage: R = Zp(5, 10); a = R(17); pari(a)  # indirect doctest            # needs sage.libs.pari
+@@ -535,3 +535,3 @@
+-            sage: R.<w> = Zq(7^2,5)
+-            sage: x = R(7*w)
+-            sage: x.exp(algorithm='newton')   # indirect doctest
++            sage: R.<w> = Zq(7^2,5)                                                # needs sage.libs.flint
++            sage: x = R(7*w)                                                       # needs sage.libs.flint
++            sage: x.exp(algorithm='newton')   # indirect doctest                   # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/padic_fixed_mod_element.pyx b/src/sage/rings/padics/padic_fixed_mod_element.pyx
+--- a/src/sage/rings/padics/padic_fixed_mod_element.pyx
++++ b/src/sage/rings/padics/padic_fixed_mod_element.pyx
+@@ -197 +197 @@
+-            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest
++            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest          # needs sage.libs.pari
+@@ -212 +212 @@
+-            sage: (x^3 + x + 1).__pari__().poldisc()
++            sage: (x^3 + x + 1).__pari__().poldisc()                               # needs sage.libs.pari
+@@ -545,3 +545,3 @@
+-            sage: R.<w> = Zq(7^2,5)
+-            sage: x = R(7*w)
+-            sage: x.exp(algorithm='newton')   # indirect doctest
++            sage: R.<w> = Zq(7^2,5)                                                # needs sage.libs.flint
++            sage: x = R(7*w)                                                       # needs sage.libs.flint
++            sage: x.exp(algorithm='newton')   # indirect doctest                   # needs sage.libs.flint
+diff -urN -U0 a/src/sage/rings/padics/padic_floating_point_element.pyx b/src/sage/rings/padics/padic_floating_point_element.pyx
+--- a/src/sage/rings/padics/padic_floating_point_element.pyx
++++ b/src/sage/rings/padics/padic_floating_point_element.pyx
+@@ -126 +126 @@
+-        sage: R(pari(R(5252)))
++        sage: R(pari(R(5252)))                                                     # needs sage.libs.pari
+@@ -199 +199 @@
+-            sage: R = ZpFP(17, 10); a = ~R(14); pari(a)  # indirect doctest
++            sage: R = ZpFP(17, 10); a = ~R(14); pari(a)  # indirect doctest        # needs sage.libs.pari
+@@ -212 +212 @@
+-            sage: R = ZpFP(5, 10); a = R(17); pari(a)  # indirect doctest
++            sage: R = ZpFP(5, 10); a = R(17); pari(a)  # indirect doctest          # needs sage.libs.pari
+@@ -420,3 +420,3 @@
+-            sage: R.<w> = Zq(7^2,5)
+-            sage: x = R(7*w)
+-            sage: x.exp(algorithm='newton')   # indirect doctest
++            sage: R.<w> = Zq(7^2,5)                                                # needs sage.libs.flint
++            sage: x = R(7*w)                                                       # needs sage.libs.flint
++            sage: x.exp(algorithm='newton')   # indirect doctest                   # needs sage.libs.flint
