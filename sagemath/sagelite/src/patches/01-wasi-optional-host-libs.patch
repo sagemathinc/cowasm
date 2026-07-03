@@ -6794,6 +6794,14 @@ diff -urN a/src/sage/libs/flint/fmpz_poly.pyx b/src/sage/libs/flint/fmpz_poly.py
 @@ -5 +5 @@
 -    sage: Fmpz_poly([1, 1])
 +    sage: Fmpz_poly([1, 1])                                                       # known bug - warning stream is not captured by Sagelite doctest runner
+diff -urN a/src/sage/libs/flint/qsieve_sage.pyx b/src/sage/libs/flint/qsieve_sage.pyx
+--- a/src/sage/libs/flint/qsieve_sage.pyx
++++ b/src/sage/libs/flint/qsieve_sage.pyx
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.flint
+ """
+ Interface to FLINT's ``qsieve_factor()``. This used to interact
+ with an external "QuadraticSieve" program, but its functionality has
 diff -urN a/src/sage/libs/flint/ulong_extras.pyx b/src/sage/libs/flint/ulong_extras.pyx
 --- a/src/sage/libs/flint/ulong_extras.pyx
 +++ b/src/sage/libs/flint/ulong_extras.pyx

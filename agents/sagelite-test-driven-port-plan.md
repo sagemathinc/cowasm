@@ -23519,6 +23519,21 @@ covered rows remain excluded unless the flag is passed. Validation used
 `--include-covered`, and a synthetic SQLite fixture proving that covered rows
 are reported only with the new flag.
 
+Follow-up FLINT qsieve boundary pass on 2026-07-03:
+
+No corpus entry was promoted in this pass. The compact frontier's
+`sage/libs/flint/qsieve_sage.pyx` file-scope `wasm_trap` came from direct
+quadratic-sieve coverage, matching the existing FLINT-backed factoring
+boundary already used by `factorint_flint.pyx`.
+
+The WASI source patch now marks `qsieve_sage.pyx` with a file-level
+`# sage.doctest: needs sage.libs.flint` directive. A direct focused rerun and
+a strict one-file `test-sage-doctest-corpus` make run both recorded
+`0 passed, 0 failed, 4 skipped`, with all skips grouped under
+`optional:sage.libs.flint`; the make database is
+`.tmp/current-run/scheduled-2026-07-03-qsieve/make.sqlite3`. A full patch
+dry-run against `/home/user/sagelite` also applies.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
