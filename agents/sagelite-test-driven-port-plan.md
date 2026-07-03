@@ -23624,6 +23624,42 @@ covering positive, negative, CSV-style, parser-guard, and legacy-schema
 detail-filter behavior, and a make-level passthrough check with
 `--near-misses --only-block-failure-detail "No module named" --paths-only`.
 
+Focused shuffle-algebra corpus-growth pass:
+
+```text
+shuffle_algebra.py: 201 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/shuffle_algebra.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 991
+non-comment entries. The file adds default-profile coverage for shuffle
+algebra construction, products, coproducts, bases, coercions, and
+representations. Its two skipped blocks are already classified by existing
+optional metadata, so no new WASI source tags or startup namespace changes
+were required.
+
+A focused algebra probe first wrote
+`.tmp/current-run/scheduled-2026-07-03-codex/probes/algebra-small.sqlite3`.
+The saved candidate helper classified `shuffle_algebra.py` as the only
+uncovered clean runnable candidate in that batch. Neighboring algebra files
+remain outside the quiet dashboard: `group_algebra.py`,
+`commutative_dga.py`, `free_algebra_quotient_element.py`, and the sampled
+finite-dimensional-algebra helpers still have broad startup, free-algebra, or
+finite-dimensional-algebra failure clusters, while `splitting_algebra.py`
+reaches the known NTL `ZZ_pContext.restore` dynamic-link boundary.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-03-codex/shuffle-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`a284bbb2406b578e65a2ff79f096478adeb45df1`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 83,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion rows
+after subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
