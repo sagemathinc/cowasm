@@ -28677,6 +28677,67 @@ and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
 empty, and `doctest-corpus-candidates.py` prints no promotion row after
 subtracting the updated corpus.
 
+Follow-up standalone directive-scope runner pass:
+
+Skipped doctest blocks now still advance the physical-line cursor used by
+standalone directive propagation. This keeps a paragraph-level directive such
+as `sage: # needs ...` attached to later contiguous examples even when an
+earlier directed example is skipped after expected output has been consumed.
+The standalone smoke covers that stateful shape and checks both default
+skipping and feature-enabled execution counts.
+
+Follow-up 341-to-370 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next two prompt-count bands.
+The 341-to-355 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-341-355/prompt-341-355.sqlite3`
+and recorded:
+
+```text
+11 files: 337 passed, 1185 failed, 876 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/schemes/toric/morphism.py` and
+`sage/combinat/matrices/hadamard_matrix.py`. Their skipped blocks are already
+explicitly classified as graph, polyhedron, module, internet, long-time, or
+deferred-test coverage, so they add no default-profile runnable blocks.
+
+The runnable files were broad near misses rather than metadata-only
+promotions. `multi_polynomial_sequence.py` recorded 69 passed and 72 failed
+blocks across Sequence/Groebner backend clusters; `wehlerK3.py` recorded 191
+passed and 155 failed blocks; and the manifold and quiver files were dominated
+by startup-name cascades. File-level errors matched existing runtime frontier
+families: function-field finite-field construction hit the NTL
+`ZZ_pContext::restore()` dynamic-link boundary, one function-field ideal
+example timed out, elliptic-curve height hit the PARI real-mpfr
+`err_recover` signature mismatch, and function-field valuation hit a separate
+signature-mismatch path.
+
+The 356-to-370 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-356-370/prompt-356-370.sqlite3`
+and recorded:
+
+```text
+10 files: 208 passed, 750 failed, 2260 skipped
+```
+
+Five files were skipped-only dependency boundaries:
+`sage/rings/finite_rings/finite_field_base.pyx`,
+`sage/matroids/graphic_matroid.pyx`, `sage/crypto/mq/rijndael_gf.py`,
+`sage/schemes/toric/divisor.py`, and `sage/crypto/mq/sr.py`. Their explicit
+skip tags cover finite-ring, module, graph, GAP, Singular, BRiAl, symbolic,
+polyhedron, NTL/LinBox, p-adic, and number-field backends.
+
+The remaining files were not narrow promotions. `groebner_fan.py` recorded
+126 passed and 226 failed blocks across tropical/Singular/Groebner startup and
+attribute clusters; `mod_sym_num.pyx` recorded 49 passed and 310 failed blocks
+around elliptic-curve modular-symbol surfaces; `finite_dimensional_algebras`
+had category/example-object attribute drift; and `strongly_regular_db.pyx`
+was mostly graph-database startup-name failures. The only file-level error
+was `hyperelliptic_padic_field.py`, which trapped in the known NTL-backed
+p-adic extension path while constructing a large extension field.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
