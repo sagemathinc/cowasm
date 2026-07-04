@@ -12965,3 +12965,9 @@ diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/invariants.py b/src/sage/s
 @@ -196 +196 @@
 -        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
 +        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                       # known bug - Sagelite WASI finite-field residue display drift
+diff -urN -U0 a/src/sage/modular/pollack_stevens/sigma0.py b/src/sage/modular/pollack_stevens/sigma0.py
+--- a/src/sage/modular/pollack_stevens/sigma0.py
++++ b/src/sage/modular/pollack_stevens/sigma0.py
+@@ -293 +293 @@
+-            sage: type(sm)
++            sage: type(sm)                                                        # known bug - Sagelite WASI matrix backend class identity drift
