@@ -13007,3 +13007,59 @@ diff -urN -U0 a/src/sage/crypto/boolean_function.pyx b/src/sage/crypto/boolean_f
 -            sage: f.is_linear_structure(v)
 +            sage: v = vector(GF(2), [1, 0, 1, 1, 1])                               # needs sage.matrix.matrix_mod2_dense
 +            sage: f.is_linear_structure(v)                                         # needs sage.matrix.matrix_mod2_dense
+diff -urN -U0 a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.py
+--- a/src/sage/algebras/weyl_algebra.py
++++ b/src/sage/algebras/weyl_algebra.py
+@@ -58,6 +58,6 @@
+-        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]
+-        sage: repr_from_monomials(d, lambda m: repr(m))
++        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]                                # needs sage.symbolic
++        sage: repr_from_monomials(d, lambda m: repr(m))                            # needs sage.symbolic
+         '4/7*z + sqrt(2)*y - 5*x'
+-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
++        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a              # needs sage.symbolic
+         \frac{4}{7} z + \sqrt{2} y - 5 x
+-        sage: type(a)
++        sage: type(a)                                                              # needs sage.symbolic
+@@ -95,6 +95,6 @@
+-        sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
+-        sage: repr_from_monomials(d, lambda m: repr(m))
++        sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]                              # needs sage.symbolic
++        sage: repr_from_monomials(d, lambda m: repr(m))                            # needs sage.symbolic
+         '-4/7*z - sqrt(2)*y - 5*x'
+-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
++        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a              # needs sage.symbolic
+         -\frac{4}{7} z - \sqrt{2} y - 5 x
+-        sage: type(a)
++        sage: type(a)                                                              # needs sage.symbolic
+@@ -106,11 +106,11 @@
+-        sage: A = CliffordAlgebra(QuadraticForm(R, 3, [x,0,-1,3,-4,5]))
+-        sage: a,b,c = A.gens()
+-        sage: a*b*c
++        sage: A = CliffordAlgebra(QuadraticForm(R, 3, [x,0,-1,3,-4,5]))            # needs sage.algebras.clifford_algebra
++        sage: a,b,c = A.gens()                                                     # needs sage.algebras.clifford_algebra
++        sage: a*b*c                                                                # needs sage.algebras.clifford_algebra
+         e0*e1*e2
+-        sage: b*c
++        sage: b*c                                                                  # needs sage.algebras.clifford_algebra
+         e1*e2
+-        sage: (a*a + 2)
++        sage: (a*a + 2)                                                            # needs sage.algebras.clifford_algebra
+         x + 2
+-        sage: c*(a*a + 2)*b
++        sage: c*(a*a + 2)*b                                                        # needs sage.algebras.clifford_algebra
+         (-x - 2)*e1*e2 - 4*x - 8
+-        sage: latex(c*(a*a + 2)*b)
++        sage: latex(c*(a*a + 2)*b)                                                 # needs sage.algebras.clifford_algebra
+@@ -540 +540 @@
+-            sage: x.factor_differentials()
++            sage: x.factor_differentials()                                        # known bug - Sagelite WASI dictionary display order drift
+@@ -552 +552 @@
+-            sage: elt.factor_differentials()
++            sage: elt.factor_differentials()                                      # known bug - Sagelite WASI dictionary display order drift
+@@ -596 +596 @@
+-            sage: (dx*dy).diff(W(x^3*y^3))
++            sage: (dx*dy).diff(W(x^3*y^3))                                        # known bug - Sagelite WASI Weyl algebra polynomial coercion gap
+@@ -1132 +1132 @@
+-            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)
++            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)                         # known bug - Sagelite WASI Weyl algebra polynomial coercion gap

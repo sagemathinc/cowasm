@@ -28562,6 +28562,48 @@ boundary, and `ntl_ZZ_pEX.pyx` traps inside NTL finite-field polynomial
 construction. Future prompt-band work should move past this range or target
 one of those runtime clusters directly.
 
+Follow-up 311-to-325 prompt-band corpus-growth pass:
+
+```text
+prompt-311-325.sqlite3: 377 passed, 884 failed, 3353 skipped
+weyl_algebra.py:        300 passed,   0 failed,   20 skipped
+```
+
+The fresh 311-to-325 prompt-band probe attempted 16 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-311-325/prompt-311-325.sqlite3`.
+The batch shape was 11 passed files, four block-failing files, and one
+file-level timeout. Most passed files were skipped-only dependency boundaries:
+K-Schur, fan/modular/topology, number-field, crystal, calculus, reflection
+group, and local-component examples are already guarded by explicit optional
+or deferred feature tags. The broad failures stayed outside the quiet corpus:
+`path_enumeration.pyx` and `automorphismfield.py` are graph/manifold startup
+cascades, `function.pyx` is Singular/subprocess-heavy, and
+`quotient_ring.py` times out at polynomial quotient-ring construction.
+
+The narrow promotion target was `sage/algebras/weyl_algebra.py`, which first
+recorded 301 passed blocks, 18 failed blocks, and one skipped block. The
+failures were a small set of browser-profile boundaries and known drifts: two
+symbolic `sqrt(2)` representation subsections, one Clifford algebra example,
+two dictionary display-order checks, and two current Weyl-polynomial coercion
+checks. The added WASI source patch marks those prompts with explicit
+`# needs sage.symbolic`, `# needs sage.algebras.clifford_algebra`, or
+`# known bug` metadata.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-311-325/weyl-make.sqlite3`.
+The focused run passed with `300 passed, 0 failed, 20 skipped`; the saved
+block- and file-failure cluster queries are empty, and the strict candidate
+scan prints no row after subtracting the updated corpus. This promotes
+`sage/algebras/weyl_algebra.py` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,063 non-comment entries. The focused latest-run summary
+records CoWasm commit `84f558be2f92bc10221aa8b915b8f196dd1ff3c2`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 88, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

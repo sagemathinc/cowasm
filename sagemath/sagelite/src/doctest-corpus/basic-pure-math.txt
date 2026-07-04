@@ -95,6 +95,7 @@ src/sage/algebras/quantum_matrix_coordinate_algebra.py
 src/sage/algebras/quantum_groups/q_numbers.py
 src/sage/algebras/shuffle_algebra.py
 src/sage/algebras/tensor_algebra.py
+src/sage/algebras/weyl_algebra.py
 src/sage/algebras/finite_gca.py
 src/sage/algebras/group_algebra.py
 src/sage/algebras/steenrod/steenrod_algebra_bases.py
