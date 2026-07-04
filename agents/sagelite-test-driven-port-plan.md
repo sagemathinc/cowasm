@@ -30390,6 +30390,50 @@ scheduled runs should avoid repeating this prompt band unless the dynamics
 startup namespace policy changes or the projective/subscheme and elliptic
 curve backend boundaries move.
 
+Follow-up 1751-to-2050 prompt-band audit and lazy-series backend tagging:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. A fresh source-minus-corpus prompt-count scan found
+no uncovered files in the 1751-to-2000 band; the next uncovered file was
+`sage/rings/lazy_series.py` at 2006 prompts.
+
+The first direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-2001-2050/probe.sqlite3`
+and failed at file scope before block rows were persisted, at the exact
+multivariate-polynomial fractional-root example `p^(1/3)` in
+`LazyCauchyProductSeries.__pow__`. The WASI source patch now marks that prompt
+as `# needs sage.libs.singular`, matching the multivariate polynomial
+`nth_root` backend boundary reached by the example. A focused `--line 3421`
+rerun confirmed the target prompt is skipped, though the focused run itself
+records a setup-artifact `NameError` because `C` is defined earlier in the
+larger doctest section outside the line-rerun contiguous setup window.
+
+The next full-file rerun advanced to a second file-level signature-mismatch
+abort at the Laurent-polynomial-over-`QQ[]` rational-function composition
+example `f(g)` in `LazyLaurentSeries.__call__`. The patch now also marks that
+prompt and its dependent equality check with `# needs sage.libs.singular`.
+After those tags, the full-file probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-2001-2050/probe-after-compose-tag.sqlite3`
+and ran to completion:
+
+```text
+lazy_series.py: 1360 passed, 469 failed, 177 skipped
+```
+
+The remaining failures are ordinary block-level dashboard data rather than
+file-level runtime aborts. The largest clusters are startup/setup cascades
+(`NameError`, 320 rows, including missing `f`, `SymmetricFunctions`, and `L`),
+missing optional modules (`ModuleNotFoundError`, 63 rows, led by `pexpect` and
+`sage.libs.gap.libgap`), output drift (38 rows), focused unported PARI/proof
+paths (`NotImplementedError`, 26 rows), and smaller `ValueError`, `TypeError`,
+and `AttributeError` clusters. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+and `--require-file-run` printed no uncovered clean runnable rows, and the
+file-error scan printed no rows. Future scheduled runs should avoid repeating
+this prompt band until lazy-series startup namespace policy, symmetric-function
+coverage, or the polynomial/Singular backend boundary changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
