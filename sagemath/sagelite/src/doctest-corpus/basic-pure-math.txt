@@ -956,6 +956,7 @@ src/sage/quadratic_forms/constructions.py
 src/sage/quadratic_forms/binary_qf.py
 src/sage/quadratic_forms/count_local_2.pyx
 src/sage/quadratic_forms/extras.py
+src/sage/quadratic_forms/quadratic_form.py
 src/sage/quadratic_forms/quadratic_form__count_local_2.py
 src/sage/quadratic_forms/quadratic_form__equivalence_testing.py
 src/sage/quadratic_forms/quadratic_form__evaluate.pyx

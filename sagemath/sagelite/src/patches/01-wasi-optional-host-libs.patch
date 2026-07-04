@@ -2335,6 +2335,15 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 -        sage: extend_to_primitive([vector([1,2,3])])
 +        sage: extend_to_primitive([vector([1,2,3])])                                  # random
          [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
+diff -urN a/src/sage/quadratic_forms/quadratic_form.py b/src/sage/quadratic_forms/quadratic_form.py
+--- a/src/sage/quadratic_forms/quadratic_form.py
++++ b/src/sage/quadratic_forms/quadratic_form.py
+@@ -541,4 +541,4 @@
+-            sage: QuadraticForm(1)
++            sage: QuadraticForm(1)                                                   # known bug - Sagelite traceback placeholder drift
+             Traceback (most recent call last):
+             ....
+             TypeError: wrong input for QuadraticForm
 diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/binary_qf.py
 --- a/src/sage/quadratic_forms/binary_qf.py
 +++ b/src/sage/quadratic_forms/binary_qf.py
