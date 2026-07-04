@@ -28869,6 +28869,42 @@ one timeout. The strict `doctest-corpus-candidates.py` scan with
 `--require-run-metadata` and `--require-block-rows` printed no uncovered clean
 runnable rows for this database.
 
+Follow-up 431-to-445 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+431-to-445 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-431-445/probe.sqlite3`
+and recorded:
+
+```text
+6 files: 116 passed, 657 failed, 949 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/schemes/berkovich/berkovich_cp_element.py` and
+`sage/rings/function_field/function_field_polymod.py`. Their blocks are
+already guarded by explicit optional, long-time, random, deferred-test, or
+backend-specific tags for p-adic, number-field, symbolic, function-field,
+module, and finite-ring coverage, so they add no runnable default-profile
+signal.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py`
+recorded useful passing coverage but still had large dependent startup-name
+clusters after curve setup failures. `sage/symbolic/expression_conversions.py`
+was dominated by symbolic converter startup names and broader symbolic
+conversion drift. The remaining files failed at file scope:
+`sage/modules/fg_pid/fgp_module.py` trapped in the existing matrix
+`Matrix.row()` table-index boundary while building a span from a diagonal
+matrix, and `sage/rings/ring_extension.pyx` hit the known NTL
+`ZZ_pContext::restore()` dynamic-link boundary while constructing
+`GF(5^4).over(GF(5^2))`. The saved failure-class summary for the band was 554
+`NameError`, 69 `ModuleNotFoundError`, 28 `output_mismatch`, two
+`NotImplementedError`, two `AttributeError`, one file-level `Error`, and one
+`wasm_link_error`. The strict `doctest-corpus-candidates.py` scan with
+`--require-run-metadata` and `--require-block-rows` printed no uncovered clean
+runnable rows for this database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
