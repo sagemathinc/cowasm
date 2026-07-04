@@ -26970,6 +26970,44 @@ ordinary dependency/startup-surface gaps that should stay outside the quiet
 browser-profile corpus until the relevant backends are ported or explicitly
 tagged.
 
+Follow-up symbolic/coding frontier audit later on 2026-07-04:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict candidate scan over 2,341 nonempty scratch
+databases under `.tmp/current-run/`, using
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths`, printed
+no uncovered clean runnable candidate. A fresh source-minus-corpus scan found
+765 prompt-bearing files in the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree without runner-87 scratch
+coverage by the normalized SQLite `files.path` audit.
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex3/` then sampled two remaining
+frontiers:
+
+```text
+symbolic-calculus.sqlite3: 121 passed, 229 failed, 191 skipped
+coding-frontier.sqlite3:     0 passed,   0 failed, 2751 skipped
+```
+
+The strict promotion scan over both fresh databases printed no uncovered clean
+runnable candidate. The symbolic/calculus slice recorded two skipped-only
+files, `sage/calculus/test_sympy.py` and
+`sage/symbolic/expression_conversion_sympy.py`, and six files with ordinary
+block failures. The dominant failure clusters were symbolic startup and
+module-surface gaps: missing names such as `x`, `a`, `f`, `var`, `SR`,
+`function`, `numerical_integral`, and `op`, plus the unavailable
+`sage.symbolic.expression` module. These are broader symbolic-runtime
+frontiers, not narrow browser-profile metadata fixes.
+
+The coding slice was entirely skipped under explicit browser-profile
+dependency tags. The skipped blocks were dominated by finite-ring/module
+coverage, with scheme, group, graph, symbolic, NTL, and GAP refinements. These
+files are useful boundary data, but they add no runnable default-profile
+coverage and should stay outside the quiet corpus until the relevant coding
+dependencies become available or a narrower runnable subset is identified.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
