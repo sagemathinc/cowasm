@@ -28769,6 +28769,36 @@ strict `doctest-corpus-candidates.py` scan with `--require-run-metadata` and
 `--require-block-rows` printed no uncovered clean runnable rows for this
 database.
 
+Follow-up 386-to-400 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+386-to-400 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-386-400/prompt-386-400.sqlite3`
+and recorded:
+
+```text
+8 files: 111 passed, 975 failed, 476 skipped
+```
+
+One file was a skipped-only dependency boundary:
+`sage/combinat/crystals/letters.pyx`. Its blocks are already guarded by
+explicit optional or deferred feature tags, so it adds no runnable
+browser-profile coverage to the curated corpus.
+
+The runnable files were broad frontier targets rather than narrow corpus
+promotions. `degenerate_submanifold.py`,
+`geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx`, and
+`dynamical_semigroup.py` all retain large startup, backend, or dependent-name
+clusters. The remaining files failed at file scope: `rings/ideal.py` and
+`geometry/polyhedron/base5.py` timed out in ideal and number-field/polyhedron
+setup, `modules/matrix_morphism.py` hit the existing matrix
+`echelonize_ring` function-signature mismatch, and
+`schemes/projective/projective_point.py` trapped in the known
+`polynomial_number_field` memory boundary. The strict
+`doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows for this
+database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
