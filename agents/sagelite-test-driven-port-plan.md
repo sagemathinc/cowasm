@@ -30536,6 +30536,36 @@ promotions. Future scheduled runs should either return to a targeted
 root-cause cluster from the recorded near misses, or refresh the
 source-minus-corpus scan after the Sagelite source/runtime frontier changes.
 
+Follow-up low-prompt dependency-boundary audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. The first low-prompt batch wrote
+`.tmp/current-run/scheduled-2026-07-04-followup/low-prompt-batch-a.sqlite3`
+and recorded `0 passed`, `0 failed`, and `81 skipped` blocks across small
+CPython, crypto, category, monoid, ring-extension, and calculus helper files,
+so it exposed only already-tagged dependency-boundary coverage.
+
+A second combinatorics/category batch wrote
+`.tmp/current-run/scheduled-2026-07-04-followup/medium-prompt-batch-a.sqlite3`
+and initially found one narrow untagged dependency-boundary file:
+`sage/combinat/posets/bubble_shuffle.py` recorded `0 passed`, `6 failed`, and
+`9 skipped`. The failing prompts were the first import/setup lines in doctest
+blocks whose following prompts were already marked `# needs sage.graphs`; the
+imports reached the unavailable graph extension resource
+`sage.graphs.generic_graph_pyx`. The WASI source patch now marks those
+import/setup prompts with `# needs sage.graphs` as well. A focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-followup/bubble-shuffle-after-tags.sqlite3`
+and records:
+
+```text
+bubble_shuffle.py: 0 passed, 0 failed, 15 skipped
+```
+
+The result is a skipped-only dependency-boundary row rather than a promotion
+candidate. Future low-prompt scans should continue past these fully gated
+files or target a known near-miss cluster with non-skipped runnable coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
