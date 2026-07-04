@@ -875,6 +875,7 @@ src/sage/tensor/modules/tensor_free_submodule.py
 src/sage/tensor/modules/tensor_free_module.py
 src/sage/modular/cusps.py
 src/sage/modular/modform/eis_series_cython.pyx
+src/sage/modular/modform/l_series_gross_zagier_coeffs.pyx
 src/sage/modular/modform/theta.py
 src/sage/modular/drinfeld_modform/tutorial.py
 src/sage/modular/drinfeld_modform/element.py

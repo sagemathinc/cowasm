@@ -30993,6 +30993,70 @@ Future low-prompt work should continue into the 19-to-21 prompt band or switch
 to one of the broader runtime clusters that still produces non-skipped
 failures.
 
+Follow-up 19-to-21 prompt-band audit and Gross-Zagier coefficient promotion:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree selected 28 uncovered files in the 19-to-21 prompt band. The initial
+broad batch wrote
+`.tmp/current-run/scheduled-2026-07-04-goal/prompt-19-21/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 12 passed, 154 failed, 372 skipped
+```
+
+Most failures were dependency-boundary front doors rather than narrow runnable
+default-profile math coverage: fusion-ring helper imports, graph-planarity
+startup names, GAP-backed orthogonal matrix groups and libgap utilities,
+symbolic callable vectors, Gross-Zagier elliptic-curve/number-field examples,
+totally-real field PARI/cypari2 paths, elliptic-curve addition over quotient
+rings, and the GLPK/graph-backed linear-programming book example.
+
+The WASI source patch now marks those clear frontiers with file-level
+`# sage.doctest: needs ...` metadata for `sage.algebras.fusion_rings`,
+`sage.graphs`, `sage.libs.gap`, `sage.symbolic`, `sage.libs.pari`,
+`sage.rings.number_field`, `sage.schemes.elliptic_curves`,
+`sage.rings.polynomial.plural`, and `sage.numerical.mip`. The
+`sage/modular/modform/l_series_gross_zagier_coeffs.pyx` helper kept its
+runnable `to_series` and list-backed `bqf_theta_series` examples while tagging
+only the BinaryQF and elliptic-curve/number-field blocks.
+
+Focused make-target validation with a one-file corpus added
+`sage/modular/modform/l_series_gross_zagier_coeffs.pyx` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+checked corpus to 1,074 non-comment entries, and recorded:
+
+```text
+l_series_gross_zagier_coeffs.pyx: 6 passed, 0 failed, 14 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-04-goal/gross-zagier-coeffs-make/make-5.sqlite3`.
+It was run through `make -C sagemath/sagelite test-sage-doctest-corpus` with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, rebuilt a fresh patched Sagelite source
+copy, and records CoWasm commit `81fff5a817993551df4d2a5b8a1d5b22ac2b3534`,
+Sagelite package/source commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, and runner version 89. The saved block- and file-failure cluster
+queries are empty; skip grouping records the new deferrals under
+`optional:sage.rings.number_field,sage.schemes.elliptic_curves` and
+`optional:sage.quadratic_forms`.
+
+A refreshed 19-to-21 source-minus-corpus band rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-goal/prompt-19-21-final-fresh/batch.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 537 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. A strict promotion
+scan across the refreshed band database and the promoted one-file make
+database with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, and `--dedupe-paths` printed no
+uncovered clean runnable rows. Future low-prompt work should continue past this
+band or target one of the broader runtime clusters instead of rechecking these
+newly classified dependency frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
