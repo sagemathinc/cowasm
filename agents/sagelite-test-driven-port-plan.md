@@ -27008,6 +27008,64 @@ files are useful boundary data, but they add no runnable default-profile
 coverage and should stay outside the quiet corpus until the relevant coding
 dependencies become available or a narrower runnable subset is identified.
 
+Follow-up combinat/category frontier promotion and metadata repair on
+2026-07-04:
+
+The curated corpus grew from 1,038 to 1,039 non-comment entries by promoting
+`src/sage/combinat/species/product_species.py`, with its random/pickle
+structure example tagged as `# needs sage.libs.flint` in the Sagelite WASI
+source patch to match the neighboring species metadata. A fresh normalized
+source-minus-corpus audit found 1,229 prompt-bearing files in the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree that were neither in the
+corpus nor represented by local runner-87 scratch coverage. A direct Sagelite
+probe under `.tmp/current-run/scheduled-2026-07-04-codex4/` sampled eighteen
+combinatorics, category, lattice, and algebra helper files:
+
+```text
+combinat-category-frontier.sqlite3: 109 passed, 188 failed, 813 skipped
+```
+
+The strict promotion scan over the fresh database printed one uncovered clean
+runnable candidate:
+
+```text
+src/sage/combinat/species/product_species.py: 60 passed, 0 failed, 19 skipped
+```
+
+Focused validation after the metadata repair used a direct single-file run:
+
+```text
+product_species.py: 60 passed, 0 failed, 19 skipped
+```
+
+Full make-target validation rebuilt the patched Sagelite source copy and wrote
+`/tmp/sagelite-corpus-after-product-species.sqlite3`:
+
+```text
+sage -t failed: 68021 passed, 15 failed, 21515 skipped
+```
+
+The promoted product-species file passed in that full dashboard with the same
+60/0/19 split. The remaining full-corpus failures were unrelated existing
+dashboard frontiers: 10 `NameError` block failures, one output mismatch, and
+four file-level worker signal errors in category files. The make target
+returned successfully because corpus failures are allowed for this dashboard
+target, but the parent shell also printed a post-run Sagelite Node
+segmentation-fault diagnostic after SQLite results had been written.
+
+The skipped-only files were explicit browser-profile dependency boundaries,
+mainly `needs sage.combinat`, `needs sage.modules`,
+`needs sage.geometry.polyhedron`, `needs sage.graphs`, finite-ring support, or
+`lrcalc_python`. The live failures are broader startup/backend gaps rather
+than narrow corpus metadata additions: number-field examples need real
+`NumberField` method objects and setup variables, formal polyhedra need
+polyhedral component/setup objects, toric lattice examples hit finite-ring and
+toric ambient constructors, and lattice-poset examples cascade from missing
+startup names such as `L`, `DS`, `DiscreteDynamicalSystem`, and
+`FiniteLatticePosets`. One `ore_module_element.py` example timed out at
+`M.<v,w> = S.quotient_module((t+1)*X^2 + 1)`, keeping Ore-module coverage in
+the backend frontier.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -335,6 +335,7 @@ src/sage/combinat/species/empty_species.py
 src/sage/combinat/species/subset_species.py
 src/sage/combinat/species/cycle_species.py
 src/sage/combinat/species/sum_species.py
+src/sage/combinat/species/product_species.py
 src/sage/combinat/species/characteristic_species.py
 src/sage/combinat/species/composition_species.py
 src/sage/combinat/species/generating_series.py
