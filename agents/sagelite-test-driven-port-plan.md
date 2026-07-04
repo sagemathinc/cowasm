@@ -28132,6 +28132,41 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up 131-to-145 frontier audit on 2026-07-04: fresh focused probes did
+not find a new absent clean runnable promotion candidate. The broad scratch
+scan using `doctest-corpus-candidates.py --require-block-rows` also returned
+no rows, confirming that existing scratch SQLite artifacts do not contain a
+still-uncovered clean candidate under the current 1,056-file corpus.
+
+The first focused probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-131-145/focused-probe.sqlite3`
+and recorded 201 passed, 0 failed, and 391 skipped blocks. Its only runnable
+clean files were `sage/logic/logic.py`, `sage/logic/logicparser.py`, and
+`sage/logic/logictable.py`, but all three were already present in the curated
+corpus. A make-target confirmation with a temporary three-file corpus wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-131-145/logic-make.sqlite3`
+and passed with `201 passed, 0 failed, 0 skipped`.
+
+The plot-helper probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-131-145/plot-helper-probe.sqlite3`
+and recorded 366 skipped blocks with no runnable coverage across
+`hyperbolic_arc.py`, `hyperbolic_polygon.py`, `hyperbolic_regular_polygon.py`,
+`density_plot.py`, `contour_plot.py`, `plot_field.py`, and
+`streamline_plot.py`. A small math/helper probe similarly recorded 665
+skipped blocks and no runnable coverage across `functions/prime_pi.pyx`,
+`functions/transcendental.py`, `functions/piecewise.py`,
+`quadratic_forms/genera/normal_form.py`, and zero-block catalog helpers.
+
+The matroid probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-131-145/matroid-probe.sqlite3`
+and recorded 91 passed, 424 failed, and 17 skipped blocks. The failure shape
+is not a narrow display or optional-tag boundary: `basis_exchange_matroid.pyx`,
+`circuits_matroid.pyx`, `minor_matroid.py`, `rank_matroid.py`, and
+`unpickling.pyx` all have runnable failure clusters, with a large dependent
+`NameError: name 'M' is not defined` cluster after setup failures. These
+files should stay out of the quiet dashboard until the matroid startup/setup
+cluster is handled directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
