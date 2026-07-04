@@ -29853,6 +29853,28 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up current-source failure audit after the pushout promotion:
+
+```text
+8 files: 554 passed, 0 failed, 581 skipped
+```
+
+The current patched Sagelite source copy clears the 12 block failures from the
+older `/tmp/sagelite-corpus-after-database-collections.sqlite3` dashboard. A
+focused direct rerun covered the previously failing files
+`sage/combinat/integer_vector.py`, `sage/categories/additive_magmas.py`,
+`sage/categories/simplicial_sets.py`, `sage/categories/semigroups.py`,
+`sage/matroids/utilities.py`,
+`sage/combinat/root_system/weight_lattice_realizations.py`,
+`sage/doctest/rif_tol.py`, and `sage/repl/interface_magic.py`.
+
+The saved block- and file-failure cluster queries are empty. The latest-run
+summary records CoWasm commit `6abf81a21afa04470efddcc3e96b290d10b9cde3`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 89, and a 100% non-skipped pass rate. The rerun used
+`--tmpdir /home/user/cowasm/.tmp/current-run` because `/tmp` rejected
+`mkdtemp` with error 122 in the current quota state.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
