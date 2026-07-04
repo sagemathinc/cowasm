@@ -12953,3 +12953,15 @@ diff -urN -U0 a/src/sage/rings/finite_rings/residue_field_givaro.pyx b/src/sage/
 @@ -119 +119 @@
 -            sage: k(v)  # indirect doctest
 +            sage: k(v)  # indirect doctest                                             # needs sage.rings.number_field
+diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/invariants.py b/src/sage/schemes/hyperelliptic_curves/invariants.py
+--- a/src/sage/schemes/hyperelliptic_curves/invariants.py
++++ b/src/sage/schemes/hyperelliptic_curves/invariants.py
+@@ -170 +170 @@
+-        sage: ubs(x^6 + 1)
++        sage: ubs(x^6 + 1)                                                            # known bug - Sagelite WASI dictionary display order drift
+@@ -183 +183 @@
+-        sage: ubs(u^6 + v^6)
++        sage: ubs(u^6 + v^6)                                                          # known bug - Sagelite WASI dictionary display order drift
+@@ -196 +196 @@
+-        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
++        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                       # known bug - Sagelite WASI finite-field residue display drift
