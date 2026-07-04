@@ -28738,6 +28738,37 @@ was mostly graph-database startup-name failures. The only file-level error
 was `hyperelliptic_padic_field.py`, which trapped in the known NTL-backed
 p-adic extension path while constructing a large extension field.
 
+Follow-up 371-to-385 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+371-to-385 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-371-385/prompt-371-385.sqlite3`
+and recorded:
+
+```text
+14 files: 570 passed, 1912 failed, 1917 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/modular/arithgroup/arithgroup_perm.py`,
+`sage/combinat/e_one_star.py`, `sage/combinat/sf/macdonald.py`, and
+`sage/modular/modform_hecketriangle/readme.py`. Their default-profile blocks
+are already guarded by explicit optional or deferred feature tags, so they add
+no runnable browser-profile signal.
+
+The runnable files were broad triage targets rather than narrow metadata
+promotions. `fraction_field_FpT.pyx` recorded 256 passed and 119 failed
+blocks, while `doctest/parsing.py`, `doctest/sources.py`, and
+`interfaces/qepcad.py` need broader doctest-framework, parser, or external
+interface work. The manifold, fusion-ring, and cubic-Hecke files remain
+dominated by startup and backend clusters. File-level errors matched existing
+runtime frontiers: `hyperelliptic_finite_field.py` hit the NTL
+`ZZ_pContext.restore()` dynamic-link boundary, and
+`polynomial_modn_dense_ntl.pyx` trapped in NTL polynomial arithmetic. The
+strict `doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows for this
+database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
