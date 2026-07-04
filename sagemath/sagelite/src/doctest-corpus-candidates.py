@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 import posixpath
+import shlex
 import signal
 import sqlite3
 import sys
@@ -329,6 +330,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--require-file-run",
+        action="store_true",
+        help=(
+            "scan only databases whose selected run command is a file-level "
+            "doctest run, filtering focused --line and --block-key reruns"
+        ),
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -529,9 +538,12 @@ def latest_run_metadata(
     db: sqlite3.Connection,
     min_runner_version: int | None,
     require_run_metadata: bool,
+    require_file_run: bool,
 ) -> tuple[int, Path | None] | None:
     filters = []
     parameters: list[object] = []
+    if require_file_run and not runs_table_has_column(db, "command"):
+        return None
     if require_run_metadata:
         if any(
             not runs_table_has_column(db, column)
@@ -547,27 +559,48 @@ def latest_run_metadata(
             return None
         filters.append("runner_version >= ?")
         parameters.append(min_runner_version)
+    command_expr = "command" if runs_table_has_column(db, "command") else "''"
     where_clause = ""
     if filters:
         where_clause = "where " + " and ".join(filters)
-    row = db.execute(
+    rows = db.execute(
         f"""
-        select id, source_root
+        select id, source_root, {command_expr}
         from runs
         {where_clause}
         order by id desc
-        limit 1
         """,
         parameters,
-    ).fetchone()
+    ).fetchall()
+    row = None
+    for candidate in rows:
+        if require_file_run and run_command_is_focused_rerun(candidate[2] or ""):
+            continue
+        row = candidate
+        break
     if min_runner_version is not None and row is None:
         return None
     if require_run_metadata and row is None:
         return None
+    if require_file_run and row is None:
+        return None
     if row is None:
         raise SystemExit("no doctest runs found in database")
-    run_id, source_root = row
+    run_id, source_root, _command = row
     return run_id, Path(source_root) if source_root else None
+
+
+def run_command_is_focused_rerun(command: str) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+    for token in tokens:
+        if token in {"--line", "--block-key"}:
+            return True
+        if token.startswith("--line=") or token.startswith("--block-key="):
+            return True
+    return False
 
 
 def files_table_has_column(db: sqlite3.Connection, column: str) -> bool:
@@ -1143,7 +1176,10 @@ def main() -> int:
             with sqlite3.connect(database) as db:
                 require_doctest_schema(database, db)
                 metadata = latest_run_metadata(
-                    db, args.min_runner_version, args.require_run_metadata
+                    db,
+                    args.min_runner_version,
+                    args.require_run_metadata,
+                    args.require_file_run,
                 )
                 if metadata is None:
                     continue

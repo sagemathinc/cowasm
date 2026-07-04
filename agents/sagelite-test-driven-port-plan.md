@@ -29875,6 +29875,32 @@ profile, runner version 89, and a 100% non-skipped pass rate. The rerun used
 `--tmpdir /home/user/cowasm/.tmp/current-run` because `/tmp` rejected
 `mkdtemp` with error 122 in the current quota state.
 
+Follow-up corpus-candidate tooling pass: scanning recent scratch SQLite
+artifacts exposed one false promotion row from a focused `sage -t --line ...`
+rerun. The database had one persisted passing block for
+`sage/rings/polynomial/polynomial_element_generic.py`, but a full-file probe
+of that same source still records broader polynomial, PPL, FLINT, PARI, and
+coercion failures, so the line rerun is not valid corpus-promotion evidence.
+
+`doctest-corpus-candidates.py` now supports `--require-file-run`, which skips
+latest runs whose recorded command contains `--line` or `--block-key` while
+leaving legacy/default scans unchanged. The strict scratch scan should now use
+the full filter set:
+
+```sh
+sagemath/sagelite/src/doctest-corpus-candidates.py \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk \
+  --require-run-metadata \
+  --require-source-root-path \
+  --require-block-rows \
+  --require-file-run \
+  --dedupe-paths \
+  DATABASE...
+```
+
+Rerunning that stricter scan across recent nonempty current-run databases
+prints no uncovered clean runnable rows after subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
