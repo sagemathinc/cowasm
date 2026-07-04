@@ -26929,6 +26929,47 @@ startup gap around `var`/callable-function setup and a Singular-backed
 polynomial-ideal near miss with 13 passing blocks before `plural`,
 `sage.libs.singular`, and `pexpect` dependencies appear.
 
+Follow-up current-dashboard and unseen low-prompt audit on 2026-07-04:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict candidate scan over 2,361 scratch
+databases under `.tmp/current-run/`, using
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths`, printed
+no uncovered clean runnable candidate. After subtracting the current corpus
+and runner-87 scratch-dashboard coverage from the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree, 1,248 prompt-bearing
+source-minus-corpus files still had no runner-87 scratch coverage.
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex2/` then checked small helper and
+backend-adjacent slices:
+
+```text
+low-prompt-helpers.sqlite3: 0 passed, 0 failed, 15 skipped
+unseen-backend-low.sqlite3: 3 passed, 88 failed, 74 skipped
+```
+
+The helper slice was skipped-only or empty: CLI, doctest, REPL prompt,
+interface, and `stats/r.py` files did not add runnable default-profile
+coverage. A recheck of already-promoted utility/interface files recorded
+223 passed, 0 failed, and 3 skipped blocks, confirming that those clean files
+were already represented in the curated corpus rather than new promotions.
+The neighboring typeset files likewise reran clean with 194 passed, 0 failed,
+and 40 skipped blocks, but they were already present at the corpus tail.
+
+The unseen backend slice confirmed broader dependency frontiers rather than
+narrow metadata candidates. Skipped-only files were explicit PARI, modular
+Hecke, modular-group-cohomology, and graph-decomposition boundaries. The live
+failures were dominated by unavailable GAP/libgap imports, graph startup names
+such as `graphs`, `Graph`, and `G`, GAP-backed orthogonal matrix-group
+constructors such as `GO` and `SO`, Sympow elliptic-curve setup names, and
+hyperelliptic Jacobian constructors. The saved block-failure query for the
+fresh backend database had no file-level runtime errors; the failures are
+ordinary dependency/startup-surface gaps that should stay outside the quiet
+browser-profile corpus until the relevant backends are ported or explicitly
+tagged.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
