@@ -28401,6 +28401,41 @@ CyclotomicField signature-mismatch runtime frontier at its first setup line.
 Future work in this prompt-count range should either probe the remaining files
 in smaller slices or target one of those startup/runtime clusters directly.
 
+Follow-up 251-to-265 prompt-band corpus-growth pass:
+
+```text
+prompt-251-265.sqlite3: 1,079 passed, 2,135 failed, 4,356 skipped
+power_series_ring.py:     231 passed,     0 failed,    31 skipped
+```
+
+The fresh 251-to-265 prompt-band probe attempted 30 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-251-265/prompt-251-265.sqlite3`.
+The batch shape was 14 skipped-only dependency-boundary files, 15
+block-failing files, and one file-level NTL dynamic-link error in
+`sage/rings/finite_rings/element_givaro.pyx`.
+
+The narrow promotion target was `sage/rings/power_series_ring.py`, which first
+recorded 232 passed blocks, 12 failed blocks, and 18 skipped blocks. All 12
+failures were in two symbolic power-series subsections that use `SR`, `var`,
+symbolic `sqrt`, or symbolic `gamma`. The added WASI source patch marks those
+subsections as `# needs sage.symbolic`, preserving ordinary exact
+power-series-ring coverage under the default browser-compatible profile.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-251-265/power-series-make.sqlite3`.
+The focused run passed with `231 passed, 0 failed, 31 skipped`; the saved
+block- and file-failure cluster queries are empty, and the strict candidate
+scan prints no row after subtracting the updated corpus. This promotes
+`sage/rings/power_series_ring.py` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,061 non-comment entries. The focused latest-run summary
+records CoWasm commit `45a84cfa38f85722caf601f5c477e2e6bbea593f`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 87, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

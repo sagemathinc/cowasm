@@ -12503,6 +12503,19 @@ diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/
 @@ -402 +402 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 -            sage: G.gens()
 +            sage: G.gens()  # known bug
+diff --git a/src/sage/rings/power_series_ring.py b/src/sage/rings/power_series_ring.py
+--- a/src/sage/rings/power_series_ring.py
++++ b/src/sage/rings/power_series_ring.py
+@@ -63 +63 @@
+-    sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
++    sage: K.<t> = PowerSeriesRing(SR, default_prec=5)                              # needs sage.symbolic
+@@ -63,0 +64 @@
++    sage: # needs sage.symbolic
+@@ -777 +778 @@ class PowerSeriesRing_generic(UniqueRepresentation, Nonexact):
+-            sage: x,y = var('x,y')
++            sage: x,y = var('x,y')                                                 # needs sage.symbolic
+@@ -777,0 +779 @@ class PowerSeriesRing_generic(UniqueRepresentation, Nonexact):
++            sage: # needs sage.symbolic
 diff --git a/src/sage/rings/polynomial/term_order.py b/src/sage/rings/polynomial/term_order.py
 --- a/src/sage/rings/polynomial/term_order.py
 +++ b/src/sage/rings/polynomial/term_order.py
