@@ -28978,6 +28978,44 @@ strict `doctest-corpus-candidates.py` scan with `--require-run-metadata` and
 `--require-block-rows` printed no uncovered clean runnable rows for this
 database.
 
+Follow-up 476-to-490 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-476-490/probe.sqlite3`
+and recorded:
+
+```text
+8 files: 419 passed, 106 failed, 2264 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/geometry/polyhedral_complex.py`, `sage/plot/plot.py`,
+`sage/schemes/riemann_surfaces/riemann_surface.py`, and
+`sage/combinat/shifted_primed_tableau.py`. Their blocks are already guarded by
+explicit optional, deferred, or backend-specific metadata for polyhedron,
+graph, plotting, symbolic, Riemann-surface, GAP, Magma, and tableau feature
+coverage, so they add no runnable browser-profile signal.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/matrix/matrix_space.py` recorded 345 passed and 51 failed
+blocks across matrix display/layout drift, dense/generic implementation
+checks, `_copy_zero` attribute drift, random solve output, and several
+setup-name cascades. `sage/categories/finite_dimensional_lie_algebras_with_basis.py`
+recorded 74 passed and 53 failed blocks, dominated by cypari2 object-model
+boundaries, graph-backed Lie algebra construction imports, quotient/reduction
+attribute drift, and dependent startup-name failures. The two file-level
+errors matched the existing NTL dynamic-link frontier:
+`sage/rings/polynomial/laurent_polynomial.pyx` and
+`sage/rings/valuation/augmented_valuation.py` both failed while resolving
+`ZZ_pContext::restore()`. The saved failure-class summary for the band was 36
+`NameError`, 18 `NotImplementedError`, 16 `output_mismatch`, 15 `TypeError`,
+nine `ImportError`, seven `AttributeError`, two `ModuleNotFoundError`, two
+`wasm_link_error`, and one `ValueError`. The strict
+`doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows for this
+database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
