@@ -31098,6 +31098,50 @@ run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
 and about 25 seconds of elapsed time.
 
+Follow-up regenerated 31-to-33 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 31-to-33 prompt
+source-minus-corpus band. The 24-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-31-33/prompt-31-33/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 55 passed, 259 failed, 350 skipped
+```
+
+Several failures were clear whole-file dependency frontiers rather than narrow
+default-profile math coverage: the remaining PBoRi helpers depend on BRiAl,
+the Maxima wrapper depends on symbolic-expression support, manifold image
+subsets depend on the manifold stack, and the mwrank and Rubik interfaces
+depend on subprocess-backed external programs. The WASI source patch now marks
+`sage/rings/polynomial/pbori/fglm.py`,
+`sage/rings/polynomial/pbori/ll.py`, `sage/symbolic/maxima_wrapper.py`,
+`sage/manifolds/continuous_map_image.py`, `sage/interfaces/mwrank.py`, and
+`sage/interfaces/rubik.py` with explicit file-level
+`# sage.doctest: needs ...` metadata.
+
+A refreshed patched-source rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-31-33/prompt-31-33/after-tags.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 51 passed, 93 failed, 520 skipped
+```
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The remaining failures are broader backend/runtime
+frontiers: NTL GF2E/GF2EX traps, an elliptic modular-polynomial NTL
+`ZZ_pContext.restore` link error, CDD/Voronoi startup and external-tool
+coverage, product-projective rational-point dependencies on cysignals alarm
+and plural, finite-field residue examples reaching number-field/PARI object
+model gaps, and lie-conformal algebra examples split between graph-backed
+affine types and coercion-model drift. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py` and
+`TMPDIR=/home/user/cowasm/.tmp/patch-tmp patch --dry-run -d /home/user/sagelite
+-p1 < sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

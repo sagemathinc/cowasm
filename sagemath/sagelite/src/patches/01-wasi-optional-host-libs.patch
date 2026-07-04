@@ -14517,3 +14517,39 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/re
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/rings/polynomial/pbori/fglm.py b/src/sage/rings/polynomial/pbori/fglm.py
+--- a/src/sage/rings/polynomial/pbori/fglm.py
++++ b/src/sage/rings/polynomial/pbori/fglm.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs brial
+ from sage.rings.polynomial.pbori.pbori import BooleSet, FGLMStrategy
+diff --git a/src/sage/rings/polynomial/pbori/ll.py b/src/sage/rings/polynomial/pbori/ll.py
+--- a/src/sage/rings/polynomial/pbori/ll.py
++++ b/src/sage/rings/polynomial/pbori/ll.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs brial
+ from sage.rings.polynomial.pbori.pbori import (
+diff --git a/src/sage/symbolic/maxima_wrapper.py b/src/sage/symbolic/maxima_wrapper.py
+--- a/src/sage/symbolic/maxima_wrapper.py
++++ b/src/sage/symbolic/maxima_wrapper.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ "Access to Maxima methods"
+diff --git a/src/sage/manifolds/continuous_map_image.py b/src/sage/manifolds/continuous_map_image.py
+--- a/src/sage/manifolds/continuous_map_image.py
++++ b/src/sage/manifolds/continuous_map_image.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/interfaces/mwrank.py b/src/sage/interfaces/mwrank.py
+--- a/src/sage/interfaces/mwrank.py
++++ b/src/sage/interfaces/mwrank.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess
+ r"""
+diff --git a/src/sage/interfaces/rubik.py b/src/sage/interfaces/rubik.py
+--- a/src/sage/interfaces/rubik.py
++++ b/src/sage/interfaces/rubik.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess
+ r"""
