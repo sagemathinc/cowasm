@@ -28329,6 +28329,41 @@ records CoWasm commit `2c3f7ef890c0e6117f17fc581d9be1e47db2f41d`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 87, and a 100% non-skipped pass rate.
 
+Follow-up 221-to-235 prompt-band frontier audit:
+
+```text
+prompt-221-235.sqlite3: 446 passed, 3,316 failed, 4,435 skipped
+```
+
+No new quiet corpus candidate was found. The fresh 221-to-235 prompt-band
+probe attempted 38 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-221-235/prompt-221-235.sqlite3`.
+The strict promotion scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --corpus
+sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt
+--require-run-metadata --require-source-root-path --min-runner-version 87
+--dedupe-paths --ignore-invalid --quiet-invalid --limit 20` printed no clean
+uncovered runnable rows, and a compact near-miss scan with `--min-passed 20
+--max-failed 10` also printed no rows.
+
+The batch shape was 18 skipped-only dependency-boundary files, 18
+block-failing files, and two file-level runtime errors. The skipped-only rows
+were explicit optional/deferred boundaries, including PPL, symbolic plotting,
+finite-ring and module-heavy coding/combinatorics, modular/GAP, p-adic,
+number-field, and function-field dependencies. The block-failing rows were
+not narrow display or startup-helper promotions: they were dominated by broad
+`NameError` cascades plus module/import and semantic clusters in function
+fields, polyhedra, graph generators, symbolic matrices, GAP/Maxima
+interfaces, manifolds, fusion rings, and arithmetic dynamics.
+
+The file-level errors match existing runtime frontier families: a
+`wasm_signature_mismatch` while creating a cubic Hecke specialization through
+`CyclotomicField(3)` in `sage/algebras/hecke_algebras/cubic_hecke_base_ring.py`,
+and an NTL dynamic-link `wasm_link_error` for
+`NTL::ZZ_pContext::restore()` while running a Mac Lane valuation example in
+`sage/rings/valuation/valuation.py`. The next prompt-band search should move
+past this window or target one of those runtime/frontier clusters directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
