@@ -29901,6 +29901,42 @@ sagemath/sagelite/src/doctest-corpus-candidates.py \
 Rerunning that stricter scan across recent nonempty current-run databases
 prints no uncovered clean runnable rows after subtracting the current corpus.
 
+Follow-up 951-to-1000 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,069 non-comment entries after the pushout promotion, and the fresh one-worker
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-next/prompt-951-1000/probe.sqlite3`.
+
+The band recorded:
+
+```text
+3 files: 970 passed, 674 failed, 256 skipped
+```
+
+`sage/rings/asymptotic/growth_group.py` timed out at the 120-second per-file
+worker boundary before recording any block rows. `sage/rings/real_mpfi.pyx`
+is a substantial near miss with `867 passed`, `27 failed`, and `67 skipped`,
+but the failures are mixed runtime and backend clusters rather than a narrow
+tagging target: symbolic `sqrt(...)` setup, startup names such as `ceil`,
+`gamma`, `zeta`, and `golden_ratio`, PARI/cypari2 object-model paths,
+algebraic-dependency matrix behavior, and real-interval output drift.
+
+`sage/schemes/elliptic_curves/ell_curve_isogeny.py` recorded `103 passed`,
+`646 failed`, and `189 skipped`. Its failures are broad elliptic-curve,
+Singular/GAP, and dependent-name cascades, led by missing `EllipticCurve`,
+`EllipticCurveIsogeny`, `phi`, and unavailable `sage.libs.gap.libgap` and
+`sage.libs.singular.function` imports. This remains an elliptic/backend
+frontier, not a source-tag-only corpus-growth candidate.
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and
+`--require-file-run` printed no uncovered clean runnable rows. Future scheduled
+runs should avoid repeating this prompt band unless the symbolic startup
+surface, PARI/cypari2 object model, real interval algebraic-dependency path,
+elliptic-curve startup surface, or Singular/GAP backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
