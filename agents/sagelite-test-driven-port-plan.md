@@ -30770,6 +30770,37 @@ scan across the broad batch and focused rerun with `--require-run-metadata`,
 work should continue past the 26-to-30 band or target one of the remaining
 non-PolyBoRi clusters above.
 
+Focused binary-form reduction corpus-growth pass:
+
+```text
+binary_form_reduce.py: 23 passed, 0 failed, 20 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/binary_form_reduce.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,073
+non-comment entries. Direct arithmetic-function sampling first recorded 23
+passed blocks and 19 focused failures in this file. The failures all routed
+through `covariant_z0(...)`, `epsinv(...)`, `get_bound_poly(...)`,
+`smallest_poly(...)`, or `F.reduced_form()`, which call polynomial root
+computation and currently reach CoWasm's focused cypari2/PARI object-model
+boundary.
+
+The added WASI source patch marks those covariant and reduction examples as
+`# needs sage.libs.pari`, including direct dependent checks that consume
+`smallest_poly(...)` output, while preserving the constructor, validation, and
+non-PARI helper coverage as default-profile doctests. Focused validation used
+the `test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex/binary-form-reduce-make/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`ec7e4ff5a927bfbd8e3fa3aa1a420d9119172ad4`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the new deferrals under
+`optional:sage.libs.pari`, plus the file's existing long-time example.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

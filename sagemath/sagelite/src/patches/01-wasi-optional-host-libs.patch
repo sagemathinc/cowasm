@@ -14161,3 +14161,62 @@ diff --git a/src/sage/symbolic/expression.pyx b/src/sage/symbolic/expression.pyx
 -            sage: SR('I') * b
 +            sage: b = polygen(FiniteField(9), 'b')                                      # needs sage.libs.ntl
 +            sage: SR('I') * b                                                          # needs sage.libs.ntl
+diff --git a/src/sage/rings/polynomial/binary_form_reduce.py b/src/sage/rings/polynomial/binary_form_reduce.py
+--- a/src/sage/rings/polynomial/binary_form_reduce.py
++++ b/src/sage/rings/polynomial/binary_form_reduce.py
+@@ -75 +75 @@
+-        sage: covariant_z0(F, prec=80, z0_cov=True)
++        sage: covariant_z0(F, prec=80, z0_cov=True)  # needs sage.libs.pari
+@@ -80 +80 @@
+-        sage: covariant_z0(F, prec=80)
++        sage: covariant_z0(F, prec=80)  # needs sage.libs.pari
+@@ -87 +87 @@
+-        sage: covariant_z0(x^3 + 2*x^2*y - 3*x*y^2, z0_cov=True)[0]
++        sage: covariant_z0(x^3 + 2*x^2*y - 3*x*y^2, z0_cov=True)[0]  # needs sage.libs.pari
+@@ -89 +89 @@
+-        sage: -1/covariant_z0(-y^3 + 2*y^2*x + 3*y*x^2, z0_cov=True)[0]
++        sage: -1/covariant_z0(-y^3 + 2*y^2*x + 3*y*x^2, z0_cov=True)[0]  # needs sage.libs.pari
+@@ -95 +95 @@
+-        sage: covariant_z0(2*x^2*y - 3*x*y^2, z0_cov=True)[0]
++        sage: covariant_z0(2*x^2*y - 3*x*y^2, z0_cov=True)[0]  # needs sage.libs.pari
+@@ -97 +97 @@
+-        sage: -1/covariant_z0(-x^3 - x^2*y + 2*x*y^2, z0_cov=True)[0] + 1
++        sage: -1/covariant_z0(-x^3 - x^2*y + 2*x*y^2, z0_cov=True)[0] + 1  # needs sage.libs.pari
+@@ -103 +103 @@
+-        sage: covariant_z0(x^2*y - x*y^2, prec=100) # tol 1e-28
++        sage: covariant_z0(x^2*y - x*y^2, prec=100) # tol 1e-28  # needs sage.libs.pari
+@@ -114 +114 @@
+-        sage: covariant_z0((x+y)^3, z0_cov=True)
++        sage: covariant_z0((x+y)^3, z0_cov=True)  # needs sage.libs.pari
+@@ -122 +122 @@
+-        sage: covariant_z0(-2*x^2*y^3 + 3*x*y^4 + 127*y^5)
++        sage: covariant_z0(-2*x^2*y^3 + 3*x*y^4 + 127*y^5)  # needs sage.libs.pari
+@@ -126 +126 @@
+-        sage: covariant_z0((x^2+2*y^2)^2)
++        sage: covariant_z0((x^2+2*y^2)^2)  # needs sage.libs.pari
+@@ -290 +290 @@
+-        sage: epsinv(-2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3, 31.5022020249597) # tol 1e-12
++        sage: epsinv(-2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3, 31.5022020249597) # tol 1e-12  # needs sage.libs.pari
+@@ -406 +406 @@
+-        sage: get_bound_poly(F) # tol 1e-12
++        sage: get_bound_poly(F) # tol 1e-12  # needs sage.libs.pari
+@@ -408 +408 @@
+-        sage: get_bound_poly(F, norm_type='height') # tol 1e-11
++        sage: get_bound_poly(F, norm_type='height') # tol 1e-11  # needs sage.libs.pari
+@@ -473 +473 @@
+-        sage: smallest_poly(F)
++        sage: smallest_poly(F)  # needs sage.libs.pari
+@@ -478,2 +478,2 @@
+-        sage: F0, M = smallest_poly(F, norm_type='height')
+-        sage: F0, M  # random
++        sage: F0, M = smallest_poly(F, norm_type='height')  # needs sage.libs.pari
++        sage: F0, M  # random  # needs sage.libs.pari
+@@ -484 +484 @@
+-        sage: M in SL2Z, F0 == R.hom(M * vector([x, y]))(F)
++        sage: M in SL2Z, F0 == R.hom(M * vector([x, y]))(F)  # needs sage.libs.pari
+@@ -486 +486 @@
+-        sage: get_bound_poly(F0, norm_type='height')  # tol 1e-12
++        sage: get_bound_poly(F0, norm_type='height')  # tol 1e-12  # needs sage.libs.pari
+@@ -494 +494 @@
+-        sage: F.reduced_form()
++        sage: F.reduced_form()  # needs sage.libs.pari
