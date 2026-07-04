@@ -27285,6 +27285,44 @@ metadata, and `games/all.py` plus `probability/all.py` extracted no blocks.
 `h = Stream_taylor((x^3 + x^2) / (x + 1), False)`, so it remains a
 series/polynomial runtime frontier rather than a promotion candidate.
 
+Scheduled low-prompt algebra and library-boundary audit on 2026-07-04:
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex9/` sampled small uncovered
+algebra, category, test, GAP, and PARI helper files from the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree. A strict promotion scan with
+`doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths
+--ignore-invalid --quiet-invalid` printed no uncovered clean runnable rows.
+
+The fresh dashboard totals were:
+
+```text
+low-prompt-algebra.sqlite3:     0 passed,  0 failed, 82 skipped
+low-prompt-tests-libs.sqlite3:  1 passed, 51 failed, 27 skipped
+```
+
+The algebra/category batch was skipped-only under existing optional metadata:
+`sage.combinat`, `sage.groups`, `sage.modules`, `sage.rings.finite_rings`,
+`sage.graphs`, and `lrcalc_python`. It covered `monoids/monoid.py`,
+`monoids/hecke_monoid.py`, `categories/groupoid.py`,
+`categories/finite_crystals.py`, `categories/bialgebras.py`,
+`categories/examples/finite_dimensional_algebras_with_basis.py`,
+`combinat/species/misc.py`, and `rings/ring_extension_homset.py`, so those
+files remain dependency-boundary rows rather than corpus promotions.
+
+The small tests/libs batch confirmed that `tests/sympy.py`,
+`tests/lazy_imports.py`, `tests/numpy.py`, `modular/modform/tests.py`, and
+`libs/pari/convert_sage_real_mpfr.pyx` are also skipped-only under their
+current optional tags. The failed rows are not quiet promotions: GAP helpers
+cluster on missing `sage.libs.gap.libgap` with dependent name failures, while
+PARI conversion helpers expose `cypari2.convert` and focused cypari2
+object-model gaps. The latest run metadata records CoWasm commit
+`82b0cbcab82d20dc101d6f149bca6526e3d34c89`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 87.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
