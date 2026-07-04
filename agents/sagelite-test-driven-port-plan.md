@@ -27240,6 +27240,51 @@ PARI conversion helpers still fail in the cypari2 object-model boundary; and
 `sagedoc.py` timed out during source search. The curated corpus remains at
 1,040 non-comment entries.
 
+Scheduled uncovered utility audit on 2026-07-04:
+
+A guarded promotion scan over the largest recent scratch dashboards, including
+`full-after-frontier-metadata.sqlite3`, the indexed-free-monoid clean corpus,
+the polynomial/category frontier dashboards, and the latest
+`scheduled-2026-07-04-codex7` category and misc databases, printed no clean
+uncovered candidate after subtracting the 1,040-file curated corpus with
+`--require-run-metadata --require-source-root-path --min-runner-version 87`.
+The checked `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` file
+is currently an empty scratch database and should not be used as a coverage
+baseline until the make target writes a fresh full dashboard there.
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex8/` sampled uncovered misc,
+structure, data-structure, crypto, games, and probability helpers from the
+patched source tree. A first absolute-path smoke revalidated already-covered
+misc files with `208 passed, 0 failed, 44 skipped`; the candidate helper
+correctly reported no promotion rows because those files are already listed in
+`basic-pure-math.txt`.
+
+The true uncovered misc/structure probe recorded:
+
+```text
+uncovered-misc-probe.sqlite3: 0 passed, 0 failed, 69 skipped
+```
+
+`sage/misc/cython.py` and `sage/misc/package_dir.py` were skipped-only, while
+`copying.py`, `func_persist.py`, `mathml.py`, `pager.py`, `proof.py`,
+`sagedoc_conf.py`, `structure/coerce_exceptions.py`, and `structure/gens_py.py`
+extracted no runnable blocks. These files remain outside the quiet corpus
+because they add no passing default-profile coverage.
+
+The small data-structure/crypto utility probe recorded:
+
+```text
+utility-crypto-probe.sqlite3: 0 passed, 1 failed, 1033 skipped
+```
+
+The crypto files in that batch were entirely skipped under existing optional
+metadata, and `games/all.py` plus `probability/all.py` extracted no blocks.
+`sage/data_structures/stream.py` timed out at
+`Stream_taylor.__eq__`, line 1179, on the setup example
+`h = Stream_taylor((x^3 + x^2) / (x + 1), False)`, so it remains a
+series/polynomial runtime frontier rather than a promotion candidate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
