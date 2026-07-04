@@ -30728,6 +30728,48 @@ the broad batch and the focused rerun with `--require-run-metadata`,
 `--dedupe-paths` prints no uncovered clean runnable rows after subtracting the
 updated corpus.
 
+Follow-up 26-to-30 prompt-band audit and PyPolyBoRi dependency-boundary
+tagging:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree selected 41 uncovered
+files in the 26-to-30 prompt band. The broad batch wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-26-30/prompt-26-30/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 42 passed, 357 failed, 605 skipped
+```
+
+The batch had four file-level errors: two NTL `ZZ_pE` traps in
+`sage/libs/ntl/ntl_ZZ_pE.pyx` and `sage/libs/ntl/ntl_ZZ_pEContext.pyx`, one
+number-field-backed polyhedron timeout in
+`sage/geometry/polyhedron/backend_number_field.py`, and one
+`sage/quadratic_forms/genera/spinor_genus.py` worker `SIGSEGV`. Ordinary block
+failures clustered around graph-extension startup names, hyperelliptic curve
+backend gaps, symbolic startup names, GAP-backed matrix-group pickling,
+manifold/vector-symbolic setup cascades, IPython shell support, ECM, and
+interactive-library symbolic imports.
+
+The narrow actionable cluster was the remaining PolyBoRi/BRiAl front-door file
+`sage/rings/polynomial/pbori/PyPolyBoRi.py`, whose 28 failures all depended on
+the unavailable `sage.rings.polynomial.pbori.pbori` extension. The WASI source
+patch now marks the file with `# sage.doctest: needs brial`. A focused rerun
+wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-26-30/prompt-26-30/pypolybori-after-tag.sqlite3`
+and records:
+
+```text
+PyPolyBoRi.py: 0 passed, 0 failed, 28 skipped
+```
+
+The focused skip query groups the file under `needs:brial`. A strict promotion
+scan across the broad batch and focused rerun with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`, and
+`--dedupe-paths` prints no uncovered clean runnable rows. Future low-prompt
+work should continue past the 26-to-30 band or target one of the remaining
+non-PolyBoRi clusters above.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
