@@ -27192,6 +27192,54 @@ polyhedron, and setup frontiers (`posets`, `simplicial_complexes`,
 records boundary data only and intentionally leaves the curated corpus
 unchanged.
 
+Scheduled static-guided frontier audit on 2026-07-04:
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex7/` sampled category examples,
+core category modules, coding files, arithmetic/calculus helpers, misc
+utilities, feature modules, and low-prompt static candidates from the current
+patched `sagemath/sagelite/build/wasi-sdk/src/sage` tree. A strict promotion
+scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths
+--ignore-invalid --quiet-invalid` printed no uncovered clean runnable rows.
+
+The fresh dashboard totals were:
+
+```text
+arith-calc-small.sqlite3:       0 passed,  0 failed,  272 skipped
+category-examples.sqlite3:      0 passed,  0 failed,  351 skipped
+coding-small.sqlite3:           0 passed,  0 failed, 1140 skipped
+core-categories.sqlite3:      474 passed, 32 failed,  624 skipped
+features.sqlite3:               0 passed,  0 failed,    0 skipped
+low-prompt-combinat.sqlite3:    0 passed, 10 failed,   62 skipped
+low-prompt-static.sqlite3:      0 passed,  4 failed,   11 skipped
+misc-edge.sqlite3:              0 passed,  1 failed,  185 skipped
+misc-small.sqlite3:           335 passed,  1 failed,  369 skipped
+misc-uncovered.sqlite3:         0 passed,  0 failed,  119 skipped
+```
+
+The `misc-small.sqlite3` passing rows were already covered by
+`basic-pure-math.txt`; its one file error was an invalid probe path for
+`sage/misc/lazy_string.py` instead of the existing `.pyx` file. The uncataloged
+misc and feature files were empty or skipped-only under the browser-compatible
+profile.
+
+The largest useful near miss was `sage/categories/pushout.py`, which recorded
+474 passing blocks and 28 block failures inside `core-categories.sqlite3`.
+Those failures split across traceback-formatting differences for coercion
+exceptions, browser-profile dependency gaps around quotient/plural polynomial
+construction and `pexpect`, symbolic/GAP `BlackBoxConstructionFunctor`
+examples, and morphism conversion drift. This remains a metadata/backend
+frontier rather than a quiet promotion. The other fresh failures were already
+known-shaped frontiers: `rings.py`, `commutative_rings.py`, and
+`quotient_fields.py` timed out on heavier polynomial/quotient examples;
+`fields.py` hit the NTL `ZZ_pContext::restore` WASM link gap;
+`hochschild_lattice.py` stayed on graph/polyhedron/setup dependencies;
+PARI conversion helpers still fail in the cypari2 object-model boundary; and
+`sagedoc.py` timed out during source search. The curated corpus remains at
+1,040 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
