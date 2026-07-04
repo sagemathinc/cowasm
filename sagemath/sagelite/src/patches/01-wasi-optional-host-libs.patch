@@ -3234,6 +3234,19 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +        sage: a5.__hash__() == b5.__hash__()                                          # needs sage.libs.pari
          True
      """
+--- a/src/sage/libs/pari/convert_sage_real_mpfr.pyx
++++ b/src/sage/libs/pari/convert_sage_real_mpfr.pyx
+@@ -8,6 +8,10 @@
+ from sage.libs.mpfr cimport *
+ from sage.libs.mpfr.types cimport mpfr_prec_t
+ from sage.rings.real_mpfr cimport RealField_class, RealField
++
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
+ 
+ 
+ cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
 --- a/src/sage/libs/pari/convert_sage.pyx
 +++ b/src/sage/libs/pari/convert_sage.pyx
 @@ -368,6 +368,11 @@

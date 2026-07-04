@@ -30047,6 +30047,52 @@ queries are empty. This promotion adds
 `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
 curated corpus to 1,070 non-comment entries.
 
+Follow-up 1101-to-1150 prompt-band audit and real-MPFR PARI initialization:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained two uncovered files:
+`sage/rings/real_mpfr.pyx` and
+`sage/schemes/elliptic_curves/heegner.py`. The first direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1101-1150/probe.sqlite3`
+and recorded:
+
+```text
+2 files: 0 passed, 1 failed, 1138 skipped
+```
+
+`heegner.py` was skipped-only under existing elliptic-curve, number-field,
+PARI, symbolic, and related optional-backend metadata. It adds no default
+browser-profile runnable signal.
+
+`real_mpfr.pyx` initially failed at file scope on its first PARI-backed
+factorization example, `k._factor_univariate_polynomial(x)` at line 1329,
+with `function signature mismatch` in
+`convert_sage_real_mpfr...err_recover`. This matched the earlier module-local
+PARI initialization gap fixed for `convert_gmp`. The WASI source patch now
+initializes PARI inside `sage.libs.pari.convert_sage_real_mpfr` before direct
+PARI stack allocation. A full Sagelite standalone rebuild and smoke passed
+after using a native-Python Cython wrapper for the local rebuild environment:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The focused post-rebuild rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-active/real-mpfr-after-pari-init/real_mpfr.sqlite3`
+and no longer records a file-level crash:
+
+```text
+real_mpfr.pyx: 702 passed, 318 failed, 87 skipped
+```
+
+The remaining failures are ordinary block-level clusters, led by 212
+`TypeError: Cannot convert str to sage.rings.real_mpfr.RealField_class`
+failures from real-literal construction/preparser coverage, 74 numeric/output
+drift failures, and 8 focused cypari2 object-model `NotImplementedError`
+failures around PARI-backed polynomial factorization and real conversion.
+`real_mpfr.pyx` should therefore be treated as a targeted real-field semantics
+pass, not as a browser-profile corpus promotion candidate yet.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
