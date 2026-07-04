@@ -27554,6 +27554,48 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the deferred suite under
 `deferred:known bug`.
 
+Follow-up focused frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-04-next/`, and the strict promotion
+scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths
+--ignore-invalid --quiet-invalid` printed no uncovered clean runnable rows.
+
+The Lie/matroid/root-system probe recorded:
+
+```text
+lie-matroid-root-probe.sqlite3: 111 passed, 330 failed, 213 skipped
+```
+
+The only compact near misses in that batch were
+`sage/algebras/lie_algebras/morphism.py`, with 94 passing blocks and 51
+failures across morphism/category, PARI object-model, and display-drift
+clusters, and `sage/matroids/unpickling.pyx`, with 14 passing blocks and 55
+failures that cascade from graph-backed matroid imports and missing broader
+matroid constructors. `heisenberg.py` and `examples.py` failed almost entirely
+from the same stripped graph-backed Lie-algebra setup boundary, while
+`coxeter_matrix.py` and `braid_move_calculator.py` were skipped-only under
+existing graph/root-system dependency tags.
+
+Three small-helper/category/mixed probes were also not promotable:
+
+```text
+small-helper-probe.sqlite3:      0 passed,  0 failed,  57 skipped
+category-examples-probe.sqlite3: 0 passed,  0 failed, 129 skipped
+mixed-small-probe.sqlite3:       0 passed,  6 failed, 222 skipped
+medium-mixed-probe.sqlite3:     18 passed, 38 failed, 208 skipped
+```
+
+The helper and category-example files are dependency-boundary rows that
+contribute no runnable default-profile coverage. The mixed probes mostly
+confirm existing optional/backend tags. The only passing runnable file in the
+medium batch was `sage/rings/factorint.pyx`, which is already in the curated
+corpus. The remaining near miss, `sage/libs/gap/assigned_names.py`, has one
+passing block and 14 GAP/libgap startup failures, so it should stay out of the
+browser-profile corpus until the GAP surface changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
