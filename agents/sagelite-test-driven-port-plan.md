@@ -27107,6 +27107,47 @@ clusters are still existing state/setup-frontier failures in
 `combinat/root_system/weight_lattice_realizations.py`, `doctest/rif_tol.py`,
 and `repl/interface_magic.py`.
 
+Follow-up metadata cleanup for the 2026-07-04 dashboard frontier:
+
+```text
+sage -t passed: 554 passed, 0 failed, 581 skipped
+```
+
+That eight-file make-target validation covers the files responsible for the
+previous 12 block-level failures:
+`sage/categories/additive_magmas.py`, `sage/categories/semigroups.py`,
+`sage/categories/simplicial_sets.py`, `sage/combinat/integer_vector.py`,
+`sage/combinat/root_system/weight_lattice_realizations.py`,
+`sage/doctest/rif_tol.py`, `sage/matroids/utilities.py`, and
+`sage/repl/interface_magic.py`. The WASI source patch now carries explicit
+per-prompt dependency metadata for setup-dependent graph, module, combinatorics,
+and matroid examples that were previously leaking as dependent `NameError`
+blocks. It also defers the `RIFtol(" - 1 ")` real-interval conversion drift as
+a known browser-profile bug and treats the interface-magic object repr check as
+random, because the runtime may omit the address text that Sage's ellipsis
+example expects. The focused validation rebuilt a fresh patched Sagelite
+source tree and wrote
+`/home/user/cowasm/.tmp/current-run/failing-frontier-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty.
+
+A full strict corpus rerun against the same rebuilt source tree did not
+establish a new clean baseline:
+
+```text
+sage -t failed: 66196 passed, 21 failed, 20953 skipped
+```
+
+That run wrote
+`/home/user/cowasm/.tmp/current-run/full-after-frontier-metadata.sqlite3`
+across all 1,040 current corpus entries, then the parent Sagelite Node process
+reported error 139. The failures are not the previous 12 metadata blocks: the
+SQLite dashboard records 20 file-level worker/runtime errors, mostly early
+ring and p-adic files with `RuntimeError`, `SIGSEGV`, or `SIGBUS`, plus one
+remaining block-level `output_mismatch` in `sage/rings/polynomial/toy_buchberger.py`.
+Treat this as a separate full-dashboard lifecycle/runtime instability; the
+focused metadata repair itself is validated, but the prior full-corpus
+dashboard should not be replaced by this failed strict run.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

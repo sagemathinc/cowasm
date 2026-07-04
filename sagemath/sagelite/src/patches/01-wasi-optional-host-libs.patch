@@ -12669,3 +12669,59 @@ diff --git a/src/sage/rings/polynomial/skew_polynomial_ring.py b/src/sage/rings/
 @@ -566 +566 @@
 -            sage: TestSuite(S).run()
 +            sage: TestSuite(S).run()  # needs sage.libs.pari
+diff -urN -U0 a/src/sage/combinat/integer_vector.py b/src/sage/combinat/integer_vector.py
+--- a/src/sage/combinat/integer_vector.py
++++ b/src/sage/combinat/integer_vector.py
+@@ -212,4 +212,4 @@
+-        sage: A = gale_ryser_theorem(p1, p2)
+-        sage: rs = [sum(x) for x in A.rows()]
+-        sage: cs = [sum(x) for x in A.columns()]
+-        sage: p1 == rs; p2 == cs
++        sage: A = gale_ryser_theorem(p1, p2)                                           # needs sage.combinat sage.modules
++        sage: rs = [sum(x) for x in A.rows()]                                          # needs sage.combinat sage.modules
++        sage: cs = [sum(x) for x in A.columns()]                                       # needs sage.combinat sage.modules
++        sage: p1 == rs; p2 == cs                                                       # needs sage.combinat sage.modules
+diff -urN -U0 a/src/sage/categories/additive_magmas.py b/src/sage/categories/additive_magmas.py
+--- a/src/sage/categories/additive_magmas.py
++++ b/src/sage/categories/additive_magmas.py
+@@ -745 +745 @@
+-                    sage: B.is_empty.__module__
++                    sage: B.is_empty.__module__                                        # needs sage.modules
+diff -urN -U0 a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.py
+--- a/src/sage/categories/semigroups.py
++++ b/src/sage/categories/semigroups.py
+@@ -209 +209 @@
+-                sage: G.n_edges()
++                sage: G.n_edges()                                                      # needs sage.graphs sage.groups
+diff -urN -U0 a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
+--- a/src/sage/categories/simplicial_sets.py
++++ b/src/sage/categories/simplicial_sets.py
+@@ -577 +577 @@
+-                    sage: C.fundamental_group()
++                    sage: C.fundamental_group()                                        # needs sage.graphs sage.groups
+diff -urN -U0 a/src/sage/combinat/root_system/weight_lattice_realizations.py b/src/sage/combinat/root_system/weight_lattice_realizations.py
+--- a/src/sage/combinat/root_system/weight_lattice_realizations.py
++++ b/src/sage/combinat/root_system/weight_lattice_realizations.py
+@@ -1071 +1071 @@
+-                sage: La = P.basis()
++                sage: La = P.basis()                                                   # needs sage.graphs
+diff -urN -U0 a/src/sage/doctest/rif_tol.py b/src/sage/doctest/rif_tol.py
+--- a/src/sage/doctest/rif_tol.py
++++ b/src/sage/doctest/rif_tol.py
+@@ -52 +52 @@
+-        sage: RIFtol(" - 1 ")
++        sage: RIFtol(" - 1 ")                                                          # known bug - Sagelite real interval conversion rejects spaced negative strings
+diff -urN -U0 a/src/sage/matroids/utilities.py b/src/sage/matroids/utilities.py
+--- a/src/sage/matroids/utilities.py
++++ b/src/sage/matroids/utilities.py
+@@ -537,2 +537,2 @@
+-        sage: M = LinearMatroid(reduced_matrix=A)
+-        sage: sorted(M.cross_ratios())
++        sage: M = LinearMatroid(reduced_matrix=A)                                      # needs sage.matroids
++        sage: sorted(M.cross_ratios())                                                 # needs sage.matroids
+diff -urN -U0 a/src/sage/repl/interface_magic.py b/src/sage/repl/interface_magic.py
+--- a/src/sage/repl/interface_magic.py
++++ b/src/sage/repl/interface_magic.py
+@@ -92 +92 @@
+-            sage: next(InterfaceMagic.all_iter())
++            sage: next(InterfaceMagic.all_iter())                                      # random
