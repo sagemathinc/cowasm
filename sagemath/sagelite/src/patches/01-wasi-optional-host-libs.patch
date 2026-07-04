@@ -574,6 +574,13 @@ diff -urN a/src/sage/rings/polynomial/pbori/randompoly.py b/src/sage/rings/polyn
 +        sage: # needs brial
 @@ -98,0 +101 @@
 +        sage: # needs brial
+diff -urN a/src/sage/rings/polynomial/pbori/gbcore.py b/src/sage/rings/polynomial/pbori/gbcore.py
+--- a/src/sage/rings/polynomial/pbori/gbcore.py
++++ b/src/sage/rings/polynomial/pbori/gbcore.py
+@@ -310,0 +311 @@
++        sage: # needs brial
+@@ -362,0 +364 @@
++        sage: # needs brial
 diff -urN a/src/sage/libs/homfly.pyx b/src/sage/libs/homfly.pyx
 --- a/src/sage/libs/homfly.pyx
 +++ b/src/sage/libs/homfly.pyx

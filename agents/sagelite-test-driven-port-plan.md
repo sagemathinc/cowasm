@@ -30639,6 +30639,50 @@ this band or target a specific non-PolyBoRi root-cause cluster such as GAP,
 graph extensions, eclib, IPython, scheme constructors, or the two timeout
 frontiers.
 
+Follow-up 16-to-20 prompt-band audit and final low-prompt PolyBoRi tagging:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. A fresh source-minus-corpus prompt-count scan from
+the current patched source tree selected 48 uncovered files in the 16-to-20
+prompt band, excluding the already-tagged low-prompt PolyBoRi files. The broad
+batch wrote
+`.tmp/current-run/scheduled-2026-07-04-codex/prompt-16-20/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 10 passed, 182 failed, 608 skipped
+```
+
+Most rows were skipped-only dependency-boundary files. The batch also recorded
+one file-level runtime error:
+`sage/modular/modform/l_series_gross_zagier_coeffs.pyx` hit the known
+recursive polynomial/number-field stack frontier at
+`K.<a> = QuadraticField(-40)`. The ordinary block-level failures clustered
+around graph-extension startup names, GAP-backed matrix groups, symbolic vector
+setup, elliptic-curve startup/backend gaps, numerical linear programming
+setup, and totally-real number-field PARI/cypari2 object-model gaps.
+
+The remaining narrow actionable dependency-boundary cluster was
+`sage/rings/polynomial/pbori/gbcore.py`, whose two doctest groups failed
+downstream of the unavailable `sage.rings.polynomial.pbori.pbori` extension.
+The WASI source patch now marks those groups with `# needs brial`, matching
+the adjacent PolyBoRi files tagged in the prior low-prompt passes. A focused
+rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-codex/pbori-gbcore-tags/focused.sqlite3`
+and records:
+
+```text
+gbcore.py: 0 passed, 0 failed, 19 skipped
+```
+
+The focused skip query groups all 19 rows under `optional:brial`. A strict
+promotion scan across the broad batch and focused rerun with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, and `--dedupe-paths` printed no
+uncovered clean runnable rows. Future low-prompt work should continue past the
+16-to-20 band or target one of the non-PolyBoRi root-cause clusters above.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
