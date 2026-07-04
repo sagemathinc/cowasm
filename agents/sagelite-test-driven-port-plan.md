@@ -30514,6 +30514,28 @@ and `--dedupe-paths` printed no uncovered clean runnable rows. Future
 scheduled runs should avoid repeating `generic_graph.py` until the graph
 extension-resource frontier moves, especially `generic_graph_pyx`.
 
+Follow-up current source-minus-corpus exhaustion audit:
+
+No new high-prompt corpus candidate was found after the `generic_graph.py`
+frontend audit. A fresh scan of
+`sagemath/sagelite/build/wasi-sdk/src/sage` against the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus found no
+uncovered `.py` or `.pyx` source file with more `sage:` prompts than
+`generic_graph.py`:
+
+```text
+4338    src/sage/graphs/generic_graph.py
+```
+
+The strict promotion scan across the current 2026-07-04 active scratch
+databases also prints no uncovered clean runnable rows when run with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, and `--dedupe-paths`. The checked corpus therefore
+remains at 1,070 non-comment entries after the interactive-simplex and pushout
+promotions. Future scheduled runs should either return to a targeted
+root-cause cluster from the recorded near misses, or refresh the
+source-minus-corpus scan after the Sagelite source/runtime frontier changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
