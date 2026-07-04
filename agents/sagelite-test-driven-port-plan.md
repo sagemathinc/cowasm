@@ -30093,6 +30093,39 @@ failures around PARI-backed polynomial factorization and real conversion.
 `real_mpfr.pyx` should therefore be treated as a targeted real-field semantics
 pass, not as a browser-profile corpus promotion candidate yet.
 
+Follow-up 1151-to-1200 prompt-band audit and elliptic-point backend tagging:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained two uncovered files:
+`sage/combinat/diagram_algebras.py` and
+`sage/schemes/elliptic_curves/ell_point.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1151-1200/probe.sqlite3`
+and recorded:
+
+```text
+2 files: 0 passed, 1 failed, 1165 skipped
+```
+
+`diagram_algebras.py` was skipped-only under its existing file-level
+`sage.combinat sage.modules` dependency metadata, so it adds no runnable
+default browser-profile coverage yet.
+
+`ell_point.py` initially failed at file scope while constructing a large
+finite field for a Tate-pairing example, with a cypari2/PARI
+`memory access out of bounds` trap in `objtogen`. The WASI source patch now
+marks the untagged large finite-field Weil-pairing and Tate-pairing examples,
+plus their dependent torsion/error checks, with explicit
+`# needs sage.rings.finite_rings` metadata. Focused `--line` reruns for the
+newly tagged examples at patched-source lines 2248, 2493, 2507, and 2531 each
+recorded `0 passed, 0 failed, 1 skipped`, confirming the directives avoid the
+crashing backend paths.
+
+A full-file rerun after those tags still records a later file-level cypari2
+trap in `EllipticCurvePoint_number_field._has_order_at_least` while building
+`NumberField(x^2 - x + 2)`. `ell_point.py` therefore remains a broad
+elliptic/number-field backend frontier, not a browser-profile corpus promotion
+candidate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

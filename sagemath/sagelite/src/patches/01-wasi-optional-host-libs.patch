@@ -13914,3 +13914,26 @@ diff -urN a/src/sage/numerical/interactive_simplex_method.py b/src/sage/numerica
              Entering: $x_{1}$. Leaving: $x_{4}$.
              \begin{equation*}
              B_\mathrm{new}^{-1} = E^{-1} B_\mathrm{old}^{-1} =
+diff --git a/src/sage/schemes/elliptic_curves/ell_point.py b/src/sage/schemes/elliptic_curves/ell_point.py
+--- a/src/sage/schemes/elliptic_curves/ell_point.py
++++ b/src/sage/schemes/elliptic_curves/ell_point.py
+@@ -2247,3 +2247,4 @@
++            sage: # needs sage.rings.finite_rings
+             sage: F = GF(65537^2, modulus=[3,-1,1], name='a')
+             sage: F.inject_variables()
+             Defining a
+@@ -2491,3 +2492,4 @@
++            sage: # needs sage.rings.finite_rings
+             sage: F = GF(65537^2, modulus=[3,46810,1], name='z2')
+             sage: F.inject_variables()
+             Defining z2
+@@ -2507,3 +2509,4 @@
++            sage: # needs sage.rings.finite_rings
+             sage: P.tate_pairing(Q, 163, 2)
+             Traceback (most recent call last):
+             ...
+@@ -2530,3 +2533,4 @@
++            sage: # needs sage.rings.finite_rings
+             sage: p = 886368969471450739924935101400677
+             sage: a = 26392827536965106777121445123290
+             sage: b = 372325368096095544195525883520589
