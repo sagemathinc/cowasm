@@ -29372,6 +29372,47 @@ and one file-level `timeout`. The strict promotion scan with
 `--require-run-metadata`, `--require-source-root-path`, and
 `--require-block-rows` printed no rows after subtracting the current corpus.
 
+Follow-up 611-to-625 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The regenerated band contained five uncovered files:
+`sage/combinat/interval_posets.py`, `sage/rings/species.py`,
+`sage/matrix/matrix_double_dense.pyx`, `sage/combinat/growth.py`, and
+`sage/combinat/parallelogram_polyomino.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-611-625/probe.sqlite3`
+and recorded:
+
+```text
+5 files: 72 passed, 1055 failed, 1923 skipped
+```
+
+Three files were skipped-only dependency boundaries:
+`sage/matrix/matrix_double_dense.pyx`, `sage/combinat/growth.py`, and
+`sage/combinat/parallelogram_polyomino.py`. Their blocks are already guarded
+by optional, needs, random, tolerance, or deferred metadata for NumPy, SciPy,
+symbolic, combinatorics, graph, modules, and plotting coverage, so they add no
+runnable default-profile signal to the quiet corpus.
+
+The runnable files were not narrow promotions. `sage/combinat/interval_posets.py`
+recorded `49 passed, 476 failed, 76 skipped`, dominated by missing
+`TamariIntervalPoset` and `TamariIntervalPosets` startup names plus dependent
+`ip`/`TIP` examples. A direct import probe shows the underlying boundary is
+the graph backend: importing `sage.combinat.interval_posets` reaches
+`sage.graphs.digraph` and fails because `sage.graphs.generic_graph_pyx` is
+not available in the current browser-compatible runtime. `sage/rings/species.py`
+recorded `23 passed, 579 failed, 9 skipped`, dominated by missing species
+constructors such as `PolynomialSpecies`, `AtomicSpecies`, and
+`MolecularSpecies`, dependent `P`/`A`/`M` examples, the unavailable
+`sage.libs.symmetrica.symmetrica` module, and group/species display drift.
+
+There were no file-level runtime errors in this band. The saved failure-class
+summary was 924 `NameError`, 68 `ModuleNotFoundError`, 54 `output_mismatch`,
+five `TypeError`, three `ImportError`, and one `AttributeError`. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+and `--require-block-rows` printed no rows after subtracting the current
+corpus; a broad near-miss scan surfaced only the same interval-poset and
+species frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
