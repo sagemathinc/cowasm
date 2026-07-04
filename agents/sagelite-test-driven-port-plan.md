@@ -29466,6 +29466,96 @@ block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py` prints no promotion row after subtracting the
 updated corpus.
 
+Follow-up 641-to-655 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The regenerated band contained six uncovered files:
+`sage/tensor/modules/free_module_tensor.py`, `sage/matroids/database_matroids.py`,
+`sage/geometry/polyhedron/combinatorial_polyhedron/base.pyx`,
+`sage/rings/padics/padic_ZZ_pX_CR_element.pyx`,
+`sage/algebras/commutative_dga.py`, and `sage/crypto/classical.py`. The direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-641-655/probe.sqlite3`
+and recorded:
+
+```text
+6 files: 608 passed, 1901 failed, 1363 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/rings/padics/padic_ZZ_pX_CR_element.pyx` and
+`sage/crypto/classical.py`. Their blocks are already guarded by optional,
+needs, random, long-time, not-tested, or deferred metadata, so they add no
+runnable default-profile signal to the quiet corpus.
+
+The runnable files were not narrow promotions.
+`sage/tensor/modules/free_module_tensor.py` was the only near miss, with
+541 passed, 97 failed, and 4 skipped blocks, but the remaining failures mixed
+setup-name cascades with `_multiprocessing`, GAP, and display drift boundaries.
+`sage/matroids/database_matroids.py`, `sage/algebras/commutative_dga.py`, and
+`sage/geometry/polyhedron/combinatorial_polyhedron/base.pyx` each had hundreds
+of failures dominated by dependent setup names and unavailable broader
+subsystems rather than a compact metadata gap. The saved failure-class summary
+was 1639 `NameError`, 194 `ModuleNotFoundError`, 43 `output_mismatch`, 15
+`ImportError`, six `AttributeError`, and four `TypeError` block failures. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, and `--require-block-rows` printed no rows after
+subtracting the current corpus.
+
+Follow-up 656-to-670 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-656-670/probe.sqlite3`
+for `sage/rings/polynomial/multi_polynomial.pyx` and
+`sage/rings/complex_arb.pyx`, recording:
+
+```text
+2 files: 0 passed, 2 failed, 0 skipped
+```
+
+Both files failed at file scope before producing useful block coverage.
+`multi_polynomial.pyx` hit a JavaScript `RangeError: Maximum call stack size
+exceeded` while constructing a polynomial over `CyclotomicField(3)` at line
+910. `complex_arb.pyx` timed out after 180 seconds at the line-530
+`CBF.has_coerce_map_from(ComplexBallField(42))` example. The file-summary
+query classifies these as file-level `Error` and `timeout` rows respectively,
+so this band adds no runnable quiet-corpus signal.
+
+Follow-up 671-to-685 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-671-685/probe.sqlite3`
+and recorded:
+
+```text
+8 files: 278 passed, 460 failed, 3273 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/modular/modform_hecketriangle/graded_ring_element.py`,
+`sage/combinat/cluster_algebra_quiver/cluster_seed.py`,
+`sage/modules/with_basis/representation.py`, and
+`sage/rings/number_field/order.py`. Their blocks are already guarded by
+existing optional, needs, long-time, random, symbolic, number-field, modular,
+cluster, and algebra metadata, so they add no runnable default-profile signal.
+
+The runnable files were broad frontiers rather than narrow promotions.
+`sage/ext/fast_callable.pyx` was the only near miss, with 129 passed, 70
+failed, and 433 skipped blocks, but its failures span missing interpreter
+wrapper modules, `KeyError` compiler-instruction metadata, setup-name
+cascades, and output drift. `sage/game_theory/normal_form_game.py` recorded
+149 passed, 388 failed, and 130 skipped blocks, dominated by startup-name
+cascades and optional backend boundaries. The two file-level errors were
+existing backend clusters: a Singular/NTL dynamic-link failure in
+`sage/rings/polynomial/plural.pyx` and an NTL-backed WASM trap in
+`sage/rings/tate_algebra_element.pyx`. The saved block failure-class summary
+was 395 `NameError`, 26 `output_mismatch`, 23 `ModuleNotFoundError`, 11
+`AttributeError`, and three `KeyError` failures. The strict promotion scan
+with `--require-run-metadata`, `--require-source-root-path`, and
+`--require-block-rows` printed no rows after subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
