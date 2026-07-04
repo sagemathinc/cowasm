@@ -29322,6 +29322,56 @@ promotion and near-miss scans with `--require-run-metadata`,
 this database, so future prompt-band work should move past this range or
 target a specific poset, GLPK, manifold, or Arb runtime surface directly.
 
+Follow-up 596-to-610 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The regenerated band contained six uncovered files:
+`sage/matrix/special.py`, `sage/rings/finite_rings/integer_mod.pyx`,
+`sage/rings/number_field/number_field_rel.py`, `sage/modular/dirichlet.py`,
+`sage/schemes/elliptic_curves/ell_finite_field.py`, and
+`sage/manifolds/differentiable/manifold.py`. The direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-596-610/probe.sqlite3`
+and recorded:
+
+```text
+6 files: 399 passed, 700 failed, 688 skipped
+```
+
+`sage/modular/dirichlet.py` was skipped-only in the default browser-compatible
+profile, with all 590 blocks guarded by existing optional, needs, or deferred
+metadata, so it adds no runnable quiet-corpus signal.
+
+The runnable block failures were broad frontiers. `sage/matrix/special.py`
+recorded `398 passed, 91 failed, 98 skipped`; the largest clusters were
+dependent setup names such as `A` and `B`, symbolic-expression imports, graph
+or group constructors such as `CyclicPermutationGroup`, matrix display drift,
+and unported cypari2 object-model paths. The strict near-miss scan surfaced
+this file as the only near miss under `--max-failed 120`, but the failure
+shape spans matrix semantics, symbolic startup, optional graph/group support,
+and PARI conversion rather than a narrow metadata gap.
+`sage/manifolds/differentiable/manifold.py` recorded `1 passed, 606 failed, 0
+skipped`, dominated by missing `Manifold` startup and the resulting dependent
+`M`, `U`, chart, field, and vector-field name cascades. This keeps the
+manifold stack in the same broad startup frontier as the preceding chart and
+metric probes.
+
+The file-level errors were also not promotion candidates.
+`sage/rings/finite_rings/integer_mod.pyx` trapped at the line-338
+`TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()` example after importing coding
+bound helpers and reaching a GSL probability-distribution `unreachable` trap.
+`sage/rings/number_field/number_field_rel.py` timed out at the line-240
+relative-number-field factorization example `(x^2 + 2).factor()`.
+`sage/schemes/elliptic_curves/ell_finite_field.py` trapped at the line-827
+PARI-backed cardinality setup `p = next_prime(10^3)`, grouping at the existing
+cypari2 `gen.cpython-314-wasm32-wasi.so.blockinsert` memory-access frame.
+
+The saved failure-class summary was 634 `NameError`, 18 `AttributeError`, 16
+`output_mismatch`, 13 `TypeError`, seven `ModuleNotFoundError`, five
+`SystemError`, four `NotImplementedError`, two file-level `wasm_trap` errors,
+and one file-level `timeout`. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, and
+`--require-block-rows` printed no rows after subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
