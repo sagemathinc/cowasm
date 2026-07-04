@@ -27667,6 +27667,19 @@ passing default-profile coverage. These files should stay out of the curated
 corpus until either their dependency tags expose runnable examples or the
 underlying optional graph/category surfaces change.
 
+Candidate-scanner tooling pass on 2026-07-04:
+
+Fresh frontier mining found no uncovered clean runnable candidate and no small
+near miss from the latest scratch dashboards, but it did expose a drift between
+the documented audit commands and the checked helper script:
+`doctest-corpus-candidates.py` rejected `--limit`, even though scheduled
+frontier scans use that option to keep broad probe output readable. The helper
+now accepts `--limit N`, validates it as positive, applies it after
+filtering/sorting, and applies it after best-row selection when
+`--dedupe-paths` is active. The standalone Sagelite smoke fixture now checks
+limited file-error and near-miss output, so future audit-command examples stay
+script-compatible.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -3050,6 +3050,16 @@ src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError" ]; t
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --file-errors did not report file-scope failures."
 fi
+doctest_candidate_helper_file_errors_limited="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --limit 1 \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_file_errors_limited" != "src/sage/example/stale_harness_error.py	0	0	0	0	0	12	error	FileNotFoundError" ]; then
+  printf '%s\n' "$doctest_candidate_helper_file_errors_limited" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --limit did not bound file-scope failures."
+fi
 doctest_candidate_helper_file_error_details="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
   --include-failure-detail \
@@ -3149,6 +3159,17 @@ if [ -n "$doctest_candidate_helper_near_misses_only_timeout" ]; then
   printf '%s\n' "$doctest_candidate_helper_near_misses_only_timeout" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --only-block-failure-class reported unrelated near misses."
+fi
+doctest_candidate_helper_near_misses_limited="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --limit 1 \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_near_misses_limited" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_near_misses_limited" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --limit did not bound near-miss rows."
 fi
 doctest_candidate_helper_near_misses_no_startup_detail="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \

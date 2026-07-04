@@ -56,6 +56,11 @@ def parse_args() -> argparse.Namespace:
         help="minimum passing block count for a candidate",
     )
     parser.add_argument(
+        "--limit",
+        type=int,
+        help="maximum number of rows to print after filtering and sorting",
+    )
+    parser.add_argument(
         "--include-header",
         action="store_true",
         help="print a tab-separated header row",
@@ -342,6 +347,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--quiet-invalid requires --ignore-invalid")
     if args.max_failed < 1:
         parser.error("--max-failed must be positive")
+    if args.limit is not None and args.limit < 1:
+        parser.error("--limit must be positive")
     if args.min_runner_version is not None and args.min_runner_version < 1:
         parser.error("--min-runner-version must be positive")
     if args.failure_detail_limit < 0:
@@ -1098,7 +1105,10 @@ def main() -> int:
             columns.insert(0, "database")
         print("\t".join(columns))
 
+    printed_rows = 0
     for database in args.database:
+        if args.limit is not None and printed_rows >= args.limit:
+            break
         try:
             if not database.exists():
                 raise SystemExit(f"database not found: {database}")
@@ -1157,7 +1167,10 @@ def main() -> int:
             collected_rows.extend((database, row) for row in rows)
         else:
             for row in rows:
+                if args.limit is not None and printed_rows >= args.limit:
+                    break
                 print_row(row, database, show_database, args)
+                printed_rows += 1
 
     if args.dedupe_paths:
         best_by_path: dict[
@@ -1190,7 +1203,7 @@ def main() -> int:
                 args.zero_blocks,
                 args.file_errors,
             ),
-        ):
+        )[: args.limit]:
             print_row(row, database, show_database, args)
     return 0
 
