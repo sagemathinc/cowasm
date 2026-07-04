@@ -30594,6 +30594,51 @@ These files remain skipped-only dependency-boundary rows rather than corpus
 promotion candidates, but the low-prompt dashboard no longer reports them as
 ordinary failures.
 
+Follow-up 10-to-15 prompt-band audit and remaining PolyBoRi tagging:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree found 1,592
+prompt-bearing uncovered files. The next 10-to-15 prompt band, excluding the
+just-tagged `blocks.py` and `nf.py` PolyBoRi files, wrote
+`.tmp/current-run/scheduled-2026-07-04-continuation/prompt-10-15/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 22 passed, 240 failed, 340 skipped
+```
+
+The batch had two file-level timeouts: `sage/rings/polynomial/ideal.py` timed
+out in the Singular/Groebner-basis example
+`I = R.ideal([x^2 - 1, x^3 - 1])`, and
+`sage/schemes/cyclic_covers/constructor.py` timed out in
+`CyclicCover(2, x^5 + x + 1)`. The block-level failures are broad
+dependency-boundary dashboard data, led by missing `sage.libs.gap.libgap`,
+graph-extension imports, eclib, IPython kernel, scheme constructor namespace,
+and symbolic/numerical setup cascades.
+
+The narrow actionable cluster was the remaining PolyBoRi/BRiAl surface:
+`sage/rings/polynomial/pbori/frontend.py` and
+`sage/rings/polynomial/pbori/randompoly.py` still failed downstream of the
+unavailable `sage.rings.polynomial.pbori.pbori` extension, while adjacent
+PolyBoRi files were already classified as `# needs brial`. The WASI source
+patch now marks those doctest groups with `# needs brial`. A focused rerun
+wrote
+`.tmp/current-run/scheduled-2026-07-04-continuation/pbori-more-tags/focused.sqlite3`
+and records:
+
+```text
+frontend.py:  0 passed, 0 failed, 13 skipped
+randompoly.py: 0 passed, 0 failed, 13 skipped
+```
+
+The strict promotion scan across the broad batch and the focused rerun with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, and `--dedupe-paths` printed no
+uncovered clean runnable rows. Future low-prompt work should continue beyond
+this band or target a specific non-PolyBoRi root-cause cluster such as GAP,
+graph extensions, eclib, IPython, scheme constructors, or the two timeout
+frontiers.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

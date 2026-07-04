@@ -558,6 +558,22 @@ diff -urN a/src/sage/rings/polynomial/pbori/nf.py b/src/sage/rings/polynomial/pb
          sage: from sage.rings.polynomial.pbori import declare_ring, normal_form
          sage: r=declare_ring(['x','y'], globals())
          sage: normal_form(x+y, [y],reduced=True)
+diff -urN a/src/sage/rings/polynomial/pbori/frontend.py b/src/sage/rings/polynomial/pbori/frontend.py
+--- a/src/sage/rings/polynomial/pbori/frontend.py
++++ b/src/sage/rings/polynomial/pbori/frontend.py
+@@ -8,0 +9 @@
++    sage: # needs brial
+@@ -22,0 +24 @@
++    sage: # needs brial
+diff -urN a/src/sage/rings/polynomial/pbori/randompoly.py b/src/sage/rings/polynomial/pbori/randompoly.py
+--- a/src/sage/rings/polynomial/pbori/randompoly.py
++++ b/src/sage/rings/polynomial/pbori/randompoly.py
+@@ -20,0 +21 @@
++        sage: # needs brial
+@@ -61,0 +63 @@
++        sage: # needs brial
+@@ -98,0 +101 @@
++        sage: # needs brial
 diff -urN a/src/sage/libs/homfly.pyx b/src/sage/libs/homfly.pyx
 --- a/src/sage/libs/homfly.pyx
 +++ b/src/sage/libs/homfly.pyx
