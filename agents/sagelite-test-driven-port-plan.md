@@ -28436,6 +28436,53 @@ records CoWasm commit `45a84cfa38f85722caf601f5c477e2e6bbea593f`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 87, and a 100% non-skipped pass rate.
 
+Follow-up 266-to-280 prompt-band corpus-growth pass:
+
+```text
+boolean_function.pyx: 161 passed, 0 failed, 100 skipped
+```
+
+The fresh source-minus-corpus prompt-count list in
+`.tmp/current-run/scheduled-2026-07-04-next-band-266-280/` identified 34
+uncovered files with 266 to 280 static Sage prompts. A broad one-worker probe
+of the full band was stopped before SQLite checkpointing after the first file
+failed to make timely progress, so the pass switched to bounded targeted and
+single-file probes. Most compact targets were skipped-only dependency
+boundaries, including `sdes.py`, `cfinite_sequence.py`, `normal_form.py`,
+`complex_reflection_or_generalized_coxeter_groups.py`,
+`fp_graded/module.py`, `branching_rules.py`, `weyl_characters.py`,
+`ore_polynomial_ring.py`, and `animate.py`; `book_stein_ent.py` extracted zero
+blocks. The remaining sampled failures were broader backend clusters:
+`chain_complex.py` hit a matrix `echelonize` signature mismatch,
+`complex_interval.pyx` recorded `203 passed, 61 failed, 13 skipped`,
+`free_quadratic_module_integer_symmetric.py` recorded
+`23 passed, 93 failed, 139 skipped`, and `padic_base_leaves.py` recorded
+`194 passed, 21 failed, 49 skipped`.
+
+The narrow promotion target was `sage/crypto/boolean_function.pyx`, which
+first recorded `161 passed, 4 failed, 96 skipped`. All four failures belonged
+to one dependency boundary in the `is_linear_structure()` examples:
+constructing dense vectors over `GF(2)` imports the unavailable
+`sage.matrix.matrix_mod2_dense` module, and the dependent checks then inherit
+that missing setup. The added WASI source patch marks those vector setup and
+dependent prompts as `# needs sage.matrix.matrix_mod2_dense`, matching the
+existing browser-profile boundary used elsewhere in the corpus.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-266-280/boolean-function-make.sqlite3`.
+The focused run passed with `161 passed, 0 failed, 100 skipped`; the saved
+block- and file-failure cluster queries are empty, and the strict candidate
+scan prints no row after subtracting the updated corpus. This promotes
+`sage/crypto/boolean_function.pyx` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,062 non-comment entries. The focused latest-run summary
+records CoWasm commit `dbe17ba42311f904aacdfe9da13d2959153de2ad`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 87, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

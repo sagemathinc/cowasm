@@ -12993,3 +12993,16 @@ diff -urN -U0 a/src/sage/modular/pollack_stevens/sigma0.py b/src/sage/modular/po
 @@ -293 +293 @@
 -            sage: type(sm)
 +            sage: type(sm)                                                        # known bug - Sagelite WASI matrix backend class identity drift
+diff -urN -U0 a/src/sage/crypto/boolean_function.pyx b/src/sage/crypto/boolean_function.pyx
+--- a/src/sage/crypto/boolean_function.pyx
++++ b/src/sage/crypto/boolean_function.pyx
+@@ -1155,2 +1155,2 @@
+-            sage: v = vector(GF(2), l)
+-            sage: f.is_linear_structure(v)
++            sage: v = vector(GF(2), l)                                             # needs sage.matrix.matrix_mod2_dense
++            sage: f.is_linear_structure(v)                                         # needs sage.matrix.matrix_mod2_dense
+@@ -1169,2 +1169,2 @@
+-            sage: v = vector(GF(2), [1, 0, 1, 1, 1])
+-            sage: f.is_linear_structure(v)
++            sage: v = vector(GF(2), [1, 0, 1, 1, 1])                               # needs sage.matrix.matrix_mod2_dense
++            sage: f.is_linear_structure(v)                                         # needs sage.matrix.matrix_mod2_dense

@@ -125,6 +125,7 @@ src/sage/cpython/debug.pyx
 src/sage/cpython/getattr.pyx
 src/sage/cpython/dict_del_by_value.pyx
 src/sage/cpython/string.pxd
+src/sage/crypto/boolean_function.pyx
 src/sage/crypto/mq/mpolynomialsystemgenerator.py
 src/sage/crypto/public_key/key_exchange/finite_field_diffie_hellman.py
 src/sage/coding/bounds_catalog.py
