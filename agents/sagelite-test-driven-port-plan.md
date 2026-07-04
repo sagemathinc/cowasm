@@ -29413,6 +29413,59 @@ and `--require-block-rows` printed no rows after subtracting the current
 corpus; a broad near-miss scan surfaced only the same interval-poset and
 species frontiers.
 
+Follow-up 626-to-640 prompt-band audit and Clifford-algebra corpus-growth pass:
+
+The fresh source-minus-corpus prompt-count band contained seven uncovered
+files and the direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-626-640/probe.sqlite3`,
+recording:
+
+```text
+7 files: 586 passed, 423 failed, 2120 skipped
+```
+
+Three files were skipped-only dependency boundaries:
+`sage/rings/number_field/number_field_element_quadratic.pyx`,
+`sage/combinat/ncsf_qsym/qsym.py`, and `sage/modular/abvar/abvar.py`.
+Their blocks are already guarded by optional, long-time, random, symbolic,
+number-field, combinat, module, PARI, FLINT, or not-implemented metadata, so
+they add no runnable default-profile signal.
+
+The remaining non-promoted files stayed on existing broad frontiers.
+`sage/schemes/elliptic_curves/ell_field.py` recorded 24 passed, 358 failed,
+and 215 skipped blocks, dominated by missing `EllipticCurve` startup and
+dependent setup-name cascades. `sage/geometry/hyperplane_arrangement/arrangement.py`
+hit a WASM memory trap at `a.essentialization()`, grouping at the same
+`wasm-function[8333]` memory-access frame seen in other polynomial/Arb
+frontiers. `sage/schemes/elliptic_curves/ell_generic.py` timed out at the
+quotient-ring setup `S.<Y> = R.quotient(X^2)`.
+
+The same band identified `sage/algebras/clifford_algebra.py` as a useful
+near-miss: the initial run recorded 562 passed, 63 failed, and one skipped
+block. The added WASI source patch marks the browser-profile dependency
+boundaries explicitly: PARI/cypari2-backed center and supercenter basis
+computations, symbolic `SR` exterior-algebra coverage, current chain-complex
+homology diagnostic drift, and noncommutative exterior-ideal quotient/Groebner
+operations that route through the `sage.rings.polynomial.plural` boundary.
+Focused make-target validation with a temporary one-file corpus and
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0` wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-626-640/clifford-make/make.sqlite3`
+and recorded:
+
+```text
+clifford_algebra.py: 559 passed, 0 failed, 67 skipped
+```
+
+This promotes `src/sage/algebras/clifford_algebra.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,067 non-comment entries. The latest-run summary records
+CoWasm commit `d9f284a2ec66ac75b85f980a7805353b04000194`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 89, and a 100% non-skipped pass rate. The saved
+block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after subtracting the
+updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

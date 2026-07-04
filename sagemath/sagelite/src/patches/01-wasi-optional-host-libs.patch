@@ -13309,3 +13309,201 @@ diff -urN a/src/sage/structure/parent.pyx b/src/sage/structure/parent.pyx
 @@ -2645 +2646 @@
 -            sage: coercion_model.discover_action(int, E, operator.mul)
 +            sage: coercion_model.discover_action(int, E, operator.mul)               # needs sage.rings.finite_rings sage.schemes
+diff -urN a/src/sage/algebras/clifford_algebra.py b/src/sage/algebras/clifford_algebra.py
+--- a/src/sage/algebras/clifford_algebra.py
++++ b/src/sage/algebras/clifford_algebra.py
+@@ -1237 +1237 @@
+-            sage: Z = Cl.center_basis(); Z
++            sage: Z = Cl.center_basis(); Z  # needs sage.libs.pari
+@@ -1239 +1239 @@
+-            sage: all(z*b - b*z == 0 for z in Z for b in Cl.basis())
++            sage: all(z*b - b*z == 0 for z in Z for b in Cl.basis())  # needs sage.libs.pari
+@@ -1244 +1244 @@
+-            sage: Z = Cl.center_basis(); Z
++            sage: Z = Cl.center_basis(); Z  # needs sage.libs.pari
+@@ -1246 +1246 @@
+-            sage: all(z*b - b*z == 0 for z in Z for b in Cl.basis())
++            sage: all(z*b - b*z == 0 for z in Z for b in Cl.basis())  # needs sage.libs.pari
+@@ -1251 +1251 @@
+-            sage: Cl.center_basis()
++            sage: Cl.center_basis()  # needs sage.libs.pari
+@@ -1256 +1256 @@
+-            sage: Cl.center_basis()
++            sage: Cl.center_basis()  # needs sage.libs.pari
+@@ -1263 +1263 @@
+-            sage: Cl.center_basis()
++            sage: Cl.center_basis()  # needs sage.libs.pari
+@@ -1270 +1270 @@
+-            sage: Cl.center_basis()
++            sage: Cl.center_basis()  # needs sage.libs.pari
+@@ -1313 +1313 @@
+-            sage: SZ = Cl.supercenter_basis(); SZ
++            sage: SZ = Cl.supercenter_basis(); SZ  # needs sage.libs.pari
+@@ -1315 +1315 @@
+-            sage: all(z.supercommutator(b) == 0 for z in SZ for b in Cl.basis())
++            sage: all(z.supercommutator(b) == 0 for z in SZ for b in Cl.basis())  # needs sage.libs.pari
+@@ -1320 +1320 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1325 +1325 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1330 +1330 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1337 +1337 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1342 +1342 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1349 +1349 @@
+-            sage: Cl.supercenter_basis()
++            sage: Cl.supercenter_basis()  # needs sage.libs.pari
+@@ -1872,2 +1872,2 @@
+-            sage: E = ExteriorAlgebra(SR,'e',3)
+-            sage: E.inject_variables()
++            sage: E = ExteriorAlgebra(SR,'e',3)  # needs sage.symbolic
++            sage: E.inject_variables()  # needs sage.symbolic
+@@ -1875,2 +1875,2 @@
+-            sage: a = (e0*e1).interior_product(e0)
+-            sage: a * e0
++            sage: a = (e0*e1).interior_product(e0)  # needs sage.symbolic
++            sage: a * e0  # needs sage.symbolic
+@@ -2273 +2273 @@
+-        sage: C.homology()
++        sage: C.homology()  # known bug
+@@ -2288 +2288 @@
+-        sage: C.homology()
++        sage: C.homology()  # known bug
+@@ -2516 +2516 @@
+-        sage: C.homology()
++        sage: C.homology()  # known bug
+@@ -2531 +2531 @@
+-        sage: C.homology()
++        sage: C.homology()  # known bug
+@@ -2730 +2730 @@
+-        sage: xbar * ybar
++        sage: xbar * ybar  # needs sage.rings.polynomial.plural
+@@ -2767 +2767 @@
+-            sage: I.reduce(x*y + x*y*z + z)
++            sage: I.reduce(x*y + x*y*z + z)  # needs sage.rings.polynomial.plural
+@@ -2769 +2769 @@
+-            sage: I.reduce(x*y + x + y)
++            sage: I.reduce(x*y + x + y)  # needs sage.rings.polynomial.plural
+@@ -2771 +2771 @@
+-            sage: I.reduce(x*y + x*y*z)
++            sage: I.reduce(x*y + x*y*z)  # needs sage.rings.polynomial.plural
+@@ -2776 +2776 @@
+-            sage: I.reduce(I.gen(0) * d)
++            sage: I.reduce(I.gen(0) * d)  # needs sage.rings.polynomial.plural
+@@ -2793 +2793 @@
+-            sage: I.groebner_basis()
++            sage: I.groebner_basis()  # needs sage.rings.polynomial.plural
+@@ -2795 +2795 @@
+-            sage: x in I
++            sage: x in I  # needs sage.rings.polynomial.plural
+@@ -2797 +2797 @@
+-            sage: y*z in I
++            sage: y*z in I  # needs sage.rings.polynomial.plural
+@@ -2799 +2799 @@
+-            sage: x + 3*y*z in I
++            sage: x + 3*y*z in I  # needs sage.rings.polynomial.plural
+@@ -2801 +2801 @@
+-            sage: x + 3*y in I
++            sage: x + 3*y in I  # needs sage.rings.polynomial.plural
+@@ -2803 +2803 @@
+-            sage: x*y in I
++            sage: x*y in I  # needs sage.rings.polynomial.plural
+@@ -2805 +2805 @@
+-            sage: x + x*y + y*z + x*z in I
++            sage: x + x*y + y*z + x*z in I  # needs sage.rings.polynomial.plural
+@@ -2826 +2826 @@
+-            sage: Ip == I
++            sage: Ip == I  # needs sage.rings.polynomial.plural
+@@ -2828 +2828 @@
+-            sage: Ip <= I
++            sage: Ip <= I  # needs sage.rings.polynomial.plural
+@@ -2830 +2830 @@
+-            sage: Ip < I
++            sage: Ip < I  # needs sage.rings.polynomial.plural
+@@ -2832 +2832 @@
+-            sage: Ip >= I
++            sage: Ip >= I  # needs sage.rings.polynomial.plural
+@@ -2834 +2834 @@
+-            sage: Ip > I
++            sage: Ip > I  # needs sage.rings.polynomial.plural
+@@ -2836 +2836 @@
+-            sage: E.ideal([x]) < I
++            sage: E.ideal([x]) < I  # needs sage.rings.polynomial.plural
+@@ -2838 +2838 @@
+-            sage: E.ideal([x]) <= I
++            sage: E.ideal([x]) <= I  # needs sage.rings.polynomial.plural
+@@ -2850 +2850 @@
+-            sage: IR <= IL
++            sage: IR <= IL  # needs sage.rings.polynomial.plural
+@@ -2852 +2852 @@
+-            sage: IR >= IL
++            sage: IR >= IL  # needs sage.rings.polynomial.plural
+@@ -2854 +2854 @@
+-            sage: IL.reduce(p * d)
++            sage: IL.reduce(p * d)  # needs sage.rings.polynomial.plural
+@@ -2856 +2856 @@
+-            sage: IR.reduce(d * p)
++            sage: IR.reduce(d * p)  # needs sage.rings.polynomial.plural
+@@ -2859 +2859 @@
+-            sage: IR <= IT
++            sage: IR <= IT  # needs sage.rings.polynomial.plural
+@@ -2861 +2861 @@
+-            sage: IL <= IT
++            sage: IL <= IT  # needs sage.rings.polynomial.plural
+@@ -2863 +2863 @@
+-            sage: IT <= IL
++            sage: IT <= IL  # needs sage.rings.polynomial.plural
+@@ -2865 +2865 @@
+-            sage: IT <= IR
++            sage: IT <= IR  # needs sage.rings.polynomial.plural
+@@ -2938 +2938 @@
+-            sage: J.groebner_basis()
++            sage: J.groebner_basis()  # needs sage.rings.polynomial.plural
+@@ -2952 +2952 @@
+-            sage: E.ideal([J.gen(0) * d * I.gen(0)], side='left') <= K
++            sage: E.ideal([J.gen(0) * d * I.gen(0)], side='left') <= K  # needs sage.rings.polynomial.plural
+@@ -2958 +2958 @@
+-            sage: X = J * I; X
++            sage: X = J * I; X  # needs sage.rings.polynomial.plural
+@@ -2960 +2960 @@
+-            sage: [X.lift(b) for b in X.basis()]
++            sage: [X.lift(b) for b in X.basis()]  # needs sage.rings.polynomial.plural
+@@ -2962,2 +2962,2 @@
+-            sage: p = X.lift(X.basis()[0])
+-            sage: p
++            sage: p = X.lift(X.basis()[0])  # needs sage.rings.polynomial.plural
++            sage: p  # needs sage.rings.polynomial.plural
+@@ -2965 +2965 @@
+-            sage: a * p  # not a left ideal
++            sage: a * p  # not a left ideal                                      # needs sage.rings.polynomial.plural
+@@ -3023 +3023 @@
+-            sage: I.groebner_basis()
++            sage: I.groebner_basis()  # needs sage.rings.polynomial.plural
+@@ -3031 +3031 @@
+-            sage: I.groebner_basis("degrevlex")
++            sage: I.groebner_basis("degrevlex")  # needs sage.rings.polynomial.plural
+@@ -3037 +3037 @@
+-            sage: I.groebner_basis("deglex")
++            sage: I.groebner_basis("deglex")  # needs sage.rings.polynomial.plural
+@@ -3062 +3062 @@
+-            sage: I.groebner_basis(reduced=False)
++            sage: I.groebner_basis(reduced=False)  # needs sage.rings.polynomial.plural
+@@ -3064 +3064 @@
+-            sage: I.groebner_basis()
++            sage: I.groebner_basis()  # needs sage.rings.polynomial.plural
+@@ -3071 +3071 @@
+-            sage: I.groebner_basis()
++            sage: I.groebner_basis()  # needs sage.rings.polynomial.plural
+@@ -3073 +3073 @@
+-            sage: I.groebner_basis(reduced=False)
++            sage: I.groebner_basis(reduced=False)  # needs sage.rings.polynomial.plural
+@@ -3080 +3080 @@
+-            sage: I.groebner_basis()
++            sage: I.groebner_basis()  # known bug
