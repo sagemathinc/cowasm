@@ -31245,6 +31245,44 @@ promotion scan with `--require-run-metadata`, `--require-source-root-path`,
 corpus remains at 1,075 non-comment entries. Validation also ran the full
 WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 40-to-42 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 40-to-42 prompt
+source-minus-corpus band. The fresh 23-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-40-42/prompt-40-42/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 67 passed, 279 failed, 512 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining failures were clear dependency-boundary frontiers:
+manifold Poisson tensors, matroid union construction, PARI-backed number-field
+prime iteration, affine and elliptic scheme helpers, finite-dimensional and
+Cherednik algebra backends, modular arithmetic-group matrix helpers, and
+IPython widget interaction.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.manifolds`, `sage.matroids`,
+`sage.libs.pari sage.rings.number_field`, `sage.schemes`, `sage.algebras`,
+`sage.libs.gap`, `sage.matrix.matrix_integer_dense`, `IPython`, and
+`sage.schemes.elliptic_curves`. A regenerated band rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-40-42/prompt-40-42/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 858 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py` and
+the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -14655,3 +14655,57 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.p
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  r"""
+diff --git a/src/sage/manifolds/differentiable/poisson_tensor.py b/src/sage/manifolds/differentiable/poisson_tensor.py
+--- a/src/sage/manifolds/differentiable/poisson_tensor.py
++++ b/src/sage/manifolds/differentiable/poisson_tensor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/matroids/union_matroid.pyx b/src/sage/matroids/union_matroid.pyx
+--- a/src/sage/matroids/union_matroid.pyx
++++ b/src/sage/matroids/union_matroid.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ """
+diff --git a/src/sage/rings/number_field/small_primes_of_degree_one.py b/src/sage/rings/number_field/small_primes_of_degree_one.py
+--- a/src/sage/rings/number_field/small_primes_of_degree_one.py
++++ b/src/sage/rings/number_field/small_primes_of_degree_one.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari sage.rings.number_field
+ r"""
+diff --git a/src/sage/schemes/affine/affine_rational_point.py b/src/sage/schemes/affine/affine_rational_point.py
+--- a/src/sage/schemes/affine/affine_rational_point.py
++++ b/src/sage/schemes/affine/affine_rational_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_ideal.py b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_ideal.py
+--- a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_ideal.py
++++ b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_ideal.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras
+ """
+diff --git a/src/sage/algebras/rational_cherednik_algebra.py b/src/sage/algebras/rational_cherednik_algebra.py
+--- a/src/sage/algebras/rational_cherednik_algebra.py
++++ b/src/sage/algebras/rational_cherednik_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap
+ """
+diff --git a/src/sage/modular/arithgroup/congroup_gamma.py b/src/sage/modular/arithgroup/congroup_gamma.py
+--- a/src/sage/modular/arithgroup/congroup_gamma.py
++++ b/src/sage/modular/arithgroup/congroup_gamma.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/repl/ipython_kernel/interact.py b/src/sage/repl/ipython_kernel/interact.py
+--- a/src/sage/repl/ipython_kernel/interact.py
++++ b/src/sage/repl/ipython_kernel/interact.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/ell_wp.py b/src/sage/schemes/elliptic_curves/ell_wp.py
+--- a/src/sage/schemes/elliptic_curves/ell_wp.py
++++ b/src/sage/schemes/elliptic_curves/ell_wp.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""
