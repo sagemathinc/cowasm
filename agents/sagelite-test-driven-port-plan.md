@@ -27596,6 +27596,37 @@ corpus. The remaining near miss, `sage/libs/gap/assigned_names.py`, has one
 passing block and 14 GAP/libgap startup failures, so it should stay out of the
 browser-profile corpus until the GAP surface changes.
 
+Focused group-algebra corpus-growth pass on 2026-07-04:
+
+```text
+group_algebra.py: 3 passed, 0 failed, 40 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/group_algebra.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,046
+non-comment entries. A fresh low/mid-prompt frontier probe first found no
+uncovered clean runnable candidates, but identified `group_algebra.py` as a
+small near miss with finite-field and input-validation coverage hidden behind
+GAP-backed permutation-group setup failures.
+
+The added WASI source patch marks the serialized GAP object, dihedral and
+symmetric permutation-group algebra examples, and additive cyclic group
+coercion examples as `# needs sage.libs.gap`. This preserves the default
+browser-profile checks for invalid `GroupAlgebra(1)` input and
+`GL(3, GF(7))` group-algebra construction over `ZZ` and `QQ`. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding
+and patching a fresh Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex/group-algebra/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`a128736fb12a35e45b772b508a12b5c3258402fd`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.libs.gap`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

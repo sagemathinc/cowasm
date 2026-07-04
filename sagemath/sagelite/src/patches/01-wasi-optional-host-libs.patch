@@ -12826,3 +12826,33 @@ diff -urN -U0 a/src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py b/src/sa
 @@ -360 +360 @@
 -            sage: TestSuite(L).run()
 +            sage: TestSuite(L).run()                                                   # known bug
+diff -urN -U0 a/src/sage/algebras/group_algebra.py b/src/sage/algebras/group_algebra.py
+--- a/src/sage/algebras/group_algebra.py
++++ b/src/sage/algebras/group_algebra.py
+@@ -10 +10,2 @@
++    sage: # needs sage.libs.gap
+     sage: G = loads(b"x\x9cM\xceM\n\xc20\x10\x86a\xac\xff\xf1$n\xb2\xf1\x04\x82"
+@@ -61 +62,2 @@
++        sage: # needs sage.libs.gap
+         sage: G = DihedralGroup(3)
+@@ -71 +73,2 @@
++        sage: # needs sage.libs.gap
+         sage: A in Algebras
+@@ -80 +83,2 @@
++        sage: # needs sage.libs.gap
+         sage: G.algebra(QQ)
+@@ -135 +140,2 @@
++            sage: # needs sage.libs.gap
+             sage: A = GroupAlgebra(SymmetricGroup(4), QQ)
+@@ -151 +157,2 @@
++            sage: # needs sage.libs.gap
+             sage: H = CyclicPermutationGroup(3)
+@@ -182 +189,2 @@
++            sage: # needs sage.libs.gap
+             sage: H = PermutationGroup([ [(1,2), (3,4)], [(5,6,7),(12,14,18)] ])
+@@ -193 +201,2 @@
++            sage: # needs sage.libs.gap
+             sage: ZG.coerce_map_from(QG)
+@@ -198 +207,2 @@
++            sage: # needs sage.libs.gap
+             sage: G = groups.misc.AdditiveCyclic(3)
