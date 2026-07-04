@@ -14220,3 +14220,28 @@ diff --git a/src/sage/rings/polynomial/binary_form_reduce.py b/src/sage/rings/po
 @@ -494 +494 @@
 -        sage: F.reduced_form()
 +        sage: F.reduced_form()  # needs sage.libs.pari
+diff --git a/src/sage/libs/gap/all_documented_functions.py b/src/sage/libs/gap/all_documented_functions.py
+--- a/src/sage/libs/gap/all_documented_functions.py
++++ b/src/sage/libs/gap/all_documented_functions.py
+@@ -9,3 +9,4 @@
++    sage: # needs sage.libs.gap
+     sage: from sage.libs.gap.all_documented_functions import *
+     sage: DihedralGroup(8)
+     <pc group of size 8 with 3 generators>
+diff --git a/src/sage/libs/pari/convert_flint.pyx b/src/sage/libs/pari/convert_flint.pyx
+--- a/src/sage/libs/pari/convert_flint.pyx
++++ b/src/sage/libs/pari/convert_flint.pyx
+@@ -133,1 +133,1 @@
+-        sage: matrix(ZZ,2,[1..6]).__pari__()   # indirect doctest
++        sage: matrix(ZZ,2,[1..6]).__pari__()   # indirect doctest, needs sage.libs.pari
+@@ -149,1 +149,1 @@
+-        sage: matrix(QQ, 2, [1/2, 2/3, 3/4, 4/5]).__pari__() # indirect doctest
++        sage: matrix(QQ, 2, [1/2, 2/3, 3/4, 4/5]).__pari__() # indirect doctest, needs sage.libs.pari
+diff --git a/src/sage/libs/pari/convert_sage_real_double.pyx b/src/sage/libs/pari/convert_sage_real_double.pyx
+--- a/src/sage/libs/pari/convert_sage_real_double.pyx
++++ b/src/sage/libs/pari/convert_sage_real_double.pyx
+@@ -9,2 +9,2 @@
+-        sage: from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
+-        sage: new_gen_from_real_double_element(RDF(-2.5))
++        sage: from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element  # needs sage.libs.pari
++        sage: new_gen_from_real_double_element(RDF(-2.5))                                          # needs sage.libs.pari

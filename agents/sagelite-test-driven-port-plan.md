@@ -30801,6 +30801,38 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the new deferrals under
 `optional:sage.libs.pari`, plus the file's existing long-time example.
 
+Follow-up compact prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 1-to-4 prompt
+source-minus-corpus band. The initial 24-file probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next/prompt-1-4.sqlite3` and recorded:
+
+```text
+sage -t failed: 0 passed, 8 failed, 49 skipped
+```
+
+Most files were already skipped-only dependency-boundary rows. The remaining
+zero-pass failures were `sage.libs.gap.all_documented_functions`, whose
+documented examples import the unavailable GAP/libgap front door, and the two
+PARI conversion helpers `convert_flint.pyx` and
+`convert_sage_real_double.pyx`, which reach the focused cypari2 object-model
+boundary or the unavailable `cypari2.convert` path.
+
+The WASI source patch now marks those examples with `# needs sage.libs.gap` or
+`# needs sage.libs.pari`. A refreshed patched-source rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-next/prompt-1-4-final.sqlite3`
+and records:
+
+```text
+sage -t passed: 0 passed, 0 failed, 57 skipped
+```
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The skip summary groups the newly tagged rows under
+`optional:sage.libs.gap` and `optional:sage.libs.pari`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
