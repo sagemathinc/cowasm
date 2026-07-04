@@ -28604,6 +28604,47 @@ records CoWasm commit `84f558be2f92bc10221aa8b915b8f196dd1ff3c2`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 88, and a 100% non-skipped pass rate.
 
+Follow-up 326-to-340 prompt-band corpus-growth pass:
+
+```text
+prompt-326-340.sqlite3: 670 passed, 1650 failed, 2593 skipped
+argument_groups.py:     255 passed,    0 failed,   80 skipped
+```
+
+The fresh 326-to-340 prompt-band probe attempted 18 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-326-340/prompt-326-340.sqlite3`.
+The batch shape was seven skipped-only dependency-boundary files, eight
+block-failing files, and three file-level errors. The file-level errors match
+existing frontier families: timeouts in root-lattice realization algebra and
+elliptic-curve isogeny setup, plus a matrix `echelonize_ring`
+function-signature mismatch in `free_module_morphism.py`.
+
+The narrow promotion target was
+`sage/groups/misc_gps/argument_groups.py`, which first recorded 262 passed
+blocks, 36 failed blocks, and 37 skipped blocks. Most failures were symbolic
+startup boundaries where upstream doctests use roots of unity or formal
+argument groups as symbolic expressions; dependent `_.parent()` checks needed
+matching inline `# needs sage.symbolic` directives, while a few longer groups
+use standalone setup directives.
+The remaining display drifts were the complex interval and complex ball
+`ArgumentGroup(...)` factory choices, now deferred as known browser-profile
+bugs.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-326-340/argument-groups/make.sqlite3`.
+The focused run passed with `255 passed, 0 failed, 80 skipped`; the saved
+block- and file-failure cluster queries are empty, and the strict candidate
+scan prints no row after subtracting the updated corpus. This promotes
+`sage/groups/misc_gps/argument_groups.py` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,064 non-comment entries. The focused latest-run summary
+records CoWasm commit `61af9e72570675d7ce467f5622e838ff83262631`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 88, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

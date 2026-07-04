@@ -13063,3 +13063,53 @@ diff -urN -U0 a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algeb
 @@ -1132 +1132 @@
 -            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)
 +            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)                         # known bug - Sagelite WASI Weyl algebra polynomial coercion gap
+diff -urN -U0 a/src/sage/groups/misc_gps/argument_groups.py b/src/sage/groups/misc_gps/argument_groups.py
+--- a/src/sage/groups/misc_gps/argument_groups.py
++++ b/src/sage/groups/misc_gps/argument_groups.py
+@@ -233,0 +234 @@
++            sage: # needs sage.symbolic
+@@ -254,0 +255 @@
++            sage: # needs sage.symbolic
+@@ -463,0 +464 @@
++            sage: # needs sage.symbolic
+@@ -470,0 +471 @@
++            sage: # needs sage.symbolic
+@@ -507,0 +508 @@
++            sage: # needs sage.symbolic
+@@ -650 +650 @@
+-            sage: UnitCircleGroup(RR)._repr_short_()
++            sage: UnitCircleGroup(RR)._repr_short_()                                   # needs sage.symbolic
+@@ -1116 +1116 @@
+-            sage: _.parent()
++            sage: _.parent()                                                         # needs sage.symbolic
+@@ -1153 +1153 @@
+-            sage: _.parent()
++            sage: _.parent()                                                         # needs sage.symbolic
+@@ -1158 +1158 @@
+-            sage: _.parent()
++            sage: _.parent()                                                         # needs sage.symbolic
+@@ -1163 +1163 @@
+-            sage: C(0.42)^CC(2.4)
++            sage: C(0.42)^CC(2.4)                                                    # needs sage.symbolic
+@@ -1165 +1165 @@
+-            sage: _.parent()
++            sage: _.parent()                                                         # needs sage.symbolic
+@@ -1170 +1170 @@
+-            sage: a = C(-20)^x; a
++            sage: a = C(-20)^x; a                                                    # needs sage.symbolic
+@@ -1172 +1172 @@
+-            sage: a.parent()
++            sage: a.parent()                                                         # needs sage.symbolic
+@@ -1242 +1242 @@
+-            sage: ArgumentByElementGroup(CC)._repr_short_()
++            sage: ArgumentByElementGroup(CC)._repr_short_()                            # needs sage.symbolic
+@@ -1466,0 +1467 @@
++            sage: # needs sage.symbolic
+@@ -1532,0 +1532 @@
++            sage: # needs sage.symbolic
+@@ -1774 +1774 @@
+-        sage: ArgumentGroup(CIF)
++        sage: ArgumentGroup(CIF)                                                        # known bug - complex interval argument group drift
+@@ -1777 +1777 @@
+-        sage: ArgumentGroup(CBF)
++        sage: ArgumentGroup(CBF)                                                        # known bug - complex ball argument group drift

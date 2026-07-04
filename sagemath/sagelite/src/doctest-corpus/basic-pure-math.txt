@@ -286,6 +286,7 @@ src/sage/groups/matrix_gps/symplectic.py
 src/sage/groups/matrix_gps/unitary.py
 src/sage/groups/affine_gps/affine_group.py
 src/sage/groups/misc_gps/imaginary_groups.py
+src/sage/groups/misc_gps/argument_groups.py
 src/sage/groups/perm_gps/partn_ref/canonical_augmentation.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_lists.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_matrices.pyx
