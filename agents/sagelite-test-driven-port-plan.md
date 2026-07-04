@@ -28645,6 +28645,38 @@ records CoWasm commit `61af9e72570675d7ce467f5622e838ff83262631`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 88, and a 100% non-skipped pass rate.
 
+Focused tropical multivariate-polynomial corpus-growth pass:
+
+```text
+tropical_mpolynomial.py: 119 passed, 0 failed, 36 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/semirings/tropical_mpolynomial.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,065
+non-comment entries. A focused semiring probe first recorded 119 passing
+blocks and 26 failures in the file. The failures were explicit
+browser-profile boundaries: tropical-variety and 3D-plot examples import the
+stripped symbolic expression stack, Newton polytope examples need PPL, and
+dual-subdivision examples need graph-backed polyhedral-complex support.
+
+The added WASI source patch marks those examples with explicit
+`# needs sage.symbolic`, `# needs ppl`, and `# needs sage.graphs` metadata,
+preserving the ordinary multivariate tropical polynomial construction,
+arithmetic, coefficient, monomial, and comparison doctests as runnable
+default-profile coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding and patching a fresh
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex/tropical-mpolynomial-make-rerun.sqlite3`.
+The latest-run summary records CoWasm commit
+`3ca73512bc31b3f4d86a7a3a7693dc6f78a111bf`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 88,
+and a 100% non-skipped pass rate. The full WASI source patch dry-runs against
+`/home/user/sagelite`, the saved block- and file-failure cluster queries are
+empty, and `doctest-corpus-candidates.py` prints no promotion row after
+subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
