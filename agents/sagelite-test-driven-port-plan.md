@@ -27739,6 +27739,48 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the deferred examples
 under `optional:sage.rings.polynomial.plural`.
 
+Follow-up prompt-band and utility frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-04-this/`, and the strict promotion
+scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --corpus
+sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt
+--require-run-metadata --require-source-root-path --min-runner-version 87
+--dedupe-paths --ignore-invalid --quiet-invalid --limit 20` printed no
+uncovered clean runnable rows.
+
+The 80-file uncovered prompt-band probe, covering files with 13 to 25 source
+prompts, recorded:
+
+```text
+next-prompt-band.sqlite3: 24 passed, 353 failed, 783 skipped
+```
+
+The compact near misses in that band were not metadata-only promotions.
+`sage/schemes/plane_conics/constructor.py` had four setup blocks pass, but
+the missing `Conic` startup name masks a stripped Singular-backed import
+boundary in `sage.schemes.curves.projective_curve`, so tagging the examples
+would preserve only setup lines. The remaining near misses clustered around
+missing `polybori`, `ipykernel`, GAP/libgap, elliptic-curve, modular-form,
+and graph-backed Lie/conic/scheme surfaces.
+
+Two targeted follow-up probes were also not promotable:
+
+```text
+plot-crypto.sqlite3:   0 passed,   0 failed, 457 skipped
+numeric-stats.sqlite3: 53 passed, 206 failed, 466 skipped
+```
+
+The plot/crypto sample was entirely skipped-only under existing dependency
+metadata. The numerical/statistics sample kept the HMM and discrete Gaussian
+files skipped-only, while the runnable numerical backend and tensor rows had
+large backend clusters rather than narrow browser-profile tags. The latest
+run metadata records CoWasm commit
+`e8be2c34a791c0672ee23cdba3dcb3b4f841ece5`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+87.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
