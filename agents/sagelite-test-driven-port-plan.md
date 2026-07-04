@@ -28516,6 +28516,52 @@ application, then the full standalone Sagelite smoke with
 The standalone smoke passed with the updated doctest count assertions and the
 new `CDF(e).real()` smoke. Runner version is now 88.
 
+Follow-up 296-to-310 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count list under
+`.tmp/current-run/scheduled-2026-07-04-next-band-296-310/` identified 21
+uncovered files with 296 to 310 static Sage prompts. A broad two-worker probe
+of the whole band left an empty SQLite database after the worker children
+exited and the parent runner stayed idle, so the pass switched to bounded
+single-file probes.
+
+The completed targeted probes recorded:
+
+```text
+21 files: 636 passed, 1298 failed, 2557 skipped
+```
+
+The strict promotion scan over the targeted SQLite artifacts printed no clean
+uncovered runnable rows. Eight files were skipped-only dependency boundaries:
+`homology_vector_space_with_basis.py`, `generic_basis_code.py`, `ncsym.py`,
+`scip_backend.pyx`, `invariant.py`, `key_polynomial.py`,
+`matching_game.py`, and `alcove_path.py`. Their skip tags are explicit
+graph/group/module/combinat/solver/plot/topology boundaries, so they add no
+default-profile runnable coverage.
+
+The four broad near-misses were not metadata-only promotions:
+`polynomial_integer_dense_flint.pyx` recorded 220 passed and 84 failed blocks,
+`free_quadratic_module.py` recorded 191 passed and 106 failed blocks,
+`map_reduce.py` recorded 146 passed and 136 failed blocks, and `sdp.pyx`
+recorded 69 passed and 154 failed blocks. The block-level failures were
+dominated by 1029 `NameError` results, then `AttributeError`,
+`ModuleNotFoundError`, `TypeError`, output mismatch, and
+`NotImplementedError` clusters. The largest concrete clusters are the
+free-quadratic-module matrix/submodule attribute-name drift, map-reduce
+`_multiprocessing` and subprocess-state gaps, SDP solver startup names, and
+dense FLINT polynomial arithmetic/backend drift.
+
+The file-level errors match existing runtime frontier families:
+`fraction_field.py` times out at the first polynomial fraction simplification,
+`quaternion_algebra_element.pyx` times out in a broad quaternion hash stress
+example, `multi_polynomial_ring_base.pyx` hits the known
+`CyclotomicField(8)` signature mismatch, `element_pari_ffelt.pyx` and
+`witt_vector_ring.py` hit the NTL `ZZ_pContext::restore()` dynamic-link
+boundary, and `ntl_ZZ_pEX.pyx` traps inside NTL finite-field polynomial
+construction. Future prompt-band work should move past this range or target
+one of those runtime clusters directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
