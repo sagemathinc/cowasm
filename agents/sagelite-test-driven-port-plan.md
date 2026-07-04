@@ -27999,6 +27999,47 @@ records CoWasm commit `19be57f2ead6cae293e5ffa56b96c2d4cbabb656`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, runner version 87, and a 100% non-skipped pass rate.
 
+Follow-up 86-to-100 prompt-band frontier audit and Galois-group promotion on
+2026-07-04:
+
+```text
+prompt-86-100.sqlite3: 580 passed, 2,635 failed, 3,379 skipped
+galois_group.py:        14 passed,     0 failed,    76 skipped
+```
+
+The fresh 86-to-100 prompt-band probe attempted the first 80 uncovered files in
+that band and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-86-100/prompt-86-100.sqlite3`.
+The batch shape was 33 skipped-only dependency-boundary files, 38
+block-failing files, six file-level errors, two zero-block book-test files,
+and one clean runnable promotion candidate. File-level errors were the same
+kind of runtime frontiers seen in adjacent bands: matrix echelonization
+signature mismatch in `affine_subspace.py`, table-index trap in the
+computational-mathematics linear-algebra book doctest, NTL
+`ZZ_pContext::restore()` dynamic-link failure in
+`jacobian_generic.py`, two 120-second timeouts in number-field Selmer and Weil
+polynomial enumeration paths, and one generic WASM memory trap in the
+fusion-ring polynomial tuple engine.
+
+The single clean promotion candidate was `sage/groups/galois_group.py`, whose
+existing Sage dependency metadata leaves a compact default-profile surface:
+14 runnable blocks for the abstract Galois-group mixin and helper paths, with
+heavier number-field, finite-field, and GAP-backed examples recorded as
+explicit skips. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-86-100/galois-group-focused.sqlite3`.
+The focused run passed with `14 passed, 0 failed, 76 skipped`; skip grouping
+recorded 62 `sage.rings.number_field` skips, 12
+`sage.rings.finite_rings` skips, and two GAP-related skips. This promotes
+`sage/groups/galois_group.py` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,053 non-comment entries. The focused latest-run summary
+records CoWasm commit `e5574634cf958c66bee55a02e8247ed8ba81e9c8`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, runner version 87, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
