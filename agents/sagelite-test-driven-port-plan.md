@@ -27356,6 +27356,34 @@ example, `multi_polynomial_ring_base.pyx` hits a CyclotomicField signature
 mismatch, and `arith/misc.py` reaches a table-index trap through polynomial
 GCD setup.
 
+Focused infinite-polynomial corpus-growth pass:
+
+```text
+infinite_polynomial_ring.py: 284 passed, 0 failed, 7 skipped
+```
+
+This pass promotes `sage/rings/polynomial/infinite_polynomial_ring.py`,
+bringing the curated corpus to 1,042 non-comment entries. The runtime fix
+tightens sparse infinite-polynomial comparison so backing finite polynomial
+rings are compared directly only when they are identical; otherwise the
+existing name-preserving common-ring comparison is used. This clears the
+`alpha_1 != alpha_1` identity drift in the sparse `deglex` test suite. The
+WASI source patch also skips the Singular/`pexpect`-backed
+`_test_fraction_field` subcheck inside the two infinite-polynomial
+`TestSuite` doctests while keeping the rest of each suite runnable.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex11/infinite-polynomial-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully,
+the saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records CoWasm commit
+`5a528d6276de5a7e25aa5e5a0d4918af4e3c957d`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+87.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

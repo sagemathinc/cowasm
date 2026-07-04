@@ -12738,3 +12738,19 @@ diff -urN -U0 a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation
 +            sage: # needs sage.groups
 @@ -8432,0 +8437 @@
 +        sage: # needs sage.graphs
+diff -urN -U0 a/src/sage/rings/polynomial/infinite_polynomial_element.py b/src/sage/rings/polynomial/infinite_polynomial_element.py
+--- a/src/sage/rings/polynomial/infinite_polynomial_element.py
++++ b/src/sage/rings/polynomial/infinite_polynomial_element.py
+@@ -1693,2 +1693 @@
+-        if ((hasattr(R1, 'has_coerce_map_from') and R1.has_coerce_map_from(R2))
+-            or (hasattr(R2, 'has_coerce_map_from') and R2.has_coerce_map_from(R1))):
++        if R1 is R2:
+diff -urN -U0 a/src/sage/rings/polynomial/infinite_polynomial_ring.py b/src/sage/rings/polynomial/infinite_polynomial_ring.py
+--- a/src/sage/rings/polynomial/infinite_polynomial_ring.py
++++ b/src/sage/rings/polynomial/infinite_polynomial_ring.py
+@@ -705 +705 @@
+-            sage: TestSuite(X).run(skip='_test_elements')
++            sage: TestSuite(X).run(skip=['_test_elements', '_test_fraction_field'])
+@@ -708 +708 @@
+-            sage: TestSuite(Y).run(skip='_test_elements')
++            sage: TestSuite(Y).run(skip=['_test_elements', '_test_fraction_field'])
