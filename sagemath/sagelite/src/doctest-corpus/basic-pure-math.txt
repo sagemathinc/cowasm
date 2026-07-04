@@ -1008,6 +1008,7 @@ src/sage/schemes/elliptic_curves/mod5family.py
 src/sage/schemes/plane_quartics/quartic_constructor.py
 src/sage/schemes/plane_quartics/quartic_generic.py
 src/sage/numerical/gauss_legendre.pyx
+src/sage/numerical/interactive_simplex_method.py
 src/sage/numerical/knapsack.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py

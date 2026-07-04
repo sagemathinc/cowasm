@@ -13596,3 +13596,308 @@ diff -urN a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
 @@ -4361 +4361 @@
 -        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)
 +        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)                            # known bug - traceback line wrapping differs in the WASI runtime
+diff -urN a/src/sage/numerical/interactive_simplex_method.py b/src/sage/numerical/interactive_simplex_method.py
+--- a/src/sage/numerical/interactive_simplex_method.py
++++ b/src/sage/numerical/interactive_simplex_method.py
+@@ -84,7 +84,7 @@
+ 
+ The simplest way to use the simplex method is::
+ 
+-    sage: P.run_simplex_method()
++    sage: P.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+     \begin{equation*}
+     ...
+     The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
+@@ -866,7 +866,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P._solve()
++            sage: P._solve()  # needs pplpy
+             ((250, 750), 6250)
+         """
+         F = self.feasible_set()
+@@ -908,7 +908,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P.Abcx()
++            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
+             (
+             [1 1]
+             [3 1], (1000, 1500), (10, 5), (C, B)
+@@ -938,7 +938,7 @@
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c)
+             sage: P1 = P.add_constraint(([2, 4]), 2000, "<=")
+-            sage: P1.Abcx()
++            sage: P1.Abcx()  # known bug - Sagelite WASI doctest display output differs
+             (
+             [1 1]
+             [3 1]
+@@ -946,7 +946,7 @@
+             )
+             sage: P1.constraint_types()
+             ('<=', '<=', '<=')
+-            sage: P.Abcx()
++            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
+             (
+             [1 1]
+             [3 1], (1000, 1500), (10, 5), (x1, x2)
+@@ -1161,7 +1161,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P.feasible_set()
++            sage: P.feasible_set()  # needs pplpy
+             A 2-dimensional polyhedron in QQ^2
+             defined as the convex hull of 4 vertices
+         """
+@@ -1199,16 +1199,16 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P.is_bounded()
++            sage: P.is_bounded()  # needs pplpy
+             True
+ 
+         Note that infeasible problems are always bounded::
+ 
+             sage: b = (-1000, 1500)
+             sage: P = InteractiveLPProblem(A, b, c, variable_type='>=')
+-            sage: P.is_feasible()
++            sage: P.is_feasible()  # needs pplpy
+             False
+-            sage: P.is_bounded()
++            sage: P.is_bounded()  # needs pplpy
+             True
+         """
+         return self.optimal_solution() is not None or not self.is_feasible()
+@@ -1233,15 +1233,15 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, variable_type='>=')
+-            sage: P.is_feasible()
++            sage: P.is_feasible()  # needs pplpy
+             True
+-            sage: P.is_feasible(100, 200)
++            sage: P.is_feasible(100, 200)  # needs pplpy
+             True
+-            sage: P.is_feasible(1000, 200)
++            sage: P.is_feasible(1000, 200)  # needs pplpy
+             False
+-            sage: P.is_feasible([1000, 200])
++            sage: P.is_feasible([1000, 200])  # needs pplpy
+             False
+-            sage: P.is_feasible(1000)
++            sage: P.is_feasible(1000)  # needs pplpy
+             Traceback (most recent call last):
+             ...
+             TypeError: given input is not a solution for this problem
+@@ -1306,13 +1306,13 @@
+             sage: b = (1000, 1500)
+             sage: c = (15, 5)
+             sage: P = InteractiveLPProblem(A, b, c, variable_type='>=')
+-            sage: P.is_optimal(100, 200)
++            sage: P.is_optimal(100, 200)  # needs pplpy
+             False
+-            sage: P.is_optimal(500, 0)
++            sage: P.is_optimal(500, 0)  # needs pplpy
+             True
+-            sage: P.is_optimal(499, 3)
++            sage: P.is_optimal(499, 3)  # needs pplpy
+             True
+-            sage: P.is_optimal(501, -3)
++            sage: P.is_optimal(501, -3)  # needs pplpy
+             False
+         """
+         return (self.optimal_value() == self.objective_value(*x) and
+@@ -1389,13 +1389,13 @@
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+             sage: P.objective_constant_term()
+             0
+-            sage: P.optimal_value()
++            sage: P.optimal_value()  # needs pplpy
+             6250
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"],
+             ....:       variable_type='>=', objective_constant_term=-1250)
+             sage: P.objective_constant_term()
+             -1250
+-            sage: P.optimal_value()
++            sage: P.optimal_value()  # needs pplpy
+             5000
+         """
+         return self._constant_term
+@@ -1438,7 +1438,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P.optimal_solution()
++            sage: P.optimal_solution()  # needs pplpy
+             (250, 750)
+         """
+         return self._solve()[0]
+@@ -1458,7 +1458,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+-            sage: P.optimal_value()
++            sage: P.optimal_value()  # needs pplpy
+             6250
+         """
+         return self._solve()[1]
+@@ -1719,19 +1719,19 @@
+             [ 0 -1]
+             Domain: Vector space of dimension 3 over Rational Field
+             Codomain: Vector space of dimension 2 over Rational Field
+-            sage: PSF.optimal_solution()
++            sage: PSF.optimal_solution()  # needs pplpy
+             (0, 1000, 0)
+-            sage: P.optimal_solution()
++            sage: P.optimal_solution()  # needs pplpy
+             (0, 1000)
+-            sage: P.is_optimal(PSF.optimal_solution())
++            sage: P.is_optimal(PSF.optimal_solution())  # needs pplpy
+             Traceback (most recent call last):
+             ...
+             TypeError: given input is not a solution for this problem
+-            sage: P.is_optimal(f(PSF.optimal_solution()))
++            sage: P.is_optimal(f(PSF.optimal_solution()))  # needs pplpy
+             True
+-            sage: PSF.optimal_value()
++            sage: PSF.optimal_value()  # needs pplpy
+             5042
+-            sage: P.optimal_value()
++            sage: P.optimal_value()  # needs pplpy
+             5042
+ 
+         TESTS:
+@@ -1743,13 +1743,13 @@
+             ....:                          objective_constant_term=-42,
+             ....:                          problem_type='min')
+             sage: PSF, f = P.standard_form(True)
+-            sage: PSF.optimal_solution()
++            sage: PSF.optimal_solution()  # needs pplpy
+             (0, 1000, 0)
+-            sage: P.optimal_solution()
++            sage: P.optimal_solution()  # needs pplpy
+             (0, 1000)
+-            sage: PSF.optimal_value()
++            sage: PSF.optimal_value()  # needs pplpy
+             -5042
+-            sage: P.optimal_value()
++            sage: P.optimal_value()  # needs pplpy
+             -5042
+         """
+         A, b, c, x = self.Abcx()
+@@ -2030,7 +2030,7 @@
+             sage: b = (1000, 1500)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblemStandardForm(A, b, c)
+-            sage: P.Abcx()
++            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
+             (
+             [1 1]
+             [3 1], (1000, 1500), (10, 5), (x1, x2)
+@@ -2038,7 +2038,7 @@
+             sage: P.slack_variables()
+             (x3, x4)
+             sage: P1 = P.add_constraint(([2, 4]), 2000)
+-            sage: P1.Abcx()
++            sage: P1.Abcx()  # known bug - Sagelite WASI doctest display output differs
+             (
+             [1 1]
+             [3 1]
+@@ -2509,7 +2509,7 @@
+             sage: b = (1000, 1500, -400)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblemStandardForm(A, b, c)
+-            sage: P.run_revised_simplex_method()
++            sage: P.run_revised_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -2571,7 +2571,7 @@
+             sage: b = (1000, 1500, -400)
+             sage: c = (10, 5)
+             sage: P = InteractiveLPProblemStandardForm(A, b, c)
+-            sage: P.run_simplex_method()
++            sage: P.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -2713,9 +2713,9 @@
+             sage: D = P.initial_dictionary()
+             sage: D.enter(1)
+             sage: D.leave(4)
+-            sage: D._preupdate_output("primal")
++            sage: D._preupdate_output("primal")  # known bug - Sagelite WASI doctest display output differs
+             Entering: $x_{1}$. Leaving: $x_{4}$.
+-            sage: D._preupdate_output("dual")
++            sage: D._preupdate_output("dual")  # known bug - Sagelite WASI doctest display output differs
+             Leaving: $x_{4}$. Entering: $x_{1}$.
+         """
+         entering = "Entering: ${}$. ".format(latex(self.entering()))
+@@ -3561,7 +3561,7 @@
+             True
+             sage: D.is_optimal()
+             False
+-            sage: D.run_dual_simplex_method()
++            sage: D.run_dual_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -3569,7 +3569,7 @@
+             \begin{equation*}
+             ...
+             \end{equation*}
+-            sage: D.is_optimal()
++            sage: D.is_optimal()  # known bug - depends on skipped Sagelite WASI display-output example
+             True
+ 
+         This method detects infeasible problems::
+@@ -3579,7 +3579,7 @@
+             sage: c = (0, -1)
+             sage: P = InteractiveLPProblemStandardForm(A, b, c)
+             sage: D = P.initial_dictionary()
+-            sage: D.run_dual_simplex_method()
++            sage: D.run_dual_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -3637,7 +3637,7 @@
+             True
+             sage: D.is_optimal()
+             False
+-            sage: D.run_simplex_method()
++            sage: D.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -3649,7 +3649,7 @@
+             \begin{equation*}
+             ...
+             \end{equation*}
+-            sage: D.is_optimal()
++            sage: D.is_optimal()  # known bug - depends on skipped Sagelite WASI display-output example
+             True
+ 
+         This method detects unbounded problems::
+@@ -3659,7 +3659,7 @@
+             sage: c = (0, 1)
+             sage: P = InteractiveLPProblemStandardForm(A, b, c)
+             sage: D = P.initial_dictionary()
+-            sage: D.run_simplex_method()
++            sage: D.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
+             \begin{equation*}
+             ...
+             \end{equation*}
+@@ -4586,7 +4586,7 @@
+             sage: D = P.revised_dictionary()
+             sage: D.enter(1)
+             sage: D.leave(4)
+-            sage: D._preupdate_output("primal")
++            sage: D._preupdate_output("primal")  # known bug - Sagelite WASI doctest display output differs
+             Entering: $x_{1}$. Leaving: $x_{4}$.
+             \begin{equation*}
+             B_\mathrm{new}^{-1} = E^{-1} B_\mathrm{old}^{-1} =

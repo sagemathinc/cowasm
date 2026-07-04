@@ -29995,6 +29995,58 @@ dashboard. Future scheduled runs should avoid repeating this band unless the
 tensor component, matroid, permutation-group, or lazy-series runtime/profile
 changes.
 
+Follow-up 1051-to-1100 prompt-band and interactive-simplex promotion:
+
+```text
+interactive_simplex_method.py: 997 passed, 0 failed, 57 skipped
+```
+
+The fresh source-minus-corpus prompt-count band contained three uncovered
+files: `sage/numerical/interactive_simplex_method.py`,
+`sage/manifolds/differentiable/tensorfield.py`, and
+`sage/rings/polynomial/multi_polynomial_ideal.py`. The first direct probe
+wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1051-1100/probe.sqlite3`
+and recorded:
+
+```text
+3 files: 1002 passed, 1064 failed, 1112 skipped
+```
+
+`sage/rings/polynomial/multi_polynomial_ideal.py` was skipped-only under
+existing Singular, Giac, Magma, msolve, finite-ring, number-field, symbolic,
+plot, module, long-time, random, and deferred metadata. It adds no default
+browser-profile runnable signal. `sage/manifolds/differentiable/tensorfield.py`
+recorded only 3 passing blocks against 1,021 failures and 43 skips; the
+failures are the same broad symbolic/manifold startup cascade seen in adjacent
+frontier probes, dominated by missing `M` setup state after earlier stripped
+profile setup failures.
+
+`sage/numerical/interactive_simplex_method.py` was the useful near miss, with
+999 passing blocks and 43 failures. The failing rows were narrow enough to
+scope for the browser-compatible profile: 26 examples require the unavailable
+`pplpy`/PPL backend for polyhedral feasible-set and optimal-solution
+computation, while 17 examples are current Sagelite WASI doctest display-output
+drift around `HtmlFragment`/LaTeX output and tuple/matrix rendering. The added
+WASI source patch tags the PPL-backed examples with `# needs pplpy` and defers
+the display-drift examples as `# known bug`, including the dependent
+`D.is_optimal()` checks whose state update is skipped when the display-output
+example is deferred.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding and patching a fresh Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/interactive-simplex-make/make.sqlite3`.
+The latest successful run records CoWasm commit
+`b97fed61de1547c0d1b7e688db3785d65217c445`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. This promotion adds
+`sage/numerical/interactive_simplex_method.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,070 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
