@@ -27449,6 +27449,48 @@ CoWasm commit `d6681b5b4650fc6aa2faefec9d72cd82043b7120`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 87.
 
+Follow-up low-level and numeric frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. Fresh direct probes wrote SQLite
+dashboards under `.tmp/current-run/scheduled-2026-07-04-codex14/` against the
+current patched Sagelite source copy, and the strict promotion scan with
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata --require-source-root-path --min-runner-version 87
+--dedupe-paths --ignore-invalid --quiet-invalid` printed no uncovered clean
+runnable rows.
+
+The low-level data-structure/CPython helper probe recorded:
+
+```text
+lowlevel-data.sqlite3: 31 passed, 1 failed, 5 skipped
+```
+
+The clean runnable rows in that batch, `sage/cpython/debug.pyx` and
+`sage/cpython/dict_del_by_value.pyx`, were already listed in the curated
+corpus. `binary_search.pyx`, `bitset_base.pyx`, and `builtin_types.pyx`
+extracted no doctest blocks. The only failed row,
+`sage/data_structures/stream.py`, traps in
+`Stream_taylor.__eq__` at the rational-function setup
+`Stream_taylor((x^3 + x^2) / (x + 1), False)`, matching the existing
+polynomial/number-field memory-trap frontier rather than a narrow source-tag
+promotion.
+
+The compact matrix/numeric probe recorded:
+
+```text
+matrix-numeric.sqlite3: 0 passed, 2 failed, 47 skipped
+```
+
+Dense double-matrix, NumPy dense-vector, and real-MPFR PARI conversion helpers
+were skipped-only under existing `numpy`, `scipy`,
+`sage.rings.real_mpfr`, and symbolic dependency tags. The only failed file,
+`sage/libs/pari/convert_sage_real_double.pyx`, fails before useful runnable
+coverage with `ModuleNotFoundError: cypari2.convert` and the dependent
+`new_gen_from_real_double_element` name error. Future scheduled runs should
+avoid repeating this exact low-level/numeric slice unless the
+polynomial-number-field trap, cypari2 conversion packaging, or NumPy/SciPy
+profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
