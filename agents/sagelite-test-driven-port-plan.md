@@ -29595,6 +29595,42 @@ promotion scan with `--require-run-metadata`, `--require-source-root-path`,
 and `--require-block-rows` printed no rows after subtracting the current
 corpus; the broad near-miss scan surfaced only `graphs/connectivity.pyx`.
 
+Follow-up 701-to-715 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-701-715/probe.sqlite3`
+and recorded:
+
+```text
+8 files: 1069 passed, 2242 failed, 1561 skipped
+```
+
+`sage/knots/link.py` was skipped-only in the default browser-compatible
+profile, with all 686 blocks guarded by existing optional, needs, long-time,
+not-tested, or deferred metadata for graph, group, module, plotting,
+finite-ring, PARI, HOMFLY, and external knot-package coverage, so it adds no
+runnable quiet-corpus signal.
+
+The runnable files stayed on broad backend frontiers rather than narrow
+promotion gaps. `sage/algebras/steenrod/steenrod_algebra.py` was the only
+near miss under `--max-failed 120`, with 603 passed, 93 failed, and 11 skipped
+blocks, but the dominant cluster remains the known unavailable
+`sage.matrix.matrix_mod2_dense` backend plus dependent setup-name and display
+drift rows. `sage/graphs/generators/smallgraphs.py` was dominated by missing
+graph-constructor setup and dependent `g` examples. The projective,
+hyperelliptic, Iwahori-Hecke, and lattice-polytope files each mixed broad
+startup-name cascades with optional algebraic-geometry, PARI, polyhedral, and
+graph boundaries. `sage/rings/asymptotic/asymptotic_ring.py` timed out at the
+line-661 quotient-ring setup `CR_mod = CR.quotient((Z^2 - 1)*CR)`.
+
+The saved failure-class summary was 1729 `NameError`, 219
+`ModuleNotFoundError`, 112 `ImportError`, 66 `FeatureNotPresentError`, 64
+`AttributeError`, 50 `output_mismatch`, one `TypeError`, and one file-level
+`timeout`. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, and `--require-block-rows` printed no rows after
+subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
