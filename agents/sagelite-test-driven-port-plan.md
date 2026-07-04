@@ -27148,6 +27148,50 @@ Treat this as a separate full-dashboard lifecycle/runtime instability; the
 focused metadata repair itself is validated, but the prior full-corpus
 dashboard should not be replaced by this failed strict run.
 
+Scheduled low-prompt frontier audit on 2026-07-04:
+
+A filtered strict promotion scan over 2,513 valid local scratch databases under
+`.tmp/current-run/` and `.tmp/sagelite-runs/`, using
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths`, printed no
+clean uncovered candidate after subtracting the 1,040-file curated corpus. The
+earlier broad scan had stopped on empty scratch databases, so this pass first
+filtered databases through a successful `select count(*) from runs` schema
+check.
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex6/` sampled low-prompt utility,
+book/example, dependency-boundary, stats, and adjacent combinatorics files:
+
+```text
+low-prompt-utility.sqlite3:       0 passed,  6 failed,  5 skipped
+low-prompt-books.sqlite3:         4 passed, 28 failed,  0 skipped
+low-prompt-mixed.sqlite3:         0 passed,  0 failed, 90 skipped
+adjacent-stats-combinat.sqlite3:  0 passed, 10 failed, 86 skipped
+```
+
+No file from these fresh databases was a valid corpus promotion. The utility
+slice exposed file-level worker/runtime errors in `sage/cpython/string.pyx`,
+`sage/cpython/cython_metaclass.pyx`, `sage/misc/map_threaded.py`,
+`sage/misc/profiler.py`, `sage/misc/sphinxify.py`, and
+`sage/repl/inputhook.py`, while `crypto/cipher.py` and `databases/odlyzko.py`
+were skipped-only dependency rows. The Judson abstract-algebra exercise files
+extracted zero runnable blocks; the computational-mathematics integration and
+linear-programming book files failed on missing local setup/startup names such
+as `var`, `x`, `numerical_integral`, `MixedIntegerLinearProgram`, `graphs`,
+`p`, and dependent `b`/`dom` values.
+
+The mixed low-prompt batch was entirely skipped under explicit optional
+boundaries such as `sage.graphs`, `sage.groups`, `sage.modules`,
+`sage.combinat`, `sage.symbolic`, `numpy`, `sympy`, `sloane_database`,
+`cunningham_tables`, and `database_odlyzko_zeta`. The adjacent
+stats/combinatorics batch was likewise skipped-only except
+`sage/combinat/posets/hochschild_lattice.py`, whose ten failures are graph,
+polyhedron, and setup frontiers (`posets`, `simplicial_complexes`,
+`generic_graph_pyx`, and dependent names). This scheduled pass therefore
+records boundary data only and intentionally leaves the curated corpus
+unchanged.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
