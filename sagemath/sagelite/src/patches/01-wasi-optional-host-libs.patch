@@ -14281,3 +14281,51 @@ diff --git a/src/sage/modular/modform/half_integral.py b/src/sage/modular/modfor
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix_integer_dense
  r"""
+diff --git a/src/sage/modular/arithgroup/congroup.pyx b/src/sage/modular/arithgroup/congroup.pyx
+--- a/src/sage/modular/arithgroup/congroup.pyx
++++ b/src/sage/modular/arithgroup/congroup.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/ec_database.py b/src/sage/schemes/elliptic_curves/ec_database.py
+--- a/src/sage/schemes/elliptic_curves/ec_database.py
++++ b/src/sage/schemes/elliptic_curves/ec_database.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs database_ellcurves
+ r"""
+diff --git a/src/sage/combinat/posets/hochschild_lattice.py b/src/sage/combinat/posets/hochschild_lattice.py
+--- a/src/sage/combinat/posets/hochschild_lattice.py
++++ b/src/sage/combinat/posets/hochschild_lattice.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/libs/eclib/constructor.py b/src/sage/libs/eclib/constructor.py
+--- a/src/sage/libs/eclib/constructor.py
++++ b/src/sage/libs/eclib/constructor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.eclib
+ "Cremona modular symbols"
+diff --git a/src/sage/graphs/graph_editor.py b/src/sage/graphs/graph_editor.py
+--- a/src/sage/graphs/graph_editor.py
++++ b/src/sage/graphs/graph_editor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/examples/symplectic_space.py b/src/sage/manifolds/differentiable/examples/symplectic_space.py
+--- a/src/sage/manifolds/differentiable/examples/symplectic_space.py
++++ b/src/sage/manifolds/differentiable/examples/symplectic_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field.py b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field.py
+--- a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field.py
++++ b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/integration_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
