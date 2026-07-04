@@ -14757,3 +14757,75 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/kummer_surface.py b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  r"""
+diff --git a/src/sage/groups/perm_gps/constructor.py b/src/sage/groups/perm_gps/constructor.py
+--- a/src/sage/groups/perm_gps/constructor.py
++++ b/src/sage/groups/perm_gps/constructor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ """
+diff --git a/src/sage/libs/singular/standard_options.py b/src/sage/libs/singular/standard_options.py
+--- a/src/sage/libs/singular/standard_options.py
++++ b/src/sage/libs/singular/standard_options.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular
+ """
+diff --git a/src/sage/lfunctions/lcalc.py b/src/sage/lfunctions/lcalc.py
+--- a/src/sage/lfunctions/lcalc.py
++++ b/src/sage/lfunctions/lcalc.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess
+ r"""
+diff --git a/src/sage/matrix/matrix_integer_dense_saturation.py b/src/sage/matrix/matrix_integer_dense_saturation.py
+--- a/src/sage/matrix/matrix_integer_dense_saturation.py
++++ b/src/sage/matrix/matrix_integer_dense_saturation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ """
+diff --git a/src/sage/matroids/extension.pyx b/src/sage/matroids/extension.pyx
+--- a/src/sage/matroids/extension.pyx
++++ b/src/sage/matroids/extension.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ """
+diff --git a/src/sage/modular/local_comp/liftings.py b/src/sage/modular/local_comp/liftings.py
+--- a/src/sage/modular/local_comp/liftings.py
++++ b/src/sage/modular/local_comp/liftings.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari
+ r"""
+diff --git a/src/sage/plot/plot3d/list_plot3d.py b/src/sage/plot/plot3d/list_plot3d.py
+--- a/src/sage/plot/plot3d/list_plot3d.py
++++ b/src/sage/plot/plot3d/list_plot3d.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.plot.plot3d matplotlib
+ """
+diff --git a/src/sage/rings/finite_rings/finite_field_prime_modn.py b/src/sage/rings/finite_rings/finite_field_prime_modn.py
+--- a/src/sage/rings/finite_rings/finite_field_prime_modn.py
++++ b/src/sage/rings/finite_rings/finite_field_prime_modn.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field
+ """
+diff --git a/src/sage/rings/function_field/extensions.py b/src/sage/rings/function_field/extensions.py
+--- a/src/sage/rings/function_field/extensions.py
++++ b/src/sage/rings/function_field/extensions.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/function_field/order.py b/src/sage/rings/function_field/order.py
+--- a/src/sage/rings/function_field/order.py
++++ b/src/sage/rings/function_field/order.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/number_field/morphism.py b/src/sage/rings/number_field/morphism.py
+--- a/src/sage/rings/number_field/morphism.py
++++ b/src/sage/rings/number_field/morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/descent_two_isogeny.pyx b/src/sage/schemes/elliptic_curves/descent_two_isogeny.pyx
+--- a/src/sage/schemes/elliptic_curves/descent_two_isogeny.pyx
++++ b/src/sage/schemes/elliptic_curves/descent_two_isogeny.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""

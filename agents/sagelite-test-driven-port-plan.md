@@ -31321,6 +31321,49 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py` and
 the full WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 46-to-48 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 46-to-48 prompt
+source-minus-corpus band. The fresh 31-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-46-48/prompt-46-48/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 286 passed, 291 failed, 696 skipped
+```
+
+The only clean runnable files in that probe were already present in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`: `pari_ring.py`,
+`matrix_modn_dense_double.pyx`, `ntl_lzz_p.pyx`, and the CMwS float doctest.
+The remaining failures were dependency-boundary frontiers: GAP-backed
+permutation-group constructors, function-field and number-field/PARI paths,
+the external `lcalc` subprocess interface, plot3d/Matplotlib conversion,
+Singular option helpers, dense integer-matrix saturation, matroid extension
+enumeration, modular local liftings, finite-field number-field coercion, and
+elliptic-curve two-isogeny descent.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.groups`,
+`sage.rings.function_field sage.libs.pari`, `sage.rings.number_field
+sage.libs.pari`, `subprocess`, `sage.plot.plot3d matplotlib`,
+`sage.libs.singular`, `sage.matrix.matrix_integer_dense`, `sage.matroids`,
+`sage.libs.pari`, `sage.rings.number_field`, and
+`sage.schemes.elliptic_curves`. A make-target rerun rebuilt a fresh patched
+source tree and wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-46-48/prompt-46-48/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 167 passed, 0 failed, 1244 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
