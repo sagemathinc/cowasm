@@ -29777,6 +29777,46 @@ repeating these prompt bands unless the number-field/PARI object model,
 Singular/pexpect, NTL dynamic-linking, p-adic extension, graph, manifold, or
 polynomial/coercion runtime profile changes.
 
+Follow-up 901-to-950 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,068 non-comment entries, and the fresh one-worker direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-codex-port-plan/prompt-901-950/probe.sqlite3`.
+
+The band recorded:
+
+```text
+6 files: 452 passed, 1186 failed, 2625 skipped
+```
+
+`sage/combinat/k_tableau.py` and
+`sage/schemes/elliptic_curves/ell_number_field.py` were skipped-only under
+existing dependency metadata, with 912 and 876 skipped blocks respectively.
+`sage/schemes/elliptic_curves/ell_rational_field.py` failed at file scope in
+the `lseries_gross_zagier` doctest while constructing
+`QuadraticField(-40)`, recording the current
+`wasm_signature_mismatch` dynamic-link/runtime cluster rather than a narrow
+source-tag gap.
+
+The runnable failures were broad backend frontiers. `sage/libs/pari/tests.py`
+recorded 69 passed, 299 failed, and 499 skipped blocks, dominated by the
+focused cypari2/PARI object-model boundary plus dependent PARI arithmetic and
+elliptic-function method failures. `sage/manifolds/section.py` recorded 867
+failures and only skipped blocks otherwise, mostly symbolic/manifold startup
+name cascades. `sage/structure/element.pyx` reconfirmed the existing near
+miss with 383 passed, 19 failed, and 336 skipped blocks; its failures still
+mix pexpect, plural/Singular, FLINT integer-polynomial, polynomial division,
+GCD argument, and output-drift clusters, so it should be handled as targeted
+structure/polynomial runtime work rather than broad corpus tagging.
+
+Strict promotion scans with `--require-run-metadata`,
+`--require-source-root-path`, and `--require-block-rows` printed no uncovered
+clean runnable rows. Future scheduled runs should avoid repeating this band
+unless the PARI/cypari2 object model, elliptic number-field dynamic-link
+boundary, symbolic/manifold startup surface, or polynomial/coercion runtime
+profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
