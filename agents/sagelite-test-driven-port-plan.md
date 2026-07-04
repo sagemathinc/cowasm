@@ -28836,6 +28836,39 @@ database. Future scheduled runs should avoid repeating this exact band unless
 the symbolic/scheme, manifold, permutation-group/category, number-field, or
 MIP backend profile changes.
 
+Follow-up 416-to-430 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+416-to-430 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-416-430/probe.sqlite3`
+and recorded:
+
+```text
+8 files: 332 passed, 1456 failed, 1124 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/rings/polynomial/real_roots.pyx` and
+`sage/modular/btquotients/btquotient.py`. Their default-profile blocks are
+already guarded by explicit optional, backend, or deferred feature metadata,
+so they add no runnable browser-profile coverage to the curated corpus.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/schemes/affine/affine_morphism.py` recorded useful passing
+coverage but still had Singular-backed polynomial and scheme failures.
+`sage/algebras/lie_algebras/verma_module.py`,
+`sage/manifolds/differentiable/integrated_curve.py`,
+`sage/interfaces/singular.py`, and `sage/plot/plot3d/base.pyx` were dominated
+by startup-name cascades, missing Singular/GAP/plot interfaces, and display or
+export backend assumptions. The remaining file,
+`sage/rings/polynomial/polynomial_rational_flint.pyx`, timed out in the
+focused rational-polynomial gcd example at line 987. The saved failure-class
+summary for the band was 1226 `NameError`, 87 `ModuleNotFoundError`, 53
+`ImportError`, 53 `output_mismatch`, 17 `AttributeError`, 14 `TypeError`, and
+one timeout. The strict `doctest-corpus-candidates.py` scan with
+`--require-run-metadata` and `--require-block-rows` printed no uncovered clean
+runnable rows for this database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
