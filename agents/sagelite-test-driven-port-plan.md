@@ -4395,6 +4395,53 @@ should avoid repeating these species, design, and compact algebra batches
 unless FLINT/finite-ring, combinatorial-design, or Lie/free-algebra backend
 support changes.
 
+Follow-up 71-to-85 prompt-band frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. The current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,051 non-comment entries after the recent NTL/projective-height promotion.
+Fresh focused probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-04-goal/prompt-71-85/`.
+
+An initial direct probe of the first 40 files in the band used repo-relative
+`src/sage/...` paths and was invalid: direct `sage -t` resolved those paths
+against `/home/user/cowasm`, so every file failed at `read_source` before the
+patched Sagelite source root could be used. The corrected probes used absolute
+paths under `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
+The first corrected 24-file slice recorded:
+
+```text
+batch1-abs-small.sqlite3: 116 passed, 633 failed, 790 skipped
+```
+
+The strict promotion scan printed no uncovered clean rows. Coverage shape was
+10 skipped-only files, 11 block-failing files, and three file-level errors.
+The file-level errors were an intentional large-allocation polyhedron
+`MemoryError` path that currently exits the worker, a matrix
+`echelonize_ring` function-signature mismatch, and the existing NTL
+`padic_ZZ_pX_CR_element` trap through p-adic extension setup.
+
+The second corrected 24-file slice recorded:
+
+```text
+batch2-abs-small.sqlite3: 98 passed, 795 failed, 715 skipped
+```
+
+The strict promotion and near-miss scans again printed no rows. Coverage shape
+was nine skipped-only files, one zero-block Judson helper, 12 block-failing
+files, and two file-level errors. The file-level errors were the known
+`NTL::ZZ_pContext::restore()` dynamic-link import gap in
+`sage/categories/finite_fields.py` and a rational-function conic timeout in
+`sage/schemes/plane_conics/con_rational_function_field.py`.
+
+Future scheduled runs should avoid repeating these exact 71-to-85 prompt
+slices unless the graph/matrix, NTL/p-adic, finite-field dynamic-link,
+polyhedron allocation, or conic/function-field backend profile changes. When
+probing source-minus-corpus lists directly, pass absolute patched-source paths
+or use the make target's corpus expansion path; repo-relative `src/sage/...`
+arguments are not safe for direct `sage -t` from the CoWasm checkout.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
