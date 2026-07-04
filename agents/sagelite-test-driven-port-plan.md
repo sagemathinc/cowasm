@@ -29631,6 +29631,62 @@ The saved failure-class summary was 1729 `NameError`, 219
 `--require-source-root-path`, and `--require-block-rows` printed no rows after
 subtracting the current corpus.
 
+Follow-up 716-to-730 prompt-band frontier audit and Lie quotient promotion:
+
+The fresh source-minus-corpus prompt-count band contained 15 uncovered files.
+The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-716-730/probe.sqlite3`
+and recorded:
+
+```text
+15 files: 294 passed, 456 failed, 790 skipped
+```
+
+Six files were skipped-only dependency boundaries in the default
+browser-compatible profile: `sage/coding/punctured_code.py`,
+`sage/combinat/sf/schur.py`,
+`sage/combinat/crystals/highest_weight_crystals.py`,
+`sage/combinat/crystals/infinity_crystals.py`,
+`sage/modular/modsym/manin_symbol.pyx`, and
+`sage/rings/function_field/order_basis.py`. Their blocks were guarded by
+existing optional, long-time, deferred, finite-ring, module, symbolic,
+combinatorics, FLINT, or function-field dependency metadata, so they added no
+runnable quiet-corpus signal.
+
+The strict promotion scan over the initial band was empty, but
+`sage/algebras/lie_algebras/quotient.py` was a compact near miss with
+`93 passed, 18 failed, 0 skipped`. The failures were dependency-boundary
+groups rather than quotient semantics: graph-backed Lie algebra constructors,
+a symbolic-ring construction, and a finite-dimensional example importing the
+unavailable noncommutative polynomial `plural` module. The WASI source patch
+now marks those groups with explicit `# needs ...` metadata, and the curated
+corpus includes `sage/algebras/lie_algebras/quotient.py`.
+
+Focused make-target validation after rebuilding a fresh patched source copy:
+
+```text
+quotient.py: 93 passed, 0 failed, 18 skipped
+```
+
+The focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-current/prompt-716-730/quotient-make/make.sqlite3`.
+The saved block- and file-failure cluster queries are empty for the focused
+run.
+
+The other runnable files in the band remain outside the quiet corpus.
+`sage/matrix/matrix_modn_sparse.pyx` still has sparse-matrix implementation
+and focused cypari2 gaps. `sage/quadratic_forms/ternary.pyx`,
+`sage/dynamics/arithmetic_dynamics/generic_ds.py`,
+`sage/schemes/curves/closed_point.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_point.py`,
+`sage/matroids/flats_matroid.pyx`, and
+`sage/manifolds/differentiable/symplectic_form.py` are dominated by startup
+name cascades, graph/symbolic/backend imports, or broader domain-specific
+frontiers. `sage/algebras/splitting_algebra.py` failed at file scope on the
+known NTL `ZZ_pContext.restore` dynamic-link boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

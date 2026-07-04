@@ -13507,3 +13507,16 @@ diff -urN a/src/sage/algebras/clifford_algebra.py b/src/sage/algebras/clifford_a
 @@ -3080 +3080 @@
 -            sage: I.groebner_basis()
 +            sage: I.groebner_basis()  # known bug
+diff -urN a/src/sage/algebras/lie_algebras/quotient.py b/src/sage/algebras/lie_algebras/quotient.py
+--- a/src/sage/algebras/lie_algebras/quotient.py
++++ b/src/sage/algebras/lie_algebras/quotient.py
+@@ -125,0 +126 @@
++        sage: # needs sage.graphs
+@@ -253,0 +255 @@
++            sage: # needs sage.symbolic
+@@ -296,0 +299 @@
++            sage: # needs sage.graphs
+@@ -304,0 +308 @@
++            sage: # needs sage.rings.polynomial.plural
+@@ -404,0 +409 @@
++            sage: # needs sage.graphs
