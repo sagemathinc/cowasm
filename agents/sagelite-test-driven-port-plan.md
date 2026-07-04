@@ -29281,6 +29281,47 @@ promotion candidate. The strict `doctest-corpus-candidates.py` scan with
 `--require-run-metadata` and `--require-block-rows` printed no uncovered clean
 runnable rows after subtracting the current corpus.
 
+Follow-up 581-to-595 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus still has
+1,066 non-comment entries. The regenerated band contained six uncovered files
+and the direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-581-595/probe.sqlite3`,
+recording:
+
+```text
+6 files: 20 passed, 1489 failed, 1353 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/schemes/curves/projective_curve.py` and
+`sage/combinat/bijectionist.py`. Their blocks are already guarded by explicit
+optional, long-time, or backend-specific metadata for schemes, algebraic
+geometry, numerical MIP, and combinatorics coverage, so they add no runnable
+default-profile signal.
+
+The runnable files were broad frontier targets. `sage/combinat/posets/hasse_diagram.py`
+recorded 13 passed and 396 failed blocks, dominated by missing poset/graph
+startup names. `sage/numerical/backends/glpk_backend.pyx` recorded four
+passed and 553 failed blocks, mostly dependent `p` failures after the GLPK
+backend setup surface did not initialize in the browser-compatible profile.
+`sage/manifolds/chart.py` recorded three passed and 539 failed blocks, again
+mostly manifold/chart startup-name cascades rather than a narrow metadata gap.
+
+`sage/rings/real_arb.pyx` failed at file scope with the existing-style WASM
+memory trap while running the line-710 setup example
+`pol = (x + 1/3)^100`; the saved file-error cluster groups it as
+`RuntimeError: memory access out of bounds` at `wasm-function[8333]`. The
+failure-class summary for the band was 1305 `NameError`, 74
+`ModuleNotFoundError`, 64 `ImportError`, 42 `output_mismatch`, two
+`TypeError`, one `AttributeError`, and one file-level `wasm_trap`. The strict
+promotion and near-miss scans with `--require-run-metadata`,
+`--require-source-root-path`, and `--require-block-rows` printed no rows for
+this database, so future prompt-band work should move past this range or
+target a specific poset, GLPK, manifold, or Arb runtime surface directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
