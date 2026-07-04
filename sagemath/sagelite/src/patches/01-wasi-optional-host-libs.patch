@@ -13194,3 +13194,22 @@ diff -urN a/src/sage/rings/semirings/tropical_mpolynomial.py b/src/sage/rings/se
 @@ -613 +613 @@
 -            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
 +            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]  # needs sage.graphs
+diff -urN a/src/sage/structure/parent.pyx b/src/sage/structure/parent.pyx
+--- a/src/sage/structure/parent.pyx
++++ b/src/sage/structure/parent.pyx
+@@ -365,0 +366 @@
++            sage: # needs sage.rings.polynomial.plural
+@@ -1151 +1152 @@
+-            sage: P(1) in ZZ
++            sage: P(1) in ZZ                                                         # needs pexpect
+@@ -1153 +1154 @@
+-            sage: P(1/2) in ZZ
++            sage: P(1/2) in ZZ                                                       # needs pexpect
+@@ -2642,2 +2643,2 @@
+-            sage: E = EllipticCurve(GF(17),[1,1])
+-            sage: coercion_model.discover_action(ZZ, E, operator.mul)
++            sage: E = EllipticCurve(GF(17),[1,1])                                    # needs sage.rings.finite_rings sage.schemes
++            sage: coercion_model.discover_action(ZZ, E, operator.mul)                # needs sage.rings.finite_rings sage.schemes
+@@ -2645 +2646 @@
+-            sage: coercion_model.discover_action(int, E, operator.mul)
++            sage: coercion_model.discover_action(int, E, operator.mul)               # needs sage.rings.finite_rings sage.schemes

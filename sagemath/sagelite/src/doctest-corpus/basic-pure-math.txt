@@ -799,6 +799,7 @@ src/sage/structure/list_clone_timings.py
 src/sage/structure/list_clone_timings_cy.pyx
 src/sage/structure/mutability.pyx
 src/sage/structure/nonexact.py
+src/sage/structure/parent.pyx
 src/sage/structure/parent_gens.pyx
 src/sage/structure/parent_old.pyx
 src/sage/structure/proof/all.py

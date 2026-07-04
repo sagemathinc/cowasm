@@ -29099,6 +29099,54 @@ block-level failures. The strict `doctest-corpus-candidates.py` scan with
 `--require-run-metadata` and `--require-block-rows` printed no uncovered clean
 runnable rows for this database.
 
+Follow-up 521-to-535 prompt-band corpus-growth pass:
+
+The fresh prompt-band probe initially found one narrow promotion:
+`sage/structure/parent.pyx` had 236 passed blocks and 11 failures. The
+failures were all browser-profile dependency boundaries: a noncommutative
+polynomial quotient example requiring `sage.rings.polynomial.plural`,
+pexpect-backed fraction-field membership checks, and elliptic-curve
+finite-field action discovery requiring the schemes and finite-rings stacks.
+
+The WASI source patch now marks those examples with explicit dependency
+metadata. Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=.tmp/current-run/scheduled-2026-07-04-current/prompt-521-535/parent-focused.sqlite3`.
+It recorded:
+
+```text
+sage -t passed: 235 passed, 0 failed, 164 skipped
+```
+
+This promotes `src/sage/structure/parent.pyx` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,066 non-comment entries. The updated full 521-to-535 band
+rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-521-535/probe-after-parent.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 384 passed, 1249 failed, 3978 skipped
+```
+
+The remaining files in the band are not narrow promotions. The skipped-only
+files are dependency-boundary coverage for function fields, schemes, topology,
+crystals, and tableaux. The broad runnable failures remain dominated by
+startup-name cascades and missing external-interface modules in `findstat.py`,
+`lazy_species.py`, `magma.py`, the Hecke-triangle abstract ring, and finite
+dimensional Lie algebras. File-level errors stayed on existing runtime
+frontiers: an NTL `ZZ_pContext::restore()` dynamic-link failure in
+`laurent_polynomial.pyx`, a `matrix1.pyx` timeout, and a matrix-echelon
+signature mismatch reached from `geometry/polyhedron/library.py`. The final
+failure-class summary was 861 `NameError`, 298 `ModuleNotFoundError`, 33
+`AttributeError`, 25 `TypeError`, 17 `NotImplementedError`, eight
+`ImportError`, four `output_mismatch`, and one each of `timeout`,
+`wasm_link_error`, and `wasm_signature_mismatch`. The strict
+`doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows after
+subtracting the updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
