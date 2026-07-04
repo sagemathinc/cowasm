@@ -30216,6 +30216,52 @@ Future scheduled runs should avoid repeating this prompt band unless the graph
 extension-resource frontier moves, especially `generic_graph_pyx` and
 `graph_coloring`, or the browser-profile graph namespace policy changes.
 
+Follow-up 1351-to-1400 prompt-band audit and Singular number-field tagging:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained two uncovered files:
+`sage/combinat/sf/sfa.py` and
+`sage/rings/polynomial/multi_polynomial_libsingular.pyx`. The direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1351-1400/probe.sqlite3`
+and recorded:
+
+```text
+2 files: 0 passed, 1 failed, 1373 skipped
+```
+
+`sfa.py` was skipped-only under existing symmetric-function/module/symbolic
+metadata, so it adds no runnable default browser-profile coverage yet.
+`multi_polynomial_libsingular.pyx` initially failed at file scope on the
+untagged number-field setup `K.<a> = QuadraticField(17)` at line 771 with the
+known maximum-call-stack trampoline/dylink trap. The WASI source patch now
+marks that contiguous issue-17964 number-field block as
+`# needs sage.rings.number_field`, matching adjacent number-field examples in
+the same file. A focused `--line 771` rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1351-1400/line-771-focused.sqlite3`
+and recorded `0 passed, 0 failed, 1 skipped`, confirming the newly tagged block
+no longer reaches the crashing backend path.
+
+A rebuilt focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1351-1400/probe-after-number-field-tag.sqlite3`
+and advanced the file-level error to a later untagged number-field
+global-height example, `K.<k> = CyclotomicField(3)` at line 5949. A repeat
+validation wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1351-1400/line-771.sqlite3`
+and classified that remaining frontier as `wasm_signature_mismatch`:
+
+```text
+2 files: 0 passed, 1 failed, 1373 skipped
+```
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and
+`--require-file-run` printed no uncovered clean runnable rows. Future scheduled
+runs should avoid repeating this prompt band unless symmetric-function
+dependencies become available or a targeted
+`multi_polynomial_libsingular.pyx` metadata pass tags the remaining number-field
+and Singular-heavy examples.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

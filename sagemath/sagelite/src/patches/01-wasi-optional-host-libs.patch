@@ -13937,3 +13937,21 @@ diff --git a/src/sage/schemes/elliptic_curves/ell_point.py b/src/sage/schemes/el
              sage: p = 886368969471450739924935101400677
              sage: a = 26392827536965106777121445123290
              sage: b = 372325368096095544195525883520589
+diff --git a/src/sage/rings/polynomial/multi_polynomial_libsingular.pyx b/src/sage/rings/polynomial/multi_polynomial_libsingular.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial_libsingular.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial_libsingular.pyx
+@@ -771,7 +771,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
+-            sage: K.<a> = QuadraticField(17)
+-            sage: Q.<x,y> = K[]
+-            sage: f = (-3*a)*y + (5*a)
+-            sage: p = K.primes_above(5)[0]
+-            sage: R = K.residue_field(p)
+-            sage: S = R['x','y']
+-            sage: S(f)
++            sage: K.<a> = QuadraticField(17)                                            # needs sage.rings.number_field
++            sage: Q.<x,y> = K[]                                                         # needs sage.rings.number_field
++            sage: f = (-3*a)*y + (5*a)                                                  # needs sage.rings.number_field
++            sage: p = K.primes_above(5)[0]                                              # needs sage.rings.number_field
++            sage: R = K.residue_field(p)                                                # needs sage.rings.number_field
++            sage: S = R['x','y']                                                        # needs sage.rings.number_field
++            sage: S(f)                                                                  # needs sage.rings.number_field
