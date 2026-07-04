@@ -29722,6 +29722,61 @@ coercion gaps. The strict promotion scan with `--require-run-metadata`,
 `--require-source-root-path`, and `--require-block-rows` printed no rows after
 subtracting the current corpus.
 
+Follow-up 746-to-850 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus has 1,068
+non-comment entries, and fresh direct probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-04-current/`.
+
+The 746-to-760 band contained only
+`sage/rings/number_field/number_field_ideal.py`; it recorded `0 passed`,
+`0 failed`, and `754 skipped`. Its blocks are already explicit dependency or
+deferred boundaries for number-field, PARI, group, scheme, Magma, long-time,
+random, not-implemented, and not-tested coverage, so it adds no runnable
+default-profile signal.
+
+The 761-to-775 band recorded `0 passed`, `1 failed`, and `775 skipped`.
+`sage/combinat/crystals/kirillov_reshetikhin.py` is skipped-only under
+existing combinatorics/module tags. `sage/numerical/mip.pyx` failed at file
+scope after importing coding-bound lazy modules and exiting the worker with a
+generic runtime error, so it remains a numerical/backend frontier rather than
+a source-tag-only corpus target.
+
+The 776-to-790 band recorded `383 passed`, `20 failed`, and `336 skipped`.
+`sage/rings/morphism.pyx` timed out at the number-field quotient setup
+`S.<sqrt2> = R.quo(x^2 - 2)`. The only near miss was
+`sage/structure/element.pyx`, with `383 passed`, `19 failed`, and
+`336 skipped`. Its failures are not narrow enough for a quiet promotion yet:
+they mix explicit missing backends (`pexpect`, `sage.rings.polynomial.plural`,
+and FLINT integer-polynomial support) with polynomial division, GCD argument,
+and coercion/output behavior drift in core element doctests. It should be
+revisited as targeted structure/polynomial-runtime work, not broad deferred
+tagging.
+
+The 791-to-805 band recorded `0 passed`, `2 failed`, and `791 skipped`.
+`sage/coding/ag_code_decoders.pyx` is skipped-only in the default
+browser-compatible profile. `sage/graphs/base/c_graph.pyx` hits the known NTL
+`ZZ_pContext.restore` dynamic-link import gap, and
+`sage/rings/asymptotic/asymptotics_multivariate_generating_functions.py`
+overflows the JS/WASM call stack during polynomial setup.
+
+The 806-to-850 grouped probe recorded `50 passed`, `2389 failed`, and
+`55 skipped`. `sage/rings/padics/padic_generic_element.pyx` hits an NTL-backed
+`padic_ZZ_pX_CR_element` WASM trap, and
+`sage/algebras/quatalg/quaternion_algebra.py` times out in quadratic-field
+setup. `sage/manifolds/scalarfield.py` and `sage/manifolds/chart_func.py` are
+pure startup-name cascades in the stripped symbolic/manifold profile, and
+`sage/graphs/matching_covered_graph.py` remains a broad graph-backend
+frontier with only 50 passing blocks against 729 failures.
+
+Strict candidate scans across the new dashboards, using
+`doctest-corpus-candidates.py --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --require-run-metadata --require-source-root-path --require-block-rows`,
+printed no uncovered clean runnable rows. Future scheduled runs should avoid
+repeating these prompt bands unless the number-field/PARI object model,
+Singular/pexpect, NTL dynamic-linking, p-adic extension, graph, manifold, or
+polynomial/coercion runtime profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
