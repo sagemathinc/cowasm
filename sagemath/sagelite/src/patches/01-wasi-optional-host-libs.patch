@@ -520,6 +520,44 @@ diff -urN a/src/sage/rings/polynomial/pbori/easy_polynomials.py b/src/sage/rings
          sage: from sage.rings.polynomial.pbori.frontend import x
          sage: from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials_via_interpolation
          sage: easy_linear_polynomials_via_interpolation(x(1)*x(2) + 1)
+diff -urN a/src/sage/rings/polynomial/pbori/blocks.py b/src/sage/rings/polynomial/pbori/blocks.py
+--- a/src/sage/rings/polynomial/pbori/blocks.py
++++ b/src/sage/rings/polynomial/pbori/blocks.py
+@@ -360,6 +360,7 @@
+ 
+     EXAMPLES::
+ 
++        sage: # needs brial
+         sage: from sage.rings.polynomial.pbori import *
+         sage: declare_ring([Block("x",10),Block("y",5)],globals())
+         Boolean PolynomialRing in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, y0, y1, y2, y3, y4
+@@ -410,6 +411,7 @@
+     """
+     EXAMPLES::
+ 
++        sage: # needs brial
+         sage: from sage.rings.polynomial.pbori.blocks import main_test
+         sage: main_test()
+         x(0)
+diff -urN a/src/sage/rings/polynomial/pbori/nf.py b/src/sage/rings/polynomial/pbori/nf.py
+--- a/src/sage/rings/polynomial/pbori/nf.py
++++ b/src/sage/rings/polynomial/pbori/nf.py
+@@ -93,6 +93,7 @@
+ 
+     TESTS::
+ 
++        sage: # needs brial
+         sage: from sage.rings.polynomial.pbori import *
+         sage: r = Ring(1000)
+         sage: x = r.variable
+@@ -638,6 +639,7 @@
+ 
+     TESTS::
+ 
++        sage: # needs brial
+         sage: from sage.rings.polynomial.pbori import declare_ring, normal_form
+         sage: r=declare_ring(['x','y'], globals())
+         sage: normal_form(x+y, [y],reduced=True)
 diff -urN a/src/sage/libs/homfly.pyx b/src/sage/libs/homfly.pyx
 --- a/src/sage/libs/homfly.pyx
 +++ b/src/sage/libs/homfly.pyx

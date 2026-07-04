@@ -30566,6 +30566,34 @@ The result is a skipped-only dependency-boundary row rather than a promotion
 candidate. Future low-prompt scans should continue past these fully gated
 files or target a known near-miss cluster with non-skipped runnable coverage.
 
+Follow-up PolyBoRi dependency-boundary tagging:
+
+No new quiet corpus candidate was found. A broader one-to-nine-prompt
+source-minus-corpus sweep wrote
+`.tmp/current-run/scheduled-2026-07-04-next/low-prompt-batch-b.sqlite3` and
+recorded `1 passed`, `70 failed`, and `241 skipped` blocks across 60 small
+uncovered files. Most failures were already-clear dependency boundaries for
+PARI/cypari2 conversion, GAP, graph extensions, Singular, modular forms, and
+elliptic-curve database access.
+
+The narrow actionable cluster was the untagged PolyBoRi/BRiAl boundary:
+`sage/rings/polynomial/pbori/blocks.py` failed all 4 blocks and
+`sage/rings/polynomial/pbori/nf.py` had one setup artifact pass plus 8
+failures, all downstream of the unavailable
+`sage.rings.polynomial.pbori.pbori` extension. The WASI source patch now marks
+the affected doctest groups with `# needs brial`. A focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-next/pbori-after-brial-tags.sqlite3`
+and records:
+
+```text
+blocks.py: 0 passed, 0 failed, 4 skipped
+nf.py:     0 passed, 0 failed, 9 skipped
+```
+
+These files remain skipped-only dependency-boundary rows rather than corpus
+promotion candidates, but the low-prompt dashboard no longer reports them as
+ordinary failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
