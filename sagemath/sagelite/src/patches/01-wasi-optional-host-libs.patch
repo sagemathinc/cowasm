@@ -14625,3 +14625,33 @@ diff --git a/src/sage/algebras/free_algebra_quotient_element.py b/src/sage/algeb
 @@ -218,1 +218,1 @@
 -            sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)
 +            sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)                             # needs sage.algebras.quaternion_algebra
+diff --git a/src/sage/manifolds/differentiable/differentiable_submanifold.py b/src/sage/manifolds/differentiable/differentiable_submanifold.py
+--- a/src/sage/manifolds/differentiable/differentiable_submanifold.py
++++ b/src/sage/manifolds/differentiable/differentiable_submanifold.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/interfaces/process.pyx b/src/sage/interfaces/process.pyx
+--- a/src/sage/interfaces/process.pyx
++++ b/src/sage/interfaces/process.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess
+ """
+diff --git a/src/sage/groups/perm_gps/partn_ref2/refinement_generic.pyx b/src/sage/groups/perm_gps/partn_ref2/refinement_generic.pyx
+--- a/src/sage/groups/perm_gps/partn_ref2/refinement_generic.pyx
++++ b/src/sage/groups/perm_gps/partn_ref2/refinement_generic.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/dynamics/arithmetic_dynamics/product_projective_ds.py b/src/sage/dynamics/arithmetic_dynamics/product_projective_ds.py
+--- a/src/sage/dynamics/arithmetic_dynamics/product_projective_ds.py
++++ b/src/sage/dynamics/arithmetic_dynamics/product_projective_ds.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs cysignals.alarm
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.py b/src/sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
