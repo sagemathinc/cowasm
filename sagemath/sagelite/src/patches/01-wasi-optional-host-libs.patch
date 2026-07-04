@@ -12912,3 +12912,44 @@ diff -urN -U0 a/src/sage/algebras/group_algebra.py b/src/sage/algebras/group_alg
 @@ -198 +207,2 @@
 +            sage: # needs sage.libs.gap
              sage: G = groups.misc.AdditiveCyclic(3)
+diff -urN -U0 a/src/sage/rings/finite_rings/residue_field_givaro.pyx b/src/sage/rings/finite_rings/residue_field_givaro.pyx
+--- a/src/sage/rings/finite_rings/residue_field_givaro.pyx
++++ b/src/sage/rings/finite_rings/residue_field_givaro.pyx
+@@ -37,4 +37,4 @@
+-        sage: K.<a> = NumberField(x^3 - 7)
+-        sage: P = K.ideal(29).factor()[0][0]
+-        sage: k = K.residue_field(P)
+-        sage: k.degree()
++        sage: K.<a> = NumberField(x^3 - 7)                                             # needs sage.rings.number_field
++        sage: P = K.ideal(29).factor()[0][0]                                           # needs sage.rings.number_field
++        sage: k = K.residue_field(P)                                                   # needs sage.rings.number_field
++        sage: k.degree()                                                               # needs sage.rings.number_field
+@@ -42,4 +42,4 @@
+-        sage: OK = K.maximal_order()
+-        sage: c = OK(a)
+-        sage: b = k(c)
+-        sage: b*c^2
++        sage: OK = K.maximal_order()                                                   # needs sage.rings.number_field
++        sage: c = OK(a)                                                                # needs sage.rings.number_field
++        sage: b = k(c)                                                                 # needs sage.rings.number_field
++        sage: b*c^2                                                                    # needs sage.rings.number_field
+@@ -47 +47 @@
+-        sage: b*c
++        sage: b*c                                                                      # needs sage.rings.number_field
+@@ -111,4 +111,4 @@
+-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
+-            sage: P = K.ideal(61).factor()[0][0]
+-            sage: k = K.residue_field(P)
+-            sage: k(77*a^7 + 4)
++            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                # needs sage.rings.number_field
++            sage: P = K.ideal(61).factor()[0][0]                                       # needs sage.rings.number_field
++            sage: k = K.residue_field(P)                                               # needs sage.rings.number_field
++            sage: k(77*a^7 + 4)                                                        # needs sage.rings.number_field
+@@ -116,2 +116,2 @@
+-            sage: V = k.vector_space(map=False); v = V([3,-2])
+-            sage: type(k.convert_map_from(V))
++            sage: V = k.vector_space(map=False); v = V([3,-2])                         # needs sage.rings.number_field
++            sage: type(k.convert_map_from(V))                                          # needs sage.rings.number_field
+@@ -119 +119 @@
+-            sage: k(v)  # indirect doctest
++            sage: k(v)  # indirect doctest                                             # needs sage.rings.number_field

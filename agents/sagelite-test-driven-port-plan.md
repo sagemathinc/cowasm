@@ -27814,6 +27814,36 @@ queries are empty, `skips-by-reason.sql` groups the deferred blocks under
 `optional:sage.libs.singular`, and the strict candidate scan prints no row
 after the file is added to the corpus.
 
+Focused Givaro residue-field corpus-growth pass on 2026-07-04:
+
+```text
+residue_field_givaro.pyx: 11 passed, 0 failed, 19 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/finite_rings/residue_field_givaro.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,049
+non-comment entries. The fresh 26-to-40 prompt-band probe had identified this
+file as a compact near miss with 12 passing blocks and 15 failures. The
+passing examples exercise finite-field polynomial residue fields; the failures
+were number-field residue-field examples that reach the current cypari2/PARI
+object-model boundary and then cascade through missing setup names.
+
+The added WASI source patch marks those number-field residue-field examples
+as `# needs sage.rings.number_field`, matching the same file's existing
+number-field tags in `ResidueFiniteField_givaro.__init__`. Focused validation
+used `make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-residue-field/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`2debb50a647f54b788f957fdc776df117d305868`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, `skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.rings.number_field`, and the strict candidate scan prints no
+row after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
