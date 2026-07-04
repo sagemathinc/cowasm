@@ -27627,6 +27627,46 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `skips-by-reason.sql` groups the deferred blocks under
 `optional:sage.libs.gap`.
 
+Follow-up low-frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. Fresh probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-04-goal/`, and the strict promotion
+scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --corpus
+sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt --dedupe-paths
+--ignore-invalid --quiet-invalid` printed no uncovered clean runnable rows.
+
+The mixed low-frontier probe recorded:
+
+```text
+low-frontier.sqlite3: 589 passed, 905 failed, 1113 skipped
+```
+
+The only files with substantial runnable coverage were still too noisy for a
+browser-profile promotion: `sage/algebras/weyl_algebra.py` had 301 passing
+blocks but 18 failures, and
+`sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py` had
+172 passing blocks but 21 failures. The remaining runnable failures were broad
+dependency-boundary clusters around symbolic calculus, Symmetrica, category
+setup, and a timeout in `sage/algebras/askey_wilson.py`. The skipped-only rows
+in that batch, `sage/combinat/chas/fsym.py`,
+`sage/combinat/chas/wqsym.py`, and `sage/combinat/crystals/letters.pyx`, add
+no default-profile runnable coverage.
+
+Two smaller utility/math probes also produced no promotable file:
+
+```text
+small-utility.sqlite3: 0 passed, 0 failed, 150 skipped
+small-math.sqlite3:    0 passed, 37 failed, 217 skipped
+```
+
+The utility probe was entirely skipped-only across small category, REPL,
+doctest, misc, monoid, calculus, and knot helper files. The math probe was
+mostly skipped-only, with graph and poset rows failing before exposing any
+passing default-profile coverage. These files should stay out of the curated
+corpus until either their dependency tags expose runnable examples or the
+underlying optional graph/category surfaces change.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
