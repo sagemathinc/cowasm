@@ -29057,6 +29057,48 @@ The strict `doctest-corpus-candidates.py` scan with `--require-run-metadata`
 and `--require-block-rows` printed no uncovered clean runnable rows for this
 database.
 
+Follow-up 506-to-520 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus still has
+1,065 non-comment entries. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-506-520/probe.sqlite3`
+and recorded:
+
+```text
+9 files: 471 passed, 1648 failed, 2395 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/combinat/rsk.py`, `sage/topology/simplicial_set_constructions.py`,
+`sage/schemes/toric/variety.py`, and
+`sage/rings/function_field/ideal_polymod.py`. Their blocks are already guarded
+by explicit optional, long, random, or backend-specific metadata for
+combinat/modules, graphs/groups/modules, polyhedron/graphs/Singular/plotting,
+symbolic, and function-field coverage, so they add no runnable default-profile
+signal.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/rings/power_series_ring_element.pyx` was the strongest near
+miss with 453 passed, 33 failed, and 23 skipped blocks, but its remaining
+failures mix missing hyperbolic startup names (`sinh`, `cosh`, `tanh`), PARI
+power-series implementation gaps, pexpect-backed algebraic-extension examples,
+and output drift. `sage/manifolds/differentiable/affine_connection.py` and
+`sage/manifolds/subset.py` were dominated by manifold startup-name cascades
+after `Manifold`/`M` setup failed. `sage/rings/lazy_species.py` was dominated
+by GAP/libgap import boundaries and dependent lazy-species setup-name
+cascades. `sage/schemes/elliptic_curves/period_lattice.py` remained blocked
+by elliptic-curve/symbolic/backend setup, with many skipped blocks already
+classified for default-profile dependency boundaries.
+
+There were no file-level runtime errors in this band. The saved failure-class
+summary was 1333 `NameError`, 146 `ModuleNotFoundError`, 91 `AttributeError`,
+28 `output_mismatch`, 27 `FeatureNotPresentError`, and 23 `TypeError`
+block-level failures. The strict `doctest-corpus-candidates.py` scan with
+`--require-run-metadata` and `--require-block-rows` printed no uncovered clean
+runnable rows for this database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
