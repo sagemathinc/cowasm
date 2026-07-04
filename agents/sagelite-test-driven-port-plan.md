@@ -29687,6 +29687,41 @@ name cascades, graph/symbolic/backend imports, or broader domain-specific
 frontiers. `sage/algebras/splitting_algebra.py` failed at file scope on the
 known NTL `ZZ_pContext.restore` dynamic-link boundary.
 
+Follow-up 731-to-745 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The regenerated band contained two uncovered files:
+`sage/matroids/linear_matroid.pyx` and
+`sage/modular/modform_hecketriangle/hecke_triangle_group_element.py`. The
+direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-731-745/probe.sqlite3`
+and recorded:
+
+```text
+2 files: 155 passed, 450 failed, 863 skipped
+```
+
+`sage/modular/modform_hecketriangle/hecke_triangle_group_element.py` was
+skipped-only in the default browser-compatible profile, with all 740 blocks
+guarded by existing `sage.libs.gap`, number-field, symbolic, optional, or
+long-time metadata. It adds no runnable quiet-corpus signal.
+
+The runnable failures were concentrated in
+`sage/matroids/linear_matroid.pyx`, which recorded 155 passed, 450 failed,
+and 123 skipped blocks. The failures are broad matroid/graph startup and
+backend cascades rather than a compact metadata gap: 198 `NameError` rows,
+119 `output_mismatch` rows, 48 `ImportError` rows, 22 `ValueError` rows, 22
+`KeyError` rows, 17 `ModuleNotFoundError` rows, 17 `AttributeError` rows, and
+7 `TypeError` rows. The earliest failures import
+`sage.matroids.advanced`, which reaches `sage.graphs.generic_graph_pyx`
+through lattice-poset startup; dependent examples then fail on missing
+`Matroid`, missing `matroids`, and stale setup objects. Other clusters include
+missing `sage.rings.polynomial.plural`, matroid invariant/projection method
+gaps, representation display drift, and finite-field/rational parent
+coercion gaps. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, and `--require-block-rows` printed no rows after
+subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
