@@ -27781,6 +27781,39 @@ run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 87.
 
+Focused multivariate-polynomial book corpus-growth pass on 2026-07-04:
+
+```text
+mpoly_doctest.py: 15 passed, 0 failed, 15 skipped
+```
+
+That one-file make-target validation adds
+`sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,048
+non-comment entries. A fresh 26-to-40 prompt-band probe under
+`.tmp/current-run/scheduled-2026-07-04-codex15/` first recorded
+`prompt-26-40.sqlite3` with 69 passed, 387 failed, and 669 skipped blocks. The
+only narrow book-style near miss in that batch was `mpoly_doctest.py`, where
+the passing prompts cover exact multivariate polynomial setup, submultisets,
+variable injection, polynomial ideals, and relation setup.
+
+The added WASI source patch marks the failing examples that cross unavailable
+`plural`, symbolic, or Singular-backed paths as explicit dependency skips.
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding and patching a fresh Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex15/mpoly/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b6a9021feef764935597a4a040ae999d05fffc0d`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, `skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.rings.polynomial.plural`, `optional:sage.symbolic`, and
+`optional:sage.libs.singular`, and the strict candidate scan prints no row
+after the file is added to the corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

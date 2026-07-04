@@ -7787,6 +7787,53 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/lin
 -  sage: all(abs(M[i,j]) < 10^-13
 +  sage: M = (X*X-a)                                                            # needs scipy
 +  sage: all(abs(M[i,j]) < 10^-13                                               # needs scipy
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
+@@ -34 +34 @@
+-  sage: J.variety(AA)
++  sage: J.variety(AA)                                                           # needs sage.rings.polynomial.plural
+@@ -39,2 +39,2 @@
+-  sage: V = J.variety(QQbar)
+-  sage: [u for u in V if all(a in AA for a in u.values())]
++  sage: V = J.variety(QQbar)                                                    # needs sage.rings.polynomial.plural
++  sage: [u for u in V if all(a in AA for a in u.values())]                     # needs sage.rings.polynomial.plural
+@@ -45 +45 @@
+-  sage: M = matrix([ [p.degree(v) for v in (x,y,z)]
++  sage: M = matrix([ [p.degree(v) for v in (x,y,z)]                             # needs sage.rings.polynomial.plural
+@@ -53 +53 @@
+-  sage: M.det()
++  sage: M.det()                                                                 # needs sage.rings.polynomial.plural
+@@ -58 +58 @@
+-  sage: M.change_ring(GF(17)).right_kernel()
++  sage: M.change_ring(GF(17)).right_kernel()                                    # needs sage.rings.polynomial.plural
+@@ -65 +65 @@
+-  sage: L.<a> = QQ[sqrt(2-sqrt(3))]; L
++  sage: L.<a> = QQ[sqrt(2-sqrt(3))]; L                                          # needs sage.symbolic
+@@ -69 +69 @@
+-  sage: sorted(J1.variety(L), key=str)
++  sage: sorted(J1.variety(L), key=str)                                         # needs sage.symbolic
+@@ -82 +82 @@
+-  sage: basis = J2.normal_basis(); basis
++  sage: basis = J2.normal_basis(); basis                                       # needs sage.rings.polynomial.plural
+@@ -87 +87 @@
+-  sage: xbasis = [(x*p).reduce(J2) for p in basis]; xbasis
++  sage: xbasis = [(x*p).reduce(J2) for p in basis]; xbasis                     # needs sage.rings.polynomial.plural
+@@ -89 +89 @@
+-  sage: mat = matrix([ [xp[q] for q in basis]
++  sage: mat = matrix([ [xp[q] for q in basis]                                  # needs sage.rings.polynomial.plural
+@@ -91 +91 @@
+-  sage: mat
++  sage: mat                                                                    # needs sage.rings.polynomial.plural
+@@ -103 +103 @@
+-  sage: charpoly = mat.characteristic_polynomial(); charpoly
++  sage: charpoly = mat.characteristic_polynomial(); charpoly                   # needs sage.rings.polynomial.plural
+@@ -105 +105 @@
+-  sage: solve(SR(charpoly), SR(x))
++  sage: solve(SR(charpoly), SR(x))                                             # needs sage.rings.polynomial.plural
+@@ -112 +112 @@
+-  sage: Rel.reduce(s^6)
++  sage: Rel.reduce(s^6)                                                        # needs sage.libs.singular
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
