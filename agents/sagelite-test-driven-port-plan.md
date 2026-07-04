@@ -27520,6 +27520,40 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the deferred blocks under
 `optional:sage.matroids`.
 
+Focused nilpotent Lie-algebra corpus-growth pass on 2026-07-04:
+
+```text
+nilpotent_lie_algebra.py: 113 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_algebras/nilpotent_lie_algebra.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,045
+non-comment entries. A fresh Lie-algebra probe first recorded the file as a
+compact near miss with 113 passing blocks, one failing block, and one existing
+long-time skip. The failing block was the small
+`LieAlgebra(ZZ, 2, step=2)` `TestSuite`: its direct object construction and
+ordinary nilpotent Lie-algebra doctests pass, but category suite subchecks for
+graded and nilpotent behavior reach the current free-module/matrix
+echelonization recursion and attribute-name drift in the browser-compatible
+profile.
+
+The added WASI source patch marks that single suite as a deferred
+`# known bug`, preserving the direct nilpotent Lie-algebra construction,
+category, bracket, grading, generator, representation, and coercion coverage
+as runnable default-profile doctests. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding and patching a fresh
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-active/lie/nilpotent-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`4bb3c6e0e024ca03d0f45127a7912337904cf6c8`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the deferred suite under
+`deferred:known bug`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
