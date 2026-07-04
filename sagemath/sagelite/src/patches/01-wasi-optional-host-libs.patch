@@ -21,6 +21,90 @@ diff -urN a/src/sage/combinat/species/product_species.py b/src/sage/combinat/spe
              True
          """
          self._subset = subset
+diff -urN a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
+--- a/src/sage/matrix/matrix_mod2_dense.pyx
++++ b/src/sage/matrix/matrix_mod2_dense.pyx
+@@ -695,6 +695,6 @@
+-            sage: A = random_matrix(GF(2),10^4,10^4)
+-            sage: v0 = random_matrix(GF(2),10^4,1)
+-            sage: v1 = v0.column(0)
+-            sage: r0 = A*v0
+-            sage: r1 = A*v1
+-            sage: r0.column(0) == r1
++            sage: A = random_matrix(GF(2),10^4,10^4)                  # long time
++            sage: v0 = random_matrix(GF(2),10^4,1)                    # long time
++            sage: v1 = v0.column(0)                                   # long time
++            sage: r0 = A*v0                                           # long time
++            sage: r1 = A*v1                                           # long time
++            sage: r0.column(0) == r1                                  # long time
+@@ -714,6 +714,6 @@
+-            sage: A = random_matrix(GF(2),10^4,10^3)
+-            sage: v0 = random_matrix(GF(2),10^3,1)
+-            sage: v1 = v0.column(0)
+-            sage: r0 = A*v0
+-            sage: r1 = A*v1
+-            sage: r0.column(0) == r1
++            sage: A = random_matrix(GF(2),10^4,10^3)                  # long time
++            sage: v0 = random_matrix(GF(2),10^3,1)                    # long time
++            sage: v1 = v0.column(0)                                   # long time
++            sage: r0 = A*v0                                           # long time
++            sage: r1 = A*v1                                           # long time
++            sage: r0.column(0) == r1                                  # long time
+@@ -944,2 +944,2 @@
+-              sage: A = random_matrix(GF(2),2701,3000)
+-              sage: B = random_matrix(GF(2),3000,3172)
++              sage: A = random_matrix(GF(2),2701,3000)  # long time
++              sage: B = random_matrix(GF(2),3000,3172)  # long time
+@@ -1312,4 +1312,4 @@
+-            sage: MS2 = MatrixSpace(GF(2), 1000)
+-            sage: from collections import defaultdict
+-            sage: found = defaultdict(bool)
+-            sage: while not all(found[i] for i in range(997, 1001)):
++            sage: MS2 = MatrixSpace(GF(2), 1000)  # long time
++            sage: from collections import defaultdict  # long time
++            sage: found = defaultdict(bool)  # long time
++            sage: while not all(found[i] for i in range(997, 1001)):  # long time
+@@ -1878 +1878 @@
+-            sage: l = len(dumps(random_matrix(GF(2), 2000, 2000))); l  # random   # previously ~ 785000
++            sage: l = len(dumps(random_matrix(GF(2), 2000, 2000))); l  # random, long time   # previously ~ 785000
+@@ -1960,3 +1960,3 @@
+-            sage: A = random_matrix(GF(2), 1000, 1000)
+-            sage: d = A.density()
+-            sage: float(d) == A.density(approx=True)
++            sage: A = random_matrix(GF(2), 1000, 1000)  # long time
++            sage: d = A.density()                       # long time
++            sage: float(d) == A.density(approx=True)     # long time
+@@ -1964 +1964 @@
+-            sage: len(A.nonzero_positions())/1000^2 == d
++            sage: len(A.nonzero_positions())/1000^2 == d # long time
+@@ -1968,2 +1968,2 @@
+-            sage: density_sum = A.density()
+-            sage: while abs(density_sum/total - 0.5) > 0.001:
++            sage: density_sum = A.density()  # long time
++            sage: while abs(density_sum/total - 0.5) > 0.001:  # long time
+@@ -1995 +1995 @@
+-            sage: while random_matrix(GF(2), 1000, 1000).rank() != 999:
++            sage: while random_matrix(GF(2), 1000, 1000).rank() != 999:  # long time
+@@ -2076,7 +2076,7 @@
+-            sage: set_random_seed(12345)
+-            sage: n, m = 20000, 19968
+-            sage: A = random_matrix(GF(2), n, m)
+-            sage: x = random_vector(GF(2), m)
+-            sage: B = A*x
+-            sage: from sage.doctest.util import ensure_interruptible_after
+-            sage: with ensure_interruptible_after(0.5): sol = A.solve_right(B)
++            sage: set_random_seed(12345)  # long time
++            sage: n, m = 20000, 19968     # long time
++            sage: A = random_matrix(GF(2), n, m)  # long time
++            sage: x = random_vector(GF(2), m)     # long time
++            sage: B = A*x                         # long time
++            sage: from sage.doctest.util import ensure_interruptible_after  # long time
++            sage: with ensure_interruptible_after(0.5): sol = A.solve_right(B)  # long time
+@@ -2814,2 +2814,2 @@
+-        sage: A = random_matrix(GF(2),1000,1000)
+-        sage: ple(A) == ple(A,'russian') == ple(A,'naive')
++        sage: A = random_matrix(GF(2),1000,1000)  # long time
++        sage: ple(A) == ple(A,'russian') == ple(A,'naive')  # long time
 diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/product_projective/space.py
 --- a/src/sage/schemes/product_projective/space.py
 +++ b/src/sage/schemes/product_projective/space.py

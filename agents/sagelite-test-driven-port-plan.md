@@ -29147,6 +29147,59 @@ failure-class summary was 861 `NameError`, 298 `ModuleNotFoundError`, 33
 `--require-block-rows` printed no uncovered clean runnable rows after
 subtracting the updated corpus.
 
+Follow-up 536-to-550 prompt-band frontier audit and matrix timeout
+classification:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-536-550/probe.sqlite3`
+and recorded:
+
+```text
+8 files: 9 passed, 938 failed, 2134 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/algebras/quantum_groups/quantum_group_gap.py`, `sage/plot/plot.py`,
+`sage/quadratic_forms/genera/genus.py`, and `sage/coding/grs_code.py`.
+Their blocks are already guarded by explicit optional, long, random, or
+backend-specific metadata for GAP/Quagroup, plotting/symbolic/numpy/schemes,
+PARI/Magma/symbolic, and finite-ring/module/symbolic coverage, so they add no
+runnable default-profile signal.
+
+The runnable failures were not narrow promotions. `sage/manifolds/subset.py`
+and `sage/manifolds/differentiable/affine_connection.py` remained broad
+manifold frontiers, dominated by missing symbolic-expression imports,
+manifold setup-name cascades, and display/output drift. The same band also
+recorded the existing NTL dynamic-link frontier in
+`sage/rings/polynomial/multi_polynomial_element.py` while resolving
+`ZZ_pContext::restore()`.
+
+`sage/matrix/matrix_mod2_dense.pyx` initially timed out before recording useful
+block rows because several large GF(2) matrix stress tests ran during the
+default browser-compatible profile. The WASI source patch now marks those
+large matrix-vector, Strassen/M4RI, random-rank, serialization, density, rank,
+interruptibility, and PLE stress examples as `# long time`. Focused validation
+used `make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus and
+`SAGELITE_DOCTEST_DB=.tmp/current-run/scheduled-2026-07-04-current/prompt-536-550/matrix-mod2-focused-longtime2.sqlite3`.
+It recorded:
+
+```text
+sage -t failed: 308 passed, 115 failed, 49 skipped
+```
+
+This turns the file from a file-level timeout into an actionable block-level
+frontier, but it is still not a corpus promotion candidate. The remaining
+failure classes are 40 `NameError`, 37 `ModuleNotFoundError`, 18
+`AttributeError`, 11 `output_mismatch`, eight `ValueError`, and one
+`TypeError`. The largest cluster is the missing
+`sage.matrix.matrix_mod2_dense` import surface, followed by dependent setup
+failures such as missing `LU`, `P`, and `Q` in later PLE examples. The strict
+`doctest-corpus-candidates.py` near-miss scan reports the file as
+`308 passed, 115 failed, 49 skipped`, so further matrix work should target
+startup/import surface and M4RI semantics rather than more doctest metadata.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
