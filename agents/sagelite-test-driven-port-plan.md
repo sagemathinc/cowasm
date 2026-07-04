@@ -30262,6 +30262,41 @@ dependencies become available or a targeted
 `multi_polynomial_libsingular.pyx` metadata pass tags the remaining number-field
 and Singular-heavy examples.
 
+Follow-up 1401-to-1450 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained one uncovered file:
+`sage/data_structures/stream.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1401-1450/probe.sqlite3`
+and recorded:
+
+```text
+1 file: 0 passed, 1 failed, 0 skipped
+```
+
+The file failed at file scope before persisting block rows, in the
+`Stream_taylor.__eq__` example
+`h = Stream_taylor((x^3 + x^2) / (x + 1), False)` at line 1179. The runtime
+aborted in polynomial construction with the existing CPython/Cython assertion
+path `PyTuple_GET_SIZE`, reporting `assertion failed in dynamic library:
+PyTuple_Check(op)`.
+
+A temporary patched-source probe that deferred that quotient setup and its
+dependent `f == h` check wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1401-1450/probe-after-stream-quotient-skip.sqlite3`
+and advanced only to a second file-level runtime boundary:
+`Stream_compose.input_streams` failed at
+`P = PseudoDifferentialOperatorRing(polygen(GF(8), 'a'))` with the known NTL
+dynamic-link error
+`_ZNK3NTL11ZZ_pContext7restoreEv: function import requires a callable`.
+`stream.py` should therefore remain outside the quiet corpus until the
+polynomial quotient assertion and NTL context-restore boundaries move, rather
+than being handled as a narrow source-tagging promotion.
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and `--require-file-run`
+printed no uncovered clean runnable rows for this probe.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
