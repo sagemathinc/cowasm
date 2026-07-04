@@ -28364,6 +28364,43 @@ and an NTL dynamic-link `wasm_link_error` for
 `sage/rings/valuation/valuation.py`. The next prompt-band search should move
 past this window or target one of those runtime/frontier clusters directly.
 
+Follow-up 236-to-250 prompt-band partial frontier audit:
+
+No new quiet corpus candidate was found in the completed targeted probes. The
+fresh source-minus-corpus prompt-count list under
+`.tmp/current-run/scheduled-2026-07-04-next-band-236-250/` identified 30
+uncovered files with 236 to 250 static Sage prompts. A full one-worker direct
+probe of the whole band was stopped after it reached timeout-heavy workers
+without producing a final SQLite dashboard, so the pass switched to bounded
+single-file probes for representative compact or pure-looking rows from the
+same band.
+
+Completed targeted probes recorded:
+
+```text
+onsager.py:                   5 passed, 240 failed,   1 skipped
+indexed_element.pyx:        147 passed,  14 failed,  77 skipped
+constants.py:                16 passed, 192 failed,  18 skipped
+tamari_blossoming_tree.py:   48 passed, 194 failed,   1 skipped
+matrix_cyclo_dense.pyx:       0 passed,   1 failed,   0 skipped
+elementary_crystals.py:       0 passed,   0 failed, 249 skipped
+specht_module.py:             0 passed,   0 failed, 237 skipped
+real_interval_absolute.pyx:   0 passed,   0 failed, 244 skipped
+plot3d.py:                    0 passed,   0 failed, 245 skipped
+```
+
+The strict `doctest-corpus-candidates.py` scan over those SQLite artifacts and
+the current 1,060-file corpus printed no uncovered clean runnable rows. The
+skipped-only files are already explicit dependency-boundary coverage for
+symbolic, combinat/module, p-adic, and plot3d features. The near-miss rows are
+not narrow metadata-only promotions: `indexed_element.pyx` is mostly missing
+setup names plus missing modules, `constants.py` is a broad symbolic
+startup/backend cluster, `tamari_blossoming_tree.py` and `onsager.py` are
+NameError/import cascades, and `matrix_cyclo_dense.pyx` still hits the
+CyclotomicField signature-mismatch runtime frontier at its first setup line.
+Future work in this prompt-count range should either probe the remaining files
+in smaller slices or target one of those startup/runtime clusters directly.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
