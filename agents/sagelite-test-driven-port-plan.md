@@ -27881,6 +27881,37 @@ queries are empty; `skips-by-reason.sql` groups the deferred projective-height
 examples under `optional:sage.rings.number_field` and
 `optional:sage.geometry.polyhedron,sage.libs.pari,sage.rings.number_field`.
 
+Follow-up 56-to-70 prompt-band frontier audit on 2026-07-04:
+
+No new quiet corpus candidate was found. A fresh direct Sagelite probe wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-56-70/prompt-56-70.sqlite3`
+for the first 80 uncovered files whose patched source contained between 56
+and 70 Sage prompts. The run recorded:
+
+```text
+prompt-56-70.sqlite3: 257 passed, 1,411 failed, 2,702 skipped
+```
+
+The strict promotion scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --corpus
+sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt
+--require-run-metadata --require-source-root-path --min-runner-version 87
+--dedupe-paths --ignore-invalid --quiet-invalid --limit 20` printed no clean
+uncovered rows. The batch had 44 skipped-only dependency-boundary files, 33
+block-failing files, and three file-level errors. File-level errors were one
+symbolic number-field timeout and two dynamic-link import gaps:
+`gf2x_mul` in `finite_field_ntl_gf2e.py` and
+`NTL::ZZ_pContext::restore()` in `polynomial_singular_interface.py`.
+
+The only compact near miss was
+`sage/schemes/plane_conics/con_rational_field.py` with one passing setup block,
+seven `NameError` failures, and 35 skipped blocks. It is not promoted: the
+failures are startup-namespace misses for `Conic` and dependent local names,
+while the substantive conic-solving examples are already behind explicit
+optional dependency metadata. Broader passing rows in the band, such as
+`rank_matroid.py`, `mandel_julia.py`, and `abstract_jacobian.py`, still have
+large failure clusters rather than narrow browser-profile tags.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
