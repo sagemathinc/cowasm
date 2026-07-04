@@ -31283,6 +31283,44 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py` and
 the full WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 43-to-45 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 43-to-45 prompt
+source-minus-corpus band. The fresh 18-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-43-45/prompt-43-45/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 40 passed, 200 failed, 467 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining failures were whole-file dependency frontiers rather
+than narrow promotion candidates: graph generators and weakly chordal helpers,
+polyhedron formal modules, GLPK-backed logging backend examples, fork-backed
+parallel helpers, PARI/NTL finite-field construction, and hyperelliptic Kummer
+surface scheme examples.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.graphs`, `ppl`,
+`sage.numerical.mip`, `subprocess cysignals.alarm`, `sage.libs.pari`,
+`sage.libs.ntl`, and `sage.schemes`. A make-target rerun rebuilt a fresh
+patched source tree and wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-43-45/prompt-43-45/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 792 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py` and
+the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

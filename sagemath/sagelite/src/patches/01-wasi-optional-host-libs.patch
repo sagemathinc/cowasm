@@ -14709,3 +14709,51 @@ diff --git a/src/sage/schemes/elliptic_curves/ell_wp.py b/src/sage/schemes/ellip
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves
  r"""
+diff --git a/src/sage/geometry/polyhedron/modules/formal_polyhedra_module.py b/src/sage/geometry/polyhedron/modules/formal_polyhedra_module.py
+--- a/src/sage/geometry/polyhedron/modules/formal_polyhedra_module.py
++++ b/src/sage/geometry/polyhedron/modules/formal_polyhedra_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs ppl
+ r"""
+diff --git a/src/sage/graphs/generators/platonic_solids.py b/src/sage/graphs/generators/platonic_solids.py
+--- a/src/sage/graphs/generators/platonic_solids.py
++++ b/src/sage/graphs/generators/platonic_solids.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/weakly_chordal.pyx b/src/sage/graphs/weakly_chordal.pyx
+--- a/src/sage/graphs/weakly_chordal.pyx
++++ b/src/sage/graphs/weakly_chordal.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/numerical/backends/logging_backend.py b/src/sage/numerical/backends/logging_backend.py
+--- a/src/sage/numerical/backends/logging_backend.py
++++ b/src/sage/numerical/backends/logging_backend.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ r"""
+diff --git a/src/sage/parallel/use_fork.py b/src/sage/parallel/use_fork.py
+--- a/src/sage/parallel/use_fork.py
++++ b/src/sage/parallel/use_fork.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess cysignals.alarm
+ """
+diff --git a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py b/src/sage/rings/finite_rings/finite_field_pari_ffelt.py
+--- a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py
++++ b/src/sage/rings/finite_rings/finite_field_pari_ffelt.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx b/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
+--- a/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
++++ b/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/kummer_surface.py b/src/sage/schemes/hyperelliptic_curves/kummer_surface.py
+--- a/src/sage/schemes/hyperelliptic_curves/kummer_surface.py
++++ b/src/sage/schemes/hyperelliptic_curves/kummer_surface.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
