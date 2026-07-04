@@ -30908,6 +30908,46 @@ metadata records CoWasm commit `5673b8d2e58a0abde538deef0eb80d0054a6a6ba`,
 Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 89, and about 59 seconds of elapsed time.
 
+Follow-up 13-to-15 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 13-to-15 prompt
+source-minus-corpus band. The initial 31-file probe wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-13-15/prompt-13-15/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 17 passed, 174 failed, 215 skipped
+```
+
+The clearest zero-pass failures were dependency-boundary front doors rather
+than narrow default-profile math coverage: LibGAP group and operation helpers,
+graph decomposition/partial-cube helpers, the IPython kernel wrapper, a PBoRi
+frontend import prompt, quaternion-algebra Cython helpers, modular
+abelian-variety constructors, and cyclic-cover construction. The WASI source
+patch now marks those files or setup prompts with explicit `# needs` metadata
+for `sage.libs.gap`, `sage.graphs`, `IPython`, `brial`,
+`sage.algebras.quatalg`, `sage.libs.eclib`, and `sage.schemes`.
+
+A refreshed patched-source rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-13-15/prompt-13-15/final.sqlite3`
+and records:
+
+```text
+sage -t failed: 9 passed, 48 failed, 351 skipped
+```
+
+The touched files are now skipped-only under the default browser-compatible
+profile, and the strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` prints no uncovered clean
+runnable rows. The remaining 13-to-15 prompt failures are not source-tag-only
+promotion candidates: `sage/rings/polynomial/ideal.py` times out in the
+univariate Groebner-basis example, the lie-conformal files still hit graph,
+PARI/cypari2, and coercion-model frontiers, and the conic/hyperelliptic
+constructor files still need scheme startup/backend triage. Future low-prompt
+work should continue past this band or target one of those focused runtime
+clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
