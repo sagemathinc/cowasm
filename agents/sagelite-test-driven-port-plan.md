@@ -30297,6 +30297,50 @@ The strict promotion scan with `--require-run-metadata`,
 `--require-source-root-path`, `--require-block-rows`, and `--require-file-run`
 printed no uncovered clean runnable rows for this probe.
 
+Follow-up 1451-to-1600 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. The source-minus-corpus prompt-count list has no
+uncovered files in the 1451-to-1500 range; the next actual uncovered files
+were probed in two focused one-worker batches under
+`.tmp/current-run/scheduled-2026-07-04-active/`.
+
+The 1501-to-1550 batch contained only
+`sage/combinat/posets/posets.py` and wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1501-1550/probe.sqlite3`:
+
+```text
+posets.py: 0 passed, 0 failed, 1515 skipped
+```
+
+The file is skipped-only under its existing broad
+`sage.graphs,sage.modules` file-level dependency metadata, with additional
+optional/deferred tags for graph, module, polyhedron, FLINT, GAP, PARI,
+Singular, MIP, plot, symbolic, and external-tool coverage. It adds no
+default browser-profile runnable signal until the graph/module dependency
+frontier changes.
+
+The 1551-to-1600 batch covered `sage/rings/polynomial/pbori/pbori.pyx` and
+`sage/modules/free_module.py`, writing
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1551-1600/probe.sqlite3`:
+
+```text
+2 files: 166 passed, 1405 failed, 13 skipped
+```
+
+`pbori.pyx` is not a source-tag-only promotion candidate: its block failures
+are led by missing `sage.rings.polynomial.pbori.pbori` imports and dependent
+name, attribute, type, and output cascades across Boolean polynomial ring
+examples. `free_module.py` still fails at file scope on
+`Ms.basis_matrix().is_sparse()` with the known sparse matrix
+`Matrix.__setitem__` `wasm_signature_mismatch` cluster. The strict promotion
+scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, and `--require-file-run` printed no uncovered clean
+runnable rows for either batch. Future scheduled runs should avoid repeating
+these prompt bands unless graph/module file-level policy, PBoRi packaging, or
+the sparse matrix `__setitem__` dynamic-link boundary changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
