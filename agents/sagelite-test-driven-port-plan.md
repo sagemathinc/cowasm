@@ -26891,6 +26891,44 @@ cascade through setup names such as `x`, `declare_ring`, `normal_form`, and
 blocks but still starts from unavailable `HyperellipticCurve`/`Jacobian`
 constructors, so it belongs with the broader scheme backend frontier.
 
+Follow-up low-prompt source-minus-corpus audit on 2026-07-04:
+
+No corpus entry was promoted in this pass; the curated corpus remains at
+1,038 non-comment entries. A strict candidate scan over all nonempty
+runner-87 scratch dashboards under `.tmp/current-run/`, using
+`doctest-corpus-candidates.py --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths`, printed
+no uncovered clean runnable candidate. At the time of the scan, 398
+source-minus-corpus files had runner-87 scratch coverage and 1,248
+prompt-bearing source-minus-corpus files in the patched
+`sagemath/sagelite/build/wasi-sdk/src/sage` tree had not yet appeared in a
+runner-87 dashboard.
+
+Two fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex1/` sampled another twenty
+low-prompt or pure-math-adjacent files:
+
+```text
+low-prompt-boundary.sqlite3: 6 passed, 65 failed, 41 skipped
+filtered-pure-boundary.sqlite3: 13 passed, 32 failed, 283 skipped
+```
+
+The strict promotion scan over both fresh databases printed no uncovered clean
+runnable candidate. The skipped-only rows were explicit browser-profile
+dependency boundaries, including PARI-backed modular-form files,
+FLINT/graph/module-bound poset helpers, symbolic vector-bundle examples,
+permutation-group enumeration, and rigged-configuration/crystal modules tagged
+for unavailable combinatorics or module dependencies.
+
+The live failures are still broader backend or startup-surface frontiers
+rather than narrow promotion candidates. The low-prompt batch is dominated by
+graph startup names such as `graphs` and `bandwidth`, GAP-backed group setup,
+the missing PBoRi extension, manifold startup names, and hyperelliptic-curve
+constructors. The filtered pure-math batch exposed a symbolic callable-vector
+startup gap around `var`/callable-function setup and a Singular-backed
+polynomial-ideal near miss with 13 passing blocks before `plural`,
+`sage.libs.singular`, and `pexpect` dependencies appear.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
