@@ -30126,6 +30126,33 @@ trap in `EllipticCurvePoint_number_field._has_order_at_least` while building
 elliptic/number-field backend frontier, not a browser-profile corpus promotion
 candidate.
 
+Follow-up 1201-to-1250 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained three uncovered files:
+`sage/modules/free_module_element.pyx`, `sage/arith/misc.py`, and
+`sage/combinat/sloane_functions.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1201-1250/probe.sqlite3`
+and recorded:
+
+```text
+3 files: 0 passed, 2 failed, 1250 skipped
+```
+
+`sloane_functions.py` was skipped-only under its existing metadata, so it adds
+no runnable default browser-profile coverage. `free_module_element.pyx` failed
+at file scope in `s.outer_product(s)` with the existing matrix-action
+`RuntimeError: table index is out of bounds` trap at the
+`MatrixMatrixAction._act_` frame. `arith/misc.py` timed out at the
+`__GCD_sequence(Sequence((2*X+4,2*X^2,2)))` polynomial GCD example.
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and
+`--require-file-run` printed no uncovered clean runnable rows. Future
+scheduled runs should avoid repeating this prompt band unless the matrix-action
+table-index trap, polynomial GCD timeout, or default-profile Sloane optional
+metadata changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
