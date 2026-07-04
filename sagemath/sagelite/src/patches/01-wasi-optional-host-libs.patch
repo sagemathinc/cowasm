@@ -367,6 +367,15 @@ diff -urN a/src/sage/matroids/advanced.py b/src/sage/matroids/advanced.py
 
  This adds the following to the main namespace:
 
+diff -urN -U0 a/src/sage/matroids/database_collections.py b/src/sage/matroids/database_collections.py
+--- a/src/sage/matroids/database_collections.py
++++ b/src/sage/matroids/database_collections.py
+@@ -228,0 +229 @@
++        sage: # needs sage.matroids
+@@ -278,0 +280 @@
++        sage: # needs sage.matroids
+@@ -327,0 +330 @@
++        sage: # needs sage.matroids
 diff -urN a/src/sage/matroids/utilities.py b/src/sage/matroids/utilities.py
 --- a/src/sage/matroids/utilities.py
 +++ b/src/sage/matroids/utilities.py

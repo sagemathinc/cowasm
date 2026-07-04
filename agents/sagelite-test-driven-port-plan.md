@@ -27066,6 +27066,47 @@ startup names such as `L`, `DS`, `DiscreteDynamicalSystem`, and
 `M.<v,w> = S.quotient_module((t+1)*X^2 + 1)`, keeping Ore-module coverage in
 the backend frontier.
 
+Follow-up matroid catalog promotion and frontier audit on 2026-07-04:
+
+The curated corpus grew from 1,039 to 1,040 non-comment entries by promoting
+`src/sage/matroids/database_collections.py`. Its optional
+`matroid_database` examples were already skipped correctly, and its three
+remaining named-catalog examples now carry `# needs sage.matroids` in the
+Sagelite WASI source patch, matching the existing browser-profile matroid
+boundary used by neighboring matroid doctests. A focused direct run under
+`.tmp/current-run/scheduled-2026-07-04-codex5/` passed cleanly:
+
+```text
+database_collections.py: 2 passed, 0 failed, 25 skipped
+```
+
+The same file also passed through the make target with a temporary one-file
+corpus, after rebuilding a fresh patched Sagelite source tree from package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`:
+
+```text
+sage -t passed: 2 passed, 0 failed, 25 skipped
+```
+
+Full make-target validation wrote
+`/tmp/sagelite-corpus-after-database-collections.sqlite3` from CoWasm commit
+`d092336ccb64901add2f9423378f3ba541eac8f9` and the same Sagelite package
+commit:
+
+```text
+sage -t failed: 68557 passed, 12 failed, 21615 skipped
+```
+
+The promoted matroid database-collections file passed in that full dashboard
+with the same `2/0/25` split. The remaining latest-run failure classes are
+10 `NameError`, one `TypeError`, and one `output_mismatch`. The largest
+clusters are still existing state/setup-frontier failures in
+`combinat/integer_vector.py`, plus isolated remaining failures in
+`categories/additive_magmas.py`, `categories/simplicial_sets.py`,
+`categories/semigroups.py`, `matroids/utilities.py`,
+`combinat/root_system/weight_lattice_realizations.py`, `doctest/rif_tol.py`,
+and `repl/interface_magic.py`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
