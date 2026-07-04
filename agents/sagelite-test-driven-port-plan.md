@@ -30833,6 +30833,42 @@ The strict promotion scan with `--require-run-metadata`,
 runnable candidates. The skip summary groups the newly tagged rows under
 `optional:sage.libs.gap` and `optional:sage.libs.pari`.
 
+Follow-up 5-to-8 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 5-to-8 prompt
+source-minus-corpus band. The initial 32-file probe wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-5-8/prompt-5-8/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 0 passed, 32 failed, 160 skipped
+```
+
+The remaining zero-pass failures were dependency-boundary front doors:
+graph-backed `lovasz_theta.py` and `graph_generators_pyx.pyx`, GAP-backed
+`symplectic_gap.py`, pexpect-backed `psage.py`, Singular-backed
+`function_factory.py`, and the half-integral modular-form helper whose import
+reaches the unavailable dense integer matrix/modular-arithmetic stack.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.graphs`, `sage.libs.gap`,
+`pexpect`, `sage.libs.singular`, and `sage.matrix.matrix_integer_dense`.
+A refreshed patched-source rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-5-8/prompt-5-8/final.sqlite3`
+and records:
+
+```text
+sage -t passed: 0 passed, 0 failed, 192 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The final run
+metadata records CoWasm commit `3f03aa8f6002e984840faa3bcae87eb183cbfdfc`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 89.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
