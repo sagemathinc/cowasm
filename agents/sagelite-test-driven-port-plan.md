@@ -30153,6 +30153,39 @@ scheduled runs should avoid repeating this prompt band unless the matrix-action
 table-index trap, polynomial GCD timeout, or default-profile Sloane optional
 metadata changes.
 
+Follow-up 1251-to-1300 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. The fresh source-minus-corpus prompt-count band
+contained three uncovered files:
+`sage/combinat/sloane_functions.py`, `sage/geometry/cone.py`, and
+`sage/rings/number_field/number_field_element.pyx`. The direct one-worker probe
+wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1251-1300/probe.sqlite3`
+and recorded:
+
+```text
+3 files: 161 passed, 1023 failed, 2633 skipped
+```
+
+`sloane_functions.py` and `number_field_element.pyx` were skipped-only under
+existing optional-backend metadata, including GAP/FLINT/PARI/modules for the
+Sloane helpers and LinBox/PARI/GAP/symbolic metadata for number-field element
+coverage. `geometry/cone.py` recorded `161 passed`, `1023 failed`, and
+`85 skipped`. Its failures are dominated by the unavailable PPL backend:
+317 direct `FeatureNotPresentError` rows report `ppl is not available` after
+`Linear_Expression` import failed, and most of the remaining rows are setup
+cascades such as missing `K`, `c`, `cones`, `cone`, and related cone variables
+after earlier `Cone(...)` construction failed.
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and
+`--require-file-run` printed no uncovered clean runnable rows. Future
+scheduled runs should avoid repeating this prompt band unless PPL/polyhedral
+cone support, number-field optional metadata, or Sloane optional metadata
+changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
