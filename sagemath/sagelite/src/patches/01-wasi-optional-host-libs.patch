@@ -12725,3 +12725,16 @@ diff -urN -U0 a/src/sage/repl/interface_magic.py b/src/sage/repl/interface_magic
 @@ -92 +92 @@
 -            sage: next(InterfaceMagic.all_iter())
 +            sage: next(InterfaceMagic.all_iter())                                      # random
+diff -urN -U0 a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation.py
+--- a/src/sage/combinat/permutation.py
++++ b/src/sage/combinat/permutation.py
+@@ -3258,0 +3259 @@
++            sage: # needs sage.rings.polynomial.plural
+@@ -6960,0 +6962 @@
++            sage: # needs sage.libs.gap
+@@ -6972,0 +6975 @@
++            sage: # needs sage.libs.gap
+@@ -7331,0 +7335 @@
++            sage: # needs sage.groups
+@@ -8432,0 +8437 @@
++        sage: # needs sage.graphs

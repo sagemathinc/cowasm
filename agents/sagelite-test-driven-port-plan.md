@@ -27323,6 +27323,39 @@ object-model gaps. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 87.
 
+Latest checked local corpus-growth pass after the 2026-07-04 permutation
+dependency-boundary tagging:
+
+```text
+permutation.py: 1014 passed, 0 failed, 316 skipped
+```
+
+The focused rerun records 1,330 block rows in
+`.tmp/current-run/scheduled-2026-07-04-codex10/permutation-tagged.sqlite3`
+with no block-level failures and no file-level errors, so
+`sage/combinat/permutation.py` is now part of the curated browser-profile
+corpus. The added WASI source patch marks Schubert determinant ideal doctests
+as `# needs sage.rings.polynomial.plural`, multiset permutation rank/unrank
+examples as `# needs sage.libs.gap`, permutation-group conversion coverage as
+`# needs sage.groups`, and bistochastic decomposition tests as
+`# needs sage.graphs`.
+
+The same scheduled pass sampled eight uncovered category, combinatorics,
+polynomial, and arithmetic files from the patched source tree. The raw
+frontier run in
+`.tmp/current-run/scheduled-2026-07-04-codex10/frontier.sqlite3` recorded
+1,303 passed, 21 failed, and 1,003 skipped blocks. `sets_cat.py` and
+`polynomial_quotient_ring.py` were skipped-only dependency-boundary rows.
+`infinite_polynomial_ring.py` remains a near miss with 282 passed, 2 failed,
+and 7 skipped; its failing `TestSuite` examples expose Singular-backed
+fraction-field coverage and sparse infinite-polynomial equality drift, so it
+was not promoted by metadata alone. The larger polynomial and arithmetic
+helpers remain runtime frontiers: `polynomial_ring.py` times out in
+`TestSuite(R).run()`, `polynomial_element.pyx` times out in an inverse-modulo
+example, `multi_polynomial_ring_base.pyx` hits a CyclotomicField signature
+mismatch, and `arith/misc.py` reaches a table-index trap through polynomial
+GCD setup.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
