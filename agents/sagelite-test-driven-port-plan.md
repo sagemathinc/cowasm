@@ -27709,6 +27709,36 @@ model drift. The remaining failures were broad optional-backend clusters:
 `output_mismatch`, four `AttributeError`, two `NotImplementedError`, and one
 `ImportError` block.
 
+Focused hyperelliptic genus-2 corpus-growth pass on 2026-07-04:
+
+```text
+jacobian_g2_generic.py: 2 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds
+`sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,047
+non-comment entries. Follow-up probing showed that the original startup-name
+failures masked existing heavier backend boundaries: the rational example
+reaches a polynomial change-ring function-signature mismatch after explicit
+`HyperellipticCurve` import, and the finite-field Kummer-surface example
+reaches the known finite-field memory-trap boundary. The WASI source patch
+therefore marks both genus-2 Jacobian example groups as
+`# needs sage.rings.polynomial.plural`, matching the adjacent
+`jacobian_homset_ramified.py` browser-profile boundary.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/hyperelliptic-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`3b068da3e8df8da29d0794c568d5c3f0ba1004ab`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `skips-by-reason.sql` groups the deferred examples
+under `optional:sage.rings.polynomial.plural`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
