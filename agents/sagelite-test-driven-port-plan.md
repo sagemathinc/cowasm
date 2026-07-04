@@ -30434,6 +30434,53 @@ file-error scan printed no rows. Future scheduled runs should avoid repeating
 this prompt band until lazy-series startup namespace policy, symmetric-function
 coverage, or the polynomial/Singular backend boundary changes.
 
+Follow-up 2051-to-3300 prompt-band audit and symbolic finite-field tagging:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. A fresh source-minus-corpus prompt-count scan found
+six uncovered files above the previous 2050-prompt frontier:
+`sage/combinat/finite_state_machine.py`,
+`sage/rings/number_field/number_field.py`,
+`sage/rings/polynomial/polynomial_element.pyx`,
+`sage/symbolic/expression.pyx`, `sage/matrix/matrix2.pyx`, and
+`sage/graphs/generic_graph.py`.
+
+The first two probes were skipped-only dependency-boundary rows:
+
+```text
+finite_state_machine.py: 0 passed, 0 failed, 2110 skipped
+number_field.py:         0 passed, 0 failed, 2512 skipped
+```
+
+`polynomial_element.pyx` remains an existing polynomial-runtime frontier: the
+single-file probe timed out at line 1539 on
+`t.inverse_mod(S.ideal((t + 1)^7)) == f`, before useful block-level coverage
+could accumulate. `matrix2.pyx` likewise timed out at line 576 on the first
+polynomial-ring `A.solve_right(v)` example, matching the broader matrix
+backend/performance frontier rather than a narrow corpus-promotion target.
+
+`expression.pyx` initially failed at file scope on
+`b = polygen(FiniteField(9), 'b')` in the positive-characteristic symbolic
+arithmetic diagnostic. The failure was the known NTL dynamic-link boundary,
+`_ZNK3NTL11ZZ_pContext7restoreEv: function import requires a callable`. The
+WASI source patch now marks that finite-field setup and its dependent
+`SR('I') * b` check as `# needs sage.libs.ntl`. A focused full-file rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-3101-3150/expression-after-ntl-tag.sqlite3`
+and advanced to ordinary block-level dashboard data:
+
+```text
+expression.pyx: 208 passed, 2806 failed, 119 skipped
+```
+
+The rerun has no file-level errors. Its dominant failures are broad symbolic
+startup and backend clusters, led by missing `SR`, missing symbolic modules,
+symbolic attribute gaps, and display drift, so it is not a source-tag-only
+promotion candidate. The strict `doctest-corpus-candidates.py` scan over the
+fresh probe databases with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+and `--dedupe-paths` printed no uncovered clean runnable rows.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

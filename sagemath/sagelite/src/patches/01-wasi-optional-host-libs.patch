@@ -14010,3 +14010,11 @@ diff --git a/src/sage/rings/lazy_series.py b/src/sage/rings/lazy_series.py
              (x^6 + 3*x^5 + 12*x^4 + 19*x^3 + 37*x^2 + 28*x + 31)/(x^2 + x + 3)
 -            sage: f(g) == g^2 + 1 + g^-1
 +            sage: f(g) == g^2 + 1 + g^-1                                               # needs sage.libs.singular
+diff --git a/src/sage/symbolic/expression.pyx b/src/sage/symbolic/expression.pyx
+--- a/src/sage/symbolic/expression.pyx
++++ b/src/sage/symbolic/expression.pyx
+@@ -3975,2 +3975,2 @@
+-            sage: b = polygen(FiniteField(9), 'b')
+-            sage: SR('I') * b
++            sage: b = polygen(FiniteField(9), 'b')                                      # needs sage.libs.ntl
++            sage: SR('I') * b                                                          # needs sage.libs.ntl
