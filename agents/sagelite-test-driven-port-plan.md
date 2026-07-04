@@ -29556,6 +29556,45 @@ was 395 `NameError`, 26 `output_mismatch`, 23 `ModuleNotFoundError`, 11
 with `--require-run-metadata`, `--require-source-root-path`, and
 `--require-block-rows` printed no rows after subtracting the current corpus.
 
+Follow-up 686-to-700 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-686-700/probe.sqlite3`
+and recorded:
+
+```text
+7 files: 9 passed, 636 failed, 2091 skipped
+```
+
+Three files were skipped-only dependency boundaries:
+`sage/combinat/posets/lattices.py`, `sage/modular/modform/element.py`, and
+`sage/topology/simplicial_complex.py`. Their blocks are already guarded by
+existing optional, needs, long-time, random, tolerance, or deferred metadata
+for graph, combinatorics, module, polyhedron, group, Singular, FLINT, PARI,
+symbolic, finite-ring, and numerical-MIP coverage, so they add no runnable
+default-profile signal to the quiet corpus.
+
+The runnable block failures were concentrated in
+`sage/graphs/connectivity.pyx`, which recorded 9 passed, 633 failed, and 47
+skipped blocks. The failures are broad graph-backend startup cascades rather
+than a compact metadata gap: 533 `NameError` rows, 57 `ModuleNotFoundError`
+rows for `sage.graphs.connectivity`, and 43 output mismatches. Representative
+early rows fail on missing `Graph`, `DiGraph`, `is_connected`, and dependent
+`G`/`D` setup names.
+
+The remaining three files failed at file scope on existing backend/runtime
+frontiers. `sage/modules/ore_module.py` reached the focused cypari2 object
+model boundary during a finite-field Frobenius path and then trapped with a
+WASM table-index error at `M.pseudohom()`.
+`sage/matrix/matrix_polynomial_dense.pyx` hit the known NTL
+`ZZ_pContext.restore` dynamic-link boundary while setting up `PF.<x> = F[]`.
+`sage/matrix/matrix_integer_dense.pyx` hit a table-index trap inside the
+matrix characteristic-polynomial path at `A.charpoly('x')`. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+and `--require-block-rows` printed no rows after subtracting the current
+corpus; the broad near-miss scan surfaced only `graphs/connectivity.pyx`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
