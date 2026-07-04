@@ -28,6 +28,7 @@ src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
 src/sage/rings/factorint.pyx
 src/sage/rings/sum_of_squares.pyx
+src/sage/rings/tate_algebra_ideal.pyx
 src/sage/rings/finite_rings/hom_prime_finite_field.pyx
 src/sage/rings/finite_rings/residue_field_givaro.pyx
 src/sage/rings/number_field/number_field_element_base.pyx
@@ -612,6 +613,7 @@ src/sage/categories/pointed_sets.py
 src/sage/categories/polyhedra.py
 src/sage/categories/poor_man_map.py
 src/sage/categories/primer.py
+src/sage/categories/quantum_group_representations.py
 src/sage/categories/quotients.py
 src/sage/categories/ring_ideals.py
 src/sage/categories/r_trivial_semigroups.py

@@ -28080,6 +28080,42 @@ records CoWasm commit `0cdbdf71fc2d9091d9c66fd4592d81f5e4ae52ef`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, runner version 87, and a 100% non-skipped pass rate.
 
+Focused 116-to-130 prompt-band corpus-growth pass:
+
+```text
+quantum_group_representations.py: 10 passed, 0 failed, 98 skipped
+tate_algebra_ideal.pyx: 120 passed, 0 failed, 6 skipped
+```
+
+That two-file make-target validation adds
+`sage/categories/quantum_group_representations.py` and
+`sage/rings/tate_algebra_ideal.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,056
+non-comment entries. The files add compact quantum-group category coverage
+and substantial Tate-algebra ideal coverage without new WASI source tags or
+startup namespace changes; their skipped blocks are already explicit optional
+dependency boundaries in the patched source copy.
+
+The fresh 116-to-130 prompt-band probe attempted 63 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-116-130/prompt-116-130.sqlite3`.
+It recorded 532 passed blocks, 2,515 failed blocks, and 3,651 skipped blocks.
+Coverage shape was 25 skipped-only files, 29 block-failing files, seven
+file-level errors, and the two clean runnable candidates promoted above. The
+file-level errors were existing timeout, NTL dynamic-link, matrix randomize,
+finite-field Givaro, and polynomial memory-trap frontiers rather than narrow
+corpus-growth work.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-116-130/two-candidate-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`20c266887c7701858255c6a535b61143df2c3490`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
