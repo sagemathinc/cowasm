@@ -27412,6 +27412,43 @@ to the corpus. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 87.
 
+Scheduled low-prompt frontier audit on 2026-07-04:
+
+Fresh direct Sagelite probes under
+`.tmp/current-run/scheduled-2026-07-04-codex13/` regenerated uncovered prompt
+counts from the current 1,043-entry corpus and sampled 46 small uncovered
+files from the patched `sagemath/sagelite/build/wasi-sdk/src/sage` tree. The
+strict promotion scan with `doctest-corpus-candidates.py --source-root
+sagemath/sagelite/build/wasi-sdk --require-run-metadata
+--require-source-root-path --min-runner-version 87 --dedupe-paths
+--ignore-invalid --quiet-invalid` printed no uncovered clean runnable rows.
+
+The fresh dashboard totals were:
+
+```text
+small-frontier.sqlite3:    0 passed,  0 failed,  70 skipped
+mid-frontier.sqlite3:     16 passed, 83 failed, 249 skipped
+utility-frontier.sqlite3: 13 passed, 26 failed, 469 skipped
+```
+
+The scan classified 37 rows as skipped-only dependency boundaries and four
+Judson/book helper rows as zero-block files. The skipped-only rows include
+small CPython/Cython, crypto, plot, topology, database, PARI, category, and
+utility helpers already covered by `# optional`, `# needs`, or deferred
+metadata, so they are not useful corpus promotions while they contribute no
+runnable blocks.
+
+The five failed rows remain true frontiers rather than metadata-only
+promotions. `manifolds/structure.py`, `symbolic/benchmark.py`,
+`recequadiff_doctest.py`, and `geometry/voronoi_diagram.py` all fail from
+startup-surface/module-global gaps that cascade into missing symbolic,
+manifold, plotting, or geometry names. `interfaces/process.pyx` reaches the
+separate subprocess boundary, including the expected WASI
+`wasi does not support processes` diagnostic. The latest run metadata records
+CoWasm commit `d6681b5b4650fc6aa2faefec9d72cd82043b7120`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 87.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
