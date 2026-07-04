@@ -29016,6 +29016,47 @@ nine `ImportError`, seven `AttributeError`, two `ModuleNotFoundError`, two
 `--require-block-rows` printed no uncovered clean runnable rows for this
 database.
 
+Follow-up 491-to-505 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,065 non-comment entries. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-491-505/probe.sqlite3`
+and recorded:
+
+```text
+9 files: 276 passed, 1093 failed, 2071 skipped
+```
+
+Four files were skipped-only dependency boundaries:
+`sage/modular/multiple_zeta.py`, `sage/combinat/tiling.py`,
+`sage/schemes/curves/affine_curve.py`, and `sage/categories/crystals.py`.
+Their blocks are already guarded by explicit optional or backend-specific
+metadata for modular, graph, combinatorics, scheme, curve, and crystal
+coverage, so they add no runnable default-profile signal.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/quivers/representation.py` recorded 23 passed and 472
+failed blocks, dominated by startup-name cascades. `sage/manifolds/manifold.py`
+recorded four passed and 491 failed blocks, mostly after the initial manifold
+setup failed and left the common `M` examples undefined.
+`sage/schemes/generic/morphism.py` was the strongest near miss with 249 passed,
+128 failed, and 107 skipped blocks, but its failures still span generic scheme
+morphism startup, symbolic/curve backend, and output-drift clusters rather than
+a focused source-tag-only promotion.
+
+The two file-level errors matched existing runtime frontiers:
+`sage/matrix/matrix1.pyx` trapped in a polynomial matrix construction example,
+and `sage/schemes/elliptic_curves/hom.py` trapped while constructing the
+large finite field `GF((2^127-1, 2), modulus=[1,0,1])` through cypari2/PARI
+integer cloning. The saved failure-class summary for the band was 991
+`NameError`, 63 `ModuleNotFoundError`, 18 `output_mismatch`, 12
+`AttributeError`, seven `TypeError`, and two `wasm_trap` file-level errors.
+The strict `doctest-corpus-candidates.py` scan with `--require-run-metadata`
+and `--require-block-rows` printed no uncovered clean runnable rows for this
+database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
