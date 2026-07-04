@@ -29200,6 +29200,43 @@ failures such as missing `LU`, `P`, and `Q` in later PLE examples. The strict
 `308 passed, 115 failed, 49 skipped`, so further matrix work should target
 startup/import surface and M4RI semantics rather than more doctest metadata.
 
+Follow-up 551-to-565 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-551-565/probe.sqlite3`
+and recorded:
+
+```text
+5 files: 9 passed, 518 failed, 1098 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/combinat/symmetric_group_algebra.py` and
+`sage/combinat/subword_complex.py`. Their doctests are already guarded by
+explicit optional, needs, long-time, or deferred metadata for combinatorics,
+modules, groups, graph, polyhedron, plotting, and GAP3 coverage, so they add
+no runnable default-profile signal to the quiet corpus.
+
+The runnable failures were not narrow promotions. `sage/groups/braid.py`
+recorded `9 passed, 516 failed, 36 skipped`; its largest clusters are missing
+startup names such as `BraidGroup`, `B`, dependent braid variables, and
+`FreeGroup`, plus the unavailable `sage.groups.libgap_wrapper` import surface.
+This is a broader braid/libgap startup frontier rather than a single doctest
+metadata gap. `sage/rings/padics/factory.py` hit a file-level maximum-call-stack
+trap while checking a lattice-precision matrix in `ZpLC`, grouping at the
+existing matrix1 dense-matrix recursion frame.
+`sage/combinat/colored_permutations.py` again reached the NTL dynamic-link
+boundary, `ZZ_pContext::restore()`, while evaluating
+`TabloidModule.brauer_character()`.
+
+The saved failure-class summary was 503 `NameError`, seven
+`ModuleNotFoundError`, four `AttributeError`, two `output_mismatch`, one
+file-level `Error`, and one `wasm_link_error`. The strict
+`doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows after
+subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
