@@ -11219,6 +11219,49 @@ diff -urN -U0 a/src/sage/homology/homology_group.py b/src/sage/homology/homology
 @@ -169 +169 @@
 -        sage: # needs sage.libs.flint (otherwise timeout)
 +        sage: # needs sage.libs.flint sage.modules (otherwise timeout)
+diff -urN -U0 a/src/sage/dynamics/arithmetic_dynamics/projective_ds.py b/src/sage/dynamics/arithmetic_dynamics/projective_ds.py
+--- a/src/sage/dynamics/arithmetic_dynamics/projective_ds.py
++++ b/src/sage/dynamics/arithmetic_dynamics/projective_ds.py
+@@ -6561,3 +6561,3 @@
+-            sage: L.<i> = CyclotomicField(4)
+-            sage: M = Matrix([[0,i],[-i,0]])
+-            sage: F.conjugate(M)
++            sage: L.<i> = CyclotomicField(4)                                          # needs sage.rings.number_field
++            sage: M = Matrix([[0,i],[-i,0]])                                          # needs sage.rings.number_field
++            sage: F.conjugate(M)                                                      # needs sage.rings.number_field
+@@ -6568 +6568 @@
+-            sage: F.is_chebyshev()
++            sage: F.is_chebyshev()                                                    # needs sage.rings.number_field
+@@ -6722,3 +6722,3 @@
+-            sage: L.<i> = CyclotomicField(4)
+-            sage: M = Matrix([[i, 0], [0, -i]])
+-            sage: f.conjugate(M)
++            sage: L.<i> = CyclotomicField(4)                                          # needs sage.rings.number_field
++            sage: M = Matrix([[i, 0], [0, -i]])                                       # needs sage.rings.number_field
++            sage: f.conjugate(M)                                                      # needs sage.rings.number_field
+@@ -6729 +6729 @@
+-            sage: f.is_Lattes()
++            sage: f.is_Lattes()                                                       # needs sage.rings.number_field
+@@ -6871,4 +6871,4 @@
+-            sage: L.<i> = CyclotomicField(4)
+-            sage: M = Matrix([[1+i,2*i], [0, -i]])
+-            sage: f = f.conjugate(M)
+-            sage: f.Lattes_to_curve(return_conjugation = True)
++            sage: L.<i> = CyclotomicField(4)                                          # needs sage.rings.number_field
++            sage: M = Matrix([[1+i,2*i], [0, -i]])                                    # needs sage.rings.number_field
++            sage: f = f.conjugate(M)                                                  # needs sage.rings.number_field
++            sage: f.Lattes_to_curve(return_conjugation = True)                        # needs sage.rings.number_field
+@@ -6950,5 +6950,5 @@
+-            sage: K.<x>=QuadraticField(2)
+-            sage: P.<a,y>=ProjectiveSpace(K, 1)
+-            sage: E=EllipticCurve([1, x])
+-            sage: f=P.Lattes_map(E, 2)
+-            sage: f.Lattes_to_curve()
++            sage: K.<x>=QuadraticField(2)                                             # needs sage.rings.number_field
++            sage: P.<a,y>=ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
++            sage: E=EllipticCurve([1, x])                                             # needs sage.rings.number_field
++            sage: f=P.Lattes_map(E, 2)                                                # needs sage.rings.number_field
++            sage: f.Lattes_to_curve()                                                 # needs sage.rings.number_field
 diff -urN -U0 a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
 --- a/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
 +++ b/src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx

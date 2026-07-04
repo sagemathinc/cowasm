@@ -30341,6 +30341,55 @@ runnable rows for either batch. Future scheduled runs should avoid repeating
 these prompt bands unless graph/module file-level policy, PBoRi packaging, or
 the sparse matrix `__setitem__` dynamic-link boundary changes.
 
+Follow-up 1601-to-1750 prompt-band audit and arithmetic-dynamics tagging:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,070 non-comment entries. A fresh source-minus-corpus prompt-count scan found
+`sage/rings/qqbar.py` in the 1601-to-1700 band and
+`sage/dynamics/arithmetic_dynamics/projective_ds.py` in the 1701-to-1750 band.
+
+The `qqbar.py` probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1601-1700/probe.sqlite3`
+and recorded:
+
+```text
+qqbar.py: 0 passed, 0 failed, 1671 skipped
+```
+
+The file is skipped-only under the current number-field/algebraic-number
+browser-profile metadata, so it adds no runnable default coverage.
+
+The first `projective_ds.py` probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1701-1750/probe.sqlite3`
+and failed at file scope before block rows were persisted, at the untagged
+`CyclotomicField(4)` setup in
+`DynamicalSystem_projective.is_chebyshev`. The WASI source patch now marks the
+three nearby CyclotomicField/Lattes blocks and the later
+`QuadraticField(2)` Lattes conversion block as
+`# needs sage.rings.number_field`, including dependent prompts in each block.
+
+After those tags, a focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1701-1750/probe-after-lattes-number-field-tags.sqlite3`
+and recorded ordinary block-level dashboard data instead of a file-level
+runtime abort:
+
+```text
+projective_ds.py: 397 passed, 511 failed, 713 skipped
+```
+
+The resulting failure clusters show this file is still a broad
+arithmetic-dynamics frontier, not a source-tag-only promotion candidate. The
+largest clusters are missing startup names for `DynamicalSystem_projective`
+and `DynamicalSystem`, unavailable `sage.rings.polynomial.plural` subscheme
+support, display/output drift, missing elliptic-curve startup state, and
+dependent setup cascades. The strict `doctest-corpus-candidates.py` scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+and `--require-file-run` printed no uncovered clean runnable rows. Future
+scheduled runs should avoid repeating this prompt band unless the dynamics
+startup namespace policy changes or the projective/subscheme and elliptic
+curve backend boundaries move.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
