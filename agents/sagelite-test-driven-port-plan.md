@@ -30481,6 +30481,39 @@ fresh probe databases with `--require-run-metadata`,
 `--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
 and `--dedupe-paths` printed no uncovered clean runnable rows.
 
+Follow-up high-prompt graph frontend audit:
+
+No new quiet corpus candidate was found. After the previous high-prompt pass,
+the only current source-minus-corpus file above the already-audited
+`expression.pyx` and timed-out `matrix2.pyx` frontier was
+`sage/graphs/generic_graph.py`. A bounded one-worker direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-4301-4350/generic-graph.sqlite3`
+and ran to completion without file-level errors:
+
+```text
+generic_graph.py: 152 passed, 3399 failed, 774 skipped
+```
+
+The failures are broad graph startup and backend-surface clusters rather than
+narrow metadata drift. The top block failure clusters are missing startup
+names: 777 `G`, 510 `graphs`, 430 `Graph`, 368 `g`, 295 `D`, 196 `DiGraph`,
+and 62 `digraphs` rows, plus 157 output mismatches after failed graph setup.
+Skipped blocks already cover explicit optional graph-adjacent dependencies,
+led by `networkx`, `sage.modules`, `sage.plot`, `sage.numerical.mip`,
+`python_igraph`, `sage.groups`, polyhedron, bliss, combinat, symbolic, and
+long-time tags.
+
+A direct installed-runtime import check confirms this is still a packaging and
+startup-surface frontier: `from sage.graphs.graph import Graph` fails because
+`sage.graphs.generic_graph_pyx` is not available from the Electron resource
+tree, so seeding `Graph`, `DiGraph`, `graphs`, or `digraphs` into the common
+doctest namespace would only hide the real graph-extension boundary. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+and `--dedupe-paths` printed no uncovered clean runnable rows. Future
+scheduled runs should avoid repeating `generic_graph.py` until the graph
+extension-resource frontier moves, especially `generic_graph_pyx`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
