@@ -14311,6 +14311,12 @@ diff --git a/src/sage/graphs/graph_editor.py b/src/sage/graphs/graph_editor.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/asteroidal_triples.pyx b/src/sage/graphs/asteroidal_triples.pyx
+--- a/src/sage/graphs/asteroidal_triples.pyx
++++ b/src/sage/graphs/asteroidal_triples.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
 diff --git a/src/sage/manifolds/differentiable/examples/symplectic_space.py b/src/sage/manifolds/differentiable/examples/symplectic_space.py
 --- a/src/sage/manifolds/differentiable/examples/symplectic_space.py
 +++ b/src/sage/manifolds/differentiable/examples/symplectic_space.py
@@ -14365,6 +14371,12 @@ diff --git a/src/sage/libs/gap/operations.py b/src/sage/libs/gap/operations.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.gap
  """
+diff --git a/src/sage/lfunctions/sympow.py b/src/sage/lfunctions/sympow.py
+--- a/src/sage/lfunctions/sympow.py
++++ b/src/sage/lfunctions/sympow.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs subprocess
+ r"""
 diff --git a/src/sage/repl/ipython_kernel/kernel.py b/src/sage/repl/ipython_kernel/kernel.py
 --- a/src/sage/repl/ipython_kernel/kernel.py
 +++ b/src/sage/repl/ipython_kernel/kernel.py

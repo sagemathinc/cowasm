@@ -30948,6 +30948,51 @@ constructor files still need scheme startup/backend triage. Future low-prompt
 work should continue past this band or target one of those focused runtime
 clusters.
 
+Follow-up 16-to-18 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 16-to-18 prompt
+source-minus-corpus band. The initial 26-file probe wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-16-18/prompt-16-18/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 0 passed, 28 failed, 359 skipped
+```
+
+Most files in this band were already skipped-only under the default
+browser-compatible profile. The only zero-pass failure clusters were
+dependency-boundary front doors: `sage/graphs/asteroidal_triples.pyx` used the
+unavailable graph startup surface and graph Cython module, while
+`sage/lfunctions/sympow.py` used elliptic-curve examples that ultimately call
+the external Sympow subprocess interface.
+
+The WASI source patch now marks those two files with explicit file-level
+`# sage.doctest: needs sage.graphs` and `# sage.doctest: needs subprocess`
+metadata. A refreshed patched-source rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-16-18/prompt-16-18/final.sqlite3`
+and records:
+
+```text
+sage -t passed: 0 passed, 0 failed, 387 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. Focused
+make-target validation rebuilt a fresh patched Sagelite source copy and
+confirmed the two newly tagged files with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, recording 0 passed, 0 failed, and 36
+skipped blocks in
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-16-18/two-file-make.sqlite3`.
+The latest-run metadata records CoWasm commit
+`0b1031a0cc0eddf494c214ecc051edf20f186b34`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
+and about 161 seconds for the full 26-file band rerun.
+Future low-prompt work should continue into the 19-to-21 prompt band or switch
+to one of the broader runtime clusters that still produces non-skipped
+failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
