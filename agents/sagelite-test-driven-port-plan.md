@@ -30186,6 +30186,36 @@ scheduled runs should avoid repeating this prompt band unless PPL/polyhedral
 cone support, number-field optional metadata, or Sloane optional metadata
 changes.
 
+Follow-up 1301-to-1350 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The fresh source-minus-corpus
+prompt-count band contained one uncovered file:
+`sage/graphs/graph.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1301-1350/probe.sqlite3`
+and recorded:
+
+```text
+1 file: 34 passed, 989 failed, 303 skipped
+```
+
+The failures are dominated by graph-startup and graph-backend availability
+rather than a new low-level WASM trap. The largest block cluster is
+`NameError: name 'graphs' is not defined` with 246 primary rows, followed by
+setup cascades such as missing `G1`, `M`, `G2`, and other graph variables.
+The installed runtime also fails a direct lightweight graph-catalog probe at
+`sage.graphs.graph_generators` because `sage.graphs.generic_graph_pyx` is not
+available in the Electron resource tree, so seeding `graphs` in the common
+doctest namespace would be premature. Smaller direct clusters include two
+missing `sage.graphs.graph_coloring` rows.
+
+Existing metadata already skips many backend-heavy examples in the same file:
+96 `sage.modules` rows, 42 `networkx` rows, 36
+`sage.numerical.mip` rows, 27 `sage.plot` rows, 13 `python_igraph` rows, and
+smaller GAP, PARI, FLINT, finite-ring, polyhedron, and symbolic clusters.
+Future scheduled runs should avoid repeating this prompt band unless the graph
+extension-resource frontier moves, especially `generic_graph_pyx` and
+`graph_coloring`, or the browser-profile graph namespace policy changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
