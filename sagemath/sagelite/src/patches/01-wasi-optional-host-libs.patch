@@ -8015,6 +8015,63 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpo
 @@ -112 +112 @@
 -  sage: Rel.reduce(s^6)
 +  sage: Rel.reduce(s^6)                                                        # needs sage.libs.singular
+diff -urN a/src/sage/rings/number_field/totallyreal_data.pyx b/src/sage/rings/number_field/totallyreal_data.pyx
+--- a/src/sage/rings/number_field/totallyreal_data.pyx
++++ b/src/sage/rings/number_field/totallyreal_data.pyx
+@@ -207,2 +207,2 @@
+-        sage: ls = sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,0,1,2)
+-        sage: [RealField(10)(x) for x in ls]
++        sage: ls = sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,0,1,2)  # needs sage.libs.pari
++        sage: [RealField(10)(x) for x in ls]                                           # needs sage.libs.pari
+@@ -210 +210 @@
+-        sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,6,1,2) # random
++        sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,6,1,2) # random  # needs sage.libs.pari
+@@ -217 +217 @@
+-        sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
++        sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)  # needs sage.libs.pari
+@@ -417 +417 @@
+-      sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2+1'))
++      sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2+1'))  # needs sage.libs.pari
+@@ -419 +419 @@
+-      sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2-1'))
++      sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2-1'))  # needs sage.libs.pari
+diff -urN a/src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx b/src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx
+@@ -12 +12 @@
+-    sage: I.groebner_basis('libsingular:std')
++    sage: I.groebner_basis('libsingular:std')                                   # needs sage.libs.singular
+@@ -20,3 +20,3 @@
+-    sage: I = sage.rings.ideal.Cyclic(R,6)
+-    sage: B = I.groebner_basis('libsingular:std')
+-    sage: len(B)
++    sage: I = sage.rings.ideal.Cyclic(R,6)                                      # needs pexpect
++    sage: B = I.groebner_basis('libsingular:std')                               # needs pexpect
++    sage: len(B)                                                               # needs pexpect
+@@ -30 +30 @@
+-        sage: ideal(x^2 - 2*y^2, x*y - 3).groebner_basis('libsingular:slimgb')
++        sage: ideal(x^2 - 2*y^2, x*y - 3).groebner_basis('libsingular:slimgb')  # needs sage.libs.singular
+@@ -36 +36 @@
+-        sage: ideal(x+y, x^2 - 1, y^2 - 2*x).groebner_basis('libsingular:slimgb')
++        sage: ideal(x+y, x^2 - 1, y^2 - 2*x).groebner_basis('libsingular:slimgb')  # needs sage.libs.singular
+@@ -114 +114 @@
+-        sage: sage.libs.singular.function_factory.ff.std(Sequence([x,y,z]))
++        sage: sage.libs.singular.function_factory.ff.std(Sequence([x,y,z]))     # needs sage.libs.singular
+@@ -116 +116 @@
+-        sage: sage.libs.singular.function_factory.ff.std(Ideal([x,y,z]))
++        sage: sage.libs.singular.function_factory.ff.std(Ideal([x,y,z]))        # needs sage.libs.singular
+@@ -176 +176 @@
+-        sage: I.normal_basis()  # indirect doctest
++        sage: I.normal_basis()  # indirect doctest                              # needs sage.rings.polynomial.plural
+@@ -179 +179 @@
+-        sage: [J.normal_basis(d) for d in (0..4)]  # indirect doctest
++        sage: [J.normal_basis(d) for d in (0..4)]  # indirect doctest           # needs sage.rings.polynomial.plural
+@@ -288 +288 @@
+-        sage: I.interreduced_basis()
++        sage: I.interreduced_basis()                                           # needs sage.rings.polynomial.plural
+@@ -293 +293 @@
+-        sage: I.interreduced_basis()
++        sage: I.interreduced_basis()                                           # needs sage.rings.polynomial.plural
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/polynomes_doctest.py

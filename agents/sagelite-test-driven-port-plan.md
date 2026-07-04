@@ -30683,6 +30683,51 @@ promotion scan across the broad batch and focused rerun with
 uncovered clean runnable rows. Future low-prompt work should continue past the
 16-to-20 band or target one of the non-PolyBoRi root-cause clusters above.
 
+Follow-up 21-to-25 prompt-band audit and two narrow corpus promotions:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 27 uncovered files in the 21-to-25 prompt band. The broad batch
+wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-next/prompt-21-25/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 43 passed, 169 failed, 373 skipped
+```
+
+Most files were skipped-only dependency-boundary rows or broader backend
+frontiers. The batch had one file-level runtime error:
+`sage/modular/modform/l_series_gross_zagier.py` reached the known
+number-field/PARI signature-mismatch path at `K.<a> = QuadraticField(-40)`.
+The ordinary block failures clustered around modular forms, symbolic book
+doctests, GLPK/exact linear programming, manifolds, sandpiles, hyperbolic
+geometry, and hyperelliptic startup/backend gaps.
+
+Two narrow near-misses were promotable after explicit backend tagging:
+`sage/rings/number_field/totallyreal_data.pyx` had 18 passing blocks and 6
+failures in PARI/cypari2 object-model helpers, and
+`sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx` had 13 passing
+blocks and 12 failures in Singular, plural, and pexpect-backed examples. The
+WASI source patch now marks those specific examples with `# needs
+sage.libs.pari`, `# needs sage.libs.singular`,
+`# needs sage.rings.polynomial.plural`, or `# needs pexpect` as appropriate.
+A focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-lowprompt-next/focused-tags/focused.sqlite3`
+and records:
+
+```text
+totallyreal_data.pyx: 18 passed, 0 failed, 6 skipped
+multi_polynomial_ideal_libsingular.pyx: 13 passed, 0 failed, 12 skipped
+```
+
+Both files are now added to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+checked corpus to 1,072 non-comment entries. The strict promotion scan across
+the broad batch and the focused rerun with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`, and
+`--dedupe-paths` prints no uncovered clean runnable rows after subtracting the
+updated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
