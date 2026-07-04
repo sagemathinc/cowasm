@@ -1003,6 +1003,7 @@ src/sage/probability/random_variable.py
 src/sage/graphs/cographs.py
 src/sage/graphs/print_graphs.py
 src/sage/graphs/hypergraph_generators.py
+src/sage/groups/perm_gps/partn_ref/refinement_sets.pyx
 src/sage/plot/arc.py
 src/sage/plot/arrow.py
 src/sage/plot/bar_chart.py

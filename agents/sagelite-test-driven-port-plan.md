@@ -28205,6 +28205,39 @@ records CoWasm commit `d0b3936456474489abe80dff08cc1044c171be09`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 87, and a 100% non-skipped pass rate.
 
+Focused permutation-refinement corpus-growth pass:
+
+```text
+refinement_sets.pyx: 156 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/perm_gps/partn_ref/refinement_sets.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,058
+non-comment entries. The near-miss row from the 146-to-160 prompt-band probe
+had six failures, all caused by upstream doctests using Sage's `powerset`
+startup helper without a local import.
+
+The doctest runner now seeds `powerset` beside the existing `Subsets` and
+`subsets` startup helpers, and the WASI `sage.all` patch exposes the same
+helper for REPL parity on a fresh patched source copy. Direct focused
+validation first wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-active-refinement/refinement-direct.sqlite3`
+with `156 passed, 0 failed, 0 skipped`. Make-target validation then rebuilt
+and patched the Sagelite source copy and wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-active-refinement/refinement-make.sqlite3`
+with the same clean result, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and `SAGELITE_DOCTEST_JOBS=1`.
+
+The latest-run summary records CoWasm commit
+`b2e61b673625341701c6c7f0e11a952f38afa92d`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and the strict candidate scan prints no row after
+subtracting the updated corpus. The adjacent `sage/algebras/yangian.py`
+near-miss remains outside the quiet dashboard because its first failure
+imports graph-backed Lie algebra code rather than a narrow startup helper.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
