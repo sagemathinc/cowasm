@@ -29937,6 +29937,64 @@ runs should avoid repeating this prompt band unless the symbolic startup
 surface, PARI/cypari2 object model, real interval algebraic-dependency path,
 elliptic-curve startup surface, or Singular/GAP backend profile changes.
 
+Follow-up 851-to-900 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,069 non-comment entries after the pushout promotion, and the fresh one-worker
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-851-900/probe.sqlite3`.
+
+The band recorded:
+
+```text
+5 files: 0 passed, 868 failed, 2607 skipped
+```
+
+`sage/topology/simplicial_set.py`, `sage/combinat/ncsf_qsym/ncsf.py`, and
+`sage/schemes/elliptic_curves/ell_number_field.py` were skipped-only under
+existing topology, combinatorics, number-field, elliptic, and backend
+dependency metadata. `sage/manifolds/section.py` recorded 867 block failures,
+dominated by symbolic/manifold startup-name cascades such as missing `s` after
+earlier setup failed in the stripped browser-compatible profile.
+
+`sage/schemes/elliptic_curves/ell_rational_field.py` failed at file scope in
+the `lseries_gross_zagier` doctest while constructing
+`QuadraticField(-40)`, recording the same number-field dynamic-link
+`wasm_signature_mismatch` cluster seen in adjacent elliptic-curve probes. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, and
+`--require-file-run` printed no uncovered clean runnable rows. Future scheduled
+runs should avoid repeating this band unless the symbolic/manifold startup
+surface, elliptic-curve optional profile, or number-field dynamic-link boundary
+changes.
+
+Follow-up 1001-to-1050 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. The fresh one-worker direct probe
+wrote
+`.tmp/current-run/scheduled-2026-07-04-active/prompt-1001-1050/probe.sqlite3`.
+
+The band recorded:
+
+```text
+4 files: 1014 passed, 1828 failed, 232 skipped
+```
+
+`sage/tensor/modules/comp.py` remains a substantial tensor-component near miss
+with 854 passing blocks, but still has 152 failures and should be handled as a
+targeted tensor-module semantics pass rather than broad source tagging.
+`sage/matroids/matroid.pyx` and `sage/groups/perm_gps/permgroup.py` recorded
+large backend/startup failure clusters around matroid and permutation-group
+semantics. `sage/rings/lazy_series_ring.py` timed out at the
+`(1 + t) / (1 + t + t^2)` lazy-series constructor example before recording
+block rows for the rest of the file.
+
+The strict promotion scan prints no uncovered clean runnable rows for this
+dashboard. Future scheduled runs should avoid repeating this band unless the
+tensor component, matroid, permutation-group, or lazy-series runtime/profile
+changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
