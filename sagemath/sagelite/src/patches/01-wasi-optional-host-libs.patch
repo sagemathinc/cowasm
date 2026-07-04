@@ -14486,3 +14486,34 @@ diff --git a/src/sage/schemes/cyclic_covers/constructor.py b/src/sage/schemes/cy
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  """
+diff --git a/src/sage/schemes/hyperelliptic_curves/mestre.py b/src/sage/schemes/hyperelliptic_curves/mestre.py
+--- a/src/sage/schemes/hyperelliptic_curves/mestre.py
++++ b/src/sage/schemes/hyperelliptic_curves/mestre.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/manifolds/structure.py b/src/sage/manifolds/structure.py
+--- a/src/sage/manifolds/structure.py
++++ b/src/sage/manifolds/structure.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/numerical/backends/glpk_exact_backend.pyx b/src/sage/numerical/backends/glpk_exact_backend.pyx
+--- a/src/sage/numerical/backends/glpk_exact_backend.pyx
++++ b/src/sage/numerical/backends/glpk_exact_backend.pyx
+@@ -1,1 +1,2 @@
+-
++# sage.doctest: needs sage.numerical.mip
++
+diff --git a/src/sage/sandpiles/examples.py b/src/sage/sandpiles/examples.py
+--- a/src/sage/sandpiles/examples.py
++++ b/src/sage/sandpiles/examples.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/recequadiff_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/recequadiff_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/recequadiff_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/recequadiff_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """

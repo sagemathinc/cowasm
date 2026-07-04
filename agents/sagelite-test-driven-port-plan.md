@@ -31057,6 +31057,47 @@ uncovered clean runnable rows. Future low-prompt work should continue past this
 band or target one of the broader runtime clusters instead of rechecking these
 newly classified dependency frontiers.
 
+Follow-up 22-to-24 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 22-to-24 prompt
+source-minus-corpus band. The initial 16-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-next/prompt-22-24/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 12 passed, 100 failed, 252 skipped
+```
+
+Most files were already skipped-only dependency-boundary rows. The remaining
+failures were whole-file browser-profile frontiers rather than narrow runnable
+math coverage: manifold structure examples import symbolic/manifold
+infrastructure, the GLPK exact backend depends on the missing numerical MIP
+stack, sandpile examples depend on graph-backed sandpile startup, the
+hyperelliptic Mestre helper depends on scheme/conic constructors, and the
+computational-mathematics differential-equation solution is symbolic calculus
+coverage.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.manifolds`,
+`sage.numerical.mip`, `sage.graphs`, `sage.schemes`, and `sage.symbolic`. A
+refreshed make-target rerun rebuilt a fresh patched Sagelite source copy and
+wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-next/prompt-22-24/final-clean-2.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 364 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The latest
+run metadata records CoWasm commit
+`8d89e08400d8dd26c868c12a13663835cb151874`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
+and about 25 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
