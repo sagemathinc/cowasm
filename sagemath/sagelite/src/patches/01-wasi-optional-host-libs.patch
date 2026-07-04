@@ -2044,6 +2044,18 @@ diff -urN a/src/sage/rings/polynomial/laurent_polynomial_ring.py b/src/sage/ring
 diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
 --- a/src/sage/rings/polynomial/polynomial_ring.py
 +++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -227 +227 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run()  # long time
+@@ -373,4 +373,4 @@
+-            sage: K.<a> = GF(5^2, prefix='z')
+-            sage: L.<b> = GF(5^4, prefix='z')
+-            sage: f = K['x'].gen() + a
+-            sage: L['x'](f)
++            sage: K.<a> = GF(5^2, prefix='z')                                        # needs sage.libs.ntl
++            sage: L.<b> = GF(5^4, prefix='z')                                        # needs sage.libs.ntl
++            sage: f = K['x'].gen() + a                                               # needs sage.libs.ntl
++            sage: L['x'](f)                                                          # needs sage.libs.ntl
 @@ -435,6 +435,9 @@
                  raise TypeError("denominator must be a unit")
              if x.type() != 't_POL':

@@ -29237,6 +29237,50 @@ file-level `Error`, and one `wasm_link_error`. The strict
 `--require-block-rows` printed no uncovered clean runnable rows after
 subtracting the current corpus.
 
+Follow-up 566-to-580 prompt-band frontier audit and polynomial-ring timeout
+classification:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-566-580/probe.sqlite3`
+and recorded:
+
+```text
+6 files: 25 passed, 1527 failed, 1302 skipped
+```
+
+Two files were skipped-only dependency boundaries:
+`sage/modular/modform_hecketriangle/abstract_space.py` and
+`sage/combinat/root_system/non_symmetric_macdonald_polynomials.py`. Their
+blocks are guarded by existing optional or backend metadata for combinatorics,
+graphs, and the broader root-system/Macdonald-polynomial stack, so they add no
+runnable default-profile signal.
+
+The runnable failures were not narrow promotions.
+`sage/manifolds/differentiable/metric.py` stayed a broad manifold frontier,
+with the largest clusters caused by missing `Manifold`/chart/setup names and
+dependent output drift. `sage/graphs/digraph.py` recorded 16 passed, 470
+failed, and 88 skipped blocks, dominated by missing graph startup names such
+as `DiGraph`, `D`, and dependent `g` examples. `sage/groups/perm_gps/permgroup_named.py`
+recorded 9 passed, 490 failed, and 75 skipped blocks, dominated by missing
+group startup names such as `SymmetricGroup`, `TransitiveGroups`, and GAP
+import-surface failures.
+
+`sage/rings/polynomial/polynomial_ring.py` initially timed out before
+recording useful block rows at the function-field
+`TestSuite(R).run()` example in `PolynomialRing_generic.__init__`. The WASI
+source patch now marks that example as `# long time`, and also marks the
+adjacent finite-field extension conversion example as `# needs sage.libs.ntl`
+after a focused rerun showed it reached the existing
+`ZZ_pContext::restore()` dynamic-link boundary. A second focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-566-580/polynomial-ring-focused-ntl-tags.sqlite3`
+and progressed to the next polynomial-ring timeout, the lazy power-series
+completion example at `polynomial_ring.py:653`. This keeps
+`polynomial_ring.py` classified as a timeout/backend frontier rather than a
+promotion candidate. The strict `doctest-corpus-candidates.py` scan with
+`--require-run-metadata` and `--require-block-rows` printed no uncovered clean
+runnable rows after subtracting the current corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
