@@ -27384,6 +27384,34 @@ to the corpus. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 87.
 
+Focused Hilbert-series corpus-growth pass:
+
+```text
+hilbert.pyx: 6 passed, 0 failed, 18 skipped
+```
+
+This pass promotes `sage/rings/polynomial/hilbert.pyx`, bringing the curated
+corpus to 1,043 non-comment entries. Fresh frontier sampling first found
+`hilbert.pyx` as a narrow near miss with 6 passed and 18 failed blocks: the
+failures were all import/setup fallout from the disabled FLINT integer
+polynomial side module, Singular-backed examples, or plural-backed Groebner
+basis construction. The WASI source patch now marks only those prompts with
+explicit `# needs sage.libs.flint`, `# needs sage.libs.singular`, or
+`# needs sage.rings.polynomial.plural` metadata, leaving the plain polynomial
+setup examples runnable in the browser-compatible profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-codex12/hilbert-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully,
+the saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py` prints no promotion row after the file is added
+to the corpus. The latest run metadata records CoWasm commit
+`f5cca27f34a014bce9e97528e6506ffb114a333c`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+87.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

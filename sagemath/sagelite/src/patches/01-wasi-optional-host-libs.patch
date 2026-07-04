@@ -12754,3 +12754,58 @@ diff -urN -U0 a/src/sage/rings/polynomial/infinite_polynomial_ring.py b/src/sage
 @@ -708 +708 @@
 -            sage: TestSuite(Y).run(skip='_test_elements')
 +            sage: TestSuite(Y).run(skip=['_test_elements', '_test_fraction_field'])
+diff -urN -U0 a/src/sage/rings/polynomial/hilbert.pyx b/src/sage/rings/polynomial/hilbert.pyx
+--- a/src/sage/rings/polynomial/hilbert.pyx
++++ b/src/sage/rings/polynomial/hilbert.pyx
+@@ -441 +441 @@
+-        sage: from sage.rings.polynomial.hilbert import first_hilbert_series
++        sage: from sage.rings.polynomial.hilbert import first_hilbert_series             # needs sage.libs.flint
+@@ -443,7 +443,7 @@
+-        sage: R = singular.ring(0,'(x,y,z)','dp')
+-        sage: I = singular.ideal(['x^2','y^2','z^2'])
+-        sage: first_hilbert_series(I)
++        sage: R = singular.ring(0,'(x,y,z)','dp')                                      # needs sage.libs.flint sage.libs.singular
++        sage: I = singular.ideal(['x^2','y^2','z^2'])                                  # needs sage.libs.flint sage.libs.singular
++        sage: first_hilbert_series(I)                                                  # needs sage.libs.flint sage.libs.singular
+         -t^6 + 3*t^4 - 3*t^2 + 1
+-        sage: first_hilbert_series(I, return_grading=True)
++        sage: first_hilbert_series(I, return_grading=True)                             # needs sage.libs.flint sage.libs.singular
+         (-t^6 + 3*t^4 - 3*t^2 + 1, (1, 1, 1))
+-        sage: first_hilbert_series(I, grading=(1,2,3))
++        sage: first_hilbert_series(I, grading=(1,2,3))                                 # needs sage.libs.flint sage.libs.singular
+@@ -458 +458 @@
+-        sage: first_hilbert_series(I)
++        sage: first_hilbert_series(I)                                                  # needs sage.libs.flint
+@@ -460 +460 @@
+-        sage: first_hilbert_series(singular(I))
++        sage: first_hilbert_series(singular(I))                                        # needs sage.libs.flint sage.libs.singular
+@@ -463 +463 @@
+-        sage: first_hilbert_series(I)
++        sage: first_hilbert_series(I)                                                  # needs sage.libs.flint
+@@ -465 +465 @@
+-        sage: first_hilbert_series(singular(I))
++        sage: first_hilbert_series(singular(I))                                        # needs sage.libs.flint sage.libs.singular
+@@ -563 +563 @@
+-        sage: from sage.rings.polynomial.hilbert import hilbert_poincare_series
++        sage: from sage.rings.polynomial.hilbert import hilbert_poincare_series         # needs sage.libs.flint
+@@ -565 +565 @@
+-        sage: I = [m.lm()
++        sage: I = [m.lm()                                                              # needs sage.libs.flint sage.rings.polynomial.plural
+@@ -567 +567 @@
+-        sage: hilbert_poincare_series(I)
++        sage: hilbert_poincare_series(I)                                               # needs sage.libs.flint sage.rings.polynomial.plural
+@@ -569 +569 @@
+-        sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
++        sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))           # needs sage.libs.flint
+@@ -575 +575 @@
+-        sage: from sage.rings.polynomial.hilbert import first_hilbert_series
++        sage: from sage.rings.polynomial.hilbert import first_hilbert_series            # needs sage.libs.flint
+@@ -577 +577 @@
+-        sage: J = P * [m.lm() for m in I.groebner_basis()]
++        sage: J = P * [m.lm() for m in I.groebner_basis()]                             # needs sage.libs.flint sage.rings.polynomial.plural
+@@ -578 +578 @@
+-        sage: hilbert_poincare_series(J).numerator()
++        sage: hilbert_poincare_series(J).numerator()                                   # needs sage.libs.flint sage.rings.polynomial.plural
+@@ -580 +580 @@
+-        sage: hilbert_poincare_series(J).denominator().factor()
++        sage: hilbert_poincare_series(J).denominator().factor()                        # needs sage.libs.flint sage.rings.polynomial.plural
