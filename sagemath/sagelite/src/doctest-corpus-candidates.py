@@ -311,6 +311,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--require-block-rows",
+        action="store_true",
+        help=(
+            "scan only databases whose selected run has persisted block rows, "
+            "filtering aggregate-only fixtures and empty probe databases while "
+            "preserving legacy compatibility by default"
+        ),
+    )
+    parser.add_argument(
         "--require-source-root-path",
         action="store_true",
         help=(
@@ -598,6 +607,25 @@ def can_read_block_tags(db: sqlite3.Connection) -> bool:
         and table_has_column(db, "blocks", "file_id")
         and table_has_column(db, "blocks", "status")
         and table_has_column(db, "blocks", "tags")
+    )
+
+
+def run_has_block_rows(db: sqlite3.Connection, run_id: int) -> bool:
+    return (
+        table_exists(db, "blocks")
+        and files_table_has_column(db, "id")
+        and table_has_column(db, "blocks", "file_id")
+        and db.execute(
+            """
+            select 1
+            from blocks
+            join files on files.id = blocks.file_id
+            where files.run_id = ?
+            limit 1
+            """,
+            (run_id,),
+        ).fetchone()
+        is not None
     )
 
 
@@ -1120,6 +1148,8 @@ def main() -> int:
                 if metadata is None:
                     continue
                 run_id, db_source_root = metadata
+                if args.require_block_rows and not run_has_block_rows(db, run_id):
+                    continue
                 source_root = args.source_root or db_source_root
                 if source_root not in covered_by_source_root:
                     covered_by_source_root[source_root] = read_corpus(

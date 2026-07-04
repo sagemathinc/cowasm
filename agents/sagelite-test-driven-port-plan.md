@@ -2608,6 +2608,22 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 shows the expected `pkgconfig`, Cremona data, meson-editable, and Cython
 deferrals.
 
+Focused scratch-candidate tooling pass on 2026-07-04: broad focused sampling
+across uncovered plot, matroid, misc, category, REPL, interface, dense
+matrix/vector, module/manifold, textbook, and helper files did not find a new
+quiet runnable corpus candidate. Most compact uncovered files were skipped-only
+under the default browser-compatible profile; the runnable failures clustered
+around broad solver/graph/manifold/symbolic startup assumptions, optional
+display backends, or timeout-prone module construction.
+
+The pass exposed a corpus-candidate tooling edge case while scanning existing
+scratch SQLite artifacts: a legacy aggregate-only fixture reported
+`sage/repl/prompts.py` as clean even though a fresh current-runner probe
+extracts zero blocks from that file. The `doctest-corpus-candidates.py` helper
+now supports `--require-block-rows`, so broad scratch scans can filter
+aggregate-only fixtures and empty probe databases while keeping legacy
+compatibility available by default.
+
 Focused cooperative-game corpus-growth pass:
 
 ```text
