@@ -28799,6 +28799,43 @@ setup, `modules/matrix_morphism.py` hit the existing matrix
 `--require-block-rows` printed no uncovered clean runnable rows for this
 database.
 
+Follow-up 401-to-415 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+401-to-415 probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-401-415/probe.sqlite3`
+and recorded:
+
+```text
+14 files: 153 passed, 2133 failed, 3274 skipped
+```
+
+Seven files were skipped-only dependency boundaries:
+`sage/knots/knotinfo.py`,
+`sage/geometry/polyhedron/backend_normaliz.py`,
+`sage/coding/binary_code.pyx`, `sage/combinat/chas/wqsym.py`,
+`sage/crypto/block_cipher/miniaes.py`,
+`sage/combinat/root_system/extended_affine_weyl_group.py`, and
+`sage/modular/btquotients/pautomorphicform.py`. Their skipped blocks are
+already guarded by explicit optional, long-time, deferred-test, or
+backend-specific tags for database, graph, group, Normaliz, finite-ring,
+module, GAP, PARI, p-adic, symbolic, and external package coverage, so they
+add no runnable default-profile signal.
+
+The runnable files were broad failure clusters rather than narrow metadata
+promotions. `sage/schemes/generic/algebraic_scheme.py` had useful passing
+coverage but still recorded 149 failures around symbolic scheme setup and
+dependent startup names. `sage/groups/perm_gps/permgroup_element.pyx`,
+`sage/rings/complex_mpc.pyx`, and the manifold files were dominated by
+startup, symbolic, category, number-field, and manifold backend gaps.
+`sage/numerical/backends/generic_backend.pyx` remains tied to mixed-integer
+linear-programming startup and solver-surface assumptions. The strict
+`doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows for this
+database. Future scheduled runs should avoid repeating this exact band unless
+the symbolic/scheme, manifold, permutation-group/category, number-field, or
+MIP backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
