@@ -27680,6 +27680,35 @@ filtering/sorting, and applies it after best-row selection when
 limited file-error and near-miss output, so future audit-command examples stay
 script-compatible.
 
+Follow-up low-prompt skip-boundary audit on 2026-07-04:
+
+No new quiet corpus candidate was found. A fresh direct Sagelite probe wrote
+`.tmp/current-run/scheduled-2026-07-04-cont/low-prompt/probe.sqlite3` for the
+first 80 uncovered files whose patched source contained between one and twelve
+Sage prompts. The strict promotion scan with
+`doctest-corpus-candidates.py --source-root sagemath/sagelite/build/wasi-sdk
+--require-run-metadata --min-runner-version 87 --dedupe-paths --limit 20`
+printed no rows, and a same-day historical scan over `.tmp/current-run/**/*.sqlite3`
+also printed no uncovered clean runnable rows.
+
+The batch recorded:
+
+```text
+low-prompt/probe.sqlite3: 3 passed, 98 failed, 368 skipped
+```
+
+It was mostly dependency-boundary coverage: 59 rows were skipped-only, four
+Judson/book or package aggregator rows extracted zero runnable blocks, and no
+file-level runtime errors were recorded. The only low-noise near misses were
+`sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py`, with two passing
+blocks and six `HyperellipticCurve`/`Jacobian` startup-name failures, and
+`sage/rings/polynomial/pbori/nf.py`, with one passing block and eight failures
+across missing pbori setup names, missing `polybori`, and boolean-ring object
+model drift. The remaining failures were broad optional-backend clusters:
+56 `NameError`, 21 `ModuleNotFoundError`, eight `FeatureNotPresentError`, six
+`output_mismatch`, four `AttributeError`, two `NotImplementedError`, and one
+`ImportError` block.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
