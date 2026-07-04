@@ -376,6 +376,17 @@ diff -urN -U0 a/src/sage/matroids/database_collections.py b/src/sage/matroids/da
 +        sage: # needs sage.matroids
 @@ -327,0 +330 @@
 +        sage: # needs sage.matroids
+diff -urN -U0 a/src/sage/matroids/set_system.pyx b/src/sage/matroids/set_system.pyx
+--- a/src/sage/matroids/set_system.pyx
++++ b/src/sage/matroids/set_system.pyx
+@@ -39 +39,3 @@
+-        sage: M = matroids.catalog.Fano()
++        sage: # needs sage.matroids
++        sage: import sage.matroids.catalog as matroids
++        sage: M = matroids.Fano()
+@@ -721,0 +724,2 @@
++            sage: # needs sage.matroids
++            sage: from sage.matroids.constructor import Matroid
 diff -urN a/src/sage/matroids/utilities.py b/src/sage/matroids/utilities.py
 --- a/src/sage/matroids/utilities.py
 +++ b/src/sage/matroids/utilities.py

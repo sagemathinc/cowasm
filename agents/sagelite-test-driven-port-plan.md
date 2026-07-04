@@ -27491,6 +27491,35 @@ avoid repeating this exact low-level/numeric slice unless the
 polynomial-number-field trap, cypari2 conversion packaging, or NumPy/SciPy
 profile changes.
 
+Focused matroid set-system corpus-growth pass on 2026-07-04:
+
+```text
+set_system.pyx: 72 passed, 0 failed, 8 skipped
+```
+
+That one-file make-target validation adds `sage/matroids/set_system.pyx` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,044
+non-comment entries. A fresh matroid-helper probe first recorded the file as
+a compact near miss with 72 passing blocks and five startup-name failures.
+The failing examples were the only ones that crossed from `SetSystem` helper
+coverage into broader matroid constructors and catalog imports, which still
+reach the stripped graph-backed matroid surface in the browser-compatible
+profile.
+
+The added WASI source patch marks those constructor/catalog setup groups as
+`# needs sage.matroids`, preserving the direct `SetSystem` construction,
+iteration, indexing, complement, partition-refinement, and equivalence helper
+doctests as runnable default-profile coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding and patching a fresh
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/set-system-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.matroids`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
