@@ -680,6 +680,7 @@ src/sage/rings/polynomial/hilbert.pyx
 src/sage/rings/polynomial/integer_valued_polynomials.py
 src/sage/rings/polynomial/msolve.py
 src/sage/rings/polynomial/padics/polynomial_padic_flat.py
+src/sage/rings/polynomial/polynomial_complex_arb.pyx
 src/sage/rings/polynomial/polynomial_gf2x.pyx
 src/sage/rings/polynomial/polynomial_ring_homomorphism.pyx
 src/sage/rings/polynomial/polynomial_ring_constructor.py

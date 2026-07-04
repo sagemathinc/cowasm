@@ -28167,6 +28167,44 @@ is not a narrow display or optional-tag boundary: `basis_exchange_matroid.pyx`,
 files should stay out of the quiet dashboard until the matroid startup/setup
 cluster is handled directly.
 
+Follow-up 146-to-160 prompt-band corpus-growth pass on 2026-07-04:
+
+```text
+prompt-146-160.sqlite3:       1,249 passed, 2,919 failed, 3,951 skipped
+polynomial_complex_arb.pyx:     142 passed,     0 failed,     7 skipped
+```
+
+The fresh 146-to-160 prompt-band probe attempted all 63 uncovered files in
+that band and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-146-160/prompt-146-160.sqlite3`.
+The batch shape was 24 skipped-only dependency-boundary files, 28
+block-failing files, ten file-level errors, and one clean runnable promotion
+candidate. File-level errors were the same runtime frontier families seen in
+neighboring high-prompt bands: four 120-second timeouts, matrix randomization
+table/signature traps, NTL `ZZ_pContext::restore()` dynamic-link failure, PARI
+real conversion signature mismatch, and two broader WASM memory traps in
+asymptotic/function-field setup.
+
+The clean promotion candidate was
+`sage/rings/polynomial/polynomial_complex_arb.pyx`. Its runnable blocks cover
+complex-ball polynomial construction, arithmetic, roots, derivative,
+gcd/resultant, and interpolation paths through Arb-backed polynomial code,
+while the seven skipped blocks are already explicit `# needs sage.symbolic`
+boundaries. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-146-160/polynomial-complex-arb-focused.sqlite3`.
+The focused run passed with `142 passed, 0 failed, 7 skipped`; the saved
+block- and file-failure cluster queries are empty, and the strict candidate
+scan prints no row after the file is added to the corpus. This promotes
+`sage/rings/polynomial/polynomial_complex_arb.pyx` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,057 non-comment entries. The focused latest-run summary
+records CoWasm commit `d0b3936456474489abe80dff08cc1044c171be09`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 87, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
