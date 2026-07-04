@@ -28273,6 +28273,30 @@ records CoWasm commit `f52848d91a697507eb9118b95db667501a4dd6c2`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 87, and a 100% non-skipped pass rate.
 
+Follow-up 176-to-205 prompt-band audit:
+
+```text
+prompt-176-190.sqlite3: 1,610 passed, 4,082 failed, 3,585 skipped
+prompt-191-205.sqlite3:   911 passed, 2,650 failed, 3,284 skipped
+```
+
+These two direct sampling runs attempted 97 uncovered prompt-band files and
+did not produce a new strict promotion candidate after subtracting the current
+curated corpus. The only clean runnable rows in the 176-to-190 band were
+`sage/matrix/matrix_sparse.pyx`, already present in the corpus. The only clean
+runnable rows in the 191-to-205 band were
+`sage/rings/valuation/valuation_space.py` and
+`sage/algebras/shuffle_algebra.py`, also already present in the corpus.
+
+The saved coverage-shape queries are still useful frontier data. The
+176-to-190 band recorded five file-level errors, dominated by NTL/GF2X dynamic
+linkage and number-field timeout boundaries, plus several skipped-only
+dependency-boundary files. The 191-to-205 band recorded six file-level errors,
+including number-field and PARI-adjacent timeouts, NTL-backed traps, and a
+finite-field dynamic-link boundary. The next promotion search should move
+beyond this prompt-count window or target a specific near-miss cluster instead
+of rerunning these two bands.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
