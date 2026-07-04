@@ -31142,6 +31142,70 @@ affine types and coercion-model drift. Validation also ran
 `TMPDIR=/home/user/cowasm/.tmp/patch-tmp patch --dry-run -d /home/user/sagelite
 -p1 < sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`.
 
+Follow-up 34-to-36 prompt-band audit and free-algebra quotient element
+promotion:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree selected 24 uncovered files in the 34-to-36 prompt band. The initial
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-34-36/prompt-34-36/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 55 passed, 350 failed, 398 skipped
+```
+
+Most failures were clear dependency-boundary frontiers rather than quiet
+browser-profile corpus candidates. The WASI source patch now marks
+graph/Cliquer helpers as `# needs sage.graphs`, the remaining PBoRi
+`parallel.py` helper as `# needs brial`, ECLIB matrix helpers as
+`# needs sage.libs.eclib`, manifold vector-calculus helpers as
+`# needs sage.manifolds`, PARI residue-field helpers as
+`# needs sage.libs.pari`, and elliptic/scheme construction helpers as
+`# needs sage.schemes` or `# needs sage.matrix.matrix_integer_dense`.
+
+One near miss was worth fixing instead of tagging:
+`sage/algebras/free_algebra_quotient_element.py` used
+`sage.algebras.free_algebra_quotient...` exactly as upstream Sage does, but
+Sagelite's stripped startup namespace did not import that sibling module
+before doctest execution. Runner version 90 imports
+`sage.algebras.free_algebra_quotient` during common doctest namespace setup,
+which attaches the package attribute without broadening the `sage.all` API.
+The WASI source patch also tags the file's direct `QuaternionAlgebra(...)`
+comparison as `# needs sage.algebras.quaternion_algebra`.
+
+Focused validation recorded:
+
+```text
+free_algebra_quotient_element.py: 34 passed, 0 failed, 1 skipped
+```
+
+The make-target validation used a one-file temporary corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_JOBS=1`, writing
+`.tmp/current-run/scheduled-2026-07-04-goal-34-36/free-algebra-make/make.sqlite3`.
+The file is now added to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+checked corpus to 1,075 non-comment entries.
+
+A regenerated 23-file 34-to-36 band rerun, after subtracting the new corpus
+entry, wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-34-36/prompt-34-36/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 768 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan across the final band and the promoted one-file make database
+with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable rows. Validation also ran
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+and the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

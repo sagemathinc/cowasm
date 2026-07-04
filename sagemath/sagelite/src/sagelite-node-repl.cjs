@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 89;
+const doctestRunnerVersion = 90;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1154,6 +1154,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
     try:
         import sage.algebras.catalog as algebras
         namespace.setdefault("algebras", algebras)
+    except BaseException:
+        pass
+    try:
+        import sage.algebras.free_algebra_quotient
     except BaseException:
         pass
     try:

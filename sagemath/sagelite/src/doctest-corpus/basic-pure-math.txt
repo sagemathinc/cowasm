@@ -91,6 +91,7 @@ src/sage/algebras/clifford_algebra.py
 src/sage/algebras/free_algebra.py
 src/sage/algebras/free_algebra_element.py
 src/sage/algebras/free_algebra_quotient.py
+src/sage/algebras/free_algebra_quotient_element.py
 src/sage/algebras/free_zinbiel_algebra.py
 src/sage/algebras/jordan_algebra.py
 src/sage/algebras/octonion_algebra.pyx

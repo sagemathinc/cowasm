@@ -14553,3 +14553,75 @@ diff --git a/src/sage/interfaces/rubik.py b/src/sage/interfaces/rubik.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs subprocess
  r"""
+diff --git a/src/sage/graphs/cliquer.pyx b/src/sage/graphs/cliquer.pyx
+--- a/src/sage/graphs/cliquer.pyx
++++ b/src/sage/graphs/cliquer.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/isoperimetric_inequalities.pyx b/src/sage/graphs/isoperimetric_inequalities.pyx
+--- a/src/sage/graphs/isoperimetric_inequalities.pyx
++++ b/src/sage/graphs/isoperimetric_inequalities.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/rings/polynomial/pbori/parallel.py b/src/sage/rings/polynomial/pbori/parallel.py
+--- a/src/sage/rings/polynomial/pbori/parallel.py
++++ b/src/sage/rings/polynomial/pbori/parallel.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs brial
+ r"""
+diff --git a/src/sage/libs/eclib/mat.pyx b/src/sage/libs/eclib/mat.pyx
+--- a/src/sage/libs/eclib/mat.pyx
++++ b/src/sage/libs/eclib/mat.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.eclib
+ """
+diff --git a/src/sage/manifolds/operators.py b/src/sage/manifolds/operators.py
+--- a/src/sage/manifolds/operators.py
++++ b/src/sage/manifolds/operators.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/bgg_resolution.py b/src/sage/algebras/lie_algebras/bgg_resolution.py
+--- a/src/sage/algebras/lie_algebras/bgg_resolution.py
++++ b/src/sage/algebras/lie_algebras/bgg_resolution.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/symplectic_derivation.py b/src/sage/algebras/lie_algebras/symplectic_derivation.py
+--- a/src/sage/algebras/lie_algebras/symplectic_derivation.py
++++ b/src/sage/algebras/lie_algebras/symplectic_derivation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx b/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
+--- a/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
++++ b/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/weierstrass_transform.py b/src/sage/schemes/elliptic_curves/weierstrass_transform.py
+--- a/src/sage/schemes/elliptic_curves/weierstrass_transform.py
++++ b/src/sage/schemes/elliptic_curves/weierstrass_transform.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ """
+diff --git a/src/sage/schemes/elliptic_curves/ell_egros.py b/src/sage/schemes/elliptic_curves/ell_egros.py
+--- a/src/sage/schemes/elliptic_curves/ell_egros.py
++++ b/src/sage/schemes/elliptic_curves/ell_egros.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/jacobian.py b/src/sage/schemes/elliptic_curves/jacobian.py
+--- a/src/sage/schemes/elliptic_curves/jacobian.py
++++ b/src/sage/schemes/elliptic_curves/jacobian.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ """
+diff --git a/src/sage/algebras/free_algebra_quotient_element.py b/src/sage/algebras/free_algebra_quotient_element.py
+--- a/src/sage/algebras/free_algebra_quotient_element.py
++++ b/src/sage/algebras/free_algebra_quotient_element.py
+@@ -218,1 +218,1 @@
+-            sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)
++            sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)                             # needs sage.algebras.quaternion_algebra
