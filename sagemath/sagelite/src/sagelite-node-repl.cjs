@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 88;
+const doctestRunnerVersion = 89;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -2201,6 +2201,7 @@ def __cowasm_run_file(filename):
                         "duration_ms": 0,
                     })
                     example.options[doctest.SKIP] = True
+                    previous_physical_end_line = physical_end_line
                 else:
                     if __cowasm_is_random(example._cowasm_effective_source):
                         example._cowasm_random = True
