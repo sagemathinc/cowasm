@@ -28238,6 +28238,41 @@ subtracting the updated corpus. The adjacent `sage/algebras/yangian.py`
 near-miss remains outside the quiet dashboard because its first failure
 imports graph-backed Lie algebra code rather than a narrow startup helper.
 
+Follow-up 161-to-175 prompt-band corpus-growth pass:
+
+```text
+prompt-161-175.sqlite3:                      888 passed, 1,709 failed, 4,230 skipped
+quantum_matrix_coordinate_algebra.py:        162 passed,     0 failed,     2 skipped
+```
+
+The fresh 161-to-175 prompt-band probe attempted 46 uncovered files and wrote
+`.tmp/current-run/scheduled-2026-07-04-next-band-161-175/prompt-161-175.sqlite3`.
+The batch shape was 23 skipped-only files, 19 block-failing files, three
+file-level errors, and one clean runnable promotion candidate. The file-level
+errors were a quotient-field polynomial xgcd timeout, and two broader
+memory-trap frontiers in quantum Clifford and book-example plotting paths.
+
+The clean promotion candidate was
+`sage/algebras/quantum_matrix_coordinate_algebra.py`. Its runnable blocks cover
+quantum matrix coordinate algebra construction, generator arithmetic, algebra
+relations, bases, and matrix-style coercion paths. The two skipped blocks are
+already explicit `# long time` boundaries, so no WASI source patch or startup
+namespace change was needed.
+
+Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band-161-175/quantum-matrix-coordinate-make.sqlite3`.
+The focused run passed with `162 passed, 0 failed, 2 skipped`; the saved
+block- and file-failure cluster queries are empty. This promotes
+`sage/algebras/quantum_matrix_coordinate_algebra.py` into
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, bringing the
+curated corpus to 1,059 non-comment entries. The focused latest-run summary
+records CoWasm commit `f52848d91a697507eb9118b95db667501a4dd6c2`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 87, and a 100% non-skipped pass rate.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
