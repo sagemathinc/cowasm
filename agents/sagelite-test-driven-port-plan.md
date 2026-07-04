@@ -28905,6 +28905,79 @@ matrix, and `sage/rings/ring_extension.pyx` hit the known NTL
 `--require-run-metadata` and `--require-block-rows` printed no uncovered clean
 runnable rows for this database.
 
+Follow-up 446-to-460 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next prompt-count band. The
+initial stale `.tmp/current-run/absent-prompt-counts-now.tsv` slice included
+two already-covered files, `sage/rings/derivation.py` and
+`sage/misc/functional.py`; a fresh source-minus-corpus prompt-count scan
+confirmed that both are already listed in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. The focused probe
+wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-446-460/probe.sqlite3`
+and recorded:
+
+```text
+12 files: 1220 passed, 1017 failed, 2227 skipped
+```
+
+Three files were skipped-only dependency boundaries:
+`sage/rings/function_field/drinfeld_modules/drinfeld_module.py`,
+`sage/coding/linear_code.py`, and `sage/sets/real_set.py`. Their default
+profile blocks are already guarded by deferred, optional, or backend-specific
+tags for finite rings, modules, graphs, groups, GAP, Magma, real fields,
+symbolic, and SymPy coverage, so they add no runnable browser-profile signal.
+
+The runnable files were broad frontier targets rather than narrow metadata
+promotions. `sage/databases/findstat.py`, the manifold tensor-field file,
+`sage/schemes/projective/projective_space.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_geodesic.py`, and
+`sage/algebras/quantum_groups/fock_space.py` retained startup-name, symbolic,
+Plural, or backend clusters. Two files failed at file scope:
+`sage/rings/polynomial/infinite_polynomial_element.py` hit a CPython
+traceback-suggestion `KeyError` while formatting an expected exception, and
+`sage/combinat/abstract_tree.py` exceeded the JavaScript call stack while
+running a deep recursive tree doctest. The strict `doctest-corpus-candidates.py`
+scan with `--require-run-metadata` and `--require-block-rows` printed no
+uncovered clean runnable rows for this database.
+
+Follow-up 461-to-475 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the next fresh source-minus-corpus
+prompt-count band. The probe wrote
+`.tmp/current-run/scheduled-2026-07-04-current/prompt-461-475/probe.sqlite3`
+and recorded:
+
+```text
+12 files: 816 passed, 1525 failed, 1302 skipped
+```
+
+One file was a skipped-only dependency boundary:
+`sage/rings/padics/padic_ZZ_pX_CA_element.pyx`. Its blocks are guarded by
+explicit p-adic and polyhedron dependency tags, so it adds no runnable
+default-profile coverage.
+
+The runnable files were broad frontier targets. The strongest near miss was
+`sage/rings/multi_power_series_ring_element.py`, with 414 passed blocks and
+31 failures across display-name drift, setup-name cascades, missing
+`sage.rings.real_mpfr`, and unsupported multivariate power-series behavior.
+`sage/interfaces/kenzo.py` remained an ECL/interface dependency boundary with
+some unguarded startup-name drift. The symbolic, cluster-algebra, graph, Magma,
+and Lie-algebra files were dominated by symbolic startup names, external
+interfaces, category/backend gaps, and output drift. File-level errors matched
+known runtime frontiers: a matrix `echelonize` signature mismatch in
+`sage/geometry/polyhedron/library.py`, an NTL `ZZ_pContext.restore()` dynamic
+link error in `sage/rings/laurent_series_ring_element.pyx`, and two timeouts in
+`sage/rings/finite_rings/residue_field.pyx` and
+`sage/matrix/matrix_mod2_dense.pyx`. The saved failure-class summary for the
+band was 1270 `NameError`, 110 `output_mismatch`, 34 `ImportError`, 34
+`ModuleNotFoundError`, 33 `TypeError`, 19 `AttributeError`, nine `KeyError`,
+nine `ValueError`, two `IndexError`, two timeouts, and one each of
+`NotImplementedError`, `wasm_link_error`, and `wasm_signature_mismatch`. The
+strict `doctest-corpus-candidates.py` scan with `--require-run-metadata` and
+`--require-block-rows` printed no uncovered clean runnable rows for this
+database.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
