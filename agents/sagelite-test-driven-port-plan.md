@@ -27844,6 +27844,43 @@ queries are empty, `skips-by-reason.sql` groups the deferred blocks under
 `optional:sage.rings.number_field`, and the strict candidate scan prints no
 row after the file is added to the corpus.
 
+Focused NTL/projective-height corpus-growth pass on 2026-07-04:
+
+```text
+sage -t passed: 69 passed, 0 failed, 24 skipped
+```
+
+That two-file make-target validation adds `sage/libs/ntl/ntl_lzz_p.pyx` and
+`sage/schemes/projective/proj_bdd_height.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,051
+non-comment entries. A fresh 41-to-55 prompt-band probe under
+`.tmp/current-run/scheduled-2026-07-04-next-band/` recorded
+`prompt-41-55.sqlite3` with 414 passed, 1,099 failed, and 1,779 skipped
+blocks across the first 80 uncovered files in that band. The strict promotion
+scan found exactly two clean runnable uncovered rows:
+
+```text
+ntl_lzz_p.pyx:       48 passed, 0 failed,  0 skipped
+proj_bdd_height.py:  21 passed, 0 failed, 24 skipped
+```
+
+The NTL wrapper gives the dashboard compact coverage of small-prime
+`zz_p` arithmetic through the dynamic C++ side-module stack. The projective
+bounded-height file adds rational projective-height enumeration while relying
+on existing skip metadata for number-field, PARI, and polyhedron-backed
+examples. No new WASI source tags or startup namespace changes were needed.
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-04-next-band/two-candidate-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d4b4574b5f3877ff6d1fc26f8b7d8919d191e91c`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 87,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the deferred projective-height
+examples under `optional:sage.rings.number_field` and
+`optional:sage.geometry.polyhedron,sage.libs.pari,sage.rings.number_field`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

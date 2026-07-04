@@ -247,6 +247,7 @@ src/sage/libs/ntl/ntl_ZZ.pyx
 src/sage/libs/ntl/ntl_ZZX.pyx
 src/sage/libs/ntl/ntl_ZZ_p.pyx
 src/sage/libs/ntl/ntl_ZZ_pContext.pyx
+src/sage/libs/ntl/ntl_lzz_p.pyx
 src/sage/libs/ntl/ntl_lzz_pContext.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
@@ -978,6 +979,7 @@ src/sage/schemes/generic/spec.py
 src/sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py
 src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.py
 src/sage/schemes/affine/affine_homset.py
+src/sage/schemes/projective/proj_bdd_height.py
 src/sage/schemes/product_projective/homset.py
 src/sage/schemes/product_projective/morphism.py
 src/sage/schemes/product_projective/space.py
