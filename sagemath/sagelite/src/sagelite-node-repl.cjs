@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 87;
+const doctestRunnerVersion = 88;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1190,6 +1190,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         pass
     try:
         from sage.rings.real_mpfr import RealField
+        namespace.setdefault("e", math.e)
         namespace.setdefault("pi", RealField(200).pi())
         namespace.setdefault("NaN", RealField()(float("nan")))
     except BaseException:

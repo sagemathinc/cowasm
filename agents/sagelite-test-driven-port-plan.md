@@ -28483,6 +28483,39 @@ records CoWasm commit `dbe17ba42311f904aacdfe9da13d2959153de2ad`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 87, and a 100% non-skipped pass rate.
 
+Follow-up 281-to-295 prompt-band startup-surface pass:
+
+```text
+targeted.sqlite3:                 545 passed, 572 failed, 613 skipped
+polynomial_element_generic.py:    225 passed,  35 failed,  24 skipped
+```
+
+No new quiet corpus candidate was found in the first targeted slice from the
+281-to-295 static-prompt band. The sampled files were dominated by broad
+runtime/dependency clusters: `linear_functions.pyx` and
+`fraction_field_element.pyx` timed out at number-field or fraction-field setup
+examples; `toric_lattice.py` failed through startup and graph/polyhedral
+backend gaps; `lie_algebra.py` and `classical_lie_algebra.py` failed through
+graph-backed Lie-algebra construction; `real_lazy.pyx` and `sbox.pyx` were
+skipped-only dependency-boundary rows.
+
+The narrow fix from this pass is startup namespace coverage for the numeric
+constant `e`. The doctest runner now seeds `e = math.e` beside the existing
+`pi` and `NaN` startup constants, and Sagelite's WASI `sage.all` patch exposes
+the same binding for REPL parity after a source rebuild. This clears the
+`NameError: name 'e' is not defined` cluster in
+`sage/rings/polynomial/polynomial_element_generic.py`: focused line reruns for
+the `CDF(e)` and `RDF(e)` examples pass, and a rebuilt full-file rerun records
+zero remaining `e` name failures. The file is still outside the quiet corpus
+because the remaining failures are broader PPL, FLINT, pexpect,
+PARI/cypari2, quaternion, and coercion/cache clusters.
+
+Validation used a tiny make-target corpus to force fresh Sagelite source patch
+application, then the full standalone Sagelite smoke with
+`TMPDIR=/home/user/cowasm/.tmp/tmp` after `/tmp` quota blocked host `mktemp`.
+The standalone smoke passed with the updated doctest count assertions and the
+new `CDF(e).real()` smoke. Runner version is now 88.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

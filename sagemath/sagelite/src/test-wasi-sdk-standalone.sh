@@ -1774,6 +1774,8 @@ EXAMPLES::
     9
     sage: log(QQ(125), 5)
     3
+    sage: CDF(e).real()
+    2.718281828459045
     sage: from sage.categories.sets_cat import EmptySetError; raise EmptySetError
     Traceback (most recent call last):
     ...
@@ -1874,7 +1876,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|36|27|0|9" ]; then
+if [ "$doctest_smoke_counts" != "passed|37|28|0|9" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -1917,7 +1919,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "36" ]; then
+if [ "$doctest_block_key_count" != "37" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -1927,6 +1929,12 @@ if [ "$doctest_leading_ellipsis_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not restore protected leading ellipsis output."
+fi
+doctest_e_constant_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and source = 'CDF(e).real()' || char(10);")"
+if [ "$doctest_e_constant_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not seed the numeric e constant."
 fi
 doctest_inline_random_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and expected_kind = 'random' and tags like '%random%' and failure_class = 'random_unchecked' and source like 'ZZ.random_element()%';")"
 if [ "$doctest_inline_random_count" != "1" ]; then
@@ -3422,7 +3430,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|36|30|0|6" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|37|31|0|6" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
