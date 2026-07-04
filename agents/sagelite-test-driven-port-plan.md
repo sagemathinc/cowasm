@@ -29817,6 +29817,42 @@ unless the PARI/cypari2 object model, elliptic number-field dynamic-link
 boundary, symbolic/manifold startup surface, or polynomial/coercion runtime
 profile changes.
 
+Focused pushout category corpus-growth pass:
+
+```text
+pushout.py: 476 passed, 0 failed, 477 skipped
+```
+
+That one-file make-target validation adds `sage/categories/pushout.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,069
+non-comment entries. Direct sampling first recorded 474 passed blocks, 28
+failed blocks, and 451 skipped blocks. The failures were narrow browser-profile
+boundaries or diagnostic drift: Singular/pexpect-backed fraction-field
+morphism construction, plural-backed multivariate quotient-ring examples,
+Maxima/symbolic and GAP black-box functor setup, missing `IdentityFunctor` in
+the lightweight startup namespace, and several traceback line-wrapping
+mismatches in coercion-exception examples.
+
+The doctest runner now seeds `IdentityFunctor` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched source copy. The added WASI source patch tags the
+backend-bound examples with explicit `# needs ...` metadata and defers the
+traceback-format checks as `# known bug`, preserving the ordinary pushout,
+construction-functor, polynomial, Cartesian-product, and coercion coverage as
+default-profile doctests.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/pushout-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`facfa3cb18e95b272071d89361d37fe747b6dd8a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 89,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

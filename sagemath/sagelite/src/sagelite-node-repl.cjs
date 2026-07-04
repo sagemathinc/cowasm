@@ -1020,6 +1020,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.euclidean_domains", ("EuclideanDomains",)),
         ("sage.categories.enumerated_sets", ("EnumeratedSets",)),
         ("sage.categories.fields", ("Fields",)),
+        ("sage.categories.functor", ("IdentityFunctor",)),
         ("sage.categories.finite_fields", ("FiniteFields",)),
         ("sage.categories.finite_sets", ("FiniteSets",)),
         ("sage.categories.homset", ("End", "Hom")),

@@ -621,6 +621,7 @@ src/sage/categories/pointed_sets.py
 src/sage/categories/polyhedra.py
 src/sage/categories/poor_man_map.py
 src/sage/categories/primer.py
+src/sage/categories/pushout.py
 src/sage/categories/quantum_group_representations.py
 src/sage/categories/quotients.py
 src/sage/categories/ring_ideals.py

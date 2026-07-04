@@ -2563,7 +2563,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,237 @@
+@@ -253,74 +253,238 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -2606,6 +2606,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.domains import Domains
 +    from sage.categories.euclidean_domains import EuclideanDomains
 +    from sage.categories.fields import Fields
++    from sage.categories.functor import IdentityFunctor
 +    from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
 +    from sage.categories.finite_weyl_groups import FiniteWeylGroups
 +    from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
@@ -13520,3 +13521,78 @@ diff -urN a/src/sage/algebras/lie_algebras/quotient.py b/src/sage/algebras/lie_a
 +            sage: # needs sage.rings.polynomial.plural
 @@ -404,0 +409 @@
 +            sage: # needs sage.graphs
+diff -urN a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
+--- a/src/sage/categories/pushout.py
++++ b/src/sage/categories/pushout.py
+@@ -366 +366 @@
+-            sage: pushout(QQ, cartesian_product([ZZ]))  # indirect doctest
++            sage: pushout(QQ, cartesian_product([ZZ]))  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
+@@ -395 +395 @@
+-            sage: pushout(QQ, cartesian_product([QQ]))  # indirect doctest
++            sage: pushout(QQ, cartesian_product([QQ]))  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
+@@ -474 +474 @@
+-            sage: F(f)           # indirect doctest
++            sage: F(f)           # indirect doctest                                    # needs pexpect
+@@ -498 +498 @@
+-            sage: F(R)       # indirect doctest
++            sage: F(R)       # indirect doctest                                        # needs pexpect
+@@ -762 +762 @@
+-            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest
++            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
+@@ -1199 +1199 @@
+-        sage: A.construction()[0] * R.construction()[0]
++        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
+@@ -1208 +1208 @@
+-        sage: A.construction()[0] * R.construction()[0]
++        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
+@@ -1219 +1219 @@
+-        sage: A.construction()[0] * R.construction()[0]
++        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
+@@ -2385 +2385 @@
+-        sage: F(f)
++        sage: F(f)                                                                      # needs pexpect
+@@ -2390 +2390 @@
+-        sage: F(f)(1/x)
++        sage: F(f)(1/x)                                                                 # needs pexpect
+@@ -2799,3 +2799,3 @@
+-        sage: Q = P.quo([x^2 + y^2] * P)
+-        sage: F = Q.construction()[0]
+-        sage: F(QQ['x','y'])
++        sage: Q = P.quo([x^2 + y^2] * P)                                                # needs sage.rings.polynomial.plural
++        sage: F = Q.construction()[0]                                                   # needs sage.rings.polynomial.plural
++        sage: F(QQ['x','y'])                                                            # needs sage.rings.polynomial.plural
+@@ -2804 +2804 @@
+-        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])
++        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])              # needs sage.rings.polynomial.plural
+@@ -2806 +2806 @@
+-        sage: F(QQ['x','y','z'])
++        sage: F(QQ['x','y','z'])                                                        # needs sage.rings.polynomial.plural
+@@ -2884,2 +2884,2 @@
+-            sage: Q = P.quo([2 + x^2, 3*x + y^2])
+-            sage: F = Q.construction()[0]; F
++            sage: Q = P.quo([2 + x^2, 3*x + y^2])                                      # needs sage.rings.polynomial.plural
++            sage: F = Q.construction()[0]; F                                           # needs sage.rings.polynomial.plural
+@@ -2887 +2887 @@
+-            sage: F(QQ['x','y'])     # indirect doctest
++            sage: F(QQ['x','y'])     # indirect doctest                                # needs sage.rings.polynomial.plural
+@@ -3919,2 +3919,2 @@
+-            sage: from sage.interfaces.maxima_lib import maxima
+-            sage: FG = BlackBoxConstructionFunctor(gap)
++            sage: from sage.interfaces.maxima_lib import maxima                         # needs sage.symbolic
++            sage: FG = BlackBoxConstructionFunctor(gap)                                # needs sage.libs.gap
+@@ -3951,2 +3951,2 @@
+-            sage: from sage.interfaces.maxima_lib import maxima
+-            sage: FG = BlackBoxConstructionFunctor(gap)
++            sage: from sage.interfaces.maxima_lib import maxima                         # needs sage.symbolic
++            sage: FG = BlackBoxConstructionFunctor(gap)                                # needs sage.libs.gap
+@@ -3971,2 +3971,2 @@
+-            sage: from sage.interfaces.maxima_lib import maxima
+-            sage: FG = BlackBoxConstructionFunctor(gap)
++            sage: from sage.interfaces.maxima_lib import maxima                         # needs sage.symbolic
++            sage: FG = BlackBoxConstructionFunctor(gap)                                # needs sage.libs.gap
+@@ -4052 +4052 @@
+-        sage: pushout(ZZ['x,y,z'], QQ['w,z,t'])
++        sage: pushout(ZZ['x,y,z'], QQ['w,z,t'])                                        # known bug - traceback line wrapping differs in the WASI runtime
+@@ -4361 +4361 @@
+-        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)
++        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)                            # known bug - traceback line wrapping differs in the WASI runtime
