@@ -15105,3 +15105,82 @@ diff --git a/src/sage/schemes/elliptic_curves/homset.py b/src/sage/schemes/ellip
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves
  r"""
+diff --git a/src/sage/dynamics/arithmetic_dynamics/endPN_minimal_model.py b/src/sage/dynamics/arithmetic_dynamics/endPN_minimal_model.py
+--- a/src/sage/dynamics/arithmetic_dynamics/endPN_minimal_model.py
++++ b/src/sage/dynamics/arithmetic_dynamics/endPN_minimal_model.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/geometry/fan_isomorphism.py b/src/sage/geometry/fan_isomorphism.py
+--- a/src/sage/geometry/fan_isomorphism.py
++++ b/src/sage/geometry/fan_isomorphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron
+ """
+diff --git a/src/sage/geometry/polyhedron/backend_field.py b/src/sage/geometry/polyhedron/backend_field.py
+--- a/src/sage/geometry/polyhedron/backend_field.py
++++ b/src/sage/geometry/polyhedron/backend_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.geometry.polyhedron
+ """
+diff --git a/src/sage/graphs/graph_database.py b/src/sage/graphs/graph_database.py
+--- a/src/sage/graphs/graph_database.py
++++ b/src/sage/graphs/graph_database.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/graphs/graph_decompositions/cutwidth.pyx b/src/sage/graphs/graph_decompositions/cutwidth.pyx
+--- a/src/sage/graphs/graph_decompositions/cutwidth.pyx
++++ b/src/sage/graphs/graph_decompositions/cutwidth.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/graph_decompositions/graph_products.pyx b/src/sage/graphs/graph_decompositions/graph_products.pyx
+--- a/src/sage/graphs/graph_decompositions/graph_products.pyx
++++ b/src/sage/graphs/graph_decompositions/graph_products.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/graph_list.py b/src/sage/graphs/graph_list.py
+--- a/src/sage/graphs/graph_list.py
++++ b/src/sage/graphs/graph_list.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/libs/singular/polynomial.pyx b/src/sage/libs/singular/polynomial.pyx
+--- a/src/sage/libs/singular/polynomial.pyx
++++ b/src/sage/libs/singular/polynomial.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular
+ """
+diff --git a/src/sage/matrix/matrix_rational_sparse.pyx b/src/sage/matrix/matrix_rational_sparse.pyx
+--- a/src/sage/matrix/matrix_rational_sparse.pyx
++++ b/src/sage/matrix/matrix_rational_sparse.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_rational_dense
+ """
+diff --git a/src/sage/modular/abvar/cuspidal_subgroup.py b/src/sage/modular/abvar/cuspidal_subgroup.py
+--- a/src/sage/modular/abvar/cuspidal_subgroup.py
++++ b/src/sage/modular/abvar/cuspidal_subgroup.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular.abvar sage.libs.eclib sage.matrix.matrix_integer_dense
+ """
+diff --git a/src/sage/modular/modsym/heilbronn.pyx b/src/sage/modular/modsym/heilbronn.pyx
+--- a/src/sage/modular/modsym/heilbronn.pyx
++++ b/src/sage/modular/modsym/heilbronn.pyx
+@@ -1,2 +1,3 @@
+ # distutils: extra_compile_args = -D_XPG6
++# sage.doctest: needs sage.modular.modsym sage.matrix.matrix_rational_dense
+ """
+diff --git a/src/sage/schemes/elliptic_curves/Qcurves.py b/src/sage/schemes/elliptic_curves/Qcurves.py
+--- a/src/sage/schemes/elliptic_curves/Qcurves.py
++++ b/src/sage/schemes/elliptic_curves/Qcurves.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/ell_tate_curve.py b/src/sage/schemes/elliptic_curves/ell_tate_curve.py
+--- a/src/sage/schemes/elliptic_curves/ell_tate_curve.py
++++ b/src/sage/schemes/elliptic_curves/ell_tate_curve.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari
+ r"""
