@@ -4458,6 +4458,43 @@ probing source-minus-corpus lists directly, pass absolute patched-source paths
 or use the make target's corpus expansion path; repo-relative `src/sage/...`
 arguments are not safe for direct `sage -t` from the CoWasm checkout.
 
+Focused permutation-refinement corpus-growth pass:
+
+```text
+refinement_python.pyx: 101 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/groups/perm_gps/partn_ref/refinement_python.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,077
+non-comment entries. A fresh 101-to-118 prompt-band probe first recorded this
+file as the only uncovered clean runnable candidate in the batch. The file
+adds default-profile coverage for pure-Python partition-refinement helpers
+without new WASI source tags or startup namespace changes.
+
+Focused validation used `test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-05-goal/refinement-python-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`d68de2a5451c8c986f2600f96991b9dd3daf21d0`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py` prints no promotion row
+after subtracting the updated corpus.
+
+The same scheduled pass rejected two prompt-band probes. The 86-to-100 mixed
+probe recorded seven skipped-only files, two broad block-failure files, and
+one matrix `echelonize_ring` file-level signature mismatch in
+`sage/geometry/hyperplane_arrangement/affine_subspace.py`. The 101-to-118
+probe kept skipped-only crypto, coding, combinatorics, and topology helpers
+out of the dashboard; `sage/geometry/toric_plotter.py` and
+`sage/geometry/newton_polygon.py` still have broad geometry/polyhedron
+failure clusters, and `sage/combinat/designs/ext_rep.py` currently hits a
+dynamic-link `strdup` signature mismatch. Future scheduled runs should avoid
+repeating these exact slices unless the graph/matrix, design, polyhedron, or
+geometry backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
