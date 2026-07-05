@@ -31405,6 +31405,45 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
 and the full WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 52-to-54 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 52-to-54 prompt
+source-minus-corpus band. The fresh 16-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-52-54/prompt-52-54/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 23 passed, 279 failed, 328 skipped
+```
+
+The skipped-only and empty files were already classified by existing
+browser-profile metadata. The remaining failures were dependency-boundary
+frontiers rather than narrow runnable math coverage: GAP-backed Weyl-group
+startup for affine nil Temperley-Lieb algebras, graph and graph-backed
+polyhedron helpers, plotting/dynamics examples, plot3d solids, and an
+Ore-module quotient setup that currently reaches a low-level WASM table-index
+trap.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.libs.gap`, `sage.graphs`,
+`sage.symbolic matplotlib`, `sage.plot.plot3d matplotlib`, and
+`sage.modules.ore_module`. A make-target rerun rebuilt a fresh patched source
+tree and wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-52-54/prompt-52-54/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 681 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
