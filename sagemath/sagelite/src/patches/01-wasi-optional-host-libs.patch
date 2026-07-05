@@ -15516,3 +15516,69 @@ diff --git a/src/sage/graphs/pq_trees.py b/src/sage/graphs/pq_trees.py
 @@ -299,1 +299,1 @@
 -            sage: Graph('GvGNp?').is_interval()
 +            sage: Graph('GvGNp?').is_interval()  # needs sage.graphs
+diff --git a/src/sage/groups/matrix_gps/group_element.pyx b/src/sage/groups/matrix_gps/group_element.pyx
+--- a/src/sage/groups/matrix_gps/group_element.pyx
++++ b/src/sage/groups/matrix_gps/group_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ """
+diff --git a/src/sage/manifolds/differentiable/tangent_space.py b/src/sage/manifolds/differentiable/tangent_space.py
+--- a/src/sage/manifolds/differentiable/tangent_space.py
++++ b/src/sage/manifolds/differentiable/tangent_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/lfunctions/dokchitser.py b/src/sage/lfunctions/dokchitser.py
+--- a/src/sage/lfunctions/dokchitser.py
++++ b/src/sage/lfunctions/dokchitser.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect sage.libs.pari sage.schemes.elliptic_curves
+ """
+diff --git a/src/sage/manifolds/manifold_homset.py b/src/sage/manifolds/manifold_homset.py
+--- a/src/sage/manifolds/manifold_homset.py
++++ b/src/sage/manifolds/manifold_homset.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/matroids/dual_matroid.py b/src/sage/matroids/dual_matroid.py
+--- a/src/sage/matroids/dual_matroid.py
++++ b/src/sage/matroids/dual_matroid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ r"""
+diff --git a/src/sage/schemes/affine/affine_point.py b/src/sage/schemes/affine/affine_point.py
+--- a/src/sage/schemes/affine/affine_point.py
++++ b/src/sage/schemes/affine/affine_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/geometry/hyperplane_arrangement/affine_subspace.py b/src/sage/geometry/hyperplane_arrangement/affine_subspace.py
+--- a/src/sage/geometry/hyperplane_arrangement/affine_subspace.py
++++ b/src/sage/geometry/hyperplane_arrangement/affine_subspace.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperplane_arrangement sage.matrix.matrix2
+ """
+diff --git a/src/sage/parallel/decorate.py b/src/sage/parallel/decorate.py
+--- a/src/sage/parallel/decorate.py
++++ b/src/sage/parallel/decorate.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs multiprocessing
+ r"""
+diff --git a/src/sage/rings/number_field/selmer_group.py b/src/sage/rings/number_field/selmer_group.py
+--- a/src/sage/rings/number_field/selmer_group.py
++++ b/src/sage/rings/number_field/selmer_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.ntl
+ r"""
+diff --git a/src/sage/rings/padics/relative_extension_leaves.py b/src/sage/rings/padics/relative_extension_leaves.py
+--- a/src/sage/rings/padics/relative_extension_leaves.py
++++ b/src/sage/rings/padics/relative_extension_leaves.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+ """
+diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_generic.py b/src/sage/schemes/hyperelliptic_curves/jacobian_generic.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_generic.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_generic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
+ r"""

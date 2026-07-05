@@ -32098,6 +32098,55 @@ failed while copying the source tree with `Disk quota exceeded` at
 then patched in place and used for the checked direct validation above; a
 future full make-target refresh may need scratch/quota cleanup first.
 
+Follow-up 91-to-93 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 19 uncovered files in the 91-to-93 prompt band. The initial
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-91-93/prompt-91-93/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 62 passed, 540 failed, 848 skipped
+```
+
+The strict candidate scan found no clean uncovered runnable candidates. The
+only narrow near-miss was `sage/groups/matrix_gps/group_element.pyx`, with 6
+passed blocks, 7 failed blocks, and 68 skipped blocks; its remaining runnable
+examples depend on the matrix-group constructor surface rather than an isolated
+browser-profile assertion drift. The other failures were broad frontiers:
+manifolds and symbolic setup, external Dokchitser/L-function evaluation,
+matroid graph-backed constructors, affine-scheme subschemes through Plural,
+hyperplane-arrangement matrix echelonization, multiprocessing-backed parallel
+decorators, p-adics, number fields, and hyperelliptic/NTL-backed finite-field
+construction.
+
+The WASI source patch now records those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.groups`, `sage.manifolds`,
+`sage.symbolic`, `pexpect`, `sage.libs.pari`, `sage.schemes`,
+`sage.matroids`, `sage.graphs`, `sage.rings.polynomial.plural`,
+`sage.geometry.hyperplane_arrangement`, `sage.matrix.matrix2`,
+`multiprocessing`, `sage.rings.number_field`, `sage.rings.padics`,
+`sage.libs.flint`, `sage.libs.ntl`, and
+`sage.schemes.hyperelliptic_curves`.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-91-93/prompt-91-93/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1726 skipped
+```
+
+The final run records all 19 files as skipped-only under runner version 90,
+with empty saved block- and file-failure cluster queries. The strict promotion
+scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. Validation
+also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py` and the full WASI source
+patch dry-run against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
