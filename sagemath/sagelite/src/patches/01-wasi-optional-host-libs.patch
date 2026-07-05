@@ -15280,3 +15280,59 @@ diff --git a/src/sage/modules/submodule_helper.py b/src/sage/modules/submodule_h
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense
  r"""
+diff --git a/src/sage/algebras/schur_algebra.py b/src/sage/algebras/schur_algebra.py
+--- a/src/sage/algebras/schur_algebra.py
++++ b/src/sage/algebras/schur_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.symmetrica sage.combinat
+ r"""
+diff --git a/src/sage/categories/finite_fields.py b/src/sage/categories/finite_fields.py
+--- a/src/sage/categories/finite_fields.py
++++ b/src/sage/categories/finite_fields.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/geometry/toric_lattice_element.pyx b/src/sage/geometry/toric_lattice_element.pyx
+--- a/src/sage/geometry/toric_lattice_element.pyx
++++ b/src/sage/geometry/toric_lattice_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.toric
+ r"""
+diff --git a/src/sage/graphs/convexity_properties.pyx b/src/sage/graphs/convexity_properties.pyx
+--- a/src/sage/graphs/convexity_properties.pyx
++++ b/src/sage/graphs/convexity_properties.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/groups/additive_abelian/additive_abelian_group.py b/src/sage/groups/additive_abelian/additive_abelian_group.py
+--- a/src/sage/groups/additive_abelian/additive_abelian_group.py
++++ b/src/sage/groups/additive_abelian/additive_abelian_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.modules
+ r"""
+diff --git a/src/sage/interfaces/lisp.py b/src/sage/interfaces/lisp.py
+--- a/src/sage/interfaces/lisp.py
++++ b/src/sage/interfaces/lisp.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect
+ r"""
+diff --git a/src/sage/repl/ipython_kernel/widgets_sagenb.py b/src/sage/repl/ipython_kernel/widgets_sagenb.py
+--- a/src/sage/repl/ipython_kernel/widgets_sagenb.py
++++ b/src/sage/repl/ipython_kernel/widgets_sagenb.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython ipywidgets
+ r"""
+diff --git a/src/sage/rings/padics/pow_computer_flint.pyx b/src/sage/rings/padics/pow_computer_flint.pyx
+--- a/src/sage/rings/padics/pow_computer_flint.pyx
++++ b/src/sage/rings/padics/pow_computer_flint.pyx
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+ # distutils: libraries = gmp NTL_LIBRARIES
+ # distutils: extra_compile_args = NTL_CFLAGS
+ # distutils: include_dirs = NTL_INCDIR
+diff --git a/src/sage/schemes/elliptic_curves/formal_group.py b/src/sage/schemes/elliptic_curves/formal_group.py
+--- a/src/sage/schemes/elliptic_curves/formal_group.py
++++ b/src/sage/schemes/elliptic_curves/formal_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari
+ r"""
