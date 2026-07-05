@@ -31959,6 +31959,46 @@ unless the manifold, graph, Singular/letterplace, Hecke algebra, external
 interface, elliptic-curve, matrix/vector, NTL, arb/real-polynomial, or
 arithmetic-dynamics backend profile changes.
 
+Follow-up 82-to-84 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 82-to-84 prompt
+source-minus-corpus band. The fresh 16-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-82-84/prompt-82-84/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 31 passed, 162 failed, 1039 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining failures were dependency-boundary or runtime-frontier
+coverage rather than narrow runnable math: symbolic calculus setup, GAP-backed
+matrix group elements, elliptic-curve torsion through the ECLIB/PARI surface,
+and a function-field rational hash example that timed out at the 90-second
+per-file boundary.
+
+The WASI source patch now marks those four files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.symbolic`, `sage.groups`,
+`sage.libs.gap`, `sage.rings.function_field`,
+`sage.schemes.elliptic_curves`, `sage.libs.eclib`, and `sage.libs.pari`.
+A final rerun wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-82-84/prompt-82-84/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1314 skipped
+```
+
+The final run records the whole band as skipped-only under runner version 90,
+with empty saved block- and file-failure cluster queries. The strict promotion
+scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,077 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite` with a
+workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

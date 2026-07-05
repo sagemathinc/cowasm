@@ -15226,6 +15226,30 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doc
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.numerical.mip sage.graphs
  """
+diff --git a/src/sage/calculus/tests.py b/src/sage/calculus/tests.py
+--- a/src/sage/calculus/tests.py
++++ b/src/sage/calculus/tests.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/groups/matrix_gps/group_element_gap.pyx b/src/sage/groups/matrix_gps/group_element_gap.pyx
+--- a/src/sage/groups/matrix_gps/group_element_gap.pyx
++++ b/src/sage/groups/matrix_gps/group_element_gap.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ r"""
+diff --git a/src/sage/rings/function_field/element_rational.pyx b/src/sage/rings/function_field/element_rational.pyx
+--- a/src/sage/rings/function_field/element_rational.pyx
++++ b/src/sage/rings/function_field/element_rational.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/ell_torsion.py b/src/sage/schemes/elliptic_curves/ell_torsion.py
+--- a/src/sage/schemes/elliptic_curves/ell_torsion.py
++++ b/src/sage/schemes/elliptic_curves/ell_torsion.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari
+ r"""
 diff --git a/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx b/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
 --- a/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
 +++ b/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
