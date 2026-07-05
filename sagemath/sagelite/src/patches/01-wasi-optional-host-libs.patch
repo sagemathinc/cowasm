@@ -15336,3 +15336,57 @@ diff --git a/src/sage/schemes/elliptic_curves/formal_group.py b/src/sage/schemes
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari
  r"""
+diff --git a/src/sage/categories/lattice_posets.py b/src/sage/categories/lattice_posets.py
+--- a/src/sage/categories/lattice_posets.py
++++ b/src/sage/categories/lattice_posets.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/groups/finitely_presented_named.py b/src/sage/groups/finitely_presented_named.py
+--- a/src/sage/groups/finitely_presented_named.py
++++ b/src/sage/groups/finitely_presented_named.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ r"""
+diff --git a/src/sage/matroids/unpickling.pyx b/src/sage/matroids/unpickling.pyx
+--- a/src/sage/matroids/unpickling.pyx
++++ b/src/sage/matroids/unpickling.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ """
+diff --git a/src/sage/modules/submodule.py b/src/sage/modules/submodule.py
+--- a/src/sage/modules/submodule.py
++++ b/src/sage/modules/submodule.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/repl/rich_output/backend_ipython.py b/src/sage/repl/rich_output/backend_ipython.py
+--- a/src/sage/repl/rich_output/backend_ipython.py
++++ b/src/sage/repl/rich_output/backend_ipython.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython
+ """
+diff --git a/src/sage/algebras/exterior_algebra_groebner.pyx b/src/sage/algebras/exterior_algebra_groebner.pyx
+--- a/src/sage/algebras/exterior_algebra_groebner.pyx
++++ b/src/sage/algebras/exterior_algebra_groebner.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.exterior_algebra sage.libs.singular sage.rings.number_field
+ r"""
+diff --git a/src/sage/graphs/centrality.pyx b/src/sage/graphs/centrality.pyx
+--- a/src/sage/graphs/centrality.pyx
++++ b/src/sage/graphs/centrality.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/numerical/linear_tensor_element.pyx b/src/sage/numerical/linear_tensor_element.pyx
+--- a/src/sage/numerical/linear_tensor_element.pyx
++++ b/src/sage/numerical/linear_tensor_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ """
+diff --git a/src/sage/geometry/polyhedron/ppl_lattice_polygon.py b/src/sage/geometry/polyhedron/ppl_lattice_polygon.py
+--- a/src/sage/geometry/polyhedron/ppl_lattice_polygon.py
++++ b/src/sage/geometry/polyhedron/ppl_lattice_polygon.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs ppl sage.geometry.polyhedron
+ """
