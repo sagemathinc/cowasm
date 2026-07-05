@@ -4495,6 +4495,59 @@ dynamic-link `strdup` signature mismatch. Future scheduled runs should avoid
 repeating these exact slices unless the graph/matrix, design, polyhedron, or
 geometry backend profile changes.
 
+Follow-up 119-to-132 prompt-band frontier audit:
+
+No new quiet corpus candidate was found. Fresh direct probes used absolute
+patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote SQLite
+dashboards to:
+
+```text
+.tmp/current-run/scheduled-2026-07-05-goal-119-123/batch.sqlite3
+.tmp/current-run/scheduled-2026-07-05-goal-124-132/batch.sqlite3
+```
+
+The 119-to-123 slice recorded:
+
+```text
+sage -t failed: 246 passed, 1289 failed, 1454 skipped
+```
+
+The strict promotion scan with run metadata, source-root, block-row, file-run,
+runner-version, and path-deduplication guards printed no uncovered clean rows.
+Coverage shape was 11 skipped-only files, 14 block-failing files, and one
+file-level `wasm_link_error`. The skipped-only files were already classified
+by existing dependency metadata. The remaining failures were broad
+browser-profile frontiers around letterplace/Singular algebra, polyhedron
+backends, free-module and abelian-group helpers, graph-backed refinement and
+book examples, TIDES/interface coverage, quivers, product-projective schemes,
+NTL matrix arithmetic, and the known finite-field `ZZ_pContext::restore`
+dynamic-link import gap.
+
+The 124-to-132 slice recorded:
+
+```text
+sage -t failed: 45 passed, 433 failed, 1784 skipped
+```
+
+The same strict promotion scan again printed no uncovered clean rows. Coverage
+shape was 11 skipped-only files, seven block-failing files, and six file-level
+errors. The skipped-only files were already classified by optional/dependency
+metadata for p-adics, number fields, combinatorics, PARI, NumPy, graph,
+module, finite-ring, scheme, and Singular surfaces. The remaining failures
+were runtime or dependency frontiers: matrix HNF setup reaches the existing
+matrix table-index trap, number-field homsets and complex interval/omega
+polynomial paths reach `wasm_trap` clusters, quantum Onsager and source
+documentation search time out at the 90-second file boundary, and PHC/LiE/GAP3
+and KASH interface files remain external-interface coverage rather than
+browser-profile pure math. The checked corpus remains at 1,077 non-comment
+entries.
+
+Future scheduled runs should avoid repeating these exact 119-to-132 prompt
+bands unless the Singular/letterplace, polyhedron, graph/matrix, NTL finite
+field, TIDES/interface, manifold, module/group, number-field, arb/complex
+interval, or external-interface backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
