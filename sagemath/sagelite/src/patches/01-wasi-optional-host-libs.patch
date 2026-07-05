@@ -15051,3 +15051,57 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_split.py b/sr
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  r"""
+diff --git a/src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py b/src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
+--- a/src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
++++ b/src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/geometry/polyhedron/combinatorial_polyhedron/conversions.pyx b/src/sage/geometry/polyhedron/combinatorial_polyhedron/conversions.pyx
+--- a/src/sage/geometry/polyhedron/combinatorial_polyhedron/conversions.pyx
++++ b/src/sage/geometry/polyhedron/combinatorial_polyhedron/conversions.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron
+ r"""
+diff --git a/src/sage/groups/matrix_gps/matrix_group_gap.py b/src/sage/groups/matrix_gps/matrix_group_gap.py
+--- a/src/sage/groups/matrix_gps/matrix_group_gap.py
++++ b/src/sage/groups/matrix_gps/matrix_group_gap.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap
+ r"""
+diff --git a/src/sage/groups/perm_gps/symgp_conjugacy_class.py b/src/sage/groups/perm_gps/symgp_conjugacy_class.py
+--- a/src/sage/groups/perm_gps/symgp_conjugacy_class.py
++++ b/src/sage/groups/perm_gps/symgp_conjugacy_class.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/manifolds/family.py b/src/sage/manifolds/family.py
+--- a/src/sage/manifolds/family.py
++++ b/src/sage/manifolds/family.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""
+diff --git a/src/sage/matroids/chow_ring.py b/src/sage/matroids/chow_ring.py
+--- a/src/sage/matroids/chow_ring.py
++++ b/src/sage/matroids/chow_ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ r"""
+diff --git a/src/sage/numerical/linear_tensor_constraints.py b/src/sage/numerical/linear_tensor_constraints.py
+--- a/src/sage/numerical/linear_tensor_constraints.py
++++ b/src/sage/numerical/linear_tensor_constraints.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ """
+diff --git a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+--- a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
++++ b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ """
+diff --git a/src/sage/schemes/elliptic_curves/homset.py b/src/sage/schemes/elliptic_curves/homset.py
+--- a/src/sage/schemes/elliptic_curves/homset.py
++++ b/src/sage/schemes/elliptic_curves/homset.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""
