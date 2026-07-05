@@ -15480,3 +15480,39 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/ca
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.plot sage.rings.number_field
  """
+diff --git a/src/sage/symbolic/callable.py b/src/sage/symbolic/callable.py
+--- a/src/sage/symbolic/callable.py
++++ b/src/sage/symbolic/callable.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/manifolds/differentiable/mixed_form_algebra.py b/src/sage/manifolds/differentiable/mixed_form_algebra.py
+--- a/src/sage/manifolds/differentiable/mixed_form_algebra.py
++++ b/src/sage/manifolds/differentiable/mixed_form_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/schemes/projective/projective_homset.py b/src/sage/schemes/projective/projective_homset.py
+--- a/src/sage/schemes/projective/projective_homset.py
++++ b/src/sage/schemes/projective/projective_homset.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural cysignals.alarm
+ r"""
+diff --git a/src/sage/symbolic/units.py b/src/sage/symbolic/units.py
+--- a/src/sage/symbolic/units.py
++++ b/src/sage/symbolic/units.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/linalg_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/linalg_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/linalg_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/linalg_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_mpolynomial_dense
+ """
+diff --git a/src/sage/graphs/pq_trees.py b/src/sage/graphs/pq_trees.py
+--- a/src/sage/graphs/pq_trees.py
++++ b/src/sage/graphs/pq_trees.py
+@@ -299,1 +299,1 @@
+-            sage: Graph('GvGNp?').is_interval()
++            sage: Graph('GvGNp?').is_interval()  # needs sage.graphs

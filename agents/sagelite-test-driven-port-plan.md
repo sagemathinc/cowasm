@@ -32043,6 +32043,61 @@ corpus remains at 1,077 non-comment entries. Validation also ran
 and the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 88-to-90 prompt-band PQ-tree promotion and dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 14 uncovered files in the 88-to-90 prompt band. The initial
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-88-90/prompt-88-90/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 119 passed, 274 failed, 670 skipped
+```
+
+The strict candidate scan found no already-clean uncovered candidate, but
+`sage/graphs/pq_trees.py` was a narrow promotion target: 89 blocks passed and
+the only failure was an interval-graph example using the stripped `Graph`
+startup/backend surface. The WASI source patch now marks that example as
+`# needs sage.graphs`, while keeping the rest of the PQ-tree doctests runnable
+in the default browser-compatible profile. The file is added to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,078
+non-comment entries.
+
+The remaining failed files in the band were broad browser-profile frontiers
+rather than narrow pure-math candidates: symbolic callable expressions and
+units, manifold mixed-form algebra, projective-scheme homsets through Plural
+and alarm-backed point enumeration, and a computational-mathematics linear
+algebra book example that traps in dense polynomial-matrix randomization. The
+WASI source patch now records those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.symbolic`, `sage.manifolds`,
+`sage.schemes`, `sage.rings.polynomial.plural`, `cysignals.alarm`, and
+`sage.matrix.matrix_mpolynomial_dense`.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-88-90/prompt-88-90/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 89 passed, 0 failed, 1063 skipped
+```
+
+The final run records 1,152 block rows under runner version 90, and the saved
+block- and file-failure cluster queries are empty. The strict promotion scan
+with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. Validation
+also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py` and the full WASI source
+patch dry-run against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
+An attempted make-target validation rebuilt from `/home/user/sagelite` but
+failed while copying the source tree with `Disk quota exceeded` at
+`build/pkgs/pari_nftables/package-version.txt`. The partial source copy was
+then patched in place and used for the checked direct validation above; a
+future full make-target refresh may need scratch/quota cleanup first.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
