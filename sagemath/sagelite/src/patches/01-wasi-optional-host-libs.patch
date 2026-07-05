@@ -15670,9 +15670,51 @@ diff --git a/src/sage/repl/ipython_kernel/widgets.py b/src/sage/repl/ipython_ker
 diff --git a/src/sage/rings/padics/pow_computer_relative.pyx b/src/sage/rings/padics/pow_computer_relative.pyx
 --- a/src/sage/rings/padics/pow_computer_relative.pyx
 +++ b/src/sage/rings/padics/pow_computer_relative.pyx
-@@ -5,6 +5,7 @@
+@@ -4,4 +4,5 @@
  # distutils: library_dirs = NTL_LIBDIR
  # distutils: extra_link_args = NTL_LIBEXTRA
  # distutils: language = c++
 +# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/examples.py b/src/sage/algebras/lie_algebras/examples.py
+--- a/src/sage/algebras/lie_algebras/examples.py
++++ b/src/sage/algebras/lie_algebras/examples.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/game_theory/catalog_normal_form_games.py b/src/sage/game_theory/catalog_normal_form_games.py
+--- a/src/sage/game_theory/catalog_normal_form_games.py
++++ b/src/sage/game_theory/catalog_normal_form_games.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ r"""
+diff --git a/src/sage/algebras/hecke_algebras/ariki_koike_specht_modules.py b/src/sage/algebras/hecke_algebras/ariki_koike_specht_modules.py
+--- a/src/sage/algebras/hecke_algebras/ariki_koike_specht_modules.py
++++ b/src/sage/algebras/hecke_algebras/ariki_koike_specht_modules.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular pexpect
+ r"""
+diff --git a/src/sage/geometry/toric_plotter.py b/src/sage/geometry/toric_plotter.py
+--- a/src/sage/geometry/toric_plotter.py
++++ b/src/sage/geometry/toric_plotter.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.toric sage.plot
+ r"""
+diff --git a/src/sage/graphs/base/dense_graph.pyx b/src/sage/graphs/base/dense_graph.pyx
+--- a/src/sage/graphs/base/dense_graph.pyx
++++ b/src/sage/graphs/base/dense_graph.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/scalarfield_algebra.py b/src/sage/manifolds/differentiable/scalarfield_algebra.py
+--- a/src/sage/manifolds/differentiable/scalarfield_algebra.py
++++ b/src/sage/manifolds/differentiable/scalarfield_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/combinat/designs/ext_rep.py b/src/sage/combinat/designs/ext_rep.py
+--- a/src/sage/combinat/designs/ext_rep.py
++++ b/src/sage/combinat/designs/ext_rep.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat.designs sage.coding
  r"""
