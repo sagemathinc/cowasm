@@ -4548,6 +4548,55 @@ bands unless the Singular/letterplace, polyhedron, graph/matrix, NTL finite
 field, TIDES/interface, manifold, module/group, number-field, arb/complex
 interval, or external-interface backend profile changes.
 
+Follow-up 133-to-170 prompt-band and neighbor audit on 2026-07-05:
+
+No new quiet corpus candidate was found. Fresh direct probes used absolute
+patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote SQLite
+dashboards under
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-05-codex/`.
+
+The first compact 133-to-150 slice recorded:
+
+```text
+probe-133-150-small.sqlite3: 66 passed, 322 failed, 295 skipped
+```
+
+The strict promotion and near-miss scans printed no uncovered clean rows.
+`sage/crypto/block_cipher/present.py` and `sage/homology/chains.py` were
+skipped-only. The runnable failures were broad doctest-reporting,
+hyperbolic-symbolic, and conjugacy-class startup/backend clusters; adding
+`HyperbolicPlane` to the default startup namespace is not valid yet because a
+direct import reaches the stripped `sage.symbolic.expression` module. The
+file-level errors were a `sagedoc.py` source-search timeout and the existing
+NTL `ZZ_pContext.restore()` dynamic-link import gap through
+`polynomial_template.pxi`.
+
+The second compact 151-to-170 slice recorded:
+
+```text
+probe-151-170-small.sqlite3: 141 passed, 329 failed, 468 skipped
+```
+
+Again, there was no promotion row. The only substantial near miss,
+`sage/rings/asymptotic/misc.py`, recorded 120 passing blocks and 37 failures,
+but the failures are not a narrow display drift: `parent_to_repr_short(...)`,
+`AsymptoticRing(...)`, and `SR` examples currently route through symbolic
+expression support and dependent missing-name fallout. Nearby root-system,
+symmetric-function, and polynomial helpers in that probe were skipped-only,
+while module-with-basis, quiver, and Clifford-algebra helpers remain broader
+timeout or startup/backend clusters.
+
+A focused follow-up around the recently promoted permutation-refinement
+helpers found no adjacent promotion. The remaining compact `partn_ref` files
+were skipped-only except `refinement_graphs.pyx`, which still has a
+graph-backed failure cluster. A small plot-neighborhood probe also produced
+only skipped rows across `density_plot.py`, `misc.py`, `step.py`,
+`streamline_plot.py`, and the hyperbolic plot helpers. Future scheduled runs
+should avoid repeating these exact 133-to-170, `partn_ref`, and compact plot
+batches unless the symbolic, graph, NTL dynamic-link, or display-backend
+profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
