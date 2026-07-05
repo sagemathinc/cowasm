@@ -15214,3 +15214,45 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doc
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.numerical.mip sage.graphs
  """
+diff --git a/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx b/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
+--- a/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
++++ b/src/sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron
+ r"""
+diff --git a/src/sage/geometry/polyhedron/double_description_inhomogeneous.py b/src/sage/geometry/polyhedron/double_description_inhomogeneous.py
+--- a/src/sage/geometry/polyhedron/double_description_inhomogeneous.py
++++ b/src/sage/geometry/polyhedron/double_description_inhomogeneous.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/graphs/generators/intersection.py b/src/sage/graphs/generators/intersection.py
+--- a/src/sage/graphs/generators/intersection.py
++++ b/src/sage/graphs/generators/intersection.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/hyperbolicity.pyx b/src/sage/graphs/hyperbolicity.pyx
+--- a/src/sage/graphs/hyperbolicity.pyx
++++ b/src/sage/graphs/hyperbolicity.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/knots/free_knotinfo_monoid.py b/src/sage/knots/free_knotinfo_monoid.py
+--- a/src/sage/knots/free_knotinfo_monoid.py
++++ b/src/sage/knots/free_knotinfo_monoid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/modular/arithgroup/arithgroup_element.pyx b/src/sage/modular/arithgroup/arithgroup_element.pyx
+--- a/src/sage/modular/arithgroup/arithgroup_element.pyx
++++ b/src/sage/modular/arithgroup/arithgroup_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular.modsym sage.matrix.matrix_integer_dense
+ """
+diff --git a/src/sage/modules/submodule_helper.py b/src/sage/modules/submodule_helper.py
+--- a/src/sage/modules/submodule_helper.py
++++ b/src/sage/modules/submodule_helper.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense
+ r"""

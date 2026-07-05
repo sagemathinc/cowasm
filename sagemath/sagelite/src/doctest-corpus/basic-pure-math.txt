@@ -76,6 +76,7 @@ src/sage/rings/valuation/trivial_valuation.py
 src/sage/rings/valuation/scaled_valuation.py
 src/sage/rings/valuation/value_group.py
 src/sage/rings/valuation/valuation_space.py
+src/sage/rings/valuation/developing_valuation.py
 src/sage/arith/srange.pyx
 src/sage/arith/functions.pyx
 src/sage/arith/power.pyx
