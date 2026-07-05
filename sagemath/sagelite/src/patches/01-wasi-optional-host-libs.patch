@@ -15582,3 +15582,63 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_generic.py b/src/sag
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
  r"""
+diff --git a/src/sage/libs/eclib/newforms.pyx b/src/sage/libs/eclib/newforms.pyx
+--- a/src/sage/libs/eclib/newforms.pyx
++++ b/src/sage/libs/eclib/newforms.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.eclib sage.schemes.elliptic_curves
+ """
+diff --git a/src/sage/manifolds/differentiable/tangent_vector.py b/src/sage/manifolds/differentiable/tangent_vector.py
+--- a/src/sage/manifolds/differentiable/tangent_vector.py
++++ b/src/sage/manifolds/differentiable/tangent_vector.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/rings/function_field/place.py b/src/sage/rings/function_field/place.py
+--- a/src/sage/rings/function_field/place.py
++++ b/src/sage/rings/function_field/place.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ """
+diff --git a/src/sage/rings/polynomial/weil/weil_polynomials.pyx b/src/sage/rings/polynomial/weil/weil_polynomials.pyx
+--- a/src/sage/rings/polynomial/weil/weil_polynomials.pyx
++++ b/src/sage/rings/polynomial/weil/weil_polynomials.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.flint sage.libs.ntl
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/integration_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/integration_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/integration_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/integration_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/algebras/q_system.py b/src/sage/algebras/q_system.py
+--- a/src/sage/algebras/q_system.py
++++ b/src/sage/algebras/q_system.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat sage.libs.singular
+ r"""
+diff --git a/src/sage/combinat/graph_path.py b/src/sage/combinat/graph_path.py
+--- a/src/sage/combinat/graph_path.py
++++ b/src/sage/combinat/graph_path.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/geometry/hyperplane_arrangement/library.py b/src/sage/geometry/hyperplane_arrangement/library.py
+--- a/src/sage/geometry/hyperplane_arrangement/library.py
++++ b/src/sage/geometry/hyperplane_arrangement/library.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperplane_arrangement sage.graphs sage.libs.singular
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/hom_fractional.py b/src/sage/schemes/elliptic_curves/hom_fractional.py
+--- a/src/sage/schemes/elliptic_curves/hom_fractional.py
++++ b/src/sage/schemes/elliptic_curves/hom_fractional.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari
+ r"""
+diff --git a/src/sage/symbolic/function_factory.py b/src/sage/symbolic/function_factory.py
+--- a/src/sage/symbolic/function_factory.py
++++ b/src/sage/symbolic/function_factory.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
