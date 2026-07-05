@@ -14829,3 +14829,111 @@ diff --git a/src/sage/schemes/elliptic_curves/descent_two_isogeny.pyx b/src/sage
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves
  r"""
+diff --git a/src/sage/algebras/fusion_rings/fast_parallel_fmats_methods.pyx b/src/sage/algebras/fusion_rings/fast_parallel_fmats_methods.pyx
+--- a/src/sage/algebras/fusion_rings/fast_parallel_fmats_methods.pyx
++++ b/src/sage/algebras/fusion_rings/fast_parallel_fmats_methods.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.fusion_rings
+ """
+diff --git a/src/sage/calculus/expr.py b/src/sage/calculus/expr.py
+--- a/src/sage/calculus/expr.py
++++ b/src/sage/calculus/expr.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/crypto/public_key/key_exchange/sidh.py b/src/sage/crypto/public_key/key_exchange/sidh.py
+--- a/src/sage/crypto/public_key/key_exchange/sidh.py
++++ b/src/sage/crypto/public_key/key_exchange/sidh.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""
+diff --git a/src/sage/groups/perm_gps/partn_ref/data_structures.pyx b/src/sage/groups/perm_gps/partn_ref/data_structures.pyx
+--- a/src/sage/groups/perm_gps/partn_ref/data_structures.pyx
++++ b/src/sage/groups/perm_gps/partn_ref/data_structures.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/libs/eclib/homspace.pyx b/src/sage/libs/eclib/homspace.pyx
+--- a/src/sage/libs/eclib/homspace.pyx
++++ b/src/sage/libs/eclib/homspace.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.eclib
+ "Cremona modular symbols"
+diff --git a/src/sage/matroids/rank_matroid.py b/src/sage/matroids/rank_matroid.py
+--- a/src/sage/matroids/rank_matroid.py
++++ b/src/sage/matroids/rank_matroid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ r"""
+diff --git a/src/sage/modular/abvar/abvar_ambient_jacobian.py b/src/sage/modular/abvar/abvar_ambient_jacobian.py
+--- a/src/sage/modular/abvar/abvar_ambient_jacobian.py
++++ b/src/sage/modular/abvar/abvar_ambient_jacobian.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular.abvar
+ """
+diff --git a/src/sage/rings/homset.py b/src/sage/rings/homset.py
+--- a/src/sage/rings/homset.py
++++ b/src/sage/rings/homset.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ """
+diff --git a/src/sage/rings/polynomial/pbori/cnf.py b/src/sage/rings/polynomial/pbori/cnf.py
+--- a/src/sage/rings/polynomial/pbori/cnf.py
++++ b/src/sage/rings/polynomial/pbori/cnf.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs brial
+ from random import Random
+diff --git a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_g2.py b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_g2.py
+--- a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_g2.py
++++ b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_g2.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ """r
+diff --git a/src/sage/schemes/jacobians/abstract_jacobian.py b/src/sage/schemes/jacobians/abstract_jacobian.py
+--- a/src/sage/schemes/jacobians/abstract_jacobian.py
++++ b/src/sage/schemes/jacobians/abstract_jacobian.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ """
+diff --git a/src/sage/schemes/plane_conics/con_rational_field.py b/src/sage/schemes/plane_conics/con_rational_field.py
+--- a/src/sage/schemes/plane_conics/con_rational_field.py
++++ b/src/sage/schemes/plane_conics/con_rational_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/schemes/projective/projective_rational_point.py b/src/sage/schemes/projective/projective_rational_point.py
+--- a/src/sage/schemes/projective/projective_rational_point.py
++++ b/src/sage/schemes/projective/projective_rational_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/symbolic/integration/external.py b/src/sage/symbolic/integration/external.py
+--- a/src/sage/symbolic/integration/external.py
++++ b/src/sage/symbolic/integration/external.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/symbolic/operators.py b/src/sage/symbolic/operators.py
+--- a/src/sage/symbolic/operators.py
++++ b/src/sage/symbolic/operators.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ "Operators"
+diff --git a/src/sage/symbolic/random_tests.py b/src/sage/symbolic/random_tests.py
+--- a/src/sage/symbolic/random_tests.py
++++ b/src/sage/symbolic/random_tests.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphique_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphique_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphique_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/graphique_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic matplotlib scipy
+ """

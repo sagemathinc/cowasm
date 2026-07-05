@@ -31364,6 +31364,47 @@ promotion scan with `--require-run-metadata`, `--require-source-root-path`,
 corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`.
 
+Follow-up 49-to-51 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 49-to-51 prompt
+source-minus-corpus band. The fresh 25-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-49-51/prompt-49-51/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 157 passed, 534 failed, 491 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining failures were dependency-boundary frontiers rather
+than narrow runnable math coverage: symbolic calculus and integration,
+ECLIB-backed modular symbols, BRiAl CNF helpers, fusion-ring F-matrix shared
+memory helpers, matroid rank constructors, scheme and elliptic-curve SIDH
+examples, permutation-group partition-refinement helpers, modular abelian
+varieties, and one NTL finite-field ring-homset dynamic-link boundary.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.symbolic`,
+`sage.libs.eclib`, `brial`, `sage.algebras.fusion_rings`, `sage.matroids`,
+`sage.schemes`, `sage.schemes.elliptic_curves`, `sage.groups`,
+`sage.modular.abvar`, `sage.libs.ntl`, and the CMwS graphing notebook
+dependencies `sage.symbolic matplotlib scipy`. A make-target rerun rebuilt a
+fresh patched source tree and wrote
+`.tmp/current-run/scheduled-2026-07-04-goal-49-51/prompt-49-51/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1231 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
