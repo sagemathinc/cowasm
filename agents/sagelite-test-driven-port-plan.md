@@ -31700,6 +31700,46 @@ also ran `python3 -m py_compile
 sagemath/sagelite/src/doctest-corpus-candidates.py` and the full WASI source
 patch dry-run against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 73-to-75 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 73-to-75 prompt
+source-minus-corpus band. The fresh 18-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-73-75/prompt-73-75/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 39 passed, 251 failed, 925 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining failures were dependency-boundary frontiers rather
+than narrow runnable math coverage: vector-bundle fiber doctests requiring the
+manifold stack, mixed-integer-programming linear tensor examples, Unique Hess
+function-field Jacobian examples through curve/scheme construction, and
+elliptic-curve BSD examples through ECLIB/PARI-heavy elliptic-curve backends.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.manifolds`,
+`sage.numerical.mip`, `sage.rings.function_field sage.schemes`, and
+`sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari`. A make-target
+rerun rebuilt a fresh patched source tree and wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-73-75/prompt-73-75/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1215 skipped
+```
+
+The final run records 1,215 skipped block rows under runner version 90, and
+the saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,076 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite` with a
+workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
