@@ -31614,6 +31614,47 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 and the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 67-to-69 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 67-to-69 prompt
+source-minus-corpus band. The fresh 21-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-67-69/prompt-67-69/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 70 passed, 160 failed, 987 skipped
+```
+
+The skipped-only and empty files were already classified by existing
+browser-profile metadata. The remaining failures were dependency-boundary
+frontiers rather than narrow runnable math coverage: p-adic polynomial
+backend and pexpect factorization paths, Singular/NTL polynomial-interface
+linkage, cyclic-cover scheme constructors, product-projective subschemes
+through Plural/Singular, and numerical mixed-integer-programming examples
+that also depend on graph constructors.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.rings.padics`, `pexpect`,
+`sage.schemes.elliptic_curves`, `sage.libs.singular`, `sage.libs.ntl`,
+`sage.schemes`, `sage.rings.polynomial.plural`, `sage.numerical.mip`, and
+`sage.graphs`. A make-target rerun rebuilt a fresh patched source tree and
+wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-67-69/prompt-67-69/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1284 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite` with a
+workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -15184,3 +15184,33 @@ diff --git a/src/sage/schemes/elliptic_curves/ell_tate_curve.py b/src/sage/schem
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari
  r"""
+diff --git a/src/sage/rings/polynomial/padics/polynomial_padic.py b/src/sage/rings/polynomial/padics/polynomial_padic.py
+--- a/src/sage/rings/polynomial/padics/polynomial_padic.py
++++ b/src/sage/rings/polynomial/padics/polynomial_padic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics pexpect sage.schemes.elliptic_curves
+ """
+diff --git a/src/sage/rings/polynomial/polynomial_singular_interface.py b/src/sage/rings/polynomial/polynomial_singular_interface.py
+--- a/src/sage/rings/polynomial/polynomial_singular_interface.py
++++ b/src/sage/rings/polynomial/polynomial_singular_interface.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.libs.ntl
+ """
+diff --git a/src/sage/schemes/cyclic_covers/cycliccover_generic.py b/src/sage/schemes/cyclic_covers/cycliccover_generic.py
+--- a/src/sage/schemes/cyclic_covers/cycliccover_generic.py
++++ b/src/sage/schemes/cyclic_covers/cycliccover_generic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ """
+diff --git a/src/sage/schemes/product_projective/subscheme.py b/src/sage/schemes/product_projective/subscheme.py
+--- a/src/sage/schemes/product_projective/subscheme.py
++++ b/src/sage/schemes/product_projective/subscheme.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/lp_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip sage.graphs
+ """
