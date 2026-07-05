@@ -31481,6 +31481,55 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
 and the full WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 58-to-60 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 58-to-60 prompt
+source-minus-corpus band. The fresh 19-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-58-60/prompt-58-60/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 53 passed, 384 failed, 605 skipped
+```
+
+The skipped-only files were already classified by existing browser-profile
+metadata. The remaining real-source failures were dependency-boundary
+frontiers rather than narrow runnable math coverage: graph-backed cellular
+bases and comparability algorithms, symbolic/manifold and plotting helpers,
+IPython display-format tests, permutation-group kernel subgroups, elliptic and
+hyperelliptic scheme examples, and finite-dimensional algebra examples that
+currently sit outside the default Sagelite startup/backend surface.
+
+The regenerated prompt band also surfaced
+`src/sage/rings/finite_rings/conway_polynomials.py.orig`, a patch backup file
+from the rebuilt source copy, as a false frontier. The
+`doctest-corpus-candidates.py` helper now excludes `.orig` and `.rej` paths
+from candidate reporting, so backup files do not appear as promotable Sage
+modules.
+
+The WASI source patch now marks the real dependency-frontier files with
+explicit file-level `# sage.doctest: needs ...` metadata for `sage.graphs`,
+`sage.algebras.finite_dimensional_algebras`, `sage.symbolic matplotlib`,
+`sage.groups`, `sage.symbolic`, `IPython`, `sage.schemes.elliptic_curves`,
+and `sage.schemes`. A make-target rerun rebuilt a fresh patched source tree,
+used an 18-file temporary corpus excluding the `.orig` backup, and wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-58-60/prompt-58-60/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1041 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite`, using a
+workspace-local `TMPDIR` because the default `/tmp` temporary-file quota was
+exhausted during the first dry-run attempt.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

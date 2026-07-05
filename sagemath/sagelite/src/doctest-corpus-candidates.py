@@ -14,6 +14,7 @@ from pathlib import Path
 
 
 DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
+DEFAULT_EXCLUDED_PATH_SUFFIXES = (".orig", ".rej")
 REQUIRED_RUN_METADATA_COLUMNS = (
     "started_at",
     "git_commit",
@@ -1024,6 +1025,8 @@ def candidate_rows(
                 db, run_id, path, "tags", True
             )
         if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
+            continue
+        if relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES):
             continue
         if file_errors and any(
             detail in one_line_failure_detail

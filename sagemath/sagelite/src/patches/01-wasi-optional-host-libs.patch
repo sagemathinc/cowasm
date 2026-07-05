@@ -14997,3 +14997,57 @@ diff --git a/src/sage/symbolic/expression_conversion_algebraic.py b/src/sage/sym
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.rings.number_field
  r"""
+diff --git a/src/sage/algebras/cellular_basis.py b/src/sage/algebras/cellular_basis.py
+--- a/src/sage/algebras/cellular_basis.py
++++ b/src/sage/algebras/cellular_basis.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_morphism.py b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_morphism.py
+--- a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_morphism.py
++++ b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.finite_dimensional_algebras
+ """
+diff --git a/src/sage/geometry/hyperplane_arrangement/plot.py b/src/sage/geometry/hyperplane_arrangement/plot.py
+--- a/src/sage/geometry/hyperplane_arrangement/plot.py
++++ b/src/sage/geometry/hyperplane_arrangement/plot.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic matplotlib
+ """
+diff --git a/src/sage/graphs/comparability.pyx b/src/sage/graphs/comparability.pyx
+--- a/src/sage/graphs/comparability.pyx
++++ b/src/sage/graphs/comparability.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/groups/kernel_subgroup.py b/src/sage/groups/kernel_subgroup.py
+--- a/src/sage/groups/kernel_subgroup.py
++++ b/src/sage/groups/kernel_subgroup.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/manifolds/catalog.py b/src/sage/manifolds/catalog.py
+--- a/src/sage/manifolds/catalog.py
++++ b/src/sage/manifolds/catalog.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/repl/display/formatter.py b/src/sage/repl/display/formatter.py
+--- a/src/sage/repl/display/formatter.py
++++ b/src/sage/repl/display/formatter.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/modular_parametrization.py b/src/sage/schemes/elliptic_curves/modular_parametrization.py
+--- a/src/sage/schemes/elliptic_curves/modular_parametrization.py
++++ b/src/sage/schemes/elliptic_curves/modular_parametrization.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_split.py b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_split.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_split.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_split.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
