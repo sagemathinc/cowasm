@@ -31918,6 +31918,47 @@ Validation also ran `python3 -m py_compile
 sagemath/sagelite/src/doctest-corpus-candidates.py` and the full WASI source
 patch dry-run against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 133-to-145 prompt-band frontier audit:
+
+No new quiet corpus candidate was found in the regenerated 133-to-145 prompt
+source-minus-corpus band. The fresh 55-file direct probe used absolute
+patched-source paths and wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-133-145/batch.sqlite3`, recording:
+
+```text
+sage -t failed: 603 passed, 2923 failed, 2808 skipped
+```
+
+The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The coverage shape was 17 skipped-only files, 32
+block-failing files, and six file-level errors under runner version 90.
+
+The skipped-only files were already classified by existing browser-profile
+metadata, covering arithmetic, crystals/Weyl groups, coding, combinatorics,
+crypto, homology, interface, Coxeter, modular Hecke, plot3d, and scheme
+boundaries. The block-failing files were not narrow promotion targets: the
+dominant block-failure classes were `NameError`, `ModuleNotFoundError`,
+`AttributeError`, output mismatch, and `TypeError`, clustered around
+manifolds, graph helpers, Singular/letterplace and Hecke algebra code,
+external interfaces, elliptic-curve homsets, matrix/vector backends, coding
+bound warnings, hyperbolic geometry, parallel decorators, and computational
+mathematics book examples.
+
+The file-level errors were broader runtime/backend frontiers:
+`rings/polynomial/omega.py` and `libs/ntl/ntl_mat_GF2E.pyx` hit WASM traps,
+`libs/ntl/ntl_lzz_pX.pyx` raised an NTL side-module error, and
+`dynamics/arithmetic_dynamics/endPN_automorphism_group.py`,
+`geometry/hyperplane_arrangement/hyperplane.py`, and
+`rings/polynomial/polynomial_real_arb.pyx` timed out at the 90-second
+per-file boundary. The checked corpus remains at 1,077 non-comment entries.
+
+Future scheduled runs should avoid repeating this 133-to-145 prompt band
+unless the manifold, graph, Singular/letterplace, Hecke algebra, external
+interface, elliptic-curve, matrix/vector, NTL, arb/real-polynomial, or
+arithmetic-dynamics backend profile changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
