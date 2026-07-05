@@ -14979,3 +14979,21 @@ diff --git a/src/sage/plot/plot3d/platonic.py b/src/sage/plot/plot3d/platonic.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.plot.plot3d matplotlib
  r"""
+diff --git a/src/sage/algebras/letterplace/letterplace_ideal.pyx b/src/sage/algebras/letterplace/letterplace_ideal.pyx
+--- a/src/sage/algebras/letterplace/letterplace_ideal.pyx
++++ b/src/sage/algebras/letterplace/letterplace_ideal.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.letterplace sage.libs.singular
+ """
+diff --git a/src/sage/modules/module_functors.py b/src/sage/modules/module_functors.py
+--- a/src/sage/modules/module_functors.py
++++ b/src/sage/modules/module_functors.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module
+ """
+diff --git a/src/sage/symbolic/expression_conversion_algebraic.py b/src/sage/symbolic/expression_conversion_algebraic.py
+--- a/src/sage/symbolic/expression_conversion_algebraic.py
++++ b/src/sage/symbolic/expression_conversion_algebraic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.rings.number_field
+ r"""

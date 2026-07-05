@@ -31444,6 +31444,43 @@ corpus remains at 1,075 non-comment entries. Validation also ran
 `python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
 and the full WASI source patch dry-run against `/home/user/sagelite`.
 
+Follow-up 55-to-57 prompt-band dependency tagging:
+
+No new quiet corpus candidate was found in the regenerated 55-to-57 prompt
+source-minus-corpus band. The fresh 16-file direct probe wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-55-57/prompt-55-57/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 8 passed, 104 failed, 628 skipped
+```
+
+The skipped-only and empty files were already classified by existing
+browser-profile metadata. The remaining failures were dependency-boundary
+frontiers rather than narrow runnable math coverage: Singular/letterplace
+free-algebra ideals, quotient free-module functors, and symbolic algebraic
+conversion through quadratic number-field setup.
+
+The WASI source patch now marks those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.algebras.letterplace
+sage.libs.singular`, `sage.modules.free_module`, and `sage.symbolic
+sage.rings.number_field`. A make-target rerun rebuilt a fresh patched source
+tree and wrote
+`.tmp/current-run/scheduled-2026-07-05-goal-55-57/prompt-55-57/final.sqlite3`,
+recording:
+
+```text
+sage -t passed: 0 passed, 0 failed, 796 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,075 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+and the full WASI source patch dry-run against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
