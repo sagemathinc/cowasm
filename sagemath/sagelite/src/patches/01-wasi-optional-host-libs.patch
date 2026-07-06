@@ -16004,3 +16004,45 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/recequ
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/geometry/polyhedron/double_description.py b/src/sage/geometry/polyhedron/double_description.py
+--- a/src/sage/geometry/polyhedron/double_description.py
++++ b/src/sage/geometry/polyhedron/double_description.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field
+ r"""
+diff --git a/src/sage/geometry/triangulation/element.py b/src/sage/geometry/triangulation/element.py
+--- a/src/sage/geometry/triangulation/element.py
++++ b/src/sage/geometry/triangulation/element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect sage.geometry.triangulation sage.geometry.toric
+ """
+diff --git a/src/sage/manifolds/differentiable/levi_civita_connection.py b/src/sage/manifolds/differentiable/levi_civita_connection.py
+--- a/src/sage/manifolds/differentiable/levi_civita_connection.py
++++ b/src/sage/manifolds/differentiable/levi_civita_connection.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/modules/fg_pid/fgp_morphism.py b/src/sage/modules/fg_pid/fgp_morphism.py
+--- a/src/sage/modules/fg_pid/fgp_morphism.py
++++ b/src/sage/modules/fg_pid/fgp_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/schemes/affine/affine_subscheme.py b/src/sage/schemes/affine/affine_subscheme.py
+--- a/src/sage/schemes/affine/affine_subscheme.py
++++ b/src/sage/schemes/affine/affine_subscheme.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/lseries_ell.py b/src/sage/schemes/elliptic_curves/lseries_ell.py
+--- a/src/sage/schemes/elliptic_curves/lseries_ell.py
++++ b/src/sage/schemes/elliptic_curves/lseries_ell.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.eclib sage.libs.pari pexpect
+ """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/graphique_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/graphique_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/graphique_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/graphique_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.plot matplotlib scipy
+ """
