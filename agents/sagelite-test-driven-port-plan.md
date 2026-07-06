@@ -32666,6 +32666,52 @@ against `/home/user/sagelite` with a workspace-local `TMPDIR`, and a focused
 `ntl_mat_ZZ.pyx` rerun confirming that the header-level directive records
 `0 passed, 0 failed, 120 skipped`.
 
+Follow-up 121-to-123 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 14 uncovered files in the 121-to-123 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-121-123/prompt-121-123/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 68 passed, 577 failed, 920 skipped
+```
+
+The strict candidate scan printed no uncovered clean runnable candidates.
+Seven files were already skipped-only under existing dependency metadata:
+`sage/combinat/sf/powersum.py`, `sage/sat/converters/polybori.py`,
+`sage/combinat/designs/block_design.py`,
+`sage/topology/simplicial_set_examples.py`, `sage/calculus/functional.py`,
+`sage/combinat/posets/moebius_algebra.py`, and
+`sage/modular/abvar/homspace.py`.
+
+The remaining failures were broad browser-profile dependency frontiers rather
+than narrow corpus-promotion targets: integral polyhedron helpers need
+polyhedron/PPL support; quiver algebra doctests use graph-backed path
+semigroups; Givaro finite-field examples hit the known NTL
+`ZZ_pContext.restore` dynamic-link gap; product-projective points import
+Singular/plural-backed scheme code; abelian automorphism examples depend on
+the GAP/libgap wrapper; graph partition-refinement examples need graph
+constructors; and Singular option doctests need Singular plus pexpect-backed
+setup.
+
+The WASI source patch now records those boundaries with explicit file-level
+`# sage.doctest: needs ...` metadata. Final direct validation against the
+patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-121-123/prompt-121-123/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1686 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,080 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

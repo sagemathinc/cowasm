@@ -16129,3 +16129,45 @@ diff --git a/src/sage/manifolds/differentiable/degenerate.py b/src/sage/manifold
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds
  r"""
+diff --git a/src/sage/geometry/polyhedron/base_ZZ.py b/src/sage/geometry/polyhedron/base_ZZ.py
+--- a/src/sage/geometry/polyhedron/base_ZZ.py
++++ b/src/sage/geometry/polyhedron/base_ZZ.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ r"""
+diff --git a/src/sage/quivers/algebra.py b/src/sage/quivers/algebra.py
+--- a/src/sage/quivers/algebra.py
++++ b/src/sage/quivers/algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.quivers
+ """
+diff --git a/src/sage/rings/finite_rings/finite_field_givaro.py b/src/sage/rings/finite_rings/finite_field_givaro.py
+--- a/src/sage/rings/finite_rings/finite_field_givaro.py
++++ b/src/sage/rings/finite_rings/finite_field_givaro.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ """
+diff --git a/src/sage/schemes/product_projective/point.py b/src/sage/schemes/product_projective/point.py
+--- a/src/sage/schemes/product_projective/point.py
++++ b/src/sage/schemes/product_projective/point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.libs.singular sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/groups/abelian_gps/abelian_aut.py b/src/sage/groups/abelian_gps/abelian_aut.py
+--- a/src/sage/groups/abelian_gps/abelian_aut.py
++++ b/src/sage/groups/abelian_gps/abelian_aut.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups.libgap_wrapper
+ r"""
+diff --git a/src/sage/groups/perm_gps/partn_ref/refinement_graphs.pyx b/src/sage/groups/perm_gps/partn_ref/refinement_graphs.pyx
+--- a/src/sage/groups/perm_gps/partn_ref/refinement_graphs.pyx
++++ b/src/sage/groups/perm_gps/partn_ref/refinement_graphs.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/libs/singular/option.pyx b/src/sage/libs/singular/option.pyx
+--- a/src/sage/libs/singular/option.pyx
++++ b/src/sage/libs/singular/option.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular pexpect
+ """
