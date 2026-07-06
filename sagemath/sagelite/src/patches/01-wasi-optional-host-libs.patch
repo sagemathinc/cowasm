@@ -16123,6 +16123,30 @@ diff --git a/src/sage/libs/ntl/ntl_mat_ZZ.pyx b/src/sage/libs/ntl/ntl_mat_ZZ.pyx
  # distutils: extra_link_args = NTL_LIBEXTRA
 +# sage.doctest: needs sage.libs.ntl sage.matrix.matrix_integer_dense
  # distutils: language = c++
+diff --git a/src/sage/rings/polynomial/omega.py b/src/sage/rings/polynomial/omega.py
+--- a/src/sage/rings/polynomial/omega.py
++++ b/src/sage/rings/polynomial/omega.py
+@@ -1,1 +1,2 @@
++# sage.doctest: long time
+ r"""
+diff --git a/src/sage/rings/number_field/homset.py b/src/sage/rings/number_field/homset.py
+--- a/src/sage/rings/number_field/homset.py
++++ b/src/sage/rings/number_field/homset.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field
+ """
+diff --git a/src/sage/rings/complex_interval_field.py b/src/sage/rings/complex_interval_field.py
+--- a/src/sage/rings/complex_interval_field.py
++++ b/src/sage/rings/complex_interval_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.complex_interval
+ r"""
+diff --git a/src/sage/interfaces/gap3.py b/src/sage/interfaces/gap3.py
+--- a/src/sage/interfaces/gap3.py
++++ b/src/sage/interfaces/gap3.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect gap3
+ r"""
 diff --git a/src/sage/manifolds/differentiable/degenerate.py b/src/sage/manifolds/differentiable/degenerate.py
 --- a/src/sage/manifolds/differentiable/degenerate.py
 +++ b/src/sage/manifolds/differentiable/degenerate.py
