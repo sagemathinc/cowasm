@@ -32423,6 +32423,34 @@ corpus remains at 1,078 non-comment entries. Validation also ran
 `git diff --check`, and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Focused stats frontier classification pass:
+
+Fresh grouped sampling of uncovered `sage/games`, `sage/stats`, and
+`sage/probability` files found no new clean runnable corpus candidates. Most
+files in that frontier were empty or skipped-only under the default
+browser-compatible profile; the one runnable near miss,
+`sage/stats/distributions/discrete_gaussian_lattice.py`, recorded 47 passed
+blocks but 95 failures dominated by `ModuleNotFoundError:
+sage.symbolic.expression` and dependent setup-name failures.
+
+The WASI source patch now marks `discrete_gaussian_lattice.py` with a
+file-level `# sage.doctest: needs sage.symbolic` directive, matching the
+module's symbolic-constant import boundary. The focused post-tag validation
+wrote
+`.tmp/current-run/discrete-gaussian-lattice-symbolic-tag2.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 158 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. `skips-by-reason.sql` groups all 158 blocks under the
+explicit `optional:sage.symbolic` boundary. The strict corpus promotion scan
+remains empty for this pass, so the checked corpus stays at 1,078 non-comment
+entries. Validation also ran the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
