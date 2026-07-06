@@ -32930,6 +32930,50 @@ Validation also ran a focused top-of-file directive rerun for
 `vector_mod2_dense.pyx`, `git diff --check`, and the full WASI source patch
 dry-run against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 139-to-141 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 12 uncovered files in the 139-to-141 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-139-141/prompt-139-141/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 317 passed, 786 failed, 428 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Two
+files were already skipped-only under existing dependency metadata:
+`sage/libs/coxeter3/coxeter_group.py` and
+`sage/modular/hecke/submodule.py`.
+
+The remaining failures were broad browser-profile boundaries rather than
+narrow corpus-promotion targets: Yokonuma-Hecke examples depend on GAP-backed
+algebra paths; de Rham and pseudo-Riemannian examples depend on the manifold
+and symbolic stacks; hyperbolic coercion needs the hyperbolic-space and
+symbolic surfaces; slice decomposition needs the graph backend; real-Arb
+polynomial examples timed out in the FLINT/Arb path; Gauss valuation reaches
+the disabled FLINT p-adic initializer; reflection-group and GAP matrix
+examples need GAP-backed modules; and the computational-mathematics float
+chapter needs SciPy, symbolic, and real-ball/interval behavior.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-139-141/prompt-139-141/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1670 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,081 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
