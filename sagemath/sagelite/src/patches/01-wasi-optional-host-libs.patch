@@ -16046,3 +16046,86 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/graphi
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.plot matplotlib scipy
  """
+diff --git a/src/sage/geometry/cone_catalog.py b/src/sage/geometry/cone_catalog.py
+--- a/src/sage/geometry/cone_catalog.py
++++ b/src/sage/geometry/cone_catalog.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron
+ r"""
+diff --git a/src/sage/libs/lcalc/lcalc_Lfunction.pyx b/src/sage/libs/lcalc/lcalc_Lfunction.pyx
+--- a/src/sage/libs/lcalc/lcalc_Lfunction.pyx
++++ b/src/sage/libs/lcalc/lcalc_Lfunction.pyx
+@@ -4,4 +4,5 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
+ # distutils: language = c++
++# sage.doctest: needs sage.libs.lcalc
+ r"""
+diff --git a/src/sage/libs/singular/ring.pyx b/src/sage/libs/singular/ring.pyx
+--- a/src/sage/libs/singular/ring.pyx
++++ b/src/sage/libs/singular/ring.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.libs.pari
+ """
+diff --git a/src/sage/rings/function_field/order_rational.py b/src/sage/rings/function_field/order_rational.py
+--- a/src/sage/rings/function_field/order_rational.py
++++ b/src/sage/rings/function_field/order_rational.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field
+ r"""
+diff --git a/src/sage/topology/moment_angle_complex.py b/src/sage/topology/moment_angle_complex.py
+--- a/src/sage/topology/moment_angle_complex.py
++++ b/src/sage/topology/moment_angle_complex.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.topology
+ """
+diff --git a/src/sage/algebras/letterplace/free_algebra_element_letterplace.pyx b/src/sage/algebras/letterplace/free_algebra_element_letterplace.pyx
+--- a/src/sage/algebras/letterplace/free_algebra_element_letterplace.pyx
++++ b/src/sage/algebras/letterplace/free_algebra_element_letterplace.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural
+ """
+diff --git a/src/sage/geometry/polyhedron/base2.py b/src/sage/geometry/polyhedron/base2.py
+--- a/src/sage/geometry/polyhedron/base2.py
++++ b/src/sage/geometry/polyhedron/base2.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ r"""
+diff --git a/src/sage/modules/fg_pid/fgp_element.py b/src/sage/modules/fg_pid/fgp_element.py
+--- a/src/sage/modules/fg_pid/fgp_element.py
++++ b/src/sage/modules/fg_pid/fgp_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/graphtheory_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/graphtheory_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/graphtheory_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/graphtheory_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.numerical.mip matplotlib scipy
+ """
+diff --git a/src/sage/groups/fqf_orthogonal.py b/src/sage/groups/fqf_orthogonal.py
+--- a/src/sage/groups/fqf_orthogonal.py
++++ b/src/sage/groups/fqf_orthogonal.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/interfaces/tides.py b/src/sage/interfaces/tides.py
+--- a/src/sage/interfaces/tides.py
++++ b/src/sage/interfaces/tides.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs tides sage.symbolic subprocess
+ r"""
+diff --git a/src/sage/libs/ntl/ntl_mat_ZZ.pyx b/src/sage/libs/ntl/ntl_mat_ZZ.pyx
+--- a/src/sage/libs/ntl/ntl_mat_ZZ.pyx
++++ b/src/sage/libs/ntl/ntl_mat_ZZ.pyx
+@@ -4,3 +4,4 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
++# sage.doctest: needs sage.libs.ntl sage.matrix.matrix_integer_dense
+ # distutils: language = c++
+diff --git a/src/sage/manifolds/differentiable/degenerate.py b/src/sage/manifolds/differentiable/degenerate.py
+--- a/src/sage/manifolds/differentiable/degenerate.py
++++ b/src/sage/manifolds/differentiable/degenerate.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds
+ r"""

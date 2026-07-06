@@ -32617,6 +32617,55 @@ sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 118-to-120 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 17 uncovered files in the 118-to-120 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-118-120/prompt-118-120/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 235 passed, 1085 failed, 571 skipped
+```
+
+The strict candidate scan found no uncovered clean runnable candidates. Four
+files in the band were already skipped-only under existing dependency
+metadata: `sage/combinat/fully_commutative_elements.py`,
+`sage/combinat/grossman_larson_algebras.py`,
+`sage/modular/modform_hecketriangle/analytic_type.py`, and
+`sage/modular/modform/ambient.py`.
+
+The remaining failures were broad browser-profile frontiers rather than
+narrow corpus-promotion targets: cone and polyhedron catalog examples need
+polyhedron/PPL support; lcalc and TIDES examples need optional native
+libraries and subprocess or symbolic support; Singular, letterplace, and NTL
+helpers need their unavailable algebra backends; rational function-field order
+tests time out in function-field TestSuite coverage; moment-angle complexes
+and the graph-theory book depend on graph and numerical backends; finitely
+generated PID elements need free-module and dense integer matrix support; and
+degenerate manifold examples need the stripped manifold stack.
+
+The WASI source patch now records those dependency boundaries with explicit
+file-level `# sage.doctest: needs ...` metadata. Final direct validation
+against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-118-120/prompt-118-120/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2008 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,080 non-comment entries.
+Validation also ran `git diff --check`, the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`, and a focused
+`ntl_mat_ZZ.pyx` rerun confirming that the header-level directive records
+`0 passed, 0 failed, 120 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
