@@ -32528,6 +32528,51 @@ clusters around symbolic setup, pexpect doctests, symmetric functions, and
 stream cache/display semantics. The full WASI source patch dry-run against
 `/home/user/sagelite` also succeeds with a workspace-local `TMPDIR`.
 
+Follow-up 112-to-114 prompt-band promotion and dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 20 uncovered files in the 112-to-114 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-112-114/prompt-112-114/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 384 passed, 563 failed, 1279 skipped
+```
+
+The strict candidate scan found `sage/algebras/quantum_oscillator.py` as a
+clean uncovered corpus candidate with 114 passing blocks. A narrow follow-up
+tag in `sage/geometry/polyhedron/backend_polymake.py` marked its lone
+unguarded polymake setup prompt as optional, leaving that file with 10 passing
+blocks and 96 skipped blocks. Both files are now promoted to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,080
+non-comment entries.
+
+The remaining failures were broad browser-profile dependency frontiers:
+hyperbolic geometry through symbolic setup, quadratic-form and design helper
+surfaces, polyhedron constructors through PPL/PARI, static graph and affine
+group examples, Scilab through pexpect, and symbolic computational-mathematics
+book examples. The WASI source patch records those boundaries with explicit
+file-level `# sage.doctest: needs ...` metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-112-114/prompt-112-114/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 124 passed, 0 failed, 2102 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+the full WASI source patch dry-run against `/home/user/sagelite` with a
+workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
