@@ -16411,3 +16411,35 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/float_
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs scipy sage.rings.real_arb sage.rings.real_mpfi sage.symbolic
  """
+diff --git a/src/sage/groups/perm_gps/cubegroup.py b/src/sage/groups/perm_gps/cubegroup.py
+--- a/src/sage/groups/perm_gps/cubegroup.py
++++ b/src/sage/groups/perm_gps/cubegroup.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap sage.plot.plot3d
+ r"""
+diff --git a/src/sage/libs/ntl/ntl_lzz_pX.pyx b/src/sage/libs/ntl/ntl_lzz_pX.pyx
+--- a/src/sage/libs/ntl/ntl_lzz_pX.pyx
++++ b/src/sage/libs/ntl/ntl_lzz_pX.pyx
+@@ -4,3 +4,4 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
++# sage.doctest: needs sage.libs.ntl
+ # distutils: language = c++
+diff --git a/src/sage/algebras/letterplace/free_algebra_letterplace.pyx b/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
+--- a/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
++++ b/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.letterplace sage.libs.singular sage.rings.polynomial.plural
+ ###############################################################################
+diff --git a/src/sage/schemes/elliptic_curves/hom_scalar.py b/src/sage/schemes/elliptic_curves/hom_scalar.py
+--- a/src/sage/schemes/elliptic_curves/hom_scalar.py
++++ b/src/sage/schemes/elliptic_curves/hom_scalar.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.singular
+ r"""
+diff --git a/src/sage/interfaces/octave.py b/src/sage/interfaces/octave.py
+--- a/src/sage/interfaces/octave.py
++++ b/src/sage/interfaces/octave.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect octave
+ r"""
