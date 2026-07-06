@@ -32712,6 +32712,45 @@ cluster queries. The strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,080 non-comment entries.
 
+Follow-up 124-to-126 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 13 uncovered files in the 124-to-126 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-124-126/prompt-124-126/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 38 passed, 20 failed, 1353 skipped
+```
+
+The strict candidate scan printed no uncovered clean runnable candidates.
+Eleven files in the band were already skipped-only under existing dependency
+metadata. The remaining failures were broad browser-profile frontiers rather
+than narrow corpus-promotion targets: `sage/interfaces/phc.py` imports the
+pexpect-backed PHC external-process interface before its optional `phc`
+examples are reached, and `sage/matrix/matrix_integer_dense_hnf.py` traps in
+the integer-matrix backend while running the HNF difficult-row solver.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata: `phc.py` is guarded by `# sage.doctest: needs pexpect phc`, and the
+integer dense HNF helper is guarded by `# sage.doctest: needs sage.libs.linbox`.
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-124-126/prompt-124-126/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1536 skipped
+```
+
+That run records runner version 90 and has empty saved block- and file-failure
+cluster queries. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,080 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -16171,3 +16171,15 @@ diff --git a/src/sage/libs/singular/option.pyx b/src/sage/libs/singular/option.p
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.singular pexpect
  """
+diff --git a/src/sage/interfaces/phc.py b/src/sage/interfaces/phc.py
+--- a/src/sage/interfaces/phc.py
++++ b/src/sage/interfaces/phc.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect phc
+ r"""
+diff --git a/src/sage/matrix/matrix_integer_dense_hnf.py b/src/sage/matrix/matrix_integer_dense_hnf.py
+--- a/src/sage/matrix/matrix_integer_dense_hnf.py
++++ b/src/sage/matrix/matrix_integer_dense_hnf.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.linbox
+ """
