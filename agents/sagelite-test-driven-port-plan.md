@@ -32502,6 +32502,32 @@ sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Focused utility-frontier classification pass:
+
+The July 6 utility-frontier probe had two file-level blockers:
+`sage/data_structures/stream.py` trapped while constructing a Taylor stream
+through the `polynomial_number_field` dynamic-link boundary, and
+`sage/misc/sagedoc.py` timed out in full-source search doctests. The WASI
+source patch now marks the narrow stream examples that cross
+`sage.rings.number_field`, `sage.symbolic`, and `sage.libs.ntl` boundaries,
+and marks the broad `sagedoc.py` source-search doctests as `# long time`.
+The `sagedoc.py` startup subprocess smoke is now tagged as `# needs
+subprocess`.
+
+Focused validation against the patched source tree records:
+
+```text
+sagedoc.py: 76 passed, 0 failed, 50 skipped
+stream.py: 1188 passed, 95 failed, 126 skipped
+```
+
+`sagedoc.py` is now quiet under the default browser-compatible profile. The
+stream file is no longer blocked by file-level runtime crashes, but it remains
+outside the quiet corpus because the remaining failures are broader block-level
+clusters around symbolic setup, pexpect doctests, symmetric functions, and
+stream cache/display semantics. The full WASI source patch dry-run against
+`/home/user/sagelite` also succeeds with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

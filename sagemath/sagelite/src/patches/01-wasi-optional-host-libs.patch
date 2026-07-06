@@ -5,6 +5,40 @@ diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage
 +# sage.doctest: needs sage.symbolic
  r"""
  Discrete Gaussian Samplers over Lattices
+diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream.py
+--- a/src/sage/data_structures/stream.py
++++ b/src/sage/data_structures/stream.py
+@@ -1179,5 +1179,5 @@
+-            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)
++            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)  # needs sage.rings.number_field
+             sage: f == g
+             True
+-            sage: f == h
++            sage: f == h  # needs sage.rings.number_field
+             True
+@@ -1185,5 +1185,5 @@
+-            sage: F(y) = cos(y)^2 + sin(y)^2 + y
+-            sage: G(y) = y + 1
+-            sage: f = Stream_taylor(F, True)
+-            sage: g = Stream_taylor(G, False)
+-            sage: f == g
++            sage: F(y) = cos(y)^2 + sin(y)^2 + y  # needs sage.symbolic
++            sage: G(y) = y + 1                    # needs sage.symbolic
++            sage: f = Stream_taylor(F, True)      # needs sage.symbolic
++            sage: g = Stream_taylor(G, False)     # needs sage.symbolic
++            sage: f == g                          # needs sage.symbolic
+@@ -3200,2 +3200,3 @@
+             sage: f = Stream_exact([2, 5, 7, 11], 1)
++            sage: # needs sage.libs.ntl
+             sage: P = PseudoDifferentialOperatorRing(polygen(GF(8), 'a'))
+@@ -3217,2 +3218,3 @@
+             sage: f = Stream_exact([2, 5, 7, 11], 1)
++            sage: # needs sage.libs.ntl
+             sage: P = PseudoDifferentialOperatorRing(polygen(GF(8), 'a'))
+@@ -3239,2 +3241,3 @@
+             sage: f = Stream_exact([2, 0, 7, 11], -1)
++            sage: # needs sage.libs.ntl
+             sage: P = PseudoDifferentialOperatorRing(polygen(GF(8)['t'], 'a'))
 diff -urN a/src/sage/categories/euclidean_domains.py b/src/sage/categories/euclidean_domains.py
 --- a/src/sage/categories/euclidean_domains.py
 +++ b/src/sage/categories/euclidean_domains.py
@@ -6382,6 +6416,10 @@ diff -urN a/src/sage/misc/superseded.py b/src/sage/misc/superseded.py
 diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 --- a/src/sage/misc/sagedoc.py
 +++ b/src/sage/misc/sagedoc.py
+@@ -29,2 +29,2 @@
+-    sage: os.system("sage -c \"if 'sphinx' in sys.modules: sys.exit(1)\"")
++    sage: os.system("sage -c \"if 'sphinx' in sys.modules: sys.exit(1)\"")  # needs subprocess
+     0
 @@ -620,5 +620,15 @@
          "sage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2"
      """
@@ -6399,6 +6437,24 @@ diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 +    else:
 +        from sage.doctest.external import available_software
      from sage.doctest.parsing import parse_optional_tags, update_optional_tags
+@@ -931,6 +941,6 @@
+-        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1
++        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # long time
+         True
+         sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # long time (4s on sage.math, 2012), needs sagemath_doc_html
+         True
+-        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)
++        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # long time
+         True
+@@ -1172,5 +1182,5 @@
+-        sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 40
++        sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 40  # long time
+         True
+-        sage: len(search_src('log', 'derivative',
+-        ....:                interact=False, multiline=True).splitlines()) > 70
++        sage: len(search_src('log', 'derivative',  # long time
++        ....:                interact=False, multiline=True).splitlines()) > 70      # long time
+         True
 diff -urN a/src/sage/doctest/external.py b/src/sage/doctest/external.py
 --- a/src/sage/doctest/external.py
 +++ b/src/sage/doctest/external.py
