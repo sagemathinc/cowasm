@@ -16183,3 +16183,33 @@ diff --git a/src/sage/matrix/matrix_integer_dense_hnf.py b/src/sage/matrix/matri
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.linbox
  """
+diff --git a/src/sage/algebras/quantum_groups/ace_quantum_onsager.py b/src/sage/algebras/quantum_groups/ace_quantum_onsager.py
+--- a/src/sage/algebras/quantum_groups/ace_quantum_onsager.py
++++ b/src/sage/algebras/quantum_groups/ace_quantum_onsager.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.quantum_groups
+ """
+diff --git a/src/sage/interfaces/lie.py b/src/sage/interfaces/lie.py
+--- a/src/sage/interfaces/lie.py
++++ b/src/sage/interfaces/lie.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect lie
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/interfaces/kash.py b/src/sage/interfaces/kash.py
+--- a/src/sage/interfaces/kash.py
++++ b/src/sage/interfaces/kash.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs pexpect kash
+ r"""
+diff --git a/src/sage/manifolds/scalarfield_algebra.py b/src/sage/manifolds/scalarfield_algebra.py
+--- a/src/sage/manifolds/scalarfield_algebra.py
++++ b/src/sage/manifolds/scalarfield_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
