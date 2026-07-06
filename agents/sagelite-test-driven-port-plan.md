@@ -32379,6 +32379,50 @@ corpus remains at 1,078 non-comment entries. Validation also ran
 `git diff --check`, and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 106-to-108 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 12 uncovered files in the 106-to-108 prompt band. The initial
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-106-108/prompt-106-108/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 68 passed, 438 failed, 755 skipped
+```
+
+The strict candidate scan found no uncovered clean runnable candidates. The
+failed files were broad browser-profile frontiers rather than narrow corpus
+promotion targets: toric point collections and polyhedron constructors,
+graph cycle and edge-connectivity algorithms, the optional MuPAD/pexpect
+interface, IPython REPL integration, and number-field polynomial examples
+through symbolic/PARI-backed number-field construction.
+
+The WASI source patch now records those files with explicit file-level
+`# sage.doctest: needs ...` metadata for `sage.geometry.toric`,
+`sage.geometry.polyhedron`, `sage.graphs`, `networkx`, `pexpect`, `IPython`,
+`sage.rings.number_field`, `sage.symbolic`, and `sage.libs.pari`. The
+skipped-only files in the same band were already classified by existing
+browser-profile metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-106-108/prompt-106-108/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1261 skipped
+```
+
+The final run records 1,261 skipped block rows under runner version 90, with
+empty saved block- and file-failure cluster queries. The strict promotion scan
+with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,078 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`git diff --check`, and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
