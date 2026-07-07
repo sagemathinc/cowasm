@@ -18110,6 +18110,18 @@ diff --git a/src/sage/manifolds/local_frame.py b/src/sage/manifolds/local_frame.
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/differentiable/multivectorfield.py b/src/sage/manifolds/differentiable/multivectorfield.py
+--- a/src/sage/manifolds/differentiable/multivectorfield.py
++++ b/src/sage/manifolds/differentiable/multivectorfield.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/geometry/riemannian_manifolds/parametrized_surface3d.py b/src/sage/geometry/riemannian_manifolds/parametrized_surface3d.py
+--- a/src/sage/geometry/riemannian_manifolds/parametrized_surface3d.py
++++ b/src/sage/geometry/riemannian_manifolds/parametrized_surface3d.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.riemannian_manifolds sage.symbolic
+ """
 diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction_field_element.pyx
 --- a/src/sage/rings/fraction_field_element.pyx
 +++ b/src/sage/rings/fraction_field_element.pyx

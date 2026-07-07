@@ -35468,6 +35468,50 @@ The latest run metadata records CoWasm commit
 version 90. Validation also ran `git diff --check` and the full WASI source
 patch in dry-run mode against `/home/user/sagelite`.
 
+Follow-up 301-to-303 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 301-to-303 prompt band:
+`sage/manifolds/differentiable/multivectorfield.py`,
+`sage/geometry/riemannian_manifolds/parametrized_surface3d.py`, and
+`sage/homology/homology_vector_space_with_basis.py`. The initial direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-301-303/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 4 passed, 556 failed, 326 skipped
+```
+
+`homology_vector_space_with_basis.py` was already skipped-only under existing
+graph-backed homology metadata. The two runnable-failing files were broader
+manifold/symbolic dependency frontiers rather than promotion candidates:
+`parametrized_surface3d.py` failed first while importing symbolic expression
+support, then cascaded into missing `var`, `ParametrizedSurface3D`, `sphere`,
+and `assume` setup names; `multivectorfield.py` similarly cascaded through
+missing manifold setup names such as `Manifold`, `M`, `U`, and `a`. The WASI
+source patch now records those two files with module-level
+`# sage.doctest: needs ...` metadata matching the existing manifold and
+symbolic browser-profile boundary.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-301-303/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 886 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths`
+printed no uncovered clean runnable candidates. The checked corpus remains at
+1,092 non-comment entries. The latest run metadata records CoWasm commit
+`8cf2371ad8b848c79357aeb045bbdbd488de5067`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
