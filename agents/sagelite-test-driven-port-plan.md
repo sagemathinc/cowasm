@@ -37088,6 +37088,49 @@ CoWasm commit `2eb2fdb29fd073f806e55f76d8aa29279f6bc8d8`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 90.
 
+Follow-up 651-to-670 prompt-frontier audit:
+
+The next mid-count source-minus-corpus prompt frontier was run as a focused
+one-worker probe with a 120-second per-file timeout. The batch covers:
+`sage/algebras/quantum_clifford.py`,
+`sage/rings/polynomial/polynomial_quotient_ring_element.py`,
+`sage/schemes/cyclic_covers/cycliccover_finite_field.py`,
+`sage/coding/reed_muller_code.py`,
+`sage/combinat/free_dendriform_algebra.py`,
+`sage/geometry/polyhedron/generating_function.py`,
+`sage/modular/abvar/morphism.py`, `sage/topology/cell_complex.py`,
+`sage/combinat/crystals/generalized_young_walls.py`,
+`sage/databases/cremona.py`, `sage/modules/free_module_morphism.py`,
+`sage/schemes/toric/fano_variety.py`, `sage/matroids/constructor.py`,
+`sage/modular/pollack_stevens/dist.pyx`,
+`sage/combinat/posets/incidence_algebras.py`,
+`sage/combinat/sf/ns_macdonald.py`, `sage/interfaces/gp.py`,
+`sage/rings/number_field/number_field_morphisms.pyx`,
+`sage/categories/quotient_fields.py`, and `sage/graphs/domination.py`.
+
+The first batch exposed `quotient_fields.py` as a broad browser-profile
+fraction-field frontier rather than a narrow promotion candidate: focused
+reruns timed out in independent rational-function `xgcd`, `factor`,
+partial-fraction, and derivative examples. The WASI source patch now records a
+file-level `# sage.doctest: needs sage.rings.fraction_field` boundary for that
+module.
+
+The final probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-651-670/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3347 skipped
+```
+
+All 20 files are skipped-only under current browser-profile metadata. The
+saved block- and file-failure cluster queries are empty, and the strict
+promotion scan with `--strict-frontier`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,093 non-comment entries. The latest run metadata records
+CoWasm commit `77a714adc8673a2d736529e384977ce91a20390f`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

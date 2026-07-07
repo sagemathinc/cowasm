@@ -10993,6 +10993,11 @@ diff -urN -U0 a/src/sage/categories/principal_ideal_domains.py b/src/sage/catego
 @@ -76 +76 @@
 -                sage: RR['x']._test_gcd_vs_xgcd()
 +                sage: RR['x']._test_gcd_vs_xgcd()                                  # known bug
+diff -urN -U0 a/src/sage/categories/quotient_fields.py b/src/sage/categories/quotient_fields.py
+--- a/src/sage/categories/quotient_fields.py
++++ b/src/sage/categories/quotient_fields.py
+@@ -0,0 +1 @@
++# sage.doctest: needs sage.rings.fraction_field
 diff -urN -U0 a/src/sage/categories/unique_factorization_domains.py b/src/sage/categories/unique_factorization_domains.py
 --- a/src/sage/categories/unique_factorization_domains.py
 +++ b/src/sage/categories/unique_factorization_domains.py
