@@ -36856,6 +36856,28 @@ errors. The strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate.
 
+Follow-up 551-to-570 prompt-frontier audit:
+
+The next source-minus-corpus prompt-count band, rows 551 through 570, was run
+as a focused one-worker probe and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-551-570/batch.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1528 skipped
+```
+
+The batch covered 20 uncovered files with no block-level failures and no
+file-level errors. Nineteen files were skipped-only under current
+browser-profile metadata, including frontiers for symbolic/SymPy calculus,
+graph algorithms, GAP-backed matrix groups, Singular-backed exterior algebra,
+finite-ring/coding coverage, polyhedron/PPL coverage, Sage interface startup,
+NumPy dense matrices, and combinatorics/module-heavy coalgebra and symmetric
+function files. The remaining file,
+`sage/tests/books/judson_abstract_algebra/galois-sage.py`, extracted zero
+doctest blocks. The strict promotion scan with `--strict-frontier`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
