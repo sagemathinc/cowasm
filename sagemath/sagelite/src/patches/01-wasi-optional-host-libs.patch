@@ -18642,3 +18642,57 @@ diff --git a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx b/src/sage/r
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  r"""
+diff --git a/src/sage/groups/finitely_presented.py b/src/sage/groups/finitely_presented.py
+--- a/src/sage/groups/finitely_presented.py
++++ b/src/sage/groups/finitely_presented.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ """
+diff --git a/src/sage/doctest/forker.py b/src/sage/doctest/forker.py
+--- a/src/sage/doctest/forker.py
++++ b/src/sage/doctest/forker.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.doctest IPython pexpect subprocess cysignals.pselect
+ """
+diff --git a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py
+--- a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py
++++ b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl sage.libs.pari sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/modules/fg_pid/fgp_module.py b/src/sage/modules/fg_pid/fgp_module.py
+--- a/src/sage/modules/fg_pid/fgp_module.py
++++ b/src/sage/modules/fg_pid/fgp_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix2
+ r"""
+diff --git a/src/sage/symbolic/expression_conversions.py b/src/sage/symbolic/expression_conversions.py
+--- a/src/sage/symbolic/expression_conversions.py
++++ b/src/sage/symbolic/expression_conversions.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/rings/ring_extension.pyx b/src/sage/rings/ring_extension.pyx
+--- a/src/sage/rings/ring_extension.pyx
++++ b/src/sage/rings/ring_extension.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.finite_rings sage.libs.ntl
+ r"""
+diff --git a/src/sage/databases/findstat.py b/src/sage/databases/findstat.py
+--- a/src/sage/databases/findstat.py
++++ b/src/sage/databases/findstat.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs requests internet
+ r"""
+diff --git a/src/sage/manifolds/differentiable/tensorfield_paral.py b/src/sage/manifolds/differentiable/tensorfield_paral.py
+--- a/src/sage/manifolds/differentiable/tensorfield_paral.py
++++ b/src/sage/manifolds/differentiable/tensorfield_paral.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/schemes/projective/projective_space.py b/src/sage/schemes/projective/projective_space.py
+--- a/src/sage/schemes/projective/projective_space.py
++++ b/src/sage/schemes/projective/projective_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""

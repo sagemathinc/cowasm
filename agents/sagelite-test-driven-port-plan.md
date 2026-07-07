@@ -36550,6 +36550,60 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 431-to-450 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree selected 13 uncovered files in the 431-to-450 band:
+`sage/groups/finitely_presented.py`, `sage/doctest/forker.py`,
+`sage/schemes/berkovich/berkovich_cp_element.py`,
+`sage/schemes/hyperelliptic_curves/hyperelliptic_generic.py`,
+`sage/modules/fp_graded/morphism.py`,
+`sage/rings/function_field/function_field_polymod.py`,
+`sage/modules/fg_pid/fgp_module.py`,
+`sage/symbolic/expression_conversions.py`,
+`sage/rings/ring_extension.pyx`, `sage/modular/modsym/ambient.py`,
+`sage/databases/findstat.py`,
+`sage/manifolds/differentiable/tensorfield_paral.py`, and
+`sage/schemes/projective/projective_space.py`.
+
+The initial one-worker probe reused the current rebuilt source copy, whose
+upstream `/home/user/sagelite` checkout was still dirty with the unrelated
+`integer_ring.pyx` modification and untracked SQLite result file noted in the
+previous pass. It wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-431-450/batch.sqlite3` with:
+
+```text
+sage -t failed: 529 passed, 1932 failed, 2325 skipped
+```
+
+Four files were already skipped-only under existing browser-profile metadata:
+`berkovich_cp_element.py`, `morphism.py`, `function_field_polymod.py`, and
+`ambient.py`. The remaining runnable failures were broad dependency frontiers
+rather than promotion candidates: GAP-backed finitely presented groups,
+doctest process/IPython support, hyperelliptic scheme backends, free-module
+and matrix side modules, symbolic expression conversion, NTL finite-field ring
+extensions, FindStat's web/`requests` interface, manifolds plus symbolic
+support, and Singular/plural-backed projective schemes. The WASI source patch
+now records file-level dependency metadata for those nine failing files.
+
+Focused validation rebuilt the patched source from `/home/user/sagelite`,
+applied the full WASI source patch cleanly, reran the 13-file band, and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-431-450/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 5660 skipped
+```
+
+The final database has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths`
+printed no uncovered clean runnable candidate. The checked corpus remains at
+1,093 non-comment entries. The latest run metadata records CoWasm commit
+`3ae5f66796f9ddeff8caab91b33a9ad72d5ae714`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
