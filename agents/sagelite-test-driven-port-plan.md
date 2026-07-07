@@ -38902,6 +38902,14 @@ only the `path	prompt_count` header against the current patched source tree,
 so the local source-minus-corpus prompt frontier remains exhausted under the
 current filtering policy.
 
+Follow-up scheduled source-frontier recheck on 2026-07-07: no corpus entry was
+added. A live direct helper run and the make-target wrapper both scanned the
+current patched source tree with the persisted `.tmp/**/*.sqlite3` subtraction
+glob and the quiet invalid-database flags. Both printed only the
+`path	prompt_count` header, reconfirming that the local
+source-minus-corpus prompt frontier remains exhausted after CoWasm commit
+`2582a2cc8f607afba955bfd69bc5d1dfb660c87b`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
