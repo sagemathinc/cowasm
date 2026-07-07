@@ -16485,3 +16485,39 @@ diff --git a/src/sage/rings/function_field/ideal_rational.py b/src/sage/rings/fu
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.libs.pari
  r"""
+diff --git a/src/sage/algebras/fusion_rings/shm_managers.pyx b/src/sage/algebras/fusion_rings/shm_managers.pyx
+--- a/src/sage/algebras/fusion_rings/shm_managers.pyx
++++ b/src/sage/algebras/fusion_rings/shm_managers.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.fusion_rings sage.libs.singular multiprocessing
+ r"""
+diff --git a/src/sage/geometry/polyhedron/base1.py b/src/sage/geometry/polyhedron/base1.py
+--- a/src/sage/geometry/polyhedron/base1.py
++++ b/src/sage/geometry/polyhedron/base1.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.rings.number_field
+ r"""
+diff --git a/src/sage/manifolds/topological_submanifold.py b/src/sage/manifolds/topological_submanifold.py
+--- a/src/sage/manifolds/topological_submanifold.py
++++ b/src/sage/manifolds/topological_submanifold.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/modules/free_module_pseudomorphism.py b/src/sage/modules/free_module_pseudomorphism.py
+--- a/src/sage/modules/free_module_pseudomorphism.py
++++ b/src/sage/modules/free_module_pseudomorphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.rings.finite_rings
+ """
+diff --git a/src/sage/modules/with_basis/subquotient.py b/src/sage/modules/with_basis/subquotient.py
+--- a/src/sage/modules/with_basis/subquotient.py
++++ b/src/sage/modules/with_basis/subquotient.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.with_basis sage.rings.number_field
+ r"""
+diff --git a/src/sage/rings/function_field/function_field_rational.py b/src/sage/rings/function_field/function_field_rational.py
+--- a/src/sage/rings/function_field/function_field_rational.py
++++ b/src/sage/rings/function_field/function_field_rational.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ r"""

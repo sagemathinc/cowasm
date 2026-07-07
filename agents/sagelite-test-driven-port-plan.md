@@ -33096,6 +33096,53 @@ strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,083 non-comment entries.
 
+Follow-up 151-to-153 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 11 uncovered files in the 151-to-153 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-151-153/prompt-151-153/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 129 passed, 319 failed, 756 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Five
+files were already skipped-only under existing dependency metadata:
+`sage/coding/linear_rank_metric.py`, `sage/misc/randstate.pyx`,
+`sage/quadratic_forms/quadratic_form__local_representation_conditions.py`,
+`sage/rings/polynomial/padics/polynomial_padic_capped_relative_dense.py`, and
+`sage/rings/polynomial/skew_polynomial_finite_field.pyx`.
+
+The remaining failures were broad browser-profile boundaries rather than
+narrow corpus-promotion targets: fusion-ring shared-memory manager examples
+need fusion-ring, Singular, and multiprocessing support; topological
+submanifold examples need the manifold and symbolic stacks; polyhedron hashing
+over a quadratic field timed out in the number-field/polyhedron frontier; free
+module pseudomorphism examples depend on finite-field display and pickling
+behavior; module-with-basis subspace comparison reached the existing
+polynomial-number-field table-index runtime trap; and rational function-field
+factorization reached the existing function-field/PARI-backed
+polynomial-number-field trap.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-151-153/prompt-151-153/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1657 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,083 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
