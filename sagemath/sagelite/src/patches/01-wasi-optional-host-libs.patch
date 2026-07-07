@@ -40,9 +40,21 @@ diff --git a/src/sage/algebras/hecke_algebras/ariki_koike_algebra.py b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.number_field
  r"""
+diff --git a/src/sage/graphs/generators/distance_regular.pyx b/src/sage/graphs/generators/distance_regular.pyx
+--- a/src/sage/graphs/generators/distance_regular.pyx
++++ b/src/sage/graphs/generators/distance_regular.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
 diff --git a/src/sage/manifolds/vector_bundle.py b/src/sage/manifolds/vector_bundle.py
 --- a/src/sage/manifolds/vector_bundle.py
 +++ b/src/sage/manifolds/vector_bundle.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/differentiable/vectorfield.py b/src/sage/manifolds/differentiable/vectorfield.py
+--- a/src/sage/manifolds/differentiable/vectorfield.py
++++ b/src/sage/manifolds/differentiable/vectorfield.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
@@ -52,6 +64,12 @@ diff --git a/src/sage/numerical/backends/interactivelp_backend.pyx b/src/sage/nu
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.numerical.mip
  r"""
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ # distutils: libraries = NTL_LIBRARIES gmp m
 diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 --- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 +++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx

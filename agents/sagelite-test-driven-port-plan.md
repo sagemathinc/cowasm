@@ -35075,6 +35075,67 @@ file-failure cluster queries are empty. The strict promotion scan with
 `--dedupe-paths` printed no uncovered clean runnable candidates. The checked
 corpus remains at 1,091 non-comment entries.
 
+Follow-up 274-to-276 and 277-to-279 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected four uncovered files in the 274-to-276 prompt band:
+`sage/coding/cyclic_code.py`, `sage/plot/animate.py`,
+`sage/quadratic_forms/genera/normal_form.py`, and
+`sage/rings/cfinite_sequence.py`. The direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-274-276/batch.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1093 skipped
+```
+
+All four files were already skipped-only under existing browser-profile
+metadata, covering finite-ring/module/NTL coding, symbolic/plot/video
+animation, PARI/p-adic quadratic-form normal forms, and symbolic C-finite
+sequence examples. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates.
+
+The next fresh source-minus-corpus prompt-count scan selected six uncovered
+files in the 277-to-279 prompt band:
+`sage/graphs/generators/distance_regular.pyx`,
+`sage/rings/complex_interval.pyx`,
+`sage/rings/polynomial/ore_polynomial_ring.py`,
+`sage/combinat/sf/k_dual.py`, `sage/libs/ntl/ntl_ZZ_pX.pyx`, and
+`sage/manifolds/differentiable/vectorfield.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-277-279/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 208 passed, 463 failed, 711 skipped
+```
+
+`ore_polynomial_ring.py` and `k_dual.py` were already skipped-only under
+existing metadata. The broad failures were dependency frontiers rather than
+narrow promotion candidates: distance-regular graph constructors need the
+stripped graph backend, vector-field examples need the manifold/symbolic stack,
+and `ntl_ZZ_pX.pyx` still reaches an NTL terminal-error trap while exercising
+`ZZ_pX` remainder over a non-invertible leading coefficient. The WASI source
+patch now records those three boundaries with module-level
+`# sage.doctest: needs ...` directives. `complex_interval.pyx` remains
+untagged as a core backend frontier because it already records 203 passing
+blocks and 61 failing blocks, mostly interval elementary-function output
+drift, direct constructor gaps, and isolated plot/symbolic/zeta dependencies.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-277-279/final.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 203 passed, 61 failed, 1396 skipped
+```
+
+The newly tagged graph, NTL, and manifold files are skipped-only in the final
+run, and the saved file-failure cluster query is empty. The strict promotion
+scan over the 274-to-279 probe databases printed no uncovered clean runnable
+candidates. The checked corpus remains at 1,091 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
