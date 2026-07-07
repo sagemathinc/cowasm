@@ -34206,6 +34206,53 @@ corpus remains at 1,087 non-comment entries. Validation also ran
 `git diff --check`, and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 220-to-222 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 220-to-222 prompt band:
+`sage/groups/cubic_braid.py`,
+`sage/rings/padics/local_generic_element.pyx`,
+`sage/topology/simplicial_complex_morphism.py`,
+`sage/numerical/backends/ppl_backend.pyx`,
+`sage/plot/plot3d/parametric_plot3d.py`,
+`sage/rings/function_field/maps.py`, and
+`sage/schemes/elliptic_curves/gal_reps_number_field.py`. The initial direct
+probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-220-222/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 92 passed, 282 failed, 1163 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata.
+The remaining failures were broad dependency surfaces rather than narrow
+promotion targets: cubic braid groups need Sage group/libGAP support before
+their tested-module globals can be seeded, and function-field maps are
+dominated by function-field factorization/PARI setup plus dependent name
+fallout. The WASI source patch now records those boundaries with file-level
+`sage.groups sage.libs.gap` and
+`sage.rings.function_field sage.libs.pari` metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-220-222/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1537 skipped
+```
+
+The latest-run summary records CoWasm commit
+`73d3b1c1a1274072dda2dea0633bb92774baf729`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,087 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

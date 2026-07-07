@@ -17352,3 +17352,15 @@ diff --git a/src/sage/quivers/algebra_elements.pyx b/src/sage/quivers/algebra_el
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.quivers sage.graphs
  """
+diff --git a/src/sage/groups/cubic_braid.py b/src/sage/groups/cubic_braid.py
+--- a/src/sage/groups/cubic_braid.py
++++ b/src/sage/groups/cubic_braid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ r"""
+diff --git a/src/sage/rings/function_field/maps.py b/src/sage/rings/function_field/maps.py
+--- a/src/sage/rings/function_field/maps.py
++++ b/src/sage/rings/function_field/maps.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ r"""
