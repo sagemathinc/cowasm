@@ -17744,3 +17744,45 @@ diff --git a/src/sage/symbolic/ring.pyx b/src/sage/symbolic/ring.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/geometry/polyhedron/base6.py b/src/sage/geometry/polyhedron/base6.py
+--- a/src/sage/geometry/polyhedron/base6.py
++++ b/src/sage/geometry/polyhedron/base6.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field
+ r"""
+diff --git a/src/sage/geometry/polyhedron/plot.py b/src/sage/geometry/polyhedron/plot.py
+--- a/src/sage/geometry/polyhedron/plot.py
++++ b/src/sage/geometry/polyhedron/plot.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.plot
+ """
+diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/basic.py
+--- a/src/sage/graphs/generators/basic.py
++++ b/src/sage/graphs/generators/basic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.plot
+ r"""
+diff --git a/src/sage/homology/chain_complex.py b/src/sage/homology/chain_complex.py
+--- a/src/sage/homology/chain_complex.py
++++ b/src/sage/homology/chain_complex.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.homology sage.matrix.matrix2
+ r"""
+diff --git a/src/sage/modular/pollack_stevens/modsym.py b/src/sage/modular/pollack_stevens/modsym.py
+--- a/src/sage/modular/pollack_stevens/modsym.py
++++ b/src/sage/modular/pollack_stevens/modsym.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular.modsym sage.rings.padics
+ r"""
+diff --git a/src/sage/modules/free_quadratic_module_integer_symmetric.py b/src/sage/modules/free_quadratic_module_integer_symmetric.py
+--- a/src/sage/modules/free_quadratic_module_integer_symmetric.py
++++ b/src/sage/modules/free_quadratic_module_integer_symmetric.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.modules sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/rings/function_field/jacobian_khuri_makdisi.py b/src/sage/rings/function_field/jacobian_khuri_makdisi.py
+--- a/src/sage/rings/function_field/jacobian_khuri_makdisi.py
++++ b/src/sage/rings/function_field/jacobian_khuri_makdisi.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari sage.schemes
+ r"""

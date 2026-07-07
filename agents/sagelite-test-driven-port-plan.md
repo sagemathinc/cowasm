@@ -34975,6 +34975,54 @@ corpus is now at 1,091 non-comment entries. Validation also ran
 `git diff --check` and the full WASI source patch against a fresh `/home/user/sagelite`
 scratch copy.
 
+Follow-up 268-to-270 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected ten uncovered files in the 268-to-270 prompt band:
+`sage/combinat/constellation.py`,
+`sage/modular/pollack_stevens/modsym.py`,
+`sage/modules/free_quadratic_module_integer_symmetric.py`,
+`sage/crypto/block_cipher/sdes.py`, `sage/geometry/polyhedron/base6.py`,
+`sage/geometry/polyhedron/plot.py`, `sage/tests/book_stein_ent.py`,
+`sage/graphs/generators/basic.py`, `sage/homology/chain_complex.py`, and
+`sage/rings/function_field/jacobian_khuri_makdisi.py`. The initial direct
+probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-268-270/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 134 passed, 860 failed, 865 skipped
+```
+
+`constellation.py` and `sdes.py` were already skipped-only under existing
+browser-profile metadata, and `book_stein_ent.py` extracted no blocks. The
+remaining failures were broad dependency frontiers rather than promotion
+targets: Pollack-Stevens modular symbols need modular-symbol and p-adic
+surfaces; integral lattices reach graph/module/dense-integer-matrix paths;
+polyhedron plotting and affine-hull projection need the stripped polyhedron,
+plotting, and number-field surfaces; graph generators need the graph and plot
+backends; chain-complex homology reaches the current matrix echelon
+signature-mismatch boundary; and Khuri-Makdisi Jacobians need function-field,
+PARI, and scheme support.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-268-270/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2393 skipped
+```
+
+The latest-run summary records CoWasm commit
+`05a331dbabf98a8bf5fe5dcf3dfb06868d87bad2`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all non-empty files in the band. The saved block-
+and file-failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,091
+non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
