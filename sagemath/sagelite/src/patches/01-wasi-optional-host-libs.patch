@@ -18910,3 +18910,21 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  """
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/nonlinear_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/nonlinear_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/nonlinear_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/nonlinear_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.plot sage.rings.number_field
+ """
+diff --git a/src/sage/modular/quatalg/brandt.py b/src/sage/modular/quatalg/brandt.py
+--- a/src/sage/modular/quatalg/brandt.py
++++ b/src/sage/modular/quatalg/brandt.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular.quatalg sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/calculus_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/calculus_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/calculus_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/calculus_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.plot sage.rings.number_field
+ """
