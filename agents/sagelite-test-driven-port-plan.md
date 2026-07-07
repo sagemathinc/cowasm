@@ -39162,6 +39162,26 @@ quiet invalid-database flags, `--include-header`, and
 `SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=1`; it exited 0 with no
 frontier rows.
 
+Follow-up doctest SQLite writer pass on 2026-07-07: no corpus entry was
+promoted. Runner version 93 replaces the monolithic post-run SQLite script
+with explicit run, file, and chunked block insert helpers. Each file row is
+written separately and block rows are committed in bounded chunks, so large
+full-corpus dashboards no longer depend on one enormous `sqlite3` input stream
+or one long-lived write transaction after all per-file workers have exited.
+If a file or block write fails, the partially inserted run is removed before
+the error is re-raised.
+
+Focused validation used the current installed `bin/sage` runner against the
+patched source copy:
+
+```text
+output.py: 70 passed, 0 failed, 0 skipped
+```
+
+The scratch SQLite dashboard at
+`.tmp/sagelite-sqlite-chunk-smoke.sqlite3` records one file row, 70 passing
+block rows, no block- or file-failure clusters, and runner version 93.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

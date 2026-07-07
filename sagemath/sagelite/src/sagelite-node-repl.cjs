@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 92;
+const doctestRunnerVersion = 93;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -2569,13 +2569,27 @@ function blockKeyFor(file, block, run) {
 function writeDoctestSqlite(dbPath, run) {
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   ensureDoctestSchema(dbPath);
+  const runId = insertDoctestRun(dbPath, run);
+  try {
+    for (const file of run.files) {
+      const fileId = insertDoctestFile(dbPath, runId, file);
+      try {
+        insertDoctestBlocks(dbPath, fileId, file, run);
+      } catch (err) {
+        deleteDoctestFile(dbPath, fileId);
+        throw err;
+      }
+    }
+  } catch (err) {
+    deleteDoctestRun(dbPath, runId);
+    throw err;
+  }
+}
+
+function insertDoctestRun(dbPath, run) {
   const rows = [
     "PRAGMA foreign_keys=ON;",
     "BEGIN IMMEDIATE;",
-    "DROP TABLE IF EXISTS __cowasm_doctest_run_id;",
-    "DROP TABLE IF EXISTS __cowasm_doctest_file_id;",
-    "CREATE TEMP TABLE __cowasm_doctest_run_id(id INTEGER NOT NULL);",
-    "CREATE TEMP TABLE __cowasm_doctest_file_id(id INTEGER NOT NULL);",
     `INSERT INTO runs (
       started_at, finished_at, git_commit, sagelite_source_commit,
       sagelite_package_commit, command,
@@ -2595,30 +2609,53 @@ function writeDoctestSqlite(dbPath, run) {
       ${sqlNumber(run.failed_blocks)}, ${sqlNumber(run.skipped_blocks)},
       ${sqlNumber(run.duration_ms)}
     );`,
-    "INSERT INTO __cowasm_doctest_run_id(id) VALUES (last_insert_rowid());",
+    "SELECT last_insert_rowid();",
+    "COMMIT;",
   ];
+  const rawRunId = sqliteExec(dbPath, rows.join("\n")).trim();
+  if (!/^\d+$/.test(rawRunId)) {
+    throw new Error(`could not determine doctest run id from sqlite output: ${rawRunId}`);
+  }
+  return Number(rawRunId);
+}
 
-  for (const file of run.files) {
-    rows.push("DELETE FROM __cowasm_doctest_file_id;");
-    rows.push(`INSERT INTO files (
+function insertDoctestFile(dbPath, runId, file) {
+  const rows = [
+    "PRAGMA foreign_keys=ON;",
+    "BEGIN IMMEDIATE;",
+    `INSERT INTO files (
       run_id, path, status, total_blocks, passed_blocks, failed_blocks,
       skipped_blocks, duration_ms, stdout, stderr, failure_class, failure_detail
     ) VALUES (
-      (SELECT id FROM __cowasm_doctest_run_id),
+      ${sqlNumber(runId)},
       ${sqlString(file.path)}, ${sqlString(file.status)},
       ${sqlNumber(file.total_blocks)}, ${sqlNumber(file.passed_blocks)},
       ${sqlNumber(file.failed_blocks)}, ${sqlNumber(file.skipped_blocks)},
       ${sqlNumber(file.duration_ms)}, ${sqlString(file.stdout)}, ${sqlString(file.stderr)},
       ${sqlString(file.failure_class)}, ${sqlString(file.failure_detail)}
-    );`);
-    rows.push("INSERT INTO __cowasm_doctest_file_id(id) VALUES (last_insert_rowid());");
-    for (const block of file.blocks || []) {
+    );`,
+    "SELECT last_insert_rowid();",
+    "COMMIT;",
+  ];
+  const rawFileId = sqliteExec(dbPath, rows.join("\n")).trim();
+  if (!/^\d+$/.test(rawFileId)) {
+    throw new Error(`could not determine doctest file id from sqlite output: ${rawFileId}`);
+  }
+  return Number(rawFileId);
+}
+
+function insertDoctestBlocks(dbPath, fileId, file, run) {
+  const blocks = file.blocks || [];
+  const chunkSize = 250;
+  for (let offset = 0; offset < blocks.length; offset += chunkSize) {
+    const rows = ["PRAGMA foreign_keys=ON;", "BEGIN IMMEDIATE;"];
+    for (const block of blocks.slice(offset, offset + chunkSize)) {
       rows.push(`INSERT INTO blocks (
         file_id, block_index, block_key, name, start_line, end_line, source,
         source_hash, expected, expected_kind, actual, status, failure_class,
         failure_detail, tags, skip_reason, duration_ms
       ) VALUES (
-        (SELECT id FROM __cowasm_doctest_file_id),
+        ${sqlNumber(fileId)},
         ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block, run))},
         ${sqlString(block.name)},
         ${sqlNumber(block.start_line)}, ${sqlNumber(block.end_line)},
@@ -2630,13 +2667,23 @@ function writeDoctestSqlite(dbPath, run) {
         ${sqlString(block.skip_reason)}, ${sqlNumber(block.duration_ms)}
       );`);
     }
+    rows.push("COMMIT;");
+    sqliteExec(dbPath, rows.join("\n"));
   }
-  rows.push(
-    "DROP TABLE __cowasm_doctest_file_id;",
-    "DROP TABLE __cowasm_doctest_run_id;",
-    "COMMIT;",
+}
+
+function deleteDoctestFile(dbPath, fileId) {
+  sqliteExec(
+    dbPath,
+    `PRAGMA foreign_keys=ON;\nDELETE FROM files WHERE id = ${sqlNumber(fileId)};`,
   );
-  sqliteExec(dbPath, rows.join("\n"));
+}
+
+function deleteDoctestRun(dbPath, runId) {
+  sqliteExec(
+    dbPath,
+    `PRAGMA foreign_keys=ON;\nDELETE FROM runs WHERE id = ${sqlNumber(runId)};`,
+  );
 }
 
 function printDoctestSummary(dbPath, run, displayCwd) {
