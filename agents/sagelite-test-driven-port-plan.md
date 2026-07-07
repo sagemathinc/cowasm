@@ -33019,6 +33019,42 @@ sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 145-to-147 prompt-band corpus-growth pass:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 14 uncovered files in the 145-to-147 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-06-goal-145-147/prompt-145-147/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 387 passed, 476 failed, 867 skipped
+```
+
+The strict promotion scan found two clean runnable candidates:
+`sage/rings/polynomial/polynomial_real_mpfr_dense.pyx`, with 119 passed and
+25 skipped blocks, and `sage/rings/real_double_element_gsl.pyx`, with 139
+passed and 6 skipped blocks. Both files are now promoted to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 1,083 non-comment entries.
+
+Focused make-target validation used a temporary two-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-06-goal-145-147/prompt-145-147/focused-make.sqlite3`,
+recording:
+
+```text
+sage -t passed: 258 passed, 0 failed, 31 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. After subtracting
+the updated corpus, the strict promotion scan on the grouped batch prints no
+remaining uncovered clean runnable candidates. The remaining files in the
+band are skipped-only dependency-boundary files or broader failure clusters
+around Brandt modules, symbolic calculus, matroid state setup, pexpect-backed
+Axiom, hyperplane arrangement number-field setup, and polynomial recursive
+construction.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

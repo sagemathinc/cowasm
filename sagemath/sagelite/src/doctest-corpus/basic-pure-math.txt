@@ -14,6 +14,7 @@ src/sage/rings/bernmm.pyx
 src/sage/rings/bernoulli_mod_p.pyx
 src/sage/rings/real_field.py
 src/sage/rings/real_double.pyx
+src/sage/rings/real_double_element_gsl.pyx
 src/sage/rings/complex_double.pyx
 src/sage/rings/complex_conversion.pyx
 src/sage/rings/convert/mpfi.pyx
@@ -698,6 +699,7 @@ src/sage/rings/polynomial/integer_valued_polynomials.py
 src/sage/rings/polynomial/msolve.py
 src/sage/rings/polynomial/padics/polynomial_padic_flat.py
 src/sage/rings/polynomial/polynomial_complex_arb.pyx
+src/sage/rings/polynomial/polynomial_real_mpfr_dense.pyx
 src/sage/rings/polynomial/polynomial_gf2x.pyx
 src/sage/rings/polynomial/polynomial_ring_homomorphism.pyx
 src/sage/rings/polynomial/polynomial_ring_constructor.py
