@@ -34925,6 +34925,56 @@ no uncovered clean runnable candidates. The checked corpus remains at 1,090
 non-comment entries. Validation also ran the full WASI source patch against a
 fresh `/home/user/sagelite` scratch copy.
 
+Follow-up 265-to-267 prompt-band p-adic promotion and dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected eight uncovered files in the 265-to-267 prompt band:
+`sage/algebras/lie_algebras/bgg_dual_module.py`,
+`sage/groups/abelian_gps/abelian_group_gap.py`,
+`sage/rings/finite_rings/element_base.pyx`, `sage/graphs/traversals.pyx`,
+`sage/rings/padics/padic_base_leaves.py`, `sage/rings/tate_algebra.py`,
+`sage/symbolic/integration/integral.py`, and `sage/symbolic/ring.pyx`. The
+initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-265-267/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 213 passed, 976 failed, 396 skipped
+```
+
+`element_base.pyx` was already skipped-only under existing finite-ring
+metadata. Most remaining failures were broad dependency frontiers rather than
+narrow promotion targets: BGG dual modules need graph, Lie-algebra, and
+number-field surfaces; GAP-backed abelian groups need libGAP; graph traversals
+need the stripped graph backend; Tate algebras reach p-adic/NTL extension
+construction; and the symbolic integration/ring files need the stripped
+symbolic stack. The useful near-miss was `padic_base_leaves.py`, whose
+failures were repeated `_test_matrix_smith` TestSuite output and relaxed
+p-adic constructor examples that need the disabled FLINT path.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-265-267/final2.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 207 passed, 0 failed, 1907 skipped
+```
+
+The final run records `padic_base_leaves.py` with 207 passed, 0 failed, and
+57 skipped blocks; the other seven files are skipped-only dependency-boundary
+rows. The latest-run summary records CoWasm commit
+`627162156aa137e2acc7a0da9e7e043c08fed6dc`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block-failure cluster query is
+empty. After adding `sage/rings/padics/padic_base_leaves.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, the strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus is now at 1,091 non-comment entries. Validation also ran
+`git diff --check` and the full WASI source patch against a fresh `/home/user/sagelite`
+scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

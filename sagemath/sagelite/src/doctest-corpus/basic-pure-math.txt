@@ -71,6 +71,7 @@ src/sage/rings/padics/padic_printing.pyx
 src/sage/rings/padics/pow_computer.pyx
 src/sage/rings/padics/eisenstein_extension_generic.py
 src/sage/rings/padics/padic_extension_leaves.py
+src/sage/rings/padics/padic_base_leaves.py
 src/sage/rings/padics/unramified_extension_generic.py
 src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/semirings/tropical_matrix.py

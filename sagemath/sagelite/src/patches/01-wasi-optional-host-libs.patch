@@ -17647,3 +17647,100 @@ diff --git a/src/sage/symbolic/assumptions.py b/src/sage/symbolic/assumptions.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/algebras/lie_algebras/bgg_dual_module.py b/src/sage/algebras/lie_algebras/bgg_dual_module.py
+--- a/src/sage/algebras/lie_algebras/bgg_dual_module.py
++++ b/src/sage/algebras/lie_algebras/bgg_dual_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.algebras.lie_algebras sage.rings.number_field
+ r"""
+diff --git a/src/sage/groups/abelian_gps/abelian_group_gap.py b/src/sage/groups/abelian_gps/abelian_group_gap.py
+--- a/src/sage/groups/abelian_gps/abelian_group_gap.py
++++ b/src/sage/groups/abelian_gps/abelian_group_gap.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap
+ r"""
+diff --git a/src/sage/graphs/traversals.pyx b/src/sage/graphs/traversals.pyx
+--- a/src/sage/graphs/traversals.pyx
++++ b/src/sage/graphs/traversals.pyx
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.graphs
+ # distutils: language = c++
+ r"""
+diff --git a/src/sage/rings/padics/padic_base_leaves.py b/src/sage/rings/padics/padic_base_leaves.py
+--- a/src/sage/rings/padics/padic_base_leaves.py
++++ b/src/sage/rings/padics/padic_base_leaves.py
+@@ -234,1 +234,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -239,1 +239,1 @@
+-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
++            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)], skip='_test_matrix_smith')
+@@ -331,1 +331,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -336,1 +336,1 @@
+-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
++            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)], skip='_test_matrix_smith')
+@@ -444,1 +444,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -449,1 +449,1 @@
+-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
++            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)], skip='_test_matrix_smith')
+@@ -538,1 +538,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -543,1 +543,1 @@
+-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
++            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)], skip='_test_matrix_smith')
+@@ -549,1 +549,1 @@
+-            sage: TestSuite(R).run(skip='_test_log')
++            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+@@ -663,1 +663,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -805,1 +805,1 @@
+-            sage: TestSuite(R).run()
++            sage: TestSuite(R).run(skip='_test_matrix_smith')
+@@ -810,1 +810,1 @@
+-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
++            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)], skip='_test_matrix_smith')
+@@ -816,1 +816,1 @@
+-            sage: TestSuite(R).run(skip='_test_log')
++            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+@@ -1177,4 +1177,4 @@
+-            sage: R = ZpER(7)
+-            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+-            sage: R = ZpER(7, secure=True)
+-            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
++            sage: R = ZpER(7)                                                        # needs sage.libs.flint
++            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])          # needs sage.libs.flint
++            sage: R = ZpER(7, secure=True)                                           # needs sage.libs.flint
++            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])          # needs sage.libs.flint
+@@ -1215,4 +1215,4 @@
+-            sage: K = QpER(7)
+-            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
+-            sage: K = QpER(7, secure=True)
+-            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
++            sage: K = QpER(7)                                                        # needs sage.libs.flint
++            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])          # needs sage.libs.flint
++            sage: K = QpER(7, secure=True)                                           # needs sage.libs.flint
++            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])          # needs sage.libs.flint
+diff --git a/src/sage/rings/tate_algebra.py b/src/sage/rings/tate_algebra.py
+--- a/src/sage/rings/tate_algebra.py
++++ b/src/sage/rings/tate_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.libs.ntl
+ r"""
+diff --git a/src/sage/symbolic/integration/integral.py b/src/sage/symbolic/integration/integral.py
+--- a/src/sage/symbolic/integration/integral.py
++++ b/src/sage/symbolic/integration/integral.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
+diff --git a/src/sage/symbolic/ring.pyx b/src/sage/symbolic/ring.pyx
+--- a/src/sage/symbolic/ring.pyx
++++ b/src/sage/symbolic/ring.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
