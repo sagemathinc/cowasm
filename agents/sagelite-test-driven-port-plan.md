@@ -35602,6 +35602,54 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 310-to-312 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 310-to-312 prompt band:
+`sage/rings/padics/witt_vector_ring.py`,
+`sage/combinat/sf/new_kschur.py`, `sage/geometry/fan_morphism.py`,
+`sage/modular/modsym/space.py`, `sage/rings/padics/CA_template.pxi`,
+`sage/combinat/partition_algebra.py`, and
+`sage/topology/simplicial_set_morphism.py`. The initial direct one-worker
+probe wrote `.tmp/current-run/scheduled-2026-07-07-goal-310-312/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 0 passed, 2 failed, 1544 skipped
+```
+
+`new_kschur.py`, `fan_morphism.py`, `space.py`, `partition_algebra.py`, and
+`simplicial_set_morphism.py` were already skipped-only under existing
+combinatorics, modules, toric/geometry, FLINT/PARI, graphs/groups, and
+topology metadata. The two runnable failures were both p-adic/NTL backend
+frontiers rather than promotion candidates: `witt_vector_ring.py` reached the
+known `ZZ_pContext.restore()` dynamic-link boundary while constructing a
+finite-field polynomial ring, and `CA_template.pxi` trapped in NTL
+`ZZ_pX` conversion during capped-absolute p-adic extension setup. The WASI
+source patch now records `witt_vector_ring.py` as
+`# sage.doctest: needs sage.rings.padics sage.libs.ntl` and
+`CA_template.pxi` as
+`# sage.doctest: needs sage.rings.padics sage.libs.ntl`.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-310-312/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2165 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`c6893ecaf15eeb15d92fd8408e067e95aa93cbbd`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90. Validation also ran `git diff --check` and the full WASI source
+patch in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
