@@ -37939,6 +37939,62 @@ queries are empty, and the strict promotion scan with `--strict-frontier`,
 `--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate. The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 951-to-970 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/symbolic/function_factory.py`,
+`sage/tests/books/judson_abstract_algebra/rings-sage.py`,
+`sage/algebras/q_system.py`,
+`sage/combinat/rigged_configurations/tensor_product_kr_tableaux.py`,
+`sage/geometry/hyperplane_arrangement/library.py`,
+`sage/modular/abvar/homology.py`, `sage/libs/eclib/newforms.pyx`,
+`sage/manifolds/differentiable/tangent_vector.py`,
+`sage/rings/function_field/place.py`,
+`sage/rings/polynomial/weil/weil_polynomials.pyx`,
+`sage/homology/graded_resolution.py`,
+`sage/modular/modform/eisenstein_submodule.py`,
+`sage/rings/number_field/selmer_group.py`,
+`sage/rings/padics/relative_extension_leaves.py`,
+`sage/schemes/hyperelliptic_curves/jacobian_generic.py`,
+`sage/combinat/ncsf_qsym/tutorial.py`,
+`sage/geometry/polyhedron/backend_ppl.py`,
+`sage/groups/abelian_gps/dual_abelian_group.py`,
+`sage/lfunctions/dokchitser.py`, and
+`sage/manifolds/manifold_homset.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-951-970-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 5 passed, 85 failed, 18 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`07af4de51ce51aed5042a693e774facf71267e88`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, 108 block rows, and about
+125 seconds of elapsed time. Nineteen files passed at file scope: eighteen
+were file-level skips under existing browser-profile metadata, and
+`sage/tests/books/judson_abstract_algebra/rings-sage.py` extracted zero
+default-profile blocks.
+
+The only failed file was `sage/geometry/polyhedron/backend_ppl.py`, with
+five passing setup blocks and 85 failed blocks. The block-failure classes are
+79 `NameError`, four `output_mismatch`, and two `AttributeError` rows. The
+dominant clusters are missing startup names such as `Polyhedron`,
+`polytopes`, `p`, and `P`, plus dependent output drift after those setup
+objects fail to materialize; this remains a broader polyhedron/PPL startup and
+dependency frontier rather than a quiet promotion candidate.
+
+The skipped files cover symbolic, combinat/modules, hyperplane arrangement,
+graph, Singular, FLINT, PARI, eclib, elliptic-curve, manifold, function-field,
+number-field, p-adic, NTL, and pexpect boundaries. The saved file-error query
+is empty, and the strict promotion scan with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
