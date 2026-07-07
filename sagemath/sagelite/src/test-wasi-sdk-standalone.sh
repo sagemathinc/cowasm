@@ -2733,6 +2733,7 @@ doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_source_frontier_corpus="$probe_dir/sagelite-doctest-source-frontier-corpus.txt"
 doctest_source_frontier_mentioned="$probe_dir/sagelite-doctest-source-frontier-mentioned.txt"
+doctest_source_frontier_all_mentioned="$probe_dir/sagelite-doctest-source-frontier-all-mentioned.txt"
 doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
 doctest_candidate_helper_override_source_root="$probe_dir/candidate-override-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
@@ -2774,6 +2775,7 @@ touch "$doctest_candidate_helper_corpus"
 printf '%s\n' "src/sage/example/real_candidate.py" >"$doctest_candidate_helper_covered_corpus"
 printf '%s\n' "src/sage/example/covered_frontier.py" >"$doctest_source_frontier_corpus"
 printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py" >"$doctest_source_frontier_mentioned"
+printf '%s\n' "previously audited src/sage/example/frontier_candidate.py" >"$doctest_source_frontier_all_mentioned"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
   id integer primary key,
@@ -3530,6 +3532,36 @@ if [ "$doctest_source_frontier_required_paths" != "src/sage/example/frontier_can
   printf '%s\n' "$doctest_source_frontier_required_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier required database subtraction rejected a valid glob."
+fi
+set +e
+doctest_source_frontier_fail_on_rows="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database-glob "$probe_dir/sagelite-doctest-candidate-helper.sqlite3" \
+  --require-subtraction-database \
+  --fail-on-rows \
+  2>&1)"
+doctest_source_frontier_fail_on_rows_status=$?
+set -e
+if [ "$doctest_source_frontier_fail_on_rows_status" -ne 1 ] || \
+  [ "$doctest_source_frontier_fail_on_rows" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_fail_on_rows" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --fail-on-rows did not fail with remaining rows."
+fi
+doctest_source_frontier_fail_on_rows_empty="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --mentioned-file "$doctest_source_frontier_all_mentioned" \
+  --subtract-database-glob "$probe_dir/sagelite-doctest-candidate-helper.sqlite3" \
+  --require-subtraction-database \
+  --fail-on-rows)"
+if [ -n "$doctest_source_frontier_fail_on_rows_empty" ]; then
+  printf '%s\n' "$doctest_source_frontier_fail_on_rows_empty" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --fail-on-rows reported a fully subtracted frontier."
 fi
 set +e
 doctest_source_frontier_all_invalid="$("$src_dir/doctest-source-frontier.py" \

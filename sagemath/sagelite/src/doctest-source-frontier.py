@@ -137,6 +137,11 @@ def parse_args() -> argparse.Namespace:
         help="print a tab-separated header row",
     )
     parser.add_argument(
+        "--fail-on-rows",
+        action="store_true",
+        help="exit with status 1 after printing rows if any frontier rows remain",
+    )
+    parser.add_argument(
         "--include-covered",
         action="store_true",
         help="include files already listed in the curated corpus",
@@ -380,6 +385,8 @@ def main() -> int:
             print(relative_path)
         else:
             print(f"{relative_path}\t{prompt_count}")
+    if args.fail_on_rows and rows:
+        return 1
     return 0
 
 
