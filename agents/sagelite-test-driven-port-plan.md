@@ -35650,6 +35650,52 @@ The latest run metadata records CoWasm commit
 version 90. Validation also ran `git diff --check` and the full WASI source
 patch in dry-run mode against `/home/user/sagelite`.
 
+Follow-up 313-to-315 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 313-to-315 prompt band:
+`sage/graphs/path_enumeration.pyx`,
+`sage/libs/singular/function.pyx`,
+`sage/rings/number_field/S_unit_solver.py`,
+`sage/stats/time_series.pyx`, and
+`sage/combinat/alternating_sign_matrix.py`. The initial direct one-worker
+probe wrote `.tmp/current-run/scheduled-2026-07-07-goal-313-315/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 76 passed, 547 failed, 942 skipped
+```
+
+`S_unit_solver.py`, `time_series.pyx`, and `alternating_sign_matrix.py` were
+already skipped-only under existing number-field, statistics, and
+combinatorics dependency metadata. The two runnable-failing files were
+backend-owned frontiers rather than promotion candidates:
+`path_enumeration.pyx` cascaded from graph setup names such as `g`,
+`graphs`, and `digraphs`, while `function.pyx` depended on the unavailable
+Singular/plural/pexpect browser-profile surface. The WASI source patch now
+records `path_enumeration.pyx` as `# sage.doctest: needs sage.graphs` and
+`function.pyx` as
+`# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural pexpect`.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-313-315/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1565 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`b9c27b322c8d9075aa2d001c6a501d9ccf3581ed`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90. Validation also ran `git diff --check` and the full WASI source
+patch in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

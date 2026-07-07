@@ -10,6 +10,14 @@ diff --git a/src/sage/graphs/matching.py b/src/sage/graphs/matching.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/path_enumeration.pyx b/src/sage/graphs/path_enumeration.pyx
+--- a/src/sage/graphs/path_enumeration.pyx
++++ b/src/sage/graphs/path_enumeration.pyx
+@@ -1,3 +1,4 @@
+ # distutils: language = c++
++# sage.doctest: needs sage.graphs
+ r"""
+ Path enumeration
 diff --git a/src/sage/manifolds/differentiable/scalarfield.py b/src/sage/manifolds/differentiable/scalarfield.py
 --- a/src/sage/manifolds/differentiable/scalarfield.py
 +++ b/src/sage/manifolds/differentiable/scalarfield.py
@@ -78,6 +86,13 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
  # distutils: extra_link_args = NTL_LIBEXTRA
 +# sage.doctest: needs sage.libs.ntl
  # distutils: language = c++
+diff --git a/src/sage/libs/singular/function.pyx b/src/sage/libs/singular/function.pyx
+--- a/src/sage/libs/singular/function.pyx
++++ b/src/sage/libs/singular/function.pyx
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural pexpect
+ """
+ libSingular: Functions
 diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 --- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 +++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
