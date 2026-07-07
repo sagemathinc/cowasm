@@ -17346,3 +17346,9 @@ diff --git a/src/sage/rings/localization.py b/src/sage/rings/localization.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.polynomial.plural pexpect
  r"""
+diff --git a/src/sage/quivers/algebra_elements.pyx b/src/sage/quivers/algebra_elements.pyx
+--- a/src/sage/quivers/algebra_elements.pyx
++++ b/src/sage/quivers/algebra_elements.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.quivers sage.graphs
+ """

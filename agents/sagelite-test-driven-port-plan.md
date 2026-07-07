@@ -34164,6 +34164,48 @@ corpus remains at 1,087 non-comment entries. Validation also ran
 `git diff --check` and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 217-to-219 prompt-band quiver dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected six uncovered files in the 217-to-219 prompt band:
+`sage/combinat/finite_state_machine_generators.py`,
+`sage/combinat/integer_vectors_mod_permgroup.py`,
+`sage/numerical/backends/cvxopt_backend.pyx`,
+`sage/quivers/algebra_elements.pyx`,
+`sage/schemes/elliptic_curves/padics.py`, and
+`sage/modular/overconvergent/genus0.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-217-219/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 9 passed, 202 failed, 1081 skipped
+```
+
+Five files were already skipped-only under existing browser-profile dependency
+metadata. The remaining failures in `sage/quivers/algebra_elements.pyx`
+clustered around `DiGraph` startup usage, dependent algebra generator names,
+and letterplace/Singular-backed free-algebra comparison examples, so the file
+is a quiver/graph backend boundary rather than a narrow promotion target. The
+WASI source patch now records that boundary with file-level
+`sage.quivers sage.graphs` metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-217-219/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1292 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,087 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`git diff --check`, and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
