@@ -4,6 +4,35 @@ diff --git a/src/sage/algebras/askey_wilson.py b/src/sage/algebras/askey_wilson.
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.askey_wilson
  """
+diff --git a/src/sage/rings/multi_power_series_ring.py b/src/sage/rings/multi_power_series_ring.py
+--- a/src/sage/rings/multi_power_series_ring.py
++++ b/src/sage/rings/multi_power_series_ring.py
+@@ -77,0 +78 @@
++    sage: # needs sage.rings.finite_rings
+@@ -161,0 +163 @@
++    sage: # needs sage.symbolic
+@@ -682,0 +685 @@
++            sage: # needs sage.rings.number_field
+@@ -820,3 +823,3 @@
+             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+             sage: R = PowerSeriesRing(QQ, names=('x','y','z'))
+-            sage: R(1/(1-x-y), prec=3)
++            sage: R(1/(1-x-y), prec=3)                                                # needs sage.libs.singular
+@@ -988,7 +991,7 @@
+         EXAMPLES::
+
+             sage: A.<s,t,u> = PowerSeriesRing(ZZ)
+-            sage: A.prec_ideal()
++            sage: A.prec_ideal()                                                       # needs sage.rings.polynomial.plural
+             Ideal (s, t, u) of
+              Multivariate Polynomial Ring in s, t, u over Integer Ring
+         """
+diff --git a/src/sage/rings/valuation/limit_valuation.py b/src/sage/rings/valuation/limit_valuation.py
+--- a/src/sage/rings/valuation/limit_valuation.py
++++ b/src/sage/rings/valuation/limit_valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.pari
+ r"""
 diff --git a/src/sage/algebras/clifford_algebra_element.pyx b/src/sage/algebras/clifford_algebra_element.pyx
 --- a/src/sage/algebras/clifford_algebra_element.pyx
 +++ b/src/sage/algebras/clifford_algebra_element.pyx

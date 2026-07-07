@@ -51,6 +51,7 @@ src/sage/rings/laurent_series_ring.py
 src/sage/rings/polynomial/infinite_polynomial_ring.py
 src/sage/rings/polynomial/multi_polynomial_ring.py
 src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx
+src/sage/rings/multi_power_series_ring.py
 src/sage/rings/power_series_mpoly.pyx
 src/sage/rings/power_series_ring.py
 src/sage/rings/puiseux_series_ring.py

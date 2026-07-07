@@ -34567,6 +34567,54 @@ no uncovered clean runnable candidates. The checked corpus remains at 1,088
 non-comment entries. Validation also ran the full WASI source patch against a
 fresh `/home/user/sagelite` copy with a workspace-local scratch directory.
 
+Follow-up 244-to-246 prompt-band power-series promotion and dependency
+tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 244-to-246 prompt band:
+`sage/rings/real_interval_absolute.pyx`, `sage/plot/plot3d/plot3d.py`,
+`sage/rings/function_field/divisor.py`,
+`sage/rings/multi_power_series_ring.py`, and
+`sage/rings/valuation/limit_valuation.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-244-246/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 0 passed, 2 failed, 734 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata.
+`limit_valuation.py` timed out in p-adic/function-field/number-field valuation
+machinery, so the WASI source patch now records that broad dependency boundary
+with file-level `sage.rings.padics`, `sage.rings.function_field`,
+`sage.rings.number_field`, and `sage.libs.pari` metadata. The multivariate
+power-series file was a useful promotion candidate after tagging localized
+finite-field display drift, symbolic coercion, number-field coercion,
+Singular-backed lazy-series gcd, and plural-backed ideal display boundaries.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-244-246/final3.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 213 passed, 0 failed, 1011 skipped
+```
+
+The final run records `multi_power_series_ring.py` with 213 passed, 0 failed,
+and 32 skipped blocks; the other four files are skipped-only dependency
+boundary rows. The latest-run summary records CoWasm commit
+`97a8c00bb2490532abcf1482079d7b31c52c067c`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. After adding `sage/rings/multi_power_series_ring.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, the strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus is now at 1,089 non-comment entries. Validation also ran `git diff
+--check` and the full WASI source patch against a fresh `/home/user/sagelite`
+copy with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
