@@ -21722,6 +21722,29 @@ Focused validation confirmed the helper still reports the synthetic real
 candidate fixture, rejects `--quiet-invalid` without `--ignore-invalid`, and
 prints nothing for the current wide scan when there is no uncovered candidate.
 
+Scheduled 2026-07-07 candidate-wrapper hardening pass:
+
+- The default SQLite dashboard
+  `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` is still empty,
+  so the make-target candidate scan has no valid dashboard to inspect until a
+  fresh full corpus run rewrites it.
+- Fresh focused probes of absent plot/dynamics and tensor/quadratic helper
+  files produced no new uncovered clean runnable corpus candidate after
+  subtracting the checked corpus. The only clean runnable file seen in the
+  tensor/quadratic probe, `sage/quadratic_forms/random_quadraticform.py`, was
+  already listed in `basic-pure-math.txt`.
+- A broad scratch scan without `--require-file-run` again surfaced the known
+  false promotion row for
+  `sage/rings/polynomial/polynomial_element_generic.py`; a current full-file
+  rerun still records `227 passed, 33 failed, 24 skipped`, so focused rerun
+  artifacts are not promotion evidence.
+- The `sage-doctest-candidates` make wrapper now defaults
+  `SAGELITE_DOCTEST_CANDIDATE_FLAGS` to the strict promotion filter set:
+  `--require-run-metadata --require-source-root-path --require-block-rows
+  --require-file-run`. This makes scheduled make-target scans match the plan's
+  recommended scratch-scan discipline instead of rediscovering focused
+  `--line` or `--block-key` databases.
+
 Focused msolve polynomial-interface corpus-growth pass on 2026-07-02:
 
 ```text

@@ -14,7 +14,7 @@ SAGELITE_DOCTEST_JOBS ?= 4
 SAGELITE_DOCTEST_ALLOW_FAILURES ?= 1
 SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED ?= 1
 SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS ?= --ignore-invalid --quiet-invalid
-SAGELITE_DOCTEST_CANDIDATE_FLAGS ?= --require-run-metadata
+SAGELITE_DOCTEST_CANDIDATE_FLAGS ?= --require-run-metadata --require-source-root-path --require-block-rows --require-file-run
 
 all: test-wasi-sdk-standalone
 
