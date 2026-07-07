@@ -17077,3 +17077,39 @@ diff --git a/src/sage/libs/eclib/interface.py b/src/sage/libs/eclib/interface.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.eclib sage.schemes.elliptic_curves
  r"""
+diff --git a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py
+--- a/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py
++++ b/src/sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.finite_dimensional_algebras sage.libs.pari
+ """
+diff --git a/src/sage/geometry/polyhedron/base_QQ.py b/src/sage/geometry/polyhedron/base_QQ.py
+--- a/src/sage/geometry/polyhedron/base_QQ.py
++++ b/src/sage/geometry/polyhedron/base_QQ.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.graphs
+ r"""
+diff --git a/src/sage/plot/plot3d/shapes.pyx b/src/sage/plot/plot3d/shapes.pyx
+--- a/src/sage/plot/plot3d/shapes.pyx
++++ b/src/sage/plot/plot3d/shapes.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.plot.plot3d matplotlib
+ """
+diff --git a/src/sage/groups/artin.py b/src/sage/groups/artin.py
+--- a/src/sage/groups/artin.py
++++ b/src/sage/groups/artin.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap sage.graphs
+ """
+diff --git a/src/sage/groups/free_group.py b/src/sage/groups/free_group.py
+--- a/src/sage/groups/free_group.py
++++ b/src/sage/groups/free_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ """
+diff --git a/src/sage/quivers/path_semigroup.py b/src/sage/quivers/path_semigroup.py
+--- a/src/sage/quivers/path_semigroup.py
++++ b/src/sage/quivers/path_semigroup.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.quivers sage.graphs
+ """

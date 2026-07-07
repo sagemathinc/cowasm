@@ -33810,6 +33810,52 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch copy.
 
+Follow-up 193-to-195 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected nine uncovered files in the 193-to-195 prompt band:
+`sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra.py`,
+`sage/combinat/designs/orthogonal_arrays.py`,
+`sage/geometry/polyhedron/base4.py`, `sage/geometry/polyhedron/base_QQ.py`,
+`sage/plot/plot3d/shapes.pyx`,
+`sage/dynamics/arithmetic_dynamics/berkovich_ds.py`,
+`sage/groups/artin.py`, `sage/groups/free_group.py`, and
+`sage/quivers/path_semigroup.py`. The initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-193-195/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 197 passed, 672 failed, 842 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. The
+orthogonal-array, polyhedron-base4, and Berkovich-dynamics files were already
+skipped-only under existing dependency metadata. The remaining failures were
+broad browser-profile boundaries rather than narrow promotion targets:
+finite-dimensional algebra examples still reach the broader finite-dimensional
+algebra category surface and focused PARI object-model gaps, rational
+polyhedron examples need the polyhedron/PPL/graph stack, plot3d shapes require
+the unavailable plot3d wrapper surface, Artin and free-group examples need the
+group/GAP backends, and quiver path-semigroup examples need graph-backed quiver
+support.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-193-195/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1711 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
