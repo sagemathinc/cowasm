@@ -37342,6 +37342,48 @@ promotion scan with `--strict-frontier`, `--min-runner-version 91`, and
 `--dedupe-paths` printed no uncovered clean runnable candidate. The checked
 corpus remains at 1,093 non-comment entries.
 
+Follow-up current 751-to-770 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected the next 20-file high-count band after the previous audit:
+`sage/tests/books/computational_mathematics_with_sagemath/linsolve_doctest.py`,
+`sage/manifolds/differentiable/examples/sphere.py`,
+`sage/libs/singular/groebner_strategy.pyx`,
+`sage/algebras/hecke_algebras/cubic_hecke_matrix_rep.py`,
+`sage/libs/ntl/ntl_mat_GF2E.pyx`, `sage/lfunctions/zero_sums.pyx`,
+`sage/graphs/base/sparse_graph.pyx`, `sage/arith/multi_modular.pyx`,
+`sage/doctest/reporting.py`, `sage/combinat/sf/llt.py`,
+`sage/schemes/curves/curve.py`,
+`sage/rings/polynomial/laurent_polynomial_ring_base.py`,
+`sage/rings/complex_interval_field.py`,
+`sage/modular/multiple_zeta_F_algebra.py`, `sage/interfaces/gap3.py`,
+`sage/categories/regular_crystals.py`, `sage/rings/number_field/homset.py`,
+`sage/crypto/public_key/blum_goldwasser.py`,
+`sage/rings/polynomial/omega.py`, and `sage/libs/ntl/ntl_mat_ZZ.pyx`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-751-770-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The runner printed the SQLite summary and then the host Node process reported
+the known post-summary segmentation fault, exiting with status 139. The
+database is intact and records runner version 91, node profile, CoWasm commit
+`c7e1d3519073a9c8aed4c84e47a52d001ac37165`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 20 skipped block rows over
+about 131 seconds.
+
+All 20 files were skipped-only under existing browser-profile metadata, with
+skip tags dominated by unavailable graph, Singular, NTL, number-field,
+manifold, symbolic, GAP/pexpect, lcalc, and long-time boundaries. The saved
+block- and file-failure cluster queries are empty, and the strict promotion
+scan with `--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths`
+printed no uncovered clean runnable candidate. The checked corpus remains at
+1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
