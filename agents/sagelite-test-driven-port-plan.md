@@ -4895,6 +4895,61 @@ dashboard. Future scheduled runs should avoid repeating this exact 851-to-870
 slice unless the matroid startup/backend surface, Axiom/pexpect interface
 profile, or hyperplane-arrangement number-field path changes.
 
+Follow-up 871-to-890 source-minus-corpus frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1093 non-comment entries. After correcting the local source-minus-corpus
+helper to subtract the full corpus file rather than only its first 260 lines,
+a fresh prompt-count frontier scan filtered against files already named in
+this plan selected:
+`sage/algebras/letterplace/free_algebra_letterplace.pyx`,
+`sage/groups/perm_gps/cubegroup.py`,
+`sage/modules/vector_mod2_dense.pyx`,
+`sage/schemes/elliptic_curves/hom_scalar.py`,
+`sage/geometry/cone_catalog.py`, `sage/libs/ntl/ntl_lzz_pX.pyx`,
+`sage/manifolds/differentiable/de_rham_cohomology.py`,
+`sage/rings/polynomial/polynomial_real_arb.pyx`,
+`sage/tests/books/computational_mathematics_with_sagemath/recequadiff_doctest.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_coercion.py`,
+`sage/rings/valuation/gauss_valuation.py`,
+`sage/algebras/yokonuma_hecke_algebra.py`,
+`sage/schemes/elliptic_curves/hom_sum.py`,
+`sage/libs/singular/option.pyx`,
+`sage/matrix/matrix_complex_ball_dense.pyx`, `sage/graphs/graph_input.py`,
+`sage/interfaces/lie.py`, `sage/topology/moment_angle_complex.py`,
+`sage/plot/plot3d/implicit_plot3d.py`, and
+`sage/manifolds/scalarfield_algebra.py`.
+
+The one-worker direct probe used absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-goal-871-890-current/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The latest-run summary records CoWasm commit
+`9be1a01193534c8e587c9879cbd54863495b3f41`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+20 skipped block rows, and about 126 seconds of elapsed time.
+
+All 20 files were skipped at file scope by existing browser-profile metadata.
+The skip groups cover NTL, manifolds/symbolic, elliptic-curve/Singular,
+symbolic plotting and book examples, pexpect/LiE, letterplace/Singular/plural,
+hyperbolic geometry, polyhedra, graphs/topology, FLINT, p-adics, real-ARB,
+GAP, and Singular/pexpect boundaries. The saved block- and file-failure
+cluster queries are empty, and the strict promotion scan with
+`--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths` printed
+no uncovered clean runnable row for this dashboard. Future scheduled runs
+should avoid repeating this exact 871-to-890 slice unless those default
+browser-profile dependency boundaries change.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
