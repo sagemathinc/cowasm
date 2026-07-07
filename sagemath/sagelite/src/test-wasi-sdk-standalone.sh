@@ -2731,20 +2731,49 @@ doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite
 doctest_candidate_helper_focused_db="$probe_dir/sagelite-doctest-focused-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
+doctest_source_frontier_corpus="$probe_dir/sagelite-doctest-source-frontier-corpus.txt"
+doctest_source_frontier_mentioned="$probe_dir/sagelite-doctest-source-frontier-mentioned.txt"
 doctest_candidate_helper_source_root="$probe_dir/candidate-source-root"
 doctest_candidate_helper_override_source_root="$probe_dir/candidate-override-source-root"
 mkdir -p "$doctest_candidate_helper_source_root/src/sage/example"
 mkdir -p "$doctest_candidate_helper_override_source_root/src/sage/example"
-touch "$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py"
+cat >"$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py" <<'PY'
+r"""
+    sage: 40 + 2
+    42
+"""
+PY
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
+cat >"$doctest_candidate_helper_source_root/src/sage/example/frontier_candidate.py" <<'PY'
+r"""
+    sage: 1 + 1
+    2
+    sage: 2 + 2
+    4
+"""
+PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/covered_frontier.py" <<'PY'
+r"""
+    sage: 3 + 3
+    6
+"""
+PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/mentioned_frontier.py" <<'PY'
+r"""
+    sage: 4 + 4
+    8
+"""
+PY
 touch "$doctest_candidate_helper_override_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 printf '%s\n' "src/sage/example/real_candidate.py" >"$doctest_candidate_helper_covered_corpus"
+printf '%s\n' "src/sage/example/covered_frontier.py" >"$doctest_source_frontier_corpus"
+printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py" >"$doctest_source_frontier_mentioned"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
   id integer primary key,
@@ -3441,11 +3470,69 @@ doctest_candidate_helper_quiet_stderr="$("$src_dir/doctest-corpus-candidates.py"
   --ignore-invalid \
   --quiet-invalid \
   --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
   "$doctest_candidate_helper_empty_db" \
-  2>&1)"
+  2>&1 >/dev/null)"
 if [ -n "$doctest_candidate_helper_quiet_stderr" ]; then
   printf '%s\n' "$doctest_candidate_helper_quiet_stderr" >&2
   record_blocker "sagelite-blocked: doctest-corpus-candidates --quiet-invalid emitted skipped-database noise."
+fi
+set +e
+doctest_candidate_helper_all_invalid="$("$src_dir/doctest-corpus-candidates.py" \
+  --ignore-invalid \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_empty_db" \
+  2>&1 >/dev/null)"
+doctest_candidate_helper_all_invalid_status=$?
+set -e
+if [ "$doctest_candidate_helper_all_invalid_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_all_invalid" | grep -Fq -- "no valid Sagelite doctest databases were scanned"; then
+  printf '%s\n' "$doctest_candidate_helper_all_invalid" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates all-invalid database guard did not fire."
+fi
+doctest_source_frontier_quiet_stderr="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$doctest_candidate_helper_empty_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  2>&1 >/dev/null)"
+if [ -n "$doctest_source_frontier_quiet_stderr" ]; then
+  printf '%s\n' "$doctest_source_frontier_quiet_stderr" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --quiet-invalid-databases emitted skipped-database noise."
+fi
+doctest_source_frontier_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$doctest_candidate_helper_empty_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases)"
+if [ "$doctest_source_frontier_paths" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-source-frontier did not subtract corpus, mentioned, database, and invalid inputs."
+fi
+set +e
+doctest_source_frontier_all_invalid="$("$src_dir/doctest-source-frontier.py" \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --subtract-database "$doctest_candidate_helper_empty_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  2>&1 >/dev/null)"
+doctest_source_frontier_all_invalid_status=$?
+set -e
+if [ "$doctest_source_frontier_all_invalid_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_all_invalid" | grep -Fq -- "no valid Sagelite doctest databases were scanned"; then
+  printf '%s\n' "$doctest_source_frontier_all_invalid" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier all-invalid database guard did not fire."
 fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \

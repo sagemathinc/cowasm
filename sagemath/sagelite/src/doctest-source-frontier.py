@@ -10,6 +10,7 @@ import posixpath
 import re
 import sqlite3
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -20,6 +21,14 @@ SAGE_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?\.(?:py|pyx)"
 )
 SAGE_PROMPT_RE = re.compile(r"^\s*sage:")
+
+
+@dataclass(frozen=True)
+class DatabasePathScan:
+    audited_paths: set[str]
+    valid_count: int
+    invalid_count: int
+    first_invalid_error: str
 
 
 def parse_args() -> argparse.Namespace:
@@ -214,20 +223,32 @@ def read_database_paths(
     source_root: Path,
     ignore_invalid: bool,
     quiet_invalid: bool,
-) -> set[str]:
+) -> DatabasePathScan:
     audited: set[str] = set()
+    valid_count = 0
+    invalid_count = 0
+    first_invalid_error = ""
     for path in paths:
         try:
             audited.update(read_one_database_paths(path, source_root))
+            valid_count += 1
         except (OSError, sqlite3.DatabaseError, SystemExit) as err:
             if not ignore_invalid:
                 raise
+            invalid_count += 1
+            if not first_invalid_error:
+                first_invalid_error = f"{path}: {err}"
             if not quiet_invalid:
                 print(
                     f"warning: skipping invalid doctest database {path}: {err}",
                     file=sys.stderr,
                 )
-    return audited
+    return DatabasePathScan(
+        audited,
+        valid_count,
+        invalid_count,
+        first_invalid_error,
+    )
 
 
 def read_one_database_paths(path: Path, source_root: Path) -> set[str]:
@@ -294,12 +315,25 @@ def main() -> int:
     source_root = args.source_root.resolve()
     covered = read_corpus(args.corpus, source_root)
     mentioned = read_mentioned(args.mentioned_file)
-    audited = read_database_paths(
+    database_scan = read_database_paths(
         database_paths(args),
         source_root,
         args.ignore_invalid_databases,
         args.quiet_invalid_databases,
     )
+    audited = database_scan.audited_paths
+    if (
+        args.ignore_invalid_databases
+        and database_scan.invalid_count
+        and database_scan.valid_count == 0
+    ):
+        print(
+            "error: no valid Sagelite doctest databases were scanned"
+            f" ({database_scan.invalid_count} invalid; first: "
+            f"{database_scan.first_invalid_error})",
+            file=sys.stderr,
+        )
+        return 2
 
     rows: list[tuple[int, str]] = []
     for source_path in iter_source_files(source_root, args.extensions):

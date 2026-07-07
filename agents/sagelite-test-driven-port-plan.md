@@ -38880,6 +38880,28 @@ The wrapper prints only the `path	prompt_count` header against the current
 patched source tree, matching the direct helper invocation and confirming the
 persisted local frontier remains exhausted under the current filtering policy.
 
+Follow-up source-frontier invalid-database guard pass on 2026-07-07: no
+corpus entry was added, but the frontier helper now mirrors the corpus
+candidate helper's all-invalid dashboard guard. When
+`--ignore-invalid-databases` is used with one or more SQLite subtraction inputs,
+per-database warnings can still be suppressed with
+`--quiet-invalid-databases`, but a scan where every requested subtraction
+database is invalid now exits with status 2 and reports that no valid Sagelite
+doctest databases were scanned. This prevents a typo, empty database, or
+stale scratch glob from silently removing the scheduled frontier-audit
+breadcrumbs.
+
+The standalone smoke fixture now covers the source-frontier helper's corpus
+subtraction, mentioned-path subtraction, valid database subtraction, mixed
+valid/invalid quiet scan, and all-invalid guard. Focused validation used
+`python3 -m py_compile`, `bash -n`, a synthetic source tree plus SQLite
+database fixture for the helper, and the live
+`make -C sagemath/sagelite sage-doctest-source-frontier` wrapper with the
+persisted `.tmp/**/*.sqlite3` subtraction glob. The live wrapper still prints
+only the `path	prompt_count` header against the current patched source tree,
+so the local source-minus-corpus prompt frontier remains exhausted under the
+current filtering policy.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
