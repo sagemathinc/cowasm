@@ -34700,6 +34700,49 @@ corpus is now at 1,090 non-comment entries. Validation also ran
 `git diff --check`, and the full WASI source patch against a fresh
 `/home/user/sagelite` archive with a workspace-local scratch directory.
 
+Follow-up 250-to-252 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from a newly patched scratch
+source tree selected four uncovered files in the 250-to-252 prompt band:
+`sage/coding/linear_code_no_metric.py`,
+`sage/combinat/cluster_algebra_quiver/quiver_mutation_type.py`,
+`sage/combinat/sf/jack.py`, and
+`sage/schemes/elliptic_curves/weierstrass_morphism.py`. The initial direct
+probe wrote `.tmp/current-run/scheduled-2026-07-07-goal-250-252/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 64 passed, 136 failed, 709 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata.
+The remaining failures in `weierstrass_morphism.py` were broad dependency
+frontiers rather than a narrow promotion target: elliptic-curve construction
+reached Singular, GAP, Cremona database, finite-field, and dependent setup-name
+clusters. The WASI source patch now records that boundary with file-level
+`sage.schemes.elliptic_curves`, `sage.libs.singular`, `sage.libs.gap`, and
+`database_cremona_mini_ellcurve` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-250-252/fresh-final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 909 skipped
+```
+
+The latest-run summary records CoWasm commit
+`b4f1f4dccf44e3c7b0339c2d15d283bc6b066700`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all four files. The saved block- and file-
+failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,090
+non-comment entries. Validation also ran `git diff --check` and the full WASI
+source patch against a fresh `/home/user/sagelite` archive with a
+workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

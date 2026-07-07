@@ -16974,6 +16974,12 @@ diff --git a/src/sage/schemes/elliptic_curves/kraus.py b/src/sage/schemes/ellipt
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves database_cremona_mini_ellcurve
  r"""
+diff --git a/src/sage/schemes/elliptic_curves/weierstrass_morphism.py b/src/sage/schemes/elliptic_curves/weierstrass_morphism.py
+--- a/src/sage/schemes/elliptic_curves/weierstrass_morphism.py
++++ b/src/sage/schemes/elliptic_curves/weierstrass_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.singular sage.libs.gap database_cremona_mini_ellcurve
+ r"""
 diff --git a/src/sage/modular/pollack_stevens/fund_domain.py b/src/sage/modular/pollack_stevens/fund_domain.py
 --- a/src/sage/modular/pollack_stevens/fund_domain.py
 +++ b/src/sage/modular/pollack_stevens/fund_domain.py
