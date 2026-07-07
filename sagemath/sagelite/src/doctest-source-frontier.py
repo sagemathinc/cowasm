@@ -1,0 +1,338 @@
+#!/usr/bin/env python3
+"""List Sagelite source files with Sage prompts that are not yet audited."""
+
+from __future__ import annotations
+
+import argparse
+import glob
+import os
+import posixpath
+import re
+import sqlite3
+import sys
+from pathlib import Path
+
+
+DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
+DEFAULT_EXCLUDED_PATH_SUFFIXES = (".orig", ".rej")
+DEFAULT_EXTENSIONS = (".py", ".pyx")
+SAGE_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?\.(?:py|pyx)"
+)
+SAGE_PROMPT_RE = re.compile(r"^\s*sage:")
+
+
+def parse_args() -> argparse.Namespace:
+    package_root = Path(__file__).resolve().parents[1]
+    parser = argparse.ArgumentParser(
+        description=(
+            "Print source files with Sage doctest prompts after subtracting "
+            "the curated corpus and, optionally, files already mentioned in "
+            "audit notes."
+        )
+    )
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=package_root / "build" / "wasi-sdk",
+        help="patched Sagelite source root to scan",
+    )
+    parser.add_argument(
+        "--corpus",
+        type=Path,
+        default=Path(__file__).with_name("doctest-corpus") / "basic-pure-math.txt",
+        help="curated corpus file to subtract",
+    )
+    parser.add_argument(
+        "--mentioned-file",
+        type=Path,
+        action="append",
+        default=[],
+        help=(
+            "text file whose mentioned src/sage paths should be subtracted; "
+            "may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--subtract-database",
+        type=Path,
+        action="append",
+        default=[],
+        help=(
+            "Sagelite doctest SQLite database whose files table paths should "
+            "be subtracted; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--subtract-database-glob",
+        action="append",
+        default=[],
+        metavar="PATTERN",
+        help=(
+            "glob for Sagelite doctest SQLite databases whose files table "
+            "paths should be subtracted; may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--ignore-invalid-databases",
+        action="store_true",
+        help="skip missing, empty, or non-Sagelite subtraction databases",
+    )
+    parser.add_argument(
+        "--quiet-invalid-databases",
+        action="store_true",
+        help="with --ignore-invalid-databases, suppress skipped-database warnings",
+    )
+    parser.add_argument(
+        "--extension",
+        action="append",
+        default=[],
+        metavar=".EXT",
+        help=(
+            "source extension to scan; defaults to .py and .pyx and may be "
+            "repeated"
+        ),
+    )
+    parser.add_argument(
+        "--min-prompts",
+        type=int,
+        default=1,
+        help="minimum number of sage: prompt lines to report",
+    )
+    parser.add_argument(
+        "--max-prompts",
+        type=int,
+        help="maximum number of sage: prompt lines to report",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        help="maximum number of rows to print",
+    )
+    parser.add_argument(
+        "--paths-only",
+        action="store_true",
+        help="print only normalized paths, one per line",
+    )
+    parser.add_argument(
+        "--include-header",
+        action="store_true",
+        help="print a tab-separated header row",
+    )
+    parser.add_argument(
+        "--include-covered",
+        action="store_true",
+        help="include files already listed in the curated corpus",
+    )
+    parser.add_argument(
+        "--include-mentioned",
+        action="store_true",
+        help="include files already mentioned in --mentioned-file inputs",
+    )
+    parser.add_argument(
+        "--include-doctest-self-tests",
+        action="store_true",
+        help="include Sage doctest framework self-test fixtures",
+    )
+    args = parser.parse_args()
+    if args.paths_only and args.include_header:
+        parser.error("--paths-only cannot be combined with --include-header")
+    if args.min_prompts < 1:
+        parser.error("--min-prompts must be positive")
+    if args.max_prompts is not None and args.max_prompts < args.min_prompts:
+        parser.error("--max-prompts must be at least --min-prompts")
+    if args.limit is not None and args.limit < 1:
+        parser.error("--limit must be positive")
+    if args.quiet_invalid_databases and not args.ignore_invalid_databases:
+        parser.error(
+            "--quiet-invalid-databases requires --ignore-invalid-databases"
+        )
+    args.extensions = tuple(
+        normalize_extension(extension) for extension in args.extension
+    ) or DEFAULT_EXTENSIONS
+    args.excluded_path_prefixes = (
+        ()
+        if args.include_doctest_self_tests
+        else DEFAULT_EXCLUDED_PATH_PREFIXES
+    )
+    return args
+
+
+def normalize_extension(extension: str) -> str:
+    return extension if extension.startswith(".") else f".{extension}"
+
+
+def normalize_path(path: str, source_root: Path | None = None) -> str:
+    text = path.replace(os.sep, "/")
+    if text.startswith("sage/"):
+        return posixpath.normpath(f"src/{text}")
+    if text.startswith("src/sage/"):
+        return posixpath.normpath(text)
+
+    marker = "/src/sage/"
+    if marker in text:
+        return posixpath.normpath("src/sage/" + text.split(marker, 1)[1])
+
+    candidate = Path(path)
+    if source_root is not None and candidate.is_absolute():
+        try:
+            return candidate.resolve().relative_to(source_root.resolve()).as_posix()
+        except ValueError:
+            pass
+    return posixpath.normpath(text)
+
+
+def read_corpus(corpus: Path, source_root: Path) -> set[str]:
+    entries: set[str] = set()
+    with corpus.open(encoding="utf-8") as handle:
+        for raw_line in handle:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+            entries.add(normalize_path(line, source_root))
+    return entries
+
+
+def read_mentioned(paths: list[Path]) -> set[str]:
+    mentioned: set[str] = set()
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for match in SAGE_PATH_RE.finditer(text):
+            mentioned.add(normalize_path(match.group(0)))
+    return mentioned
+
+
+def database_paths(args: argparse.Namespace) -> list[Path]:
+    paths = list(args.subtract_database)
+    for pattern in args.subtract_database_glob:
+        paths.extend(Path(path) for path in sorted(glob.glob(pattern, recursive=True)))
+    return paths
+
+
+def read_database_paths(
+    paths: list[Path],
+    source_root: Path,
+    ignore_invalid: bool,
+    quiet_invalid: bool,
+) -> set[str]:
+    audited: set[str] = set()
+    for path in paths:
+        try:
+            audited.update(read_one_database_paths(path, source_root))
+        except (OSError, sqlite3.DatabaseError, SystemExit) as err:
+            if not ignore_invalid:
+                raise
+            if not quiet_invalid:
+                print(
+                    f"warning: skipping invalid doctest database {path}: {err}",
+                    file=sys.stderr,
+                )
+    return audited
+
+
+def read_one_database_paths(path: Path, source_root: Path) -> set[str]:
+    if not path.exists():
+        raise SystemExit(f"database not found: {path}")
+    if path.stat().st_size == 0:
+        raise SystemExit(f"empty doctest database: {path}")
+    with sqlite3.connect(path) as db:
+        rows = db.execute(
+            """
+            select name
+            from sqlite_master
+            where type = 'table' and name = 'files'
+            """
+        ).fetchall()
+        if not rows:
+            raise SystemExit(f"not a Sagelite doctest database: {path}")
+        file_rows = db.execute("select distinct path from files").fetchall()
+    return {
+        normalize_path(row_path, source_root)
+        for (row_path,) in file_rows
+        if row_path is not None
+    }
+
+
+def iter_source_files(source_root: Path, extensions: tuple[str, ...]) -> list[Path]:
+    source_dir = source_root / "src" / "sage"
+    if not source_dir.is_dir():
+        raise SystemExit(f"Sagelite source tree not found: {source_dir}")
+    return sorted(
+        path
+        for path in source_dir.rglob("*")
+        if path.is_file() and path.suffix in extensions
+    )
+
+
+def count_sage_prompts(path: Path) -> int:
+    prompts = 0
+    try:
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                if SAGE_PROMPT_RE.match(line):
+                    prompts += 1
+    except UnicodeDecodeError:
+        with path.open(encoding="latin-1") as handle:
+            for line in handle:
+                if SAGE_PROMPT_RE.match(line):
+                    prompts += 1
+    return prompts
+
+
+def is_excluded_path(
+    relative_path: str,
+    excluded_prefixes: tuple[str, ...],
+) -> bool:
+    return (
+        relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES)
+        or relative_path.startswith(excluded_prefixes)
+    )
+
+
+def main() -> int:
+    args = parse_args()
+    source_root = args.source_root.resolve()
+    covered = read_corpus(args.corpus, source_root)
+    mentioned = read_mentioned(args.mentioned_file)
+    audited = read_database_paths(
+        database_paths(args),
+        source_root,
+        args.ignore_invalid_databases,
+        args.quiet_invalid_databases,
+    )
+
+    rows: list[tuple[int, str]] = []
+    for source_path in iter_source_files(source_root, args.extensions):
+        relative_path = normalize_path(str(source_path), source_root)
+        if is_excluded_path(relative_path, args.excluded_path_prefixes):
+            continue
+        if not args.include_covered and relative_path in covered:
+            continue
+        if not args.include_mentioned and relative_path in mentioned:
+            continue
+        if relative_path in audited:
+            continue
+
+        prompt_count = count_sage_prompts(source_path)
+        if prompt_count < args.min_prompts:
+            continue
+        if args.max_prompts is not None and prompt_count > args.max_prompts:
+            continue
+        rows.append((prompt_count, relative_path))
+
+    rows.sort(key=lambda row: (-row[0], row[1]))
+    if args.limit is not None:
+        rows = rows[: args.limit]
+
+    if args.include_header:
+        print("path\tprompt_count")
+    for prompt_count, relative_path in rows:
+        if args.paths_only:
+            print(relative_path)
+        else:
+            print(f"{relative_path}\t{prompt_count}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

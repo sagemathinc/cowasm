@@ -15,6 +15,9 @@ SAGELITE_DOCTEST_ALLOW_FAILURES ?= 1
 SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED ?= 1
 SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS ?= --ignore-invalid --quiet-invalid
 SAGELITE_DOCTEST_CANDIDATE_FLAGS ?= --strict-frontier
+SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED ?= ${CWD}/../../agents/sagelite-test-driven-port-plan.md
+SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS ?=
+SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS ?=
 
 all: test-wasi-sdk-standalone
 
@@ -222,6 +225,15 @@ sage-doctest-candidates:
 .PHONY: sage-doctest-candidate-paths
 sage-doctest-candidate-paths: SAGELITE_DOCTEST_CANDIDATE_FLAGS += --paths-only
 sage-doctest-candidate-paths: sage-doctest-candidates
+
+.PHONY: sage-doctest-source-frontier
+sage-doctest-source-frontier:
+	python3 ${SRC}/doctest-source-frontier.py \
+	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
+	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
+	  --mentioned-file "${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED}" \
+	  ${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS} \
+	  ${SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS}
 
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:

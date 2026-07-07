@@ -38843,6 +38843,22 @@ the persisted scheduled frontier databases found no remaining unmentioned
 unaudited `src/sage` files with Sage prompts under the current filtering
 policy.
 
+Follow-up source-frontier tooling pass on 2026-07-07: no corpus entry was
+added, but the repeated ad hoc source-minus-corpus prompt scans are now
+reproducible through `sagemath/sagelite/src/doctest-source-frontier.py` and
+the `make -C sagemath/sagelite sage-doctest-source-frontier` wrapper. The
+helper scans a patched Sagelite source tree, counts `sage:` prompt lines,
+subtracts the curated corpus, subtracts files already mentioned in this plan,
+and can also subtract paths persisted in prior Sagelite doctest SQLite
+dashboards.
+
+Focused validation used a synthetic source tree to confirm corpus,
+mentioned-path, doctest-self-test, and SQLite subtraction. A live scan against
+the current patched source tree with the glob pattern `.tmp/**/*.sqlite3`,
+`--ignore-invalid-databases`, and `--quiet-invalid-databases` printed no rows,
+matching the current exhausted local frontier after all persisted scratch
+probes are subtracted.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
