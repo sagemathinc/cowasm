@@ -34302,6 +34302,51 @@ runnable candidates. The checked corpus remains at 1,087 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 226-to-228 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected six uncovered files in the 226-to-228 prompt band:
+`sage/algebras/hecke_algebras/cubic_hecke_base_ring.py`,
+`sage/categories/loop_crystals.py`, `sage/combinat/chas/fsym.py`,
+`sage/combinat/root_system/pieri_factors.py`,
+`sage/modular/modform_hecketriangle/hecke_triangle_groups.py`, and
+`sage/rings/function_field/differential.py`. The initial direct probe used a
+120-second file-level timeout after an unbounded probe was interrupted, wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-226-228/batch.sqlite3`, and
+recorded:
+
+```text
+sage -t failed: 0 passed, 1 failed, 1140 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata.
+The remaining file, `cubic_hecke_base_ring.py`, trapped while constructing
+`CubicHeckeExtensionRing('a, b, c')` in the Markov trace examples. This is part
+of the same broader cubic Hecke algebra surface as the already tagged matrix
+representation file, so the WASI source patch now records it with file-level
+`sage.algebras.hecke_algebras` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-226-228/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1366 skipped
+```
+
+The latest-run summary records CoWasm commit
+`75eb3ecdf957288a5cd141746ffc8dcb66b1d06f`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,087 non-comment entries.
+Validation also ran `python3 -m py_compile` on
+`sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+the full WASI source patch against `/home/user/sagelite` with a
+workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

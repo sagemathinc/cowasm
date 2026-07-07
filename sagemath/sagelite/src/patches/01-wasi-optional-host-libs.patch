@@ -17370,6 +17370,12 @@ diff --git a/src/sage/algebras/fusion_rings/fusion_ring.py b/src/sage/algebras/f
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.fusion_rings
  """
+diff --git a/src/sage/algebras/hecke_algebras/cubic_hecke_base_ring.py b/src/sage/algebras/hecke_algebras/cubic_hecke_base_ring.py
+--- a/src/sage/algebras/hecke_algebras/cubic_hecke_base_ring.py
++++ b/src/sage/algebras/hecke_algebras/cubic_hecke_base_ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.hecke_algebras
+ r"""
 diff --git a/src/sage/geometry/polyhedron/base0.py b/src/sage/geometry/polyhedron/base0.py
 --- a/src/sage/geometry/polyhedron/base0.py
 +++ b/src/sage/geometry/polyhedron/base0.py
