@@ -37704,6 +37704,51 @@ The strict promotion scan with `--strict-frontier`, `--min-runner-version
 91`, and `--dedupe-paths` printed no uncovered clean runnable candidate. The
 checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 811-to-830 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/interfaces/kash.py`,
+`sage/algebras/lie_algebras/heisenberg.py`,
+`sage/schemes/berkovich/berkovich_space.py`,
+`sage/algebras/quantum_groups/ace_quantum_onsager.py`,
+`sage/rings/polynomial/skew_polynomial_element.pyx`,
+`sage/modular/modform_hecketriangle/functors.py`,
+`sage/rings/function_field/drinfeld_modules/charzero_drinfeld_module.py`,
+`sage/groups/abelian_gps/abelian_aut.py`,
+`sage/schemes/product_projective/point.py`,
+`sage/rings/finite_rings/finite_field_givaro.py`,
+`sage/quivers/algebra.py`, `sage/geometry/polyhedron/base_ZZ.py`,
+`sage/manifolds/differentiable/degenerate.py`,
+`sage/interfaces/tides.py`, `sage/groups/fqf_orthogonal.py`,
+`sage/modules/fg_pid/fgp_element.py`,
+`sage/geometry/polyhedron/base2.py`,
+`sage/algebras/letterplace/free_algebra_element_letterplace.pyx`,
+`sage/rings/function_field/order_rational.py`, and
+`sage/libs/singular/ring.pyx`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-811-830-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`268af1f3fd968c35105dd53b6be928af1453f4fc`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 20 skipped block rows over
+about 126 seconds. All 20 files were skipped-only under existing
+browser-profile metadata, with skip tags covering Kash/pexpect, graphs,
+quantum groups, finite rings, Singular/PARI/plural, function fields, padics,
+polyhedron/PPL, manifolds, quivers, groups/libgap, NTL, free modules,
+matrix-integer-dense, symbolic, Tides, and subprocess boundaries. The saved
+block- and file-failure cluster queries are empty, and the strict promotion
+scan with `--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths`
+printed no uncovered clean runnable candidate. The checked corpus remains at
+1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
