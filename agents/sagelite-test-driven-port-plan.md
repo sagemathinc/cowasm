@@ -33718,6 +33718,53 @@ has only `id`. Retrying the recent scratch scan with `--ignore-invalid`,
 sagemath/sagelite/build/wasi-sdk`, and `--dedupe-paths` completed and printed
 no uncovered clean runnable candidates.
 
+Follow-up 187-to-189 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected nine uncovered files in the 187-to-189 prompt band:
+`sage/matrix/operation_table.py`,
+`sage/modular/quasimodform/element.py`,
+`sage/rings/finite_rings/element_ntl_gf2e.pyx`,
+`sage/quivers/ar_quiver.py`,
+`sage/rings/polynomial/polynomial_integer_dense_ntl.pyx`,
+`sage/geometry/polyhedron/base.py`, `sage/modular/hecke/module.py`,
+`sage/modules/torsion_quadratic_module.py`, and
+`sage/schemes/affine/affine_space.py`. The initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-187-189/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 415 passed, 543 failed, 540 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. The
+two modular files were already skipped-only under existing FLINT/PARI tags.
+The remaining failures were broad browser-profile boundaries rather than
+narrow promotion targets: operation-table examples need the stripped group
+surface; GF(2^e) NTL elements need the NTL/GF2X dynamic-link backend; AR
+quivers need graph/quiver support; dense integer NTL polynomial examples need
+NTL and PARI factorization/conversion surfaces; polyhedron base examples need
+polyhedron/PPL/graph support; torsion quadratic modules need free-module and
+dense integer matrix functionality; and affine schemes need the broader scheme
+and noncommutative polynomial stack.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-187-189/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1684 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

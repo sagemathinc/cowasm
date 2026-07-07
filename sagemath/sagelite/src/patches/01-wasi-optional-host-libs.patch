@@ -16991,3 +16991,47 @@ diff --git a/src/sage/manifolds/differentiable/examples/real_line.py b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/matrix/operation_table.py b/src/sage/matrix/operation_table.py
+--- a/src/sage/matrix/operation_table.py
++++ b/src/sage/matrix/operation_table.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+--- a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
++++ b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+@@ -6,1 +6,2 @@
+ # distutils: language = c++
++# sage.doctest: needs sage.libs.ntl gf2x
+ r"""
+diff --git a/src/sage/quivers/ar_quiver.py b/src/sage/quivers/ar_quiver.py
+--- a/src/sage/quivers/ar_quiver.py
++++ b/src/sage/quivers/ar_quiver.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.quivers
+ r"""
+diff --git a/src/sage/rings/polynomial/polynomial_integer_dense_ntl.pyx b/src/sage/rings/polynomial/polynomial_integer_dense_ntl.pyx
+--- a/src/sage/rings/polynomial/polynomial_integer_dense_ntl.pyx
++++ b/src/sage/rings/polynomial/polynomial_integer_dense_ntl.pyx
+@@ -6,1 +6,2 @@
+ # distutils: language = c++
++# sage.doctest: needs sage.libs.ntl sage.libs.pari
+ r"""
+diff --git a/src/sage/geometry/polyhedron/base.py b/src/sage/geometry/polyhedron/base.py
+--- a/src/sage/geometry/polyhedron/base.py
++++ b/src/sage/geometry/polyhedron/base.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.graphs
+ r"""
+diff --git a/src/sage/modules/torsion_quadratic_module.py b/src/sage/modules/torsion_quadratic_module.py
+--- a/src/sage/modules/torsion_quadratic_module.py
++++ b/src/sage/modules/torsion_quadratic_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/schemes/affine/affine_space.py b/src/sage/schemes/affine/affine_space.py
+--- a/src/sage/schemes/affine/affine_space.py
++++ b/src/sage/schemes/affine/affine_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural
+ """
