@@ -3836,6 +3836,10 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
                      from sage.libs.pari.convert_sage import set_integer_from_gen
 --- a/src/sage/rings/finite_rings/element_pari_ffelt.pyx
 +++ b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.libs.pari sage.libs.ntl
+ """
+ Finite field elements implemented via PARI's FFELT type
 @@ -23,6 +23,10 @@
  from cypari2.stack cimport new_gen, new_gen_noclear, clear_stack
  from cypari2.gen cimport Gen as pari_gen, objtogen
@@ -17439,6 +17443,13 @@ diff --git a/src/sage/rings/polynomial/polynomial_integer_dense_ntl.pyx b/src/sa
 @@ -6,1 +6,2 @@
  # distutils: language = c++
 +# sage.doctest: needs sage.libs.ntl sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/polynomial/polynomial_integer_dense_flint.pyx b/src/sage/rings/polynomial/polynomial_integer_dense_flint.pyx
+--- a/src/sage/rings/polynomial/polynomial_integer_dense_flint.pyx
++++ b/src/sage/rings/polynomial/polynomial_integer_dense_flint.pyx
+@@ -6,1 +6,2 @@
+ # distutils: language = c++
++# sage.doctest: needs sage.libs.flint sage.libs.pari sage.libs.ntl
  r"""
 diff --git a/src/sage/geometry/polyhedron/base.py b/src/sage/geometry/polyhedron/base.py
 --- a/src/sage/geometry/polyhedron/base.py

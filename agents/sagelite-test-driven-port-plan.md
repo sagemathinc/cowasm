@@ -35557,6 +35557,51 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 307-to-309 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 307-to-309 prompt band:
+`sage/combinat/crystals/alcove_path.py`,
+`sage/rings/finite_rings/element_pari_ffelt.pyx`, and
+`sage/rings/polynomial/polynomial_integer_dense_flint.pyx`. The initial
+direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-307-309/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 220 passed, 85 failed, 311 skipped
+```
+
+`alcove_path.py` was already skipped-only under existing crystal/graph
+dependency metadata. `element_pari_ffelt.pyx` reached the known NTL
+`ZZ_pContext.restore()` dynamic-link boundary while setting up a PARI finite
+field polynomial ring. `polynomial_integer_dense_flint.pyx` recorded 220
+passing blocks, but its 84 block failures spanned the disabled FLINT integer
+polynomial side module, PARI/cypari2 object-model gaps, NTL-backed factoring,
+integer-polynomial xgcd/division semantics, and display drift. Since both
+remaining files are backend-owned implementation modules, the WASI source
+patch now marks `element_pari_ffelt.pyx` as `# sage.doctest: needs
+sage.libs.pari sage.libs.ntl` and `polynomial_integer_dense_flint.pyx` as
+`# sage.doctest: needs sage.libs.flint sage.libs.pari sage.libs.ntl`.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-307-309/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 922 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`fd675fff3298155d9989b3f06069e01aa7b188b6`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
