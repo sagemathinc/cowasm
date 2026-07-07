@@ -37749,6 +37749,52 @@ scan with `--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths`
 printed no uncovered clean runnable candidate. The checked corpus remains at
 1,093 non-comment entries.
 
+Follow-up current 831-to-850 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/libs/lcalc/lcalc_Lfunction.pyx`,
+`sage/combinat/crystals/pbw_crystal.py`,
+`sage/modular/hecke/hecke_operator.py`,
+`sage/modules/fg_pid/fgp_morphism.py`,
+`sage/schemes/affine/affine_subscheme.py`,
+`sage/combinat/sf/character.py`, `sage/functions/transcendental.py`,
+`sage/geometry/polyhedron/double_description.py`,
+`sage/geometry/triangulation/element.py`,
+`sage/groups/indexed_free_group.py`,
+`sage/numerical/backends/cvxopt_sdp_backend.pyx`,
+`sage/schemes/elliptic_curves/lseries_ell.py`,
+`sage/coding/goppa_code.py`,
+`sage/manifolds/differentiable/levi_civita_connection.py`,
+`sage/rings/polynomial/laurent_polynomial_ideal.py`,
+`sage/schemes/elliptic_curves/hom_frobenius.py`,
+`sage/combinat/rigged_configurations/rc_infinity.py`,
+`sage/crypto/lwe.py`, `sage/interfaces/scilab.py`, and
+`sage/tests/books/computational_mathematics_with_sagemath/domaines_doctest.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-831-850-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 123 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`ac7a440fbe6bbf18308fce1b1cb4bb451081b68a`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 123 skipped block rows over
+about 131 seconds. All 20 files were skipped-only under existing
+browser-profile metadata. `functions/transcendental.py` accounts for 104
+block-level skips, mostly `sage.symbolic`, real-MPFR, PARI, FLINT, mpmath,
+SymPy, and plotting boundaries; the other 19 files were file-level skips
+covering lcalc, combinatorics, modules, FLINT/PARI, finite rings, Singular,
+polyhedron, triangulation, manifolds, CVXOPT, SciPy, pexpect, and symbolic
+dependencies. The saved block- and file-failure cluster queries are empty, and
+the strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
+`--require-run-metadata`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
