@@ -33345,6 +33345,56 @@ strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,084 non-comment entries.
 
+Follow-up 166-to-168 prompt-band dependency tagging and polynomial-ring
+promotion:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected nine uncovered files in the 166-to-168 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-166-168/prompt-166-168/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 177 passed, 579 failed, 742 skipped
+```
+
+Four files were already skipped-only under existing dependency metadata:
+`sage/combinat/posets/incidence_algebras.py`,
+`sage/combinat/sf/ns_macdonald.py`, `sage/interfaces/gp.py`, and
+`sage/rings/number_field/number_field_morphisms.pyx`. The remaining broad
+browser-profile boundaries were graph domination/decomposition, matroid
+constructor examples, and Pollack-Stevens distribution examples, now recorded
+with file-level `# sage.doctest: needs ...` metadata for the stripped graph,
+matroid, and PARI-backed modular surfaces.
+
+`sage/rings/polynomial/multi_polynomial_ring.py` was the narrow useful
+candidate in the band. Targeted metadata classifies its symbolic/Singular,
+PARI conversion, symbolic diagnostic, and QQbar examples, after which a
+focused rerun recorded:
+
+```text
+multi_polynomial_ring.py: 135 passed, 0 failed, 31 skipped
+```
+
+That file is now promoted to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,085
+non-comment entries. Final direct validation against the patched source tree
+wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-166-168/prompt-166-168/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 135 passed, 0 failed, 1363 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no additional
+uncovered clean runnable candidates. Validation also ran `git diff --check`
+and the full WASI source patch dry-run against `/home/user/sagelite` with a
+workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

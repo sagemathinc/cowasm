@@ -16701,3 +16701,53 @@ diff --git a/src/sage/geometry/polyhedron/base7.py b/src/sage/geometry/polyhedro
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.polyhedron latte_int pynormaliz
  r"""
+diff --git a/src/sage/graphs/domination.py b/src/sage/graphs/domination.py
+--- a/src/sage/graphs/domination.py
++++ b/src/sage/graphs/domination.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/graphs/graph_decompositions/modular_decomposition.pyx b/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
+--- a/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
++++ b/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
+@@ -2,2 +2,3 @@
+ # distutils: extra_compile_args = -std=c++11
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/matroids/constructor.py b/src/sage/matroids/constructor.py
+--- a/src/sage/matroids/constructor.py
++++ b/src/sage/matroids/constructor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ r"""
+diff --git a/src/sage/modular/pollack_stevens/dist.pyx b/src/sage/modular/pollack_stevens/dist.pyx
+--- a/src/sage/modular/pollack_stevens/dist.pyx
++++ b/src/sage/modular/pollack_stevens/dist.pyx
+@@ -2,2 +2,3 @@
+ # distutils: extra_compile_args = -D_XPG6
++# sage.doctest: needs sage.libs.pari
+ """
+diff --git a/src/sage/rings/polynomial/multi_polynomial_ring.py b/src/sage/rings/polynomial/multi_polynomial_ring.py
+--- a/src/sage/rings/polynomial/multi_polynomial_ring.py
++++ b/src/sage/rings/polynomial/multi_polynomial_ring.py
+@@ -249,0 +250 @@
++            sage: # needs sage.symbolic sage.libs.singular
+@@ -267,0 +269 @@
++            sage: # needs sage.symbolic sage.libs.singular
+@@ -358 +360 @@
+-            sage: P('pi')
++            sage: P('pi')                                                           # needs sage.symbolic
+@@ -378 +380 @@
+-            sage: B(f)
++            sage: B(f)                                                               # needs sage.libs.pari
+@@ -381 +383 @@
+-            sage: B(f)
++            sage: B(f)                                                               # needs sage.libs.pari
+@@ -387 +389 @@
+-            sage: B(f)
++            sage: B(f)                                                               # needs sage.libs.pari
+@@ -392,0 +395 @@
++            sage: # needs sage.libs.pari
+@@ -405 +408 @@
+-            sage: type(R({(1,2): 3}).coefficients()[0])
++            sage: type(R({(1,2): 3}).coefficients()[0])                                 # needs sage.rings.number_field
