@@ -35735,6 +35735,53 @@ The latest run metadata records CoWasm commit
 sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch in dry-run mode against `/home/user/sagelite`.
 
+Follow-up 319-to-321 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 319-to-321 prompt band:
+`sage/combinat/crystals/tensor_product_element.pyx`,
+`sage/manifolds/differentiable/automorphismfield.py`,
+`sage/quadratic_forms/ternary_qf.py`,
+`sage/combinat/crystals/littelmann_path.py`, and
+`sage/combinat/partition_kleshchev.py`. The initial direct one-worker probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-319-321/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 0 passed, 319 failed, 964 skipped
+```
+
+The crystal tensor-product, Littelmann-path, and Kleshchev partition files
+were already skipped-only under existing crystal/combinatorics/module
+dependency metadata. The two untagged files were dependency frontiers rather
+than promotion candidates: `automorphismfield.py` cascaded from manifold and
+symbolic setup names such as `M`, `c_xy`, and `a`, and `ternary_qf.py` timed
+out at `TernaryQF.automorphisms` after entering the quadratic-form
+automorphism computation. The WASI source patch now records
+`automorphismfield.py` as
+`# sage.doctest: needs sage.manifolds sage.symbolic` and `ternary_qf.py` as
+`# sage.doctest: needs sage.quadratic_forms`, matching adjacent browser-profile
+boundaries.
+
+Focused make-target validation rebuilt and patched a fresh Sagelite source
+copy, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-319-321/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1599 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`103c933c60f0a5015933f9aafc77c8fe0a6768db`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `git diff --check` and the full WASI source patch in
+dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

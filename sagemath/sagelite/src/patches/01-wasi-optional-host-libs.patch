@@ -15810,6 +15810,12 @@ diff --git a/src/sage/manifolds/differentiable/automorphismfield_group.py b/src/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/differentiable/automorphismfield.py b/src/sage/manifolds/differentiable/automorphismfield.py
+--- a/src/sage/manifolds/differentiable/automorphismfield.py
++++ b/src/sage/manifolds/differentiable/automorphismfield.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
 diff --git a/src/sage/matrix/matrix_complex_ball_dense.pyx b/src/sage/matrix/matrix_complex_ball_dense.pyx
 --- a/src/sage/matrix/matrix_complex_ball_dense.pyx
 +++ b/src/sage/matrix/matrix_complex_ball_dense.pyx
@@ -16687,6 +16693,12 @@ diff --git a/src/sage/quadratic_forms/ternary.pyx b/src/sage/quadratic_forms/ter
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.quadratic_forms
  """
+diff --git a/src/sage/quadratic_forms/ternary_qf.py b/src/sage/quadratic_forms/ternary_qf.py
+--- a/src/sage/quadratic_forms/ternary_qf.py
++++ b/src/sage/quadratic_forms/ternary_qf.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.quadratic_forms
+ r"""
 diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/domaines_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/domaines_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/domaines_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/domaines_doctest.py
