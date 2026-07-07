@@ -39018,6 +39018,30 @@ list remains the existing runtime/package frontier set for rational polynomial
 roots, integer matrix right kernels, graph/poset imports, plural-backed
 free-module constructors, and finite-field matrix row/column materialization.
 
+Follow-up persisted-frontier recheck on 2026-07-07: no corpus entry was
+promoted. The strict source-frontier scan is now empty after subtracting the
+curated corpus, this plan's mentioned source paths, and valid persisted
+scratch SQLite dashboards under `.tmp/**/*.sqlite3`. Both the focused
+16-to-25 prompt scan and the unbounded scan printed only the `path	prompt_count`
+header, and the make-wrapper `SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS=1`
+guard exited successfully with no remaining rows.
+
+A direct `sage -t` resource sanity check also passed from the patched source
+tree:
+
+```text
+all.py: 13 passed, 0 failed, 2 skipped
+```
+
+That probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-07-goal/all-smoke-source-root.sqlite3`.
+The same smoke check failed when invoked from the repository root with the
+relative path `src/sage/all.py`, because Sagelite resolved it as
+`/home/user/cowasm/src/sage/all.py` instead of under the patched source root.
+Future direct probes should either run from
+`sagemath/sagelite/build/wasi-sdk` or pass source-file paths that resolve
+against that tree.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
