@@ -2498,6 +2498,27 @@ diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/r
 +        from sage.misc.persist import register_unpickle_override
 +        register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
 +                                   'Polynomial_rational_dense', Polynomial_rational_flint)
+diff -urN a/src/sage/modules/ore_module_morphism.py b/src/sage/modules/ore_module_morphism.py
+--- a/src/sage/modules/ore_module_morphism.py
++++ b/src/sage/modules/ore_module_morphism.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+ Morphisms between Ore modules
+diff -urN a/src/sage/schemes/elliptic_curves/hom_velusqrt.py b/src/sage/schemes/elliptic_curves/hom_velusqrt.py
+--- a/src/sage/schemes/elliptic_curves/hom_velusqrt.py
++++ b/src/sage/schemes/elliptic_curves/hom_velusqrt.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari
+ r"""
+ Square‑root Vélu algorithm for elliptic-curve isogenies
+diff -urN a/src/sage/rings/valuation/inductive_valuation.py b/src/sage/rings/valuation/inductive_valuation.py
+--- a/src/sage/rings/valuation/inductive_valuation.py
++++ b/src/sage/rings/valuation/inductive_valuation.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.rings.padics sage.libs.ntl
+ r"""
+ Inductive valuations on polynomial rings
 diff -urN a/src/sage/structure/sequence.py b/src/sage/structure/sequence.py
 --- a/src/sage/structure/sequence.py
 +++ b/src/sage/structure/sequence.py
