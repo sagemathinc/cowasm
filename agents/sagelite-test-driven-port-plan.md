@@ -35248,6 +35248,49 @@ runnable candidates. The checked corpus remains at 1,092 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch in
 dry-run mode against a fresh `/home/user/sagelite` scratch copy.
 
+Follow-up 286-to-288 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 286-to-288 prompt band:
+`sage/crypto/sbox.pyx`, `sage/matroids/lean_matrix.pyx`,
+`sage/rings/polynomial/ore_function_field.py`,
+`sage/tests/book_schilling_zabrocki_kschur_primer.py`,
+`sage/manifolds/differentiable/bundle_connection.py`,
+`sage/rings/real_lazy.pyx`, and
+`sage/rings/ring_extension_element.pyx`. The initial direct one-worker probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-286-288/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 1 passed, 286 failed, 861 skipped
+```
+
+`sbox.pyx`, `lean_matrix.pyx`, and `real_lazy.pyx` were already skipped-only
+under existing browser-profile metadata, while the Schilling-Zabrocki book
+fixture extracted zero doctest blocks. The remaining failures were dependency
+frontiers instead of promotion candidates: `bundle_connection.py` depends on
+the stripped manifold/symbolic stack, `ore_function_field.py` timed out in
+Ore fraction-field arithmetic, and `ring_extension_element.pyx` reached the
+same NTL `ZZ_pContext.restore` dynamic-link boundary already tagged for
+neighboring ring-extension code. The WASI source patch now records those
+three boundaries with module-level `# sage.doctest: needs ...` directives.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-286-288/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1719 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch in
+dry-run mode against a fresh `/home/user/sagelite` scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

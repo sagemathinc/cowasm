@@ -16672,6 +16672,12 @@ diff --git a/src/sage/manifolds/differentiable/levi_civita_connection.py b/src/s
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/differentiable/bundle_connection.py b/src/sage/manifolds/differentiable/bundle_connection.py
+--- a/src/sage/manifolds/differentiable/bundle_connection.py
++++ b/src/sage/manifolds/differentiable/bundle_connection.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
 diff --git a/src/sage/modules/fg_pid/fgp_morphism.py b/src/sage/modules/fg_pid/fgp_morphism.py
 --- a/src/sage/modules/fg_pid/fgp_morphism.py
 +++ b/src/sage/modules/fg_pid/fgp_morphism.py
@@ -17051,6 +17057,12 @@ diff --git a/src/sage/matroids/gammoid.py b/src/sage/matroids/gammoid.py
 diff --git a/src/sage/rings/ring_extension_morphism.pyx b/src/sage/rings/ring_extension_morphism.pyx
 --- a/src/sage/rings/ring_extension_morphism.pyx
 +++ b/src/sage/rings/ring_extension_morphism.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/rings/ring_extension_element.pyx b/src/sage/rings/ring_extension_element.pyx
+--- a/src/sage/rings/ring_extension_element.pyx
++++ b/src/sage/rings/ring_extension_element.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  r"""
@@ -17874,6 +17886,12 @@ diff --git a/src/sage/rings/polynomial/ore_function_element.py b/src/sage/rings/
 +++ b/src/sage/rings/polynomial/ore_function_element.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.rings.finite_rings sage.libs.pari sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/rings/polynomial/ore_function_field.py b/src/sage/rings/polynomial/ore_function_field.py
+--- a/src/sage/rings/polynomial/ore_function_field.py
++++ b/src/sage/rings/polynomial/ore_function_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.polynomial.ore_function_field
  r"""
 diff --git a/src/sage/rings/finite_rings/element_givaro.pyx b/src/sage/rings/finite_rings/element_givaro.pyx
 --- a/src/sage/rings/finite_rings/element_givaro.pyx
