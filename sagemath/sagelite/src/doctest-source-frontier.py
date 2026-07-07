@@ -18,7 +18,8 @@ DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
 DEFAULT_EXCLUDED_PATH_SUFFIXES = (".orig", ".rej")
 DEFAULT_EXTENSIONS = (".py", ".pyx")
 SAGE_PATH_RE = re.compile(
-    r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?\.(?:py|pyx)"
+    r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?\.(?:pyx|py)"
+    r"(?![A-Za-z0-9_./+-])"
 )
 SAGE_PROMPT_RE = re.compile(r"^\s*sage:")
 

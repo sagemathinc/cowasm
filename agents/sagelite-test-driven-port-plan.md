@@ -38947,6 +38947,19 @@ flags, and `--include-header`. The current persisted local frontier still
 prints only the `path	prompt_count` header under the stricter exhausted-run
 contract.
 
+Follow-up source-frontier `.pyx` mention matcher pass on 2026-07-07: no
+corpus entry was added, but the reproducible source-frontier helper now
+extracts mentioned `.pyx` paths as full `.pyx` paths instead of truncating
+them at the `.py` prefix. The standalone smoke fixture covers this with a
+synthetic mentioned `.pyx` frontier file, so future scans that subtract this
+plan do not re-audit Cython files already recorded in earlier frontier notes.
+Focused validation used `python3 -m py_compile`, `bash -n`, a synthetic
+source tree that leaves only the unmentioned `.pyx` path in helper output, and
+the live strict make wrapper with the persisted `.tmp/**/*.sqlite3`
+subtraction glob. The live wrapper still prints only the
+`path	prompt_count` header under the required-database and fail-on-rows
+guards.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

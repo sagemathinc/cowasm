@@ -2770,11 +2770,20 @@ r"""
     8
 """
 PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/mentioned_pyx_frontier.pyx" <<'PY'
+r"""
+    sage: 5 + 5
+    10
+"""
+PY
 touch "$doctest_candidate_helper_override_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 printf '%s\n' "src/sage/example/real_candidate.py" >"$doctest_candidate_helper_covered_corpus"
 printf '%s\n' "src/sage/example/covered_frontier.py" >"$doctest_source_frontier_corpus"
-printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py" >"$doctest_source_frontier_mentioned"
+{
+  printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py"
+  printf '%s\n' "previously audited src/sage/example/mentioned_pyx_frontier.pyx"
+} >"$doctest_source_frontier_mentioned"
 printf '%s\n' "previously audited src/sage/example/frontier_candidate.py" >"$doctest_source_frontier_all_mentioned"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
 create table runs (
