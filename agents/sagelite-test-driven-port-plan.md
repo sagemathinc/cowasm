@@ -35136,6 +35136,50 @@ run, and the saved file-failure cluster query is empty. The strict promotion
 scan over the 274-to-279 probe databases printed no uncovered clean runnable
 candidates. The checked corpus remains at 1,091 non-comment entries.
 
+Follow-up 280-to-282 prompt-band dependency tagging and promotion:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 280-to-282 prompt band:
+`sage/modules/fp_graded/module.py`, `sage/rings/power_series_poly.pyx`,
+`sage/coding/ag_code.py`, `sage/combinat/symmetric_group_representations.py`,
+`sage/rings/padics/pow_computer_ext.pyx`,
+`sage/combinat/rigged_configurations/rigged_configuration_element.py`, and
+`sage/interfaces/polymake.py`. An initial direct probe with a 90-second
+per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-280-282/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 0 passed, 2 failed, 1404 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata.
+`power_series_poly.pyx` first reached a WASM table-index trap in the Padé
+approximation examples, and `polymake.py` timed out on an untagged
+`QuadraticField` setup inside an otherwise jupymake-only interface doctest.
+
+After tagging `polymake.py` as a `jupymake` interface boundary and marking the
+power-series Padé, reversion, and symbolic-conversion dependency frontiers, the
+final direct validation wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-280-282/final2.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 205 passed, 0 failed, 1745 skipped
+```
+
+The final run records `power_series_poly.pyx` as a clean runnable file with
+`205 passed, 0 failed, 75 skipped`; the other six files are skipped-only. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed
+`src/sage/rings/power_series_poly.pyx`, which is now promoted to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`. Rerunning the same
+strict scan printed no uncovered clean runnable candidates. The checked corpus
+is now at 1,092 non-comment entries. Validation also ran `git diff --check`
+and the full WASI source patch in dry-run mode against a fresh
+`/home/user/sagelite` scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

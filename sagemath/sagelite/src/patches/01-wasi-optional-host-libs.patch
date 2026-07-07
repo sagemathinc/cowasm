@@ -505,11 +505,11 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
 +            sage: S*X                                                            # needs sage.rings.polynomial.plural
              Closed subscheme of Product of projective spaces P^1 x P^2 x P^1 x P^2 x P^2 over Integer Ring defined by:
                -x1*x3 + x0*x4
- 
+
 @@ -804,9 +804,9 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: ProductProjectiveSpaces([1, 2, 3], ZZ).an_element()
 +            sage: ProductProjectiveSpaces([1, 2, 3], ZZ).an_element()             # needs sage.libs.singular
              (7 : 1 , 7 : 6 : 1 , 7 : 6 : 5 : 1)
@@ -520,7 +520,7 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
          v = [R.an_element() for R in self._components]
 @@ -825,23 +825,23 @@
          EXAMPLES::
- 
+
              sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))
 -            sage: X = P.subscheme([x - y, z - w]); X
 +            sage: X = P.subscheme([x - y, z - w]); X                              # needs sage.rings.polynomial.plural
@@ -550,7 +550,7 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
                      over Finite Field of size 5 defined by: x - y, z - w
 @@ -1130,7 +1130,7 @@
          EXAMPLES::
- 
+
              sage: PP = ProductProjectiveSpaces(QQ, [1, 2])
 -            sage: sorted(list(PP.points_of_bounded_height(bound=1)))
 +            sage: sorted(list(PP.points_of_bounded_height(bound=1)))               # needs sage.libs.singular
@@ -559,7 +559,7 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
               (-1 : 1 , 0 : 1 : 0), (-1 : 1 , 0 : 1 : 1), (-1 : 1 , 1 : -1 : 1),
 @@ -1219,7 +1219,7 @@
          EXAMPLES::
- 
+
              sage: P = ProductProjectiveSpaces([1, 2], GF(11))
 -            sage: P([3, 7, 4, 5, 9])
 +            sage: P([3, 7, 4, 5, 9])                                               # needs sage.libs.singular
@@ -16408,6 +16408,201 @@ diff --git a/src/sage/graphs/base/static_sparse_graph.pyx b/src/sage/graphs/base
  # distutils: language = c++
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/interfaces/polymake.py b/src/sage/interfaces/polymake.py
+--- a/src/sage/interfaces/polymake.py
++++ b/src/sage/interfaces/polymake.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs jupymake
+ r"""
+diff --git a/src/sage/rings/power_series_poly.pyx b/src/sage/rings/power_series_poly.pyx
+--- a/src/sage/rings/power_series_poly.pyx
++++ b/src/sage/rings/power_series_poly.pyx
+@@ -944 +944 @@
+-            sage: R.<x> = PowerSeriesRing(QQ)
++            sage: R.<x> = PowerSeriesRing(QQ)                                      # needs sage.libs.pari
+@@ -945 +945 @@
+-            sage: f = 2*x + 3*x^2 - x^4 + O(x^5)
++            sage: f = 2*x + 3*x^2 - x^4 + O(x^5)                                   # needs sage.libs.pari
+@@ -946 +946 @@
+-            sage: g = f.reverse()
++            sage: g = f.reverse()                                                   # needs sage.libs.pari
+@@ -947 +947 @@
+-            sage: g
++            sage: g                                                                 # needs sage.libs.pari
+@@ -949 +949 @@
+-            sage: f(g)
++            sage: f(g)                                                              # needs sage.libs.pari
+@@ -951 +951 @@
+-            sage: g(f)
++            sage: g(f)                                                              # needs sage.libs.pari
+@@ -954 +954 @@
+-            sage: A.<t> = PowerSeriesRing(ZZ)
++            sage: A.<t> = PowerSeriesRing(ZZ)                                       # needs sage.libs.pari
+@@ -955 +955 @@
+-            sage: a = t - t^2 - 2*t^4 + t^5 + O(t^6)
++            sage: a = t - t^2 - 2*t^4 + t^5 + O(t^6)                                # needs sage.libs.pari
+@@ -956 +956 @@
+-            sage: b = a.reverse(); b
++            sage: b = a.reverse(); b                                                # needs sage.libs.pari
+@@ -958 +958 @@
+-            sage: a(b)
++            sage: a(b)                                                              # needs sage.libs.pari
+@@ -960 +960 @@
+-            sage: b(a)
++            sage: b(a)                                                              # needs sage.libs.pari
+@@ -963 +963 @@
+-            sage: B.<b,c> = PolynomialRing(ZZ)
++            sage: B.<b,c> = PolynomialRing(ZZ)                                      # needs sage.libs.pari
+@@ -964 +964 @@
+-            sage: A.<t> = PowerSeriesRing(B)
++            sage: A.<t> = PowerSeriesRing(B)                                        # needs sage.libs.pari
+@@ -965 +965 @@
+-            sage: f = t + b*t^2 + c*t^3 + O(t^4)
++            sage: f = t + b*t^2 + c*t^3 + O(t^4)                                   # needs sage.libs.pari
+@@ -966 +966 @@
+-            sage: g = f.reverse(); g
++            sage: g = f.reverse(); g                                                # needs sage.libs.pari
+@@ -968 +968 @@
+-            sage: f(g)
++            sage: f(g)                                                              # needs sage.libs.pari
+@@ -970 +970 @@
+-            sage: g(f)
++            sage: g(f)                                                              # needs sage.libs.pari
+@@ -973 +973 @@
+-            sage: A.<t> = PowerSeriesRing(ZZ)
++            sage: A.<t> = PowerSeriesRing(ZZ)                                       # needs sage.libs.pari
+@@ -974 +974 @@
+-            sage: B.<s> = A[[]]
++            sage: B.<s> = A[[]]                                                     # needs sage.libs.pari
+@@ -975 +975 @@
+-            sage: f = (1 - 3*t + 4*t^3 + O(t^4))*s + (2 + t + t^2 + O(t^3))*s^2 + O(s^3)
++            sage: f = (1 - 3*t + 4*t^3 + O(t^4))*s + (2 + t + t^2 + O(t^3))*s^2 + O(s^3) # needs sage.libs.pari
+@@ -976 +976 @@
+-            sage: from sage.misc.verbose import set_verbose
++            sage: from sage.misc.verbose import set_verbose                         # needs sage.libs.pari
+@@ -977 +977 @@
+-            sage: set_verbose(1)
++            sage: set_verbose(1)                                                    # needs sage.libs.pari
+@@ -978 +978 @@
+-            sage: g = f.reverse(); g
++            sage: g = f.reverse(); g                                                # needs sage.libs.pari
+@@ -981 +981 @@
+-            sage: set_verbose(0)
++            sage: set_verbose(0)                                                    # needs sage.libs.pari
+@@ -982 +982 @@
+-            sage: f(g) == g(f) == s
++            sage: f(g) == g(f) == s                                                 # needs sage.libs.pari
+@@ -988 +988 @@
+-            sage: A.<t> = PowerSeriesRing(ZZ)
++            sage: A.<t> = PowerSeriesRing(ZZ)                                       # needs sage.libs.pari
+@@ -989 +989 @@
+-            sage: a = 2*t - 4*t^2 + t^4 - t^5 + O(t^6)
++            sage: a = 2*t - 4*t^2 + t^4 - t^5 + O(t^6)                              # needs sage.libs.pari
+@@ -990 +990 @@
+-            sage: a.reverse()
++            sage: a.reverse()                                                       # needs sage.libs.pari
+@@ -993 +993 @@
+-            sage: B.<b> = PolynomialRing(ZZ)
++            sage: B.<b> = PolynomialRing(ZZ)                                        # needs sage.libs.pari
+@@ -994 +994 @@
+-            sage: A.<t> = PowerSeriesRing(B)
++            sage: A.<t> = PowerSeriesRing(B)                                        # needs sage.libs.pari
+@@ -995 +995 @@
+-            sage: f = 2*b*t + b*t^2 + 3*b^2*t^3 + O(t^4)
++            sage: f = 2*b*t + b*t^2 + 3*b^2*t^3 + O(t^4)                            # needs sage.libs.pari
+@@ -996 +996 @@
+-            sage: g = f.reverse(); g
++            sage: g = f.reverse(); g                                                # needs sage.libs.pari
+@@ -998 +998 @@
+-            sage: f(g)
++            sage: f(g)                                                              # needs sage.libs.pari
+@@ -1000 +1000 @@
+-            sage: g(f)
++            sage: g(f)                                                              # needs sage.libs.pari
+@@ -1005 +1005 @@
+-            sage: A8.<t> = PowerSeriesRing(Zmod(8))
++            sage: A8.<t> = PowerSeriesRing(Zmod(8))                                 # needs sage.libs.pari
+@@ -1006 +1006 @@
+-            sage: a = t - 15*t^2 - 2*t^4 + t^5 + O(t^6)
++            sage: a = t - 15*t^2 - 2*t^4 + t^5 + O(t^6)                             # needs sage.libs.pari
+@@ -1007 +1007 @@
+-            sage: b = a.reverse(); b
++            sage: b = a.reverse(); b                                                # needs sage.libs.pari
+@@ -1009 +1009 @@
+-            sage: a(b)
++            sage: a(b)                                                              # needs sage.libs.pari
+@@ -1011 +1011 @@
+-            sage: b(a)
++            sage: b(a)                                                              # needs sage.libs.pari
+@@ -1016 +1016 @@
+-            sage: R.<x> = PowerSeriesRing(QQ)
++            sage: R.<x> = PowerSeriesRing(QQ)                                      # needs sage.libs.pari
+@@ -1017 +1017 @@
+-            sage: f = 2*x + 3*x^2 - 7*x^3 + x^4 + O(x^5)
++            sage: f = 2*x + 3*x^2 - 7*x^3 + x^4 + O(x^5)                            # needs sage.libs.pari
+@@ -1018 +1018 @@
+-            sage: g = f.reverse(precision=3); g
++            sage: g = f.reverse(precision=3); g                                     # needs sage.libs.pari
+@@ -1020 +1020 @@
+-            sage: f(g)
++            sage: f(g)                                                              # needs sage.libs.pari
+@@ -1022 +1022 @@
+-            sage: g(f)
++            sage: g(f)                                                              # needs sage.libs.pari
+@@ -1029 +1029 @@
+-            sage: R.<x> = PowerSeriesRing(QQ, default_prec=20)
++            sage: R.<x> = PowerSeriesRing(QQ, default_prec=20)                      # needs sage.libs.pari
+@@ -1030 +1030 @@
+-            sage: (x - x^2).reverse() # get some Catalan numbers
++            sage: (x - x^2).reverse() # get some Catalan numbers                    # needs sage.libs.pari
+@@ -1035 +1035 @@
+-            sage: (x - x^2).reverse(precision=3)
++            sage: (x - x^2).reverse(precision=3)                                    # needs sage.libs.pari
+@@ -1144 +1144 @@
+-            sage: exp(z).pade(4, 0)
++            sage: exp(z).pade(4, 0)                                                   # known bug
+@@ -1146 +1146 @@
+-            sage: exp(z).pade(1, 1)
++            sage: exp(z).pade(1, 1)                                                   # known bug
+@@ -1148 +1148 @@
+-            sage: exp(z).pade(3, 3)
++            sage: exp(z).pade(3, 3)                                                   # known bug
+@@ -1150 +1150 @@
+-            sage: log(1-z).pade(4, 4)
++            sage: log(1-z).pade(4, 4)                                                 # known bug
+@@ -1153 +1153 @@
+-            sage: sqrt(1+z).pade(3, 2)
++            sage: sqrt(1+z).pade(3, 2)                                                # known bug
+@@ -1155 +1155 @@
+-            sage: exp(2*z).pade(3, 3)
++            sage: exp(2*z).pade(3, 3)                                                 # known bug
+@@ -1164 +1164 @@
+-            sage: f.pade(3, 3) # abs tol 1e-10
++            sage: f.pade(3, 3)                                                        # known bug
+@@ -1170 +1170 @@
+-            sage: f.pade(4, 4)
++            sage: f.pade(4, 4)                                                        # known bug
+@@ -1178 +1178 @@
+-            sage: (1 + x + O(x^100)).pade(2,2)
++            sage: (1 + x + O(x^100)).pade(2,2)                                       # known bug
+@@ -1184 +1184 @@
+-            sage: (1 + x + O(x^2)).pade(0,1)
++            sage: (1 + x + O(x^2)).pade(0,1)                                         # known bug
+@@ -1204 +1204 @@
+-            sage: SR(s)
++            sage: SR(s)                                                             # needs sage.symbolic
+@@ -1206 +1206 @@
+-            sage: SR(s).is_terminating_series()
++            sage: SR(s).is_terminating_series()                                     # needs sage.symbolic
+@@ -1208 +1208 @@
+-            sage: SR(s).variables()
++            sage: SR(s).variables()                                                 # needs sage.symbolic
+@@ -1212 +1212 @@
+-            sage: SR(s)
++            sage: SR(s)                                                             # needs sage.symbolic
+@@ -1214 +1214 @@
+-            sage: _.is_terminating_series()
++            sage: _.is_terminating_series()                                         # needs sage.symbolic
 diff --git a/src/sage/groups/affine_gps/group_element.py b/src/sage/groups/affine_gps/group_element.py
 --- a/src/sage/groups/affine_gps/group_element.py
 +++ b/src/sage/groups/affine_gps/group_element.py
