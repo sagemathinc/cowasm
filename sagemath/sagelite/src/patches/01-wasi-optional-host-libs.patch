@@ -18447,3 +18447,75 @@ diff --git a/src/sage/groups/generic.py b/src/sage/groups/generic.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.groups sage.libs.gap sage.rings.finite_rings sage.schemes.elliptic_curves
  """
+diff --git a/src/sage/doctest/sources.py b/src/sage/doctest/sources.py
+--- a/src/sage/doctest/sources.py
++++ b/src/sage/doctest/sources.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.doctest
+ """
+diff --git a/src/sage/rings/fraction_field_FpT.pyx b/src/sage/rings/fraction_field_FpT.pyx
+--- a/src/sage/rings/fraction_field_FpT.pyx
++++ b/src/sage/rings/fraction_field_FpT.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.flint sage.libs.ntl
+ # distutils: libraries = gmp NTL_LIBRARIES
+diff --git a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field.py b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field.py
+--- a/src/sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field.py
++++ b/src/sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
+ r"""
+diff --git a/src/sage/algebras/fusion_rings/f_matrix.py b/src/sage/algebras/fusion_rings/f_matrix.py
+--- a/src/sage/algebras/fusion_rings/f_matrix.py
++++ b/src/sage/algebras/fusion_rings/f_matrix.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.fusion_rings
+ r"""
+diff --git a/src/sage/manifolds/differentiable/diff_form.py b/src/sage/manifolds/differentiable/diff_form.py
+--- a/src/sage/manifolds/differentiable/diff_form.py
++++ b/src/sage/manifolds/differentiable/diff_form.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/differentiable/pseudo_riemannian_submanifold.py b/src/sage/manifolds/differentiable/pseudo_riemannian_submanifold.py
+--- a/src/sage/manifolds/differentiable/pseudo_riemannian_submanifold.py
++++ b/src/sage/manifolds/differentiable/pseudo_riemannian_submanifold.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/doctest/parsing.py b/src/sage/doctest/parsing.py
+--- a/src/sage/doctest/parsing.py
++++ b/src/sage/doctest/parsing.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.doctest
+ """
+diff --git a/src/sage/interfaces/qepcad.py b/src/sage/interfaces/qepcad.py
+--- a/src/sage/interfaces/qepcad.py
++++ b/src/sage/interfaces/qepcad.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs qepcad pexpect subprocess
+ r"""
+diff --git a/src/sage/rings/polynomial/polynomial_modn_dense_ntl.pyx b/src/sage/rings/polynomial/polynomial_modn_dense_ntl.pyx
+--- a/src/sage/rings/polynomial/polynomial_modn_dense_ntl.pyx
++++ b/src/sage/rings/polynomial/polynomial_modn_dense_ntl.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ # distutils: libraries = NTL_LIBRARIES gmp
+diff --git a/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py b/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py
+--- a/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py
++++ b/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.hecke_algebras
+ r"""
+diff --git a/src/sage/manifolds/differentiable/degenerate_submanifold.py b/src/sage/manifolds/differentiable/degenerate_submanifold.py
+--- a/src/sage/manifolds/differentiable/degenerate_submanifold.py
++++ b/src/sage/manifolds/differentiable/degenerate_submanifold.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/rings/ideal.py b/src/sage/rings/ideal.py
+--- a/src/sage/rings/ideal.py
++++ b/src/sage/rings/ideal.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.polynomial.plural sage.libs.singular
+ r"""

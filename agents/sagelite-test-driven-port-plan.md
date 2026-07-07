@@ -36349,6 +36349,60 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty; `skips-by-reason.sql` groups the remaining three skips
 under the existing `long time` metadata.
 
+Follow-up 371-to-390 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 17 uncovered files in the 371-to-390 band:
+`sage/modular/arithgroup/arithgroup_perm.py`, `sage/combinat/e_one_star.py`,
+`sage/doctest/sources.py`, `sage/rings/fraction_field_FpT.pyx`,
+`sage/combinat/sf/macdonald.py`,
+`sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field.py`,
+`sage/algebras/fusion_rings/f_matrix.py`,
+`sage/manifolds/differentiable/diff_form.py`,
+`sage/manifolds/differentiable/pseudo_riemannian_submanifold.py`,
+`sage/doctest/parsing.py`, `sage/interfaces/qepcad.py`,
+`sage/modular/modform_hecketriangle/readme.py`,
+`sage/rings/polynomial/polynomial_modn_dense_ntl.pyx`,
+`sage/algebras/hecke_algebras/cubic_hecke_algebra.py`,
+`sage/combinat/crystals/letters.pyx`,
+`sage/manifolds/differentiable/degenerate_submanifold.py`, and
+`sage/rings/ideal.py`.
+
+The first direct probe against the stale build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-371-390/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 570 passed, 2252 failed, 2356 skipped
+```
+
+Five files were already skipped-only under existing metadata. The runnable
+failures were broad dependency frontiers rather than promotion candidates:
+doctest harness internals, FLINT/NTL finite-field and polynomial backends,
+hyperelliptic finite-field construction, manifolds plus symbolic support,
+Qepcad subprocess integration, fusion-ring and cubic-Hecke stacks, and an
+ideal-construction timeout through stripped polynomial backends. The WASI
+source patch now records file-level dependency metadata for those 12 failing
+files.
+
+Focused validation applied the full WASI source patch to a clean
+`/home/user/sagelite` HEAD archive, then reran the tagged files and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-371-390/tagged-only.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 4432 skipped
+```
+
+The full 17-file patched-source band also writes
+`.tmp/current-run/scheduled-2026-07-07-goal-371-390/final.sqlite3` with
+6,326 skipped blocks, no block-level failures, and no file-level errors.
+The strict promotion scan over the fresh database prints no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`c76c3e70acb027ebdc9c65fa0d0cf492ad67143e`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
