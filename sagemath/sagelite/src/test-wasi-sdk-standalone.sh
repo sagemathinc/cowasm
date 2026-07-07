@@ -3651,6 +3651,37 @@ if [ "$doctest_source_frontier_empty_glob_status" -eq 0 ] || \
   printf '%s\n' "$doctest_source_frontier_empty_glob" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier empty required database glob guard did not fire."
 fi
+cat >"$doctest_candidate_helper_source_root/src/sage/example/module_skipped_frontier.py" <<'PY'
+# sage.doctest: needs sage.groups
+r"""
+    sage: 6 + 6
+    12
+"""
+PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/inline_skipped_frontier.py" <<'PY'
+r"""
+    sage: 7 + 7  # needs sage.groups
+    14
+"""
+PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/directive_skipped_frontier.py" <<'PY'
+r"""
+    sage: # needs sage.groups
+    sage: 8 + 8
+    16
+"""
+PY
+doctest_source_frontier_runnable_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database-glob "$probe_dir/sagelite-doctest-candidate-helper.sqlite3" \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_runnable_paths" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_runnable_paths" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --min-runnable-prompts did not filter skipped-only prompt files."
+fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
   --quiet-invalid \

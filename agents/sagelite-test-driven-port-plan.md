@@ -39042,6 +39042,28 @@ Future direct probes should either run from
 `sagemath/sagelite/build/wasi-sdk` or pass source-file paths that resolve
 against that tree.
 
+Follow-up runnable-frontier filter pass on 2026-07-07: no corpus entry was
+promoted, but the next source-frontier scan can now avoid a repeated
+skipped-only probe pattern. Focused `sage -t` samples of
+`sage/categories/groupoid.py`, `sage/categories/g_sets.py`,
+`sage/combinat/species/misc.py`,
+`sage/combinat/rigged_configurations/bij_type_A.py`,
+`sage/categories/lie_conformal_algebras_with_basis.py`, and
+`sage/libs/gap/context_managers.py` all produced zero passed blocks and only
+default browser-profile skips from module-level or inline `# needs` tags.
+
+The `doctest-source-frontier.py` helper now accepts
+`--min-runnable-prompts`, which filters rows by prompt lines not covered by
+common default-skip directives such as `# needs`, `# optional`,
+`# long time`, `# known bug`, `# not implemented`, and `# not tested`. The
+default raw `prompt_count` output is unchanged, so existing exhausted-frontier
+guards keep their current behavior unless the scheduled run opts into the
+runnable filter. Focused validation used `python3 -m py_compile`, `bash -n`,
+the standalone smoke fixture's synthetic skipped-frontier cases, and a live
+patched-source check confirming the new filter removes the skipped-only
+`groupoid.py`, `g_sets.py`, and `species/misc.py` rows that the raw prompt
+scan still reports.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

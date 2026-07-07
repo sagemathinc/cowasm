@@ -22,6 +22,17 @@ SAGE_PATH_RE = re.compile(
     r"(?![A-Za-z0-9_./+-])"
 )
 SAGE_PROMPT_RE = re.compile(r"^\s*sage:")
+FILE_SKIP_DIRECTIVE_RE = re.compile(
+    r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
+)
+PROMPT_SKIP_DIRECTIVE_RE = re.compile(
+    r"#\s*"
+    r"(?:needs\b|optional\b|long time\b|known bug\b|not implemented\b|not tested\b)"
+)
+STANDALONE_SKIP_DIRECTIVE_RE = re.compile(
+    r"^\s*sage:\s*#\s*"
+    r"(?:needs\b|optional\b|long time\b|known bug\b|not implemented\b|not tested\b)"
+)
 
 
 @dataclass(frozen=True)
@@ -123,6 +134,15 @@ def parse_args() -> argparse.Namespace:
         help="maximum number of sage: prompt lines to report",
     )
     parser.add_argument(
+        "--min-runnable-prompts",
+        type=int,
+        default=0,
+        help=(
+            "minimum number of prompt lines not covered by common default-skip "
+            "directives such as # needs, # optional, # long time, or # known bug"
+        ),
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         help="maximum number of rows to print",
@@ -164,6 +184,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-prompts must be positive")
     if args.max_prompts is not None and args.max_prompts < args.min_prompts:
         parser.error("--max-prompts must be at least --min-prompts")
+    if args.min_runnable_prompts < 0:
+        parser.error("--min-runnable-prompts must not be negative")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
     if args.quiet_invalid_databases and not args.ignore_invalid_databases:
@@ -299,19 +321,60 @@ def iter_source_files(source_root: Path, extensions: tuple[str, ...]) -> list[Pa
     )
 
 
-def count_sage_prompts(path: Path) -> int:
+def count_sage_prompts(path: Path) -> tuple[int, int]:
     prompts = 0
+    runnable_prompts = 0
+    file_skip_directive = False
+    active_skip_directive = False
     try:
         with path.open(encoding="utf-8") as handle:
             for line in handle:
-                if SAGE_PROMPT_RE.match(line):
-                    prompts += 1
+                (
+                    prompt_counted,
+                    runnable_counted,
+                    file_skip_directive,
+                    active_skip_directive,
+                ) = count_line_prompts(line, file_skip_directive, active_skip_directive)
+                prompts += prompt_counted
+                runnable_prompts += runnable_counted
     except UnicodeDecodeError:
+        prompts = 0
+        runnable_prompts = 0
+        file_skip_directive = False
+        active_skip_directive = False
         with path.open(encoding="latin-1") as handle:
             for line in handle:
-                if SAGE_PROMPT_RE.match(line):
-                    prompts += 1
-    return prompts
+                (
+                    prompt_counted,
+                    runnable_counted,
+                    file_skip_directive,
+                    active_skip_directive,
+                ) = count_line_prompts(line, file_skip_directive, active_skip_directive)
+                prompts += prompt_counted
+                runnable_prompts += runnable_counted
+    return prompts, runnable_prompts
+
+
+def count_line_prompts(
+    line: str,
+    file_skip_directive: bool,
+    active_skip_directive: bool,
+) -> tuple[int, int, bool, bool]:
+    if FILE_SKIP_DIRECTIVE_RE.search(line):
+        file_skip_directive = True
+    if not line.strip():
+        active_skip_directive = False
+
+    if not SAGE_PROMPT_RE.match(line):
+        return 0, 0, file_skip_directive, active_skip_directive
+
+    prompt_skip_directive = bool(PROMPT_SKIP_DIRECTIVE_RE.search(line))
+    standalone_skip_directive = bool(STANDALONE_SKIP_DIRECTIVE_RE.match(line))
+    runnable = not (
+        file_skip_directive or active_skip_directive or prompt_skip_directive
+    )
+    active_skip_directive = active_skip_directive or standalone_skip_directive
+    return 1, int(runnable), file_skip_directive, active_skip_directive
 
 
 def is_excluded_path(
@@ -368,10 +431,12 @@ def main() -> int:
         if relative_path in audited:
             continue
 
-        prompt_count = count_sage_prompts(source_path)
+        prompt_count, runnable_prompt_count = count_sage_prompts(source_path)
         if prompt_count < args.min_prompts:
             continue
         if args.max_prompts is not None and prompt_count > args.max_prompts:
+            continue
+        if runnable_prompt_count < args.min_runnable_prompts:
             continue
         rows.append((prompt_count, relative_path))
 
