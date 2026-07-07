@@ -37287,6 +37287,61 @@ sage -t failed: 3287 passed, 4513 failed, 1424 skipped
   91` and `--dedupe-paths` printed no uncovered clean runnable candidate.
   The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 731-to-750 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree selected the next high-count band below the just-audited largest
+frontier:
+`sage/modules/free_module_element.pyx`,
+`sage/schemes/elliptic_curves/ell_point.py`,
+`sage/combinat/diagram_algebras.py`,
+`sage/schemes/elliptic_curves/heegner.py`,
+`sage/rings/asymptotic/term_monoid.py`, `sage/rings/real_mpfr.pyx`,
+`sage/manifolds/differentiable/tensorfield.py`,
+`sage/rings/polynomial/multi_polynomial_ideal.py`,
+`sage/groups/perm_gps/permgroup.py`,
+`sage/rings/lazy_series_ring.py`, `sage/matroids/matroid.pyx`,
+`sage/tensor/modules/comp.py`,
+`sage/schemes/elliptic_curves/ell_curve_isogeny.py`,
+`sage/rings/real_mpfi.pyx`, `sage/rings/asymptotic/growth_group.py`,
+`sage/sandpiles/sandpile.py`, `sage/matrix/matrix0.pyx`,
+`sage/combinat/k_tableau.py`, `sage/libs/pari/tests.py`, and
+`sage/schemes/elliptic_curves/ell_rational_field.py`.
+
+The one-worker probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-731-750-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 3109 passed, 5839 failed, 1134 skipped
+```
+
+The runner printed the SQLite summary and then the host Node process reported
+a post-summary segmentation fault. The database is intact and records runner
+version 91, node profile, CoWasm commit
+`ebe95189ae0067f572ded3e6020adc43f927ef48`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 10,076 block rows.
+
+Four files were skipped-only under existing browser-profile metadata:
+`diagram_algebras.py`, `heegner.py`, `multi_polynomial_ideal.py`, and
+`k_tableau.py`. The remaining files are broad dependency/runtime frontiers
+rather than quiet promotion candidates. The file-level errors are
+`free_module_element.pyx` matrix action table-index trap,
+`ell_point.py` PARI/cypari2 memory trap during number-field setup,
+`lazy_series_ring.py` timeout in a rational-function lazy-series constructor,
+`growth_group.py` signature mismatch while constructing a cyclotomic
+growth-group example, `matrix0.pyx` recursive polynomial construction stack
+overflow after a quadratic-field setup, and `ell_rational_field.py` timeout
+in `integral_short_weierstrass_model`.
+
+The block-failure classes are dominated by broad missing-setup and dependency
+frontiers: 4,321 `NameError`, 582 `NotImplementedError`, 307
+`ModuleNotFoundError`, 256 `output_mismatch`, 245 `TypeError`, and 101
+`AttributeError` rows, plus smaller import/value/PARI clusters. The strict
+promotion scan with `--strict-frontier`, `--min-runner-version 91`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
