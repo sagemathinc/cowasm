@@ -36018,6 +36018,49 @@ The latest run metadata records CoWasm commit
 90. Validation also ran full-patch application against the clean archived
 Sagelite source copy.
 
+Follow-up 343-to-345 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 343-to-345 band:
+`sage/geometry/polyhedron/representation.py`,
+`sage/rings/function_field/function_field.py`, and
+`sage/manifolds/differentiable/manifold_homset.py`. The initial direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-343-345/prompt-343-345/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 15 passed, 665 failed, 8 skipped
+```
+
+The failures were dependency-frontier cascades rather than clean promotion
+candidates. `representation.py` was dominated by missing `Polyhedron` and
+`polytopes` startup names, matching the existing polyhedron/PPL/graph boundary;
+`function_field.py` hit the NTL side-module import/link boundary at its first
+finite-field function-field example; and `manifold_homset.py` cascaded from
+the unavailable manifold/symbolic startup surface. The WASI source patch now
+records file-level dependency metadata for those three files.
+
+Focused direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-343-345/prompt-343-345/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1030 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`1a851bd1c15f20b8fd7d781b6b554a81a6df5abd`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+full-patch application against a clean `/home/user/sagelite` HEAD archive.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
