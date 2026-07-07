@@ -38447,6 +38447,78 @@ runnable candidate. Future scheduled runs should avoid repeating this
 67-to-53 prompt-count dependency-boundary slice unless default-profile
 dependency policy changes.
 
+Follow-up 65-to-43 prompt-count dependency-boundary audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree filtered against both
+corpus entries and files already mentioned in this plan. After correcting the
+local path matcher to recognize `.pyx` before `.py`, the next 40 unrecorded
+`src/sage` files ranged from 65 down to 43 prompt markers:
+`sage/graphs/generators/chessboard.py`,
+`sage/geometry/polyhedron/combinatorial_polyhedron/polyhedron_face_lattice.pyx`,
+`sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_ideal.py`,
+`sage/matroids/extension.pyx`,
+`sage/geometry/polyhedron/backend_cdd_rdf.py`,
+`sage/tests/books/judson_abstract_algebra/groups-sage.py`,
+`sage/combinat/sf/homogeneous.py`, `sage/graphs/genus.pyx`,
+`sage/modular/local_comp/liftings.py`,
+`sage/rings/function_field/valuation_ring.py`,
+`sage/crypto/public_key/key_exchange/sidh.py`,
+`sage/modular/abvar/abvar_ambient_jacobian.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py`,
+`sage/algebras/fusion_rings/fast_parallel_fmats_methods.pyx`,
+`sage/coding/guruswami_sudan/interpolation.py`,
+`sage/combinat/crystals/polyhedral_realization.py`,
+`sage/combinat/rigged_configurations/bij_infinity.py`,
+`sage/schemes/hyperelliptic_curves/hyperelliptic_g2.py`,
+`sage/symbolic/operators.py`, `sage/libs/eclib/homspace.pyx`,
+`sage/rings/polynomial/pbori/cnf.py`, `sage/coding/golay_code.py`,
+`sage/dynamics/complex_dynamics/mandel_julia_helper.pyx`,
+`sage/graphs/chrompoly.pyx`, `sage/libs/singular/standard_options.py`,
+`sage/modular/modform/ambient_eps.py`,
+`sage/modular/abvar/torsion_point.py`,
+`sage/modular/modform/numerical.py`,
+`sage/rings/function_field/drinfeld_modules/action.py`,
+`sage/parallel/use_fork.py`, `sage/rings/function_field/extensions.py`,
+`sage/coding/kasami_codes.pyx`, `sage/libs/eclib/mat.pyx`,
+`sage/modules/vector_numpy_dense.pyx`,
+`sage/repl/ipython_kernel/interact.py`,
+`sage/geometry/polyhedron/modules/formal_polyhedra_module.py`,
+`sage/homology/algebraic_topological_model.py`,
+`sage/rings/finite_rings/hom_finite_field_givaro.pyx`,
+`sage/algebras/rational_cherednik_algebra.py`, and
+`sage/coding/self_dual_codes.py`.
+
+Two one-worker direct probes with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-65-frontier/batch.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-07-goal-49-frontier/batch.sqlite3`.
+The first run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 19 skipped
+```
+
+The second run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+Both databases record runner version 91, node profile, CoWasm commit
+`def12af8a6dc66d1f070786b317ff8cb95738293`, and about 126 and 127 seconds
+of elapsed time. The first coverage shape was 19 skipped-only files plus one
+zero-block Judson exercise helper; the second coverage shape was 20
+skipped-only files. The skip tags cover graphs, polyhedra/PPL, finite
+dimensional algebras, matroids, combinat/modules, elliptic curves/eclib,
+modular abvars/forms, PARI, finite rings/function fields, schemes, symbolic
+support, fusion rings, coding backends, plot, Singular, subprocess/alarm,
+NumPy, IPython, FLINT, NTL, and BRiAl boundaries. The saved block- and
+file-failure queries are empty for both databases, and the strict promotion
+scan over both dashboards with `--strict-frontier`, `--min-runner-version 91`,
+and `--dedupe-paths` printed no uncovered clean runnable candidate. Future
+scheduled runs should avoid repeating this 65-to-43 prompt-count slice unless
+default-profile dependency policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
