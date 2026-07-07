@@ -33610,6 +33610,48 @@ sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 181-to-183 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected ten uncovered files in the 181-to-183 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-181-183/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 183 passed, 732 failed, 701 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates.
+Three files were already skipped-only under existing dependency metadata:
+`sage/groups/raag.py`, `sage/modular/pollack_stevens/space.py`, and
+`sage/modules/fp_graded/free_module.py`. The remaining failures were broad
+browser-profile boundaries rather than narrow corpus-promotion targets:
+`sage/categories/fields.py` reaches the known NTL finite-field dynamic-link
+frontier, mapped valuations need function-field/number-field/PARI surfaces,
+Lie algebra representation and affine Lie algebra examples need the broader
+Lie-algebra, graph, and finite-ring backends, the generic SDP backend is not
+installed in the stripped numeric profile, Orlik-Terao examples need matroid,
+graph, and GAP-backed surfaces, and the real-line manifold example needs the
+manifold/symbolic stack.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-181-183/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1787 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

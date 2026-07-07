@@ -16889,3 +16889,45 @@ diff --git a/src/sage/rings/padics/witt_vector.py b/src/sage/rings/padics/witt_v
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
  r"""
+diff --git a/src/sage/categories/fields.py b/src/sage/categories/fields.py
+--- a/src/sage/categories/fields.py
++++ b/src/sage/categories/fields.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.finite_rings sage.libs.ntl
+ r"""
+diff --git a/src/sage/rings/valuation/mapped_valuation.py b/src/sage/rings/valuation/mapped_valuation.py
+--- a/src/sage/rings/valuation/mapped_valuation.py
++++ b/src/sage/rings/valuation/mapped_valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/representation.py b/src/sage/algebras/lie_algebras/representation.py
+--- a/src/sage/algebras/lie_algebras/representation.py
++++ b/src/sage/algebras/lie_algebras/representation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.rings.finite_rings
+ r"""
+diff --git a/src/sage/numerical/backends/generic_sdp_backend.pyx b/src/sage/numerical/backends/generic_sdp_backend.pyx
+--- a/src/sage/numerical/backends/generic_sdp_backend.pyx
++++ b/src/sage/numerical/backends/generic_sdp_backend.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/affine_lie_algebra.py b/src/sage/algebras/lie_algebras/affine_lie_algebra.py
+--- a/src/sage/algebras/lie_algebras/affine_lie_algebra.py
++++ b/src/sage/algebras/lie_algebras/affine_lie_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+ """
+diff --git a/src/sage/algebras/orlik_terao.py b/src/sage/algebras/orlik_terao.py
+--- a/src/sage/algebras/orlik_terao.py
++++ b/src/sage/algebras/orlik_terao.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs sage.libs.gap
+ r"""
+diff --git a/src/sage/manifolds/differentiable/examples/real_line.py b/src/sage/manifolds/differentiable/examples/real_line.py
+--- a/src/sage/manifolds/differentiable/examples/real_line.py
++++ b/src/sage/manifolds/differentiable/examples/real_line.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
