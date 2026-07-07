@@ -93,6 +93,14 @@ def parse_args() -> argparse.Namespace:
         help="with --ignore-invalid-databases, suppress skipped-database warnings",
     )
     parser.add_argument(
+        "--require-subtraction-database",
+        action="store_true",
+        help=(
+            "fail if --subtract-database and --subtract-database-glob resolve "
+            "no valid SQLite subtraction databases"
+        ),
+    )
+    parser.add_argument(
         "--extension",
         action="append",
         default=[],
@@ -315,8 +323,15 @@ def main() -> int:
     source_root = args.source_root.resolve()
     covered = read_corpus(args.corpus, source_root)
     mentioned = read_mentioned(args.mentioned_file)
+    subtraction_databases = database_paths(args)
+    if args.require_subtraction_database and not subtraction_databases:
+        print(
+            "error: no Sagelite doctest databases matched subtraction inputs",
+            file=sys.stderr,
+        )
+        return 2
     database_scan = read_database_paths(
-        database_paths(args),
+        subtraction_databases,
         source_root,
         args.ignore_invalid_databases,
         args.quiet_invalid_databases,

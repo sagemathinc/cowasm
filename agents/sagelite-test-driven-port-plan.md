@@ -38910,6 +38910,23 @@ glob and the quiet invalid-database flags. Both printed only the
 source-minus-corpus prompt frontier remains exhausted after CoWasm commit
 `2582a2cc8f607afba955bfd69bc5d1dfb660c87b`.
 
+Follow-up source-frontier required-database guard pass on 2026-07-07: no
+corpus entry was added, but scheduled frontier scans can now fail loudly when
+a subtraction database glob stops matching persisted SQLite breadcrumbs. The
+`doctest-source-frontier.py` helper accepts `--require-subtraction-database`,
+which exits with status 2 if the `--subtract-database` and
+`--subtract-database-glob` inputs resolve no databases. The make wrapper
+exposes this through `SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE=1`.
+
+Focused validation used `python3 -m py_compile` for the helper, `bash -n` for
+the standalone smoke script, a direct empty-glob helper check, a live make
+wrapper run with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='../../.tmp/**/*.sqlite3'`,
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE=1`, quiet invalid-database
+flags, and `--include-header`, plus a live make wrapper empty-glob failure
+check. The current persisted local frontier still prints only the
+`path	prompt_count` header when valid scratch databases are required.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
