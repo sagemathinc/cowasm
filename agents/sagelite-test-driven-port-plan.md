@@ -4597,6 +4597,44 @@ should avoid repeating these exact 133-to-170, `partn_ref`, and compact plot
 batches unless the symbolic, graph, NTL dynamic-link, or display-backend
 profile changes.
 
+Follow-up scheduled frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,085 non-comment entries. Fresh focused probes wrote SQLite dashboards
+under `.tmp/current-run/scheduled-2026-07-07-goal/` and used absolute
+patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
+The low-prompt database/modular-symbol/refinement probe in
+`probe1/low-prompt.sqlite3` recorded only skipped blocks:
+`0 passed, 0 failed, 97 skipped`. It covered small database helpers,
+`modsym/hecke_operator.py`, `modsym/ghlist.py`, `modsym/relation_matrix.py`,
+and `partn_ref/double_coset.pyx`. The parent Node process segfaulted after
+printing the successful summary, so the run remains useful as skipped-only
+frontier evidence but not as corpus-growth data.
+
+The follow-up `probe2/modsym-partn.sqlite3`,
+`probe3/double-matrix-vector.sqlite3`, and
+`probe4/utility-helpers.sqlite3` dashboards were also skipped-only. Together
+they covered the next compact modular-symbol and partition-refinement helpers,
+dense double matrix/vector helpers, `misc/sphinxify.py`, `misc/profiler.py`,
+small coding/quadratic-form helpers, `factorint_flint.pyx`, and
+`qqbar_decorators.py`.
+
+A direct current-source rerun of the already-covered `sage/misc/persist.pyx`
+now records `122 passed, 0 failed, 29 skipped`, confirming that the earlier
+failure cluster has been cleared in the checked corpus. The module helper
+probe in `probe5/modules.sqlite3` recorded skipped-only coverage for
+`module_functors.py`, `submodule_helper.py`, and `free_module_integer.py`;
+`matrix_morphism.py` still hits the known matrix `echelonize` WASM signature
+mismatch in `MatrixMorphism_abstract.inverse`.
+
+Future scheduled runs should avoid repeating these exact compact database,
+modular-symbol, partition-refinement, dense double matrix/vector, utility,
+quadratic-form, and module-helper slices unless the default-profile skip
+policy or the matrix `echelonize` runtime boundary changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
