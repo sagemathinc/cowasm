@@ -38519,6 +38519,65 @@ and `--dedupe-paths` printed no uncovered clean runnable candidate. Future
 scheduled runs should avoid repeating this 65-to-43 prompt-count slice unless
 default-profile dependency policy changes.
 
+Follow-up 67-to-36 prompt-count dependency-boundary audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree filtered against both
+corpus entries and files already mentioned in this plan found 190 unmentioned
+files with Sage prompts. The next 40 unrecorded `src/sage` files ranged from
+67 down to 41 prompt markers:
+`sage/rings/finite_rings/homset.py`, `sage/rings/padics/morphism.pyx`,
+`sage/modular/modform/constructor.py`, `sage/manifolds/family.py`,
+`sage/schemes/elliptic_curves/homset.py`,
+`sage/geometry/hyperplane_arrangement/plot.py`, `sage/manifolds/catalog.py`,
+`sage/combinat/sf/symplectic.py`, `sage/combinat/sf/orthogonal.py`,
+`sage/modular/modsym/subspace.py`, `sage/schemes/curves/constructor.py`,
+`sage/combinat/sf/elementary.py`, `sage/symbolic/integration/external.py`,
+`sage/schemes/jacobians/abstract_jacobian.py`,
+`sage/combinat/designs/evenly_distributed_sets.pyx`,
+`sage/rings/padics/padic_ext_element.pyx`,
+`sage/rings/finite_rings/finite_field_prime_modn.py`,
+`sage/quadratic_forms/qfsolve.py`, `sage/modular/hecke/element.py`,
+`sage/lfunctions/lcalc.py`, `sage/coding/parity_check_code.py`,
+`sage/rings/function_field/order.py`, `sage/rings/number_field/morphism.py`,
+`sage/modular/modsym/element.py`, `sage/groups/perm_gps/constructor.py`,
+`sage/combinat/designs/latin_squares.py`,
+`sage/schemes/hyperelliptic_curves/kummer_surface.py`,
+`sage/rings/finite_rings/finite_field_pari_ffelt.py`,
+`sage/modular/modform/eis_series.py`, `sage/graphs/weakly_chordal.pyx`,
+`sage/combinat/species/partition_species.py`,
+`sage/tests/books/judson_abstract_algebra/homomorph-sage.py`,
+`sage/schemes/elliptic_curves/ell_wp.py`,
+`sage/modular/arithgroup/congroup_gamma.py`, `sage/libs/pari/__init__.py`,
+`sage/combinat/species/permutation_species.py`,
+`sage/topology/simplicial_complex_homset.py`,
+`sage/schemes/toric/sheaf/constructor.py`,
+`sage/schemes/affine/affine_rational_point.py`, and
+`sage/rings/number_field/small_primes_of_degree_one.py`.
+
+A one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-67-to-36-frontier/batch.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 39 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`5d6b09bdac99417565ad772f6c1129e650a3bb8e`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 250 seconds of elapsed
+time. Thirty-nine files were skipped-only under existing browser-profile
+dependency metadata, and the Judson homomorphism exercise helper extracted
+zero default-profile blocks. The skip tags cover combinat/modules, FLINT,
+PARI, schemes, graphs, finite rings, elliptic curves, symbolic support,
+polyhedra, groups, NTL, Singular, manifolds, integer dense matrices, function
+fields, number fields, padics, real fields, Matplotlib, and subprocess
+boundaries. The saved block- and file-failure queries are empty, and the
+strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
+and `--dedupe-paths` printed no uncovered clean runnable candidate. Future
+scheduled runs should avoid repeating this 67-to-36 prompt-count slice unless
+default-profile dependency policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
