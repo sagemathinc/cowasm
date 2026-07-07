@@ -4729,6 +4729,51 @@ compact modular, and compact polynomial slices unless the default-profile
 skip policy or the Singular/Groebner, PARI, FLINT, NTL, finite-ring, or
 integer-matrix backend profile changes.
 
+Follow-up 811-to-830 source-minus-corpus frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1093 non-comment entries. A fresh direct probe used absolute patched-source
+paths under `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-next-811-830/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t failed: 1 passed, 126 failed, 18 skipped
+```
+
+The latest-run summary records CoWasm commit
+`1302099ec0d6110fac2235649d4d2f124b396671`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+and about 123 seconds of elapsed time. The parent Node process segfaulted
+after printing the failed summary, but the SQLite dashboard was written.
+
+Coverage shape was 18 skipped-only files, one file-level error, and one
+block-failing file. The skipped-only files were already classified by existing
+browser-profile dependency metadata for PARI, FLINT, NTL, Singular, PPL,
+polybori/BRiAl, graph/quiver/module, pexpect/external-interface,
+finite-ring, matrix, schemes, and NumPy/HMM boundaries.
+
+The file-level error was
+`sage/topology/simplicial_set_examples.py`, whose worker exited with
+`SIGSEGV`. The broad block-failure file was
+`sage/matroids/chow_ring_ideal.py`, with 1 passing block and 125 failed
+blocks. The failures are not a narrow corpus-promotion target: they begin
+with missing `matroids`/`Matroid` startup names and dependent `ch`/`M1`
+fallout, but also include number-field element attribute failures and
+TestSuite output mismatches in Chow-ring ideal normal-basis and Groebner
+paths.
+
+`doctest-corpus-candidates.py --strict-frontier` prints no uncovered clean
+runnable rows for this dashboard. Future scheduled runs should avoid
+repeating this exact 811-to-830 slice unless the topology worker crash,
+matroid startup surface, number-field element model, or Chow-ring/Groebner
+backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
