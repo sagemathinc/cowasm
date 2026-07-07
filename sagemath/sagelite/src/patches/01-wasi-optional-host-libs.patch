@@ -66,6 +66,12 @@ diff --git a/src/sage/manifolds/differentiable/vectorfield.py b/src/sage/manifol
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/differentiable/vectorframe.py b/src/sage/manifolds/differentiable/vectorframe.py
+--- a/src/sage/manifolds/differentiable/vectorframe.py
++++ b/src/sage/manifolds/differentiable/vectorframe.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
 diff --git a/src/sage/numerical/backends/interactivelp_backend.pyx b/src/sage/numerical/backends/interactivelp_backend.pyx
 --- a/src/sage/numerical/backends/interactivelp_backend.pyx
 +++ b/src/sage/numerical/backends/interactivelp_backend.pyx
@@ -2332,6 +2338,12 @@ diff -urN a/src/sage/rings/polynomial/meson.build b/src/sage/rings/polynomial/me
 -
 +
  endforeach
+diff --git a/src/sage/rings/polynomial/multi_polynomial_sequence.py b/src/sage/rings/polynomial/multi_polynomial_sequence.py
+--- a/src/sage/rings/polynomial/multi_polynomial_sequence.py
++++ b/src/sage/rings/polynomial/multi_polynomial_sequence.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural sage.rings.number_field pexpect
+ r"""
 diff -urN a/src/sage/meson.build b/src/sage/meson.build
 --- a/src/sage/meson.build
 +++ b/src/sage/meson.build
