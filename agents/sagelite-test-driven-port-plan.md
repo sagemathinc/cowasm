@@ -38662,6 +38662,86 @@ no uncovered clean runnable candidate. Future scheduled runs should avoid
 repeating this 41-to-31 prompt-count slice unless the default-profile
 dependency policy changes.
 
+Follow-up 31-to-21 prompt-count frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree filtered against both
+corpus entries and files already mentioned in this plan found 110 unmentioned
+files with Sage prompts. The next 40 unrecorded `src/sage` files ranged from
+31 down to 21 prompt markers:
+`sage/plot/hyperbolic_arc.py`,
+`sage/rings/finite_rings/maps_finite_field.py`,
+`sage/geometry/riemannian_manifolds/surface3d_generators.py`,
+`sage/combinat/rigged_configurations/bij_type_D_twisted.py`,
+`sage/crypto/lfsr.py`, `sage/graphs/graph_decompositions/rankwidth.pyx`,
+`sage/manifolds/subsets/closure.py`,
+`sage/modular/arithgroup/congroup_sl2z.py`,
+`sage/modular/modsym/relation_matrix.py`,
+`sage/plot/plot3d/revolution_plot3d.py`,
+`sage/repl/ipython_tests.py`,
+`sage/schemes/plane_conics/con_finite_field.py`,
+`sage/tests/books/judson_abstract_algebra/domains-sage.py`,
+`sage/combinat/rigged_configurations/bij_type_C.py`,
+`sage/combinat/sf/classical.py`,
+`sage/manifolds/vector_bundle_fiber_element.py`,
+`sage/modules/vector_symbolic_dense.py`,
+`sage/modules/vector_symbolic_sparse.py`,
+`sage/categories/regular_supercrystals.py`,
+`sage/combinat/crystals/crystals.py`,
+`sage/modular/modform/vm_basis.py`, `sage/symbolic/benchmark.py`,
+`sage/graphs/generators/world_map.py`,
+`sage/schemes/curves/weighted_projective_curve.py`,
+`sage/schemes/hyperelliptic_curves/constructor.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_interface.py`,
+`sage/graphs/generators/degree_sequence.py`,
+`sage/modular/modform/ambient_g1.py`,
+`sage/combinat/designs/resolvable_bibd.py`,
+`sage/combinat/posets/d_complete.py`,
+`sage/numerical/backends/glpk_exact_backend.pyx`,
+`sage/geometry/palp_normal_form.pyx`,
+`sage/rings/padics/qadic_flint_CR.pyx`,
+`sage/schemes/hyperelliptic_curves/mestre.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/sol/recequadiff_doctest.py`,
+`sage/libs/pari/convert_sage_complex_double.pyx`,
+`sage/modular/hecke/homspace.py`,
+`sage/rings/padics/qadic_flint_FP.pyx`, `sage/tests/parigp.py`,
+and `sage/combinat/posets/hasse_cython_flint.pyx`.
+
+The one-worker direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-31-frontier/batch.sqlite3` and
+printed a final summary before the wrapper exited with status 139:
+
+```text
+sage -t failed: 20 passed, 316 failed, 72 skipped
+```
+
+The persisted database records runner version 91, node profile, CoWasm commit
+`4fcdbb2b254af36d1db3af0299ed335fd0b60186`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 253 seconds of elapsed
+time. The file shape was 26 clean skipped-only or empty files, 13 block-failure
+files, and one file-level error recorded for
+`sage/rings/padics/qadic_flint_CR.pyx`. The block-failure clusters are broad
+startup/dependency frontiers: missing `graphs`, `surfaces`, `SL2Z`,
+`ModularForms`, manifold state such as `M`/`v`, symbolic-vector state, IPython,
+and modular/hyperelliptic/symbolic backends. The saved strict promotion scan
+with `--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths`
+printed no uncovered clean runnable candidate.
+
+The `qadic_flint_CR.pyx` file-level error is not a missing WASI source tag:
+both the patch and the current patched source tree already carry
+`# sage.doctest: needs sage.libs.flint` at the top of the file. A focused
+rerun wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-31-frontier/qadic-cr-focused.sqlite3`
+and recorded the expected skipped-only result:
+
+```text
+qadic_flint_CR.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+Future scheduled runs should avoid repeating this 31-to-21 prompt-count slice
+unless the default-profile dependency policy changes or the transient
+multi-file worker observation for `qadic_flint_CR.pyx` becomes reproducible.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
