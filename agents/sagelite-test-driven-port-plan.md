@@ -37006,6 +37006,46 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 631-to-650 prompt-frontier audit:
+
+The next raw source-minus-corpus prompt-count band, rows 631 through 650, was
+run as a focused one-worker probe with a 120-second per-file timeout. The band
+covers number-field, p-adic, toric, calculus, matroid, module, topology,
+IPython, SDP/CVXPY, external-interface, root-system, elliptic-curve, category,
+and textbook-doctest dependency frontiers:
+`sage/rings/number_field/unit_group.py`,
+`sage/rings/padics/witt_vector.py`,
+`sage/schemes/toric/toric_subscheme.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/float_doctest.py`,
+`sage/calculus/riemann.pyx`, `sage/matroids/transversal_matroid.pyx`,
+`sage/modules/filtered_vector_space.py`,
+`sage/modules/free_module_integer.py`, `sage/topology/delta_complex.py`,
+`sage/modules/fp_graded/free_module.py`, `sage/repl/ipython_extension.py`,
+`sage/categories/algebra_functor.py`,
+`sage/modular/pollack_stevens/fund_domain.py`,
+`sage/numerical/backends/cvxpy_backend.pyx`,
+`sage/stats/distributions/discrete_gaussian_lattice.py`,
+`sage/interfaces/mathematica.py`,
+`sage/combinat/root_system/reflection_group_element.pyx`,
+`sage/schemes/elliptic_curves/kraus.py`, `sage/categories/posets.py`, and
+`sage/tests/books/computational_mathematics_with_sagemath/mpoly_doctest.py`.
+
+The probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-631-650/batch.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3227 skipped
+```
+
+All 20 files are skipped-only under current browser-profile metadata. The
+saved block- and file-failure cluster queries are empty, and the strict
+promotion scan with `--strict-frontier`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,093 non-comment entries. The latest run metadata records
+CoWasm commit `2eb2fdb29fd073f806e55f76d8aa29279f6bc8d8`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
