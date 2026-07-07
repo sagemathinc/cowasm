@@ -38188,6 +38188,83 @@ compact category, misc/function, low-prompt interface/database, and
 data-structure slices unless the `g_sets.py` worker crash, the `stream.py`
 runtime cluster, or the default-profile skip policy changes.
 
+Follow-up current high-count dependency-boundary audit on 2026-07-07:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against both full paths and historical basename-only
+mentions in this plan. The next 40 unrecorded high-count files ranged from 86
+down to 68 prompt blocks:
+`sage/groups/perm_gps/permgroup_morphism.py`,
+`sage/modular/modform_hecketriangle/series_constructor.py`,
+`sage/combinat/rigged_configurations/rc_crystal.py`,
+`sage/combinat/sf/orthotriang.py`,
+`sage/modular/modform/cuspidal_submodule.py`, `sage/coding/bch_code.py`,
+`sage/coding/codecan/autgroup_can_label.pyx`,
+`sage/combinat/rigged_configurations/rigged_partition.pyx`,
+`sage/groups/matrix_gps/group_element_gap.pyx`,
+`sage/matrix/matrix_numpy_dense.pyx`,
+`sage/combinat/crystals/fast_crystals.py`,
+`sage/geometry/polyhedron/ppl_lattice_polygon.py`,
+`sage/interfaces/sage0.py`,
+`sage/numerical/linear_tensor_element.pyx`,
+`sage/combinat/rigged_configurations/bij_type_D.py`,
+`sage/groups/finitely_presented_named.py`,
+`sage/graphs/convexity_properties.pyx`, `sage/interfaces/lisp.py`,
+`sage/repl/ipython_kernel/widgets_sagenb.py`,
+`sage/schemes/elliptic_curves/formal_group.py`,
+`sage/modular/modform_hecketriangle/graded_ring.py`,
+`sage/algebras/schur_algebra.py`,
+`sage/categories/classical_crystals.py`,
+`sage/combinat/crystals/subcrystal.py`,
+`sage/combinat/rigged_configurations/tensor_product_kr_tableaux_element.py`,
+`sage/geometry/toric_lattice_element.pyx`,
+`sage/rings/ring_extension_conversion.pyx`,
+`sage/combinat/designs/gen_quadrangles_with_spread.pyx`,
+`sage/combinat/root_system/associahedron.py`,
+`sage/combinat/sf/monomial.py`,
+`sage/manifolds/vector_bundle_fiber.py`,
+`sage/graphs/generators/intersection.py`,
+`sage/modular/arithgroup/arithgroup_element.pyx`,
+`sage/coding/codecan/codecan.pyx`, `sage/knots/free_knotinfo_monoid.py`,
+`sage/stats/hmm/distributions.pyx`,
+`sage/combinat/cluster_algebra_quiver/mutation_class.py`,
+`sage/rings/function_field/element_polymod.pyx`,
+`sage/tests/books/judson_abstract_algebra/poly-sage.py`, and
+`sage/combinat/sf/kfpoly.py`.
+
+Two one-worker direct probes with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-next-current/batch.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-07-goal-next2-current/batch.sqlite3`.
+The first run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The second run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 19 skipped
+```
+
+Both databases record runner version 91, node profile, CoWasm commit
+`11dc29b505a7aa5c81a53078c2e4a74028935aa9`, and Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`. The two runs took about
+122 and 120 seconds respectively. Thirty-nine files were skipped at file scope
+by existing browser-profile metadata, and
+`sage/tests/books/judson_abstract_algebra/poly-sage.py` extracted zero
+default-profile blocks.
+
+The skip tags cover combinat/modules, GAP-backed groups, PARI-backed modular
+and coding functionality, IPython widgets, NumPy, pexpect interfaces, PPL and
+polyhedron, `sage.all` interface startup, graph, finite-ring, MIP,
+elliptic-curve/eclib/PARI, toric geometry, Symmetrica, manifolds, modular
+symbols, function fields, and related combinat/geometry boundaries. The saved
+block- and file-failure queries are empty for both databases, and the strict
+promotion scan over the two dashboards with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
