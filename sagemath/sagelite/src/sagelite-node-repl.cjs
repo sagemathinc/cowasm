@@ -988,7 +988,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.symmetric_group_algebra", ("SymmetricGroupAlgebra",)),
         ("sage.combinat.tableau", ("SemistandardTableau", "SemistandardTableaux", "StandardTableau", "StandardTableaux", "Tableau", "Tableaux")),
         ("sage.combinat.tableau_tuple", ("StandardTableauTuple", "StandardTableauTuples", "TableauTuples")),
-        ("sage.combinat.partition_tuple", ("PartitionTuples",)),
+        ("sage.combinat.partition_tuple", ("PartitionTuple", "PartitionTuples")),
         ("sage.combinat.subset", ("Subsets", "powerset", "subsets")),
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),

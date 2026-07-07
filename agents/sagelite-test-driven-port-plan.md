@@ -36321,6 +36321,34 @@ This could eventually support Magma, GAP, Singular, FriCAS, and similar
 interfaces in Node/Electron deployments, while browser builds skip or replace
 them.
 
+Focused quantum Fock-space corpus-growth pass:
+
+```text
+fock_space.py: 453 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/quantum_groups/fock_space.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,093
+non-comment entries. A fresh near-miss rerun first recorded 449 passed blocks
+and four dependent `NameError` failures because the upstream Fock-space
+doctest used `PartitionTuple(...)` from Sage's startup namespace without a
+local import.
+
+The doctest runner now seeds `PartitionTuple` beside `PartitionTuples` in the
+common doctest namespace, and the WASI `sage.all` patch exposes the same
+constructor for REPL parity on a fresh patched Sagelite source copy. Focused
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` after
+rebuilding and patching a fresh source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-07-padics/fock-space-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`be45bbf68ab1898166f4324fe1fb76e2e7699e13`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty; `skips-by-reason.sql` groups the remaining three skips
+under the existing `long time` metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

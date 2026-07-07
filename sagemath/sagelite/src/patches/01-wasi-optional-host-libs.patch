@@ -3289,7 +3289,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.subset import Subsets, powerset, subsets
 +    from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, StandardTableaux, Tableau, Tableaux
-+    from sage.combinat.partition_tuple import PartitionTuples
++    from sage.combinat.partition_tuple import PartitionTuple, PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
 +    from sage.combinat.words.alphabet import Alphabet

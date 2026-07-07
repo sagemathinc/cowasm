@@ -106,6 +106,7 @@ src/sage/algebras/octonion_algebra.pyx
 src/sage/algebras/quaternion_algebra.py
 src/sage/algebras/quantum_matrix_coordinate_algebra.py
 src/sage/algebras/quantum_oscillator.py
+src/sage/algebras/quantum_groups/fock_space.py
 src/sage/algebras/quantum_groups/q_numbers.py
 src/sage/algebras/shuffle_algebra.py
 src/sage/algebras/tensor_algebra.py
