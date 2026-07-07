@@ -35929,6 +35929,51 @@ non-comment entries. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 90.
 
+Follow-up 337-to-339 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree had no uncovered files in the 334-to-336 prompt band, then selected five
+uncovered files in the 337-to-339 band: `sage/interfaces/maxima_abstract.py`,
+`sage/categories/finite_posets.py`, `sage/combinat/fqsym.py`,
+`sage/combinat/recognizable_series.py`, and
+`sage/schemes/projective/projective_subscheme.py`. The initial direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-337-339/prompt-337-339/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 118 passed, 358 failed, 1183 skipped
+```
+
+`finite_posets.py`, `fqsym.py`, and `recognizable_series.py` were already
+skipped-only under existing browser-profile metadata. The two runnable-failing
+files were broad dependency frontiers rather than narrow promotion candidates:
+`maxima_abstract.py` cascaded from the unavailable Maxima/symbolic interface
+and subprocess-backed version checks, while `projective_subscheme.py` exposed
+schemes, symbolic, Singular/plural polynomial, and process-backed interface
+boundaries. The WASI source patch now records file-level dependency metadata
+for both files.
+
+Focused direct validation applied the full WASI source patch to a clean
+`/home/user/sagelite` HEAD archive, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-337-339/prompt-337-339/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1659 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`00dd1bd44cbe6b04601fcb1b9bbddd7661b05971`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `git diff --check` and full-patch application against
+the clean archived Sagelite source copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

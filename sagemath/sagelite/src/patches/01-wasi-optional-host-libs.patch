@@ -188,6 +188,12 @@ diff --git a/src/sage/interfaces/maxima.py b/src/sage/interfaces/maxima.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs maxima pexpect subprocess
  r"""
+diff --git a/src/sage/interfaces/maxima_abstract.py b/src/sage/interfaces/maxima_abstract.py
+--- a/src/sage/interfaces/maxima_abstract.py
++++ b/src/sage/interfaces/maxima_abstract.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs maxima pexpect subprocess sage.symbolic
+ r"""
 diff --git a/src/sage/interfaces/maple.py b/src/sage/interfaces/maple.py
 --- a/src/sage/interfaces/maple.py
 +++ b/src/sage/interfaces/maple.py
@@ -15419,6 +15425,12 @@ diff --git a/src/sage/schemes/projective/projective_rational_point.py b/src/sage
 +++ b/src/sage/schemes/projective/projective_rational_point.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
+ r"""
+diff --git a/src/sage/schemes/projective/projective_subscheme.py b/src/sage/schemes/projective/projective_subscheme.py
+--- a/src/sage/schemes/projective/projective_subscheme.py
++++ b/src/sage/schemes/projective/projective_subscheme.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular sage.symbolic pexpect
  r"""
 diff --git a/src/sage/symbolic/integration/external.py b/src/sage/symbolic/integration/external.py
 --- a/src/sage/symbolic/integration/external.py
