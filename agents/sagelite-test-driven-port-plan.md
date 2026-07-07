@@ -37995,6 +37995,55 @@ is empty, and the strict promotion scan with `--strict-frontier`,
 `--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate. The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 971-to-990 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/matroids/dual_matroid.py`,
+`sage/modular/arithgroup/congroup_gamma1.py`,
+`sage/rings/function_field/place_polymod.py`,
+`sage/schemes/affine/affine_point.py`, `sage/coding/extended_code.py`,
+`sage/manifolds/differentiable/tangent_space.py`,
+`sage/modular/arithgroup/congroup_gamma0.py`,
+`sage/schemes/projective/projective_homset.py`,
+`sage/symbolic/units.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/linalg_doctest.py`,
+`sage/manifolds/differentiable/mixed_form_algebra.py`,
+`sage/matrix/benchmark.py`, `sage/modular/hecke/ambient_module.py`,
+`sage/modular/pollack_stevens/padic_lseries.py`,
+`sage/modular/hecke/algebra.py`, `sage/modules/fp_graded/homspace.py`,
+`sage/symbolic/callable.py`,
+`sage/tests/books/judson_abstract_algebra/cyclic-sage.py`,
+`sage/algebras/fusion_rings/poly_tup_engine.pyx`, and
+`sage/combinat/cluster_algebra_quiver/mutation_type.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-971-990-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 19 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`c0237d784139bf83ebd82ca202e5354c7c8fb25f`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, 19 skipped block rows, and about
+122 seconds of elapsed time. The process exited cleanly after printing the
+summary. Nineteen files were skipped at file scope by existing
+browser-profile metadata, and
+`sage/tests/books/judson_abstract_algebra/cyclic-sage.py` extracted zero
+default-profile blocks.
+
+The skip tags cover matroids/graphs, PARI, function fields, schemes with the
+plural polynomial backend and cysignals alarm support, modules and finite
+rings, manifolds/symbolic, matrix multivariate polynomial support, FLINT,
+p-adics, combinat, fusion rings, and symbolic boundaries. The saved block- and
+file-failure queries are empty, and the strict promotion scan with
+`--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths` printed no
+uncovered clean runnable candidate. The checked corpus remains at 1,093
+non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
