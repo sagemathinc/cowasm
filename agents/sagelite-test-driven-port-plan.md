@@ -34743,6 +34743,54 @@ non-comment entries. Validation also ran `git diff --check` and the full WASI
 source patch against a fresh `/home/user/sagelite` archive with a
 workspace-local scratch directory.
 
+Follow-up 253-to-255 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected six uncovered files in the 253-to-255 prompt band:
+`sage/plot/colors.py`, `sage/tests/benchmark.py`,
+`sage/libs/coxeter3/coxeter.pyx`,
+`sage/rings/polynomial/ore_function_element.py`,
+`sage/rings/finite_rings/element_givaro.pyx`, and
+`sage/rings/padics/generic_nodes.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-253-255/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 336 passed, 112 failed, 819 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata:
+plot colors need `sage.plot`, benchmark coverage needs the symbolic/interface
+stack, and Coxeter bindings are optional `coxeter3` coverage. The remaining
+failures were broad dependency frontiers rather than narrow promotion targets:
+Ore function-field examples route through finite-field Frobenius inversion,
+function fields, PARI/cypari2 object paths, and plural-backed polynomial
+support; Givaro finite-field elements hit the known NTL
+`ZZ_pContext.restore` dynamic-link boundary; and generic p-adic node examples
+exercise relaxed/extension p-adic paths blocked by FLINT/NTL-backed polynomial
+support. The WASI source patch now records those boundaries with file-level
+`sage.rings.function_field`, `sage.rings.finite_rings`, `sage.libs.pari`,
+`sage.rings.polynomial.plural`, `sage.libs.ntl`, `sage.rings.padics`, and
+`sage.libs.flint` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-253-255/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1521 skipped
+```
+
+The latest-run summary records CoWasm commit
+`62a180c283ad0aef17dbb129026ab436d796df9b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all six files. The saved block- and file-failure
+cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,090
+non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
