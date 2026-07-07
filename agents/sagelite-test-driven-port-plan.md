@@ -4774,6 +4774,62 @@ repeating this exact 811-to-830 slice unless the topology worker crash,
 matroid startup surface, number-field element model, or Chow-ring/Groebner
 backend profile changes.
 
+Follow-up 831-to-850 source-minus-corpus frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1093 non-comment entries. A fresh prompt-count frontier scan filtered
+against files already named in this plan selected:
+`sage/tests/books/computational_mathematics_with_sagemath/graphtheory_doctest.py`,
+`sage/combinat/designs/designs_pyx.pyx`,
+`sage/dynamics/cellular_automata/solitons.py`,
+`sage/stats/hmm/hmm.pyx`, `sage/graphs/generic_graph_pyx.pyx`,
+`sage/algebras/fusion_rings/shm_managers.pyx`,
+`sage/geometry/polyhedron/face.py`, `sage/repl/interpreter.py`,
+`sage/manifolds/differentiable/multivector_module.py`,
+`sage/manifolds/topological_submanifold.py`,
+`sage/algebras/q_commuting_polynomials.py`,
+`sage/manifolds/differentiable/tensorfield_module.py`,
+`sage/rings/function_field/derivations_polymod.py`,
+`sage/rings/polynomial/polynomial_zz_pex.pyx`,
+`sage/algebras/clifford_algebra_element.pyx`,
+`sage/modular/quasimodform/ring.py`,
+`sage/geometry/hyperplane_arrangement/ordered_arrangement.py`,
+`sage/graphs/graph_decompositions/slice_decomposition.pyx`,
+`sage/geometry/polyhedron/base1.py`, and
+`sage/schemes/elliptic_curves/sha_tate.py`.
+
+The one-worker direct probe used absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-goal-831-850-current/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The latest-run summary records CoWasm commit
+`081a1b31f692dec7f2aeb183a152efca067a3f6b`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+and about 128 seconds of elapsed time.
+
+All 20 files were skipped at file scope by existing browser-profile metadata.
+The skip groups cover graph/numerical/Matplotlib/Scipy, designs/Singular,
+crystals/rigged configurations, NumPy/modules, graph, fusion-ring/Singular
+with multiprocessing, polyhedron/PPL/number-field, IPython/subprocess,
+manifold/symbolic, q-commuting-polynomial, function-field/PARI,
+finite-ring/NTL, Clifford/exterior algebra, modular, hyperplane arrangement,
+and elliptic-curve/eclib/PARI boundaries.
+
+`doctest-corpus-candidates.py --strict-frontier` prints no uncovered clean
+runnable rows for this dashboard. Future scheduled runs should avoid
+repeating this exact 831-to-850 slice unless the default browser-profile
+dependency boundary for those file-level `# needs` tags changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
