@@ -17593,3 +17593,15 @@ diff --git a/src/sage/rings/padics/generic_nodes.py b/src/sage/rings/padics/gene
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
  """
+diff --git a/src/sage/symbolic/function.pyx b/src/sage/symbolic/function.pyx
+--- a/src/sage/symbolic/function.pyx
++++ b/src/sage/symbolic/function.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/constructor.py b/src/sage/schemes/elliptic_curves/constructor.py
+--- a/src/sage/schemes/elliptic_curves/constructor.py
++++ b/src/sage/schemes/elliptic_curves/constructor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.singular sage.matrix.matrix_integer_dense sage.rings.finite_rings database_cremona_mini_ellcurve
+ """

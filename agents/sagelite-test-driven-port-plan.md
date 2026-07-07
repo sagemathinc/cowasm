@@ -34791,6 +34791,52 @@ cluster queries are empty. The strict promotion scan with
 no uncovered clean runnable candidates. The checked corpus remains at 1,090
 non-comment entries.
 
+Follow-up 256-to-258 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 256-to-258 prompt band:
+`sage/modular/modform/space.py`, `sage/symbolic/function.pyx`,
+`sage/schemes/elliptic_curves/constructor.py`,
+`sage/topology/cubical_complex.py`, and
+`sage/combinat/crystals/monomial_crystals.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-256-258/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 152 passed, 216 failed, 900 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata:
+modular form spaces need PARI/number-field support, cubical complexes need
+graph/module surfaces, and monomial crystals need combinatorics/module
+surfaces. The remaining failures were broad dependency frontiers rather than
+narrow promotion targets: symbolic function doctests need the stripped
+symbolic stack and optional numeric/symbolic integrations, while elliptic-curve
+constructor doctests route through Singular, dense integer matrices, finite
+rings, Cremona database coverage, symbolic setup, and dependent setup-name
+fallout. The WASI source patch now records those two file-level boundaries
+with `sage.symbolic`, `sage.schemes.elliptic_curves`, `sage.libs.singular`,
+`sage.matrix.matrix_integer_dense`, `sage.rings.finite_rings`, and
+`database_cremona_mini_ellcurve` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-256-258/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1268 skipped
+```
+
+The latest-run summary records CoWasm commit
+`3281780e9b785db4b0feb4c72dd95a02ac285137`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all five files. The saved block- and file-
+failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,090
+non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
