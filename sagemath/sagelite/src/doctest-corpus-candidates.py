@@ -1173,6 +1173,9 @@ def main() -> int:
         print("\t".join(columns))
 
     printed_rows = 0
+    valid_database_count = 0
+    invalid_database_count = 0
+    first_invalid_error = ""
     for database in args.database:
         if args.limit is not None and printed_rows >= args.limit:
             break
@@ -1230,11 +1233,15 @@ def main() -> int:
                 )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
+                invalid_database_count += 1
+                if not first_invalid_error:
+                    first_invalid_error = f"{database}: {error}"
                 if not args.quiet_invalid:
                     print(f"warning: skipping {database}: {error}", file=sys.stderr)
                 continue
             raise
 
+        valid_database_count += 1
         if args.dedupe_paths:
             collected_rows.extend((database, row) for row in rows)
         else:
@@ -1277,6 +1284,17 @@ def main() -> int:
             ),
         )[: args.limit]:
             print_row(row, database, show_database, args)
+    if (
+        args.ignore_invalid
+        and invalid_database_count
+        and valid_database_count == 0
+    ):
+        print(
+            "error: no valid Sagelite doctest databases were scanned"
+            f" ({invalid_database_count} invalid; first: {first_invalid_error})",
+            file=sys.stderr,
+        )
+        return 2
     return 0
 
 

@@ -123,6 +123,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   with `promote-candidates.sql`, which keeps follow-up corpus-growth passes
   from spending time on skipped-only or empty files when a broad sample has
   already been recorded in SQLite.
+- The `sage-doctest-candidates` helper reports an all-invalid database scan as
+  an error even when per-database invalid warnings are suppressed, so scheduled
+  corpus-promotion runs do not silently treat an empty dashboard database as
+  "no candidates".
 - Broad sampling runs can also be summarized with
   `corpus-candidate-summary.sql`, so "no promotion candidate" passes leave a
   compact SQLite audit of promote-candidate, triage, file-error, skipped-only,
@@ -618,6 +622,27 @@ The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
 and writes the checked database to
 `/tmp/sagelite-corpus-after-sets-cartesian-product.sqlite3`.
+
+Scheduled 2026-07-07 candidate-frontier check:
+
+- The configured default dashboard path
+  `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` was present but
+  zero bytes, so SQL dashboard queries and promotion-candidate scans had no
+  run schema to inspect.
+- Focused probes confirmed the installed doctest runner still works on a known
+  clean file: `sage/combinat/output.py` reports `70 passed, 0 failed,
+  0 skipped`.
+- Nearby unpromoted set/combinat probes did not yield a clean runnable corpus
+  addition. Several files are skipped-only under the current browser profile
+  (`real_set.py`, `graph_path.py`, `fully_commutative_elements.py`,
+  `similarity_class_type.py`, `finite_state_machine_generators.py`,
+  `nu_dyck_word.py`, and `shard_order.py`); the remaining untagged candidates
+  exposed broader runtime or dependency frontiers (`abstract_tree.py` stack
+  depth, `colored_permutations.py` NTL dynamic import, `interval_posets.py`
+  broad failures, and `tamari_blossoming_tree.py` graph/plot import fallout).
+- The candidate helper now fails an all-invalid scan with a concise diagnostic,
+  while still allowing mixed multi-database scans to skip invalid inputs and
+  use valid scratch databases.
 
 Latest checked local corpus run after the 2026-06-26 tableau-residue
 corpus-growth pass:
