@@ -34122,6 +34122,48 @@ corpus remains at 1,087 non-comment entries. Validation also ran a full WASI
 source patch dry-run against `/home/user/sagelite` with a workspace-local
 scratch directory.
 
+Follow-up 214-to-216 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 214-to-216 prompt band:
+`sage/combinat/free_prelie_algebra.py`,
+`sage/graphs/distances_all_pairs.pyx`, `sage/interfaces/maxima.py`,
+`sage/rings/function_field/drinfeld_modules/homset.py`,
+`sage/schemes/toric/chow_group.py`, `sage/interfaces/maple.py`, and
+`sage/manifolds/differentiable/chart.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-214-216/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 5 passed, 632 failed, 848 skipped
+```
+
+`free_prelie_algebra.py`, `drinfeld_modules/homset.py`, and `chow_group.py`
+were already skipped-only under existing browser-profile dependency metadata.
+The remaining failures were broad browser-profile boundaries rather than
+promotion targets: all-pairs graph distances depend on Sage graph constructors
+and graph backend semantics, Maxima and Maple are pexpect/subprocess external
+interfaces, and differentiable charts are manifold/symbolic coverage. The
+WASI source patch now records those four boundaries with file-level
+`sage.graphs`, `maxima pexpect subprocess`, `maple pexpect subprocess`, and
+`sage.manifolds sage.symbolic` metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-214-216/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1485 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,087 non-comment entries. Validation also ran
+`git diff --check` and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

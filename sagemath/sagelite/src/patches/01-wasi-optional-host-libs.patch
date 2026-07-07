@@ -46,6 +46,18 @@ diff --git a/src/sage/interfaces/mathematica.py b/src/sage/interfaces/mathematic
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs mathematica pexpect subprocess
  r"""
+diff --git a/src/sage/interfaces/maxima.py b/src/sage/interfaces/maxima.py
+--- a/src/sage/interfaces/maxima.py
++++ b/src/sage/interfaces/maxima.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs maxima pexpect subprocess
+ r"""
+diff --git a/src/sage/interfaces/maple.py b/src/sage/interfaces/maple.py
+--- a/src/sage/interfaces/maple.py
++++ b/src/sage/interfaces/maple.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs maple pexpect subprocess
+ r"""
 diff --git a/src/sage/geometry/polyhedron/face.py b/src/sage/geometry/polyhedron/face.py
 --- a/src/sage/geometry/polyhedron/face.py
 +++ b/src/sage/geometry/polyhedron/face.py
@@ -70,6 +82,12 @@ diff --git a/src/sage/graphs/graph_coloring.pyx b/src/sage/graphs/graph_coloring
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  # distutils: language = c++
+diff --git a/src/sage/graphs/distances_all_pairs.pyx b/src/sage/graphs/distances_all_pairs.pyx
+--- a/src/sage/graphs/distances_all_pairs.pyx
++++ b/src/sage/graphs/distances_all_pairs.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
 diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/trees.pyx
 --- a/src/sage/graphs/generators/trees.pyx
 +++ b/src/sage/graphs/generators/trees.pyx
@@ -79,6 +97,12 @@ diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/t
 diff --git a/src/sage/manifolds/differentiable/multivector_module.py b/src/sage/manifolds/differentiable/multivector_module.py
 --- a/src/sage/manifolds/differentiable/multivector_module.py
 +++ b/src/sage/manifolds/differentiable/multivector_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/differentiable/chart.py b/src/sage/manifolds/differentiable/chart.py
+--- a/src/sage/manifolds/differentiable/chart.py
++++ b/src/sage/manifolds/differentiable/chart.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
