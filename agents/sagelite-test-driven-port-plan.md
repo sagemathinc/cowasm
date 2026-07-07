@@ -36187,6 +36187,69 @@ CoWasm commit `09e0d3386e66218d6db353d054b98a17d80e9346`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 90.
 
+Follow-up 355-to-357 prompt-band and strict-frontier dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree first sampled the 355-to-357 band:
+`sage/modular/ssmod/ssmod.py`, `sage/calculus/test_sympy.py`, and
+`sage/categories/coalgebras.py`. Those files were already skipped-only under
+existing block metadata:
+
+```text
+sage -t passed: 0 passed, 0 failed, 227 skipped
+```
+
+The adjacent 358-to-363 prompt bands were likewise skipped-only, and a compact
+strict low-count source-minus-corpus probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-355-357/prompt-355-357/strict-low.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 60 skipped
+```
+
+A stricter mid-count probe then found broad dependency frontiers rather than a
+clean promotion candidate. The initial run wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-355-357/prompt-355-357/strict-mid.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 94 passed, 382 failed, 704 skipped
+```
+
+The failures clustered around stripped graph/poset, polyhedron/Cdd/LattE,
+matroid/graph, number-field/NTL/PARI, elliptic modular polynomial, and
+product-projective scheme boundaries. The WASI source patch now records
+file-level dependency metadata for the failing mid-count files:
+`sage/geometry/voronoi_diagram.py`,
+`sage/rings/finite_rings/residue_field_ntl_gf2e.pyx`,
+`sage/schemes/elliptic_curves/mod_poly.py`,
+`sage/schemes/product_projective/rational_point.py`,
+`sage/geometry/polyhedron/backend_cdd.py`, `sage/interfaces/latte.py`,
+`sage/combinat/posets/cartesian_product.py`,
+`sage/graphs/independent_sets.pyx`,
+`sage/geometry/polyhedron/base_mutable.py`,
+`sage/graphs/graph_decompositions/clique_separators.pyx`,
+`sage/matroids/minor_matroid.py`, and
+`sage/rings/number_field/splitting_field.py`.
+
+Focused direct validation applied the full WASI source patch to a clean
+`/home/user/sagelite` HEAD archive, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-355-357/prompt-355-357/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 642 skipped
+```
+
+The final run covers the 12 newly tagged frontier files, has no block-level
+failures and no file-level errors, and the strict promotion scan over the
+fresh databases printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,092 non-comment entries. The latest run metadata records
+CoWasm commit `98b34abc31b2189b3e39e4995e794ee83746829a`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

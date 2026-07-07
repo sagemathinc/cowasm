@@ -18339,6 +18339,78 @@ diff --git a/src/sage/rings/function_field/valuation.py b/src/sage/rings/functio
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field
  r"""
+diff --git a/src/sage/combinat/posets/cartesian_product.py b/src/sage/combinat/posets/cartesian_product.py
+--- a/src/sage/combinat/posets/cartesian_product.py
++++ b/src/sage/combinat/posets/cartesian_product.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/geometry/polyhedron/backend_cdd.py b/src/sage/geometry/polyhedron/backend_cdd.py
+--- a/src/sage/geometry/polyhedron/backend_cdd.py
++++ b/src/sage/geometry/polyhedron/backend_cdd.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron cddlib
+ r"""
+diff --git a/src/sage/geometry/polyhedron/base_mutable.py b/src/sage/geometry/polyhedron/base_mutable.py
+--- a/src/sage/geometry/polyhedron/base_mutable.py
++++ b/src/sage/geometry/polyhedron/base_mutable.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron
+ r"""
+diff --git a/src/sage/geometry/voronoi_diagram.py b/src/sage/geometry/voronoi_diagram.py
+--- a/src/sage/geometry/voronoi_diagram.py
++++ b/src/sage/geometry/voronoi_diagram.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.plot
+ r"""
+diff --git a/src/sage/graphs/graph_decompositions/clique_separators.pyx b/src/sage/graphs/graph_decompositions/clique_separators.pyx
+--- a/src/sage/graphs/graph_decompositions/clique_separators.pyx
++++ b/src/sage/graphs/graph_decompositions/clique_separators.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ # distutils: language = c++
+diff --git a/src/sage/graphs/independent_sets.pyx b/src/sage/graphs/independent_sets.pyx
+--- a/src/sage/graphs/independent_sets.pyx
++++ b/src/sage/graphs/independent_sets.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/interfaces/latte.py b/src/sage/interfaces/latte.py
+--- a/src/sage/interfaces/latte.py
++++ b/src/sage/interfaces/latte.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron latte_int
+ r"""
+diff --git a/src/sage/matroids/minor_matroid.py b/src/sage/matroids/minor_matroid.py
+--- a/src/sage/matroids/minor_matroid.py
++++ b/src/sage/matroids/minor_matroid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ r"""
+diff --git a/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx b/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
+--- a/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
++++ b/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.ntl
+ r"""
+diff --git a/src/sage/rings/number_field/splitting_field.py b/src/sage/rings/number_field/splitting_field.py
+--- a/src/sage/rings/number_field/splitting_field.py
++++ b/src/sage/rings/number_field/splitting_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ """
+diff --git a/src/sage/schemes/elliptic_curves/mod_poly.py b/src/sage/schemes/elliptic_curves/mod_poly.py
+--- a/src/sage/schemes/elliptic_curves/mod_poly.py
++++ b/src/sage/schemes/elliptic_curves/mod_poly.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.ntl
+ r"""
+diff --git a/src/sage/schemes/product_projective/rational_point.py b/src/sage/schemes/product_projective/rational_point.py
+--- a/src/sage/schemes/product_projective/rational_point.py
++++ b/src/sage/schemes/product_projective/rational_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.rings.finite_rings cysignals.alarm
+ r"""
 diff --git a/src/sage/schemes/elliptic_curves/height.py b/src/sage/schemes/elliptic_curves/height.py
 --- a/src/sage/schemes/elliptic_curves/height.py
 +++ b/src/sage/schemes/elliptic_curves/height.py
