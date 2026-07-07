@@ -37434,6 +37434,55 @@ The strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
 and `--dedupe-paths` printed no uncovered clean runnable candidate. The
 checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 791-to-810 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/rings/function_field/jacobian_base.py`,
+`sage/dynamics/arithmetic_dynamics/affine_ds.py`,
+`sage/tensor/modules/tensor_with_indices.py`,
+`sage/rings/function_field/order_polymod.py`,
+`sage/interfaces/maxima_lib.py`, `sage/categories/drinfeld_modules.py`,
+`sage/geometry/polyhedron/combinatorial_polyhedron/combinatorial_face.pyx`,
+`sage/algebras/down_up_algebra.py`, `sage/graphs/views.pyx`,
+`sage/interfaces/giac.py`, `sage/matroids/basis_exchange_matroid.pyx`,
+`sage/manifolds/differentiable/curve.py`, `sage/algebras/orlik_terao.py`,
+`sage/algebras/lie_algebras/representation.py`,
+`sage/graphs/orientations.py`, `sage/plot/plot3d/index_face_set.pyx`,
+`sage/geometry/polyhedron/ppl_lattice_polytope.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/programmation_doctest.py`,
+`sage/groups/libgap_wrapper.pyx`, and
+`sage/schemes/elliptic_curves/gal_reps.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-791-810-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 153 passed, 897 failed, 87 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`033c54fb28e3070f887859e75059b32d59297804`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 1,136 block rows. Fourteen
+files were skipped-only under existing browser-profile metadata, with skip
+tags covering function-field, finite-ring, graph, GAP, Giac, manifold,
+matroid, PPL, plot3d/Matplotlib, symbolic, and elliptic-curve dependencies.
+
+The remaining files are broad backend or startup-frontier clusters rather
+than quiet promotion candidates. `down_up_algebra.py` records a file-level
+`wasm_trap` at `k.<z6> = CyclotomicField(6)`, reaching the existing
+polynomial-number-field memory trap. Block failures are dominated by 701
+`NameError`, 94 `ModuleNotFoundError`, 48 `TypeError`, 35 `output_mismatch`,
+12 `NotImplementedError`, and five `AttributeError` rows. The main failed
+files are `jacobian_base.py`, `affine_ds.py`, `maxima_lib.py`,
+`combinatorial_face.pyx`, and `views.pyx`, with missing setup names,
+unavailable Maxima/graph/polyhedron surfaces, and dependent output drift.
+The strict promotion scan with `--strict-frontier`, `--min-runner-version
+91`, and `--dedupe-paths` printed no uncovered clean runnable candidate. The
+checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
