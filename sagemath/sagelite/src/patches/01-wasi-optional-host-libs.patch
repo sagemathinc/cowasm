@@ -15516,6 +15516,12 @@ diff --git a/src/sage/plot/plot3d/platonic.py b/src/sage/plot/plot3d/platonic.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.plot.plot3d matplotlib
  r"""
+diff --git a/src/sage/plot/plot3d/shapes2.py b/src/sage/plot/plot3d/shapes2.py
+--- a/src/sage/plot/plot3d/shapes2.py
++++ b/src/sage/plot/plot3d/shapes2.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.plot.plot3d matplotlib
+ r"""
 diff --git a/src/sage/algebras/letterplace/letterplace_ideal.pyx b/src/sage/algebras/letterplace/letterplace_ideal.pyx
 --- a/src/sage/algebras/letterplace/letterplace_ideal.pyx
 +++ b/src/sage/algebras/letterplace/letterplace_ideal.pyx

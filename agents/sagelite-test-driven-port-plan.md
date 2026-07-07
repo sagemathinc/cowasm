@@ -36902,6 +36902,30 @@ non-comment entries. The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 90.
 
+Follow-up plot3d dependency-frontier tagging:
+
+A focused plot3d probe completed the in-progress browser-profile metadata
+tagging for `sage/plot/plot3d/platonic.py` and
+`sage/plot/plot3d/shapes2.py`. Both modules exercise the unavailable 3D
+plotting/matplotlib stack throughout, so the WASI source patch now records
+`# sage.doctest: needs sage.plot.plot3d matplotlib` at file scope for both
+files.
+
+Focused validation rebuilt the patched source copy already present in
+`sagemath/sagelite/build/wasi-sdk`, verified that the full WASI patch still
+applies cleanly to `/home/user/sagelite` with `patch --dry-run`, and wrote
+`.tmp/current-run/scheduled-2026-07-07-plot3d/focused.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 218 skipped
+```
+
+The focused database has no block-level failures and no file-level errors.
+The latest run metadata records CoWasm commit
+`8be5eef10699f86d13e97e19a9affbdc136a3a54`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
