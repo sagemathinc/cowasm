@@ -13204,6 +13204,12 @@ diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_ramified.p
 -            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
 +            sage: # needs sage.rings.polynomial.plural
 +            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
+diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_inert.py b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_inert.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_homset_inert.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_homset_inert.py
+@@ -1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
+ r"""
 diff -urN -U0 a/src/sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py b/src/sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py
 --- a/src/sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py
 +++ b/src/sage/schemes/hyperelliptic_curves/jacobian_g2_generic.py

@@ -38742,6 +38742,50 @@ Future scheduled runs should avoid repeating this 31-to-21 prompt-count slice
 unless the default-profile dependency policy changes or the transient
 multi-file worker observation for `qadic_flint_CR.pyx` becomes reproducible.
 
+Follow-up 21-to-14 prompt-count frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree, again filtering out
+files already mentioned in this plan, found 70 unmentioned files with Sage
+prompts. The next 40 ranged from 21 down to 14 prompt markers.
+
+The one-worker direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-21-frontier/batch.sqlite3` and
+printed a final summary before the wrapper exited with status 139:
+
+```text
+sage -t failed: 2 passed, 12 failed, 90 skipped
+```
+
+The persisted database records runner version 91, node profile, CoWasm commit
+`e361b399ad280a584bac377ba57670c590b1e972`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 246 seconds of elapsed
+time. The file shape was 37 clean skipped-only files, 2 zero-block files, and
+one block-failure file. The saved strict promotion scan with
+`--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths` printed
+no uncovered clean runnable candidate. The skipped-only rows were dominated by
+explicit dependency tags for graphs, GAP, PARI/FLINT/NTL, finite-ring,
+number-field, modular, scheme, symbolic, and plotting backends.
+
+The only runnable failure cluster was
+`sage/schemes/hyperelliptic_curves/jacobian_homset_inert.py`, where upstream
+examples use `HyperellipticCurve` and `Jacobian` without local imports. That
+file is not a lightweight startup-namespace candidate: adjacent hyperelliptic
+Jacobian modules already mark this backend as requiring
+`sage.schemes.hyperelliptic_curves` and `sage.libs.ntl`. The WASI source patch
+now adds the same file-level doctest directive to
+`jacobian_homset_inert.py`. A focused rerun against the patched source copy
+wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-21-frontier/jacobian-focused-after-tag.sqlite3`
+and records the expected clean dependency-boundary result:
+
+```text
+jacobian_homset_inert.py: 0 passed, 0 failed, 1 skipped
+```
+
+The full WASI source patch also passed a `patch --dry-run -p1` check against
+the Sagelite source checkout after this hunk was added.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
