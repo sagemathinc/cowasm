@@ -18696,3 +18696,82 @@ diff --git a/src/sage/schemes/projective/projective_space.py b/src/sage/schemes/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
  r"""
+diff --git a/src/sage/rings/polynomial/infinite_polynomial_element.py b/src/sage/rings/polynomial/infinite_polynomial_element.py
+--- a/src/sage/rings/polynomial/infinite_polynomial_element.py
++++ b/src/sage/rings/polynomial/infinite_polynomial_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.polynomial.infinite_polynomial
+ r"""
+diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_geodesic.py b/src/sage/geometry/hyperbolic_space/hyperbolic_geodesic.py
+--- a/src/sage/geometry/hyperbolic_space/hyperbolic_geodesic.py
++++ b/src/sage/geometry/hyperbolic_space/hyperbolic_geodesic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
+ r"""
+diff --git a/src/sage/combinat/abstract_tree.py b/src/sage/combinat/abstract_tree.py
+--- a/src/sage/combinat/abstract_tree.py
++++ b/src/sage/combinat/abstract_tree.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat.abstract_tree
+ r"""
+diff --git a/src/sage/geometry/polyhedron/library.py b/src/sage/geometry/polyhedron/library.py
+--- a/src/sage/geometry/polyhedron/library.py
++++ b/src/sage/geometry/polyhedron/library.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.graphs sage.matrix.matrix2
+ r"""
+diff --git a/src/sage/rings/laurent_series_ring_element.pyx b/src/sage/rings/laurent_series_ring_element.pyx
+--- a/src/sage/rings/laurent_series_ring_element.pyx
++++ b/src/sage/rings/laurent_series_ring_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/interfaces/kenzo.py b/src/sage/interfaces/kenzo.py
+--- a/src/sage/interfaces/kenzo.py
++++ b/src/sage/interfaces/kenzo.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs kenzo sage.libs.ecl pexpect subprocess
+ r"""
+diff --git a/src/sage/symbolic/relation.py b/src/sage/symbolic/relation.py
+--- a/src/sage/symbolic/relation.py
++++ b/src/sage/symbolic/relation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/lie_algebra_element.pyx b/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
+--- a/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
++++ b/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+ """
+diff --git a/src/sage/rings/multi_power_series_ring_element.py b/src/sage/rings/multi_power_series_ring_element.py
+--- a/src/sage/rings/multi_power_series_ring_element.py
++++ b/src/sage/rings/multi_power_series_ring_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.multi_power_series sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/finite_rings/residue_field.pyx b/src/sage/rings/finite_rings/residue_field.pyx
+--- a/src/sage/rings/finite_rings/residue_field.pyx
++++ b/src/sage/rings/finite_rings/residue_field.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.schemes.elliptic_curves sage.libs.ntl
+ r"""
+diff --git a/src/sage/algebras/cluster_algebra.py b/src/sage/algebras/cluster_algebra.py
+--- a/src/sage/algebras/cluster_algebra.py
++++ b/src/sage/algebras/cluster_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat.cluster_algebra_quiver sage.graphs sage.libs.gap sage.rings.polynomial.plural
+ r"""
+diff --git a/src/sage/graphs/bipartite_graph.py b/src/sage/graphs/bipartite_graph.py
+--- a/src/sage/graphs/bipartite_graph.py
++++ b/src/sage/graphs/bipartite_graph.py
+@@ -1,2 +1,3 @@
+ # autopep8: off
++# sage.doctest: needs sage.graphs sage.rings.finite_rings
+ r"""
+diff --git a/src/sage/interfaces/magma.py b/src/sage/interfaces/magma.py
+--- a/src/sage/interfaces/magma.py
++++ b/src/sage/interfaces/magma.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs magma pexpect subprocess
+ r"""

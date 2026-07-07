@@ -36604,6 +36604,66 @@ printed no uncovered clean runnable candidate. The checked corpus remains at
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 451-to-470 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree selected 17 uncovered files in the 451-to-470 band:
+`sage/rings/polynomial/infinite_polynomial_element.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_geodesic.py`,
+`sage/rings/function_field/drinfeld_modules/drinfeld_module.py`,
+`sage/combinat/abstract_tree.py`, `sage/coding/linear_code.py`,
+`sage/sets/real_set.py`, `sage/geometry/polyhedron/library.py`,
+`sage/rings/laurent_series_ring_element.pyx`, `sage/interfaces/kenzo.py`,
+`sage/symbolic/relation.py`,
+`sage/algebras/lie_algebras/lie_algebra_element.pyx`,
+`sage/rings/multi_power_series_ring_element.py`,
+`sage/rings/finite_rings/residue_field.pyx`,
+`sage/rings/padics/padic_ZZ_pX_CA_element.pyx`,
+`sage/algebras/cluster_algebra.py`, `sage/graphs/bipartite_graph.py`, and
+`sage/interfaces/magma.py`.
+
+The initial one-worker probe rebuilt the patched source from the current
+`/home/user/sagelite` checkout, which was still dirty with the unrelated
+`integer_ring.pyx` modification and untracked SQLite result file noted in the
+previous passes. It wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-451-470/batch.sqlite3` with:
+
+```text
+sage -t failed: 823 passed, 1948 failed, 2673 skipped
+```
+
+Four files were already skipped-only under existing browser-profile metadata:
+`drinfeld_module.py`, `linear_code.py`, `real_set.py`, and
+`padic_ZZ_pX_CA_element.pyx`. The remaining runnable or file-level failures
+were broad dependency/runtime frontiers rather than promotion candidates:
+infinite-polynomial exception formatting, hyperbolic geometry plus symbolic
+support, abstract-tree recursion stack depth, polyhedron/matrix side-module
+paths, NTL-backed Laurent-series construction, Kenzo/ECL subprocess coverage,
+symbolic relation solving, Lie algebra graph/category coverage,
+number-field/PARI-backed multivariate power series, number-field residue
+fields with elliptic-curve and NTL paths, cluster-algebra graph/GAP/plural
+coverage, graph-backed bipartite graph coverage, and the external Magma
+interface. The WASI source patch now records file-level dependency metadata
+for those 13 files.
+
+Focused validation rebuilt the patched source copy, applied the full WASI
+source patch cleanly, reran the same 17-file band, and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-451-470/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 7720 skipped
+```
+
+The final database has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths`
+printed no uncovered clean runnable candidate. The checked corpus remains at
+1,093 non-comment entries. The latest run metadata records CoWasm commit
+`c68a028792c352b51d57f3edcce070b68df7ab74`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
