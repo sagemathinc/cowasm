@@ -33765,6 +33765,51 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch copy.
 
+Follow-up 190-to-192 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 190-to-192 prompt band:
+`sage/graphs/spanning_tree.pyx`,
+`sage/groups/additive_abelian/additive_abelian_wrapper.py`,
+`sage/rings/semirings/tropical_variety.py`,
+`sage/algebras/lie_algebras/virasoro.py`,
+`sage/algebras/orlik_solomon.py`,
+`sage/graphs/base/static_sparse_backend.pyx`, and
+`sage/libs/eclib/interface.py`. The initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-190-192/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 159 passed, 1071 failed, 98 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. The
+failure clusters were broad browser-profile boundaries rather than narrow
+promotion targets: spanning-tree and static-sparse-backend examples require the
+stripped graph backend; additive abelian wrapper examples lean on elliptic
+curves, number fields, and PARI-backed object-model paths; tropical-variety
+examples require the symbolic surface; Virasoro examples reach graph-backed Lie
+algebra representation paths; Orlik-Solomon examples require matroids, graphs,
+and GAP; and the ECLIB interface requires the missing mwrank/eclib extension
+plus elliptic-curve support.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-190-192/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1328 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
