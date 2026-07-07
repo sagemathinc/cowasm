@@ -54,7 +54,7 @@ electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
 doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-10}"
 meson_compile_jobs="${SAGELITE_MESON_COMPILE_JOBS:-4}"
 cython_generate_jobs="${SAGELITE_CYTHON_GENERATE_JOBS:-1}"
-cython_generate_attempts="${SAGELITE_CYTHON_GENERATE_ATTEMPTS:-5}"
+cython_generate_attempts="${SAGELITE_CYTHON_GENERATE_ATTEMPTS:-10}"
 
 if ! [[ "$meson_compile_jobs" =~ ^[1-9][0-9]*$ ]]; then
   echo "SAGELITE_MESON_COMPILE_JOBS must be a positive integer" >&2

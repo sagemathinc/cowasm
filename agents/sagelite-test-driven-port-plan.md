@@ -38994,7 +38994,7 @@ Follow-up resource-staging repair on 2026-07-07: no corpus entry was promoted,
 but the standalone staging target now runs generated Cython outputs as a
 separate bounded phase before the normal Meson compile. The new
 `SAGELITE_CYTHON_GENERATE_JOBS` knob defaults to serial generation, and
-`SAGELITE_CYTHON_GENERATE_ATTEMPTS` defaults to five retry attempts so
+`SAGELITE_CYTHON_GENERATE_ATTEMPTS` defaults to ten retry attempts so
 transient host Cython crashes can resume from already-generated outputs
 instead of restarting the whole resource build.
 
@@ -39091,6 +39091,43 @@ segfaults at `sage/rings/finite_rings/finite_field_base.pyx` and then
 `sage/rings/finite_rings/element_givaro.pyx`. Direct `sage -t` probes need
 the Electron resource manifest staged again before they can run in this
 checkout.
+
+Follow-up staged-resource rebuild on 2026-07-07: no corpus entry was
+promoted, but the standalone resource staging target completed with an
+expanded Cython-generation retry budget:
+
+```sh
+make -C sagemath/sagelite test-wasi-sdk-standalone SAGELITE_CYTHON_GENERATE_ATTEMPTS=25
+```
+
+The Cython-generation phase recovered four host crashes and finished on
+attempt 5 of 25: status-139 crashes at
+`sage/libs/ntl/ntl_ZZX.pyx`, `sage/libs/ntl/ntl_mat_GF2E.pyx`, and
+`sage/interacts/library_cython.pyx`, plus a status-135 crash at
+`sage/combinat/designs/subhypergraph_search.pyx`. Meson then compiled all
+`964/964` targets, installed Sagelite, and staged
+`sagemath/sagelite/dist/wasi-sdk/electron-resources/sagelite-electron-resources.json`.
+
+The standalone wrapper still recorded a runtime blocker after its line-specific
+doctest smoke: the doctest log reported `1 passed, 0 failed, 0 skipped`, but
+the Node process segfaulted during or after teardown, so `status.txt` contains
+`sagelite-blocked: sage -t line doctest smoke failed`. The broader standalone
+doctest smoke passed with `29 passed, 0 failed, 10 skipped`.
+
+Direct staged-resource validation now works again from the repository root:
+
+```text
+src/sage/all.py: 13 passed, 0 failed, 2 skipped
+```
+
+That probe wrote
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-07-restaged/all-smoke.sqlite3`.
+The strict runnable source-frontier scan with the plan subtraction and
+`.tmp/**/*.sqlite3` subtraction printed only the `path	prompt_count` header.
+Because this successful rebuild needed the full old five-attempt default after
+a previous five-attempt run exhausted its budget, the standalone script now
+defaults `SAGELITE_CYTHON_GENERATE_ATTEMPTS` to ten while retaining the
+environment override.
 
 ## Phase 6: TypeScript/NPM Direction
 
