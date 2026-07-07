@@ -33652,6 +33652,53 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 184-to-186 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected fifteen uncovered files in the 184-to-186 prompt band. The
+initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-184-186/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 393 passed, 1128 failed, 1049 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Five
+files were already skipped-only under existing dependency metadata:
+`sage/combinat/posets/poset_examples.py`,
+`sage/combinat/root_system/coxeter_matrix.py`, `sage/graphs/graph_plot.py`,
+`sage/groups/libgap_mixin.py`, and
+`sage/schemes/elliptic_curves/period_lattice_region.pyx`. The remaining
+failures were broad browser-profile boundaries rather than narrow
+corpus-promotion targets: Hall algebra doctests need Symmetrica; UEA-center,
+nilpotent Lie-group, and differentiable-curve examples need the broader Lie
+algebra, graph, manifold, symbolic, and PARI surfaces; cubic Hecke database
+examples need GAP/graph support; basis-exchange matroid examples need the
+matroid/graph stack; FLINT/NTL modular polynomial and PARI power-series
+examples remain behind the split FLINT/NTL/PARI backend boundary; and the
+elliptic/hyperelliptic scheme examples depend on Cremona data, dense integer
+matrices, hyperelliptic arithmetic, and NTL-backed surfaces.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final make-target validation against a freshly rebuilt patched
+source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-184-186/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2754 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,085
+non-comment entries. Validation also ran `git diff --check` and the full WASI
+source patch dry-run against `/home/user/sagelite` with a workspace-local
+`TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

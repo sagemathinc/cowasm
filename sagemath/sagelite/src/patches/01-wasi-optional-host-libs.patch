@@ -136,6 +136,66 @@ diff --git a/src/sage/rings/function_field/derivations_polymod.py b/src/sage/rin
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.libs.pari
  r"""
+diff --git a/src/sage/algebras/hall_algebra.py b/src/sage/algebras/hall_algebra.py
+--- a/src/sage/algebras/hall_algebra.py
++++ b/src/sage/algebras/hall_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.symmetrica
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/center_uea.py b/src/sage/algebras/lie_algebras/center_uea.py
+--- a/src/sage/algebras/lie_algebras/center_uea.py
++++ b/src/sage/algebras/lie_algebras/center_uea.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.libs.pari
+ """
+diff --git a/src/sage/databases/cubic_hecke_db.py b/src/sage/databases/cubic_hecke_db.py
+--- a/src/sage/databases/cubic_hecke_db.py
++++ b/src/sage/databases/cubic_hecke_db.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap sage.graphs
+ r"""
+diff --git a/src/sage/groups/lie_gps/nilpotent_lie_group.py b/src/sage/groups/lie_gps/nilpotent_lie_group.py
+--- a/src/sage/groups/lie_gps/nilpotent_lie_group.py
++++ b/src/sage/groups/lie_gps/nilpotent_lie_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/differentiable/curve.py b/src/sage/manifolds/differentiable/curve.py
+--- a/src/sage/manifolds/differentiable/curve.py
++++ b/src/sage/manifolds/differentiable/curve.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/matroids/basis_exchange_matroid.pyx b/src/sage/matroids/basis_exchange_matroid.pyx
+--- a/src/sage/matroids/basis_exchange_matroid.pyx
++++ b/src/sage/matroids/basis_exchange_matroid.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ """
+diff --git a/src/sage/rings/polynomial/polynomial_zmod_flint.pyx b/src/sage/rings/polynomial/polynomial_zmod_flint.pyx
+--- a/src/sage/rings/polynomial/polynomial_zmod_flint.pyx
++++ b/src/sage/rings/polynomial/polynomial_zmod_flint.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.flint sage.libs.ntl
+ # distutils: libraries = gmp NTL_LIBRARIES
+diff --git a/src/sage/rings/power_series_pari.pyx b/src/sage/rings/power_series_pari.pyx
+--- a/src/sage/rings/power_series_pari.pyx
++++ b/src/sage/rings/power_series_pari.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari sage.libs.ntl
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/ell_local_data.py b/src/sage/schemes/elliptic_curves/ell_local_data.py
+--- a/src/sage/schemes/elliptic_curves/ell_local_data.py
++++ b/src/sage/schemes/elliptic_curves/ell_local_data.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs database_cremona_mini_ellcurve sage.schemes.elliptic_curves sage.matrix.matrix_integer_dense
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py b/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py
+--- a/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py
++++ b/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
+ r"""
 diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage/stats/distributions/discrete_gaussian_lattice.py
 --- a/src/sage/stats/distributions/discrete_gaussian_lattice.py
 +++ b/src/sage/stats/distributions/discrete_gaussian_lattice.py
