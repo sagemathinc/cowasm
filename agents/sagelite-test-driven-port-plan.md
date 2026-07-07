@@ -38300,6 +38300,84 @@ printed no uncovered clean runnable row for this dashboard. Future scheduled
 runs should avoid repeating this never-mentioned tail slice unless those
 default-profile dependency boundaries change.
 
+Follow-up high-count dependency-boundary audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree filtered against both
+full paths and historical basename-only mentions in this plan still had 311
+never-mentioned files with Sage prompts. The next 40 high-count files ranged
+from 88 down to 68 prompt markers:
+`sage/modular/modsym/modsym.py`,
+`sage/numerical/backends/matrix_sdp_backend.pyx`,
+`sage/algebras/exterior_algebra_groebner.pyx`,
+`sage/modular/modform_hecketriangle/element.py`,
+`sage/rings/number_field/bdd_height.py`,
+`sage/rings/function_field/element_rational.pyx`,
+`sage/rings/polynomial/skew_polynomial_finite_order.pyx`,
+`sage/libs/singular/polynomial.pyx`,
+`sage/repl/rich_output/backend_ipython.py`,
+`sage/modules/fp_graded/element.py`,
+`sage/symbolic/random_tests.py`, `sage/schemes/toric/ideal.py`,
+`sage/modules/submodule.py`, `sage/interfaces/process.pyx`,
+`sage/geometry/fan_isomorphism.py`,
+`sage/tests/books/judson_abstract_algebra/permute-sage.py`,
+`sage/rings/padics/pow_computer_flint.pyx`,
+`sage/geometry/polyhedron/double_description_inhomogeneous.py`,
+`sage/combinat/ncsym/dual.py`,
+`sage/graphs/graph_decompositions/cutwidth.pyx`,
+`sage/geometry/polyhedron/backend_field.py`,
+`sage/crypto/cryptosystem.py`,
+`sage/combinat/crystals/mv_polytopes.py`,
+`sage/matroids/chow_ring.py`,
+`sage/schemes/elliptic_curves/Qcurves.py`,
+`sage/numerical/linear_tensor.py`,
+`sage/matrix/matrix_rational_sparse.pyx`,
+`sage/graphs/graph_list.py`,
+`sage/graphs/generators/platonic_solids.py`,
+`sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_morphism.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/sol/graphique_doctest.py`,
+`sage/plot/plot3d/list_plot3d.py`,
+`sage/geometry/polyhedron/palp_database.py`, `sage/combinat/sf/hecke.py`,
+`sage/categories/supercrystals.py`,
+`sage/tests/books/judson_abstract_algebra/sylow-sage.py`,
+`sage/tests/books/judson_abstract_algebra/fields-sage.py`,
+`sage/schemes/plane_conics/con_number_field.py`,
+`sage/rings/polynomial/polynomial_singular_interface.py`, and
+`sage/rings/number_field/structure.py`.
+
+Two one-worker direct probes with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-modsym-frontier/batch.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-07-modsym-frontier-next/batch.sqlite3`.
+The first run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 19 skipped
+```
+
+The second run recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 18 skipped
+```
+
+Both databases record runner version 91, node profile, CoWasm commit
+`d9ec11f4d053fead64e792afd17c0c1fd7774ef9`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 120 seconds of elapsed
+time. Thirty-seven files were file-scope skips under existing browser-profile
+metadata, and the three Judson exercise helpers extracted zero default-profile
+blocks. The skip tags cover modular symbols, SDP, exterior algebras,
+Hecke-triangle modular forms, number fields, function fields, finite-order
+skew polynomials, Singular, IPython, combinat/modules, symbolic, toric
+geometry, subprocess, polyhedra, padics/FLINT/NTL, graphs, crypto, matroids,
+elliptic curves, MIP, rational dense matrices, plot3d/Matplotlib, PALP and
+polytope databases, finite-dimensional algebras, and SciPy-backed examples.
+The saved block- and file-failure queries are empty for both databases, and
+the strict promotion scan over both dashboards with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. Future scheduled runs should avoid repeating this exact
+40-file high-count dependency-boundary slice unless the default-profile skip
+policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
