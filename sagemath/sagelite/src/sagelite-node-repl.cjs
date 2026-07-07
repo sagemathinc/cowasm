@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 90;
+const doctestRunnerVersion = 91;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1512,6 +1512,41 @@ def __cowasm_file_directive_source(text):
     return "\\n".join(directives) if directives else None
 
 
+def __cowasm_file_directive_skip_result(filename, directive_source):
+    source_hash = _cowasm_source_hash(directive_source)
+    skip_reason = __cowasm_skip_reason(directive_source)
+    return {
+        "path": filename,
+        "status": "passed",
+        "total_blocks": 1,
+        "passed_blocks": 0,
+        "failed_blocks": 0,
+        "skipped_blocks": 1,
+        "duration_ms": 0,
+        "stdout": "",
+        "stderr": "",
+        "failure_class": None,
+        "failure_detail": None,
+        "blocks": [{
+            "block_index": 0,
+            "name": os.path.basename(filename) + "[file-directive]",
+            "start_line": 1,
+            "end_line": 1,
+            "source": directive_source,
+            "expected": "",
+            "expected_kind": "file_skip",
+            "block_key": __cowasm_block_key(filename, 1, source_hash),
+            "source_hash": source_hash,
+            "tags": _cowasm_tags(directive_source),
+            "skip_reason": skip_reason,
+            "actual": "",
+            "status": "skipped",
+            "failure_class": "optional_or_deferred",
+            "duration_ms": 0,
+        }],
+    }
+
+
 def __cowasm_filtered_text_with_prompts(text):
     lines = text.splitlines(True)
     kept = [False] * len(lines)
@@ -2021,6 +2056,14 @@ def __cowasm_run_file(filename):
         with open(filename, "r", encoding="utf-8") as f:
             original = f.read()
         file_directive_source = __cowasm_file_directive_source(original)
+        if (
+            file_directive_source
+            and not __cowasm_lines
+            and not __cowasm_block_keys
+            and __cowasm_should_skip(file_directive_source)
+        ):
+            file_result = __cowasm_file_directive_skip_result(filename, file_directive_source)
+            return file_result
         parser = doctest.DocTestParser()
         namespace = None
         protected_namespace = None

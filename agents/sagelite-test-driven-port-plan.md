@@ -37243,6 +37243,50 @@ metadata records CoWasm commit `e916ee3c32d1cfcc3fb0d9986136f62a0db6f482`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, and runner version 90.
 
+Scheduled 2026-07-07 high-count frontier follow-up:
+
+- The next prepared unaudited frontier band contained the 20 largest remaining
+  source-minus-corpus files by prompt count, from `sage/graphs/generic_graph.py`
+  through `sage/arith/misc.py`.
+- A first attempt to run the band, and then files 5-20, stalled before writing
+  SQLite because several large out-of-profile files had file-level
+  `# sage.doctest: needs ...` directives but the runner still collected every
+  docstring before applying those directives.
+- Runner version 91 now short-circuits disabled file-level doctest directives
+  when no `--line` or `--block-key` filter is active. It records one synthetic
+  skipped block with `expected_kind=file_skip`, the directive tags, skip
+  reason, and a stable block key instead of timing out in `collect_docstrings`.
+  A focused rerun of `sage/rings/number_field/number_field.py` now records
+  `0 passed, 0 failed, 1 skipped` and exits cleanly.
+- The known small-file smoke still passes after the runner change:
+  `sage/combinat/output.py` records `70 passed, 0 failed, 0 skipped`.
+- The first four high-count files now write a SQLite dashboard at
+  `.tmp/current-run/scheduled-2026-07-07-goal-711-730-current/batch-1-4-after-early-skip.sqlite3`:
+
+```text
+sage -t failed: 208 passed, 2809 failed, 119 skipped
+```
+
+  `generic_graph.py`, `matrix2.pyx`, and `polynomial_element.pyx` are
+  file-level timeouts; `expression.pyx` exposes broad symbolic failures.
+- Files 5-20 now write a SQLite dashboard at
+  `.tmp/current-run/scheduled-2026-07-07-goal-711-730-current/batch-5-20-after-early-skip.sqlite3`:
+
+```text
+sage -t failed: 3287 passed, 4513 failed, 1424 skipped
+```
+
+  The file-level errors are the existing matrix `__setitem__`
+  `wasm_signature_mismatch` in `free_module.py`, an NTL
+  `_ZNK3NTL11ZZ_pContext7restoreEv` link error in
+  `multi_polynomial_libsingular.pyx`, and another signature mismatch in
+  `arith/misc.py`. The remaining block failures are broad graph, symbolic,
+  pbori, geometry, stream, lazy-series, and arithmetic clusters, not narrow
+  promotion work.
+- Strict promotion scans over both chunk databases with `--min-runner-version
+  91` and `--dedupe-paths` printed no uncovered clean runnable candidate.
+  The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
