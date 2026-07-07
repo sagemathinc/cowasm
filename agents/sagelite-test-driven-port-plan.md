@@ -34615,6 +34615,66 @@ corpus is now at 1,089 non-comment entries. Validation also ran `git diff
 --check` and the full WASI source patch against a fresh `/home/user/sagelite`
 copy with a workspace-local scratch directory.
 
+Follow-up 246-to-249 prompt-band indexed-element promotion and dependency
+tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected eleven uncovered files in the 246-to-249 prompt band:
+`sage/schemes/curves/zariski_vankampen.py`,
+`sage/rings/function_field/khuri_makdisi.pyx`,
+`sage/modules/with_basis/indexed_element.pyx`,
+`sage/combinat/crystals/fully_commutative_stable_grothendieck.py`,
+`sage/combinat/crystals/elementary_crystals.py`,
+`sage/symbolic/constants.py`,
+`sage/schemes/elliptic_curves/ell_padic_field.py`,
+`sage/combinat/rigged_configurations/kr_tableaux.py`,
+`sage/algebras/lie_algebras/subalgebra.py`,
+`sage/matrix/matrix_cyclo_dense.pyx`, and
+`sage/algebras/lie_algebras/onsager.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-246-249/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 376 passed, 713 failed, 1351 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata.
+The broad failures were dependency frontiers rather than narrow promotion
+targets: Khuri-Makdisi Jacobian arithmetic routes through schemes,
+function-field, and PARI surfaces; symbolic constants need the stripped
+symbolic/interface stack; Lie subalgebra and Onsager examples reach the graph
+backend; and cyclotomic dense matrices timed out in number-field/NTL-backed
+startup. The WASI source patch now records those files with file-level
+`# sage.doctest: needs ...` metadata. The useful near-miss was
+`indexed_element.pyx`; its only failures were two GAP-backed permutation
+representation art examples and two Temperley-Lieb cellular-basis art
+examples, now marked with focused `sage.libs.gap` and `sage.combinat` tags.
+
+Final direct validation against the updated patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-246-249/final2.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 147 passed, 0 failed, 2538 skipped
+```
+
+The final run records `indexed_element.pyx` with 147 passed, 0 failed, and 91
+skipped blocks; the other ten files are skipped-only dependency-boundary rows.
+The latest-run summary records CoWasm commit
+`f1f03fcfa72909b9a5b86e930a9ec8e5fabdedd1`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. After adding
+`sage/modules/with_basis/indexed_element.pyx` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, the strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus is now at 1,090 non-comment entries. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`git diff --check`, and the full WASI source patch against a fresh
+`/home/user/sagelite` archive with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

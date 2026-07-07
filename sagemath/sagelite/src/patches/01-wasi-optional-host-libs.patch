@@ -17504,3 +17504,68 @@ diff --git a/src/sage/rings/number_field/number_field_ideal_rel.py b/src/sage/ri
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.number_field sage.libs.pari
  r"""
+diff --git a/src/sage/algebras/lie_algebras/onsager.py b/src/sage/algebras/lie_algebras/onsager.py
+--- a/src/sage/algebras/lie_algebras/onsager.py
++++ b/src/sage/algebras/lie_algebras/onsager.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ """
+diff --git a/src/sage/algebras/lie_algebras/subalgebra.py b/src/sage/algebras/lie_algebras/subalgebra.py
+--- a/src/sage/algebras/lie_algebras/subalgebra.py
++++ b/src/sage/algebras/lie_algebras/subalgebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.symbolic
+ r"""
+diff --git a/src/sage/matrix/matrix_cyclo_dense.pyx b/src/sage/matrix/matrix_cyclo_dense.pyx
+--- a/src/sage/matrix/matrix_cyclo_dense.pyx
++++ b/src/sage/matrix/matrix_cyclo_dense.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.ntl
+ # distutils: language = c++
+diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/with_basis/indexed_element.pyx
+--- a/src/sage/modules/with_basis/indexed_element.pyx
++++ b/src/sage/modules/with_basis/indexed_element.pyx
+@@ -370,4 +370,4 @@
+-            sage: DC3 = groups.permutation.DiCyclic(3)
+-            sage: L = DC3.regular_representation(QQ, side='left')
+-            sage: E2 = L.exterior_power(2)
+-            sage: ascii_art(E2.an_element())
++            sage: DC3 = groups.permutation.DiCyclic(3)                         # needs sage.libs.gap
++            sage: L = DC3.regular_representation(QQ, side='left')              # needs sage.libs.gap
++            sage: E2 = L.exterior_power(2)                                     # needs sage.libs.gap
++            sage: ascii_art(E2.an_element())                                   # needs sage.libs.gap
+@@ -379,3 +379,3 @@
+-            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+-            sage: C = TL.cellular_basis()
+-            sage: ascii_art(list(C.basis())[0])
++            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)                         # needs sage.combinat
++            sage: C = TL.cellular_basis()                                      # needs sage.combinat
++            sage: ascii_art(list(C.basis())[0])                                # needs sage.combinat
+@@ -464,4 +464,4 @@
+-            sage: DC3 = groups.permutation.DiCyclic(3)
+-            sage: L = DC3.regular_representation(QQ, side='left')
+-            sage: E2 = L.exterior_power(2)
+-            sage: unicode_art(E2.an_element())
++            sage: DC3 = groups.permutation.DiCyclic(3)                         # needs sage.libs.gap
++            sage: L = DC3.regular_representation(QQ, side='left')              # needs sage.libs.gap
++            sage: E2 = L.exterior_power(2)                                     # needs sage.libs.gap
++            sage: unicode_art(E2.an_element())                                 # needs sage.libs.gap
+@@ -473,3 +473,3 @@
+-            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+-            sage: C = TL.cellular_basis()
+-            sage: unicode_art(list(C.basis())[0])
++            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)                         # needs sage.combinat
++            sage: C = TL.cellular_basis()                                      # needs sage.combinat
++            sage: unicode_art(list(C.basis())[0])                              # needs sage.combinat
+diff --git a/src/sage/rings/function_field/khuri_makdisi.pyx b/src/sage/rings/function_field/khuri_makdisi.pyx
+--- a/src/sage/rings/function_field/khuri_makdisi.pyx
++++ b/src/sage/rings/function_field/khuri_makdisi.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.function_field sage.libs.pari
+ r"""
+diff --git a/src/sage/symbolic/constants.py b/src/sage/symbolic/constants.py
+--- a/src/sage/symbolic/constants.py
++++ b/src/sage/symbolic/constants.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
