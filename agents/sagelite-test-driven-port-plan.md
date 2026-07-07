@@ -36878,6 +36878,30 @@ doctest blocks. The strict promotion scan with `--strict-frontier`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate.
 
+Follow-up 571-to-590 prompt-frontier audit:
+
+The next raw source-minus-corpus prompt-count band, rows 571 through 590, was
+run as a focused one-worker probe with a 120-second per-file timeout. The probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-571-590/batch.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3614 skipped
+```
+
+The batch covered 20 uncovered files with no block-level failures and no
+file-level errors. All files were skipped-only under current browser-profile
+metadata. The dominant frontiers were manifolds plus symbolic/plot support,
+PARI and NTL-backed power-series and valuation paths, graph and GAP-backed
+algebra/combinatorics paths, FLINT/NTL polynomial coverage, elliptic and
+hyperelliptic curve dependencies, padics, SDP/MIP support, Symmetrica, and
+optional database-backed examples. The strict promotion scan with
+`--strict-frontier`, `--min-runner-version 87`, and `--dedupe-paths` printed no
+uncovered clean runnable candidate. The checked corpus remains at 1,093
+non-comment entries. The latest run metadata records CoWasm commit
+`fa35cdcd23e4795ddcf6cb9b4d0df704abfebb7b`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
