@@ -35512,6 +35512,51 @@ printed no uncovered clean runnable candidates. The checked corpus remains at
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 304-to-306 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 304-to-306 prompt band:
+`sage/combinat/key_polynomial.py`, `sage/game_theory/matching_game.py`,
+`sage/libs/ntl/ntl_ZZ_pEX.pyx`,
+`sage/manifolds/differentiable/characteristic_cohomology_class.py`, and
+`sage/rings/polynomial/multi_polynomial_ring_base.pyx`. The initial direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-304-306/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 6 passed, 258 failed, 651 skipped
+```
+
+`key_polynomial.py` and `matching_game.py` were already skipped-only under
+existing combinatorics, module, graph, and plotting metadata. The remaining
+three failures were dependency/runtime frontiers rather than promotion
+candidates: `ntl_ZZ_pEX.pyx` trapped in NTL finite-extension polynomial
+construction at `ntl.ZZ_pE([3,2], c)`, `characteristic_cohomology_class.py`
+cascaded from the unavailable manifold and symbolic startup namespace, and
+`multi_polynomial_ring_base.pyx` hit the known number-field/GAP boundary at
+the `CyclotomicField(8)` conversion doctest. The WASI source patch now
+records those three files with module-level `# sage.doctest: needs ...`
+metadata.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-304-306/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1519 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`3531dee3e1ff9e6affcaa2e05560d75c47dc0ac1`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -70,6 +70,14 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  # distutils: libraries = NTL_LIBRARIES gmp m
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
+@@ -4,3 +4,4 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
++# sage.doctest: needs sage.libs.ntl
+ # distutils: language = c++
 diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 --- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 +++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
@@ -110,6 +118,12 @@ diff --git a/src/sage/rings/valuation/limit_valuation.py b/src/sage/rings/valuat
 +++ b/src/sage/rings/valuation/limit_valuation.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx b/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.gap
  r"""
 diff --git a/src/sage/algebras/clifford_algebra_element.pyx b/src/sage/algebras/clifford_algebra_element.pyx
 --- a/src/sage/algebras/clifford_algebra_element.pyx
@@ -18113,6 +18127,12 @@ diff --git a/src/sage/manifolds/local_frame.py b/src/sage/manifolds/local_frame.
 diff --git a/src/sage/manifolds/differentiable/multivectorfield.py b/src/sage/manifolds/differentiable/multivectorfield.py
 --- a/src/sage/manifolds/differentiable/multivectorfield.py
 +++ b/src/sage/manifolds/differentiable/multivectorfield.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/differentiable/characteristic_cohomology_class.py b/src/sage/manifolds/differentiable/characteristic_cohomology_class.py
+--- a/src/sage/manifolds/differentiable/characteristic_cohomology_class.py
++++ b/src/sage/manifolds/differentiable/characteristic_cohomology_class.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
