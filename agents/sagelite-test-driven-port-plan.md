@@ -34435,6 +34435,47 @@ queries are empty. The strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,087 non-comment entries.
 
+Follow-up 235-to-237 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 235-to-237 prompt band:
+`sage/coding/gabidulin_code.py`,
+`sage/geometry/hyperbolic_space/hyperbolic_model.py`,
+`sage/rings/function_field/drinfeld_modules/finite_drinfeld_module.py`,
+`sage/schemes/plane_conics/con_field.py`, and
+`sage/combinat/specht_module.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-235-237/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 28 passed, 302 failed, 830 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata.
+The two noisy files were broad dependency surfaces rather than narrow
+promotion targets: hyperbolic models need the stripped hyperbolic
+geometry/symbolic stack, and plane conics over fields need the unavailable
+schemes surface. The WASI source patch now records those boundaries with
+file-level `sage.geometry.hyperbolic_space sage.symbolic` and `sage.schemes`
+metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-235-237/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1160 skipped
+```
+
+The latest-run summary records CoWasm commit
+`067fea76afcba3c4689b3246e9d2ac86192d6a33`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,087 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

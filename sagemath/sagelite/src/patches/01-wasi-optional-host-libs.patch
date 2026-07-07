@@ -15210,6 +15210,12 @@ diff --git a/src/sage/schemes/plane_conics/con_rational_field.py b/src/sage/sche
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  r"""
+diff --git a/src/sage/schemes/plane_conics/con_field.py b/src/sage/schemes/plane_conics/con_field.py
+--- a/src/sage/schemes/plane_conics/con_field.py
++++ b/src/sage/schemes/plane_conics/con_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes
+ r"""
 diff --git a/src/sage/schemes/projective/projective_rational_point.py b/src/sage/schemes/projective/projective_rational_point.py
 --- a/src/sage/schemes/projective/projective_rational_point.py
 +++ b/src/sage/schemes/projective/projective_rational_point.py
@@ -16250,6 +16256,12 @@ diff --git a/src/sage/combinat/designs/designs_pyx.pyx b/src/sage/combinat/desig
 diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_point.py b/src/sage/geometry/hyperbolic_space/hyperbolic_point.py
 --- a/src/sage/geometry/hyperbolic_space/hyperbolic_point.py
 +++ b/src/sage/geometry/hyperbolic_space/hyperbolic_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
+ r"""
+diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_model.py b/src/sage/geometry/hyperbolic_space/hyperbolic_model.py
+--- a/src/sage/geometry/hyperbolic_space/hyperbolic_model.py
++++ b/src/sage/geometry/hyperbolic_space/hyperbolic_model.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
  r"""
