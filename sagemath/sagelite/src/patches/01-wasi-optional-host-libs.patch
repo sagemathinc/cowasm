@@ -18321,3 +18321,15 @@ diff --git a/src/sage/manifolds/differentiable/manifold_homset.py b/src/sage/man
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/quivers/morphism.py b/src/sage/quivers/morphism.py
+--- a/src/sage/quivers/morphism.py
++++ b/src/sage/quivers/morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.quivers sage.graphs
+ """
+diff --git a/src/sage/rings/function_field/ideal.py b/src/sage/rings/function_field/ideal.py
+--- a/src/sage/rings/function_field/ideal.py
++++ b/src/sage/rings/function_field/ideal.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field
+ r"""

@@ -36061,6 +36061,47 @@ The latest run metadata records CoWasm commit
 sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 full-patch application against a clean `/home/user/sagelite` HEAD archive.
 
+Follow-up 346-to-348 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected two uncovered files in the 346-to-348 band:
+`sage/quivers/morphism.py` and `sage/rings/function_field/ideal.py`. The
+initial direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-346-348/prompt-346-348/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 65 passed, 282 failed, 0 skipped
+```
+
+The failures were dependency-frontier coverage rather than promotion
+candidates. `morphism.py` cascaded from the unavailable graph/quiver startup
+surface, with dominant `DiGraph`, `Q`, and dependent representation names
+missing. `ideal.py` timed out at the rational function-field ideal inverse
+display example `~I`, matching the existing function-field backend boundary.
+The WASI source patch now records file-level dependency metadata for both
+files.
+
+Focused direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-346-348/prompt-346-348/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 694 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,092
+non-comment entries. The latest run metadata records CoWasm commit
+`b1609e34a0732cd20de2dcf6381228ff75a1ec41`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+full-patch application against a clean `/home/user/sagelite` HEAD archive.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
