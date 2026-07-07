@@ -16443,3 +16443,45 @@ diff --git a/src/sage/interfaces/octave.py b/src/sage/interfaces/octave.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs pexpect octave
  r"""
+diff --git a/src/sage/geometry/convex_set.py b/src/sage/geometry/convex_set.py
+--- a/src/sage/geometry/convex_set.py
++++ b/src/sage/geometry/convex_set.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ r"""
+diff --git a/src/sage/matroids/gammoid.py b/src/sage/matroids/gammoid.py
+--- a/src/sage/matroids/gammoid.py
++++ b/src/sage/matroids/gammoid.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ r"""
+diff --git a/src/sage/rings/ring_extension_morphism.pyx b/src/sage/rings/ring_extension_morphism.pyx
+--- a/src/sage/rings/ring_extension_morphism.pyx
++++ b/src/sage/rings/ring_extension_morphism.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/algebras/quantum_groups/representations.py b/src/sage/algebras/quantum_groups/representations.py
+--- a/src/sage/algebras/quantum_groups/representations.py
++++ b/src/sage/algebras/quantum_groups/representations.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.quantum_groups
+ r"""
+diff --git a/src/sage/matroids/basis_matroid.pyx b/src/sage/matroids/basis_matroid.pyx
+--- a/src/sage/matroids/basis_matroid.pyx
++++ b/src/sage/matroids/basis_matroid.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids sage.graphs
+ """
+diff --git a/src/sage/rings/asymptotic/asymptotic_expansion_generators.py b/src/sage/rings/asymptotic/asymptotic_expansion_generators.py
+--- a/src/sage/rings/asymptotic/asymptotic_expansion_generators.py
++++ b/src/sage/rings/asymptotic/asymptotic_expansion_generators.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.symbolic
+ r"""
+diff --git a/src/sage/rings/function_field/ideal_rational.py b/src/sage/rings/function_field/ideal_rational.py
+--- a/src/sage/rings/function_field/ideal_rational.py
++++ b/src/sage/rings/function_field/ideal_rational.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
+ r"""

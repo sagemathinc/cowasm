@@ -33055,6 +33055,47 @@ around Brandt modules, symbolic calculus, matroid state setup, pexpect-backed
 Axiom, hyperplane arrangement number-field setup, and polynomial recursive
 construction.
 
+Follow-up 148-to-150 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected nine uncovered files in the 148-to-150 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-148-150/prompt-148-150/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 174 passed, 421 failed, 300 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Two
+files were already skipped-only under existing dependency metadata:
+`sage/schemes/toric/sheaf/klyachko.py` and
+`sage/coding/code_constructions.py`.
+
+The remaining failures were broad browser-profile boundaries rather than
+narrow corpus-promotion targets: convex-set examples need polyhedron/PPL
+support, gammoid and basis-matroid examples need the matroid/graph stack,
+ring-extension morphisms hit the known NTL finite-field dynamic-link frontier,
+quantum-group representation examples need the quantum-group surface, the
+asymptotic expansion generator reaches number-field/symbolic runtime
+frontiers, and rational function-field ideals hit the existing
+function-field/PARI-backed polynomial-number-field trap.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-148-150/prompt-148-150/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1340 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,083 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
