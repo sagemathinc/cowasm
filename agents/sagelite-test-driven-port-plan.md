@@ -33485,6 +33485,46 @@ strict promotion scan with `--require-run-metadata`,
 no uncovered clean runnable candidates. The checked corpus remains at 1,085
 non-comment entries.
 
+Follow-up 175-to-177 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected eight uncovered files in the 175-to-177 prompt band. The
+initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-175-177/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 71 passed, 752 failed, 579 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates.
+Three files were already skipped-only under existing dependency metadata:
+`sage/calculus/riemann.pyx`, `sage/numerical/backends/cvxpy_backend.pyx`, and
+`sage/categories/algebra_functor.py`. The remaining failures were broad
+browser-profile boundaries rather than narrow corpus-promotion targets:
+PBW basis doctests need the graph-backed Lie algebra catalog, linear-extension
+doctests need the graph/module-backed poset surface, triangulation doctests
+need the stripped triangulation package, PPL lattice-polytope doctests need
+the PPL/polyhedron surface, and transversal-matroid doctests need the
+matroid/graph surface.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-175-177/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1402 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
