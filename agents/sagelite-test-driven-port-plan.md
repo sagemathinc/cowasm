@@ -33195,6 +33195,32 @@ promotion scan with `--require-run-metadata`, `--require-source-root-path`,
 also ran `git diff --check` and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up sampling pass on 2026-07-07 found no new quiet runnable corpus
+candidate in the checked helper/frontier bands. Focused probes covered small
+typeset, stats, probability, data-structure, misc, monoid, category, coding,
+module, database, plotting, homology, species, and Judson-book files under the
+default node profile. The only clean runnable rows found by scanning prior
+SQLite probes did not promote: `sage/repl/prompts.py` currently extracts no
+blocks from the patched source copy, and a full-file rerun of
+`sage/rings/polynomial/polynomial_element_generic.py` records broad backend
+failures rather than a narrow tag-only boundary:
+
+```text
+polynomial_element_generic.py: 227 passed, 33 failed, 24 skipped
+```
+
+The polynomial failure clusters include missing PPL-backed Newton polygons,
+unavailable FLINT integer polynomial gcd support on WASI, pexpect-backed gcd
+paths, number-field/PARI object-model gaps, quaternion/algebraic-field setup
+drift, and dependent `NameError` rows after failed setup blocks. The sampled
+helper/coding/stats rows were mostly skipped-only under explicit
+`# needs ...`, `# optional ...`, or deferred metadata, for example
+`sage/stats/time_series.pyx` with 312 skipped blocks,
+`sage/stats/distributions/discrete_gaussian_lattice.py` with 158 skipped
+blocks, and the compact coding/module batch with 104 skipped blocks and no
+runnable default-profile rows. These results are useful frontier data, but
+they do not justify growing the quiet corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
