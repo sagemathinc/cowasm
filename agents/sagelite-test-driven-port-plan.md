@@ -38960,6 +38960,36 @@ subtraction glob. The live wrapper still prints only the
 `path	prompt_count` header under the required-database and fail-on-rows
 guards.
 
+Follow-up resource-staging audit on 2026-07-07: no corpus entry was promoted
+because the checkout had no staged Electron resource tree. A direct focused
+probe of the next unmentioned 16-to-21 prompt frontier could not start:
+`sagemath/sagelite/bin/sage -t` reported
+`Sagelite Electron resources not found; set COWASM_SAGELITE_ELECTRON_RESOURCES`,
+and `sagemath/sagelite/dist/wasi-sdk/electron-resources/` did not contain
+`sagelite-electron-resources.json`.
+
+Refreshing the resource tree with
+`make -C sagemath/sagelite test-wasi-sdk-standalone` exposed a host build
+blocker before any doctest dashboard could be written. The default standalone
+target runs Meson compile with four jobs, and that run failed while Cython was
+generating multiple `sage.misc` C sources:
+
+```text
+randstate.pyx: Segmentation fault (core dumped)
+reset.pyx: Segmentation fault (core dumped)
+sage_timeit_class.pyx: Segmentation fault (core dumped)
+sage_ostools.pyx: Segmentation fault (core dumped)
+```
+
+A retry with `SAGELITE_MESON_COMPILE_JOBS=1` passed the exact previous crash
+point, reaching later Cython generation at `sage/algebras/...` before the
+scheduled run stopped it to avoid spending the whole pass on a serial
+1441-step resource rebuild. The next scheduled run should either complete
+that one-job standalone staging first, or make the standalone target use a
+serial Cython-generation phase when the host Cython process is unstable. Until
+`dist/wasi-sdk/electron-resources/sagelite-electron-resources.json` exists,
+direct source-frontier `sage -t` probes cannot run in this checkout.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
