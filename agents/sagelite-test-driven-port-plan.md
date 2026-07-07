@@ -36963,6 +36963,49 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 611-to-630 prompt-frontier audit:
+
+The next raw source-minus-corpus prompt-count band, rows 611 through 630, was
+run as a focused one-worker probe with a 120-second per-file timeout. The band
+covers graph, Singular, PARI, modular, valuation, manifold, polyhedron, and
+Lie-algebra dependency frontiers:
+`sage/groups/libgap_mixin.py`,
+`sage/rings/polynomial/polynomial_zmod_flint.pyx`,
+`sage/rings/power_series_pari.pyx`,
+`sage/algebras/lie_algebras/center_uea.py`,
+`sage/algebras/lie_algebras/poincare_birkhoff_witt.py`,
+`sage/graphs/graph_decompositions/modular_decomposition.pyx`,
+`sage/numerical/backends/generic_sdp_backend.pyx`,
+`sage/schemes/hyperelliptic_curves/jacobian_morphism.py`,
+`sage/tests/article_heuberger_krenn_kropf_fsm-in-sage.py`,
+`sage/algebras/lie_algebras/affine_lie_algebra.py`,
+`sage/manifolds/differentiable/examples/real_line.py`,
+`sage/geometry/polyhedron/base7.py`,
+`sage/libs/singular/singular.pyx`,
+`sage/modular/pollack_stevens/space.py`, `sage/groups/raag.py`,
+`sage/rings/valuation/mapped_valuation.py`, `sage/symbolic/subring.py`,
+`sage/graphs/digraph_generators.py`,
+`sage/graphs/generators/trees.pyx`, and
+`sage/modular/pollack_stevens/manin_map.py`.
+
+The probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-611-630/batch.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3357 skipped
+```
+
+Nineteen files are skipped-only under current browser-profile metadata, and
+`sage/tests/article_heuberger_krenn_kropf_fsm-in-sage.py` extracts zero
+doctest blocks. The saved block- and file-failure cluster queries are empty,
+and the strict promotion scan with `--strict-frontier`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`03b54ea0ad0227e69d1e42f66b357ab54297493f`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
