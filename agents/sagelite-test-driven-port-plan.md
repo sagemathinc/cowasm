@@ -36149,6 +36149,44 @@ The latest run metadata records CoWasm commit
 sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 full-patch application against a clean `/home/user/sagelite` HEAD archive.
 
+Follow-up 352-to-354 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from a clean patched Sagelite
+HEAD archive selected one unguarded file in the 352-to-354 prompt band:
+`sage/rings/function_field/valuation.py`. The initial direct one-worker probe
+wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-352-354/valuation.sqlite3` and
+hit a file-level `wasm_signature_mismatch` while running the rational
+function-field valuation setup at `valuation.py:890`:
+
+```text
+sage -t failed: 0 passed, 1 failed, 0 skipped
+```
+
+The failure is the same function-field backend boundary as the adjacent
+`ideal.py` coverage. The WASI source patch now records
+`sage/rings/function_field/valuation.py` with file-level
+`# sage.doctest: needs sage.rings.function_field` metadata, and completes the
+same directive for `sage/rings/function_field/ideal.py` in the checked patch.
+
+Focused direct validation against a clean patched Sagelite HEAD archive wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-352-354/function-field-final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 701 skipped
+```
+
+The final run covers `ideal.py` and `valuation.py`, has no block-level
+failures and no file-level errors, and the strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,092 non-comment entries. The latest run metadata records
+CoWasm commit `09e0d3386e66218d6db353d054b98a17d80e9346`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

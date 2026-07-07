@@ -18333,6 +18333,12 @@ diff --git a/src/sage/rings/function_field/ideal.py b/src/sage/rings/function_fi
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field
  r"""
+diff --git a/src/sage/rings/function_field/valuation.py b/src/sage/rings/function_field/valuation.py
+--- a/src/sage/rings/function_field/valuation.py
++++ b/src/sage/rings/function_field/valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field
+ r"""
 diff --git a/src/sage/schemes/elliptic_curves/height.py b/src/sage/schemes/elliptic_curves/height.py
 --- a/src/sage/schemes/elliptic_curves/height.py
 +++ b/src/sage/schemes/elliptic_curves/height.py
