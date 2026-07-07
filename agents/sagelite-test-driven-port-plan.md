@@ -34253,6 +34253,55 @@ runnable candidates. The checked corpus remains at 1,087 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 223-to-225 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from a newly patched scratch
+source tree selected eight uncovered files in the 223-to-225 prompt band:
+`sage/combinat/fully_packed_loop.py`,
+`sage/geometry/polyhedron/base0.py`,
+`sage/combinat/rigged_configurations/kleber_tree.py`,
+`sage/combinat/similarity_class_type.py`,
+`sage/geometry/ribbon_graph.py`,
+`sage/manifolds/differentiable/diff_form_module.py`,
+`sage/algebras/fusion_rings/fusion_ring.py`, and
+`sage/matrix/matrix_symbolic_dense.pyx`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-223-225/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 29 passed, 1054 failed, 709 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata.
+The remaining five failures were broad dependency surfaces rather than narrow
+promotion targets: polyhedron base doctests start from the stripped
+polyhedron/PPL backend, ribbon graphs need permutation-group support,
+differential-form modules need the manifold/symbolic stack, fusion rings need
+the unavailable fusion-ring stack, and symbolic dense matrices need the
+symbolic ring startup surface. The WASI source patch now records those
+boundaries with file-level `sage.geometry.polyhedron ppl`, `sage.groups`,
+`sage.manifolds sage.symbolic`, `sage.algebras.fusion_rings`, and
+`sage.symbolic` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-223-225/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1792 skipped
+```
+
+The latest-run summary records CoWasm commit
+`64f78f0d8424a9304ae9aa778f971e317b48889e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,087 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

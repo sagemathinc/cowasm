@@ -17364,3 +17364,33 @@ diff --git a/src/sage/rings/function_field/maps.py b/src/sage/rings/function_fie
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.libs.pari
  r"""
+diff --git a/src/sage/algebras/fusion_rings/fusion_ring.py b/src/sage/algebras/fusion_rings/fusion_ring.py
+--- a/src/sage/algebras/fusion_rings/fusion_ring.py
++++ b/src/sage/algebras/fusion_rings/fusion_ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.fusion_rings
+ """
+diff --git a/src/sage/geometry/polyhedron/base0.py b/src/sage/geometry/polyhedron/base0.py
+--- a/src/sage/geometry/polyhedron/base0.py
++++ b/src/sage/geometry/polyhedron/base0.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ r"""
+diff --git a/src/sage/geometry/ribbon_graph.py b/src/sage/geometry/ribbon_graph.py
+--- a/src/sage/geometry/ribbon_graph.py
++++ b/src/sage/geometry/ribbon_graph.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups
+ r"""
+diff --git a/src/sage/manifolds/differentiable/diff_form_module.py b/src/sage/manifolds/differentiable/diff_form_module.py
+--- a/src/sage/manifolds/differentiable/diff_form_module.py
++++ b/src/sage/manifolds/differentiable/diff_form_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/matrix/matrix_symbolic_dense.pyx b/src/sage/matrix/matrix_symbolic_dense.pyx
+--- a/src/sage/matrix/matrix_symbolic_dense.pyx
++++ b/src/sage/matrix/matrix_symbolic_dense.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """
