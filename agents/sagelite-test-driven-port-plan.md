@@ -39064,6 +39064,34 @@ patched-source check confirming the new filter removes the skipped-only
 `groupoid.py`, `g_sets.py`, and `species/misc.py` rows that the raw prompt
 scan still reports.
 
+Follow-up source-root relative doctest path pass on 2026-07-07: no corpus
+entry was promoted. The strict runnable source-frontier scan with
+`--min-runnable-prompts 1`, the plan's mentioned-path subtraction, and the
+persisted `.tmp/**/*.sqlite3` dashboard subtraction printed only the
+`path	prompt_count` header, so the local runnable source-minus-corpus
+frontier remained exhausted under the current filters.
+
+The Sagelite Node doctest runner now resolves delayed file operands against
+`--source-root`/`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` when a relative file path
+does not exist under the invocation cwd but does exist under the source root.
+This fixes direct probes such as `sage -t --source-root
+sagemath/sagelite/build/wasi-sdk src/sage/all.py` from the repository root.
+A focused pre-staging-rebuild check recorded `all.py: 13 passed, 0 failed,
+2 skipped` in
+`/home/user/cowasm/.tmp/current-run/scheduled-2026-07-07-source-root/all-relative.sqlite3`,
+with source-root-relative block keys.
+
+The standalone smoke fixture now includes a synthetic source-root-relative
+doctest operand check, but the full `make -C sagemath/sagelite
+test-wasi-sdk-standalone` validation did not reach that smoke after the
+resource rebuild removed the staged Electron resources and the serial Cython
+generation phase exhausted its five retry attempts. The latest blockers in
+`sagemath/sagelite/dist/wasi-sdk/meson-cython-generate.log` are host Cython
+segfaults at `sage/rings/finite_rings/finite_field_base.pyx` and then
+`sage/rings/finite_rings/element_givaro.pyx`. Direct `sage -t` probes need
+the Electron resource manifest staged again before they can run in this
+checkout.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -1960,6 +1960,51 @@ if [ "$doctest_env_db_counts" != "passed|1|1|0|0" ]; then
   sqlite3 "$doctest_env_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest env-db smoke wrote unexpected SQLite counts: $doctest_env_db_counts"
 fi
+doctest_source_root_relative_file="$probe_dir/src/sage/source_root_relative.py"
+doctest_source_root_relative_db="$probe_dir/sagelite-doctest-source-root-relative.sqlite3"
+doctest_source_root_relative_log="$dist_dir/doctest-source-root-relative.log"
+mkdir -p "$(dirname "$doctest_source_root_relative_file")"
+cat >"$doctest_source_root_relative_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: 21 * 2
+    42
+"""
+PY
+set +e
+(
+  cd "$dist_dir" &&
+  COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+    COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+    timeout "$node_import_timeout" \
+      node "$src_dir/sagelite-node-repl.cjs" -t \
+        --source-root "$probe_dir" \
+        --sqlite "$doctest_source_root_relative_db" \
+        src/sage/source_root_relative.py
+) >"$doctest_source_root_relative_log" 2>&1
+doctest_source_root_relative_status=$?
+set -e
+if [ "$doctest_source_root_relative_status" -eq 124 ]; then
+  tail -120 "$doctest_source_root_relative_log" >&2
+  record_blocker "sagelite-blocked: sage -t source-root relative doctest smoke timed out after $node_import_timeout; see $doctest_source_root_relative_log for the first runtime blocker."
+fi
+if [ "$doctest_source_root_relative_status" -ne 0 ]; then
+  tail -120 "$doctest_source_root_relative_log" >&2
+  record_blocker "sagelite-blocked: sage -t source-root relative doctest smoke failed; see $doctest_source_root_relative_log for the first runtime blocker."
+fi
+doctest_source_root_relative_counts="$(sqlite3 "$doctest_source_root_relative_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_source_root_relative_counts" != "passed|1|1|0|0" ]; then
+  cat "$doctest_source_root_relative_log" >&2
+  sqlite3 "$doctest_source_root_relative_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t source-root relative doctest smoke wrote unexpected SQLite counts: $doctest_source_root_relative_counts"
+fi
+doctest_source_root_relative_path_count="$(sqlite3 "$doctest_source_root_relative_db" "select count(*) from runs join files on files.run_id = runs.id join blocks on blocks.file_id = files.id where runs.source_root = '$probe_dir' and files.path = '$doctest_source_root_relative_file' and blocks.block_key like 'src/sage/source_root_relative.py:%:%';")"
+if [ "$doctest_source_root_relative_path_count" != "1" ]; then
+  cat "$doctest_source_root_relative_log" >&2
+  sqlite3 "$doctest_source_root_relative_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t source-root relative doctest smoke did not resolve the relative source path under --source-root."
+fi
 doctest_sagelite_package_commit_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from runs where sagelite_package_commit is not null and sagelite_package_commit = sagelite_source_commit;")"
 if [ "$doctest_sagelite_package_commit_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2

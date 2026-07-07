@@ -193,6 +193,7 @@ async function createSagelitePython({ manifest, resourceRoot, sagelitePythonEnv 
 function parseDoctestArgs(args, invocationCwd) {
   const envDbPath =
     process.env.COWASM_SAGELITE_DOCTEST_DB || process.env.SAGELITE_DOCTEST_DB;
+  const fileArgs = [];
   const options = {
     dbPath: envDbPath
       ? path.resolve(invocationCwd, envDbPath)
@@ -292,13 +293,13 @@ function parseDoctestArgs(args, invocationCwd) {
       );
     } else if (arg === "--") {
       for (const file of args.slice(i + 1)) {
-        options.files.push(path.resolve(invocationCwd, file));
+        fileArgs.push(file);
       }
       break;
     } else if (arg.startsWith("-")) {
       throw new Error(`unsupported sage -t option in Sagelite: ${arg}`);
     } else {
-      options.files.push(path.resolve(invocationCwd, arg));
+      fileArgs.push(arg);
     }
   }
   if (!Number.isFinite(options.timeoutSeconds) || options.timeoutSeconds < 0) {
@@ -307,7 +308,7 @@ function parseDoctestArgs(args, invocationCwd) {
   if (!Number.isInteger(options.jobs) || options.jobs < 1) {
     throw new Error("jobs must be a positive integer");
   }
-  if (options.files.length === 0) {
+  if (fileArgs.length === 0) {
     throw new Error("sage -t requires at least one file");
   }
   if (options.blockKeys.some((key) => !key)) {
@@ -325,7 +326,27 @@ function parseDoctestArgs(args, invocationCwd) {
   if (!allowedProfiles.has(options.profile)) {
     throw new Error(`unsupported Sagelite doctest profile: ${options.profile}`);
   }
+  options.files = fileArgs.map((file) =>
+    resolveDoctestFilePath(file, invocationCwd, options.sourceRoot),
+  );
   return options;
+}
+
+function resolveDoctestFilePath(file, invocationCwd, sourceRoot) {
+  if (path.isAbsolute(file)) {
+    return path.resolve(file);
+  }
+
+  const cwdPath = path.resolve(invocationCwd, file);
+  if (fs.existsSync(cwdPath) || !sourceRoot) {
+    return cwdPath;
+  }
+
+  const sourceRootPath = path.resolve(sourceRoot, file);
+  if (fs.existsSync(sourceRootPath)) {
+    return sourceRootPath;
+  }
+  return cwdPath;
 }
 
 function parseDoctestLine(value) {
