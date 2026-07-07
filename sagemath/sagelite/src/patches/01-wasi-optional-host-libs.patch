@@ -18267,3 +18267,15 @@ diff --git a/src/sage/modules/free_quadratic_module.py b/src/sage/modules/free_q
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.modules sage.matrix.matrix_mod2_dense
  r"""
+diff --git a/src/sage/modular/hypergeometric_motive.py b/src/sage/modular/hypergeometric_motive.py
+--- a/src/sage/modular/hypergeometric_motive.py
++++ b/src/sage/modular/hypergeometric_motive.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari
+ """
+diff --git a/src/sage/manifolds/differentiable/vectorfield_module.py b/src/sage/manifolds/differentiable/vectorfield_module.py
+--- a/src/sage/manifolds/differentiable/vectorfield_module.py
++++ b/src/sage/manifolds/differentiable/vectorfield_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""

@@ -35856,6 +35856,50 @@ The latest run metadata records CoWasm commit
 90. Validation also ran `git diff --check` and full-patch application against
 the clean archived Sagelite source copy.
 
+Follow-up 328-to-330 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 328-to-330 prompt band:
+`sage/modular/hypergeometric_motive.py`,
+`sage/combinat/cluster_algebra_quiver/quiver.py`, and
+`sage/manifolds/differentiable/vectorfield_module.py`. The initial direct
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-328-330/prompt-328-330/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 80 passed, 574 failed, 333 skipped
+```
+
+`quiver.py` was already skipped-only under existing graph/module metadata. The
+two runnable-failing files were broad dependency frontiers rather than clean
+promotion candidates: `hypergeometric_motive.py` was dominated by the focused
+PARI/cypari2 object-model boundary, and `vectorfield_module.py` cascaded from
+the unavailable manifold/symbolic startup surface. The WASI source patch now
+records `hypergeometric_motive.py` as `# sage.doctest: needs sage.libs.pari`
+and `vectorfield_module.py` as
+`# sage.doctest: needs sage.manifolds sage.symbolic`.
+
+Focused direct validation applied the full WASI source patch to a clean
+archived copy of `/home/user/sagelite`, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-328-330/prompt-328-330/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 987 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`22d2c313dae30db0c0cec3a80163487a81057acf`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `git diff --check` and full-patch application against
+the clean archived Sagelite source copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
