@@ -17605,3 +17605,15 @@ diff --git a/src/sage/schemes/elliptic_curves/constructor.py b/src/sage/schemes/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.singular sage.matrix.matrix_integer_dense sage.rings.finite_rings database_cremona_mini_ellcurve
  """
+diff --git a/src/sage/schemes/elliptic_curves/hom_composite.py b/src/sage/schemes/elliptic_curves/hom_composite.py
+--- a/src/sage/schemes/elliptic_curves/hom_composite.py
++++ b/src/sage/schemes/elliptic_curves/hom_composite.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.singular sage.rings.finite_rings database_cremona_mini_ellcurve
+ r"""
+diff --git a/src/sage/symbolic/assumptions.py b/src/sage/symbolic/assumptions.py
+--- a/src/sage/symbolic/assumptions.py
++++ b/src/sage/symbolic/assumptions.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ """

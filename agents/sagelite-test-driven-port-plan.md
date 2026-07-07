@@ -34837,6 +34837,49 @@ failure cluster queries are empty. The strict promotion scan with
 no uncovered clean runnable candidates. The checked corpus remains at 1,090
 non-comment entries.
 
+Follow-up 259-to-261 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 259-to-261 prompt band:
+`sage/functions/piecewise.py`, `sage/modular/cusps_nf.py`,
+`sage/schemes/elliptic_curves/hom_composite.py`,
+`sage/modular/modform/space.py`,
+`sage/rings/function_field/drinfeld_modules/morphism.py`,
+`sage/symbolic/assumptions.py`, and `sage/interfaces/fricas.py`. The initial
+direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-259-261/prompt-259-261/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 51 passed, 294 failed, 1439 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata,
+including the previously sampled `modular/modform/space.py`. The remaining two
+failures were broad dependency frontiers rather than narrow promotion targets:
+elliptic-curve composite morphisms require elliptic-curve, Singular,
+finite-ring, and Cremona database surfaces, while symbolic assumptions require
+the stripped symbolic/Maxima stack. The WASI source patch now records those
+file-level boundaries with explicit `# sage.doctest: needs ...` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-259-261/prompt-259-261/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1784 skipped
+```
+
+The latest-run summary records CoWasm commit
+`48a61a633973662e28b7d54384ae199ba7f36519`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all seven files. The saved block- and file-
+failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,090
+non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
