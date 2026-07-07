@@ -17131,3 +17131,33 @@ diff --git a/src/sage/manifolds/subsets/pullback.py b/src/sage/manifolds/subsets
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/categories/commutative_rings.py b/src/sage/categories/commutative_rings.py
+--- a/src/sage/categories/commutative_rings.py
++++ b/src/sage/categories/commutative_rings.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field
+ r"""
+diff --git a/src/sage/geometry/polyhedron/parent.py b/src/sage/geometry/polyhedron/parent.py
+--- a/src/sage/geometry/polyhedron/parent.py
++++ b/src/sage/geometry/polyhedron/parent.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.graphs
+ r"""
+diff --git a/src/sage/rings/number_field/order_ideal.py b/src/sage/rings/number_field/order_ideal.py
+--- a/src/sage/rings/number_field/order_ideal.py
++++ b/src/sage/rings/number_field/order_ideal.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/combinat/yang_baxter_graph.py b/src/sage/combinat/yang_baxter_graph.py
+--- a/src/sage/combinat/yang_baxter_graph.py
++++ b/src/sage/combinat/yang_baxter_graph.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/diff_map.py b/src/sage/manifolds/differentiable/diff_map.py
+--- a/src/sage/manifolds/differentiable/diff_map.py
++++ b/src/sage/manifolds/differentiable/diff_map.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""

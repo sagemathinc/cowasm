@@ -33901,6 +33901,54 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 199-to-201 prompt-band dependency tagging:
+
+A prompt-count band probe selected eight files from the 199-to-201 range:
+`sage/categories/commutative_rings.py`,
+`sage/geometry/polyhedron/parent.py`, `sage/modular/modsym/boundary.py`,
+`sage/rings/number_field/order_ideal.py`,
+`sage/combinat/yang_baxter_graph.py`,
+`sage/manifolds/differentiable/diff_map.py`,
+`sage/rings/finite_rings/hom_finite_field.pyx`, and
+`sage/rings/valuation/valuation_space.py`. The initial grouped direct probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-199-201/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 282 passed, 447 failed, 472 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates.
+`valuation_space.py` was already present in the curated corpus and was
+therefore only an audit row; `boundary.py` and `hom_finite_field.pyx` were
+already skipped-only under existing file-level dependency metadata. The new
+WASI source patch tags cover the remaining broad browser-profile boundaries:
+commutative-ring category examples reaching number-field-style polynomial
+construction traps, polyhedron parent coverage requiring the polyhedron/PPL
+and graph stack, number-field order ideals requiring number-field/PARI
+support, graph-backed Yang-Baxter construction, and symbolic manifold
+differentiable maps.
+
+Final direct validation against the patched source tree, excluding the already
+covered `valuation_space.py` audit row, wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-199-201/final.sqlite3` and
+recorded the clean SQLite dashboard:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1383 skipped
+```
+
+The Node process printed the clean summary and then exited with status 139 on
+the known post-run teardown path, so this pass is recorded from the completed
+SQLite dashboard rather than from the process exit status. The saved block-
+and file-failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,085 non-comment entries. Validation also ran
+`git diff --check` and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
