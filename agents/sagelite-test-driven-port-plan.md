@@ -33856,6 +33856,51 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local scratch copy.
 
+Follow-up 196-to-198 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected ten uncovered files in the 196-to-198 prompt band:
+`sage/combinat/crystals/induced_structure.py`,
+`sage/homology/free_resolution.py`,
+`sage/numerical/backends/glpk_graph_backend.pyx`,
+`sage/rings/number_field/maps.py`,
+`sage/schemes/curves/plane_curve_arrangement.py`,
+`sage/graphs/generators/classical_geometries.py`,
+`sage/manifolds/subsets/pullback.py`, `sage/plot/multigraphics.py`,
+`sage/schemes/toric/points.py`, and
+`sage/combinat/crystals/tensor_product.py`. The initial grouped direct probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-196-198/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 2 passed, 224 failed, 1519 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Six
+files were already skipped-only under existing dependency metadata. The
+remaining failures were broad browser-profile boundaries rather than narrow
+promotion targets: number-field maps hit a PARI-backed number-field
+signature-mismatch boundary, plane-curve arrangements require the broader
+scheme/Singular polynomial surface, and manifold pullbacks require the
+symbolic manifold surface.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-196-198/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1940 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

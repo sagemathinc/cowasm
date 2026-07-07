@@ -17113,3 +17113,21 @@ diff --git a/src/sage/quivers/path_semigroup.py b/src/sage/quivers/path_semigrou
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.quivers sage.graphs
  """
+diff --git a/src/sage/rings/number_field/maps.py b/src/sage/rings/number_field/maps.py
+--- a/src/sage/rings/number_field/maps.py
++++ b/src/sage/rings/number_field/maps.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/schemes/curves/plane_curve_arrangement.py b/src/sage/schemes/curves/plane_curve_arrangement.py
+--- a/src/sage/schemes/curves/plane_curve_arrangement.py
++++ b/src/sage/schemes/curves/plane_curve_arrangement.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/manifolds/subsets/pullback.py b/src/sage/manifolds/subsets/pullback.py
+--- a/src/sage/manifolds/subsets/pullback.py
++++ b/src/sage/manifolds/subsets/pullback.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
