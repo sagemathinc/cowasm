@@ -33699,6 +33699,25 @@ non-comment entries. Validation also ran `git diff --check` and the full WASI
 source patch dry-run against `/home/user/sagelite` with a workspace-local
 `TMPDIR`.
 
+Follow-up candidate-helper compatibility pass on 2026-07-07: while scanning
+recent scratch SQLite probe artifacts, `doctest-corpus-candidates.py` hit a
+legacy `runs` schema without `source_root` and aborted before
+`--ignore-invalid` could skip stale or incomplete databases. The helper now
+selects a null source root when the column is absent, so callers that provide
+`--source-root` can still normalize legacy result paths. The standalone smoke
+fixture now covers this no-`source_root` legacy schema alongside the existing
+legacy `files` table modes.
+
+Validation ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, and a
+synthetic SQLite probe that reports
+`src/sage/example/real_candidate.py` from a legacy database whose `runs` table
+has only `id`. Retrying the recent scratch scan with `--ignore-invalid`,
+`--quiet-invalid`, `--require-block-rows`, `--source-root
+sagemath/sagelite/build/wasi-sdk`, and `--dedupe-paths` completed and printed
+no uncovered clean runnable candidates.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

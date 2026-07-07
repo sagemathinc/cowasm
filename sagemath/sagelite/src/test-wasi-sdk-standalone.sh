@@ -3385,6 +3385,46 @@ for legacy_mode in "--near-misses" "--zero-blocks" "--file-errors"; do
       ;;
   esac
 done
+doctest_candidate_helper_legacy_no_root_db="$probe_dir/sagelite-doctest-legacy-no-source-root.sqlite3"
+sqlite3 "$doctest_candidate_helper_legacy_no_root_db" <<SQL
+create table runs (
+  id integer primary key
+);
+create table files (
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id) values (1);
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/real_candidate.py',
+  'passed',
+  2,
+  2,
+  0,
+  0,
+  10
+);
+SQL
+doctest_candidate_helper_legacy_no_root_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_legacy_no_root_db")"
+if [ "$doctest_candidate_helper_legacy_no_root_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_legacy_no_root_paths" >&2
+  sqlite3 "$doctest_candidate_helper_legacy_no_root_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not tolerate legacy runs tables without source_root."
+fi
 doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
 touch "$doctest_candidate_helper_empty_db"
 doctest_candidate_helper_quiet_stderr="$("$src_dir/doctest-corpus-candidates.py" \

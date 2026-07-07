@@ -561,12 +561,15 @@ def latest_run_metadata(
         filters.append("runner_version >= ?")
         parameters.append(min_runner_version)
     command_expr = "command" if runs_table_has_column(db, "command") else "''"
+    source_root_expr = (
+        "source_root" if runs_table_has_column(db, "source_root") else "NULL"
+    )
     where_clause = ""
     if filters:
         where_clause = "where " + " and ".join(filters)
     rows = db.execute(
         f"""
-        select id, source_root, {command_expr}
+        select id, {source_root_expr}, {command_expr}
         from runs
         {where_clause}
         order by id desc
