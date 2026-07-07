@@ -38859,6 +38859,27 @@ the current patched source tree with the glob pattern `.tmp/**/*.sqlite3`,
 matching the current exhausted local frontier after all persisted scratch
 probes are subtracted.
 
+Follow-up source-frontier wrapper pass on 2026-07-07: the make-target wrapper
+now has a dedicated `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB` variable
+for SQLite subtraction globs. This keeps recursive patterns such as
+`../../.tmp/**/*.sqlite3` quoted until `doctest-source-frontier.py` can expand
+them internally, instead of allowing the shell to expand the pattern into
+hundreds of stray command-line arguments after a single
+`--subtract-database-glob` flag.
+
+Focused validation used:
+
+```sh
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='../../.tmp/**/*.sqlite3' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS='--ignore-invalid-databases --quiet-invalid-databases' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS='--include-header'
+```
+
+The wrapper prints only the `path	prompt_count` header against the current
+patched source tree, matching the direct helper invocation and confirming the
+persisted local frontier remains exhausted under the current filtering policy.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
