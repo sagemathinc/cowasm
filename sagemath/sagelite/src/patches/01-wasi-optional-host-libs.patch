@@ -17249,3 +17249,58 @@ diff --git a/src/sage/manifolds/trivialization.py b/src/sage/manifolds/trivializ
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/groups/matrix_gps/finitely_generated_gap.py b/src/sage/groups/matrix_gps/finitely_generated_gap.py
+--- a/src/sage/groups/matrix_gps/finitely_generated_gap.py
++++ b/src/sage/groups/matrix_gps/finitely_generated_gap.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ """
+diff --git a/src/sage/libs/eclib/mwrank.pyx b/src/sage/libs/eclib/mwrank.pyx
+--- a/src/sage/libs/eclib/mwrank.pyx
++++ b/src/sage/libs/eclib/mwrank.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.eclib
+ """
+diff --git a/src/sage/manifolds/point.py b/src/sage/manifolds/point.py
+--- a/src/sage/manifolds/point.py
++++ b/src/sage/manifolds/point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/rings/polynomial/q_integer_valued_polynomials.py b/src/sage/rings/polynomial/q_integer_valued_polynomials.py
+--- a/src/sage/rings/polynomial/q_integer_valued_polynomials.py
++++ b/src/sage/rings/polynomial/q_integer_valued_polynomials.py
+@@ -1,1 +1,2 @@
++# sage.doctest: long time
+ r"""
+@@ -648,1 +648,1 @@
+-                sage: A.from_h_vector(ex.h_vector())
++                sage: A.from_h_vector(ex.h_vector())                            # long time
+@@ -653,1 +653,1 @@
+-                sage: A.from_h_vector(ex.h_vector())
++                sage: A.from_h_vector(ex.h_vector())                            # long time
+diff --git a/src/sage/rings/puiseux_series_ring_element.pyx b/src/sage/rings/puiseux_series_ring_element.pyx
+--- a/src/sage/rings/puiseux_series_ring_element.pyx
++++ b/src/sage/rings/puiseux_series_ring_element.pyx
+@@ -223,1 +223,1 @@
+-            sage: t = p._im_gens_(QQbar, [2])
++            sage: t = p._im_gens_(QQbar, [2])                                  # needs sage.rings.number_field
+@@ -224,1 +224,1 @@
+-            sage: t in QQbar
++            sage: t in QQbar                                                    # needs sage.rings.number_field
+@@ -226,2 +226,2 @@
+-            sage: f = R.hom([QQbar(2)], check=False)
+-            sage: t == f(p)
++            sage: f = R.hom([QQbar(2)], check=False)                           # needs sage.rings.number_field
++            sage: t == f(p)                                                     # needs sage.rings.number_field
+@@ -1025,1 +1025,1 @@
+-            sage: p = x**(3/2) - QQbar(I)*x**(1/2)
++            sage: p = x**(3/2) - QQbar(I)*x**(1/2)                             # needs sage.rings.number_field
+@@ -1026,1 +1026,1 @@
+-            sage: p.power_series()
++            sage: p.power_series()                                              # needs sage.rings.number_field
+@@ -1030,2 +1030,2 @@
+-            sage: q = p**2
+-            sage: q.power_series()
++            sage: q = p**2                                                      # needs sage.rings.number_field
++            sage: q.power_series()                                              # needs sage.rings.number_field

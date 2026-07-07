@@ -34035,6 +34035,52 @@ and recorded:
 sage -t passed: 0 passed, 0 failed, 204 skipped
 ```
 
+Follow-up 208-to-210 prompt-band Puiseux element promotion and dependency
+tagging:
+
+A source-minus-corpus prompt-count scan from the current patched source tree
+selected six uncovered files in the 208-to-210 prompt band:
+`sage/groups/matrix_gps/finitely_generated_gap.py`,
+`sage/rings/padics/padic_extension_generic.py`,
+`sage/libs/eclib/mwrank.pyx`,
+`sage/rings/polynomial/q_integer_valued_polynomials.py`,
+`sage/rings/puiseux_series_ring_element.pyx`, and
+`sage/manifolds/point.py`. The initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-208-210/prompt-208-210/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 226 passed, 411 failed, 382 skipped
+```
+
+`padic_extension_generic.py` was already skipped-only under existing p-adic
+metadata. The matrix-group, ECLIB mwrank, and manifold point files were broad
+browser-profile boundaries, so the WASI source patch records them with
+file-level `sage.groups`/`sage.libs.gap`, `sage.libs.eclib`, and
+`sage.manifolds sage.symbolic` metadata. The q-integer-valued polynomial file
+repeatedly timed out in `h_vector()`/`from_h_vector()` conversion examples, so
+it is recorded as file-level `long time` coverage for the default profile.
+
+`puiseux_series_ring_element.pyx` was the useful promotion row. Its failures
+were limited to QQbar/algebraic-number setup and dependent checks, which are
+now tagged as `sage.rings.number_field` coverage. Final direct validation
+against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-208-210/prompt-208-210/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 194 passed, 0 failed, 1033 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates after adding
+`sage/rings/puiseux_series_ring_element.pyx` to the curated corpus. The
+checked corpus is now at 1,087 non-comment entries. Validation also ran
+`git diff --check` and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
