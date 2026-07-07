@@ -37894,6 +37894,51 @@ scan with `--strict-frontier`, `--min-runner-version 91`, and
 `--dedupe-paths` printed no uncovered clean runnable candidate. The checked
 corpus remains at 1,093 non-comment entries.
 
+Follow-up current 931-to-950 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/modular/modform_hecketriangle/subspace.py`,
+`sage/schemes/toric/homset.py`, `sage/crypto/stream_cipher.py`,
+`sage/rings/number_field/number_field_base.pyx`,
+`sage/algebras/hecke_algebras/ariki_koike_specht_modules.py`,
+`sage/combinat/crystals/spins.pyx`,
+`sage/manifolds/differentiable/scalarfield_algebra.py`,
+`sage/homology/homology_morphism.py`, `sage/schemes/toric/library.py`,
+`sage/libs/gap/libgap.pyx`, `sage/modular/dims.py`,
+`sage/modular/local_comp/type_space.py`,
+`sage/modules/finite_submodule_iter.pyx`,
+`sage/modular/arithgroup/farey_symbol.pyx`,
+`sage/repl/ipython_kernel/widgets.py`, `sage/quivers/homspace.py`,
+`sage/rings/padics/pow_computer_relative.pyx`,
+`sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py`,
+`sage/knots/knot.py`, and
+`sage/schemes/elliptic_curves/hom_fractional.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-931-950-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`3ec086b812a308476d9e0f7a896b59846fe8749f`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, 20 skipped block rows, and about
+128 seconds of elapsed time. The process exited cleanly after printing the
+summary.
+
+All 20 files were skipped at file scope by existing browser-profile metadata.
+The skip tags cover PARI-backed modular forms, toric geometry, finite rings,
+number fields, Singular/pexpect, combinat/modules, manifolds/symbolic,
+graphs/topology/knots, GAP, IPython widgets, quivers, p-adics with FLINT/NTL,
+and elliptic-curve/eclib boundaries. The saved block- and file-failure cluster
+queries are empty, and the strict promotion scan with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
