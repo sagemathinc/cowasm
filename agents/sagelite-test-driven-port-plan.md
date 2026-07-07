@@ -38265,6 +38265,41 @@ promotion scan over the two dashboards with `--strict-frontier`,
 `--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate. The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up never-mentioned tail frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. After filtering the live
+source-minus-corpus list against both `src/sage/...` and bare `sage/...` paths
+already named in this plan, the remaining never-mentioned tail is much
+shorter than the historical prompt-band numbering. A fresh one-worker direct
+probe used absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-continued/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 68 skipped
+```
+
+The latest-run summary records CoWasm commit
+`3477bdc44b4bb8e299017724ce3f421fd9f7fc1c`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+and about 121 seconds of elapsed time.
+
+Coverage shape was 18 skipped-only files and two zero-block Judson exercise
+helpers. The skipped-only files were already classified by existing
+browser-profile dependency metadata for Frobby, graph, number-field,
+Singular/NTL, finite-dimensional algebra, modules/combinatorics, FLINT/GAP,
+polytope database/PALP, rational dense matrices, plot3d/Matplotlib,
+finite-ring, schemes, and symbolic/SciPy boundaries. The strict promotion
+scan with `--strict-frontier`, `--min-runner-version 83`, and `--dedupe-paths`
+printed no uncovered clean runnable row for this dashboard. Future scheduled
+runs should avoid repeating this never-mentioned tail slice unless those
+default-profile dependency boundaries change.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
