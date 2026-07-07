@@ -36460,6 +36460,41 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up scheduled low-count frontier audit on 2026-07-07:
+
+Fresh focused probes against the current patched source copy did not find a
+new quiet runnable corpus candidate. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,093 non-comment entries. The strict candidate helper also printed no
+uncovered promotion rows for the new probe databases when run with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, and `--require-file-run`.
+
+The three probe dashboards written under `/home/user/cowasm/.tmp/current-run/`
+should not be repeated without a profile, runtime, or source-tagging change:
+
+- `small-aggregators.sqlite3` recorded no runnable blocks in
+  `sage/typeset/all.py`, `sage/stats/all.py`, `sage/games/all.py`, and
+  `sage/logic/all.py`; `sage/repl/display/formatter.py` remained
+  skipped-only with 58 skipped blocks.
+- `helper-frontier-20260707.sqlite3` recorded skipped-only coverage for
+  `sage/functions/min_max.py`, `sage/functions/prime_pi.pyx`,
+  `sage/monoids/monoid.py`, `sage/cpython/cython_metaclass.pyx`, and
+  `sage/cpython/string.pyx`, plus no-block results for the sampled CPython and
+  data-structure helpers.
+- `mixed-low-count-20260707.sqlite3` recorded skipped-only coverage for
+  `sage/databases/sloane.py`, `sage/tests/sympy.py`, `sage/tests/numpy.py`,
+  `sage/misc/profiler.py`, `sage/rings/polynomial/pbori/blocks.py`,
+  `sage/geometry/hyperplane_arrangement/check_freeness.py`,
+  `sage/libs/singular/function_factory.py`, and
+  `sage/matrix/matrix_numpy_integer_dense.pyx`.
+
+Historical scratch databases under `.tmp/current-run/` and the nested
+`scheduled-2026-07-*` probe directories were also rescanned with the strict
+candidate helper; all clean runnable candidates from those runs are already in
+the current corpus, except synthetic fixture paths that are intentionally
+ignored.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
