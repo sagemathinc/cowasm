@@ -35809,6 +35809,53 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
 90.
 
+Follow-up 325-to-327 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected four uncovered files in the 325-to-327 prompt band:
+`sage/combinat/root_system/root_lattice_realization_algebras.py`,
+`sage/geometry/polyhedron/base3.py`,
+`sage/schemes/elliptic_curves/isogeny_small_degree.py`, and
+`sage/tensor/modules/free_module_morphism.py`. The initial direct one-worker
+probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-325-327/prompt-325-327/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 2 passed, 319 failed, 8 skipped
+```
+
+The failures were backend-owned frontiers rather than clean promotion
+candidates. `root_lattice_realization_algebras.py` timed out in a
+Demazure-Lusztig operator example, `base3.py` cascaded from unavailable
+polyhedron startup names such as `polytopes` and `Polyhedron`,
+`isogeny_small_degree.py` timed out while computing `Fricke_module(2)`, and
+`free_module_morphism.py` hit the known matrix echelonization
+`wasm_signature_mismatch` path. The WASI source patch now records those files
+as explicit browser-profile dependency boundaries for root/combinatorial
+algebras, polyhedron/PPL, elliptic-curve/PARI, and free-module/matrix2
+coverage.
+
+Focused direct validation applied the full WASI source patch to a clean
+archived copy of `/home/user/sagelite`, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-325-327/prompt-325-327/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1285 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`a991c7fa5ee681c0aead29ffa4c0d4b382bf4fd6`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `git diff --check` and full-patch application against
+the clean archived Sagelite source copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -2541,6 +2541,13 @@ diff -urN a/src/sage/schemes/elliptic_curves/hom_velusqrt.py b/src/sage/schemes/
 +# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari
  r"""
  Square‑root Vélu algorithm for elliptic-curve isogenies
+diff -urN a/src/sage/schemes/elliptic_curves/isogeny_small_degree.py b/src/sage/schemes/elliptic_curves/isogeny_small_degree.py
+--- a/src/sage/schemes/elliptic_curves/isogeny_small_degree.py
++++ b/src/sage/schemes/elliptic_curves/isogeny_small_degree.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari
+ r"""
+ Isogenies of small prime degree
 diff -urN a/src/sage/rings/valuation/inductive_valuation.py b/src/sage/rings/valuation/inductive_valuation.py
 --- a/src/sage/rings/valuation/inductive_valuation.py
 +++ b/src/sage/rings/valuation/inductive_valuation.py
@@ -6164,6 +6171,12 @@ diff -urN a/src/sage/combinat/root_system/root_lattice_realizations.py b/src/sag
 @@ -3930 +3930 @@
 -                sage: [(mu+rho).scalar(coroot) for coroot in alphacheck]
 +                sage: [(mu+rho).scalar(coroot) for coroot in alphacheck]                 # needs sage.graphs
+diff -urN a/src/sage/combinat/root_system/root_lattice_realization_algebras.py b/src/sage/combinat/root_system/root_lattice_realization_algebras.py
+--- a/src/sage/combinat/root_system/root_lattice_realization_algebras.py
++++ b/src/sage/combinat/root_system/root_lattice_realization_algebras.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras sage.combinat
+ r"""
 diff -urN a/src/sage/combinat/root_system/weight_lattice_realizations.py b/src/sage/combinat/root_system/weight_lattice_realizations.py
 --- a/src/sage/combinat/root_system/weight_lattice_realizations.py
 +++ b/src/sage/combinat/root_system/weight_lattice_realizations.py
@@ -11551,6 +11564,12 @@ diff -urN -U0 a/src/sage/tensor/modules/free_module_automorphism.py b/src/sage/t
 @@ -1086 +1086 @@
 -            sage: a.charpoly('T')
 +            sage: a.charpoly('T')                                                    # needs sage.libs.pari
+diff -urN a/src/sage/tensor/modules/free_module_morphism.py b/src/sage/tensor/modules/free_module_morphism.py
+--- a/src/sage/tensor/modules/free_module_morphism.py
++++ b/src/sage/tensor/modules/free_module_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix2
+ r"""
 diff -urN -U0 a/src/sage/tensor/modules/tensor_free_submodule.py b/src/sage/tensor/modules/tensor_free_submodule.py
 --- a/src/sage/tensor/modules/tensor_free_submodule.py
 +++ b/src/sage/tensor/modules/tensor_free_submodule.py
@@ -16801,6 +16820,12 @@ diff --git a/src/sage/algebras/letterplace/free_algebra_element_letterplace.pyx 
 diff --git a/src/sage/geometry/polyhedron/base2.py b/src/sage/geometry/polyhedron/base2.py
 --- a/src/sage/geometry/polyhedron/base2.py
 +++ b/src/sage/geometry/polyhedron/base2.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ r"""
+diff --git a/src/sage/geometry/polyhedron/base3.py b/src/sage/geometry/polyhedron/base3.py
+--- a/src/sage/geometry/polyhedron/base3.py
++++ b/src/sage/geometry/polyhedron/base3.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.polyhedron ppl
  r"""
