@@ -18775,3 +18775,33 @@ diff --git a/src/sage/interfaces/magma.py b/src/sage/interfaces/magma.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs magma pexpect subprocess
  r"""
+diff --git a/src/sage/rings/valuation/augmented_valuation.py b/src/sage/rings/valuation/augmented_valuation.py
+--- a/src/sage/rings/valuation/augmented_valuation.py
++++ b/src/sage/rings/valuation/augmented_valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.libs.ntl
+ r"""
+diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+--- a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
++++ b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.rings.polynomial.plural sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/polynomial/laurent_polynomial.pyx b/src/sage/rings/polynomial/laurent_polynomial.pyx
+--- a/src/sage/rings/polynomial/laurent_polynomial.pyx
++++ b/src/sage/rings/polynomial/laurent_polynomial.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/matrix/matrix_space.py b/src/sage/matrix/matrix_space.py
+--- a/src/sage/matrix/matrix_space.py
++++ b/src/sage/matrix/matrix_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix2 sage.matrix.matrix_integer_dense sage.matrix.matrix_mod2_dense sage.matrix.matrix_gap sage.modules.free_module sage.libs.pari sage.groups
+ r"""
+diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
+--- a/src/sage/matrix/matrix_mod2_dense.pyx
++++ b/src/sage/matrix/matrix_mod2_dense.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_mod2_dense m4ri libpng resource
+ # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES ZLIB_LIBRARIES

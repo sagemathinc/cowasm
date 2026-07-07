@@ -36664,6 +36664,51 @@ printed no uncovered clean runnable candidate. The checked corpus remains at
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 471-to-490 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree, excluding files already covered by file-level browser-profile metadata,
+selected five uncovered files in the 471-to-490 band:
+`sage/rings/valuation/augmented_valuation.py`,
+`sage/categories/finite_dimensional_lie_algebras_with_basis.py`,
+`sage/rings/polynomial/laurent_polynomial.pyx`,
+`sage/matrix/matrix_space.py`, and
+`sage/matrix/matrix_mod2_dense.pyx`.
+
+The initial one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-471-490/batch.sqlite3` with:
+
+```text
+sage -t failed: 727 passed, 221 failed, 418 skipped
+```
+
+The failures were dependency/runtime frontiers rather than promotion
+candidates: valuation and Laurent-polynomial examples both hit the known NTL
+dynamic import boundary at `_ZNK3NTL11ZZ_pContext7restoreEv`; finite
+dimensional Lie algebra category examples cascaded through graph, PARI/cypari2,
+and plural-backed paths; matrix-space examples reached FLINT, GAP, PARI, and
+matrix side-module coverage; and dense GF(2) matrix examples need the stripped
+M4RI/libpng/resource-backed `matrix_mod2_dense` stack. The WASI source patch
+now records file-level dependency metadata for the five files.
+
+Focused validation rebuilt the patched source copy from `/home/user/sagelite`,
+applied the full WASI source patch cleanly, reran the same five-file band, and
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-471-490/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2334 skipped
+```
+
+The final database has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`92a957f1f75272abfdef2c44797bfe9a78278119`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
