@@ -53,9 +53,21 @@ node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
 electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
 doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-10}"
 meson_compile_jobs="${SAGELITE_MESON_COMPILE_JOBS:-4}"
+cython_generate_jobs="${SAGELITE_CYTHON_GENERATE_JOBS:-1}"
+cython_generate_attempts="${SAGELITE_CYTHON_GENERATE_ATTEMPTS:-5}"
 
 if ! [[ "$meson_compile_jobs" =~ ^[1-9][0-9]*$ ]]; then
   echo "SAGELITE_MESON_COMPILE_JOBS must be a positive integer" >&2
+  exit 2
+fi
+
+if ! [[ "$cython_generate_jobs" =~ ^[1-9][0-9]*$ ]]; then
+  echo "SAGELITE_CYTHON_GENERATE_JOBS must be a positive integer" >&2
+  exit 2
+fi
+
+if ! [[ "$cython_generate_attempts" =~ ^[1-9][0-9]*$ ]]; then
+  echo "SAGELITE_CYTHON_GENERATE_ATTEMPTS must be a positive integer" >&2
   exit 2
 fi
 
@@ -408,6 +420,44 @@ set -e
 if [ "$meson_status" -ne 0 ]; then
   tail -80 "$log_file" >&2
   record_blocker "sagelite-blocked: meson setup failed; see $log_file for the first configure blocker."
+fi
+
+cython_targets_file="$probe_dir/cython-targets.txt"
+awk '
+  /^build / && /: cython_COMPILER / {
+    line = $0
+    sub(/^build /, "", line)
+    sub(/: cython_COMPILER .*/, "", line)
+    count = split(line, outputs, " ")
+    for (i = 1; i <= count; i++) {
+      print outputs[i]
+    }
+  }
+' "$build_dir/cowasm-meson-build/build.ninja" >"$cython_targets_file"
+
+if [ -s "$cython_targets_file" ]; then
+  cython_generate_status=0
+  : >"$dist_dir/meson-cython-generate.log"
+  for cython_generate_attempt in $(seq 1 "$cython_generate_attempts"); do
+    printf 'Sagelite Cython generation attempt %s/%s\n' \
+      "$cython_generate_attempt" "$cython_generate_attempts" >>"$dist_dir/meson-cython-generate.log"
+    set +e
+    PYTHONPATH="$pythonpath" \
+    PKG_CONFIG_PATH="$pkg_config_path" \
+    PKG_CONFIG_LIBDIR="$pkg_config_path" \
+    PKG_CONFIG="$pkg_config" \
+      xargs ninja -j "$cython_generate_jobs" -C "$build_dir/cowasm-meson-build" \
+        <"$cython_targets_file" >>"$dist_dir/meson-cython-generate.log" 2>&1
+    cython_generate_status=$?
+    set -e
+    if [ "$cython_generate_status" -eq 0 ]; then
+      break
+    fi
+  done
+  if [ "$cython_generate_status" -ne 0 ]; then
+    tail -120 "$dist_dir/meson-cython-generate.log" >&2
+    record_blocker "sagelite-blocked: meson Cython generation failed; configure succeeded, see $dist_dir/meson-cython-generate.log for the first Cython blockers."
+  fi
 fi
 
 set +e

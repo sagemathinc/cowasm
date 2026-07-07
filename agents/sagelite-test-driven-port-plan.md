@@ -38990,6 +38990,34 @@ serial Cython-generation phase when the host Cython process is unstable. Until
 `dist/wasi-sdk/electron-resources/sagelite-electron-resources.json` exists,
 direct source-frontier `sage -t` probes cannot run in this checkout.
 
+Follow-up resource-staging repair on 2026-07-07: no corpus entry was promoted,
+but the standalone staging target now runs generated Cython outputs as a
+separate bounded phase before the normal Meson compile. The new
+`SAGELITE_CYTHON_GENERATE_JOBS` knob defaults to serial generation, and
+`SAGELITE_CYTHON_GENERATE_ATTEMPTS` defaults to five retry attempts so
+transient host Cython crashes can resume from already-generated outputs
+instead of restarting the whole resource build.
+
+Validation used `make -C sagemath/sagelite test-wasi-sdk-standalone` with the
+default parallel Meson compile. The Cython-generation phase completed after
+three attempts, recovering status-139 crashes at
+`sage/arith/functions.pyx` and
+`sage/groups/perm_gps/partn_ref/data_structures.pyx`; the following Meson
+compile reached `964/964`, install completed, the Electron resource manifest
+was staged at
+`sagemath/sagelite/dist/wasi-sdk/electron-resources/sagelite-electron-resources.json`,
+and the standalone script finished with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The staged Electron resource tree is available again for direct
+source-frontier `sage -t` probes in this checkout. The standalone follow-up
+list remains the existing runtime/package frontier set for rational polynomial
+roots, integer matrix right kernels, graph/poset imports, plural-backed
+free-module constructors, and finite-field matrix row/column materialization.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
