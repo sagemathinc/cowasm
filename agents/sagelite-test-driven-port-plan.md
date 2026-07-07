@@ -36926,6 +36926,43 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 591-to-610 prompt-frontier audit:
+
+The next raw source-minus-corpus prompt-count band, rows 591 through 610, was
+rerun after the plot3d file-level metadata landed. The band covers:
+`sage/schemes/elliptic_curves/ell_local_data.py`,
+`sage/combinat/posets/linear_extensions.py`,
+`sage/homology/hochschild_complex.py`, `sage/manifolds/section_module.py`,
+`sage/matrix/matrix_integer_sparse.pyx`,
+`sage/modules/torsion_quadratic_module.py`,
+`sage/plot/plot3d/shapes2.py`, `sage/schemes/affine/affine_space.py`,
+`sage/rings/polynomial/polynomial_integer_dense_ntl.pyx`,
+`sage/categories/highest_weight_crystals.py`,
+`sage/geometry/triangulation/base.pyx`, `sage/graphs/graph_coloring.pyx`,
+`sage/matrix/operation_table.py`, `sage/modular/quasimodform/element.py`,
+`sage/rings/finite_rings/element_ntl_gf2e.pyx`,
+`sage/algebras/hall_algebra.py`,
+`sage/groups/lie_gps/nilpotent_lie_group.py`,
+`sage/stats/hmm/chmm.pyx`, `sage/combinat/nu_dyck_word.py`, and
+`sage/databases/cubic_hecke_db.py`.
+
+The final one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-591-610/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3510 skipped
+```
+
+All 20 files are skipped-only under current browser-profile metadata. The
+failure-class, file-error-cluster, and block-failure-cluster queries are empty,
+and the strict promotion scan with `--strict-frontier`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`73945b314827c4cdb5153a0c5554bbcba1481674`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
