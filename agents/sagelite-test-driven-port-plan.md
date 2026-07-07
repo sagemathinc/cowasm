@@ -33997,6 +33997,44 @@ corpus is now at 1,086 non-comment entries. Validation also ran
 `git diff --check` and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local scratch directory.
 
+Focused 205-to-207 prompt-band ECL dependency tagging pass:
+
+The next source-minus-corpus prompt-count scan selected seven uncovered files:
+`sage/categories/finite_coxeter_groups.py`, `sage/matroids/constructor.py`,
+`sage/rings/padics/padic_valuation.py`,
+`sage/combinat/crystals/induced_structure.py`,
+`sage/combinat/sf/hall_littlewood.py`, `sage/libs/ecl.pyx`, and
+`sage/rings/quotient_ring_element.py`. The grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-205-207/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 49 passed, 274 failed, 859 skipped
+```
+
+Four files were already skipped-only under existing browser-profile dependency
+metadata. `padic_valuation.py` timed out at the number-field quotient setup
+`S = R.quo(x^2 + 1)`, and `quotient_ring_element.py` still has broad
+`sage.rings.polynomial.plural`, Singular, letterplace, and dependent-name
+clusters, so neither is a narrow source-tag-only promotion target.
+
+`sage/libs/ecl.pyx` exposed a pure missing-backend cluster: its root import of
+`sage.libs.ecl` is unavailable in the default browser-compatible profile,
+causing 201 dependent failures after one unrelated passing block. The WASI
+source patch now marks that file with file-level
+`# sage.doctest: needs sage.libs.ecl` metadata. This records ECL as explicit
+optional runtime coverage instead of leaving it as a noisy missing-module
+cluster; it is not added to the curated corpus because it contributes no
+default-profile runnable blocks.
+
+Focused validation after refreshing the patched source copy wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-205-207/ecl-after-tag.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 204 skipped
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
