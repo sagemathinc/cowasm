@@ -6,10 +6,8 @@ const path = require("path");
 const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
-const pythonWasmModule = resolvePythonWasmModule();
-const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 91;
+const doctestRunnerVersion = 92;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -180,6 +178,7 @@ function flushWritable(stream) {
 }
 
 async function createSagelitePython({ manifest, resourceRoot, sagelitePythonEnv }) {
+  const { asyncPython } = require(resolvePythonWasmModule());
   const python = await asyncPython({
     fs: "everything",
     noStdio: true,

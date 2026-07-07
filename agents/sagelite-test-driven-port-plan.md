@@ -39129,6 +39129,24 @@ a previous five-attempt run exhausted its budget, the standalone script now
 defaults `SAGELITE_CYTHON_GENERATE_ATTEMPTS` to ten while retaining the
 environment override.
 
+Follow-up doctest parent lifecycle pass on 2026-07-07: no corpus entry was
+promoted, but the `sage -t` parent coordinator no longer imports
+`python-wasm` at top-level. The parent process only needs to parse options,
+spawn per-file worker processes, merge JSON results, and write SQLite, so
+loading the WASM Python runtime there left an unnecessary native teardown path
+in the process that supervises line-specific doctest reruns. Runner version 92
+loads `python-wasm` lazily when a REPL or worker process actually creates a
+Sagelite Python kernel.
+
+Focused validation used `node --check` for `sagelite-node-repl.cjs`, `bash -n`
+for the standalone smoke script, and four direct line-mode reruns from the
+repository root with `COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` pointed at the
+patched source tree. Each rerun of `src/sage/all.py` line 590 exited with
+status 0 and recorded `1 passed, 0 failed, 0 skipped`; the checked SQLite row
+records runner version 92. The strict runnable source-frontier scan with the
+plan subtraction, required `.tmp/**/*.sqlite3` database subtraction, and
+`--fail-on-rows` still prints only the `path	prompt_count` header.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
