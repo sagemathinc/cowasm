@@ -639,7 +639,8 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
          return ProductProjectiveSpaces_point_finite_field(*args, **kwds)
 @@ -1231,7 +1231,7 @@
          EXAMPLES::
- 
+-
++
              sage: P = ProductProjectiveSpaces([2, 1], GF(3))
 -            sage: [x for x in P]
 +            sage: [x for x in P]                                                   # needs sage.libs.singular
@@ -7787,6 +7788,43 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py
+@@ -63,10 +63,10 @@
+-        sage: R = lie_conformal_algebras.Affine(QQ, 'A1')
+-        sage: R
++        sage: R = lie_conformal_algebras.Affine(QQ, 'A1')                          # needs sage.graphs
++        sage: R                                                                     # needs sage.graphs
+         The affine Lie conformal algebra of type ['A', 1] over Rational Field
+-        sage: R.an_element()
++        sage: R.an_element()                                                        # needs sage.graphs
+         B[alpha[1]] + B[alphacheck[1]] + B[-alpha[1]] + B['K']
+-
++
+-        sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h','f'))
+-        sage: R.inject_variables()
++        sage: R = lie_conformal_algebras.Affine(QQ, 'A1', names = ('e', 'h','f'))  # needs sage.graphs
++        sage: R.inject_variables()                                                  # needs sage.graphs
+         Defining e, h, f, K
+-        sage: Family(e.bracket(f.T(3)))
++        sage: Family(e.bracket(f.T(3)))                                             # needs sage.graphs
+@@ -91,2 +91,2 @@
+-            sage: V = lie_conformal_algebras.Affine(QQ,'A1')
+-            sage: TestSuite(V).run()
++            sage: V = lie_conformal_algebras.Affine(QQ,'A1')                        # needs sage.graphs
++            sage: TestSuite(V).run()                                                 # needs sage.graphs
+@@ -140,4 +140,4 @@
+-            sage: R = lie_conformal_algebras.Affine(QQ, 'B3')
+-            sage: R
++            sage: R = lie_conformal_algebras.Affine(QQ, 'B3')                       # needs sage.graphs
++            sage: R                                                                 # needs sage.graphs
+             The affine Lie conformal algebra of type ['B', 3] over Rational Field
+-            sage: R.cartan_type()
++            sage: R.cartan_type()                                                   # needs sage.graphs
+@@ -154 +154 @@
+-            sage: lie_conformal_algebras.Affine(QQ, 'A1')
++            sage: lie_conformal_algebras.Affine(QQ, 'A1')                           # needs sage.graphs
 diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra.py

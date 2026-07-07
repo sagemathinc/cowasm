@@ -38786,6 +38786,63 @@ jacobian_homset_inert.py: 0 passed, 0 failed, 1 skipped
 The full WASI source patch also passed a `patch --dry-run -p1` check against
 the Sagelite source checkout after this hunk was added.
 
+Follow-up 14-to-2 prompt-count frontier audit on 2026-07-07:
+
+The remaining source-minus-corpus prompt-count scan, after subtracting files
+already persisted in the July 7 frontier audit databases, found 30 unmentioned
+`src/sage` files with Sage prompts, ranging from 14 down to 2 prompt markers.
+The one-worker direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-14-frontier/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 1 passed, 12 failed, 36 skipped
+```
+
+The only runnable failure cluster was
+`sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py`.
+Affine Lie conformal algebra construction imports the graph-backed classical
+Lie algebra stack and failed with
+`cannot import name 'generic_graph_pyx' from 'sage.graphs'`; the remaining
+block failures were dependent missing-state examples. The WASI source patch
+now marks those affine construction examples and their dependent continuation
+prompts as `# needs sage.graphs`, while leaving the non-graph `ValueError`
+validation example runnable.
+
+After mirroring the patch into the current patched source tree, a focused
+rerun recorded:
+
+```text
+affine_lie_conformal_algebra.py: 1 passed, 0 failed, 12 skipped
+```
+
+The tagged 30-file rerun wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-14-frontier-tagged/batch.sqlite3`
+and printed a clean summary before the wrapper hit the known post-summary
+segfault:
+
+```text
+sage -t passed: 1 passed, 0 failed, 48 skipped
+```
+
+The strict candidate scan surfaced
+`src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py` as
+the one clean runnable uncovered row, so it is now included in
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` beside the adjacent
+Lie conformal algebra files. Focused make-target validation with a temporary
+one-file corpus and `SAGELITE_DOCTEST_ALLOW_FAILURES=0` rebuilt the patched
+source tree and exited cleanly:
+
+```text
+sage -t passed: 1 passed, 0 failed, 12 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for the clean
+tagged frontier database. A fresh source-minus-corpus scan after subtracting
+the persisted scheduled frontier databases found no remaining unmentioned
+unaudited `src/sage` files with Sage prompts under the current filtering
+policy.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
