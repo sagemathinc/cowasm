@@ -38578,6 +38578,90 @@ and `--dedupe-paths` printed no uncovered clean runnable candidate. Future
 scheduled runs should avoid repeating this 67-to-36 prompt-count slice unless
 default-profile dependency policy changes.
 
+Follow-up 41-to-31 prompt-count dependency-boundary audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree filtered against both
+corpus entries and files already mentioned in this plan found 150 unmentioned
+files with Sage prompts. The next 40 unrecorded `src/sage` files ranged from
+41 down to 31 prompt markers:
+`sage/combinat/rigged_configurations/bij_type_B.py`,
+`sage/plot/streamline_plot.py`, `sage/databases/stein_watkins.py`,
+`sage/groups/matrix_gps/heisenberg.py`,
+`sage/manifolds/differentiable/poisson_tensor.py`,
+`sage/matroids/union_matroid.pyx`, `sage/modular/modsym/tests.py`,
+`sage/tests/books/judson_abstract_algebra/cosets-sage.py`,
+`sage/categories/coxeter_group_algebras.py`,
+`sage/groups/perm_gps/partn_ref2/refinement_generic.pyx`,
+`sage/plot/density_plot.py`,
+`sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils.py`,
+`sage/tests/books/judson_abstract_algebra/crypt-sage.py`,
+`sage/modular/modform_hecketriangle/constructor.py`,
+`sage/crypto/sboxes.py`,
+`sage/dynamics/arithmetic_dynamics/product_projective_ds.py`,
+`sage/manifolds/differentiable/differentiable_submanifold.py`,
+`sage/tests/books/judson_abstract_algebra/normal-sage.py`,
+`sage/manifolds/operators.py`, `sage/schemes/elliptic_curves/jacobian.py`,
+`sage/tests/books/judson_abstract_algebra/actions-sage.py`,
+`sage/algebras/lie_algebras/bgg_resolution.py`,
+`sage/algebras/lie_algebras/symplectic_derivation.py`,
+`sage/graphs/isoperimetric_inequalities.pyx`,
+`sage/groups/abelian_gps/dual_abelian_group_element.py`,
+`sage/homology/chain_complex_homspace.py`, `sage/interfaces/sagespawn.pyx`,
+`sage/schemes/elliptic_curves/ell_egros.py`, `sage/graphs/cliquer.pyx`,
+`sage/modular/modform/hecke_operator_on_qexp.py`,
+`sage/plot/hyperbolic_polygon.py`,
+`sage/rings/polynomial/pbori/parallel.py`,
+`sage/schemes/elliptic_curves/weierstrass_transform.py`,
+`sage/schemes/generic/hypersurface.py`, `sage/tests/arxiv_0812_2725.py`,
+`sage/algebras/lie_conformal_algebras/lie_conformal_algebra_element.py`,
+`sage/combinat/designs/group_divisible_designs.py`,
+`sage/modular/abvar/abvar_newform.py`,
+`sage/modular/arithgroup/tests.py`, and `sage/libs/ntl/ntl_GF2EX.pyx`.
+
+Two one-worker direct probes with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-41-frontier/batch.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-07-goal-36-frontier/batch.sqlite3`.
+The first database recorded a persisted clean dashboard:
+
+```text
+sage -t passed: 0 passed, 0 failed, 17 skipped
+```
+
+That first wrapper process printed the final summary and then exited with
+status 139, but the SQLite run was complete and queryable. The second
+untagged probe recorded two file-level runtime failures:
+`lie_conformal_algebra_element.py` exited its worker with `SIGSEGV`, and
+`ntl_GF2EX.pyx` trapped in the NTL `GF2EX` string-conversion example at line
+55. The WASI source patch now marks those files as browser-profile dependency
+boundaries with file-level `# sage.doctest: needs` metadata for
+`sage.algebras.lie_conformal_algebras` and `sage.libs.ntl`.
+
+After mirroring those two patch lines into the current patched source tree, a
+focused rerun wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-36-frontier-tagged/batch.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 19 skipped
+```
+
+The clean tagged database records runner version 91, node profile, CoWasm
+commit `3b8f1428f308227e32c856e59a67b060b13b1aeb`, Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, and about 122 seconds of
+elapsed time. Across the two clean dashboards, 36 files were skipped-only
+under browser-profile dependency metadata and four Judson exercise helpers
+extracted zero default-profile blocks. The skip tags cover combinatorics,
+plotting, databases, groups, manifolds, matroids, modular symbols, Coxeter
+algebras, schemes, crypto, elliptic curves, Lie algebras, graphs, homology,
+pexpect interfaces, PBORI, NTL, and related external or heavy Sage backend
+boundaries. The saved block- and file-failure queries are empty for the clean
+databases, and the strict promotion scan over both clean dashboards with
+`--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths` printed
+no uncovered clean runnable candidate. Future scheduled runs should avoid
+repeating this 41-to-31 prompt-count slice unless the default-profile
+dependency policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

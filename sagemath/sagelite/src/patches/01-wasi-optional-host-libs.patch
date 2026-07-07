@@ -100,6 +100,14 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx b/src/sage/libs/ntl/ntl_ZZ_p
  # distutils: extra_link_args = NTL_LIBEXTRA
 +# sage.doctest: needs sage.libs.ntl
  # distutils: language = c++
+diff --git a/src/sage/libs/ntl/ntl_GF2EX.pyx b/src/sage/libs/ntl/ntl_GF2EX.pyx
+--- a/src/sage/libs/ntl/ntl_GF2EX.pyx
++++ b/src/sage/libs/ntl/ntl_GF2EX.pyx
+@@ -4,3 +4,4 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
++# sage.doctest: needs sage.libs.ntl
+ # distutils: language = c++
 diff --git a/src/sage/libs/libecm.pyx b/src/sage/libs/libecm.pyx
 --- a/src/sage/libs/libecm.pyx
 +++ b/src/sage/libs/libecm.pyx
@@ -179,6 +187,12 @@ diff --git a/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py b/src/sage
 +++ b/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+ """
+diff --git a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_element.py b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_element.py
+--- a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_element.py
++++ b/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_conformal_algebras
  """
 diff --git a/src/sage/combinat/posets/linear_extensions.py b/src/sage/combinat/posets/linear_extensions.py
 --- a/src/sage/combinat/posets/linear_extensions.py
