@@ -33440,6 +33440,51 @@ runnable candidates. The checked corpus remains at 1,085 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 172-to-174 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected eleven uncovered files in the 172-to-174 prompt band. The first
+direct attempt used no per-file timeout and stalled before SQLite tables were
+initialized, so the checked probe reran the same file list with
+`--timeout 120` and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-172-174/prompt-172-174/batch-timeout.sqlite3`.
+That run recorded:
+
+```text
+sage -t failed: 189 passed, 640 failed, 875 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Four
+files were already skipped-only under existing dependency metadata:
+`sage/schemes/cyclic_covers/cycliccover_finite_field.py`,
+`sage/topology/delta_complex.py`,
+`sage/coding/information_set_decoder.py`, and
+`sage/groups/cactus_group.py`. The remaining failures were broad
+browser-profile boundaries rather than narrow corpus-promotion targets:
+quantum Clifford examples reached the larger algebra stack and a WASM trap;
+digraph generators need the graph backend; elliptic-curve Galois and Kraus
+examples need the stripped elliptic-curve, ECLIB/PARI, and Cremona database
+surfaces; `libgap_wrapper.pyx` needs LibGAP-backed groups; Pollack-Stevens
+fundamental-domain examples need the modular-symbol plus elliptic-curve
+surface; and the programming book doctest needs symbolic calculus names such
+as `var` and `diff`.
+
+The WASI source patch now records those boundaries with explicit metadata.
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-172-174/prompt-172-174/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1875 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,085
+non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
