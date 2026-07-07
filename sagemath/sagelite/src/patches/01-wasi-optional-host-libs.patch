@@ -18074,3 +18074,50 @@ diff --git a/src/sage/rings/function_field/jacobian_khuri_makdisi.py b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.libs.pari sage.schemes
  r"""
+diff --git a/src/sage/databases/sql_db.py b/src/sage/databases/sql_db.py
+--- a/src/sage/databases/sql_db.py
++++ b/src/sage/databases/sql_db.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sqlite
+ r"""
+diff --git a/src/sage/numerical/linear_functions.pyx b/src/sage/numerical/linear_functions.pyx
+--- a/src/sage/numerical/linear_functions.pyx
++++ b/src/sage/numerical/linear_functions.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip sage.rings.number_field
+ """
+diff --git a/src/sage/geometry/triangulation/point_configuration.py b/src/sage/geometry/triangulation/point_configuration.py
+--- a/src/sage/geometry/triangulation/point_configuration.py
++++ b/src/sage/geometry/triangulation/point_configuration.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.triangulation
+ r"""
+diff --git a/src/sage/manifolds/differentiable/vector_bundle.py b/src/sage/manifolds/differentiable/vector_bundle.py
+--- a/src/sage/manifolds/differentiable/vector_bundle.py
++++ b/src/sage/manifolds/differentiable/vector_bundle.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/local_frame.py b/src/sage/manifolds/local_frame.py
+--- a/src/sage/manifolds/local_frame.py
++++ b/src/sage/manifolds/local_frame.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction_field_element.pyx
+--- a/src/sage/rings/fraction_field_element.pyx
++++ b/src/sage/rings/fraction_field_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.fraction_field
+ """
+@@ -468,5 +468,5 @@
+-            sage: P = PolynomialRing(QQ, ["x%s" % i for i in range(10000)])
+-            sage: PF = P.fraction_field()
+-            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))
+-            sage: v = P.gen(4)
+-            sage: p.subs({v: 100})
++            sage: P = PolynomialRing(QQ, ["x%s" % i for i in range(10000)])    # long time
++            sage: PF = P.fraction_field()                                      # long time
++            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))  # long time
++            sage: v = P.gen(4)                                                 # long time
++            sage: p.subs({v: 100})                                             # long time

@@ -35331,6 +35331,54 @@ missing setup names. The strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,092 non-comment entries.
 
+Follow-up 292-to-294 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 292-to-294 prompt band:
+`sage/databases/sql_db.py`, `sage/numerical/linear_functions.pyx`,
+`sage/geometry/triangulation/point_configuration.py`,
+`sage/combinat/root_system/hecke_algebra_representation.py`,
+`sage/manifolds/differentiable/vector_bundle.py`,
+`sage/manifolds/local_frame.py`, and
+`sage/rings/fraction_field_element.pyx`. The initial direct one-worker probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-292-294/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 67 passed, 1043 failed, 354 skipped
+```
+
+`hecke_algebra_representation.py` was already skipped-only under existing
+GAP/group metadata. The remaining failures were broad browser-profile
+frontiers rather than promotion candidates: SQL database doctests rely on the
+stripped graph database surface and writable temporary SQLite behavior,
+triangulation doctests need the triangulation package namespace, numerical
+linear-function doctests enter MIP and number-field setup, and the manifold
+files require the stripped manifold/symbolic stack. The fraction-field element
+file remained a runtime frontier under the current default timeout, first
+reaching a 10,000-variable polynomial-ring stress test and then timing out
+again on the opening rational-function example in a repeated full-file run.
+The WASI source patch now records these boundaries with module-level
+`# sage.doctest: needs ...` metadata, and the 10,000-variable fraction-field
+stress block is also tagged `# long time`.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-292-294/final3.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2048 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+the full WASI source patch in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
