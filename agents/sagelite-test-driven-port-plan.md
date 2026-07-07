@@ -38144,6 +38144,50 @@ The saved file-error query is empty, and the strict promotion scan with
 uncovered clean runnable candidate. The checked corpus remains at 1,093
 non-comment entries.
 
+Follow-up compact low-prompt frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. Fresh direct probes used absolute
+patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote scratch
+dashboards under `/home/user/cowasm/.tmp/`.
+
+The compact category probe in `.tmp/sagelite-category-probe.sqlite3`
+recorded:
+
+```text
+sage -t failed: 0 passed, 1 failed, 2 skipped
+```
+
+`quotient_fields.py` and `groupoid.py` were skipped-only, `subquotients.py`
+extracted no default-profile blocks, and `g_sets.py` still exits its worker
+with `SIGSEGV`. The data-structure probe in
+`.tmp/sagelite-data-structures-probe.sqlite3` recorded:
+
+```text
+sage -t failed: 1188 passed, 95 failed, 126 skipped
+```
+
+`binary_search.pyx` and `bitset_base.pyx` extracted no doctest blocks, while
+`stream.py` remains a broad failure frontier rather than a narrow promotion
+candidate. The failures in `stream.py` are large enough that this file should
+not be revisited as corpus-growth work until its runtime/backend cluster is
+addressed directly.
+
+Three additional probes were skipped-only. `.tmp/sagelite-misc-probe.sqlite3`
+recorded `0 passed, 0 failed, 18 skipped` across compact `sage.misc` helpers;
+`.tmp/sagelite-functions-probe.sqlite3` recorded
+`0 passed, 0 failed, 107 skipped` across small function front-door files; and
+`.tmp/sagelite-low-prompt-probe.sqlite3` recorded
+`0 passed, 0 failed, 34 skipped` across compact interface, PARI conversion,
+database, modular-symbol, CPython, NumPy/SymPy, and vector helpers. The strict
+candidate scan over these five dashboards with `--strict-frontier`,
+`--source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. Future scheduled runs should avoid repeating these exact
+compact category, misc/function, low-prompt interface/database, and
+data-structure slices unless the `g_sets.py` worker crash, the `stream.py`
+runtime cluster, or the default-profile skip policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
