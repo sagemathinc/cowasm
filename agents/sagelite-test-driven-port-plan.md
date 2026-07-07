@@ -38044,6 +38044,54 @@ file-failure queries are empty, and the strict promotion scan with
 uncovered clean runnable candidate. The checked corpus remains at 1,093
 non-comment entries.
 
+Follow-up current 991-to-1010 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded files now range from 104 down to 88 prompt blocks, confirming that
+the earlier larger high-count backlog is recorded. The selected files were:
+`sage/groups/group_semidirect_product.py`, `sage/graphs/morphisms.py`,
+`sage/matroids/matroids_plot_helpers.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/sol/calculus_doctest.py`,
+`sage/matrix/matrix_mpolynomial_dense.pyx`,
+`sage/geometry/polyhedron/combinatorial_polyhedron/conversions.pyx`,
+`sage/calculus/tests.py`,
+`sage/combinat/root_system/reflection_group_real.py`,
+`sage/matroids/circuit_closures_matroid.pyx`,
+`sage/combinat/sf/abreu_nigro.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/lp_doctest.py`,
+`sage/schemes/toric/weierstrass_covering.py`,
+`sage/modular/overconvergent/hecke_series.py`,
+`sage/schemes/cyclic_covers/charpoly_frobenius.py`,
+`sage/manifolds/calculus_method.py`, `sage/graphs/hyperbolicity.pyx`,
+`sage/combinat/crystals/pbw_datum.pyx`,
+`sage/combinat/crystals/affine_factorization.py`,
+`sage/modular/abvar/torsion_subgroup.py`, and
+`sage/schemes/elliptic_curves/ell_torsion.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-991-1010-current/batch.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`45e7c5eaf649db989fec244bb45d076b2f5b7d0b`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, 20 skipped block rows, and about
+129 seconds of elapsed time. The process exited cleanly after printing the
+summary.
+
+All 20 files were skipped at file scope by existing browser-profile metadata.
+The skip tags cover combinat/modules, graph, matroid, polyhedron, group,
+Singular/plural/number-field/pexpect, manifold/symbolic, MIP, p-adic,
+elliptic-curve/eclib/PARI, FLINT/PARI, GAP3, SciPy, symbolic/plot, and toric
+or cyclic-cover dependencies. The saved block- and file-failure queries are
+empty, and the strict promotion scan with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
