@@ -38092,6 +38092,58 @@ empty, and the strict promotion scan with `--strict-frontier`,
 `--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate. The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current unrecorded high-count gap frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against full paths and historical basename-only mentions in
+this plan. The next 20 unrecorded high-count files ranged from 185 down to 114
+prompt blocks:
+`sage/schemes/elliptic_curves/BSD.py`,
+`sage/combinat/designs/orthogonal_arrays_build_recursive.py`,
+`sage/graphs/isgci.py`, `sage/matroids/matroids_catalog.py`,
+`sage/interacts/library.py`, `sage/sat/boolean_polynomials.py`,
+`sage/graphs/centrality.pyx`,
+`sage/combinat/designs/orthogonal_arrays_find_recursive.pyx`,
+`sage/graphs/line_graph.pyx`,
+`sage/schemes/elliptic_curves/cardinality.py`,
+`sage/schemes/projective/projective_rational_point.py`,
+`sage/schemes/elliptic_curves/descent_two_isogeny.pyx`,
+`sage/calculus/integration.pyx`, `sage/graphs/comparability.pyx`,
+`sage/graphs/graph_database.py`,
+`sage/groups/perm_gps/partn_ref/automorphism_group_canonical_label.pyx`,
+`sage/rings/number_field/totallyreal_rel.py`,
+`sage/schemes/elliptic_curves/saturation.py`,
+`sage/combinat/rigged_configurations/bij_type_E67.py`, and
+`sage/schemes/product_projective/subscheme.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-highcount-gap-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 1 passed, 92 failed, 30 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`926976931ba874463921c44095a5e08cf79f33ba`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, 123 block rows, no file-level
+errors, and about 132 seconds of elapsed time.
+
+Seventeen files were file-scope skips under existing browser-profile metadata,
+and `sage/matroids/matroids_catalog.py` extracted zero default-profile blocks.
+The two runnable-failing files were dependency frontiers rather than promotion
+candidates. `sage/interacts/library.py` is dominated by unavailable symbolic
+expression support for notebook interact examples, while
+`sage/graphs/line_graph.pyx` is dominated by graph startup names such as
+`Graph`, `DiGraph`, `graphs`, and `root_graph`, plus dependent state-name and
+output mismatches. The block-failure classes are 67 `NameError`, 22
+`ModuleNotFoundError`, and 3 `output_mismatch` rows.
+
+The saved file-error query is empty, and the strict promotion scan with
+`--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths` printed no
+uncovered clean runnable candidate. The checked corpus remains at 1,093
+non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
