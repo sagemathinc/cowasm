@@ -4687,6 +4687,48 @@ passes. The standalone smoke fixture also asserts the new option against its
 candidate-helper test database, and the `sage-doctest-candidates` make target
 now uses the shortcut by default.
 
+Follow-up active frontier audit on 2026-07-07: no new corpus entry was
+promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1093 non-comment entries in this checkout, and the strict historical scan
+with source-root, runner-version, metadata, block-row, file-run, and
+path-deduplication guards printed no uncovered promotion rows.
+
+Fresh focused probes wrote SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-07-active/` and used absolute
+patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`. The Drinfeld/modular
+sanity probe recorded:
+
+```text
+drinfeld_modform/all.py: 0 passed, 0 failed, 0 skipped
+drinfeld_modform/ring.py: 144 passed, 0 failed, 11 skipped
+modular/cusps.py: 123 passed, 0 failed, 26 skipped
+modular/hypergeometric_misc.pyx: 3 passed, 0 failed, 8 skipped
+```
+
+All runnable rows from that probe are already present in the curated corpus,
+and the only uncovered Drinfeld front-door file extracted no doctest blocks.
+The compact modular probe was skipped-only, recording `0 passed, 0 failed,
+61 skipped` across `modform/j_invariant.py`, `modform/half_integral.py`,
+`arithgroup/congroup.pyx`, `buzzard.py`, `modform/weight1.py`,
+`modform/submodule.py`, and `modform/ambient_g0.py`. Skip metadata groups the
+files under existing FLINT, PARI, and integer-matrix backend requirements.
+
+The compact polynomial probe likewise produced no promotion candidate:
+`polynomial_singular_interface.py`, `skew_polynomial_finite_order.pyx`, and
+`symmetric_reduction.pyx` were skipped-only under existing Singular, NTL,
+finite-ring, number-field, real-field, and combinatorics metadata.
+`polynomial/ideal.py` timed out after 90 seconds at the first Groebner-basis
+setup,
+`R.ideal([x^2 - 1, x^3 - 1])`, so it remains a Singular/Groebner backend
+frontier rather than a narrow source-tag promotion.
+
+Future scheduled runs should avoid repeating these Drinfeld front-door,
+compact modular, and compact polynomial slices unless the default-profile
+skip policy or the Singular/Groebner, PARI, FLINT, NTL, finite-ring, or
+integer-matrix backend profile changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
