@@ -17370,6 +17370,12 @@ diff --git a/src/sage/numerical/backends/generic_sdp_backend.pyx b/src/sage/nume
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.numerical.mip
  r"""
+diff --git a/src/sage/numerical/sdp.pyx b/src/sage/numerical/sdp.pyx
+--- a/src/sage/numerical/sdp.pyx
++++ b/src/sage/numerical/sdp.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.backends.generic_sdp_backend
+ r"""
 diff --git a/src/sage/algebras/lie_algebras/affine_lie_algebra.py b/src/sage/algebras/lie_algebras/affine_lie_algebra.py
 --- a/src/sage/algebras/lie_algebras/affine_lie_algebra.py
 +++ b/src/sage/algebras/lie_algebras/affine_lie_algebra.py

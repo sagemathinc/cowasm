@@ -35379,6 +35379,48 @@ Validation also ran `python3 -m py_compile
 sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 the full WASI source patch in dry-run mode against `/home/user/sagelite`.
 
+Follow-up 295-to-297 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 295-to-297 prompt band:
+`sage/combinat/ncsf_qsym/generic_basis_code.py`,
+`sage/combinat/ncsym/ncsym.py`, and `sage/numerical/sdp.pyx`. The initial
+direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-295-297/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 69 passed, 154 failed, 656 skipped
+```
+
+The two combinatorics files were already skipped-only under existing
+`sage.combinat` and `sage.modules` metadata. The runnable failures were all
+in `sdp.pyx`: importing `SemidefiniteProgram` currently fails because the
+packaged browser-compatible runtime does not provide an importable
+`sage.numerical.backends.generic_sdp_backend` extension module. The first
+missing backend failure cascaded into `SemidefiniteProgram`, `p`, variable,
+and `SDPSolverException` name errors through the rest of the file. A direct
+REPL import of `SemidefiniteProgram` confirmed the same missing-backend
+boundary, so this is not a safe Sage startup namespace expansion.
+
+The WASI source patch now records `sdp.pyx` with module-level
+`# sage.doctest: needs sage.numerical.backends.generic_sdp_backend` metadata.
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-295-297/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 879 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch in
+dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
