@@ -34880,6 +34880,51 @@ failure cluster queries are empty. The strict promotion scan with
 no uncovered clean runnable candidates. The checked corpus remains at 1,090
 non-comment entries.
 
+Follow-up 262-to-264 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 262-to-264 prompt band:
+`sage/manifolds/differentiable/scalarfield.py`,
+`sage/combinat/root_system/weyl_group.py`, `sage/interfaces/interface.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py`,
+`sage/calculus/desolvers.py`, `sage/graphs/matching.py`, and
+`sage/manifolds/utilities.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-262-264/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 254 passed, 960 failed, 621 skipped
+```
+
+Two files were already skipped-only under existing browser-profile metadata:
+`weyl_group.py` and `interfaces/interface.py`. The remaining failures were
+broad dependency frontiers rather than narrow promotion targets. The manifold
+files need the stripped manifold/symbolic surface, `desolvers.py` needs
+symbolic, Maxima, SciPy, and plotting paths, `matching.py` needs the graph
+backend, and the combinatorics book doctest mixes symbolic, graph, plot,
+polyhedron, group, and broader combinatorics examples. The WASI source patch
+now records those five files with explicit file-level
+`# sage.doctest: needs ...` metadata.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-262-264/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1835 skipped
+```
+
+The latest-run summary records CoWasm commit
+`40960bce38e0a55aea3f2233030fe930bbd8b587`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all seven files. The saved block- and file-
+failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,090
+non-comment entries. Validation also ran the full WASI source patch against a
+fresh `/home/user/sagelite` scratch copy.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

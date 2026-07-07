@@ -1,3 +1,33 @@
+diff --git a/src/sage/calculus/desolvers.py b/src/sage/calculus/desolvers.py
+--- a/src/sage/calculus/desolvers.py
++++ b/src/sage/calculus/desolvers.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic maxima scipy
+ r"""
+diff --git a/src/sage/graphs/matching.py b/src/sage/graphs/matching.py
+--- a/src/sage/graphs/matching.py
++++ b/src/sage/graphs/matching.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/scalarfield.py b/src/sage/manifolds/differentiable/scalarfield.py
+--- a/src/sage/manifolds/differentiable/scalarfield.py
++++ b/src/sage/manifolds/differentiable/scalarfield.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/utilities.py b/src/sage/manifolds/utilities.py
+--- a/src/sage/manifolds/utilities.py
++++ b/src/sage/manifolds/utilities.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.graphs sage.plot sage.geometry.polyhedron sage.groups sage.combinat
+ """
 diff --git a/src/sage/algebras/askey_wilson.py b/src/sage/algebras/askey_wilson.py
 --- a/src/sage/algebras/askey_wilson.py
 +++ b/src/sage/algebras/askey_wilson.py
