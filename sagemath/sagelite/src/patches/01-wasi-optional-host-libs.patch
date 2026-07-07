@@ -16841,3 +16841,51 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/progra
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/libs/singular/singular.pyx b/src/sage/libs/singular/singular.pyx
+--- a/src/sage/libs/singular/singular.pyx
++++ b/src/sage/libs/singular/singular.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.libs.ntl
+ """
+diff --git a/src/sage/modules/filtered_vector_space.py b/src/sage/modules/filtered_vector_space.py
+--- a/src/sage/modules/filtered_vector_space.py
++++ b/src/sage/modules/filtered_vector_space.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix_integer_dense sage.libs.pari
+ r"""
+diff --git a/src/sage/symbolic/subring.py b/src/sage/symbolic/subring.py
+--- a/src/sage/symbolic/subring.py
++++ b/src/sage/symbolic/subring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
+diff --git a/src/sage/plot/plot3d/index_face_set.pyx b/src/sage/plot/plot3d/index_face_set.pyx
+--- a/src/sage/plot/plot3d/index_face_set.pyx
++++ b/src/sage/plot/plot3d/index_face_set.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.plot.plot3d matplotlib
+ """
+diff --git a/src/sage/graphs/orientations.py b/src/sage/graphs/orientations.py
+--- a/src/sage/graphs/orientations.py
++++ b/src/sage/graphs/orientations.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/section_module.py b/src/sage/manifolds/section_module.py
+--- a/src/sage/manifolds/section_module.py
++++ b/src/sage/manifolds/section_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/rings/number_field/unit_group.py b/src/sage/rings/number_field/unit_group.py
+--- a/src/sage/rings/number_field/unit_group.py
++++ b/src/sage/rings/number_field/unit_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ r"""
+diff --git a/src/sage/rings/padics/witt_vector.py b/src/sage/rings/padics/witt_vector.py
+--- a/src/sage/rings/padics/witt_vector.py
++++ b/src/sage/rings/padics/witt_vector.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+ r"""
