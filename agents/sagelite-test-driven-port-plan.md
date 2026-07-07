@@ -36709,6 +36709,58 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 491-to-510 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the rebuilt patched source
+tree, excluding files already covered by file-level browser-profile metadata,
+selected nine uncovered files in the 491-to-510 band:
+`sage/rings/power_series_ring_element.pyx`, `sage/rings/lazy_species.py`,
+`sage/manifolds/differentiable/affine_connection.py`,
+`sage/schemes/elliptic_curves/period_lattice.py`,
+`sage/schemes/elliptic_curves/hom.py`,
+`sage/schemes/generic/morphism.py`, `sage/matrix/matrix1.pyx`,
+`sage/manifolds/manifold.py`, and `sage/quivers/representation.py`.
+
+The initial no-timeout probe reached `matrix1.pyx` and was stopped after the
+worker stayed on the same matrix constructor example. The timeout-bound
+one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-491-510/batch.sqlite3` with:
+
+```text
+sage -t failed: 741 passed, 2288 failed, 441 skipped
+```
+
+The failures were dependency/runtime frontiers rather than promotion
+candidates: power-series examples reached PARI implementation gaps, symbolic
+hyperbolic functions, and pexpect-backed extension paths; lazy species needed
+GAP and Symmetrica-backed species support; manifold examples needed the
+manifold/symbolic stack; elliptic-curve period and hom examples reached
+Cremona data, GAP, matrix integer dense, finite-field, and PARI/cypari2
+paths; generic scheme morphisms reached Singular/plural and number-field
+coverage; `matrix1.pyx` timed out in a polynomial matrix constructor; and
+quiver representations needed graph, free-module, and number-field support.
+The WASI source patch now records file-level dependency metadata for all nine
+files.
+
+Focused validation rebuilt the patched source copy from `/home/user/sagelite`,
+applied the full WASI source patch cleanly, reran the same nine-file band with
+`SAGELITE_DOCTEST_TIMEOUT=120`, and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-491-510/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 4458 skipped
+```
+
+The final database has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`2bad9327ca0f3f9abad7c9881bc8f84170caaef4`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

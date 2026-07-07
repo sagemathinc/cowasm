@@ -18805,3 +18805,57 @@ diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix_mod2_dense m4ri libpng resource
  # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES ZLIB_LIBRARIES
+diff --git a/src/sage/rings/power_series_ring_element.pyx b/src/sage/rings/power_series_ring_element.pyx
+--- a/src/sage/rings/power_series_ring_element.pyx
++++ b/src/sage/rings/power_series_ring_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.pari sage.symbolic pexpect
+ """
+diff --git a/src/sage/rings/lazy_species.py b/src/sage/rings/lazy_species.py
+--- a/src/sage/rings/lazy_species.py
++++ b/src/sage/rings/lazy_species.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap sage.libs.symmetrica sage.combinat.species
+ r"""
+diff --git a/src/sage/manifolds/differentiable/affine_connection.py b/src/sage/manifolds/differentiable/affine_connection.py
+--- a/src/sage/manifolds/differentiable/affine_connection.py
++++ b/src/sage/manifolds/differentiable/affine_connection.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/period_lattice.py b/src/sage/schemes/elliptic_curves/period_lattice.py
+--- a/src/sage/schemes/elliptic_curves/period_lattice.py
++++ b/src/sage/schemes/elliptic_curves/period_lattice.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.rings.number_field sage.libs.gap sage.matrix.matrix_integer_dense database_cremona_mini_ellcurve
+ r"""
+diff --git a/src/sage/schemes/elliptic_curves/hom.py b/src/sage/schemes/elliptic_curves/hom.py
+--- a/src/sage/schemes/elliptic_curves/hom.py
++++ b/src/sage/schemes/elliptic_curves/hom.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.rings.finite_rings sage.libs.pari
+ """
+diff --git a/src/sage/schemes/generic/morphism.py b/src/sage/schemes/generic/morphism.py
+--- a/src/sage/schemes/generic/morphism.py
++++ b/src/sage/schemes/generic/morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular sage.rings.number_field
+ r"""
+diff --git a/src/sage/matrix/matrix1.pyx b/src/sage/matrix/matrix1.pyx
+--- a/src/sage/matrix/matrix1.pyx
++++ b/src/sage/matrix/matrix1.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix1 sage.matrix.matrix2 sage.libs.pari sage.libs.singular
+ """
+diff --git a/src/sage/manifolds/manifold.py b/src/sage/manifolds/manifold.py
+--- a/src/sage/manifolds/manifold.py
++++ b/src/sage/manifolds/manifold.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/quivers/representation.py b/src/sage/quivers/representation.py
+--- a/src/sage/quivers/representation.py
++++ b/src/sage/quivers/representation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.quivers sage.graphs sage.modules.free_module sage.rings.number_field
+ r"""
