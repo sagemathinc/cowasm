@@ -39147,6 +39147,21 @@ records runner version 92. The strict runnable source-frontier scan with the
 plan subtraction, required `.tmp/**/*.sqlite3` database subtraction, and
 `--fail-on-rows` still prints only the `path	prompt_count` header.
 
+Follow-up runnable-frontier make-wrapper pass on 2026-07-07: no corpus entry
+was promoted. The strict runnable source-frontier scan still prints only the
+`path	prompt_count` header when subtracting the curated corpus, this plan's
+mentioned paths, and required valid persisted SQLite dashboards under
+`.tmp/**/*.sqlite3`.
+
+The make wrapper now exposes the runnable-prompt filter as the dedicated
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS` variable, so scheduled
+frontier guards no longer need to pass `--min-runnable-prompts` through the
+generic `SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS` string. Validation used the
+strict live wrapper with required database subtraction, `--fail-on-rows`,
+quiet invalid-database flags, `--include-header`, and
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=1`; it exited 0 with no
+frontier rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
