@@ -17364,6 +17364,12 @@ diff --git a/src/sage/rings/function_field/maps.py b/src/sage/rings/function_fie
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field sage.libs.pari
  r"""
+diff --git a/src/sage/rings/function_field/jacobian_hess.py b/src/sage/rings/function_field/jacobian_hess.py
+--- a/src/sage/rings/function_field/jacobian_hess.py
++++ b/src/sage/rings/function_field/jacobian_hess.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.function_field sage.libs.pari
+ r"""
 diff --git a/src/sage/algebras/fusion_rings/fusion_ring.py b/src/sage/algebras/fusion_rings/fusion_ring.py
 --- a/src/sage/algebras/fusion_rings/fusion_ring.py
 +++ b/src/sage/algebras/fusion_rings/fusion_ring.py

@@ -34391,6 +34391,50 @@ runnable candidates. The checked corpus remains at 1,087 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch against
 `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 232-to-234 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan selected ten uncovered files in
+the 232-to-234 prompt band: `sage/geometry/polyhedron/base4.py`,
+`sage/numerical/backends/glpk_graph_backend.pyx`,
+`sage/combinat/crystals/affine.py`,
+`sage/combinat/similarity_class_type.py`,
+`sage/functions/hypergeometric.py`,
+`sage/geometry/cone_critical_angles.py`, `sage/logic/boolformula.py`,
+`sage/matrix/matrix_symbolic_dense.pyx`,
+`sage/rings/function_field/jacobian_hess.py`, and
+`sage/schemes/elliptic_curves/padic_lseries.py`. The initial direct probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-232-234/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 271 passed, 187 failed, 1636 skipped
+```
+
+Nine files were already clean under existing browser-profile metadata or
+checked corpus coverage. The remaining failures were all in
+`jacobian_hess.py`: the first tested `Curve(...)` setup needs the unavailable
+schemes/function-field/PARI Jacobian surface, and the rest of the failures are
+dependent missing-name fallout from that setup block. The WASI source patch now
+records this boundary with file-level
+`sage.schemes sage.rings.function_field sage.libs.pari` metadata.
+
+Final direct validation against a freshly patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-232-234/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 224 passed, 0 failed, 1870 skipped
+```
+
+The latest-run summary records CoWasm commit
+`d06e95ba12fa686b732bfc3934cab2540c257461`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,087 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
