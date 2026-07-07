@@ -35421,6 +35421,53 @@ runnable candidates. The checked corpus remains at 1,092 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch in
 dry-run mode against `/home/user/sagelite`.
 
+Follow-up 298-to-300 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected six uncovered files in the 298-to-300 prompt band:
+`sage/modules/with_basis/invariant.py`, `sage/rings/fraction_field.py`,
+`sage/algebras/quatalg/quaternion_algebra_element.pyx`,
+`sage/modules/free_quadratic_module.py`,
+`sage/numerical/backends/scip_backend.pyx`, and
+`sage/parallel/map_reduce.py`. The initial direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-298-300/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 337 passed, 244 failed, 613 skipped
+```
+
+`invariant.py` and `scip_backend.pyx` were already skipped-only under
+existing browser-profile metadata. The remaining failures were dependency or
+runtime frontiers rather than promotion candidates: `fraction_field.py` and
+`quaternion_algebra_element.pyx` reached the known NTL
+`ZZ_pContext.restore` dynamic-link boundary, `map_reduce.py` depends on the
+unavailable `_multiprocessing` runtime, and `free_quadratic_module.py`
+exposed a broad Sage modules/matrix backend cluster around span/submodule
+construction, with dependent missing setup names. The WASI source patch now
+records those four boundaries with module-level `# sage.doctest: needs ...`
+directives; the first quaternion hash stress block is also tagged
+`# long time`.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-298-300/final2.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1789 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`e7cb719ec9a5a6b5991c705bfcf711f9a20e23fe`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90. Validation also ran `git diff --check` and the full WASI source
+patch in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

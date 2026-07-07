@@ -18127,3 +18127,30 @@ diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction
 +            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))  # long time
 +            sage: v = P.gen(4)                                                 # long time
 +            sage: p.subs({v: 100})                                             # long time
+diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
+--- a/src/sage/rings/fraction_field.py
++++ b/src/sage/rings/fraction_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""
+diff --git a/src/sage/algebras/quatalg/quaternion_algebra_element.pyx b/src/sage/algebras/quatalg/quaternion_algebra_element.pyx
+--- a/src/sage/algebras/quatalg/quaternion_algebra_element.pyx
++++ b/src/sage/algebras/quatalg/quaternion_algebra_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ # distutils: language = c++
+@@ -201,1 +202,1 @@
+-            sage: for K in [QQ, QuadraticField(2), AA, Frac(QQ['x'])]:
++            sage: for K in [QQ, QuadraticField(2), AA, Frac(QQ['x'])]:          # long time
+diff --git a/src/sage/parallel/map_reduce.py b/src/sage/parallel/map_reduce.py
+--- a/src/sage/parallel/map_reduce.py
++++ b/src/sage/parallel/map_reduce.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs _multiprocessing
+ r"""
+diff --git a/src/sage/modules/free_quadratic_module.py b/src/sage/modules/free_quadratic_module.py
+--- a/src/sage/modules/free_quadratic_module.py
++++ b/src/sage/modules/free_quadratic_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules sage.matrix.matrix_mod2_dense
+ r"""
