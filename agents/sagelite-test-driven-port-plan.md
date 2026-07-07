@@ -39182,6 +39182,21 @@ The scratch SQLite dashboard at
 `.tmp/sagelite-sqlite-chunk-smoke.sqlite3` records one file row, 70 passing
 block rows, no block- or file-failure clusters, and runner version 93.
 
+Follow-up strict frontier recheck on 2026-07-07: no corpus entry was
+promoted. The make-wrapper runnable source-frontier guard still exits cleanly
+with only the `path	prompt_count` header when it subtracts the curated
+corpus, this plan's mentioned paths, and required persisted scratch SQLite
+dashboards via the make-directory-relative glob `../../.tmp/**/*.sqlite3`.
+
+The same pass checked the persisted dashboard candidate scan with
+`doctest-corpus-candidates.py --strict-frontier --dedupe-paths` across
+`.tmp/**/*.sqlite3`; it also printed only its header row. A mistaken trial with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/**/*.sqlite3'` failed
+before scanning because the make target runs from `sagemath/sagelite`, so that
+glob does not reach the repository-level scratch directory. Scheduled make
+wrapper runs should continue using `../../.tmp/**/*.sqlite3` or an absolute
+glob when `SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE=1` is enabled.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
