@@ -34524,6 +34524,49 @@ corpus is now at 1,088 non-comment entries. Validation also ran `git diff
 --check` and the full WASI source patch against a detached
 `/home/user/sagelite` worktree with a workspace-local scratch directory.
 
+Follow-up 241-to-243 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from a newly patched scratch
+source tree selected five uncovered files in the 241-to-243 prompt band:
+`sage/combinat/rigged_configurations/rigged_configurations.py`,
+`sage/rings/padics/local_generic.py`, `sage/tests/book_stein_modform.py`,
+`sage/combinat/tamari_blossoming_tree.py`, and
+`sage/rings/number_field/number_field_ideal_rel.py`. The initial direct probe
+wrote `.tmp/current-run/scheduled-2026-07-07-goal-241-243/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 83 passed, 402 failed, 726 skipped
+```
+
+Three files were already skipped-only under existing browser-profile
+metadata. The remaining two failures were broad dependency frontiers rather
+than narrow promotion targets: Tamari blossoming trees import the unavailable
+graph/plot stack at module load, preventing the module globals from seeding
+and causing dependent missing-name failures; relative number-field ideals
+route through the still-focused PARI/cypari2 object model. The WASI source
+patch now records those boundaries with file-level `sage.graphs sage.plot`
+and `sage.rings.number_field sage.libs.pari` metadata.
+
+Final direct validation against the patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-241-243/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1211 skipped
+```
+
+The latest-run summary records CoWasm commit
+`3694dd32dad8d5fca1493c8d4cb9409e76fc0ee7`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all five files. The saved block- and file-
+failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,088
+non-comment entries. Validation also ran the full WASI source patch against a
+fresh `/home/user/sagelite` copy with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

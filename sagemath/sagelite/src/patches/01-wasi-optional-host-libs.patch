@@ -17463,3 +17463,15 @@ diff --git a/src/sage/interfaces/mathics.py b/src/sage/interfaces/mathics.py
 @@ -311,1 +311,1 @@
 -    sage: x = var('x')
 +    sage: x = var('x')                      # needs sage.symbolic
+diff --git a/src/sage/combinat/tamari_blossoming_tree.py b/src/sage/combinat/tamari_blossoming_tree.py
+--- a/src/sage/combinat/tamari_blossoming_tree.py
++++ b/src/sage/combinat/tamari_blossoming_tree.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs sage.plot
+ r"""
+diff --git a/src/sage/rings/number_field/number_field_ideal_rel.py b/src/sage/rings/number_field/number_field_ideal_rel.py
+--- a/src/sage/rings/number_field/number_field_ideal_rel.py
++++ b/src/sage/rings/number_field/number_field_ideal_rel.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
+ r"""
