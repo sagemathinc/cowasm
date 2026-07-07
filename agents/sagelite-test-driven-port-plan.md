@@ -36102,6 +36102,53 @@ non-comment entries. The latest run metadata records CoWasm commit
 sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
 full-patch application against a clean `/home/user/sagelite` HEAD archive.
 
+Follow-up 350-to-351 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree had no uncovered files in the 349 prompt band, then selected five
+uncovered files in the 350-to-351 band:
+`sage/combinat/matrices/hadamard_matrix.py`,
+`sage/schemes/elliptic_curves/height.py`, `sage/categories/rings.py`,
+`sage/dynamics/arithmetic_dynamics/wehlerK3.py`, and
+`sage/groups/generic.py`. The initial direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-350-351/prompt-350-351/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 384 passed, 269 failed, 701 skipped
+```
+
+`hadamard_matrix.py` was already skipped-only under existing graph/module
+metadata. The remaining runnable-failing files were broad dependency frontiers
+rather than narrow promotion candidates: `height.py` cascaded from elliptic
+curve, PARI, Singular, GAP, and number-field boundaries; `rings.py` timed out
+at the known polynomial quotient prime-field example; `wehlerK3.py` was
+dominated by schemes, Singular/plural polynomial, and dependent local-name
+cascades; and `generic.py` exposed GAP, finite-field, elliptic-curve, and
+group-constructor boundaries. The WASI source patch now records file-level
+dependency metadata for those four files.
+
+Focused direct validation applied the full WASI source patch to a clean
+`/home/user/sagelite` HEAD archive, then wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-350-351/prompt-350-351/final.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1689 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`98385f1a7a36f8e8a17369a59577bd28fa0f1950`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+full-patch application against a clean `/home/user/sagelite` HEAD archive.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

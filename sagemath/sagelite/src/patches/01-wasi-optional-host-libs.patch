@@ -18333,3 +18333,27 @@ diff --git a/src/sage/rings/function_field/ideal.py b/src/sage/rings/function_fi
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.function_field
  r"""
+diff --git a/src/sage/schemes/elliptic_curves/height.py b/src/sage/schemes/elliptic_curves/height.py
+--- a/src/sage/schemes/elliptic_curves/height.py
++++ b/src/sage/schemes/elliptic_curves/height.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.elliptic_curves sage.libs.pari sage.libs.singular sage.libs.gap sage.rings.number_field
+ r"""
+diff --git a/src/sage/categories/rings.py b/src/sage/categories/rings.py
+--- a/src/sage/categories/rings.py
++++ b/src/sage/categories/rings.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.rings.finite_rings
+ r"""
+diff --git a/src/sage/dynamics/arithmetic_dynamics/wehlerK3.py b/src/sage/dynamics/arithmetic_dynamics/wehlerK3.py
+--- a/src/sage/dynamics/arithmetic_dynamics/wehlerK3.py
++++ b/src/sage/dynamics/arithmetic_dynamics/wehlerK3.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/groups/generic.py b/src/sage/groups/generic.py
+--- a/src/sage/groups/generic.py
++++ b/src/sage/groups/generic.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap sage.rings.finite_rings sage.schemes.elliptic_curves
+ """
