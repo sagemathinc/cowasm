@@ -4950,6 +4950,60 @@ no uncovered clean runnable row for this dashboard. Future scheduled runs
 should avoid repeating this exact 871-to-890 slice unless those default
 browser-profile dependency boundaries change.
 
+Follow-up 891-to-910 source-minus-corpus frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,093 non-comment entries. A fresh prompt-count frontier scan filtered
+against files already named in this plan selected:
+`sage/groups/perm_gps/partn_ref/refinement_binary.pyx`,
+`sage/geometry/polyhedron/constructor.py`, `sage/graphs/bliss.pyx`,
+`sage/tests/books/computational_mathematics_with_sagemath/polynomes_doctest.py`,
+`sage/schemes/curves/point.py`,
+`sage/algebras/fusion_rings/fusion_double.py`,
+`sage/graphs/cycle_enumeration.py`,
+`sage/topology/filtered_simplicial_complex.py`,
+`sage/graphs/tutte_polynomial.py`, `sage/numerical/optimize.py`,
+`sage/interfaces/expect.py`, `sage/tests/gosper-sum.py`,
+`sage/groups/affine_gps/group_element.py`,
+`sage/graphs/edge_connectivity.pyx`,
+`sage/combinat/schubert_polynomial.py`,
+`sage/combinat/partition_shifting_algebras.py`,
+`sage/graphs/base/static_dense_graph.pyx`,
+`sage/rings/polynomial/symmetric_ideal.py`,
+`sage/groups/matrix_gps/matrix_group.py`, and
+`sage/crypto/classical_cipher.py`.
+
+The one-worker direct probe used absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-goal-891-910-current/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 20 skipped
+```
+
+The latest-run summary records CoWasm commit
+`e20de6ff623a4f5725cbafc878d3e28afa2d0f9e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+20 skipped block rows, and about 127 seconds of elapsed time. The parent Node
+process printed the successful SQLite summary and then reported the known
+post-summary 139 exit.
+
+All 20 files were skipped at file scope by existing browser-profile metadata.
+The skip tags cover graph and NetworkX boundaries, combinat/modules, finite
+rings, polyhedron/PPL/PARI, Singular and plural-backed polynomial paths,
+number fields, GAP, symbolic support, SciPy, pexpect, fusion rings, and group
+backends. The saved block- and file-failure cluster queries are empty, and the
+strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
+and `--dedupe-paths` printed no uncovered clean runnable row for this
+dashboard. Future scheduled runs should avoid repeating this exact 891-to-910
+slice unless those default browser-profile dependency boundaries change.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
