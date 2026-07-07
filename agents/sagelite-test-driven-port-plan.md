@@ -35900,6 +35900,35 @@ The latest run metadata records CoWasm commit
 90. Validation also ran `git diff --check` and full-patch application against
 the clean archived Sagelite source copy.
 
+Follow-up 331-to-333 prompt-band audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected two uncovered files in the 331-to-333 prompt band:
+`sage/coding/linear_code_no_metric.py` and
+`sage/combinat/alternating_sign_matrix.py`. Both files had already been
+classified in earlier frontier passes, but their current prompt counts place
+them in this band while they remain outside the checked quiet corpus. The
+direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-331-333/prompt-331-333/batch.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 563 skipped
+```
+
+`linear_code_no_metric.py` is skipped under the existing
+`sage.modules sage.rings.finite_rings` file-level metadata, and
+`alternating_sign_matrix.py` is skipped under the existing
+`sage.combinat sage.modules` metadata. The saved block- and file-failure
+cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`, `--require-block-rows`,
+`--require-file-run`, `--min-runner-version 87`, and `--dedupe-paths` printed
+no uncovered clean runnable candidates. The checked corpus remains at 1,092
+non-comment entries. The latest run metadata records CoWasm commit
+`5726c54bbd7c056c295e97cbc227c69ff9956a93`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
