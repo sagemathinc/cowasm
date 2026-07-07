@@ -37384,6 +37384,56 @@ scan with `--strict-frontier`, `--min-runner-version 91`, and `--dedupe-paths`
 printed no uncovered clean runnable candidate. The checked corpus remains at
 1,093 non-comment entries.
 
+Follow-up current unrecorded high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan, because the latest
+source/corpus state no longer makes raw row numbers line up with the previous
+751-to-770 audit. The next 20 unrecorded high-count files were:
+`sage/geometry/lattice_polytope.py`,
+`sage/rings/polynomial/ore_polynomial_element.pyx`,
+`sage/schemes/hyperelliptic_curves/monsky_washnitzer.py`,
+`sage/algebras/iwahori_hecke_algebra.py`,
+`sage/schemes/projective/projective_morphism.py`,
+`sage/graphs/generators/families.py`, `sage/geometry/fan.py`,
+`sage/rings/complex_mpfr.pyx`, `sage/libs/gap/element.pyx`,
+`sage/rings/polynomial/polynomial_quotient_ring.py`,
+`sage/matrix/matrix_rational_dense.pyx`,
+`sage/schemes/elliptic_curves/mod_sym_num.pyx`,
+`sage/rings/padics/padic_ZZ_pX_FM_element.pyx`,
+`sage/rings/polynomial/groebner_fan.py`,
+`sage/schemes/hyperelliptic_curves/hyperelliptic_padic_field.py`,
+`sage/combinat/sf/sf.py`, `sage/rings/universal_cyclotomic_field.py`,
+`sage/tests/cmdline.py`, `sage/algebras/lie_algebras/lie_algebra.py`, and
+`sage/doctest/control.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-771-790-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 1316 passed, 3521 failed, 1011 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`0bf0527534cae850151004593f9164b2240f5484`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and 5,846 block rows. Six files
+were skipped-only under existing browser-profile metadata:
+`ore_polynomial_element.pyx`, `fan.py`, `polynomial_quotient_ring.py`,
+`padic_ZZ_pX_FM_element.pyx`, `sf.py`, and
+`universal_cyclotomic_field.py`.
+
+The remaining files are broad backend/dependency frontiers rather than quiet
+promotion candidates. The file-level errors are two `wasm_trap` rows:
+`matrix_rational_dense.pyx` traps in `a.echelonize()` through the matrix import
+path, and `hyperelliptic_padic_field.py` traps in the p-adic extension setup
+`L.<a> = K.extension(x^20-11)`. Block failures are dominated by 2,298
+`NameError`, 495 `ModuleNotFoundError`, 298 `output_mismatch`, 174
+`AttributeError`, 131 `ImportError`, and 66 `FeatureNotPresentError` rows.
+The strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
+and `--dedupe-paths` printed no uncovered clean runnable candidate. The
+checked corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
