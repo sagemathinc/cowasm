@@ -313,6 +313,7 @@ src/sage/interfaces/gap_workspace.py
 src/sage/interfaces/jmoldata.py
 src/sage/interfaces/khoca.py
 src/sage/interfaces/matlab.py
+src/sage/interfaces/mathics.py
 src/sage/interfaces/tab_completion.py
 src/sage/interfaces/tachyon.py
 src/sage/interfaces/gnuplot.py

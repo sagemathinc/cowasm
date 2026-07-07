@@ -34476,6 +34476,54 @@ queries are empty. The strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,087 non-comment entries.
 
+Follow-up 238-to-240 prompt-band Mathics promotion and dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected five uncovered files in the 238-to-240 prompt band:
+`sage/rings/number_field/class_group.py`,
+`sage/rings/number_field/galois_group.py`,
+`sage/graphs/graph_generators.py`, `sage/interfaces/mathics.py`, and
+`sage/rings/padics/padic_generic.py`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-238-240/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 46 passed, 107 failed, 777 skipped
+```
+
+`galois_group.py` and `padic_generic.py` were already skipped-only under
+existing browser-profile metadata. `class_group.py` timed out in
+number-field class-group construction, and `graph_generators.py` had broad
+graph-backend and dependent generator failures, so the WASI source patch now
+records those files with file-level `sage.rings.number_field sage.libs.pari`
+and `sage.graphs` metadata. `mathics.py` was a useful promotion candidate:
+its remaining failures were only the untagged GP comparison and symbolic
+`var('x')` setup, now marked as `sage.libs.pari` and `sage.symbolic`
+coverage while preserving the file's default-profile interface-helper blocks.
+
+Final direct validation against a freshly patched scratch source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-238-240/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 28 passed, 0 failed, 1139 skipped
+```
+
+The final run records `mathics.py` with 28 passed, 0 failed, and 197 skipped
+blocks; the other four files are skipped-only dependency-boundary rows. The
+latest-run summary records CoWasm commit
+`b0d692795eeab7f07ac821fc773c36a75bcbf7c5`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty. After adding `sage/interfaces/mathics.py` to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`, the strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus is now at 1,088 non-comment entries. Validation also ran `git diff
+--check` and the full WASI source patch against a detached
+`/home/user/sagelite` worktree with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

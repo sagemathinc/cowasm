@@ -14644,6 +14644,12 @@ diff --git a/src/sage/graphs/graph_generators_pyx.pyx b/src/sage/graphs/graph_ge
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
 diff --git a/src/sage/groups/matrix_gps/symplectic_gap.py b/src/sage/groups/matrix_gps/symplectic_gap.py
 --- a/src/sage/groups/matrix_gps/symplectic_gap.py
 +++ b/src/sage/groups/matrix_gps/symplectic_gap.py
@@ -14981,6 +14987,12 @@ diff --git a/src/sage/rings/number_field/small_primes_of_degree_one.py b/src/sag
 +++ b/src/sage/rings/number_field/small_primes_of_degree_one.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.pari sage.rings.number_field
+ r"""
+diff --git a/src/sage/rings/number_field/class_group.py b/src/sage/rings/number_field/class_group.py
+--- a/src/sage/rings/number_field/class_group.py
++++ b/src/sage/rings/number_field/class_group.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.libs.pari
  r"""
 diff --git a/src/sage/schemes/affine/affine_rational_point.py b/src/sage/schemes/affine/affine_rational_point.py
 --- a/src/sage/schemes/affine/affine_rational_point.py
@@ -17442,3 +17454,12 @@ diff --git a/src/sage/interfaces/gap.py b/src/sage/interfaces/gap.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.gap pexpect subprocess
  r"""
+diff --git a/src/sage/interfaces/mathics.py b/src/sage/interfaces/mathics.py
+--- a/src/sage/interfaces/mathics.py
++++ b/src/sage/interfaces/mathics.py
+@@ -198,1 +198,1 @@
+-    sage: gp('solve(x=1,2,exp(x)-3*x)')
++    sage: gp('solve(x=1,2,exp(x)-3*x)')    # needs sage.libs.pari
+@@ -311,1 +311,1 @@
+-    sage: x = var('x')
++    sage: x = var('x')                      # needs sage.symbolic
