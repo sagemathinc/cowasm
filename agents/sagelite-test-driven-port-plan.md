@@ -33221,6 +33221,52 @@ blocks, and the compact coding/module batch with 104 skipped blocks and no
 runnable default-profile rows. These results are useful frontier data, but
 they do not justify growing the quiet corpus.
 
+Follow-up 157-to-159 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 20 uncovered files in the 157-to-159 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-157-159/prompt-157-159/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 201 passed, 1035 failed, 1428 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates.
+Eight files were already skipped-only under existing dependency metadata:
+`sage/categories/posets.py`, `sage/combinat/sf/dual.py`,
+`sage/crypto/block_cipher/des.py`, `sage/modular/abvar/finite_subgroup.py`,
+`sage/modular/modform/ring.py`,
+`sage/schemes/elliptic_curves/isogeny_class.py`,
+`sage/stats/distributions/discrete_gaussian_lattice.py`, and
+`sage/topology/simplicial_complex_examples.py`.
+
+The remaining failures were broad browser-profile frontiers rather than
+narrow corpus-promotion targets: Askey-Wilson loop representation timed out;
+hyperplane-arrangement, graph-tree, polyhedron-face, and manifold examples
+need their stripped backend surfaces; REPL interpreter examples need IPython
+and subprocess behavior; asymptotic examples need symbolic/asymptotic support;
+Clifford and q-commuting polynomial examples need algebra constructors not in
+the current startup surface; quasimodular-form examples need the modular-form
+stack; and sparse integer matrix/free-module examples hit existing matrix
+runtime frontiers. The WASI source patch now records those boundaries with
+explicit file-level metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-157-159/prompt-157-159/final.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 3130 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,084 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -1,3 +1,75 @@
+diff --git a/src/sage/algebras/askey_wilson.py b/src/sage/algebras/askey_wilson.py
+--- a/src/sage/algebras/askey_wilson.py
++++ b/src/sage/algebras/askey_wilson.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.askey_wilson
+ """
+diff --git a/src/sage/algebras/clifford_algebra_element.pyx b/src/sage/algebras/clifford_algebra_element.pyx
+--- a/src/sage/algebras/clifford_algebra_element.pyx
++++ b/src/sage/algebras/clifford_algebra_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.clifford_algebra sage.algebras.exterior_algebra
+ """
+diff --git a/src/sage/algebras/q_commuting_polynomials.py b/src/sage/algebras/q_commuting_polynomials.py
+--- a/src/sage/algebras/q_commuting_polynomials.py
++++ b/src/sage/algebras/q_commuting_polynomials.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.q_commuting_polynomials
+ r"""
+diff --git a/src/sage/geometry/hyperplane_arrangement/ordered_arrangement.py b/src/sage/geometry/hyperplane_arrangement/ordered_arrangement.py
+--- a/src/sage/geometry/hyperplane_arrangement/ordered_arrangement.py
++++ b/src/sage/geometry/hyperplane_arrangement/ordered_arrangement.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperplane_arrangement
+ r"""
+diff --git a/src/sage/geometry/polyhedron/face.py b/src/sage/geometry/polyhedron/face.py
+--- a/src/sage/geometry/polyhedron/face.py
++++ b/src/sage/geometry/polyhedron/face.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ """
+diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/trees.pyx
+--- a/src/sage/graphs/generators/trees.pyx
++++ b/src/sage/graphs/generators/trees.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/tensorfield_module.py b/src/sage/manifolds/differentiable/tensorfield_module.py
+--- a/src/sage/manifolds/differentiable/tensorfield_module.py
++++ b/src/sage/manifolds/differentiable/tensorfield_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/matrix/matrix_integer_sparse.pyx b/src/sage/matrix/matrix_integer_sparse.pyx
+--- a/src/sage/matrix/matrix_integer_sparse.pyx
++++ b/src/sage/matrix/matrix_integer_sparse.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_sparse
+ r"""
+diff --git a/src/sage/modular/quasimodform/ring.py b/src/sage/modular/quasimodform/ring.py
+--- a/src/sage/modular/quasimodform/ring.py
++++ b/src/sage/modular/quasimodform/ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modular
+ r"""
+diff --git a/src/sage/modules/free_module_integer.py b/src/sage/modules/free_module_integer.py
+--- a/src/sage/modules/free_module_integer.py
++++ b/src/sage/modules/free_module_integer.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module
+ """
+diff --git a/src/sage/repl/interpreter.py b/src/sage/repl/interpreter.py
+--- a/src/sage/repl/interpreter.py
++++ b/src/sage/repl/interpreter.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython subprocess
+ r"""
+diff --git a/src/sage/rings/asymptotic/misc.py b/src/sage/rings/asymptotic/misc.py
+--- a/src/sage/rings/asymptotic/misc.py
++++ b/src/sage/rings/asymptotic/misc.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic sage.rings.asymptotic
+ r"""
 diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage/stats/distributions/discrete_gaussian_lattice.py
 --- a/src/sage/stats/distributions/discrete_gaussian_lattice.py
 +++ b/src/sage/stats/distributions/discrete_gaussian_lattice.py
