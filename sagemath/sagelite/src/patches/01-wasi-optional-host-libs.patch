@@ -16689,3 +16689,15 @@ diff --git a/src/sage/graphs/generic_graph_pyx.pyx b/src/sage/graphs/generic_gra
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  """
+diff --git a/src/sage/dynamics/cellular_automata/solitons.py b/src/sage/dynamics/cellular_automata/solitons.py
+--- a/src/sage/dynamics/cellular_automata/solitons.py
++++ b/src/sage/dynamics/cellular_automata/solitons.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat.crystals sage.combinat.rigged_configurations
+ """
+diff --git a/src/sage/geometry/polyhedron/base7.py b/src/sage/geometry/polyhedron/base7.py
+--- a/src/sage/geometry/polyhedron/base7.py
++++ b/src/sage/geometry/polyhedron/base7.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron latte_int pynormaliz
+ r"""
