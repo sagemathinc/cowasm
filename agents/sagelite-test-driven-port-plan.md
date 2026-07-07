@@ -36403,6 +36403,63 @@ The latest run metadata records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up 391-to-410 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan selected 16 uncovered files in
+the 391-to-410 band:
+`sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx`,
+`sage/dynamics/arithmetic_dynamics/dynamical_semigroup.py`,
+`sage/modular/btquotients/pautomorphicform.py`,
+`sage/geometry/polyhedron/base5.py`,
+`sage/modules/matrix_morphism.py`,
+`sage/schemes/projective/projective_point.py`,
+`sage/geometry/polyhedron/backend_normaliz.py`,
+`sage/knots/knotinfo.py`,
+`sage/manifolds/differentiable/mixed_form.py`,
+`sage/numerical/backends/generic_backend.pyx`,
+`sage/rings/complex_mpc.pyx`,
+`sage/schemes/generic/algebraic_scheme.py`,
+`sage/combinat/chas/wqsym.py`,
+`sage/combinat/root_system/extended_affine_weyl_group.py`,
+`sage/crypto/block_cipher/miniaes.py`, and
+`sage/manifolds/differentiable/examples/euclidean.py`.
+
+The initial direct one-worker probe against the current build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-391-410/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 240 passed, 1996 failed, 2919 skipped
+```
+
+Six files were already skipped-only under existing browser-profile metadata.
+The runnable failures were broad dependency frontiers rather than promotion
+candidates: polyhedron/PPL/graph coverage, arithmetic dynamics through
+scheme and Singular-backed polynomial paths, number-field polyhedron and
+projective-coordinate paths, matrix echelonization in the `matrix2` side
+module, manifolds plus symbolic support, LP backend coverage, MPC plus
+symbolic/PARI paths, and generic algebraic schemes through polynomial/Singular
+support. The WASI source patch now records file-level dependency metadata for
+the ten failing files.
+
+Focused validation applied the full WASI source patch to a clean
+`/home/user/sagelite` HEAD archive, then reran the 16-file band and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-391-410/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 6321 skipped
+```
+
+The patched-source final run has no block-level failures and no file-level
+errors. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`e14512b0871e03a492f03990129ca9c0dfa1ed4b`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

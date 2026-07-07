@@ -18519,3 +18519,63 @@ diff --git a/src/sage/rings/ideal.py b/src/sage/rings/ideal.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.polynomial.plural sage.libs.singular
  r"""
+diff --git a/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx b/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
+--- a/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
++++ b/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl sage.graphs
+ # distutils: extra_compile_args = OPENMP_CFLAGS
+diff --git a/src/sage/dynamics/arithmetic_dynamics/dynamical_semigroup.py b/src/sage/dynamics/arithmetic_dynamics/dynamical_semigroup.py
+--- a/src/sage/dynamics/arithmetic_dynamics/dynamical_semigroup.py
++++ b/src/sage/dynamics/arithmetic_dynamics/dynamical_semigroup.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/geometry/polyhedron/base5.py b/src/sage/geometry/polyhedron/base5.py
+--- a/src/sage/geometry/polyhedron/base5.py
++++ b/src/sage/geometry/polyhedron/base5.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field
+ r"""
+diff --git a/src/sage/modules/matrix_morphism.py b/src/sage/modules/matrix_morphism.py
+--- a/src/sage/modules/matrix_morphism.py
++++ b/src/sage/modules/matrix_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.modules.free_module sage.matrix.matrix2
+ r"""
+diff --git a/src/sage/schemes/projective/projective_point.py b/src/sage/schemes/projective/projective_point.py
+--- a/src/sage/schemes/projective/projective_point.py
++++ b/src/sage/schemes/projective/projective_point.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.rings.number_field
+ r"""
+diff --git a/src/sage/manifolds/differentiable/mixed_form.py b/src/sage/manifolds/differentiable/mixed_form.py
+--- a/src/sage/manifolds/differentiable/mixed_form.py
++++ b/src/sage/manifolds/differentiable/mixed_form.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/numerical/backends/generic_backend.pyx b/src/sage/numerical/backends/generic_backend.pyx
+--- a/src/sage/numerical/backends/generic_backend.pyx
++++ b/src/sage/numerical/backends/generic_backend.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.backends.generic_backend sage.numerical.backends.glpk_backend
+ r"""
+diff --git a/src/sage/rings/complex_mpc.pyx b/src/sage/rings/complex_mpc.pyx
+--- a/src/sage/rings/complex_mpc.pyx
++++ b/src/sage/rings/complex_mpc.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.complex_mpc sage.symbolic sage.libs.pari
+ """
+diff --git a/src/sage/schemes/generic/algebraic_scheme.py b/src/sage/schemes/generic/algebraic_scheme.py
+--- a/src/sage/schemes/generic/algebraic_scheme.py
++++ b/src/sage/schemes/generic/algebraic_scheme.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/manifolds/differentiable/examples/euclidean.py b/src/sage/manifolds/differentiable/examples/euclidean.py
+--- a/src/sage/manifolds/differentiable/examples/euclidean.py
++++ b/src/sage/manifolds/differentiable/examples/euclidean.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
