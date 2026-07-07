@@ -33143,6 +33143,58 @@ runnable candidates. The checked corpus remains at 1,083 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch dry-run
 against `/home/user/sagelite` with a workspace-local `TMPDIR`.
 
+Follow-up 154-to-156 prompt-band corpus-growth pass:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected 10 uncovered files in the 154-to-156 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-154-156/prompt-154-156/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 284 passed, 569 failed, 695 skipped
+```
+
+The strict promotion scan initially printed no uncovered clean runnable
+candidates. Three files were already skipped-only under existing dependency
+metadata: `sage/modular/arithgroup/congroup_gammaH.py`,
+`sage/categories/examples/sets_cat.py`, and
+`sage/combinat/root_system/fundamental_group.py`. The near-miss
+`sage/algebras/yangian.py` had 146 passing blocks and one narrow cascading
+failure group where `lie_algebras.gl(QQ, 4)` imports graph-backed Lie-algebra
+support. The WASI source patch now marks that setup group as
+`# needs sage.graphs`, preserving the rest of the file as runnable coverage.
+Focused make-target validation for `yangian.py` recorded:
+
+```text
+sage -t passed: 146 passed, 0 failed, 10 skipped
+```
+
+`yangian.py` is now promoted to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,084
+non-comment entries. The remaining failing files in the band were broad
+browser-profile boundaries: binary quadratic form class groups need PARI,
+quiver paths need the quiver/graph stack, Tate-Shafarevich examples need the
+elliptic-curve/eclib/PARI stack, cone critical-angle examples need
+polyhedron/symbolic support, and generic graph Cython helpers need the graph
+backend. The WASI source patch now records those boundaries with explicit
+file-level metadata.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-154-156/prompt-154-156/final-inline-one.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 146 passed, 0 failed, 1402 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. Validation
+also ran `git diff --check` and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
