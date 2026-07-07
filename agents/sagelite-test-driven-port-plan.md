@@ -37131,6 +37131,51 @@ CoWasm commit `77a714adc8673a2d736529e384977ce91a20390f`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 90.
 
+Follow-up 671-to-690 prompt-frontier audit:
+
+The next source-minus-corpus prompt-count band was run as a focused
+one-worker probe with a 120-second per-file timeout. The batch covers:
+`sage/tests/books/judson_abstract_algebra/sets-sage.py`,
+`sage/categories/examples/cw_complexes.py`,
+`sage/categories/filtered_modules.py`,
+`sage/categories/lie_algebras_with_basis.py`,
+`sage/combinat/words/infinite_word.py`, `sage/crypto/stream.py`,
+`sage/doctest/check_tolerance.py`, `sage/groups/galois_group_perm.py`,
+`sage/manifolds/continuous_map_image.py`,
+`sage/modular/modform/ambient_R.py`,
+`sage/plot/hyperbolic_regular_polygon.py`,
+`sage/symbolic/maxima_wrapper.py`,
+`sage/categories/coalgebras_with_basis.py`,
+`sage/combinat/designs/covering_array.py`,
+`sage/combinat/ncsf_qsym/combinatorics.py`,
+`sage/combinat/species/set_species.py`,
+`sage/cpython/dict_del_by_value.pyx`,
+`sage/graphs/graph_decompositions/fast_digraph.pyx`,
+`sage/libs/libecm.pyx`, and `sage/libs/ntl/ntl_ZZ_pEContext.pyx`.
+
+The first probe showed that the runnable clean files in this band were already
+covered by the checked corpus, while the two remaining failures were backend
+frontiers: `libecm.pyx` depended on unavailable GMP-ECM bindings and
+`ntl_ZZ_pEContext.pyx` reached an NTL `RuntimeError: unreachable` while
+constructing `c.ZZ_pE([10,17,12])`. The WASI source patch now records
+file-level needs metadata for those files: `sage.libs.ecm` for `libecm.pyx`
+and `sage.libs.ntl` for `ntl_ZZ_pEContext.pyx`.
+
+The final probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-671-690/final.sqlite3` with:
+
+```text
+sage -t passed: 228 passed, 0 failed, 302 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and the strict
+promotion scan with `--strict-frontier`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,093 non-comment entries. The latest run metadata records
+CoWasm commit `6b0442d50860907182e364270dbb2fd61658d6d0`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
