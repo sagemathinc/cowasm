@@ -17376,6 +17376,12 @@ diff --git a/src/sage/algebras/lie_algebras/affine_lie_algebra.py b/src/sage/alg
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
  """
+diff --git a/src/sage/algebras/lie_algebras/classical_lie_algebra.py b/src/sage/algebras/lie_algebras/classical_lie_algebra.py
+--- a/src/sage/algebras/lie_algebras/classical_lie_algebra.py
++++ b/src/sage/algebras/lie_algebras/classical_lie_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+ """
 diff --git a/src/sage/algebras/orlik_terao.py b/src/sage/algebras/orlik_terao.py
 --- a/src/sage/algebras/orlik_terao.py
 +++ b/src/sage/algebras/orlik_terao.py

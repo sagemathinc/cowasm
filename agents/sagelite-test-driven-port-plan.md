@@ -35291,6 +35291,46 @@ runnable candidates. The checked corpus remains at 1,092 non-comment entries.
 Validation also ran `git diff --check` and the full WASI source patch in
 dry-run mode against a fresh `/home/user/sagelite` scratch copy.
 
+Follow-up 289-to-291 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected three uncovered files in the 289-to-291 prompt band:
+`sage/geometry/toric_lattice.py`,
+`sage/algebras/lie_algebras/classical_lie_algebra.py`, and
+`sage/interfaces/macaulay2.py`. The initial direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-289-291/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 145 passed, 419 failed, 307 skipped
+```
+
+`macaulay2.py` was already skipped-only under existing interface metadata.
+`classical_lie_algebra.py` failed at the stripped graph backend while
+constructing classical matrix Lie algebras, with the first cluster reporting
+`cannot import name 'generic_graph_pyx' from 'sage.graphs'` and the remaining
+failures mostly dependent missing setup names. The WASI source patch now
+records this file with module-level `sage.algebras.lie_algebras sage.graphs`
+metadata.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-289-291/final.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 145 passed, 141 failed, 585 skipped
+```
+
+The final run has no file-level errors. `classical_lie_algebra.py` and
+`macaulay2.py` are skipped-only, and the remaining runnable near-miss is
+`toric_lattice.py`, which records `145 passed, 141 failed, 3 skipped`.
+Its largest cluster is the toric sublattice/quotient path failing with
+`TypeError: attribute name must be string, not ''`, followed by dependent
+missing setup names. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
