@@ -39211,6 +39211,34 @@ source-root-relative sanity probe from the repository root still passes:
 `src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
 `.tmp/scheduled-2026-07-07-frontier-recheck-all.sqlite3`.
 
+Follow-up scheduled frontier recheck on 2026-07-07: no corpus entry was
+promoted. The make-wrapper runnable source-frontier guard still exits 0 with
+only the `path	prompt_count` header when subtracting the curated corpus, this
+plan's mentioned paths, and required valid scratch dashboards through
+`../../.tmp/**/*.sqlite3`.
+
+A direct source-root-relative smoke from the repository root still passes:
+`src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-07-goal-recheck/all-source-root.sqlite3`.
+The persisted-dashboard candidate scan also remains empty when pinned to the
+real patched source root:
+
+```sh
+python3 sagemath/sagelite/src/doctest-corpus-candidates.py \
+  .tmp/**/*.sqlite3 \
+  --strict-frontier \
+  --dedupe-paths \
+  --include-header \
+  --ignore-invalid \
+  --quiet-invalid \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk
+```
+
+The source-root pin matters for ad hoc multi-database scans because old
+synthetic helper fixtures under `.tmp/` may record their own temporary source
+roots and otherwise look like valid promotion candidates. With the pinned
+source root, the scan printed only its tab-separated header.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
