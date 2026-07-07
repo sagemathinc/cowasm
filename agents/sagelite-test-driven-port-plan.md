@@ -36834,6 +36834,28 @@ printed no uncovered clean runnable candidate. The checked corpus remains at
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 90.
 
+Follow-up multivariate-polynomial element dependency-frontier tagging:
+
+The next source-minus-corpus prompt-count scan left
+`sage/rings/polynomial/multi_polynomial_element.py` as a large unpromoted
+frontier file, with 565 Sage prompts in the patched source tree. A focused
+rerun after adding file-level browser-profile metadata wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-531-plus/multi-polynomial-element.sqlite3`
+with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 541 skipped
+```
+
+The file is NTL-backed throughout, so the WASI source patch now records
+`# sage.doctest: needs sage.libs.ntl` at file scope instead of letting the
+stripped browser profile rediscover the same dependency boundary block by
+block. The focused database has no block-level failures and no file-level
+errors. The strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -18877,3 +18877,9 @@ diff --git a/src/sage/calculus/calculus.py b/src/sage/calculus/calculus.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic maxima
  r"""
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ """
