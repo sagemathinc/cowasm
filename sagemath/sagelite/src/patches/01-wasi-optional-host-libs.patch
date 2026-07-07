@@ -18375,6 +18375,18 @@ diff --git a/src/sage/graphs/independent_sets.pyx b/src/sage/graphs/independent_
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/strongly_regular_db.pyx b/src/sage/graphs/strongly_regular_db.pyx
+--- a/src/sage/graphs/strongly_regular_db.pyx
++++ b/src/sage/graphs/strongly_regular_db.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/combinat/designs/incidence_structures.py b/src/sage/combinat/designs/incidence_structures.py
+--- a/src/sage/combinat/designs/incidence_structures.py
++++ b/src/sage/combinat/designs/incidence_structures.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
 diff --git a/src/sage/interfaces/latte.py b/src/sage/interfaces/latte.py
 --- a/src/sage/interfaces/latte.py
 +++ b/src/sage/interfaces/latte.py

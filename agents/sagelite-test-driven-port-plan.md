@@ -36250,6 +36250,50 @@ CoWasm commit `98b34abc31b2189b3e39e4995e794ee83746829a`, Sagelite
 source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, and runner version 90.
 
+Follow-up 364-to-370 prompt-band graph-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected seven uncovered files in the 364-to-370 band:
+`sage/crypto/mq/rijndael_gf.py`, `sage/schemes/toric/divisor.py`,
+`sage/combinat/matrices/latin.py`, `sage/graphs/strongly_regular_db.pyx`,
+`sage/combinat/designs/incidence_structures.py`, `sage/crypto/mq/sr.py`, and
+`sage/modular/arithgroup/arithgroup_perm.py`. The initial direct one-worker
+probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-364-370/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 168 passed, 222 failed, 2163 skipped
+```
+
+Five files were already skipped-only under existing browser-profile metadata.
+The remaining runnable-failing files were broad graph frontiers rather than
+narrow promotion candidates: `strongly_regular_db.pyx` was dominated by
+`sage.graphs.strongly_regular_db` startup imports and dependent graph-object
+checks, while `incidence_structures.py` cascaded from graph and hypergraph
+examples. The WASI source patch now records file-level `sage.graphs`
+dependency metadata for both files.
+
+Focused direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-364-370/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2553 skipped
+```
+
+The final run covers all seven prompt-band files, has no block-level failures
+and no file-level errors, and the strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,092 non-comment entries. The latest run metadata records
+CoWasm commit `d925a7b1976aae4e7592480fa15a2bed6b979381`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, and runner version 90. Validation also ran
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`,
+`git diff --check`, and full-patch application against a clean
+`/home/user/sagelite` HEAD archive.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
