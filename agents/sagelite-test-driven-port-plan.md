@@ -39197,6 +39197,20 @@ glob does not reach the repository-level scratch directory. Scheduled make
 wrapper runs should continue using `../../.tmp/**/*.sqlite3` or an absolute
 glob when `SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE=1` is enabled.
 
+Follow-up scheduled frontier recheck on 2026-07-07: no corpus entry was
+promoted. The curated corpus still contains 1,094 non-comment entries, and the
+make-wrapper runnable source-frontier guard exits 0 with only the
+`path	prompt_count` header when subtracting the curated corpus, this plan's
+mentioned paths, and required valid scratch dashboards through
+`../../.tmp/**/*.sqlite3`.
+
+The persisted-dashboard promotion scan also remains empty under
+`doctest-corpus-candidates.py --strict-frontier --dedupe-paths` across
+`.tmp/**/*.sqlite3`, printing only its tab-separated header. A direct
+source-root-relative sanity probe from the repository root still passes:
+`src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/scheduled-2026-07-07-frontier-recheck-all.sqlite3`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
