@@ -18579,3 +18579,66 @@ diff --git a/src/sage/manifolds/differentiable/examples/euclidean.py b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/continuous_map.py b/src/sage/manifolds/continuous_map.py
+--- a/src/sage/manifolds/continuous_map.py
++++ b/src/sage/manifolds/continuous_map.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/groups/perm_gps/permgroup_element.pyx b/src/sage/groups/perm_gps/permgroup_element.pyx
+--- a/src/sage/groups/perm_gps/permgroup_element.pyx
++++ b/src/sage/groups/perm_gps/permgroup_element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ """
+diff --git a/src/sage/matrix/matrix_gf2e_dense.pyx b/src/sage/matrix/matrix_gf2e_dense.pyx
+--- a/src/sage/matrix/matrix_gf2e_dense.pyx
++++ b/src/sage/matrix/matrix_gf2e_dense.pyx
+@@ -5,1 +5,2 @@
++# sage.doctest: needs sage.matrix.matrix_gf2e_dense sage.rings.finite_rings
+ r"""
+diff --git a/src/sage/schemes/affine/affine_morphism.py b/src/sage/schemes/affine/affine_morphism.py
+--- a/src/sage/schemes/affine/affine_morphism.py
++++ b/src/sage/schemes/affine/affine_morphism.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes sage.rings.polynomial.plural sage.libs.singular
+ r"""
+diff --git a/src/sage/algebras/lie_algebras/verma_module.py b/src/sage/algebras/lie_algebras/verma_module.py
+--- a/src/sage/algebras/lie_algebras/verma_module.py
++++ b/src/sage/algebras/lie_algebras/verma_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/integrated_curve.py b/src/sage/manifolds/differentiable/integrated_curve.py
+--- a/src/sage/manifolds/differentiable/integrated_curve.py
++++ b/src/sage/manifolds/differentiable/integrated_curve.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic sage.plot
+ r"""
+diff --git a/src/sage/rings/polynomial/polynomial_rational_flint.pyx b/src/sage/rings/polynomial/polynomial_rational_flint.pyx
+--- a/src/sage/rings/polynomial/polynomial_rational_flint.pyx
++++ b/src/sage/rings/polynomial/polynomial_rational_flint.pyx
+@@ -4,4 +4,5 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
+ # distutils: language = c++
++# sage.doctest: needs sage.libs.flint sage.libs.ntl
+ r"""
+diff --git a/src/sage/interfaces/singular.py b/src/sage/interfaces/singular.py
+--- a/src/sage/interfaces/singular.py
++++ b/src/sage/interfaces/singular.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural pexpect
+ r"""
+diff --git a/src/sage/plot/plot3d/base.pyx b/src/sage/plot/plot3d/base.pyx
+--- a/src/sage/plot/plot3d/base.pyx
++++ b/src/sage/plot/plot3d/base.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.plot.plot3d matplotlib
+ r"""
+diff --git a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+--- a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
++++ b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.ntl
+ r"""

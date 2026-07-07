@@ -36495,6 +36495,61 @@ candidate helper; all clean runnable candidates from those runs are already in
 the current corpus, except synthetic fixture paths that are intentionally
 ignored.
 
+Follow-up 411-to-430 prompt-band dependency-frontier tagging:
+
+A fresh source-minus-corpus prompt-count scan selected 13 uncovered files in
+the 411-to-430 band:
+`sage/manifolds/continuous_map.py`,
+`sage/groups/perm_gps/permgroup_element.pyx`,
+`sage/modular/btquotients/pautomorphicform.py`,
+`sage/matrix/matrix_gf2e_dense.pyx`,
+`sage/rings/polynomial/real_roots.pyx`,
+`sage/modular/btquotients/btquotient.py`,
+`sage/schemes/affine/affine_morphism.py`,
+`sage/algebras/lie_algebras/verma_module.py`,
+`sage/manifolds/differentiable/integrated_curve.py`,
+`sage/rings/polynomial/polynomial_rational_flint.pyx`,
+`sage/interfaces/singular.py`, `sage/plot/plot3d/base.pyx`, and
+`sage/rings/polynomial/laurent_polynomial_mpair.pyx`.
+
+The initial one-worker probe rebuilt the patched source from the current
+`/home/user/sagelite` checkout, which was dirty with an unrelated
+`integer_ring.pyx` modification and an untracked SQLite result file. It wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-411-430/batch.sqlite3` with:
+
+```text
+sage -t failed: 356 passed, 2230 failed, 1543 skipped
+```
+
+Three files were already skipped-only under existing browser-profile metadata:
+`pautomorphicform.py`, `real_roots.pyx`, and `btquotient.py`. The remaining
+runnable failures were broad dependency frontiers rather than promotion
+candidates: manifolds plus symbolic and plotting support, GAP-backed
+permutation groups, M4RIE finite-field matrix side modules, affine schemes
+through Singular-backed polynomial paths, graph-backed Lie algebra
+construction, FLINT/NTL polynomial backends, Singular subprocess/interface
+coverage, plot3d rendering/export support, and NTL-backed Laurent polynomial
+paths. The WASI source patch now records file-level dependency metadata for
+the ten failing files.
+
+Focused validation reran the full 13-file band from the rebuilt patched source
+and wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-411-430/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 5395 skipped
+```
+
+The final database has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. The checked corpus remains at 1,093 non-comment entries.
+The latest run metadata records CoWasm commit
+`65e7720027f8dd8790470f642903c7603be4a244`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 90.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
