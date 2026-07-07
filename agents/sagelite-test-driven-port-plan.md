@@ -37849,6 +37849,51 @@ the strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
 `--require-run-metadata`, and `--dedupe-paths` printed no uncovered clean
 runnable candidate. The checked corpus remains at 1,093 non-comment entries.
 
+Follow-up current 911-to-930 high-count frontier audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree was filtered against files already named in this plan. The next 20
+unrecorded high-count files were:
+`sage/graphs/base/graph_backends.pyx`, `sage/graphs/schnyder.py`,
+`sage/modular/overconvergent/weightspace.py`,
+`sage/plot/plot3d/implicit_surface.pyx`, `sage/interfaces/mupad.py`,
+`sage/modular/etaproducts.py`, `sage/geometry/point_collection.pyx`,
+`sage/matrix/compute_J_ideal.py`, `sage/schemes/elliptic_curves/cm.py`,
+`sage/graphs/base/dense_graph.pyx`,
+`sage/modular/local_comp/local_comp.py`,
+`sage/rings/polynomial/polynomial_number_field.pyx`,
+`sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces.pyx`,
+`sage/tests/books/computational_mathematics_with_sagemath/integration_doctest.py`,
+`sage/combinat/blob_algebra.py`, `sage/groups/matrix_gps/isometries.py`,
+`sage/rings/polynomial/symmetric_reduction.pyx`,
+`sage/schemes/generic/divisor.py`, `sage/arith/long.pxd`, and
+`sage/combinat/crystals/virtual_crystal.py`.
+
+The one-worker direct probe with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-911-930-current/batch.sqlite3`
+with:
+
+```text
+sage -t failed: 0 passed, 1 failed, 19 skipped
+```
+
+The database records runner version 91, node profile, CoWasm commit
+`7050fbd70adec0da9159feef1e1825d92562b9cc`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 125 seconds of elapsed
+time. The parent Node process segfaulted after printing the summary, but the
+SQLite dashboard was written.
+
+Nineteen files were skipped-only under existing browser-profile metadata.
+Skip tags covered graph, combinat/module, symbolic, pexpect, polyhedron,
+toric, group, PARI, Singular, Cython, modular/matrix, p-adic, scheme, FLINT,
+and elliptic-curve boundaries. The only non-skip row was a file-level
+`SIGSEGV` in `sage/rings/polynomial/polynomial_number_field.pyx`; the saved
+file-error cluster records the worker exit as
+`sage -t worker exited with status null signal SIGSEGV`. The strict promotion
+scan with `--strict-frontier`, `--min-runner-version 91`, and
+`--dedupe-paths` printed no uncovered clean runnable candidate. The checked
+corpus remains at 1,093 non-comment entries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
