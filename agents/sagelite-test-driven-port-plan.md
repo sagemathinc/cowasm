@@ -35023,6 +35023,58 @@ and file-failure cluster queries are empty. The strict promotion scan with
 no uncovered clean runnable candidates. The checked corpus remains at 1,091
 non-comment entries.
 
+Follow-up 271-to-273 prompt-band dependency tagging:
+
+The inherited uncovered prompt-count list for this band was stale because it
+still included the already-promoted `sage/crypto/boolean_function.pyx`. A fresh
+source-minus-corpus scan from the current patched source tree selected ten
+uncovered files in the 271-to-273 prompt band:
+`sage/algebras/hecke_algebras/ariki_koike_algebra.py`,
+`sage/combinat/root_system/plot.py`, `sage/manifolds/vector_bundle.py`,
+`sage/modular/modsym/p1list_nf.py`,
+`sage/categories/complex_reflection_or_generalized_coxeter_groups.py`,
+`sage/numerical/backends/interactivelp_backend.pyx`,
+`sage/combinat/root_system/branching_rules.py`,
+`sage/combinat/root_system/weyl_characters.py`,
+`sage/graphs/graph_decompositions/tree_decomposition.pyx`, and
+`sage/rings/function_field/element.pyx`. The initial direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-271-273/batch2.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 3 passed, 797 failed, 1343 skipped
+```
+
+`root_system/plot.py`, `p1list_nf.py`,
+`complex_reflection_or_generalized_coxeter_groups.py`,
+`branching_rules.py`, and `weyl_characters.py` were already skipped-only under
+existing browser-profile metadata. The remaining failures were broad
+dependency frontiers rather than promotion targets: Ariki-Koike algebra
+doctests reached the number-field/cyclotomic field runtime boundary,
+topological vector bundles reached the stripped manifold and symbolic stack,
+the interactive LP backend reached the unavailable generic numerical backend
+surface, tree decomposition reached the graph backend boundary, and function
+field element doctests reached function-field and number-field side-module
+paths.
+
+Final direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-271-273/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2685 skipped
+```
+
+The latest-run summary records CoWasm commit
+`26cbbd27f91986246ed9e5f7b83f4377c11208dc`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 90,
+and skipped-only coverage for all ten files in the band. The saved block- and
+file-failure cluster queries are empty. The strict promotion scan with
+`--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus remains at 1,091 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

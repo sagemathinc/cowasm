@@ -34,6 +34,36 @@ diff --git a/src/sage/algebras/askey_wilson.py b/src/sage/algebras/askey_wilson.
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.askey_wilson
  """
+diff --git a/src/sage/algebras/hecke_algebras/ariki_koike_algebra.py b/src/sage/algebras/hecke_algebras/ariki_koike_algebra.py
+--- a/src/sage/algebras/hecke_algebras/ariki_koike_algebra.py
++++ b/src/sage/algebras/hecke_algebras/ariki_koike_algebra.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field
+ r"""
+diff --git a/src/sage/manifolds/vector_bundle.py b/src/sage/manifolds/vector_bundle.py
+--- a/src/sage/manifolds/vector_bundle.py
++++ b/src/sage/manifolds/vector_bundle.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/numerical/backends/interactivelp_backend.pyx b/src/sage/numerical/backends/interactivelp_backend.pyx
+--- a/src/sage/numerical/backends/interactivelp_backend.pyx
++++ b/src/sage/numerical/backends/interactivelp_backend.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ r"""
+diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
+--- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
++++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/rings/function_field/element.pyx b/src/sage/rings/function_field/element.pyx
+--- a/src/sage/rings/function_field/element.pyx
++++ b/src/sage/rings/function_field/element.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.rings.number_field
+ r"""
 diff --git a/src/sage/rings/multi_power_series_ring.py b/src/sage/rings/multi_power_series_ring.py
 --- a/src/sage/rings/multi_power_series_ring.py
 +++ b/src/sage/rings/multi_power_series_ring.py
