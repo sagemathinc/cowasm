@@ -4830,6 +4830,71 @@ runnable rows for this dashboard. Future scheduled runs should avoid
 repeating this exact 831-to-850 slice unless the default browser-profile
 dependency boundary for those file-level `# needs` tags changes.
 
+Follow-up 851-to-870 source-minus-corpus frontier audit on 2026-07-07:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1093 non-comment entries. A fresh prompt-count frontier scan filtered
+against files already named in this plan selected:
+`sage/quadratic_forms/bqf_class_group.py`, `sage/quivers/paths.pyx`,
+`sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_element.pyx`,
+`sage/rings/function_field/function_field_rational.py`,
+`sage/modules/with_basis/subquotient.py`, `sage/repl/attach.py`,
+`sage/schemes/elliptic_curves/ell_modular_symbols.py`,
+`sage/combinat/descent_algebra.py`,
+`sage/tests/books/computational_mathematics_with_sagemath/graphique_doctest.py`,
+`sage/manifolds/differentiable/automorphismfield_group.py`,
+`sage/graphs/base/static_sparse_graph.pyx`,
+`sage/matroids/circuits_matroid.pyx`,
+`sage/dynamics/arithmetic_dynamics/endPN_automorphism_group.py`,
+`sage/geometry/hyperplane_arrangement/hyperplane.py`,
+`sage/interfaces/axiom.py`,
+`sage/manifolds/differentiable/pseudo_riemannian.py`,
+`sage/matrix/matrix_gap.pyx`, `sage/groups/conjugacy_classes.py`,
+`sage/groups/perm_gps/partn_ref/refinement_graphs.pyx`, and
+`sage/interfaces/octave.py`.
+
+The one-worker direct probe used absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk` and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-07-goal-851-870-current/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t failed: 31 passed, 138 failed, 130 skipped
+```
+
+The latest-run summary records CoWasm commit
+`918576e7de3e1bb2ac398ec7baea505ee6662a9a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 91,
+298 block rows, and about 241 seconds of elapsed time. The parent Node
+process printed the SQLite summary and then reported the known post-summary
+139 exit.
+
+Seventeen files were skipped-only under existing browser-profile metadata,
+with skip tags covering algebra, function-field/PARI, graph/quiver,
+groups/GAP, IPython, manifold/symbolic, matrix/GAP, eclib/elliptic-curve,
+Octave/pexpect, and plotting/scientific-Python boundaries. The remaining
+files are broad dependency or runtime frontiers rather than narrow promotion
+candidates. `sage/matroids/circuits_matroid.pyx` recorded 27 passed, 117
+failed, and one skipped block; its failures are dominated by missing
+`matroids`, `Matroid`, `M`, and related dependent setup names. The pexpect
+front door `sage/interfaces/axiom.py` recorded 4 passed, 20 failed, and 112
+skipped blocks, with failures around missing `pexpect`/`axiom`/`Axiom` state
+and dependent output drift. `sage/geometry/hyperplane_arrangement/hyperplane.py`
+timed out at the number-field setup
+`R.<sqrt2> = QuadraticField(2)` in `Hyperplane.primitive`, matching the
+existing hyperplane-arrangement and number-field runtime frontier.
+
+The strict promotion scan with `--strict-frontier`, `--min-runner-version 91`,
+and `--dedupe-paths` printed no uncovered clean runnable row for this
+dashboard. Future scheduled runs should avoid repeating this exact 851-to-870
+slice unless the matroid startup/backend surface, Axiom/pexpect interface
+profile, or hyperplane-arrangement number-field path changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
