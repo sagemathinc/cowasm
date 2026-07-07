@@ -103,6 +103,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--strict-frontier",
+        action="store_true",
+        help=(
+            "enable the standard scheduled frontier-scan guards: require "
+            "modern run metadata, persisted block rows, a file-level doctest "
+            "run, absolute paths under the selected source root, and "
+            "path-deduplicated output"
+        ),
+    )
+    parser.add_argument(
         "--near-misses",
         action="store_true",
         help=(
@@ -372,6 +382,12 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.failure_detail_limit < 0:
         parser.error("--failure-detail-limit must be non-negative")
+    if args.strict_frontier:
+        args.require_run_metadata = True
+        args.require_block_rows = True
+        args.require_file_run = True
+        args.require_source_root_path = True
+        args.dedupe_paths = True
     if args.exclude_block_failure_class and not args.near_misses:
         parser.error("--exclude-block-failure-class requires --near-misses")
     if args.only_block_failure_class and not args.near_misses:

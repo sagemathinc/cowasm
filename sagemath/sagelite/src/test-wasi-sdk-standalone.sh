@@ -2947,6 +2947,16 @@ if [ "$doctest_candidate_helper_modern_metadata_paths" != "src/sage/example/real
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --require-run-metadata did not accept modern run metadata."
 fi
+doctest_candidate_helper_strict_frontier_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --strict-frontier \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_strict_frontier_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_strict_frontier_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --strict-frontier did not apply the scheduled scan guards."
+fi
 sqlite3 "$doctest_candidate_helper_focused_db" <<SQL
 create table runs (
   id integer primary key,

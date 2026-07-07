@@ -4660,6 +4660,33 @@ modular-symbol, partition-refinement, dense double matrix/vector, utility,
 quadratic-form, and module-helper slices unless the default-profile skip
 policy or the matrix `echelonize` runtime boundary changes.
 
+Follow-up frontier tooling pass on 2026-07-07: no new corpus entry was
+promoted, but the candidate helper now has a `--strict-frontier` option for
+scheduled source-minus-corpus scans. The option bundles the guards that recent
+audits repeatedly needed by hand: require modern run metadata, require
+persisted block rows, ignore focused `--line`/`--block-key` reruns, require
+absolute file rows to live under the selected source root, and deduplicate by
+normalized path when scanning multiple SQLite artifacts.
+
+The intended default promotion scan shape is now:
+
+```sh
+sagemath/sagelite/src/doctest-corpus-candidates.py \
+  --strict-frontier \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk \
+  --min-runner-version 83 \
+  --ignore-invalid \
+  --quiet-invalid \
+  .tmp/current-run/**/*.sqlite3
+```
+
+Focused validation used a tiny synthetic SQLite fixture to confirm
+`--strict-frontier --paths-only` still reports a real uncovered candidate, and
+`python3 -m py_compile sagemath/sagelite/src/doctest-corpus-candidates.py`
+passes. The standalone smoke fixture also asserts the new option against its
+candidate-helper test database, and the `sage-doctest-candidates` make target
+now uses the shortcut by default.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
