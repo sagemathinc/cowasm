@@ -16354,6 +16354,12 @@ diff --git a/src/sage/rings/polynomial/polynomial_number_field.pyx b/src/sage/ri
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.number_field sage.symbolic sage.libs.pari
  r"""
+diff --git a/src/sage/rings/quotient_ring.py b/src/sage/rings/quotient_ring.py
+--- a/src/sage/rings/quotient_ring.py
++++ b/src/sage/rings/quotient_ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.rings.polynomial.plural
+ r"""
 diff --git a/src/sage/algebras/fusion_rings/fusion_double.py b/src/sage/algebras/fusion_rings/fusion_double.py
 --- a/src/sage/algebras/fusion_rings/fusion_double.py
 +++ b/src/sage/algebras/fusion_rings/fusion_double.py

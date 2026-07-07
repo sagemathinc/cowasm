@@ -35696,6 +35696,45 @@ The latest run metadata records CoWasm commit
 version 90. Validation also ran `git diff --check` and the full WASI source
 patch in dry-run mode against `/home/user/sagelite`.
 
+Follow-up 316-to-318 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected one uncovered file in the 316-to-318 prompt band:
+`sage/rings/quotient_ring.py`. The initial direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-316-318/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 0 passed, 1 failed, 0 skipped
+```
+
+The failure was a file-level `wasm_signature_mismatch` at
+`quotient_ring.py:184` while constructing `QuotientRing(P, P.ideal(x^2 + 1))`;
+the preserved stack entered
+`polynomial_number_field.cpython-314-wasm32-wasi.so`, so this is the existing
+number-field and polynomial quotient backend frontier rather than a clean
+promotion candidate. The WASI source patch now records `quotient_ring.py` as
+`# sage.doctest: needs sage.rings.number_field sage.rings.polynomial.plural`.
+
+Focused direct validation against the patched build source wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-316-318/final.sqlite3` with:
+
+```text
+sage -t passed: 0 passed, 0 failed, 316 skipped
+```
+
+The final run has no block-level failures and no file-level errors. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`353c013a6b4e7b7ef2c04ed7bbafcb6bafe69852`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90. Validation also ran `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `git diff --check`, and
+the full WASI source patch in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
