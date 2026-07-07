@@ -35782,6 +35782,33 @@ The latest run metadata records CoWasm commit
 90. Validation also ran `git diff --check` and the full WASI source patch in
 dry-run mode against `/home/user/sagelite`.
 
+Follow-up 322-to-324 prompt-band audit:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected four uncovered files in the 322-to-324 prompt band:
+`sage/interfaces/sympy.py`, `sage/calculus/wester.py`,
+`sage/combinat/root_system/reflection_group_complex.py`, and
+`sage/modular/local_comp/smoothchar.py`. The direct one-worker probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-322-324/prompt-322-324/batch.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1171 skipped
+```
+
+All four files were already skipped-only under existing browser-profile
+metadata. The dominant skip boundaries are SymPy, symbolic calculus, PARI and
+number-field-backed local components, and complex reflection-group/GAP
+coverage. The run has no block-level failures and no file-level errors, and
+the strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,092 non-comment entries.
+The latest run metadata records CoWasm commit
+`db3b491fe6ded8d2ca30b4d53d7c7168096ad9c4`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner version
+90.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
