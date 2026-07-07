@@ -47,6 +47,7 @@ src/sage/rings/invariants/invariant_theory.py
 src/sage/rings/invariants/reconstruction.py
 src/sage/rings/polynomial/polydict.pyx
 src/sage/rings/polynomial/laurent_polynomial_ring.py
+src/sage/rings/laurent_series_ring.py
 src/sage/rings/polynomial/infinite_polynomial_ring.py
 src/sage/rings/polynomial/multi_polynomial_ring.py
 src/sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx

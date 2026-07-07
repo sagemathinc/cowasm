@@ -33949,6 +33949,54 @@ corpus remains at 1,085 non-comment entries. Validation also ran
 `git diff --check` and the full WASI source patch dry-run against
 `/home/user/sagelite` with a workspace-local scratch directory.
 
+Follow-up 202-to-204 prompt-band Laurent-series promotion:
+
+A source-minus-corpus prompt-count scan from the current patched source tree
+selected six uncovered files in the 202-to-204 prompt band:
+`sage/geometry/hyperbolic_space/hyperbolic_isometry.py`,
+`sage/graphs/graph_decompositions/vertex_separation.pyx`,
+`sage/schemes/hyperelliptic_curves/jacobian_homset_generic.py`,
+`sage/lfunctions/pari.py`, `sage/rings/laurent_series_ring.py`, and
+`sage/manifolds/trivialization.py`. The initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-202-204/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 213 passed, 357 failed, 240 skipped
+```
+
+`hyperbolic_isometry.py` was already skipped-only under existing dependency
+metadata. The graph decomposition and manifold trivialization files were broad
+browser-profile graph/manifold boundaries, while the hyperelliptic Jacobian
+homset and PARI L-function files reached the existing NTL/PARI runtime
+frontiers. The WASI source patch now records those four broad boundaries with
+file-level `# sage.doctest: needs ...` metadata.
+
+`laurent_series_ring.py` was a useful promotion candidate rather than a pure
+frontier row: its failures were limited to number-field/symbolic rational
+function examples, FLINT-backed lazy-series conversion, PARI conversions, and
+one symbolic series conversion block. The WASI patch now marks those examples
+with explicit dependency tags, and the file is added to
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`.
+
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-202-204/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 166 passed, 0 failed, 1047 skipped
+```
+
+The final run includes `laurent_series_ring.py` with `166 passed, 0 failed,
+35 skipped`, and the other five files are skipped-only dependency-boundary
+rows. The saved block- and file-failure cluster queries are empty. The strict
+promotion scan with `--require-run-metadata`, `--require-source-root-path`,
+`--require-block-rows`, `--require-file-run`, `--min-runner-version 87`, and
+`--dedupe-paths` printed no uncovered clean runnable candidates. The checked
+corpus is now at 1,086 non-comment entries. Validation also ran
+`git diff --check` and the full WASI source patch dry-run against
+`/home/user/sagelite` with a workspace-local scratch directory.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
