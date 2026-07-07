@@ -33395,6 +33395,51 @@ uncovered clean runnable candidates. Validation also ran `git diff --check`
 and the full WASI source patch dry-run against `/home/user/sagelite` with a
 workspace-local `TMPDIR`.
 
+Follow-up 169-to-171 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected twelve uncovered files in the 169-to-171 prompt band. The
+initial grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-169-171/batch.sqlite3` and
+recorded:
+
+```text
+sage -t failed: 153 passed, 154 failed, 1703 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates.
+Nine files were already skipped-only under existing dependency metadata:
+`sage/combinat/crystals/generalized_young_walls.py`,
+`sage/schemes/toric/fano_variety.py`,
+`sage/geometry/polyhedron/generating_function.py`,
+`sage/modular/abvar/morphism.py`, `sage/schemes/toric/toric_subscheme.py`,
+`sage/topology/cell_complex.py`, `sage/coding/reed_muller_code.py`,
+`sage/combinat/free_dendriform_algebra.py`, and
+`sage/homology/hochschild_complex.py`. The remaining failures were broad
+browser-profile boundaries rather than narrow corpus-promotion targets:
+`sage/databases/cremona.py` needs the Cremona elliptic-curve database and
+elliptic-curve stack, `sage/interfaces/mathematica.py` needs the Mathematica
+subprocess/pexpect interface, and
+`sage/modules/free_module_morphism.py` needs the broader free-module backend
+surface.
+
+The WASI source patch now records those boundaries with explicit file-level
+metadata. Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-169-171/final.sqlite3` and
+recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 2010 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,085 non-comment entries.
+Validation also ran `git diff --check` and the full WASI source patch dry-run
+against `/home/user/sagelite` with a workspace-local `TMPDIR`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
