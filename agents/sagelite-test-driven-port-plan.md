@@ -38378,6 +38378,75 @@ runnable candidate. Future scheduled runs should avoid repeating this exact
 40-file high-count dependency-boundary slice unless the default-profile skip
 policy changes.
 
+Follow-up 67-to-53 prompt-count dependency-boundary audit on 2026-07-07:
+
+No new quiet corpus candidate was found. A fresh source-minus-corpus
+prompt-count scan from the current patched source tree, filtered against both
+corpus entries and files already mentioned in this plan, found 232
+never-mentioned files with Sage prompts. The next 40 high-count files ranged
+from 67 down to 53 prompt markers:
+`sage/combinat/posets/elements.py`,
+`sage/modular/arithgroup/congroup_generic.py`,
+`sage/schemes/cyclic_covers/cycliccover_generic.py`,
+`sage/combinat/rigged_configurations/bij_abstract_class.py`,
+`sage/modular/abvar/cuspidal_subgroup.py`,
+`sage/coding/subfield_subcode.py`,
+`sage/modular/modsym/modular_symbols.py`,
+`sage/graphs/graph_decompositions/graph_products.pyx`,
+`sage/modular/abvar/lseries.py`,
+`sage/rings/noncommutative_ideals.pyx`,
+`sage/schemes/elliptic_curves/ell_tate_curve.py`,
+`sage/combinat/root_system/reflection_group_c.pyx`,
+`sage/groups/semimonomial_transformations/semimonomial_transformation_group.py`,
+`sage/sat/solvers/cryptominisat.py`,
+`sage/schemes/toric/divisor_class.pyx`,
+`sage/tests/books/judson_abstract_algebra/boolean-sage.py`,
+`sage/graphs/matchpoly.pyx`, `sage/groups/matrix_gps/matrix_group_gap.py`,
+`sage/groups/perm_gps/symgp_conjugacy_class.py`,
+`sage/numerical/linear_tensor_constraints.py`,
+`sage/combinat/crystals/multisegments.py`, `sage/interfaces/frobby.py`,
+`sage/coding/delsarte_bounds.py`, `sage/combinat/crystals/affinization.py`,
+`sage/groups/kernel_subgroup.py`,
+`sage/schemes/hyperelliptic_curves/jacobian_homset_split.py`,
+`sage/calculus/interpolators.pyx`,
+`sage/schemes/elliptic_curves/modular_parametrization.py`,
+`sage/combinat/crystals/direct_sum.py`,
+`sage/groups/semimonomial_transformations/semimonomial_transformation.pyx`,
+`sage/symbolic/expression_conversion_algebraic.py`,
+`sage/algebras/letterplace/letterplace_ideal.pyx`,
+`sage/combinat/crystals/star_crystal.py`,
+`sage/quadratic_forms/quadratic_form__automorphisms.py`,
+`sage/tests/books/judson_abstract_algebra/vect-sage.py`,
+`sage/tests/books/judson_abstract_algebra/isomorph-sage.py`,
+`sage/tests/symbolic-series.py`, `sage/plot/plot_field.py`,
+`sage/schemes/toric/weierstrass_higher.py`, and
+`sage/tests/books/judson_abstract_algebra/integers-sage.py`.
+
+Two one-worker direct probes with a 120-second per-file timeout wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-67-frontier/batch.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-07-goal-60-frontier-corrected/batch.sqlite3`.
+Both runs recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 67 skipped
+```
+
+Both databases record runner version 91, node profile, CoWasm commit
+`df46cfd4d6fcac75597cf0bfa8da8a5bc0db95d0`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and about 119 and 118 seconds of
+elapsed time. Across the two clean dashboards, 36 files were skipped-only under
+existing browser-profile dependency metadata and four Judson exercise helpers
+extracted zero default-profile blocks. The skip tags cover PyCryptoSat, Frobby,
+graphs, FLINT, GAP, PARI, Singular, NumPy, symbolic support, number fields,
+finite rings, schemes, elliptic curves, modular abvars, modules/combinatorics,
+groups, MIP, polyhedra, and related external or heavy Sage backend boundaries.
+The saved block- and file-failure queries are empty for both databases, and
+the strict promotion scan over both dashboards with `--strict-frontier`,
+`--min-runner-version 91`, and `--dedupe-paths` printed no uncovered clean
+runnable candidate. Future scheduled runs should avoid repeating this
+67-to-53 prompt-count dependency-boundary slice unless default-profile
+dependency policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
