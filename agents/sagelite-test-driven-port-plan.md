@@ -33267,6 +33267,47 @@ strict promotion scan with `--require-run-metadata`,
 `--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
 runnable candidates. The checked corpus remains at 1,084 non-comment entries.
 
+Follow-up 160-to-162 prompt-band dependency tagging:
+
+A fresh source-minus-corpus prompt-count scan from the current patched source
+tree selected six uncovered files in the 160-to-162 prompt band. The initial
+grouped direct probe wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-160-162/prompt-160-162/batch.sqlite3`
+and recorded:
+
+```text
+sage -t failed: 72 passed, 352 failed, 378 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable candidates. Two
+files were already skipped-only under existing dependency metadata:
+`sage/groups/class_function.py` and
+`sage/modular/arithgroup/arithgroup_generic.py`. The remaining failures were
+broad browser-profile boundaries rather than narrow corpus-promotion targets:
+multivector-module examples need the manifold and symbolic stacks;
+graph-coloring examples need the graph backend; function-field derivations
+need the function-field/PARI frontier; and the computational-mathematics
+multivariate-polynomial book doctest reaches plotting, Singular/plural
+polynomial, and symbolic-elimination boundaries. A narrow plot tag moved the
+book doctest past the first WASM trap, but the next untagged elimination-ideal
+example timed out, confirming that the file is a broad computational-algebra
+frontier for the default browser-compatible profile.
+
+The WASI source patch now records those boundaries with explicit metadata.
+Final direct validation against the patched source tree wrote
+`.tmp/current-run/scheduled-2026-07-07-goal-160-162/prompt-160-162/final-file-scope.sqlite3`
+and recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 962 skipped
+```
+
+The final run has empty saved block- and file-failure cluster queries. The
+strict promotion scan with `--require-run-metadata`,
+`--require-source-root-path`, `--require-block-rows`, `--require-file-run`,
+`--min-runner-version 87`, and `--dedupe-paths` printed no uncovered clean
+runnable candidates. The checked corpus remains at 1,084 non-comment entries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

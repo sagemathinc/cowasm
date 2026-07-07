@@ -28,11 +28,23 @@ diff --git a/src/sage/geometry/polyhedron/face.py b/src/sage/geometry/polyhedron
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.polyhedron ppl
  """
+diff --git a/src/sage/graphs/graph_coloring.pyx b/src/sage/graphs/graph_coloring.pyx
+--- a/src/sage/graphs/graph_coloring.pyx
++++ b/src/sage/graphs/graph_coloring.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.graphs
+ # distutils: language = c++
 diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/trees.pyx
 --- a/src/sage/graphs/generators/trees.pyx
 +++ b/src/sage/graphs/generators/trees.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
+ r"""
+diff --git a/src/sage/manifolds/differentiable/multivector_module.py b/src/sage/manifolds/differentiable/multivector_module.py
+--- a/src/sage/manifolds/differentiable/multivector_module.py
++++ b/src/sage/manifolds/differentiable/multivector_module.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
 diff --git a/src/sage/manifolds/differentiable/tensorfield_module.py b/src/sage/manifolds/differentiable/tensorfield_module.py
 --- a/src/sage/manifolds/differentiable/tensorfield_module.py
@@ -69,6 +81,12 @@ diff --git a/src/sage/rings/asymptotic/misc.py b/src/sage/rings/asymptotic/misc.
 +++ b/src/sage/rings/asymptotic/misc.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.rings.asymptotic
+ r"""
+diff --git a/src/sage/rings/function_field/derivations_polymod.py b/src/sage/rings/function_field/derivations_polymod.py
+--- a/src/sage/rings/function_field/derivations_polymod.py
++++ b/src/sage/rings/function_field/derivations_polymod.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.function_field sage.libs.pari
  r"""
 diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage/stats/distributions/discrete_gaussian_lattice.py
 --- a/src/sage/stats/distributions/discrete_gaussian_lattice.py
@@ -8188,6 +8206,22 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/lin
 -  sage: all(abs(M[i,j]) < 10^-13
 +  sage: M = (X*X-a)                                                            # needs scipy
 +  sage: all(abs(M[i,j]) < 10^-13                                               # needs scipy
+diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/mpoly_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/mpoly_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/mpoly_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/mpoly_doctest.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural sage.plot sage.symbolic
+ r"""
+@@ -293,4 +294,4 @@
+   sage: R.<x,y,t> = QQ[]
+   sage: eq = x^2 + (y-t)^2 - 1/2*(t^2+1)
+-  sage: fig = add((eq(t=k/5)*QQ[x,y]).plot() for k in (-15..15))
+-  sage: fig.show(aspect_ratio=1, xmin=-2, xmax=2, ymin=-3, ymax=3)
++  sage: fig = add((eq(t=k/5)*QQ[x,y]).plot() for k in (-15..15))              # needs sage.plot
++  sage: fig.show(aspect_ratio=1, xmin=-2, xmax=2, ymin=-3, ymax=3)            # needs sage.plot
+@@ -306,1 +307,1 @@
+-  sage: env.change_ring(QQ[x,y]).plot((x,-2,2),(y,-3,3))
++  sage: env.change_ring(QQ[x,y]).plot((x,-2,2),(y,-3,3))                      # needs sage.plot
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/mpoly_doctest.py
