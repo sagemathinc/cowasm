@@ -39459,6 +39459,41 @@ form using `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/**/*.sqlite3'`
 again subtracts the normal scratch dashboard tree and prints no frontier rows
 for the broad `.py`, `.pyx`, `.pxi`, `.rst`, `.pxd`, and `.txt` support scan.
 
+Scheduled wrapper-path recheck on 2026-07-08 UTC: no corpus entry was
+promoted. The curated corpus still contains 1,095 non-comment entries. The
+make-wrapper source-frontier scan now works with the repository-relative
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/**/*.sqlite3'` scheduled
+form, pins the patched Sagelite source root, subtracts the curated corpus,
+this plan, and valid scratch dashboards, and exits 0 with only the
+`path	prompt_count` header when run with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=1` and
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE=1`.
+
+The persisted-dashboard promotion scan also remains empty when pinned to the
+patched source root:
+
+```sh
+python3 sagemath/sagelite/src/doctest-corpus-candidates.py \
+  .tmp/**/*.sqlite3 \
+  --strict-frontier \
+  --dedupe-paths \
+  --include-header \
+  --ignore-invalid \
+  --quiet-invalid \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk
+```
+
+It printed only the tab-separated
+`database	path	total_blocks	passed_blocks	skipped_blocks	runnable_blocks	duration_ms`
+header. A fresh source-root-relative smoke from the repository root still
+passes: `src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-08-wrapper-recheck/source-smoke.sqlite3`;
+that database records CoWasm commit
+`169a17e92c37edb92d0864b66aee805681302792`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
