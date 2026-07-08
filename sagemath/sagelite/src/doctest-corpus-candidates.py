@@ -477,6 +477,8 @@ def require_doctest_schema(database: Path, db: sqlite3.Connection) -> None:
 
 def normalize_path(path: str, source_root: Path | None) -> str:
     text = path.replace(os.sep, "/")
+    if text.startswith("sage/"):
+        return posixpath.normpath(f"src/{text}")
     if text.startswith("src/sage/"):
         return posixpath.normpath(text)
 

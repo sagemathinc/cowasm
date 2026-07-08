@@ -39528,6 +39528,33 @@ database records CoWasm commit
 and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Scheduled relative-path candidate helper pass on 2026-07-08 UTC: no corpus
+entry was promoted. The curated corpus still contains 1,095 non-comment
+entries. The persisted-dashboard candidate helper now normalizes relative
+`sage/...` file rows to `src/sage/...`, matching the source-frontier helper and
+preventing direct or legacy relative doctest database paths from being filtered
+as non-Sage rows or missed during corpus subtraction.
+
+The standalone smoke fixture now includes an isolated SQLite dashboard with a
+relative `sage/example/relative_candidate.py` row, checks that
+`doctest-corpus-candidates.py --paths-only` reports it as
+`src/sage/example/relative_candidate.py`, and checks that a corpus entry using
+the normalized `src/sage/...` form suppresses it. Validation used `python3 -m
+py_compile` for the candidate and source-frontier helpers, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a focused synthetic
+relative-path candidate probe, and the broad scheduled source-frontier and
+persisted-dashboard promotion scans. Both broad scans still printed only their
+headers.
+
+A fresh source-root-relative smoke from the repository root still passes:
+`src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-08-relative-path/source-smoke.sqlite3`;
+that database records CoWasm commit
+`32983a2e10434e7ebec440c674d66d7065708b99`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

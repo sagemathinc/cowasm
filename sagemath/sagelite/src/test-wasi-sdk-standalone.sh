@@ -2824,8 +2824,10 @@ for expected_candidate_status in \
 done
 doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite3"
 doctest_candidate_helper_focused_db="$probe_dir/sagelite-doctest-focused-candidate-helper.sqlite3"
+doctest_candidate_helper_relative_db="$probe_dir/sagelite-doctest-relative-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
+doctest_candidate_helper_relative_corpus="$probe_dir/sagelite-doctest-relative-corpus.txt"
 doctest_source_frontier_corpus="$probe_dir/sagelite-doctest-source-frontier-corpus.txt"
 doctest_source_frontier_mentioned="$probe_dir/sagelite-doctest-source-frontier-mentioned.txt"
 doctest_source_frontier_all_mentioned="$probe_dir/sagelite-doctest-source-frontier-all-mentioned.txt"
@@ -3034,6 +3036,58 @@ if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]
   printf '%s\n' "$doctest_candidate_helper_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
+fi
+touch "$doctest_candidate_helper_source_root/src/sage/example/relative_candidate.py"
+printf '%s\n' "src/sage/example/relative_candidate.py" >"$doctest_candidate_helper_relative_corpus"
+sqlite3 "$doctest_candidate_helper_relative_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id, source_root, runner_version) values (1, '$doctest_candidate_helper_source_root', 83);
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  'sage/example/relative_candidate.py',
+  'passed',
+  1,
+  1,
+  0,
+  0,
+  10
+);
+SQL
+doctest_candidate_helper_relative_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_relative_db")"
+if [ "$doctest_candidate_helper_relative_paths" != "src/sage/example/relative_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_relative_paths" >&2
+  sqlite3 "$doctest_candidate_helper_relative_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not normalize relative sage paths."
+fi
+doctest_candidate_helper_relative_covered="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_relative_corpus" \
+  "$doctest_candidate_helper_relative_db")"
+if [ -n "$doctest_candidate_helper_relative_covered" ]; then
+  printf '%s\n' "$doctest_candidate_helper_relative_covered" >&2
+  sqlite3 "$doctest_candidate_helper_relative_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not subtract covered relative sage paths."
 fi
 doctest_candidate_helper_min_runner_paths="$("$src_dir/doctest-corpus-candidates.py" \
   --paths-only \
