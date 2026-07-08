@@ -6703,13 +6703,13 @@ diff -urN a/src/sage/misc/lazy_import.pyx b/src/sage/misc/lazy_import.pyx
 +        sage: isinstance(QQbar, Parent)                                               # needs sage.rings.number_field
 @@ -175 +175 @@
 -        sage: my_ZZ(123)
-+        sage: my_ZZ(123)                                                              # known bug - warning stream is not captured by Sagelite doctest runner
++        sage: my_ZZ(123)
 @@ -211 +211 @@
 -            sage: lazy_ZZ._get_object() is ZZ
 +            sage: lazy_ZZ._get_object() is ZZ                                         # known bug - startup namespace resolves a distinct integer-ring singleton
 @@ -250 +250 @@
 -            sage: my_rats
-+            sage: my_rats                                                             # known bug - warning stream is not captured by Sagelite doctest runner
++            sage: my_rats
 @@ -336 +336 @@
 -            sage: 'A subset of the real line' in RealSet.__doc__
 +            sage: 'A subset of the real line' in RealSet.__doc__                      # needs sage.symbolic
@@ -7620,10 +7620,10 @@ diff -urN a/src/sage/misc/temporary_file.py b/src/sage/misc/temporary_file.py
 +        sage: '{:#o}'.format(os.stat(target_file).st_mode & 0o777)                  # needs host_umask
 @@ -280 +280 @@
 -        sage: with atomic_write(target_file, binary=False,
-+        sage: with atomic_write(target_file, binary=False,                           # known bug - Sagelite doctest conversion mangles this non-ASCII literal
++        sage: with atomic_write(target_file, binary=False,
 @@ -284 +284 @@
 -        sage: with io.open(target_file, encoding='utf-8') as f:
-+        sage: with io.open(target_file, encoding='utf-8') as f:                       # known bug - Sagelite doctest conversion mangles this non-ASCII literal
++        sage: with io.open(target_file, encoding='utf-8') as f:
 @@ -319,2 +319,5 @@
 -        umask = os.umask(0)
 -        os.umask(umask)

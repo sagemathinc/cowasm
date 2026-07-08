@@ -40645,6 +40645,31 @@ it records runner version 96, empty block- and file-failure cluster queries,
 and the remaining neighboring matrix transpose/slice rows still grouped under
 `deferred:known bug`.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found four more stale browser-profile tags.
+The warning-capture checks for `my_ZZ(123)` and `my_rats` in
+`sage/misc/lazy_import.pyx` now match when executed, and the UTF-8
+`atomic_write` checks in `sage/misc/temporary_file.py` now preserve the
+expected non-ASCII text. The WASI source patch no longer marks those prompts
+as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a two-file corpus with failures disallowed:
+
+```text
+lazy_import.pyx: 268 passed, 0 failed, 28 skipped
+temporary_file.py: 73 passed, 0 failed, 7 skipped
+two-file make rerun: 341 passed, 0 failed, 35 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-lazy-temp-stale/make.sqlite3`; its
+saved block- and file-failure cluster queries are empty. Adjacent probes
+confirmed the `lazy_import.pyx` startup singleton check and top-level warning
+capture check, `persist.pyx` UnicodeDecodeError position drift, and
+`sage_timeit.py` formatting tag still fail under `--deferred=known-bug`, so
+those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
