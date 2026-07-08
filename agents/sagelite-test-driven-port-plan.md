@@ -40448,6 +40448,31 @@ file under runner version 95. A later full-corpus refresh can replace the
 runner-version-94 default dashboard and check whether the transient parallel
 worker crashes are eliminated in the broad run.
 
+Follow-up full-corpus refresh on 2026-07-08 UTC: runner version 95 clears the
+previous transient parallel worker crash frontier in a full make-target run
+with failures disallowed:
+
+```sh
+make -C sagemath/sagelite test-sage-doctest-corpus \
+  SAGELITE_DOCTEST_ALLOW_FAILURES=0 \
+  SAGELITE_DOCTEST_TIMEOUT=120 \
+  SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sagelite-corpus-runner95.sqlite3
+```
+
+The run completed cleanly:
+
+```text
+sage -t passed: 77797 passed, 0 failed, 23725 skipped
+```
+
+The SQLite summary records 101,522 total block rows, node profile, runner
+version 95, CoWasm commit `96f0380657f65c33e99485ce396bcf95e69a24f4`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, and
+about 2,196 seconds elapsed. The saved block- and file-failure cluster queries
+are empty, and the strict promotion-candidate scan with
+`--min-runner-version 95` prints no uncovered candidate after subtracting the
+checked corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
