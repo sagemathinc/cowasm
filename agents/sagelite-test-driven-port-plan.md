@@ -39958,6 +39958,30 @@ the existing doctest `--block-key` smoke still hit a worker `SIGBUS`, so the
 standalone target remains blocked at that lifecycle smoke rather than by the
 matrix patch.
 
+Follow-up standalone lifecycle verification on 2026-07-08 UTC: a fresh full
+`make -C sagemath/sagelite test-wasi-sdk-standalone` run no longer reproduces
+the block-key worker `SIGBUS`. The make target rebuilt a clean patched
+Sagelite source copy, generated Cython sources, compiled and installed the
+standalone tree, staged Electron resources, ran the Node import ladder, ran
+the doctest smoke suite, and completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The doctest block-key smoke specifically records:
+
+```text
+sage -t passed: 1 passed, 0 failed, 0 skipped; sqlite=/tmp/tmp.mRW2AtGueG/sagelite-doctest-block-key.sqlite3
+```
+
+The only transient build issue in this checked run was a first-attempt Cython
+generation `Segmentation fault (core dumped)` while generating
+`sage/libs/pari/convert_flint.pyx`; the existing retry loop reran generation
+successfully and the full standalone target passed. The standalone lifecycle
+blocker from the prior matrix fallback pass is therefore cleared at the
+current CoWasm state.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
