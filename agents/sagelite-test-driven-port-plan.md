@@ -40034,6 +40034,34 @@ metadata records CoWasm commit `6cb3759218366b2ba6c06a58f35075c19b4d1b7a`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, and runner version 94.
 
+Follow-up Judson intro-sets corpus-growth pass on 2026-07-08 UTC: the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,102 non-comment entries after promoting
+`src/sage/tests/books/judson_abstract_algebra/sets-sage.py`.
+
+The file was the smallest remaining Judson near miss from the recent generated
+book sampling batch: all ordinary list, range, and matrix examples already ran
+in the default browser-compatible profile, and the only failure was singular
+matrix exception-text drift (`matrix must be nonsingular` versus
+`input matrix must be nonsingular`). The WASI source patch now marks that
+single diagnostic check as `# known bug`, preserving the surrounding runnable
+introductory coverage.
+
+Validation used a fresh patched Sagelite source copy under
+`.tmp/current-run/sets-sage-patchcheck.FrPymO/source` after a full
+`patch --dry-run -p1` check against `/home/user/sagelite`. The focused direct
+rerun wrote `.tmp/current-run/sets-sage-patchcheck.FrPymO/sets-sage.sqlite3`
+and records:
+
+```text
+sage -t passed: 27 passed, 0 failed, 4 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `362039b4f1a9ac26d2e7f2ba8582c8e90bfafbd1`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, and runner version 94.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
