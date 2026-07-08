@@ -40383,6 +40383,43 @@ The saved block- and file-failure cluster queries are empty for the focused
 dashboard. A later full-corpus refresh can replace the pre-fix default
 dashboard when a fresh global zero-failure artifact is needed.
 
+Full-corpus refresh after toy-Buchberger cleanup on 2026-07-08 UTC: rerunning
+`make -C sagemath/sagelite test-sage-doctest-corpus` replaced the stale
+block-mismatch dashboard with a new run in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`:
+
+```text
+sage -t failed: 77766 passed, 2 failed, 23719 skipped
+```
+
+The refreshed dashboard has no block-level failures, and the saved
+`block-failure-clusters.sql` query is empty. The two failures are file-level
+worker crashes during the full parallel corpus run:
+`sage/combinat/baxter_permutations.py` exited with `SIGBUS`, and
+`sage/combinat/binary_recurrence_sequences.py` exited with `SIGSEGV`. After
+writing the SQLite results, the parent Node process again segfaulted while
+returning the make-target status, matching the earlier post-dashboard failure
+mode.
+
+Focused reruns did not reproduce the file-level crashes:
+
+```text
+baxter_permutations.py: 31 passed, 0 failed, 5 skipped
+binary_recurrence_sequences.py: 0 passed, 0 failed, 1 skipped
+two-file rerun: 31 passed, 0 failed, 6 skipped
+```
+
+The strict promotion-candidate scan still prints no uncovered candidate after
+subtracting the checked corpus:
+
+```sh
+doctest-corpus-candidates.py --strict-frontier --min-runner-version 94 --dedupe-paths
+```
+
+Treat the refreshed default dashboard as evidence of a full-corpus/parallel
+worker stability frontier, not as a deterministic doctest semantics failure in
+those two files.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
