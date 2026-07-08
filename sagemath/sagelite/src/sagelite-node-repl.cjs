@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 100;
+const doctestRunnerVersion = 101;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1962,13 +1962,18 @@ class __CowasmOutputChecker(doctest.OutputChecker):
                 return True
             return (
                 self.__check_tolerant_output(want_body, got, tolerance, optionflags)
-                or self.__check_literal_dict_output(want_body, got, tolerance)
+                or self.__check_literal_dict_output(
+                    want_body,
+                    got,
+                    tolerance,
+                    optionflags,
+                )
             )
         if super().check_output(want, got, optionflags):
             return True
         if self.__check_warning_output(want, got, optionflags):
             return True
-        if self.__check_literal_dict_output(want, got):
+        if self.__check_literal_dict_output(want, got, optionflags=optionflags):
             return True
         if self.__check_exception_line_output(want, got, optionflags):
             return True
@@ -2072,7 +2077,7 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             text,
         )
 
-    def __check_literal_dict_output(self, want, got, tolerance=None):
+    def __check_literal_dict_output(self, want, got, tolerance=None, optionflags=0):
         want = want.strip()
         got = got.strip()
         if not want.startswith("{") or not want.endswith("}"):
@@ -2092,7 +2097,94 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             got_tree = self.__canonical_literal_node(ast.parse(got, mode="eval"))
             return self.__literal_nodes_equal(want_tree, got_tree, tolerance)
         except (SyntaxError, ValueError, TypeError):
+            return self.__check_ellipsis_dict_output(want, got, optionflags)
+
+    def __check_ellipsis_dict_output(self, want, got, optionflags):
+        if "..." not in want:
             return False
+        want_items = self.__top_level_dict_items(want)
+        got_items = self.__top_level_dict_items(got)
+        if want_items is None or got_items is None or len(want_items) != len(got_items):
+            return False
+        remaining = list(got_items)
+        match_flags = optionflags | doctest.ELLIPSIS
+        for want_key, want_value in want_items:
+            match_index = None
+            for index, (got_key, got_value) in enumerate(remaining):
+                if super().check_output(
+                    want_key,
+                    got_key,
+                    match_flags,
+                ) and super().check_output(
+                    want_value,
+                    got_value,
+                    match_flags,
+                ):
+                    match_index = index
+                    break
+            if match_index is None:
+                return False
+            remaining.pop(match_index)
+        return not remaining
+
+    def __top_level_dict_items(self, text):
+        body = text.strip()[1:-1].strip()
+        if not body:
+            return []
+        items = []
+        for item in self.__split_top_level(body, ","):
+            if not item:
+                continue
+            pair = self.__split_top_level_once(item, ":")
+            if pair is None:
+                return None
+            items.append(pair)
+        return items
+
+    def __split_top_level_once(self, text, separator):
+        parts = self.__split_top_level(text, separator, maxsplit=1)
+        if len(parts) != 2:
+            return None
+        return parts[0], parts[1]
+
+    def __split_top_level(self, text, separator, maxsplit=None):
+        parts = []
+        current = []
+        depth = 0
+        quote = None
+        escaped = False
+        for char in text:
+            if quote is not None:
+                current.append(char)
+                if escaped:
+                    escaped = False
+                elif char == "\\\\":
+                    escaped = True
+                elif char == quote:
+                    quote = None
+                continue
+            if char in ("'", '"'):
+                quote = char
+                current.append(char)
+            elif char in "([{":
+                depth += 1
+                current.append(char)
+            elif char in ")]}":
+                depth -= 1
+                if depth < 0:
+                    return []
+                current.append(char)
+            elif char == separator and depth == 0 and (
+                maxsplit is None or len(parts) < maxsplit
+            ):
+                parts.append("".join(current).strip())
+                current = []
+            else:
+                current.append(char)
+        if quote is not None or depth != 0:
+            return []
+        parts.append("".join(current).strip())
+        return parts
 
     def __literal_expected_ellipsis_text(self, text):
         def replace_numeric_ellipsis(match):

@@ -2827,7 +2827,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              sage: from sage.combinat.integer_lists.base import IntegerListsBackend
              sage: C = IntegerListsBackend(2, length=3)
 -            sage: C.__getstate__()
-+            sage: C.__getstate__()                                                     # known bug
++            sage: C.__getstate__()
              {'ceiling': <sage.combinat.integer_lists.base.Envelope object at ...>,
               'floor': <sage.combinat.integer_lists.base.Envelope object at ...>,
               'max_length': 3,

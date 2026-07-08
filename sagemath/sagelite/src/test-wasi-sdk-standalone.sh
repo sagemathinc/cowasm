@@ -1902,6 +1902,11 @@ EXAMPLES::
     42
     sage: "17-adic Field with capped relative precision 20"
     ...-adic Field with capped relative precision ...
+    sage: class CowasmDictRepr:
+    ....:     def __repr__(self):
+    ....:         return "<cowasm object at 0x>"
+    sage: {"b": 2, "a": CowasmDictRepr()}
+    {'a': <cowasm object at ...>, 'b': 2}
     sage: ZZ.random_element()  # random
     output is intentionally unchecked
     sage: 7 + 8  # optional - cowasm_smoke

@@ -41023,6 +41023,34 @@ sagemath/sagelite/src/sagelite-node-repl.cjs`, `bash -n
 sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
 `patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
 
+Follow-up literal-dict ellipsis audit on 2026-07-08 UTC: no corpus entry was
+promoted. The doctest runner now has a final fallback for literal dictionary
+outputs whose values are not valid Python literals but do use doctest
+ellipsis, such as object reprs containing addresses. This keeps dictionary
+comparison order-insensitive even for examples like
+`{'ceiling': <sage...Envelope object at ...>, ...}`. The runner version is now
+101, and the standalone smoke fixture includes a custom object repr inside a
+dictionary with reversed key order.
+
+This made the remaining `sage/combinat/integer_lists/base.pyx`
+`IntegerListsBackend.__getstate__()` display-order tag stale, so the WASI
+source patch no longer marks that prompt as `# known bug`. Focused validation
+against the current patched source tree and a staged Electron resource bundle
+records:
+
+```text
+integer_lists/base.pyx --line 244: 1 passed, 0 failed, 0 skipped
+integer_lists/base.pyx: 117 passed, 0 failed, 3 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-dict-ellipsis/integer-lists-base.sqlite3`;
+it records runner version 101, node profile, and empty saved block- and
+file-failure cluster queries. Validation also used
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
