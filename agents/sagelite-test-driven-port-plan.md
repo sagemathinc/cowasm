@@ -39309,6 +39309,39 @@ The latest-run summary records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
 and a 100% non-skipped pass rate.
 
+Follow-up support-extension frontier pass on 2026-07-08 UTC: no corpus entry
+was promoted. A pinned source-frontier scan over `.py`, `.pyx`, `.pxi`,
+`.rst`, and `.pxd` sources, with the curated corpus, this plan, and valid
+`.tmp/**/*.sqlite3` dashboards subtracted, printed only the `path	prompt_count`
+header. Widening the same pinned scan to support-file suffixes found one
+unmentioned runnable row:
+
+```text
+src/sage/plot/plot3d/bugs.txt	6
+```
+
+A direct source-root-relative probe of that file is not a quiet promotion
+candidate:
+
+```text
+bugs.txt: 1 passed, 5 failed, 0 skipped
+```
+
+The failures are startup/dependency boundaries for the stripped
+browser-compatible profile: missing `sphere`, `plot3d`, `var`, and the
+dependent `S.show(...)` example. The probe database at
+`.tmp/current-run/scheduled-2026-07-08-bugs-txt/bugs-direct.sqlite3` records
+CoWasm commit `5407ecb07310bab498300e6a6e164ba74b07c9ab`, Sagelite package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner
+version 93, and the plotting `NameError` clusters.
+
+The make wrapper now exposes `SAGELITE_DOCTEST_SOURCE_FRONTIER_EXTENSIONS`,
+which expands to repeated `--extension` flags for
+`doctest-source-frontier.py`. This keeps broader scheduled frontier checks
+for `.pxi`, `.rst`, `.pxd`, `.txt`, or other support suffixes reproducible
+without routing extension lists through the generic
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS` escape hatch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
