@@ -41344,6 +41344,31 @@ The fresh skipped-only row is tagged `needs:sage.plot.plot3d`, so future
 frontier scans should treat this file as dependency-boundary coverage rather
 than a small runnable near miss.
 
+Follow-up Judson rings boundary pass on 2026-07-08 UTC: no corpus entry was
+promoted. A fresh remaining-Judson probe reproduced
+`src/sage/tests/books/judson_abstract_algebra/rings-sage.py` as a file-level
+timeout at the first active prompt, `F = QuadraticField(7)`, before any useful
+default-profile blocks could be recorded. The rest of the generated rings
+chapter is downstream of number-field, cyclotomic-field, finite-field, and
+quaternion setup, so this file is better treated as number-field boundary
+coverage than as a recurring timeout.
+
+The WASI source patch now adds file-level
+`# sage.doctest: needs sage.rings.number_field` metadata to `rings-sage.py`.
+Focused validation used `test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-rings-boundary/rings-make.sqlite3`.
+The run records:
+
+```text
+rings-sage.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the file-scope row under
+`optional:sage.rings.number_field`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
