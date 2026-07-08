@@ -5025,6 +5025,54 @@ and `--dedupe-paths` printed no uncovered clean runnable row for this
 dashboard. Future scheduled runs should avoid repeating this exact 891-to-910
 slice unless those default browser-profile dependency boundaries change.
 
+Follow-up unmentioned low-count frontier audit on 2026-07-08:
+
+A fresh source-minus-corpus scan subtracted both the checked corpus and every
+`sage/...`/`src/sage/...` path already named in this plan, then skipped Sage's
+doctest self-test fixtures because those files intentionally exercise failure,
+interrupt, and timeout behavior. The first compact non-fixture slice wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-goal/unmentioned-lowcount.sqlite3
+```
+
+The direct one-worker probe recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 32 skipped
+```
+
+All 20 files were skipped-only under existing browser-profile metadata, with
+skip groups covering SymEngine, GAP, FLINT, graph, NumPy, pexpect, finite
+crystal, rigged-configuration, eclib, PARI, finite-ring, real-field, schemes,
+and Cython boundaries. The strict promotion scan printed no uncovered clean
+row for this dashboard, so these exact compact files should not be resampled
+unless those dependency boundaries change.
+
+The same pass ran a guarded strict scan across current scratch dashboards and
+found one valid uncovered candidate from a same-day conic namespace probe:
+`src/sage/schemes/plane_conics/constructor.py`. Older plan notes correctly
+rejected this file before its Singular-dependent examples were tagged, but the
+current patched source now leaves only four default-profile constructor/import
+blocks runnable and defers the eleven conic-construction examples under
+`# needs sage.libs.singular`.
+
+Focused current-checkout reruns record:
+
+```text
+constructor.py: 4 passed, 0 failed, 11 skipped
+```
+
+The make-target validation uses a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-goal/conic-current/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`b894e965239af83de70de1b2d21aceba89f45580`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 99,
+and a 100% non-skipped pass rate. The strict candidate helper prints no
+promotion row after subtracting the updated 1,108-entry corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
