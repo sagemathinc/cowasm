@@ -41105,6 +41105,23 @@ run records runner version 102 and resource root
 resource tree was usable for the Weyl follow-up despite the standalone smoke
 count blocker.
 
+Follow-up standalone smoke assertion pass on 2026-07-08 UTC: no corpus entry
+was promoted. The standalone smoke fixture counts in
+`test-wasi-sdk-standalone.sh` now match the runner-version-102 fixture after
+the non-literal dictionary ellipsis and broken-displayhook `repr()` examples
+were added. The default smoke records `passed|48|38|0|10` and 48 relative
+stable block keys; `--optional=cowasm_smoke` records `passed|48|42|0|6`; and
+`--deferred=known-bug` records `failed|48|38|1|9`.
+
+Validation used `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`, and focused
+default/optional/deferred `sage -t` smoke reruns against the staged
+`sagemath/sagelite/dist/wasi-sdk/electron-resources` tree. A full
+`make -C sagemath/sagelite test-wasi-sdk-standalone` was also run before the
+final assertion update; it rebuilt Sagelite and confirmed the previous count
+blocker was cleared, then stopped at the now-updated stale 44-block-key
+assertion.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
