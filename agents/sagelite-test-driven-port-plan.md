@@ -39875,6 +39875,44 @@ patched source tree. Future scheduled runs should continue past the relaxed
 frontier scan and use a deliberately chosen backend/runtime cluster, not the
 old low-prompt scratch rows.
 
+Follow-up low-prompt library frontier audit on 2026-07-08 UTC: no corpus entry
+was promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. A fresh focused probe wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-goal/low-prompt-library/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 25 skipped
+```
+
+It covered 20 remaining low-prompt library/frontier files, all skipped by
+existing browser-profile metadata. Skip groups include GAP, graph, cluster
+algebra, finite-crystal, rigged-configuration, finite-ring, ECLib, PARI,
+FLINT/p-adic, NumPy, 3D-plot, symbolic, pexpect, and MCQD boundaries. A
+focused follow-up database for `sage/arith/numerical_approx.pxd` also recorded
+one skipped block under the existing `sage.rings.real_mpfr` requirement:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-goal/numerical-approx-pxd/direct.sqlite3
+```
+
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+printed no uncovered clean runnable rows for those dashboards. The make-target
+source-frontier wrapper also exits cleanly with only the
+`path	prompt_count	runnable_prompt_count` header when run with the current
+corpus, this plan as the mentioned-path subtraction file, valid scratch
+databases under `.tmp/current-run/**/*.sqlite3`, and the patched source root.
+
+Future scheduled runs should avoid repeating this low-prompt library slice
+unless one of those dependency boundaries changes. The useful next step
+remains a deliberately chosen backend/runtime cluster or a new source frontier
+that is not already covered by corpus, plan, and SQLite subtraction.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
