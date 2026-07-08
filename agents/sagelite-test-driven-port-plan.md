@@ -40176,6 +40176,42 @@ block- and file-failure cluster queries are empty, and
 `doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
 prints no promotion row after subtracting the updated corpus.
 
+Focused graph-namespace corpus-growth pass on 2026-07-08 UTC: the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,106 non-comment entries after promoting `src/sage/graphs/all.py`.
+
+A fresh low-count frontier rerun first confirmed that the remaining raw
+low-count source frontier is still mostly dependency-boundary material:
+`pbori/frontend.py`, `pbori/randompoly.py`, `sage/doctest/__main__.py`, and
+`sage/libs/pari/convert_flint.pyx` are skipped-only under the current browser
+profile; `n2_lie_conformal_algebra.py` and `plane_conics/constructor.py` still
+have broader backend failures; and `rings/polynomial/ideal.py` reaches a
+Singular-style Groebner-basis timeout. The earlier remaining-Judson rerun also
+kept the unpromoted generated group, field, and ring files out of the quiet
+corpus because they are dominated by group-constructor dependent failures,
+cypari2/PARI object-model gaps, and a number-field timeout.
+
+`src/sage/graphs/all.py` was the narrow useful candidate from that scan. It
+exercises the graph namespace deprecation checks for removed clique helpers
+without importing the heavier graph algorithm corpus. Focused validation used
+`test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-graphs-all/make.sqlite3`.
+The run records:
+
+```text
+graphs/all.py: 3 passed, 0 failed, 0 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+prints no promotion row after subtracting the updated corpus. The run metadata
+records CoWasm commit `0f5da7ba07a7a7c89e4ddd8239f8c54beaae6393`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 94, and the Electron resource root
+`/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
