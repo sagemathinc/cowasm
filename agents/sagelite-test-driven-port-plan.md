@@ -40212,6 +40212,37 @@ source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 94, and the Electron resource root
 `/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources`.
 
+Scheduled post-graph frontier audit on 2026-07-08 UTC: no corpus entry was
+promoted. The standard source-frontier command with corpus and plan-mentioned
+subtraction enabled printed no rows, confirming that the usual low-noise source
+frontier remains exhausted under the current patched source tree.
+
+Relaxing only the plan-mentioned subtraction surfaced previously audited rows.
+Focused probes wrote scratch dashboards under
+`.tmp/current-run/scheduled-2026-07-08-next/` and found no clean uncovered
+runnable candidate after subtracting the 1,106-entry corpus:
+
+- the remaining Judson batch kept `boolean-sage.py`, `fields-sage.py`,
+  `cyclic-sage.py`, and `rings-sage.py` out because they still expose broad
+  poset, number-field, PARI/cypari2, signature-mismatch, and timeout
+  frontiers; `struct-sage.py` remains skipped-only;
+- the unpromoted computational-math book examples sampled in
+  `cms-probe.sqlite3` and `cms-sol-probe.sqlite3` were skipped-only, while the
+  runnable core files in that probe were already covered by the corpus;
+- the small source-frontier tail kept `pbori/frontend.py`,
+  `pbori/randompoly.py`, `doctest/__main__.py`, and
+  `libs/pari/convert_flint.pyx` as skipped-only rows, kept
+  `n2_lie_conformal_algebra.py` and `plane_conics/constructor.py` out because
+  they still have multiple backend/startup failures, and confirmed
+  `rings/polynomial/ideal.py` still times out at the Groebner-basis setup
+  example on line 77.
+
+The persisted strict candidate scan across the same scratch dashboards with
+`--strict-frontier --min-runner-version 94 --dedupe-paths` printed no rows.
+Future scheduled runs should continue to avoid broad low-prompt rescans unless
+a dependency boundary changes; the next useful work is either a deliberate
+backend fix for one of the recorded clusters or a newly scoped source frontier.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
