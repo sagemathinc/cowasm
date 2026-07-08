@@ -40840,6 +40840,28 @@ file-failure cluster queries. The neighboring cachefunc doc lookup tag at
 line 907 remains live; the full-file deferred rerun still reports the expected
 module-warning prefix drift for `print(sage_getdoc(I.groebner_basis))`.
 
+Follow-up doc-lookup deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found that the first three
+`sage/misc/sageinspect.py` doc lookup examples now pass when executed. The
+WASI source patch no longer marks the `sage_getdoc(sage.misc.sageinspect)`,
+`sage_getdoc(sage.rings.rational.Rational)`, or
+`sage_getdoc(sage.misc.sageinspect.sage_getfile)` examples as
+`# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a one-file corpus with failures disallowed:
+
+```text
+sageinspect.py: 296 passed, 0 failed, 111 skipped
+```
+
+The dashboard is `.tmp/current-run/scheduled-active/sageinspect-make.sqlite3`;
+its saved block- and file-failure cluster queries are empty. Adjacent probes
+confirmed that `sageinspect.py`'s empty-docstring formatting tag,
+`sage_input.py`'s non-ASCII source-conversion tag, the lightweight
+pretty-printer fallback tags, and the sampled combinatorics display/order tags
+still fail under `--deferred=known-bug`, so those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

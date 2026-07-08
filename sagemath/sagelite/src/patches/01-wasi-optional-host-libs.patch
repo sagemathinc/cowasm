@@ -6909,7 +6909,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
      sage: sage_getfile(sage.misc.sageinspect)
      '.../sageinspect.py'
 -    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
-+    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])                    # known bug - WASI doctest feature detection uses multiprocessing
++    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
      Inspect Python, Sage, and Cython objects
      sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
      'Inspect Python, Sage, and Cython objects...'
@@ -6918,7 +6918,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
      sage: sage_getfile(sage.rings.rational.Rational)
      '.../rational.pyx'
 -    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()
-+    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()                         # known bug - WASI doctest feature detection uses multiprocessing
++    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()
      'A rational number...'
      sage: sage_getsource(sage.rings.rational.Rational)
      'cdef class Rational...'
@@ -6927,7 +6927,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
      sage: sage_getfile(sage.misc.sageinspect.sage_getfile)
      '.../sageinspect.py'
 -    sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()
-+    sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()                   # known bug - WASI doctest feature detection uses multiprocessing
++    sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()
      'Get the full file name associated to "obj" as a string...'
      sage: sage_getsource(sage.misc.sageinspect.sage_getfile)[4:]
      'sage_getfile(obj):...'
