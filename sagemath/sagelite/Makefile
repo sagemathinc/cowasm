@@ -7,6 +7,10 @@ BUILD_WASI_SDK = ${BUILD}/wasi-sdk
 DIST_WASI_SDK = ${DIST}/wasi-sdk
 SAGELITE_DOCTEST_CORPUS ?= ${SRC}/doctest-corpus/basic-pure-math.txt
 SAGELITE_DOCTEST_DB ?= ${DIST_WASI_SDK}/sagelite-doctests.sqlite3
+SAGELITE_DOCTEST_PATH_ROOT ?= $(realpath ${CWD}/../..)
+SAGELITE_DOCTEST_DB_PATH = $(strip $(if $(filter /%,${SAGELITE_DOCTEST_DB}),\
+	${SAGELITE_DOCTEST_DB},\
+	${SAGELITE_DOCTEST_PATH_ROOT}/${SAGELITE_DOCTEST_DB}))
 SAGELITE_DOCTEST_SOURCE ?= ${BUILD_WASI_SDK}
 SAGELITE_DOCTEST_PROFILE ?= node
 SAGELITE_DOCTEST_TIMEOUT ?= 0
@@ -16,7 +20,7 @@ SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED ?= 1
 SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS ?= --ignore-invalid --quiet-invalid
 SAGELITE_DOCTEST_CANDIDATE_FLAGS ?= --strict-frontier
 SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED ?= ${CWD}/../../agents/sagelite-test-driven-port-plan.md
-SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT ?= $(realpath ${CWD}/../..)
+SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT ?= ${SAGELITE_DOCTEST_PATH_ROOT}
 SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB ?=
 SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE ?= 0
 SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS ?= 0
@@ -195,7 +199,7 @@ test-sage-doctest-corpus: ${BUILD_WASI_SDK}/.patched
 	  (echo "Sagelite Electron resources are missing; run make -C sagemath/sagelite test-wasi-sdk-standalone first." >&2; exit 2)
 	test -f ${SAGELITE_DOCTEST_CORPUS}
 	test -d ${SAGELITE_DOCTEST_SOURCE}
-	mkdir -p "$$(dirname ${SAGELITE_DOCTEST_DB})"
+	mkdir -p "$$(dirname ${SAGELITE_DOCTEST_DB_PATH})"
 	@files="$$(grep -Ev '^[[:space:]]*($$|#)' ${SAGELITE_DOCTEST_CORPUS} | \
 	  while IFS= read -r file; do \
 	    case "$$file" in \
@@ -211,10 +215,10 @@ test-sage-doctest-corpus: ${BUILD_WASI_SDK}/.patched
 	${CWD}/bin/sage -t \
 	  --profile "${SAGELITE_DOCTEST_PROFILE}" \
 	  --timeout "${SAGELITE_DOCTEST_TIMEOUT}" \
-	  --sqlite "${SAGELITE_DOCTEST_DB}" \
+	  --sqlite "${SAGELITE_DOCTEST_DB_PATH}" \
 	  $$files || status=$$?; \
 	if [ "$$status" -ne 0 ]; then \
-	  echo "Sagelite doctest corpus completed with doctest failures; results are in ${SAGELITE_DOCTEST_DB}." >&2; \
+	  echo "Sagelite doctest corpus completed with doctest failures; results are in ${SAGELITE_DOCTEST_DB_PATH}." >&2; \
 	  if [ "${SAGELITE_DOCTEST_ALLOW_FAILURES}" != "1" ]; then exit "$$status"; fi; \
 	fi
 
@@ -226,7 +230,7 @@ sage-doctest-candidates:
 	  --min-passed "${SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED}" \
 	  ${SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS} \
 	  ${SAGELITE_DOCTEST_CANDIDATE_FLAGS} \
-	  "${SAGELITE_DOCTEST_DB}"
+	  "${SAGELITE_DOCTEST_DB_PATH}"
 
 .PHONY: sage-doctest-candidate-paths
 sage-doctest-candidate-paths: SAGELITE_DOCTEST_CANDIDATE_FLAGS += --paths-only

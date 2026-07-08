@@ -40473,6 +40473,28 @@ are empty, and the strict promotion-candidate scan with
 `--min-runner-version 95` prints no uncovered candidate after subtracting the
 checked corpus.
 
+Follow-up make-wrapper ergonomics pass on 2026-07-08 UTC: the Sagelite
+doctest make targets now resolve relative `SAGELITE_DOCTEST_DB` values against
+the CoWasm repository root instead of the `sagemath/sagelite` make directory.
+This matches the source-frontier wrapper's scratch-database glob behavior and
+keeps scheduled runs from accidentally scanning `sagemath/sagelite/.tmp/...`
+when the intended dashboard is under the repo-root `.tmp/...` tree.
+
+Validation used the runner-95 full-corpus dashboard through the make wrapper
+with a repo-root-relative DB path:
+
+```sh
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_DB=.tmp/current-run/sagelite-corpus-runner95.sqlite3 \
+  SAGELITE_DOCTEST_CANDIDATE_FLAGS='--strict-frontier --min-runner-version 95 --dedupe-paths'
+```
+
+The wrapper expands that DB to
+`/home/user/cowasm/.tmp/current-run/sagelite-corpus-runner95.sqlite3` and still
+prints no uncovered candidate. A dry-run of `test-sage-doctest-corpus` with
+`SAGELITE_DOCTEST_DB=.tmp/current-run/dry-run.sqlite3` likewise expands the
+SQLite output path under `/home/user/cowasm/.tmp/current-run/`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
