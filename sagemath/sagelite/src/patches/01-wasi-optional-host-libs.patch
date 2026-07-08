@@ -6108,12 +6108,6 @@ diff -urN a/src/sage/combinat/tableau.py b/src/sage/combinat/tableau.py
 diff -urN a/src/sage/combinat/partition.py b/src/sage/combinat/partition.py
 --- a/src/sage/combinat/partition.py
 +++ b/src/sage/combinat/partition.py
-@@ -3967 +3967 @@
--            sage: Partition([4,3,2]).block(0)
-+            sage: Partition([4,3,2]).block(0)                                          # known bug
-@@ -3971 +3971 @@
--            sage: Partition([4,3,2]).block(2, multicharge=(1,))
-+            sage: Partition([4,3,2]).block(2, multicharge=(1,))                         # known bug
 @@ -5147 +5147 @@
 -            sage: Partition([3,2,1]).arms_legs_coeff(1,1)
 +            sage: Partition([3,2,1]).arms_legs_coeff(1,1)                                # needs sage.libs.singular

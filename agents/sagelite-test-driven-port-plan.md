@@ -40578,6 +40578,24 @@ existing optional/deferred skip groups. The adjacent
 `integer_lists/base.pyx` `__getstate__()` dict display check still fails under
 `--deferred=known-bug`, so that tag remains live.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found that both
+`sage/combinat/partition.py` block-statistic dictionary examples at lines 3967
+and 3971 now pass when executed, so the WASI source patch no longer marks
+those prompts as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a one-file partition corpus with failures disallowed:
+
+```text
+partition.py: 1306 passed, 0 failed, 214 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-partition-stale/partition.sqlite3`; it
+records runner version 96, empty block- and file-failure cluster queries, and
+only the existing optional/dependency skip groups.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
