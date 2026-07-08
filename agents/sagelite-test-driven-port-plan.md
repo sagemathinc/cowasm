@@ -41394,6 +41394,44 @@ historical near-miss rows should not be used as promotion evidence; future
 scheduled runs should start from a changed backend/runtime boundary or a new
 source frontier rather than resampling these three files.
 
+Follow-up full-dashboard and displayhook audit on 2026-07-08 UTC: no corpus
+entry was promoted. A guarded candidate scan against the latest large scratch
+dashboard,
+`.tmp/current-run/sagelite-corpus-runner95.sqlite3`, used the current patched
+source root, strict runner metadata guards, persisted block-row guards,
+file-run guards, and `--min-runner-version 83`; it printed no uncovered clean
+promotion rows. A source-frontier scan subtracting the checked corpus, this
+plan's mentioned paths, and the same dashboard also printed no unmentioned
+source file with runnable prompts.
+
+The large scratch dashboard records a clean 1,107-file run:
+
+```text
+sage -t passed: 77797 passed, 0 failed, 23725 skipped
+```
+
+It records 101,522 block rows in
+`.tmp/current-run/sagelite-corpus-runner95.sqlite3`, with empty block- and
+file-failure cluster queries. The run metadata records CoWasm commit
+`96f0380657f65c33e99485ce396bcf95e69a24f4`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 95,
+and about 2,196 seconds of elapsed time.
+
+Later focused displayhook validation after the literal-dict ellipsis runner
+work recorded:
+
+```text
+displayhook-repr-smoke.sqlite3: 2 passed, 0 failed, 0 skipped
+lazy-format-displayhook-full-after.sqlite3: 23 passed, 0 failed, 0 skipped
+```
+
+Those databases record runner version 102 at CoWasm commit
+`76d9483dc441844b7e7d662851d63c712a813afb`. The earlier one-line
+`lazy_format.py:45` probe still fails as a stale setup artifact
+(`NameError: name 'lf' is not defined`), but the full file and displayhook
+smoke reruns are clean, so future scheduled runs should not treat that stale
+focused row as an active lazy-format frontier.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
