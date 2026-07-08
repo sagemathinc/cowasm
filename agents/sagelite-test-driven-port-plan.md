@@ -41324,6 +41324,26 @@ Each file records one skipped file-level block tagged `needs:sage.libs.gap`,
 and a source-frontier check with `--min-runnable-prompts 1` no longer reports
 those five files as runnable Judson candidates.
 
+Follow-up plot3d boundary pass on 2026-07-08 UTC: no corpus entry was
+promoted. A July 8 scratch near-miss database had recorded
+`src/sage/plot/plot3d/bugs.txt` as one passing setup prompt followed by five
+`NameError` failures for `sphere`, `S`, `var`, and `plot3d`. The file is an
+old plot3d/Jmol bug note rather than a quiet pure-math candidate, and the
+current WASI browser profile already treats plot3d as an explicit optional
+boundary.
+
+The WASI source patch now adds file-level `# sage.doctest: needs
+sage.plot.plot3d` metadata to `bugs.txt`. A focused rerun against the patched
+source copy records:
+
+```text
+sage -t passed: 0 passed, 0 failed, 1 skipped; sqlite=.tmp/current-run/scheduled-2026-07-08-bugs-txt-after/bugs-after.sqlite3
+```
+
+The fresh skipped-only row is tagged `needs:sage.plot.plot3d`, so future
+frontier scans should treat this file as dependency-boundary coverage rather
+than a small runnable near miss.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

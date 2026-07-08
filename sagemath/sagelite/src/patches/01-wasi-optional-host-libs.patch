@@ -19440,3 +19440,11 @@ diff --git a/src/sage/groups/matrix_gps/pickling_overrides.py b/src/sage/groups/
              sage: from sage.groups.group import Group
              sage: from sage.groups.matrix_gps.pickling_overrides import LegacyGeneralLinearGroup
              sage: state = dict()
+diff --git a/src/sage/plot/plot3d/bugs.txt b/src/sage/plot/plot3d/bugs.txt
+--- a/src/sage/plot/plot3d/bugs.txt
++++ b/src/sage/plot/plot3d/bugs.txt
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.plot.plot3d
+ We draw a spiral of spheres:
+    sage: v = [(sin(i),cos(i),i) for i in [-4,-3.5,..4]]
+    sage: S = sum(sphere(v[i], size=1/2, color=((i-4)/8, 1/2,(4-i)/8)) for i in range(len(v)))
