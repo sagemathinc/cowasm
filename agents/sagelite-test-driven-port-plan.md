@@ -40691,6 +40691,32 @@ cluster queries. Adjacent probes confirmed the neighboring
 `join_feature.py` output tag still fail under `--deferred=known-bug`, so those
 tags remain live.
 
+Follow-up stale warning-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found that `sage/misc/misc.py`'s
+`warn("blah")` example and most warning-capture examples in
+`sage/misc/superseded.py` now pass when executed. The WASI source patch no
+longer marks those prompts as `# known bug`, leaving only the second
+`deprecated_function_alias(..., replacement='BLOB')` `blo()` check tagged
+because its focused line rerun still fails.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a two-file corpus with failures disallowed:
+
+```text
+misc.py: 138 passed, 0 failed, 18 skipped
+superseded.py: 49 passed, 0 failed, 17 skipped
+two-file make rerun: 187 passed, 0 failed, 35 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-next-stale/misc-superseded-make.sqlite3`;
+it records runner version 96, node profile, and empty block- and file-failure
+cluster queries. Adjacent stale-tag probes confirmed that
+`decorators.py:641`, `multiset_partition_into_sets_ordered.py:1492`,
+`subsets_pairwise.py:98`, `six_vertex_model.py:377`, and
+`regular_sequence_bounded.py:98` still fail under `--deferred=known-bug`, so
+those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
