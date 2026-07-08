@@ -2876,10 +2876,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              set()
 @@ -4676,6 +4676,6 @@
 -            sage: Word([2,1,4,2,3,4,2]).evaluation_dict()
-+            sage: Word([2,1,4,2,3,4,2]).evaluation_dict()                               # known bug
++            sage: Word([2,1,4,2,3,4,2]).evaluation_dict()
              {1: 1, 2: 3, 3: 1, 4: 2}
 -            sage: Word('badbcdb').evaluation_dict()
-+            sage: Word('badbcdb').evaluation_dict()                                     # known bug
++            sage: Word('badbcdb').evaluation_dict()
              {'a': 1, 'b': 3, 'c': 1, 'd': 2}
              sage: Word().evaluation_dict()
              {}
@@ -2891,10 +2891,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              {(1, 2, 0)}
 @@ -6919,6 +6919,6 @@
 -        sage: evaluation_dict([2,1,4,2,3,4,2])
-+        sage: evaluation_dict([2,1,4,2,3,4,2])                                          # known bug
++        sage: evaluation_dict([2,1,4,2,3,4,2])
          {1: 1, 2: 3, 3: 1, 4: 2}
 -        sage: evaluation_dict('badbcdb')
-+        sage: evaluation_dict('badbcdb')                                                # known bug
++        sage: evaluation_dict('badbcdb')
          {'a': 1, 'b': 3, 'c': 1, 'd': 2}
          sage: evaluation_dict([])
          {}
@@ -5982,7 +5982,7 @@ diff -urN a/src/sage/combinat/q_analogues.py b/src/sage/combinat/q_analogues.py
 +++ b/src/sage/combinat/q_analogues.py
 @@ -225 +225 @@
 -        sage: q_binomial(6, 3, t)
-+        sage: q_binomial(6, 3, t)                                                      # known bug
++        sage: q_binomial(6, 3, t)
 @@ -234,3 +234,3 @@
 -        sage: Sym = SymmetricFunctions(QQ)
 -        sage: s = Sym.schur()
@@ -13831,7 +13831,7 @@ diff -urN -U0 a/src/sage/doctest/rif_tol.py b/src/sage/doctest/rif_tol.py
 +++ b/src/sage/doctest/rif_tol.py
 @@ -52 +52 @@
 -        sage: RIFtol(" - 1 ")
-+        sage: RIFtol(" - 1 ")                                                          # known bug - Sagelite real interval conversion rejects spaced negative strings
++        sage: RIFtol(" - 1 ")
 diff -urN -U0 a/src/sage/matroids/utilities.py b/src/sage/matroids/utilities.py
 --- a/src/sage/matroids/utilities.py
 +++ b/src/sage/matroids/utilities.py

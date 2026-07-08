@@ -40596,6 +40596,31 @@ The focused dashboard is
 records runner version 96, empty block- and file-failure cluster queries, and
 only the existing optional/dependency skip groups.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found that the `RIFtol(" - 1 ")` doctest in
+`sage/doctest/rif_tol.py`, the finite-field `q_binomial(6, 3, t)` doctest in
+`sage/combinat/q_analogues.py`, and the four evaluation-dictionary doctests in
+`sage/combinat/words/finite_word.py` now pass when executed. The WASI source
+patch no longer marks those prompts as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a three-file corpus with failures disallowed:
+
+```text
+q_analogues.py: 111 passed, 0 failed, 24 skipped
+finite_word.py: 1266 passed, 0 failed, 51 skipped
+rif_tol.py: 15 passed, 0 failed, 3 skipped
+three-file make rerun: 1392 passed, 0 failed, 78 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-deferred-audit/stale-tag-make.sqlite3`;
+its saved block- and file-failure cluster queries are empty. Adjacent probes
+confirmed the `dyck_word.py` latex-options dict-order tag,
+`q_analogues.py:288` raw Python integer type tag, `words.py:1722`
+`_element_classes` tag, and `misc/banner.py` version-output tag still fail
+under `--deferred=known-bug`, so those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
