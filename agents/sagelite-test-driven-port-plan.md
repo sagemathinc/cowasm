@@ -39764,6 +39764,45 @@ is empty, and `skips-by-reason.sql` groups both file-scope rows under
 `optional:sage.libs.symmetrica`. The full WASI source patch dry-runs
 successfully against `/home/user/sagelite`.
 
+Follow-up filtered frontier audit on 2026-07-08: no corpus entry was
+promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. A strict source-frontier scan that subtracted the
+curated corpus, this plan's mentioned paths, and valid scratch SQLite files
+under `.tmp/current-run/**/*.sqlite3` printed only the header row, so the
+non-repeated low-prompt `.py`/`.pyx` frontier is currently exhausted under the
+standard scheduled-run filters.
+
+A persisted candidate scan across the same scratch databases, using
+`doctest-corpus-candidates.py --strict-frontier`, also printed no uncovered
+clean runnable rows after ignoring stale empty databases. A focused direct
+probe then covered the remaining small unmentioned `.pxi` frontier:
+`sage/symbolic/getitem_impl.pxi`,
+`sage/symbolic/pynac_constant_impl.pxi`,
+`sage/symbolic/pynac_function_impl.pxi`,
+`sage/symbolic/substitution_map_impl.pxi`, and
+`sage/quivers/algebra_elements.pxi`.
+
+The probe wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-symbolic-pxi/probe.sqlite3
+```
+
+and recorded:
+
+```text
+sage -t failed: 3 passed, 77 failed, 0 skipped
+```
+
+Only `pynac_function_impl.pxi` produced passing blocks, and its failures
+remain part of the broader symbolic backend frontier rather than a narrow
+browser-profile tagging target. The quiver include file and the other symbolic
+include files had no passing default-profile blocks. Future scheduled runs
+should avoid repeating this exact symbolic/quiver include slice unless the
+symbolic backend, quiver algebra support, or browser-profile skip policy
+changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
