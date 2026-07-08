@@ -18712,6 +18712,249 @@ diff --git a/src/sage/rings/polynomial/polynomial_modn_dense_ntl.pyx b/src/sage/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  # distutils: libraries = NTL_LIBRARIES gmp
+@@ -51,7 +52,9 @@
+ 
+ from sage.structure.element import canonical_coercion, coerce_binop, have_same_parent
+ 
+-from sage.libs.ntl.types cimport NTL_SP_BOUND
++from sage.libs.ntl.types cimport NTL_SP_BOUND, zz_pContext_c, ZZ_pContext_c
++from sage.libs.ntl.ntl_lzz_pContext cimport ntl_zz_pContext_class
++from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
+ from sage.libs.ntl.ZZ_p cimport *
+ from sage.libs.ntl.lzz_p cimport *
+ from sage.libs.ntl.lzz_pX cimport *
+@@ -64,6 +67,16 @@
+ 
+ zz_p_max = NTL_SP_BOUND
+ 
++
++cdef inline void restore_zz_p_context(ntl_zz_pContext_class c) noexcept:
++    cdef zz_pContext_c local_context = zz_pContext_c(c.p)
++    local_context.restore()
++
++
++cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++
+ cdef class Polynomial_dense_mod_n(Polynomial):
+     """
+     A dense polynomial over the integers modulo n, where n is composite, with
+@@ -705,7 +718,7 @@
+ 
+     def __dealloc__(self):
+         if <object>self.c is not None:
+-            self.c.restore_c()
++            restore_zz_p_context(self.c)
+ 
+     def ntl_set_directly(self, v):
+         # TODO: Get rid of this
+@@ -760,7 +773,7 @@
+         return self._parent._base(zz_p_rep(zz_pX_GetCoeff(self.x, n)))
+ 
+     def _unsafe_mutate(self, n, value):
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_SetCoeff_long(self.x, n, value)
+ 
+     cpdef _add_(self, _right):
+@@ -775,7 +788,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(right.x) > 1000000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_add(r.x, self.x, right.x)
+         if do_sig: sig_off()
+         return r
+@@ -792,7 +805,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(right.x) > 1000000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_sub(r.x, self.x, right.x)
+         if do_sig: sig_off()
+         return r
+@@ -809,7 +822,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(right.x) > 10000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         if self is right:
+             zz_pX_sqr(r.x, self.x)
+         else:
+@@ -847,7 +860,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(op2.x) > 10000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         if self is op2:
+             zz_pX_SqrTrunc(r.x, self.x, n)
+         else:
+@@ -866,7 +879,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) > 100000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_rmul(r.x, self.x, c)
+         if do_sig: sig_off()
+         return r
+@@ -882,7 +895,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef bint do_sig = zz_pX_deg(self.x) > 100000
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_lmul(r.x, c, self.x)
+         if do_sig: sig_off()
+         return r
+@@ -936,7 +949,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef zz_pX_Modulus_c mod
+ 
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+ 
+         if modulus is None:
+             if zz_pX_IsX(self.x):
+@@ -983,7 +996,7 @@
+         cdef Polynomial_dense_modn_ntl_zz r = self._new()
+         cdef Polynomial_dense_modn_ntl_zz denom = <Polynomial_dense_modn_ntl_zz>right
+         sig_on()
+-        self.c.restore_c()
++        restore_zz_p_context(self.c)
+         zz_pX_divrem(q.x, r.x, self.x, denom.x)
+         sig_off()
+         return q, r
+@@ -1007,7 +1020,7 @@
+         cdef Polynomial_dense_modn_ntl_zz denom = <Polynomial_dense_modn_ntl_zz>right
+         cdef Polynomial_dense_modn_ntl_zz q = numer._new()
+         sig_on()
+-        numer.c.restore_c()
++        restore_zz_p_context(numer.c)
+         zz_pX_div(q.x, numer.x, denom.x)
+         sig_off()
+         return q
+@@ -1027,7 +1040,7 @@
+         cdef Polynomial_dense_modn_ntl_zz denom = <Polynomial_dense_modn_ntl_zz>right
+         cdef Polynomial_dense_modn_ntl_zz r = numer._new()
+         sig_on()
+-        numer.c.restore_c()
++        restore_zz_p_context(numer.c)
+         zz_pX_mod(r.x, numer.x, denom.x)
+         sig_off()
+         return r
+@@ -1312,7 +1325,7 @@
+ 
+     def __dealloc__(self):
+         if <object>self.c is not None:
+-            self.c.restore_c()
++            restore_ZZ_p_context(self.c)
+ 
+     cdef Polynomial_dense_modn_ntl_ZZ _new(self):
+         cdef Polynomial_dense_modn_ntl_ZZ y = <Polynomial_dense_modn_ntl_ZZ>Polynomial_dense_modn_ntl_ZZ.__new__(Polynomial_dense_modn_ntl_ZZ)
+@@ -1339,14 +1352,14 @@
+             sage: f[:50] == f
+             True
+         """
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         # TODO, make this faster
+         cdef ntl_ZZ_p ntl = ntl_ZZ_p(0, self.c)
+         ntl.x = ZZ_pX_coeff(self.x, n)
+         return self._parent._base(ntl._integer_())
+ 
+     def _unsafe_mutate(self, n, value):
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef Integer a
+         if isinstance(value, Integer):
+             a = <Integer>value
+@@ -1367,7 +1380,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e7
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_add(r.x, self.x, right.x)
+         if do_sig: sig_off()
+         return r
+@@ -1384,7 +1397,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e7
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_sub(r.x, self.x, right.x)
+         if do_sig: sig_off()
+         return r
+@@ -1401,7 +1414,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e5
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         if self is right:
+             ZZ_pX_sqr(r.x, self.x)
+         else:
+@@ -1439,7 +1452,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(op2.x)) * self.c.p_bits > 1e5
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         if self is op2:
+             ZZ_pX_SqrTrunc(r.x, self.x, n)
+         else:
+@@ -1458,7 +1471,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef bint do_sig = ZZ_pX_deg(self.x) * self.c.p_bits > 1e7
+         if do_sig: sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         cdef ntl_ZZ_p value = ntl_ZZ_p(c, self.c)
+         ZZ_pX_rmul(r.x, self.x, value.x)
+         if do_sig: sig_off()
+@@ -1506,7 +1519,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef ZZ_pX_Modulus_c mod
+ 
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+ 
+         if modulus is None:
+             if ZZ_pX_IsX(self.x):
+@@ -1552,7 +1565,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+         cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
+         sig_on()
+-        self.c.restore_c()
++        restore_ZZ_p_context(self.c)
+         ZZ_pX_DivRem(q.x, r.x, self.x, denom.x)
+         sig_off()
+         return q, r
+@@ -1576,7 +1589,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
+         cdef Polynomial_dense_modn_ntl_ZZ q = numer._new()
+         sig_on()
+-        numer.c.restore_c()
++        restore_ZZ_p_context(numer.c)
+         ZZ_pX_div(q.x, numer.x, denom.x)
+         sig_off()
+         return q
+@@ -1596,7 +1609,7 @@
+         cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
+         cdef Polynomial_dense_modn_ntl_ZZ r = numer._new()
+         sig_on()
+-        numer.c.restore_c()
++        restore_ZZ_p_context(numer.c)
+         ZZ_pX_rem(r.x, numer.x, denom.x)
+         sig_off()
+         return r
 diff --git a/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py b/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py
 --- a/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py
 +++ b/src/sage/algebras/hecke_algebras/cubic_hecke_algebra.py

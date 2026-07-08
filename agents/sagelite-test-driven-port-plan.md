@@ -40300,6 +40300,37 @@ residue-field example under `optional:sage.rings.finite_rings`, and
 `doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
 prints no promotion row after subtracting the updated corpus.
 
+Focused NTL modular-polynomial backend pass on 2026-07-08 UTC: the previous
+`Zmod(2^50)[]` root probe reproduced as an NTL global-context split across
+statically linked WASI side modules. `polynomial_modn_dense_ntl.pyx` restored
+the modulus through `self.c.restore_c()`, which updates the NTL copy inside
+the context wrapper module, while the polynomial side module then calls into a
+separate NTL copy whose `ZZ_p` modulus remains undefined.
+
+The WASI source patch now mirrors the existing `ntl_ZZ_pX.pyx` workaround:
+`polynomial_modn_dense_ntl.pyx` constructs a local `zz_pContext_c` or
+`ZZ_pContext_c` from the saved modulus and calls `restore()` inside the
+polynomial module before NTL arithmetic. All prior `restore_c()` sites in the
+small- and large-modulus NTL polynomial classes now use those local restore
+helpers.
+
+Validation for this pass:
+
+```text
+patch --dry-run -p1 < sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch
+SAGELITE_MESON_COMPILE_JOBS=4 SAGELITE_CYTHON_GENERATE_JOBS=1 make -C sagemath/sagelite test-wasi-sdk-standalone
+PYTHONPATH=<rebuilt staged Sagelite runtime> node python/python-wasm/bin/python-wasm -c 'from sage.all import *; R = PolynomialRing(Zmod(2**50), "x"); x = R.gen(); print((x + 1).roots(multiplicities=False))'
+```
+
+The clean patch dry-run succeeds, the standalone target rebuilds through the
+patched Cython and native extension compile phases, and the focused staged
+runtime probe now prints `[1125899906842623]` followed by the
+`ntl-polynomial-context-ok` marker. The standalone status still records the
+next runtime frontier as `sagelite-blocked: Node.js python-wasm import failed
+at extended integer helper smoke`; that blocker occurs before Electron
+resource bundling and is separate from the NTL polynomial-context failure fixed
+here.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
