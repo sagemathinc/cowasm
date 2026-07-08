@@ -12,6 +12,24 @@ The long-term goal is not only "Sage runs in WebAssembly". It is that a serious
 subset of Sage's pure-math semantics is available from Node.js, Electron, and
 eventually browser runtimes, with test data proving exactly which parts work.
 
+## Current Direction
+
+As of 2026-07-08, the standard low-noise source frontier is mostly exhausted
+under the usual corpus, plan-mentioned-path, and scratch-SQLite subtraction
+filters. Scheduled runs should not spend their main effort repeating broad
+low-prompt scans unless a dependency boundary, runtime capability, or skip
+policy has changed.
+
+Near-term work should be cluster-driven:
+
+- choose one known backend/runtime failure cluster;
+- create or reuse a focused `--line`, `--block-key`, or small temporary corpus
+  reproducer;
+- fix the underlying runtime/backend behavior when practical, or add explicit
+  browser-profile metadata when the dependency is intentionally out of scope;
+- validate narrowly first, then run full corpus or standalone only for shared
+  runtime/build changes.
+
 ## Current State
 
 As of 2026-06-23, CoWasm has a first useful test loop:
@@ -37544,6 +37562,7 @@ sage -t failed: 208 passed, 2809 failed, 119 skipped
 
   `generic_graph.py`, `matrix2.pyx`, and `polynomial_element.pyx` are
   file-level timeouts; `expression.pyx` exposes broad symbolic failures.
+
 - Files 5-20 now write a SQLite dashboard at
   `.tmp/current-run/scheduled-2026-07-07-goal-711-730-current/batch-5-20-after-early-skip.sqlite3`:
 
@@ -37558,6 +37577,7 @@ sage -t failed: 3287 passed, 4513 failed, 1424 skipped
   `arith/misc.py`. The remaining block failures are broad graph, symbolic,
   pbori, geometry, stream, lazy-series, and arithmetic clusters, not narrow
   promotion work.
+
 - Strict promotion scans over both chunk databases with `--min-runner-version
   91` and `--dedupe-paths` printed no uncovered clean runnable candidate.
   The checked corpus remains at 1,093 non-comment entries.
@@ -40040,3 +40060,4 @@ The next milestone is complete when:
 - failures can be grouped into actionable root-cause clusters;
 - the fast Sagelite standalone smoke remains separate and passes its Node,
   `python-wasi-sdk`, doctest, and Electron resource probes.
+
