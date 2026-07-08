@@ -39239,6 +39239,38 @@ synthetic helper fixtures under `.tmp/` may record their own temporary source
 roots and otherwise look like valid promotion candidates. With the pinned
 source root, the scan printed only its tab-separated header.
 
+Follow-up scheduled frontier recheck on 2026-07-08 UTC: no corpus entry was
+promoted. The curated corpus still contains 1,094 non-comment entries, and the
+strict make-wrapper runnable source-frontier guard still exits 0 with only the
+`path	prompt_count` header when subtracting the curated corpus, this plan's
+mentioned paths, and required valid scratch dashboards through
+`../../.tmp/**/*.sqlite3`.
+
+The persisted-dashboard promotion scan also remains empty when pinned to the
+patched Sagelite source root:
+
+```sh
+python3 sagemath/sagelite/src/doctest-corpus-candidates.py \
+  .tmp/**/*.sqlite3 \
+  --strict-frontier \
+  --dedupe-paths \
+  --include-header \
+  --ignore-invalid \
+  --quiet-invalid \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk
+```
+
+It printed only the tab-separated
+`database	path	total_blocks	passed_blocks	skipped_blocks	runnable_blocks	duration_ms`
+header. A direct source-root-relative smoke from the repository root still
+passes: `src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-08-goal-recheck/all-source-root.sqlite3`.
+The smoke database records CoWasm commit
+`499604e8e885ff0379025c19e0d29f0277bb11e6`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
