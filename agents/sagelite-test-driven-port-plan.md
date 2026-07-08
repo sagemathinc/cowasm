@@ -40325,11 +40325,29 @@ PYTHONPATH=<rebuilt staged Sagelite runtime> node python/python-wasm/bin/python-
 The clean patch dry-run succeeds, the standalone target rebuilds through the
 patched Cython and native extension compile phases, and the focused staged
 runtime probe now prints `[1125899906842623]` followed by the
-`ntl-polynomial-context-ok` marker. The standalone status still records the
-next runtime frontier as `sagelite-blocked: Node.js python-wasm import failed
-at extended integer helper smoke`; that blocker occurs before Electron
-resource bundling and is separate from the NTL polynomial-context failure fixed
-here.
+`ntl-polynomial-context-ok` marker.
+
+Follow-up standalone recovery check on 2026-07-08 UTC: rerunning
+`make -C sagemath/sagelite test-wasi-sdk-standalone` from the same workspace
+completed successfully:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+This rebuild restored
+`sagemath/sagelite/dist/wasi-sdk/electron-resources/sagelite-electron-resources.json`
+and cleared the stale extended-integer smoke blocker. A focused direct rerun
+against the refreshed resource tree also confirmed that the plane-conic
+constructor boundary is correctly classified by the checked WASI tags:
+
+```text
+constructor.py: 4 passed, 0 failed, 11 skipped
+```
+
+The skipped rows group under `optional:sage.libs.singular`, so the old
+`Conic`/`C` NameError cluster should be treated as a stale pre-refresh probe
+rather than a live doctest-runner or startup-namespace issue.
 
 ## Phase 6: TypeScript/NPM Direction
 
