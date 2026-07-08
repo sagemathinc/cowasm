@@ -39645,6 +39645,33 @@ also confirms that a `.py` file with an initial non-doctest notice string and a
 second raw doctest string records two passing blocks with preserved line
 numbers.
 
+Focused Judson generated-book corpus-growth pass on 2026-07-08:
+
+```text
+sage -t passed: 53 passed, 0 failed, 0 skipped
+```
+
+That one-file-list make-target validation promotes
+`sage/tests/books/judson_abstract_algebra/crypt-sage.py` and
+`sage/tests/books/judson_abstract_algebra/cosets-sage-exercises.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,099
+non-comment entries. The focused validation database at
+`.tmp/current-run/scheduled-2026-07-08-next/promoted-judson-make.sqlite3`
+records `crypt-sage.py: 39 passed, 0 failed, 0 skipped` and
+`cosets-sage-exercises.py: 14 passed, 0 failed, 0 skipped`, with empty saved
+block-failure clusters. The run metadata records CoWasm commit
+`9e7e1b7aef9b325fec579e955b8ad82282e540c2`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 94,
+and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
+The broader Judson batch remains useful frontier data rather than a quiet
+promotion batch: `sets-sage.py`, `finite-sage.py`, and
+`vect-sage-exercises.py` are the smallest near misses, while the larger group,
+field, permutation, and polynomial files expose broader algebra backend and
+dynamic-linkage gaps.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
