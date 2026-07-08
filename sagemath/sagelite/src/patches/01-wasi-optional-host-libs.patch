@@ -7277,36 +7277,6 @@ diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
          sage: B = random_bistochastic_matrix(MS)
          sage: B.is_bistochastic()
          True
-diff -urN a/src/sage/matrix/tests.py b/src/sage/matrix/tests.py
---- a/src/sage/matrix/tests.py
-+++ b/src/sage/matrix/tests.py
-@@ -6 +6 @@
--    sage: matrix(ZZ,1,0).kernel()
-+    sage: matrix(ZZ,1,0).kernel()                                                       # known bug - zero-column matrix kernel reaches a WASI matrix backend type gap
-@@ -10 +10 @@
--    sage: matrix(QQ,1,0).kernel()
-+    sage: matrix(QQ,1,0).kernel()                                                       # known bug - zero-column matrix kernel reaches a WASI matrix backend type gap
-@@ -14 +14 @@
--    sage: matrix(GF(7), 1, 0).kernel()
-+    sage: matrix(GF(7), 1, 0).kernel()                                                   # known bug - zero-column matrix kernel reaches a WASI matrix backend type gap
-@@ -18 +18 @@
--    sage: matrix(Frac(QQ['x']),1,0).kernel()
-+    sage: matrix(Frac(QQ['x']),1,0).kernel()                                             # known bug - zero-column matrix kernel reaches a WASI matrix backend type gap
-@@ -23 +23 @@
--    sage: matrix(ZZ,0,1).kernel()
-+    sage: matrix(ZZ,0,1).kernel()                                                       # known bug - zero-row matrix kernel reaches a WASI matrix backend type gap
-@@ -27 +27 @@
--    sage: matrix(QQ,0,1).kernel()
-+    sage: matrix(QQ,0,1).kernel()                                                       # known bug - zero-row matrix kernel reaches a WASI matrix backend type gap
-@@ -31 +31 @@
--    sage: matrix(GF(7), 0, 1).kernel()
-+    sage: matrix(GF(7), 0, 1).kernel()                                                   # known bug - zero-row matrix kernel reaches a WASI matrix backend type gap
-@@ -35 +35 @@
--    sage: matrix(Frac(QQ['x']),0,1).kernel()
-+    sage: matrix(Frac(QQ['x']),0,1).kernel()                                             # known bug - zero-row matrix kernel reaches a WASI matrix backend type gap
-@@ -62 +62 @@
--    sage: M.det()
-+    sage: M.det()                                                                       # known bug - integer determinant reaches a WASI matrix backend attribute gap
 diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
 --- a/src/sage/matrix/change_ring.pyx
 +++ b/src/sage/matrix/change_ring.pyx
@@ -7722,9 +7692,6 @@ diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factori
 diff -urN a/src/sage/structure/proof/all.py b/src/sage/structure/proof/all.py
 --- a/src/sage/structure/proof/all.py
 +++ b/src/sage/structure/proof/all.py
-@@ -214 +214 @@
--        sage: proof.all()
-+        sage: proof.all()                                                           # known bug - WASI dict display formatting
 @@ -224 +224 @@
 -        sage: proof.all()
 +        sage: proof.all()                                                           # known bug - WASI dict display formatting
@@ -8214,9 +8181,6 @@ diff -urN a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_re
 diff -urN a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty_print.py
 --- a/src/sage/repl/display/pretty_print.py
 +++ b/src/sage/repl/display/pretty_print.py
-@@ -109 +109 @@
--            sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys
-+            sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys                  # known bug - lightweight Sagelite pretty-printer fallback formatting
 @@ -154 +154 @@
 -            sage: stream.getvalue()
 +            sage: stream.getvalue()                                                 # known bug - lightweight Sagelite pretty-printer fallback formatting

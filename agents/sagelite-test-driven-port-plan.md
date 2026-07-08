@@ -40717,6 +40717,30 @@ cluster queries. Adjacent stale-tag probes confirmed that
 `regular_sequence_bounded.py:98` still fail under `--deferred=known-bug`, so
 those tags remain live.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found that the zero-row/zero-column matrix kernel
+examples and the integer determinant example in `sage/matrix/tests.py`, the
+first `proof.all()` display-format example in `sage/structure/proof/all.py`,
+and the sorted-key dictionary pretty-print example in
+`sage/repl/display/pretty_print.py` now pass when executed. The WASI source
+patch no longer marks those prompts as `# known bug`.
+
+Focused file-level validation against the current patched Sagelite source copy
+ran the three touched files together:
+
+```text
+matrix/tests.py: 13 passed, 0 failed, 5 skipped
+proof/all.py: 30 passed, 0 failed, 1 skipped
+pretty_print.py: 20 passed, 0 failed, 1 skipped
+three-file rerun: 63 passed, 0 failed, 7 skipped
+```
+
+The focused dashboard is `/tmp/sagelite-matrix-proof-pretty.sqlite3`; saved
+block- and file-failure cluster queries are empty. Adjacent probes confirmed
+that `stats/basic_stats.py:282`, `proof/all.py:227`,
+`pretty_print.py:154`, and `fancy_repr.py:158` still fail under
+`--deferred=known-bug`, so those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
