@@ -16,6 +16,7 @@ SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED ?= 1
 SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS ?= --ignore-invalid --quiet-invalid
 SAGELITE_DOCTEST_CANDIDATE_FLAGS ?= --strict-frontier
 SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED ?= ${CWD}/../../agents/sagelite-test-driven-port-plan.md
+SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT ?= $(realpath ${CWD}/../..)
 SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB ?=
 SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE ?= 0
 SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS ?= 0
@@ -237,7 +238,7 @@ sage-doctest-source-frontier:
 	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
 	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
 	  --mentioned-file "${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED}" \
-	  $(foreach pattern,${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB},--subtract-database-glob "$(pattern)") \
+	  $(foreach pattern,${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB},--subtract-database-glob "$(if $(filter /%,$(pattern)),$(pattern),${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT}/$(pattern))") \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE}),--require-subtraction-database,) \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS}),--fail-on-rows,) \
 	  $(if $(filter-out 0,${SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS}),--min-runnable-prompts "${SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS}",) \
