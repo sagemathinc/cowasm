@@ -40670,6 +40670,27 @@ capture check, `persist.pyx` UnicodeDecodeError position drift, and
 `sage_timeit.py` formatting tag still fail under `--deferred=known-bug`, so
 those tags remain live.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: a focused
+`--deferred=known-bug` rerun found that the deprecated
+`n_factor_to_list(60, 20)` import-warning example in
+`sage/libs/flint/ulong_extras.pyx` now passes when executed. The WASI source
+patch no longer marks that prompt as `# known bug`.
+
+Focused make-target validation refreshed the patched Sagelite source copy and
+ran a one-file corpus with failures disallowed:
+
+```text
+ulong_extras.pyx: 2 passed, 0 failed, 0 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-stale-next/ulong-make.sqlite3`; it
+records runner version 96, node profile, and empty block- and file-failure
+cluster queries. Adjacent probes confirmed the neighboring
+`nmod_poly_linkage.pxi` alias/remainder tags, `convert_gmp.pyx` hash tag, and
+`join_feature.py` output tag still fail under `--deferred=known-bug`, so those
+tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

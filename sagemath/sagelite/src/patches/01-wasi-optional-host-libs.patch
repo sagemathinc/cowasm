@@ -8101,12 +8101,6 @@ diff -urN a/src/sage/libs/flint/qsieve_sage.pyx b/src/sage/libs/flint/qsieve_sag
  """
  Interface to FLINT's ``qsieve_factor()``. This used to interact
  with an external "QuadraticSieve" program, but its functionality has
-diff -urN a/src/sage/libs/flint/ulong_extras.pyx b/src/sage/libs/flint/ulong_extras.pyx
---- a/src/sage/libs/flint/ulong_extras.pyx
-+++ b/src/sage/libs/flint/ulong_extras.pyx
-@@ -7 +7 @@
--    sage: n_factor_to_list(60, 20)
-+    sage: n_factor_to_list(60, 20)                                                # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN -U0 a/src/sage/libs/flint/nmod_poly_linkage.pxi b/src/sage/libs/flint/nmod_poly_linkage.pxi
 --- a/src/sage/libs/flint/nmod_poly_linkage.pxi
 +++ b/src/sage/libs/flint/nmod_poly_linkage.pxi
