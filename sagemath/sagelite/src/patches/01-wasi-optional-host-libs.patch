@@ -5110,12 +5110,6 @@ diff -urN a/src/sage/sets/image_set.py b/src/sage/sets/image_set.py
              True
          """
          return hash((self._map, self._domain_subset))
-diff -urN a/src/sage/combinat/subset.py b/src/sage/combinat/subset.py
---- a/src/sage/combinat/subset.py
-+++ b/src/sage/combinat/subset.py
-@@ -1501 +1501 @@
--        sage: subsets([1,2,3])
-+        sage: subsets([1,2,3])                                                        # known bug
 diff -urN a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
 --- a/src/sage/combinat/combinat.py
 +++ b/src/sage/combinat/combinat.py

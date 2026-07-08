@@ -40532,6 +40532,29 @@ The standalone smoke fixture covers both `known bug` and `not implemented`
 normalization, so multi-word deferred tags are emitted in the hyphenated form
 accepted by `sage -t --deferred=...`.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: using
+`deferred-reruns.sql` against the runner-95 full-corpus dashboard found that
+the `sage/combinat/subset.py` generator-repr check at line 1501 no longer
+needs a `# known bug` browser-profile tag. A focused rerun with
+`--deferred=known-bug --line 1501` passed, recording actual output
+`<generator object powerset at 0x>`, which matches the doctest ellipsis
+expectation.
+
+The WASI source patch now leaves that doctest untagged. Focused make-target
+validation rebuilt a fresh patched Sagelite source copy and ran a one-file
+subset corpus with failures disallowed:
+
+```text
+subset.py: 279 passed, 0 failed, 2 skipped
+```
+
+The focused dashboard has empty block- and file-failure cluster queries; the
+two remaining skipped rows are the existing optional
+`sage.combinat,sage.graphs` boundary. Adjacent stale-skip probes for
+`dyck_word.py` latex-option dict order and `integer_lists/base.pyx`
+`__getstate__()` dict display order still fail under `--deferred=known-bug`,
+so those tags remain live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
