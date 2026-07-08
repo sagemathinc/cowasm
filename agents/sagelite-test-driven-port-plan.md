@@ -39803,6 +39803,25 @@ should avoid repeating this exact symbolic/quiver include slice unless the
 symbolic backend, quiver algebra support, or browser-profile skip policy
 changes.
 
+Follow-up source-frontier runnable-count reporting pass on 2026-07-08: no
+corpus entry was promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. The `doctest-source-frontier.py` helper now accepts
+`--include-runnable-prompts`, which appends a `runnable_prompt_count` column to
+tabular output while preserving the existing default and `--paths-only`
+formats. This makes low-noise scheduled scans easier to interpret when a file
+contains many prompts but most are covered by file-level, inline, or
+standalone skip directives.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-source-frontier.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a focused synthetic
+source-frontier smoke with one runnable and one directive-skipped file, and the
+live make-wrapper frontier scan over `.py`, `.pyx`, `.pxi`, `.rst`, `.pxd`,
+and `.txt` files with `.tmp/current-run/**/*.sqlite3` subtraction. The live
+scan still prints only the header row:
+`path	prompt_count	runnable_prompt_count`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

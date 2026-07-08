@@ -159,6 +159,11 @@ def parse_args() -> argparse.Namespace:
         help="print a tab-separated header row",
     )
     parser.add_argument(
+        "--include-runnable-prompts",
+        action="store_true",
+        help="append a runnable_prompt_count column to tabular output",
+    )
+    parser.add_argument(
         "--fail-on-rows",
         action="store_true",
         help="exit with status 1 after printing rows if any frontier rows remain",
@@ -181,6 +186,10 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.paths_only and args.include_header:
         parser.error("--paths-only cannot be combined with --include-header")
+    if args.paths_only and args.include_runnable_prompts:
+        parser.error(
+            "--paths-only cannot be combined with --include-runnable-prompts"
+        )
     if args.min_prompts < 1:
         parser.error("--min-prompts must be positive")
     if args.max_prompts is not None and args.max_prompts < args.min_prompts:
@@ -420,7 +429,7 @@ def main() -> int:
         )
         return 2
 
-    rows: list[tuple[int, str]] = []
+    rows: list[tuple[int, int, str]] = []
     for source_path in iter_source_files(source_root, args.extensions):
         relative_path = normalize_path(str(source_path), source_root)
         if is_excluded_path(relative_path, args.excluded_path_prefixes):
@@ -439,17 +448,22 @@ def main() -> int:
             continue
         if runnable_prompt_count < args.min_runnable_prompts:
             continue
-        rows.append((prompt_count, relative_path))
+        rows.append((prompt_count, runnable_prompt_count, relative_path))
 
-    rows.sort(key=lambda row: (-row[0], row[1]))
+    rows.sort(key=lambda row: (-row[0], row[2]))
     if args.limit is not None:
         rows = rows[: args.limit]
 
     if args.include_header:
-        print("path\tprompt_count")
-    for prompt_count, relative_path in rows:
+        header = "path\tprompt_count"
+        if args.include_runnable_prompts:
+            header += "\trunnable_prompt_count"
+        print(header)
+    for prompt_count, runnable_prompt_count, relative_path in rows:
         if args.paths_only:
             print(relative_path)
+        elif args.include_runnable_prompts:
+            print(f"{relative_path}\t{prompt_count}\t{runnable_prompt_count}")
         else:
             print(f"{relative_path}\t{prompt_count}")
     if args.fail_on_rows and rows:

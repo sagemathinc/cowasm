@@ -3850,6 +3850,20 @@ if [ "$doctest_source_frontier_runnable_paths" != "src/sage/example/frontier_can
   printf '%s\n' "$doctest_source_frontier_runnable_paths" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --min-runnable-prompts did not filter skipped-only prompt files."
 fi
+doctest_source_frontier_runnable_counts="$("$src_dir/doctest-source-frontier.py" \
+  --include-header \
+  --include-runnable-prompts \
+  --limit 2 \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database-glob "$probe_dir/sagelite-doctest-candidate-helper.sqlite3")"
+if [ "$doctest_source_frontier_runnable_counts" != "path	prompt_count	runnable_prompt_count
+src/sage/example/directive_skipped_frontier.py	2	0
+src/sage/example/frontier_candidate.py	2	2" ]; then
+  printf '%s\n' "$doctest_source_frontier_runnable_counts" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --include-runnable-prompts did not report runnable counts."
+fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
   --quiet-invalid \
