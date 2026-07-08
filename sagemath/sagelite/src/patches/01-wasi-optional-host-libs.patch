@@ -7116,15 +7116,6 @@ diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial
 @@ -1824 +1824 @@
 -            sage: J.groebner_basis
 +            sage: J.groebner_basis                                                    # needs sage.libs.singular
-@@ -1936 +1936 @@
--            sage: a.g(5) is a.f(5)
-+            sage: a.g(5) is a.f(5)                                                     # known bug - warning output is not compared by the Sagelite runner here
-@@ -1940 +1940 @@
--            sage: Foo.g(a, 5) is a.f(5)
-+            sage: Foo.g(a, 5) is a.f(5)                                                 # known bug - warning output is not compared by the Sagelite runner here
-@@ -1942 +1942 @@
--            sage: Foo.g(a, y=1,x=5) is a.f(5)
-+            sage: Foo.g(a, y=1,x=5) is a.f(5)                                           # known bug - warning output is not compared by the Sagelite runner here
 @@ -2169,2 +2169,2 @@
 -            sage: foo.f.precompute(range(2), 2)
 -            sage: foo.f.cache == {((0,), ()): 0, ((1,), ()): 1, ((3,), ()): 9}
@@ -7172,12 +7163,6 @@ diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial
 @@ -2430 +2430 @@
 -            sage: I.gens.is_in_cache()
 +            sage: I.gens.is_in_cache()                                                # needs sage.rings.polynomial.plural
-@@ -2770 +2770 @@
--            sage: a.g() is a.f()
-+            sage: a.g() is a.f()                                                      # known bug - warning output is not compared by the Sagelite runner here
-@@ -2774 +2774 @@
--            sage: Foo.g(a) is a.f()
-+            sage: Foo.g(a) is a.f()                                                    # known bug - warning output is not compared by the Sagelite runner here
 diff -urN a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/multi_filtered_vector_space.py
 --- a/src/sage/modules/multi_filtered_vector_space.py
 +++ b/src/sage/modules/multi_filtered_vector_space.py

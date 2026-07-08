@@ -40820,6 +40820,26 @@ adjacent lightweight pretty-printer fallback tags in `pretty_print.py:154` and
 one-line list fallback and an unhandled `SomeIPythonRepr` set fallback,
 respectively, with the current staged resources.
 
+Follow-up stateful warning deferred-tag audit on 2026-07-08 UTC: a full-file
+`--deferred=known-bug` rerun found that the warning-capture examples in
+`sage/misc/cachefunc.pyx` at lines 1936, 1940, 1942, 2770, and 2774 now pass
+in source order. Focused `--line` reruns still miss their setup state, so the
+full-file behavior is the relevant corpus signal for these tags. The WASI
+source patch no longer marks those prompts as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a one-file corpus with failures disallowed:
+
+```text
+cachefunc.pyx: 635 passed, 0 failed, 223 skipped
+```
+
+The dashboard is `.tmp/current-run/cachefunc-warning-tags-final-make.sqlite3`; it
+records runner version 98, node profile, and empty saved block- and
+file-failure cluster queries. The neighboring cachefunc doc lookup tag at
+line 907 remains live; the full-file deferred rerun still reports the expected
+module-warning prefix drift for `print(sage_getdoc(I.groebner_basis))`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
