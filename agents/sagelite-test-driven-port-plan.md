@@ -39842,6 +39842,39 @@ exhausted under the standard scheduled filters at CoWasm commit
 pass should target a known backend/runtime cluster or intentionally relax the
 mention-subtraction frontier, rather than resampling the same empty slice.
 
+Follow-up relaxed mention-subtraction audit on 2026-07-08 UTC: no corpus entry
+was promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. A fresh runner smoke against the patched source
+tree still works:
+
+```text
+output.py: 70 passed, 0 failed, 0 skipped
+```
+
+The smoke database is
+`.tmp/current-run/scheduled-2026-07-08-relaxed-frontier/source-smoke.sqlite3`
+and records CoWasm commit `3c4d95b3b8e680007d8dc76e5803a2f080fe0939`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, runner version 94, and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
+The standard source-frontier scan, the same scan with
+`--include-mentioned`, and the strict SQLite promotion-candidate scan across
+`.tmp/**/*.sqlite3` all printed only their tab-separated header rows when
+invalid scratch databases were ignored and the scan was pinned to the patched
+source root. Relaxing the plan-mention subtraction therefore did not uncover a
+fresh candidate once the existing scratch dashboards were still subtracted.
+
+The remaining strict near-miss output is stale with respect to current source
+patches rather than a new target: `pbori/nf.py`, `pbori/frontend.py`, and
+`pbori/randompoly.py` have already been converted to skipped-only BRiAL
+boundary coverage in newer scratch runs, while the book integration example is
+now covered by file-level `# sage.doctest: needs sage.symbolic` metadata in the
+patched source tree. Future scheduled runs should continue past the relaxed
+frontier scan and use a deliberately chosen backend/runtime cluster, not the
+old low-prompt scratch rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
