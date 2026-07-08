@@ -40495,6 +40495,28 @@ prints no uncovered candidate. A dry-run of `test-sage-doctest-corpus` with
 `SAGELITE_DOCTEST_DB=.tmp/current-run/dry-run.sqlite3` likewise expands the
 SQLite output path under `/home/user/cowasm/.tmp/current-run/`.
 
+Follow-up deferred-rerun audit pass on 2026-07-08 UTC: runner version 96 adds
+an explicit `--deferred` doctest option for stale-skip triage. Default runs
+still record `# known bug`, `# not implemented`, `# not tested`, and `# py2`
+blocks as deferred skips, but focused probes can now run all deferred blocks
+with `--deferred` or a single normalized tag with `--deferred=known-bug`.
+
+The new rerun path found one stale browser-profile tag:
+`sage/doctest/marked_output.py` line 43 now passes when the
+`MarkedOutput("56 µs")` example is actually executed, so the WASI source patch
+no longer marks that non-ASCII literal example as `# known bug`.
+
+Validation used `node --check` for `sagelite-node-repl.cjs`, `bash -n` for the
+standalone smoke script, a clean `patch --dry-run` of the WASI source patch
+against `/home/user/sagelite`, and focused scratch doctest probes showing:
+
+```text
+default deferred smoke: 1 passed, 0 failed, 2 skipped
+--deferred=known-bug: 1 passed, 1 failed, 1 skipped
+--deferred: 1 passed, 2 failed, 0 skipped
+MarkedOutput("56 µs") with --deferred=known-bug: 1 passed, 0 failed, 0 skipped
+```
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

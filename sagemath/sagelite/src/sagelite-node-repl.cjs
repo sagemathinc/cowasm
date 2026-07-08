@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 95;
+const doctestRunnerVersion = 96;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -201,6 +201,8 @@ function parseDoctestArgs(args, invocationCwd) {
     long: false,
     optional: false,
     optionalFeatures: [],
+    deferred: false,
+    deferredFeatures: [],
     blockKeys: [],
     lines: [],
     profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
@@ -254,6 +256,12 @@ function parseDoctestArgs(args, invocationCwd) {
     } else if (arg.startsWith("--optional=")) {
       options.optionalFeatures.push(
         ...parseDoctestFeatureList(arg.slice("--optional=".length)),
+      );
+    } else if (arg === "--deferred") {
+      options.deferred = true;
+    } else if (arg.startsWith("--deferred=")) {
+      options.deferredFeatures.push(
+        ...parseDoctestFeatureList(arg.slice("--deferred=".length), "--deferred"),
       );
     } else if (arg === "--block-key") {
       i += 1;
@@ -362,13 +370,13 @@ function parseDoctestJobs(value, optionName = "jobs") {
   return Number(value);
 }
 
-function parseDoctestFeatureList(value) {
+function parseDoctestFeatureList(value, optionName = "--optional") {
   const features = value
     .split(/[,\s]+/)
     .map((feature) => feature.trim().toLowerCase())
     .filter(Boolean);
   if (features.length === 0) {
-    throw new Error("--optional=FEATURE requires at least one feature");
+    throw new Error(`${optionName}=FEATURE requires at least one feature`);
   }
   return features;
 }
@@ -507,6 +515,8 @@ async function runDoctestFileTask({
           long: options.long,
           optional: options.optional,
           optionalFeatures: options.optionalFeatures,
+          deferred: options.deferred,
+          deferredFeatures: options.deferredFeatures,
           blockKeys: options.blockKeys,
           lines: options.lines,
           sourceRoot: options.sourceRoot,
@@ -574,9 +584,11 @@ async function runDoctestWorker(args, invocationCwd, pythonOptions) {
       statePath: payload.statePath,
       long: payload.long,
       optional: payload.optional,
-      optionalFeatures: payload.optionalFeatures,
-      blockKeys: payload.blockKeys,
-      lines: payload.lines,
+      optionalFeatures: payload.optionalFeatures || [],
+      deferred: payload.deferred || false,
+      deferredFeatures: payload.deferredFeatures || [],
+      blockKeys: payload.blockKeys || [],
+      lines: payload.lines || [],
       sourceRoot: payload.sourceRoot,
       invocationCwd: payload.invocationCwd || invocationCwd,
     });
@@ -598,6 +610,8 @@ function runDoctestFileWorker({
   long,
   optional,
   optionalFeatures,
+  deferred,
+  deferredFeatures,
   blockKeys,
   lines,
   sourceRoot,
@@ -615,6 +629,8 @@ function runDoctestFileWorker({
         long,
         optional,
         optionalFeatures,
+        deferred,
+        deferredFeatures,
         blockKeys,
         lines,
         sourceRoot,
@@ -810,6 +826,8 @@ function buildDoctestPython({
   long,
   optional,
   optionalFeatures,
+  deferred,
+  deferredFeatures,
   blockKeys,
   lines,
   sourceRoot,
@@ -845,6 +863,8 @@ __cowasm_state_path = ${JSON.stringify(statePath)}
 __cowasm_long = ${long ? "True" : "False"}
 __cowasm_optional = ${optional ? "True" : "False"}
 __cowasm_optional_features = set(json.loads(${JSON.stringify(JSON.stringify(optionalFeatures))}))
+__cowasm_deferred = ${deferred ? "True" : "False"}
+__cowasm_deferred_features = set(json.loads(${JSON.stringify(JSON.stringify(deferredFeatures))}))
 __cowasm_block_keys = set(json.loads(${JSON.stringify(JSON.stringify(blockKeys))}))
 __cowasm_lines = set(json.loads(${JSON.stringify(JSON.stringify(lines))}))
 __cowasm_source_root = ${sourceRoot ? JSON.stringify(sourceRoot) : "None"}
@@ -1398,6 +1418,21 @@ def __cowasm_deferred_tags(source):
     return [match.group(1).lower() for match in __cowasm_deferred_re.finditer(source)]
 
 
+def __cowasm_normalized_feature(value):
+    return re.sub(r"[\\s_]+", "-", value.strip().lower())
+
+
+def __cowasm_deferred_enabled(source):
+    if not __cowasm_deferred_re.search(source):
+        return True
+    if __cowasm_deferred:
+        return True
+    return any(
+        __cowasm_normalized_feature(tag) in __cowasm_deferred_features
+        for tag in __cowasm_deferred_tags(source)
+    )
+
+
 def __cowasm_optional_feature_tags(source):
     tags = []
     for match in __cowasm_optional_tag_re.finditer(source):
@@ -1723,7 +1758,7 @@ def __cowasm_docstrings(filename, text):
 
 
 def __cowasm_should_skip(source):
-    if __cowasm_deferred_re.search(source):
+    if not __cowasm_deferred_enabled(source):
         return True
     if not __cowasm_optional_enabled(source):
         return True

@@ -3956,6 +3956,8 @@ if ! printf '%s\n' "$doctest_state_cluster_output" |
 fi
 doctest_optional_feature_db="$probe_dir/sagelite-doctest-optional-feature.sqlite3"
 doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
+doctest_deferred_feature_db="$probe_dir/sagelite-doctest-deferred-feature.sqlite3"
+doctest_deferred_feature_log="$dist_dir/doctest-deferred-feature.log"
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
@@ -3992,6 +3994,38 @@ if [ "$doctest_needs_feature_pass_count" != "1" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke did not run the requested standalone needs feature."
+fi
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --deferred=known-bug \
+      --sqlite "$doctest_deferred_feature_db" "$doctest_smoke_file" \
+      >"$doctest_deferred_feature_log" 2>&1
+doctest_deferred_feature_status=$?
+set -e
+if [ "$doctest_deferred_feature_status" -eq 124 ]; then
+  tail -120 "$doctest_deferred_feature_log" >&2
+  record_blocker "sagelite-blocked: sage -t deferred-feature smoke timed out after $node_import_timeout; see $doctest_deferred_feature_log for the first runtime blocker."
+fi
+if [ "$doctest_deferred_feature_status" -eq 0 ]; then
+  cat "$doctest_deferred_feature_log" >&2
+  sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
+fi
+doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_deferred_feature_counts" != "failed|39|29|1|9" ]; then
+  cat "$doctest_deferred_feature_log" >&2
+  sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"
+fi
+doctest_deferred_feature_failed_count="$(sqlite3 "$doctest_deferred_feature_db" "select count(*) from blocks where status = 'failed' and tags like '%deferred:known bug%' and source = '1 / 0' || char(10);")"
+if [ "$doctest_deferred_feature_failed_count" != "1" ]; then
+  cat "$doctest_deferred_feature_log" >&2
+  sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t deferred-feature smoke did not run the requested known-bug deferred block."
 fi
 doctest_rel_tol_failure_file="$probe_dir/sagelite-doctest-rel-tol-failure.py"
 doctest_rel_tol_failure_db="$probe_dir/sagelite-doctest-rel-tol-failure.sqlite3"
