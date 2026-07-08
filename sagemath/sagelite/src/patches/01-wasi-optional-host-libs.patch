@@ -6673,7 +6673,7 @@ diff -urN a/src/sage/misc/lazy_format.py b/src/sage/misc/lazy_format.py
 +++ b/src/sage/misc/lazy_format.py
 @@ -45 +45 @@
 -        sage: lf
-+        sage: lf                                                                        # known bug
++        sage: lf
 diff -urN a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
 --- a/src/sage/misc/lazy_attribute.pyx
 +++ b/src/sage/misc/lazy_attribute.pyx

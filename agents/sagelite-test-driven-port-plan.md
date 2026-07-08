@@ -41051,6 +41051,33 @@ file-failure cluster queries. Validation also used
 `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
 `patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
 
+Follow-up doctest displayhook audit on 2026-07-08 UTC: no corpus entry was
+promoted. The doctest runner now catches ordinary `repr()` exceptions raised
+from the doctest displayhook and emits the CPython-style interactive fallback
+`<repr(<Type at 0x...>) failed: ...>` instead of recording the example as an
+unexpected exception. The runner version is now 102, and the standalone smoke
+fixture includes a focused broken-`__repr__` object.
+
+This made the `sage/misc/lazy_format.py` lazy-format display tag stale, so the
+WASI source patch no longer marks `lazy_format.py:45` as `# known bug`.
+Focused validation against the current patched source tree and a staged
+Electron resource bundle records:
+
+```text
+lazy_format.py: 23 passed, 0 failed, 0 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/lazy-format-displayhook-full-after.sqlite3`; it records
+runner version 102, node profile, and empty saved block- and file-failure
+cluster queries. Validation also used a synthetic repr-failure smoke
+(`2 passed, 0 failed, 0 skipped`), `node --check
+sagemath/sagelite/src/sagelite-node-repl.cjs`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. A
+focused `--line 45` rerun still misses the non-contiguous setup state, so the
+full-file deferred rerun is the relevant stale-tag signal.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

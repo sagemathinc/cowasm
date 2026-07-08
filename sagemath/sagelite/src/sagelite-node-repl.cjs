@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 101;
+const doctestRunnerVersion = 102;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -913,10 +913,20 @@ __cowasm_displayhook_delegate = None
 
 
 def __cowasm_doctest_displayhook(value):
-    if __cowasm_displayhook_delegate is not None:
-        __cowasm_displayhook_delegate(value)
-    else:
-        sys.__displayhook__(value)
+    try:
+        if __cowasm_displayhook_delegate is not None:
+            __cowasm_displayhook_delegate(value)
+        else:
+            sys.__displayhook__(value)
+    except Exception as exc:
+        type_name = type(value).__qualname__
+        module_name = type(value).__module__
+        if module_name and module_name not in ("builtins", "__main__"):
+            type_name = module_name + "." + type_name
+        sys.stdout.write(
+            f"<repr(<{type_name} at 0x{id(value):x}>) failed: "
+            f"{type(exc).__name__}: {exc}>\\n"
+        )
     if value is not None and __cowasm_active_displayhook_globals is not None:
         __cowasm_active_displayhook_globals["_"] = value
 
