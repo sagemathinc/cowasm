@@ -41208,6 +41208,51 @@ cleanup, the checked-in WASI source patch still contained a no-op
 `# known bug` tag was removed. That no-op hunk was dropped so future patch
 reviews show only real browser-profile metadata or source changes.
 
+Scheduled frontier audit on 2026-07-08 UTC: no corpus entry was promoted. The
+default dashboard path was not available for a fresh promotion scan, so the
+run used bounded scratch probes from the patched source copy.
+
+An initial runner health batch accidentally selected already-covered
+typeset/statistics/probability/game files from the 1,113-line checked corpus;
+it still confirmed the installed doctest runner and metadata path were healthy:
+
+```text
+sage -t passed: 585 passed, 0 failed, 100 skipped; sqlite=/tmp/sagelite-frontier-20260708.sqlite3
+```
+
+The corrected frontier subtraction showed the obvious small helper frontier is
+mostly dependency-boundary coverage, not promotable runnable coverage. Two
+small batches recorded only skipped blocks:
+
+```text
+sage -t passed: 0 passed, 0 failed, 37 skipped; sqlite=/tmp/sagelite-frontier-small-20260708.sqlite3
+sage -t passed: 0 passed, 0 failed, 94 skipped; sqlite=/tmp/sagelite-frontier-runnable-20260708.sqlite3
+```
+
+The Judson abstract-algebra files that are not already in the corpus remain a
+broader group-theory frontier rather than quiet pure-math additions. A bounded
+probe of `actions-sage.py`, `normal-sage.py`, `cosets-sage.py`,
+`homomorph-sage.py`, and `sylow-sage.py` recorded:
+
+```text
+sage -t failed: 8 passed, 192 failed, 3 skipped; sqlite=/tmp/sagelite-frontier-judson-a-20260708.sqlite3
+```
+
+The dominant failure class in that run was `NameError` with 187 block failures,
+so future work should treat this as a missing startup/backend surface cluster
+instead of a simple corpus-growth candidate.
+
+A mixed numeric/support probe likewise produced no clean promotion candidate:
+
+```text
+sage -t failed: 5 passed, 23 failed, 109 skipped; sqlite=/tmp/sagelite-frontier-mixed-20260708.sqlite3
+```
+
+That run found skipped-only module/vector/statistics/transcendental/interface
+files, a `symbolic/benchmark.py` symbolic-startup cluster
+(`NameError|21`, `ModuleNotFoundError|1`), and a file-level
+`wasm_trap` in `rings/ring.pyx` at `TestSuite(QQ['x']).run(verbose=True)`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
