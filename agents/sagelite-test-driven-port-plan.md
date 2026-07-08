@@ -41303,6 +41303,27 @@ PARI, NumPy, eclib, NTL/modules/p-adics, finite-ring, schemes, and symbolic
 boundaries. Future scheduled runs should avoid repeating this exact compact
 slice unless those browser-profile dependency boundaries change.
 
+Follow-up Judson GAP-boundary pass on 2026-07-08 UTC: no corpus entry was
+promoted. The previous Judson group-theory probe was reclassified from a broad
+`NameError` startup-surface cluster to an explicit browser-profile dependency
+boundary after a direct Sagelite import probe showed that
+`sage.groups.perm_gps.permgroup_named` fails at
+`ModuleNotFoundError: No module named 'sage.libs.gap.libgap'`.
+
+The WASI source patch now adds file-level `# sage.doctest: needs
+sage.libs.gap` metadata to the unpromoted Judson group-theory files:
+`actions-sage.py`, `normal-sage.py`, `cosets-sage.py`,
+`homomorph-sage.py`, and `sylow-sage.py`. A focused rerun against the patched
+source copy records:
+
+```text
+sage -t passed: 0 passed, 0 failed, 5 skipped; sqlite=/tmp/sagelite-judson-gap-tags.sqlite3
+```
+
+Each file records one skipped file-level block tagged `needs:sage.libs.gap`,
+and a source-frontier check with `--min-runnable-prompts 1` no longer reports
+those five files as runnable Judson candidates.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

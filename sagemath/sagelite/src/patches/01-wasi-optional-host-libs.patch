@@ -19154,6 +19154,14 @@ diff --git a/src/sage/quivers/representation.py b/src/sage/quivers/representatio
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.quivers sage.graphs sage.modules.free_module sage.rings.number_field
  r"""
+diff --git a/src/sage/tests/books/judson_abstract_algebra/actions-sage.py b/src/sage/tests/books/judson_abstract_algebra/actions-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/actions-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/actions-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.gap
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
 diff --git a/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py b/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
 --- a/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
@@ -19176,6 +19184,30 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/s
 @@ -102,1 +102,1 @@
 -    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)
 +    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
+diff --git a/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py b/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.gap
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage.py b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.gap
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/normal-sage.py b/src/sage/tests/books/judson_abstract_algebra/normal-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/normal-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/normal-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.gap
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
 diff --git a/src/sage/tests/books/judson_abstract_algebra/poly-sage.py b/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
@@ -19301,6 +19333,14 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/struct-sage.py b/src/s
 +++ b/src/sage/tests/books/judson_abstract_algebra/struct-sage.py
 @@ -1,3 +1,4 @@
 +# sage.doctest: needs sage.groups
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/sylow-sage.py b/src/sage/tests/books/judson_abstract_algebra/sylow-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/sylow-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/sylow-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.gap
  ##          Sage Doctest File         ##
  #**************************************#
  #*    Generated from PreTeXt source   *#
