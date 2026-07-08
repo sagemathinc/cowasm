@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 93;
+const doctestRunnerVersion = 94;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1650,7 +1650,8 @@ def __cowasm_docstrings(filename, text):
             yield os.path.basename(filename), filtered, lineno
         return
     docstrings = []
-    stack = [(os.path.splitext(os.path.basename(filename))[0], tree)]
+    module_name = os.path.splitext(os.path.basename(filename))[0]
+    stack = [(module_name, tree)]
     while stack:
         name, node = stack.pop(0)
         body = getattr(node, "body", [])
@@ -1670,6 +1671,23 @@ def __cowasm_docstrings(filename, text):
         for child in body:
             if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 stack.append((f"{name}.{child.name}", child))
+    extra_index = 0
+    for node in getattr(tree, "body", [])[1:]:
+        if (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ):
+            raw_docstring = __cowasm_raw_docstring_source(text, node.value)
+            docstring = raw_docstring if raw_docstring is not None else node.value.value
+            filtered, _ = __cowasm_filtered_text_with_prompts(docstring)
+            if filtered:
+                extra_index += 1
+                docstrings.append((
+                    max(0, node.lineno - 1),
+                    f"{module_name}[{extra_index}]",
+                    docstring,
+                ))
     for line_offset, name, docstring in sorted(docstrings, key=lambda item: item[0]):
         yield name, docstring, line_offset
 

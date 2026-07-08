@@ -39619,6 +39619,32 @@ The latest-run summary records CoWasm commit
 `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
 and empty block-failure clusters.
 
+Focused generated-book doctest extraction and corpus-growth pass on
+2026-07-08: the Sagelite doctest extractor now includes additional top-level
+string literal blocks in `.py` files when those blocks contain Sage prompts.
+This makes generated files that start with a notice string followed by a raw
+doctest string visible to the dashboard, instead of recording misleading
+zero-block results.
+
+The pass promotes
+`sage/tests/books/judson_abstract_algebra/integers-sage.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 1,097 non-comment entries. Focused make-target validation with a temporary
+one-file corpus recorded:
+
+```text
+integers-sage.py: 53 passed, 0 failed, 0 skipped
+```
+
+The validation database at
+`.tmp/current-run/scheduled-2026-07-08-judson-promotion/integers-make.sqlite3`
+records CoWasm commit `7a738118a7dc731b9fba03c287b41d5466bc271a`, Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile,
+runner version 94, and empty block-failure clusters. A focused synthetic smoke
+also confirms that a `.py` file with an initial non-doctest notice string and a
+second raw doctest string records two passing blocks with preserved line
+numbers.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

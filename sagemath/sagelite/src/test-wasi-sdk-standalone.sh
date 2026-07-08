@@ -2150,6 +2150,54 @@ if [ "$doctest_parallel_order" != "$doctest_parallel_a_file|$doctest_parallel_b_
   sqlite3 "$doctest_parallel_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t parallel doctest smoke did not preserve input file order."
 fi
+doctest_extra_string_file="$probe_dir/sagelite-doctest-extra-string.py"
+doctest_extra_string_db="$probe_dir/sagelite-doctest-extra-string.sqlite3"
+doctest_extra_string_log="$dist_dir/doctest-extra-string.log"
+cat >"$doctest_extra_string_file" <<'PY'
+"""
+Generated file notice without runnable examples.
+"""
+
+r"""
+EXAMPLES::
+
+    sage: extra_string_value = 37
+    sage: extra_string_value + 5
+    42
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_extra_string_db" "$doctest_extra_string_file" \
+      >"$doctest_extra_string_log" 2>&1
+doctest_extra_string_status=$?
+set -e
+if [ "$doctest_extra_string_status" -eq 124 ]; then
+  tail -120 "$doctest_extra_string_log" >&2
+  record_blocker "sagelite-blocked: sage -t extra-string doctest smoke timed out after $node_import_timeout; see $doctest_extra_string_log for the first runtime blocker."
+fi
+if [ "$doctest_extra_string_status" -ne 0 ]; then
+  tail -120 "$doctest_extra_string_log" >&2
+  sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t extra-string doctest smoke failed; see $doctest_extra_string_log for the first runtime blocker."
+fi
+doctest_extra_string_counts="$(sqlite3 "$doctest_extra_string_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_extra_string_counts" != "passed|2|2|0|0" ]; then
+  cat "$doctest_extra_string_log" >&2
+  sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t extra-string doctest smoke wrote unexpected SQLite counts: $doctest_extra_string_counts"
+fi
+doctest_extra_string_line="$(grep -nF 'sage: extra_string_value + 5' "$doctest_extra_string_file" | head -n 1 | cut -d: -f1)"
+doctest_extra_string_line_count="$(sqlite3 "$doctest_extra_string_db" "select count(*) from blocks where start_line = $doctest_extra_string_line and source like 'extra_string_value + 5%';")"
+if [ "$doctest_extra_string_line_count" != "1" ]; then
+  cat "$doctest_extra_string_log" >&2
+  sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t extra-string doctest smoke did not preserve line numbers for extra top-level strings."
+fi
 doctest_expected_line="$(grep -nF 'sage: 2^5' "$doctest_smoke_file" | head -n 1 | cut -d: -f1)"
 doctest_recorded_line="$(sqlite3 "$doctest_smoke_db" "select start_line from blocks where source like '2^5%' limit 1;")"
 if [ "$doctest_recorded_line" != "$doctest_expected_line" ]; then
