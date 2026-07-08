@@ -40999,6 +40999,30 @@ focused probes confirmed that the `decorators.py`, `lazy_format.py`,
 `sage_timeit.py`, and `prandom.py` known-bug tags sampled in the same pass
 remain live under the current default node profile.
 
+Follow-up matrix-group pickle boundary pass on 2026-07-08 UTC: no corpus entry
+was promoted. A small runnable-frontier probe found
+`sage/groups/matrix_gps/pickling_overrides.py` reporting 12 passing setup and
+registration checks but 16 failures, all downstream of imports from
+`sage.libs.gap.libgap`. The WASI source patch now marks the three legacy
+matrix-group restore doctest regions as `# needs sage.libs.gap`, so the file is
+classified as explicit GAP-boundary coverage instead of a runnable low-prompt
+candidate.
+
+Focused validation against the patched build tree records:
+
+```text
+pickling_overrides.py: 0 passed, 0 failed, 28 skipped
+```
+
+The scratch dashboard is
+`.tmp/current-run/scheduled-active/pickling-overrides-after.sqlite3`; it records
+all 28 skipped blocks with `optional:sage.libs.gap`. The same source-frontier
+query that previously listed the file with 28 runnable prompts no longer emits
+it after the tags. Validation also used `node --check
+sagemath/sagelite/src/sagelite-node-repl.cjs`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

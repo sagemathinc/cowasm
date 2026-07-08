@@ -19379,3 +19379,30 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/calcul
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.plot sage.rings.number_field
  """
+diff --git a/src/sage/groups/matrix_gps/pickling_overrides.py b/src/sage/groups/matrix_gps/pickling_overrides.py
+--- a/src/sage/groups/matrix_gps/pickling_overrides.py
++++ b/src/sage/groups/matrix_gps/pickling_overrides.py
+@@ -18,6 +18,7 @@ class LegacyMatrixGroup(FinitelyGeneratedMatrixGroup_gap):
+ 
+         EXAMPLES::
+ 
++            sage: # needs sage.libs.gap
+             sage: from sage.groups.matrix_gps.pickling_overrides import LegacyMatrixGroup
+             sage: state = dict()
+             sage: state['_MatrixGroup_gap__n'] = 2
+@@ -52,6 +53,7 @@ class LegacyMatrixGroupElement(MatrixGroupElement_gap):
+ 
+         EXAMPLES::
+ 
++            sage: # needs sage.libs.gap
+             sage: from sage.groups.matrix_gps.pickling_overrides import LegacyMatrixGroup, LegacyMatrixGroupElement
+             sage: state = dict()
+             sage: state['_MatrixGroup_gap__n'] = 2
+@@ -91,6 +93,7 @@ class LegacyGeneralLinearGroup(LinearMatrixGroup_generic):
+ 
+         EXAMPLES::
+ 
++            sage: # needs sage.libs.gap
+             sage: from sage.groups.group import Group
+             sage: from sage.groups.matrix_gps.pickling_overrides import LegacyGeneralLinearGroup
+             sage: state = dict()
