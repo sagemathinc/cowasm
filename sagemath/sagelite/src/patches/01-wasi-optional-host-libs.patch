@@ -19056,6 +19056,74 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/s
 @@ -102,1 +102,1 @@
 -    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)
 +    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
+diff --git a/src/sage/tests/books/judson_abstract_algebra/poly-sage.py b/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/poly-sage.py
+@@ -149,1 +149,1 @@
+-    sage: p.is_irreducible()
++    sage: p.is_irreducible()  # needs sage.libs.pari
+@@ -154,1 +154,1 @@
+-    sage: p.factor()
++    sage: p.factor()  # needs sage.libs.pari
+@@ -160,1 +160,1 @@
+-    sage: q.is_irreducible()
++    sage: q.is_irreducible()  # needs sage.libs.pari
+@@ -165,1 +165,1 @@
+-    sage: q.factor()
++    sage: q.factor()  # needs sage.libs.pari
+@@ -170,4 +170,4 @@
+-    sage: F.<a> = FiniteField(5^2)
+-    sage: S.<y> = F[]
+-    sage: p = 2*y^5 + 2*y^4 + 4*y^3 + 2*y^2 + 3*y + 1
+-    sage: p.is_irreducible()
++    sage: F.<a> = FiniteField(5^2)  # needs sage.libs.ntl
++    sage: S.<y> = F[]  # needs sage.libs.ntl
++    sage: p = 2*y^5 + 2*y^4 + 4*y^3 + 2*y^2 + 3*y + 1  # needs sage.libs.ntl
++    sage: p.is_irreducible()  # needs sage.libs.ntl
+@@ -178,1 +178,1 @@
+-    sage: p.factor()
++    sage: p.factor()  # needs sage.libs.ntl
+@@ -183,1 +183,1 @@
+-    sage: q = 3*y^4+2*y^3-y+4; q.factor()
++    sage: q = 3*y^4+2*y^3-y+4; q.factor()  # needs sage.libs.ntl
+@@ -188,1 +188,1 @@
+-    sage: r = y^4+2*y^3+3*y^2+4; r.factor()
++    sage: r = y^4+2*y^3+3*y^2+4; r.factor()  # needs sage.libs.ntl
+@@ -193,1 +193,1 @@
+-    sage: s = 3*y^4+2*y^3-y+3; s.factor()
++    sage: s = 3*y^4+2*y^3-y+3; s.factor()  # needs sage.libs.ntl
+@@ -198,1 +198,1 @@
+-    sage: F.modulus()
++    sage: F.modulus()  # needs sage.libs.ntl
+@@ -203,1 +203,1 @@
+-    sage: [t for t in F if r(t)==0]
++    sage: [t for t in F if r(t)==0]  # needs sage.libs.ntl
+@@ -208,1 +208,1 @@
+-    sage: [t for t in F if s(t)==0]
++    sage: [t for t in F if s(t)==0]  # needs sage.libs.ntl
+@@ -215,1 +215,1 @@
+-    sage: p.is_irreducible()
++    sage: p.is_irreducible()  # needs sage.libs.pari
+@@ -220,5 +220,5 @@
+-    sage: W.<w> = QQ[]
+-    sage: r = -w^5 + 5*w^4 - 4*w^3 + 14*w^2 - 67*w + 17
+-    sage: s = 3*w^5 - 14*w^4 + 12*w^3 - 6*w^2 + w
+-    sage: S = W.ideal(r, s)
+-    sage: S
++    sage: W.<w> = QQ[]  # needs sage.libs.ntl
++    sage: r = -w^5 + 5*w^4 - 4*w^3 + 14*w^2 - 67*w + 17  # needs sage.libs.ntl
++    sage: s = 3*w^5 - 14*w^4 + 12*w^3 - 6*w^2 + w  # needs sage.libs.ntl
++    sage: S = W.ideal(r, s)  # needs sage.libs.ntl
++    sage: S  # needs sage.libs.ntl
+@@ -230,1 +230,1 @@
+-    sage: (w^2)*r + (3*w-6)*s in S
++    sage: (w^2)*r + (3*w-6)*s in S  # needs sage.libs.ntl
+@@ -292,1 +292,1 @@
+-    sage: ainv = a^-1; ainv
++    sage: ainv = a^-1; ainv  # needs sage.libs.singular
+@@ -297,1 +297,1 @@
+-    sage: a*ainv
++    sage: a*ainv  # needs sage.libs.singular
 diff --git a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py b/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/sets-sage.py

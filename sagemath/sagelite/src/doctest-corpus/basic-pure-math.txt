@@ -1081,6 +1081,7 @@ src/sage/tests/books/judson_abstract_algebra/crypt-sage.py
 src/sage/tests/books/judson_abstract_algebra/cosets-sage-exercises.py
 src/sage/tests/books/judson_abstract_algebra/domains-sage.py
 src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+src/sage/tests/books/judson_abstract_algebra/poly-sage.py
 src/sage/tests/books/judson_abstract_algebra/vect-sage-exercises.py
 src/sage/tests/books/judson_abstract_algebra/vect-sage.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py

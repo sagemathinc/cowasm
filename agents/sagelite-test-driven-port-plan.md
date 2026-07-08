@@ -40136,6 +40136,46 @@ source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 94, and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Focused Judson polynomial corpus-growth pass on 2026-07-08 UTC: the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,105 non-comment entries after promoting
+`src/sage/tests/books/judson_abstract_algebra/poly-sage.py`.
+
+A fresh remaining-Judson batch first confirmed that most generated group,
+field, and poset files are still broader backend frontiers: permutation-group
+startup names, missing `sage.graphs.generic_graph_pyx`, number-field timeouts,
+and the NTL `ZZ_pContext::restore()` dynamic-link boundary dominated the
+failures. `poly-sage.py` was the useful narrow candidate. Its ordinary
+polynomial-ring, rational-polynomial construction, and finite quotient-ring
+examples run in the default profile, while the failing spans are explicit
+backend dependencies:
+
+- rational polynomial factorization reaches the focused cypari2/PARI
+  object-model gap;
+- finite-extension polynomial factorization and rational polynomial ideal
+  construction reach NTL-backed paths, including the unexported
+  `ZZ_pContext::restore()` side-module import;
+- one quotient-ring inverse reaches the unavailable Singular multivariate
+  polynomial backend.
+
+The WASI source patch now marks only those spans with `# needs sage.libs.pari`,
+`# needs sage.libs.ntl`, and `# needs sage.libs.singular`. Focused validation
+used `test-sage-doctest-corpus` after rebuilding and patching a fresh Sagelite
+source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-judson-next/poly-make.sqlite3`.
+The run records:
+
+```text
+poly-sage.py: 45 passed, 0 failed, 24 skipped
+```
+
+The full WASI source patch dry-runs against `/home/user/sagelite`, the saved
+block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+prints no promotion row after subtracting the updated corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
