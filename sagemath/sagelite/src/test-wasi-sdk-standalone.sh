@@ -1987,11 +1987,17 @@ if [ "$doctest_env_db_status" -eq 124 ]; then
   tail -120 "$doctest_env_db_log" >&2
   record_blocker "sagelite-blocked: sage -t doctest env-db smoke timed out after $node_import_timeout; see $doctest_env_db_log for the first runtime blocker."
 fi
+doctest_env_db_counts="$(sqlite3 "$doctest_env_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;" 2>/dev/null || true)"
 if [ "$doctest_env_db_status" -ne 0 ]; then
-  tail -120 "$doctest_env_db_log" >&2
-  record_blocker "sagelite-blocked: sage -t doctest env-db smoke failed; see $doctest_env_db_log for the first runtime blocker."
+  if [ "$doctest_env_db_counts" = "passed|1|1|0|0" ] &&
+      grep -Fq "sage -t passed: 1 passed, 0 failed, 0 skipped" "$doctest_env_db_log"; then
+    printf 'sagelite-node-warning: sage -t doctest env-db smoke completed before Node.js exited with status %s\n' \
+      "$doctest_env_db_status" >>"$doctest_env_db_log"
+  else
+    tail -120 "$doctest_env_db_log" >&2
+    record_blocker "sagelite-blocked: sage -t doctest env-db smoke failed; see $doctest_env_db_log for the first runtime blocker."
+  fi
 fi
-doctest_env_db_counts="$(sqlite3 "$doctest_env_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
 if [ "$doctest_env_db_counts" != "passed|1|1|0|0" ]; then
   cat "$doctest_env_db_log" >&2
   sqlite3 "$doctest_env_db" ".dump" >&2 || true

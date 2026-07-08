@@ -41122,6 +41122,29 @@ final assertion update; it rebuilt Sagelite and confirmed the previous count
 blocker was cleared, then stopped at the now-updated stale 44-block-key
 assertion.
 
+Follow-up standalone env-db shutdown pass on 2026-07-08 UTC: no corpus entry
+was promoted. A fresh full `make -C sagemath/sagelite
+test-wasi-sdk-standalone` rerun rebuilt Sagelite and reached the doctest smoke
+phase. The earlier relative block-key assertion was no longer the blocker: the
+default smoke recorded `passed|48|38|0|10` and 48 relative stable block keys.
+
+The next standalone blocker was the env-var SQLite smoke. It wrote a durable
+passing result, `passed|1|1|0|0`, and printed the final `sage -t passed`
+summary, but Node then exited with a segmentation fault during shutdown. The
+standalone script now matches the existing Node import probe policy for this
+case: a non-timeout, nonzero Node exit after the env-db doctest has written the
+expected SQLite result and final success summary is recorded as a warning
+instead of a blocker.
+
+Validation used `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`, a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch, and a
+focused env-db doctest smoke against the staged
+`sagemath/sagelite/dist/wasi-sdk/electron-resources` tree. The focused smoke
+returned status 0 in that direct run and recorded `passed|1|1|0|0`; the full
+standalone rerun before the script policy fix recorded the shutdown-segfault
+variant described above.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
