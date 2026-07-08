@@ -40099,6 +40099,43 @@ source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 94, and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Focused Judson domain corpus-growth pass on 2026-07-08 UTC: the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,104 non-comment entries after promoting
+`src/sage/tests/books/judson_abstract_algebra/domains-sage.py`.
+
+A grouped current-source probe across the next Judson files kept
+`actions-sage.py`, `normal-sage.py`, `cosets-sage.py`, and
+`homomorph-sage.py` out of the quiet corpus because their failures are
+dominated by permutation-group startup names, graph-backed examples, and
+dependent missing-name fallout. `domains-sage.py` was the narrow useful
+candidate: its ordinary fraction-field, finite-field, polynomial-ring,
+quotient-ring, and ideal examples pass in the default profile, while the
+remaining span depends on number-field construction and symbolic quadratic
+orders.
+
+The WASI source patch now marks the number-field span in `domains-sage.py` as
+`# needs sage.rings.number_field`. Focused validation used
+`test-sage-doctest-corpus` after rebuilding and patching a fresh Sagelite
+source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-active/domains-make.sqlite3`.
+The run records:
+
+```text
+domains-sage.py: 19 passed, 0 failed, 10 skipped
+```
+
+The full WASI source patch dry-runs against `/home/user/sagelite`, the saved
+block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+prints no promotion row after subtracting the updated corpus. The run metadata
+records CoWasm commit `a98fd87cde71072c047d338ab52724ce7ee648a5`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 94, and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

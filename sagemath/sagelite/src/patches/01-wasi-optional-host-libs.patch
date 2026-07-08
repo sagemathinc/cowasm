@@ -19062,6 +19062,38 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py b/src/sag
 @@ -94,1 +94,1 @@
 -    sage: B.inverse()
 +    sage: B.inverse()  # known bug - Sagelite WASI singular-matrix diagnostic text
+diff --git a/src/sage/tests/books/judson_abstract_algebra/domains-sage.py b/src/sage/tests/books/judson_abstract_algebra/domains-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/domains-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/domains-sage.py
+@@ -87,1 +87,1 @@
+-    sage: K.<y>=QuadraticField(-7); K
++    sage: K.<y>=QuadraticField(-7); K  # needs sage.rings.number_field
+@@ -92,1 +92,1 @@
+-    sage: K.prime_subfield()
++    sage: K.prime_subfield()  # needs sage.rings.number_field
+@@ -97,1 +97,1 @@
+-    sage: K.<x> = ZZ[sqrt(-3)]; K
++    sage: K.<x> = ZZ[sqrt(-3)]; K  # needs sage.rings.number_field
+@@ -103,1 +103,1 @@
+-    sage: K.is_integral_domain()
++    sage: K.is_integral_domain()  # needs sage.rings.number_field
+@@ -108,1 +108,1 @@
+-    sage: K.basis()
++    sage: K.basis()  # needs sage.rings.number_field
+@@ -113,1 +113,1 @@
+-    sage: x
++    sage: x  # needs sage.rings.number_field
+@@ -118,1 +118,1 @@
+-    sage: (1+x)*(1-x) == 2*2
++    sage: (1+x)*(1-x) == 2*2  # needs sage.rings.number_field
+@@ -123,2 +123,2 @@
+-    sage: four = K(4)
+-    sage: four.is_unit()
++    sage: four = K(4)  # needs sage.rings.number_field
++    sage: four.is_unit()  # needs sage.rings.number_field
+@@ -129,1 +129,1 @@
+-    sage: four^-1
++    sage: four^-1  # needs sage.rings.number_field
 diff --git a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
