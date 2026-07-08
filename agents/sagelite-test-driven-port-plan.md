@@ -41253,6 +41253,56 @@ files, a `symbolic/benchmark.py` symbolic-startup cluster
 (`NameError|21`, `ModuleNotFoundError|1`), and a file-level
 `wasm_trap` in `rings/ring.pyx` at `TestSuite(QQ['x']).run(verbose=True)`.
 
+Follow-up active compact-source audit on 2026-07-08:
+
+No new quiet corpus candidate was found. A strict scan across current scratch
+dashboards with
+`doctest-corpus-candidates.py --strict-frontier --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --min-runner-version 83`
+printed no uncovered promotion rows before the fresh probe.
+
+A source-minus-corpus scan against the patched Sagelite source tree filtered
+out doctest self-test fixtures, `.orig` patch backups, templates, generated
+configuration files, and non-source snippets, then selected the first compact
+real-source slice not already clearly covered by a full path mention in this
+plan. The direct one-worker probe used absolute patched-source paths and
+wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-active/probe.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 32 skipped
+```
+
+The latest-run summary records CoWasm commit
+`93746ca4835303f1505636f0260dcd2b81de30aa`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 102,
+32 skipped block rows, and about 121 seconds of elapsed time. The strict
+promotion scan printed no uncovered clean runnable rows.
+
+All 20 files were skipped-only under existing browser-profile metadata:
+`cluster_algebra_quiver/interact.py`, `graphs/mcqd.pyx`,
+`graphs/lovasz_theta.py`, `groups/matrix_gps/unitary_gap.py`,
+`libs/gap/all_documented_functions.py`,
+`modules/vector_numpy_integer_dense.pyx`,
+`graphs/graph_generators_pyx.pyx`, `plot/plot3d/plot_field3d.py`,
+`rings/padics/relative_ramified_FM.pyx`,
+`rings/padics/relative_ramified_FP.pyx`, `modular/modform/weight1.py`,
+`symbolic/symengine.py`, `graphs/graph_editor.py`,
+`schemes/hyperelliptic_curves/hyperelliptic_rational_field.py`,
+`groups/libgap_group.py`, `modular/modform/ambient_g0.py`,
+`graphs/graph_decompositions/bandwidth.pyx`,
+`modular/abvar/constructor.py`, `modular/hecke/degenmap.py`, and
+`schemes/hyperelliptic_curves/hypellfrob.pyx`.
+
+Skip metadata groups the slice under explicit SymEngine, graph, GAP, FLINT,
+PARI, NumPy, eclib, NTL/modules/p-adics, finite-ring, schemes, and symbolic
+boundaries. Future scheduled runs should avoid repeating this exact compact
+slice unless those browser-profile dependency boundaries change.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
