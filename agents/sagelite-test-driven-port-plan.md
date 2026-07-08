@@ -39822,6 +39822,26 @@ and `.txt` files with `.tmp/current-run/**/*.sqlite3` subtraction. The live
 scan still prints only the header row:
 `path	prompt_count	runnable_prompt_count`.
 
+Scheduled source-frontier recheck on 2026-07-08 UTC: no corpus entry was
+promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. A live source-frontier scan against the patched
+Sagelite source tree, subtracting the curated corpus, this plan's mentioned
+paths, and valid `.tmp/current-run/**/*.sqlite3` scratch dashboards, again
+printed only:
+
+```text
+path	prompt_count	runnable_prompt_count
+```
+
+The matching strict SQLite candidate scan across the same scratch dashboards
+also printed no uncovered clean runnable rows. This confirms that the current
+non-repeated `.py`/`.pyx`/`.pxi`/`.pxd`/`.rst`/`.txt` low-noise frontier is
+exhausted under the standard scheduled filters at CoWasm commit
+`4749258a35fb2f8a0cc7fd786ac0d2e6007fc7ac`. The next productive scheduled
+pass should target a known backend/runtime cluster or intentionally relax the
+mention-subtraction frontier, rather than resampling the same empty slice.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
