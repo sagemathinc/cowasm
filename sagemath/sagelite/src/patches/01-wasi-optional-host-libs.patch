@@ -8093,12 +8093,6 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/lie_conformal_algebra_with_
 @@ -331 +331 @@
 -            sage: R._repr_generator(R.0)
 +            sage: R._repr_generator(R.0)                                             # needs sage.graphs
-diff -urN a/src/sage/libs/flint/fmpz_poly.pyx b/src/sage/libs/flint/fmpz_poly.pyx
---- a/src/sage/libs/flint/fmpz_poly.pyx
-+++ b/src/sage/libs/flint/fmpz_poly.pyx
-@@ -5 +5 @@
--    sage: Fmpz_poly([1, 1])
-+    sage: Fmpz_poly([1, 1])                                                       # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN a/src/sage/libs/flint/qsieve_sage.pyx b/src/sage/libs/flint/qsieve_sage.pyx
 --- a/src/sage/libs/flint/qsieve_sage.pyx
 +++ b/src/sage/libs/flint/qsieve_sage.pyx
@@ -13013,9 +13007,6 @@ diff -urN -U0 a/src/sage/matrix/matrix_generic_dense.pyx b/src/sage/matrix/matri
 @@ -77 +77 @@
 -            sage: Matrix_generic_dense(M, (x, y), True, True)
 +            sage: Matrix_generic_dense(M, (x, y), True, True)                        # needs sage.libs.pari
-@@ -119 +119 @@
--            sage: m
-+            sage: m                                                                  # known bug
 @@ -123 +123 @@
 -            sage: m.transpose()
 +            sage: m.transpose()                                                      # known bug
@@ -13031,9 +13022,6 @@ diff -urN -U0 a/src/sage/matrix/matrix_generic_dense.pyx b/src/sage/matrix/matri
 diff -urN -U0 a/src/sage/matrix/matrix_generic_sparse.pyx b/src/sage/matrix/matrix_generic_sparse.pyx
 --- a/src/sage/matrix/matrix_generic_sparse.pyx
 +++ b/src/sage/matrix/matrix_generic_sparse.pyx
-@@ -221 +221 @@
--            sage: m
-+            sage: m                                                                  # known bug
 @@ -225 +225 @@
 -            sage: m.transpose()
 +            sage: m.transpose()                                                      # known bug

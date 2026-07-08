@@ -40621,6 +40621,30 @@ confirmed the `dyck_word.py` latex-options dict-order tag,
 `_element_classes` tag, and `misc/banner.py` version-output tag still fail
 under `--deferred=known-bug`, so those tags remain live.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found three more stale browser-profile tags.
+The deprecated FLINT `Fmpz_poly([1, 1])` warning example now passes when
+executed, and the initial GF(9) matrix display examples in
+`matrix_generic_dense.pyx` and `matrix_generic_sparse.pyx` now match the
+expected doctest output. The WASI source patch no longer marks those prompts
+as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a three-file corpus with failures disallowed:
+
+```text
+fmpz_poly.pyx: 2 passed, 0 failed, 0 skipped
+matrix_generic_dense.pyx: 64 passed, 0 failed, 8 skipped
+matrix_generic_sparse.pyx: 93 passed, 0 failed, 5 skipped
+three-file make rerun: 159 passed, 0 failed, 13 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-stale-more2/touched-make.sqlite3`;
+it records runner version 96, empty block- and file-failure cluster queries,
+and the remaining neighboring matrix transpose/slice rows still grouped under
+`deferred:known bug`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
