@@ -15589,6 +15589,42 @@ diff --git a/src/sage/schemes/jacobians/abstract_jacobian.py b/src/sage/schemes/
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes
  """
+diff --git a/src/sage/schemes/plane_conics/constructor.py b/src/sage/schemes/plane_conics/constructor.py
+--- a/src/sage/schemes/plane_conics/constructor.py
++++ b/src/sage/schemes/plane_conics/constructor.py
+@@ -103 +103 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(X^2 - X*Y + Y^2 - Z^2)
++        sage: Conic(X^2 - X*Y + Y^2 - Z^2)                              # needs sage.libs.singular
+@@ -106 +106 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(x^2 - x + 2*y^2 - 3, 'U,V,W')
++        sage: Conic(x^2 - x + 2*y^2 - 3, 'U,V,W')                       # needs sage.libs.singular
+@@ -112 +112 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(matrix(QQ, [[1, 2, 0], [4, 0, 0], [7, 0, 9]]), 'x,y,z')
++        sage: Conic(matrix(QQ, [[1, 2, 0], [4, 0, 0], [7, 0, 9]]), 'x,y,z')  # needs sage.libs.singular
+@@ -116 +116 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: C = Conic(x^2 + y^2 - 2*z^2); C
++        sage: C = Conic(x^2 + y^2 - 2*z^2); C                           # needs sage.libs.singular
+@@ -118 +118 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(C.symmetric_matrix(), 'x,y,z')
++        sage: Conic(C.symmetric_matrix(), 'x,y,z')                       # needs sage.libs.singular
+@@ -123 +123 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(QQ, [1,2,3])
++        sage: Conic(QQ, [1,2,3])                                        # needs sage.libs.singular
+@@ -125 +125 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic(GF(7), [1,2,3,4,5,6], 'X')
++        sage: Conic(GF(7), [1,2,3,4,5,6], 'X')                          # needs sage.libs.singular
+@@ -131 +131 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: C = Conic(QQ, [[10,2],[3,4],[-7,6],[7,8],[9,10]]); C
++        sage: C = Conic(QQ, [[10,2],[3,4],[-7,6],[7,8],[9,10]]); C       # needs sage.libs.singular
+@@ -134 +134 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: C.rational_point()
++        sage: C.rational_point()                                        # needs sage.libs.singular
+@@ -136 +136 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: C.point([3,4])
++        sage: C.point([3,4])                                            # needs sage.libs.singular
+@@ -140 +140 @@ def Conic(base_field, F=None, names=None, unique=True):
+-        sage: Conic([a([x,x^2]) for x in range(5)])
++        sage: Conic([a([x,x^2]) for x in range(5)])                     # needs sage.libs.singular
 diff --git a/src/sage/schemes/plane_conics/con_rational_field.py b/src/sage/schemes/plane_conics/con_rational_field.py
 --- a/src/sage/schemes/plane_conics/con_rational_field.py
 +++ b/src/sage/schemes/plane_conics/con_rational_field.py

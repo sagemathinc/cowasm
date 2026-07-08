@@ -40243,6 +40243,31 @@ Future scheduled runs should continue to avoid broad low-prompt rescans unless
 a dependency boundary changes; the next useful work is either a deliberate
 backend fix for one of the recorded clusters or a newly scoped source frontier.
 
+Focused plane-conic constructor boundary pass on 2026-07-08 UTC: the previous
+`src/sage/schemes/plane_conics/constructor.py` probe was reclassified from a
+startup-name cluster into an explicit Singular dependency boundary. Direct
+import probing showed that `Conic` currently imports
+`sage.schemes.curves.projective_curve`, which imports the unavailable
+`sage.libs.singular.function` extension in the browser-compatible profile, so
+adding `Conic` to the Sagelite startup namespace would make WASI startup
+broader and less reliable.
+
+The WASI source patch now marks the file's eleven `Conic(...)` constructor
+examples and dependent `C` checks as `# needs sage.libs.singular`. Focused
+make-target validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-conic-namespace/make.sqlite3`.
+The run records:
+
+```text
+constructor.py: 4 passed, 0 failed, 11 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups all eleven skipped examples under
+`optional:sage.libs.singular`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
