@@ -251,6 +251,7 @@ src/sage/libs/flint/arith_sage.pyx
 src/sage/libs/flint/flint_sage.pyx
 src/sage/libs/flint/fmpz_poly.pyx
 src/sage/libs/flint/fmpz_poly_sage.pyx
+src/sage/libs/flint/nmod_poly_linkage.pxi
 src/sage/libs/flint/qsieve.pyx
 src/sage/libs/flint/ulong_extras_sage.pyx
 src/sage/libs/flint/ulong_extras.pyx

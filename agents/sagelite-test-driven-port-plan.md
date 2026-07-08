@@ -39588,6 +39588,37 @@ database records CoWasm commit
 and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Focused FLINT nmod-polynomial linkage corpus-growth pass on 2026-07-08:
+
+```text
+nmod_poly_linkage.pxi: 196 passed, 0 failed, 10 skipped
+```
+
+That one-file make-target validation adds
+`sage/libs/flint/nmod_poly_linkage.pxi` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,096
+non-comment entries. The file adds direct default-profile coverage for FLINT
+`nmod_poly_t` linkage helpers, including modular polynomial construction,
+comparison, arithmetic, division, exponentiation, gcd/xgcd, and factorization
+paths.
+
+Direct persisted-frontier mining first identified the file as the only current
+high-coverage near-miss in
+`.tmp/current-run/scheduled-2026-07-08-active-pxi/large-pxi.sqlite3`. The
+added WASI source patch keeps the narrow browser-profile drifts explicit:
+copy identity checks, fallback polynomial division/gcd/xgcd diagnostics, and
+one non-canonical inverse representative are deferred as `# known bug` or
+`# random`, while the interruptibility helper is tagged
+`# needs cysignals.alarm`. Focused validation rebuilt and patched a fresh
+Sagelite source copy through the `test-sage-doctest-corpus` make target with
+a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-nmod-poly/nmod-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`77e08d3619c715647a13a1dd053905af655c82f9`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and empty block-failure clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

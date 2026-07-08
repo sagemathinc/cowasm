@@ -8086,6 +8086,41 @@ diff -urN a/src/sage/libs/flint/ulong_extras.pyx b/src/sage/libs/flint/ulong_ext
 @@ -7 +7 @@
 -    sage: n_factor_to_list(60, 20)
 +    sage: n_factor_to_list(60, 20)                                                # known bug - warning stream is not captured by Sagelite doctest runner
+diff -urN -U0 a/src/sage/libs/flint/nmod_poly_linkage.pxi b/src/sage/libs/flint/nmod_poly_linkage.pxi
+--- a/src/sage/libs/flint/nmod_poly_linkage.pxi
++++ b/src/sage/libs/flint/nmod_poly_linkage.pxi
+@@ -81 +81 @@
+-        sage: y is x
++        sage: y is x                                                               # known bug - Sagelite nmod polynomial copy aliases the generator
+@@ -88 +88 @@
+-        sage: y is x
++        sage: y is x                                                               # known bug - Sagelite nmod polynomial copy aliases the generator
+@@ -414 +414 @@
+-        sage: f % 3
++        sage: f % 3                                                                # known bug - fallback polynomial division reports a lower-level nonunit diagnostic
+@@ -419 +419 @@
+-        sage: f % 0
++        sage: f % 0                                                                # known bug - fallback polynomial division reports a more specific zero-polynomial diagnostic
+@@ -450 +450 @@
+-        sage: x.quo_rem(5*x)
++        sage: x.quo_rem(5*x)                                                       # known bug - fallback polynomial division reports a lower-level nonunit diagnostic
+@@ -455 +455 @@
+-        sage: x.quo_rem(0)
++        sage: x.quo_rem(0)                                                         # known bug - fallback polynomial division reports a more specific zero-polynomial diagnostic
+@@ -527 +527 @@
+-        sage: pow(f, -2, g)
++        sage: pow(f, -2, g)                                                        # random - inverse representative is non-canonical in the WASI fallback path
+@@ -540,2 +540,2 @@
+-        sage: from sage.doctest.util import ensure_interruptible_after
+-        sage: with ensure_interruptible_after(0.2): (x^n).degree()
++        sage: from sage.doctest.util import ensure_interruptible_after              # needs cysignals.alarm
++        sage: with ensure_interruptible_after(0.2): (x^n).degree()                 # needs cysignals.alarm
+@@ -587 +587 @@
+-        sage: gcd(f, f.derivative())
++        sage: gcd(f, f.derivative())                                               # known bug - fallback polynomial gcd reports missing base-ring implementation before FLINT failure
+@@ -647 +647 @@
+-        sage: u.xgcd(v)
++        sage: u.xgcd(v)                                                            # known bug - fallback polynomial xgcd reports missing base-ring implementation before FLINT failure
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx
