@@ -2157,6 +2157,22 @@ diff -urN a/src/sage/libs/symmetrica/sc.pxi b/src/sage/libs/symmetrica/sc.pxi
  cdef extern from 'symmetrica/def.h':
      INT chartafel(OP degree, OP result)
      INT charvalue(OP irred, OP cls, OP result, OP table)
+diff -urN a/src/sage/libs/symmetrica/sb.pxi b/src/sage/libs/symmetrica/sb.pxi
+--- a/src/sage/libs/symmetrica/sb.pxi
++++ b/src/sage/libs/symmetrica/sb.pxi
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.symmetrica
+ cdef extern from 'symmetrica/def.h':
+     INT mult_schubert_schubert(OP a, OP b, OP result)
+     INT m_perm_sch(OP a, OP b)
+diff -urN a/src/sage/libs/symmetrica/symmetrica.pxi b/src/sage/libs/symmetrica/symmetrica.pxi
+--- a/src/sage/libs/symmetrica/symmetrica.pxi
++++ b/src/sage/libs/symmetrica/symmetrica.pxi
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.libs.symmetrica
+ # We put all definitions together, whether they appear in def.h or
+ # macro.h
+ cdef extern from 'symmetrica/def.h':
 diff -urN a/src/sage/libs/ntl/meson.build b/src/sage/libs/ntl/meson.build
 --- a/src/sage/libs/ntl/meson.build
 +++ b/src/sage/libs/ntl/meson.build

@@ -39735,6 +39735,35 @@ Future scheduled runs should avoid repeating this exact low-prompt unnamed
 slice unless the Symmetrica extension is packaged for the default profile or
 the browser-profile skip policy changes.
 
+Follow-up Symmetrica dependency-boundary tagging pass on 2026-07-08: no
+corpus entry was promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. The WASI source patch now gives
+`sage/libs/symmetrica/sb.pxi` and `sage/libs/symmetrica/symmetrica.pxi` the
+same file-level `# sage.doctest: needs sage.libs.symmetrica` metadata already
+used by nearby Symmetrica support files, so the stripped default profile no
+longer records misleading missing-extension block failures for those files.
+
+Focused validation rebuilt and patched a fresh Sagelite source copy through
+the `test-sage-doctest-corpus` make target with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-symmetrica-tags/symmetrica-make.sqlite3`.
+The run records:
+
+```text
+sb.pxi: 0 passed, 0 failed, 1 skipped
+symmetrica.pxi: 0 passed, 0 failed, 1 skipped
+```
+
+The latest-run summary records CoWasm commit
+`030c799829a88bff8d063fbcd3bf8f547565d1a2`, Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 94,
+and a passing skipped-only dashboard. The saved block-failure cluster query
+is empty, and `skips-by-reason.sql` groups both file-scope rows under
+`optional:sage.libs.symmetrica`. The full WASI source patch dry-runs
+successfully against `/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
