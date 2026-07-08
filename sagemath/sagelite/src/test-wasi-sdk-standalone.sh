@@ -2871,6 +2871,12 @@ r"""
     10
 """
 PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/mentioned_rst_frontier.rst" <<'RST'
+.. TESTS::
+
+    sage: 9 + 9
+    18
+RST
 touch "$doctest_candidate_helper_override_source_root/src/sage/example/real_candidate.py"
 touch "$doctest_candidate_helper_corpus"
 printf '%s\n' "src/sage/example/real_candidate.py" >"$doctest_candidate_helper_covered_corpus"
@@ -2878,6 +2884,7 @@ printf '%s\n' "src/sage/example/covered_frontier.py" >"$doctest_source_frontier_
 {
   printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py"
   printf '%s\n' "previously audited src/sage/example/mentioned_pyx_frontier.pyx"
+  printf '%s\n' "previously audited src/sage/example/mentioned_rst_frontier.rst"
 } >"$doctest_source_frontier_mentioned"
 printf '%s\n' "previously audited src/sage/example/frontier_candidate.py" >"$doctest_source_frontier_all_mentioned"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
@@ -3624,6 +3631,20 @@ if [ "$doctest_source_frontier_paths" != "src/sage/example/frontier_candidate.py
   printf '%s\n' "$doctest_source_frontier_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier did not subtract corpus, mentioned, database, and invalid inputs."
+fi
+doctest_source_frontier_support_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --extension .py \
+  --extension .pyx \
+  --extension .rst)"
+if [ "$doctest_source_frontier_support_paths" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_support_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-source-frontier did not subtract mentioned support-extension inputs."
 fi
 doctest_source_frontier_required_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \

@@ -39408,6 +39408,35 @@ Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
 profile, runner version 93, and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Follow-up support-extension mention-subtraction pass on 2026-07-08 UTC: no
+corpus entry was promoted. The curated corpus still contains 1,095
+non-comment entries. The source-frontier helper now recognizes documented
+`src/sage/...` mentions with `.pxi`, `.pxd`, `.rst`, and `.txt` suffixes in
+addition to `.py` and `.pyx`, so support-extension frontier rows already
+recorded in this plan do not depend solely on scratch SQLite database
+subtraction to stay out of scheduled rechecks.
+
+The standalone smoke fixture now includes a mentioned `.rst` frontier file and
+a support-extension scan that would report it if mentioned-file subtraction
+regressed. Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-source-frontier.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a focused synthetic
+`.rst` mention-subtraction probe, and `git diff --check`. The broad
+make-wrapper source-frontier scan over `.py`, `.pyx`, `.pxi`, `.rst`, `.pxd`,
+and `.txt` sources, pinned to the patched Sagelite source root and subtracting
+the curated corpus, this plan, and valid `.tmp/**/*.sqlite3` dashboards, still
+printed only the `path	prompt_count` header. The pinned persisted-dashboard
+promotion scan also printed only its tab-separated header.
+
+A fresh source-root-relative smoke from the repository root still passes:
+`src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-08-mentioned-support/source-smoke.sqlite3`.
+The smoke database records CoWasm commit
+`56cdafa0d58b1818055d628fe4a7435b31e47656`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
