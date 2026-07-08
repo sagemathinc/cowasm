@@ -39936,11 +39936,27 @@ the existing faster path when available.
 
 Validation used a full `patch --dry-run -p1` of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
-`/home/user/sagelite`, which applies cleanly. Runtime validation against the
-focused Judson line is still pending because this checkout currently lacks
-`sagemath/sagelite/build/wasi-sdk/cowasm-meson-build`, so there is no targeted
-`matrix2` relink path without starting a broader standalone rebuild; host
-`python3 -m Cython` is also unavailable in the current environment.
+`/home/user/sagelite`, which applies cleanly. A follow-up rebuild confirmed
+the first fallback was incomplete: it avoided the initial
+`dense_matrix().echelon_form()` recursion, but then cached pivots with
+`d.pivots()`, which recursively asked the returned generic matrix for
+`echelon_form()` again and terminated as
+`NotImplementedError: Echelon form not implemented over 'Integer Ring'`.
+
+The patch now caches the pivot list returned by `_echelon_form_PID()` when the
+fallback is active. After a full Sagelite standalone rebuild and a targeted
+`matrix2` relink, the focused Judson line rerun passes:
+
+```text
+sage -t passed: 1 passed, 0 failed, 0 skipped
+```
+
+The passing dashboard is
+`.tmp/current-run/scheduled-2026-07-08-matrix-verify/judson-line-after-pivot-cache.sqlite3`.
+The full standalone rebuild itself compiled and installed successfully, but
+the existing doctest `--block-key` smoke still hit a worker `SIGBUS`, so the
+standalone target remains blocked at that lifecycle smoke rather than by the
+matrix patch.
 
 ## Phase 6: TypeScript/NPM Direction
 
