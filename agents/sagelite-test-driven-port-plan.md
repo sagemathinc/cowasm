@@ -39376,6 +39376,38 @@ The smoke database records CoWasm commit
 and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Scheduled goal recheck on 2026-07-08 UTC: no corpus entry was promoted. The
+curated corpus still contains 1,095 non-comment entries. Re-running the
+make-wrapper source-frontier scan over `.py`, `.pyx`, `.pxi`, `.rst`, `.pxd`,
+and `.txt` sources, pinned to the patched Sagelite source root and subtracting
+the curated corpus, this plan, and valid `.tmp/**/*.sqlite3` dashboards, exited
+0 with no frontier rows when run with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=1` and invalid scratch
+databases skipped.
+
+The pinned persisted-dashboard promotion scan also remains empty:
+
+```sh
+python3 sagemath/sagelite/src/doctest-corpus-candidates.py \
+  .tmp/**/*.sqlite3 \
+  --strict-frontier \
+  --dedupe-paths \
+  --include-header \
+  --ignore-invalid \
+  --quiet-invalid \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk
+```
+
+It printed only the tab-separated
+`database	path	total_blocks	passed_blocks	skipped_blocks	runnable_blocks	duration_ms`
+header. A fresh source-root-relative smoke from the repository root still
+passes: `src/sage/all.py` records `13 passed, 0 failed, 2 skipped` in
+`.tmp/current-run/scheduled-2026-07-08-goal/source-smoke.sqlite3`. The smoke
+database records CoWasm commit `3b21e7593905e4ad0e0ed7db6b2a8cf325c295a5`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 93, and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
