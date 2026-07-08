@@ -5118,6 +5118,42 @@ failure note for that file is stale under the current patched source. The file
 remains outside the quiet corpus because it contributes no non-skipped
 default-profile coverage.
 
+Follow-up active low-count frontier audit on 2026-07-08:
+
+No new quiet corpus candidate was found. A strict scan across current scratch
+dashboards with
+`doctest-corpus-candidates.py --strict-frontier --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --min-runner-version 83`
+printed no uncovered promotion rows after subtracting the current 1,108-entry
+corpus.
+
+A fresh direct one-worker probe used absolute patched-source paths and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-active/probe-lowcount/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t passed: 0 passed, 0 failed, 29 skipped
+```
+
+It covered 17 compact source-minus-corpus files across cluster-algebra
+interacts, symbolic/SymEngine helpers, graph helpers, GAP/eclib/PARI wrappers,
+finite crystals, rigged configurations, matrix groups, NumPy vectors, modular
+forms, and a hyperelliptic rational-field helper. Every file was skipped-only
+under existing browser-profile metadata. Skip groups were explicit dependency
+boundaries for SymEngine, GAP, graph/combinat/modules, mcqd, NumPy, eclib,
+PARI, finite rings, real MPFR, schemes, and Cython support.
+
+The latest-run summary records CoWasm commit
+`7c6e516ab72e085284646a5f70b01358508b2136`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 102,
+and a skipped-only 100% non-failing run. The strict candidate helper printed
+no uncovered clean row for this dashboard. Future scheduled runs should avoid
+repeating this exact compact slice unless one of those default browser-profile
+dependency boundaries changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
