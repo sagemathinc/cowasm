@@ -9150,15 +9150,6 @@ diff -urN a/src/sage/plot/bar_chart.py b/src/sage/plot/bar_chart.py
 @@ -175 +175 @@
 -        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent
 +        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent  # needs matplotlib
-diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
---- a/src/sage/plot/histogram.py
-+++ b/src/sage/plot/histogram.py
-@@ -73 +73 @@
--            sage: h.get_minmax_data()  # rel tol 1e-15
-+            sage: h.get_minmax_data()  # rel tol 1e-15
-@@ -88 +88 @@
--            sage: h.get_minmax_data()
-+            sage: h.get_minmax_data()                                               # known bug
 diff -urN a/src/sage/plot/matrix_plot.py b/src/sage/plot/matrix_plot.py
 --- a/src/sage/plot/matrix_plot.py
 +++ b/src/sage/plot/matrix_plot.py

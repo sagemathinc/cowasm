@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 99;
+const doctestRunnerVersion = 100;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -887,6 +887,10 @@ __cowasm_tol_re = re.compile(r"#.*\\b(abs tol|rel tol|tol)\\b", re.IGNORECASE)
 __cowasm_tol_directive_re = re.compile(
     r"#.*?\\b((?:abs(?:olute)?|rel(?:ative)?)\\s+tol(?:erance)?|tol(?:erance)?)\\b(?:\\s+([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?))?",
     re.IGNORECASE,
+)
+_cowasm_literal_ellipsis_prefix = "__COWASM_LITERAL_ELLIPSIS__:"
+_cowasm_literal_numeric_ellipsis_re = re.compile(
+    r"(?<![\\w.])([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?)\\.\\.\\."
 )
 _cowasm_number_re = re.compile(
     r"(?<![\\w.])[ \\t]*[-+]?[ \\t]*(?:(?:\\d+\\.\\d*)|(?:\\.\\d+)|(?:\\d+))(?:[eE][-+]?\\d+)?(?![\\w.])"
@@ -2080,7 +2084,21 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             got_tree = self.__canonical_literal_node(ast.parse(got, mode="eval"))
             return self.__literal_nodes_equal(want_tree, got_tree, tolerance)
         except (SyntaxError, ValueError, TypeError):
+            pass
+        try:
+            want_tree = self.__canonical_literal_node(
+                ast.parse(self.__literal_expected_ellipsis_text(want), mode="eval")
+            )
+            got_tree = self.__canonical_literal_node(ast.parse(got, mode="eval"))
+            return self.__literal_nodes_equal(want_tree, got_tree, tolerance)
+        except (SyntaxError, ValueError, TypeError):
             return False
+
+    def __literal_expected_ellipsis_text(self, text):
+        def replace_numeric_ellipsis(match):
+            return repr(_cowasm_literal_ellipsis_prefix + match.group(1))
+
+        return _cowasm_literal_numeric_ellipsis_re.sub(replace_numeric_ellipsis, text)
 
     def __canonical_literal_node(self, node):
         if isinstance(node, ast.Expression):
@@ -2133,6 +2151,12 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         return False
 
     def __literal_constants_equal(self, want, got, tolerance=None):
+        if isinstance(want, builtins.str) and want.startswith(_cowasm_literal_ellipsis_prefix):
+            return super().check_output(
+                want[len(_cowasm_literal_ellipsis_prefix):] + "...",
+                str(got),
+                doctest.ELLIPSIS,
+            )
         if isinstance(want, (builtins.int, builtins.float)) and not isinstance(
             want, builtins.bool
         ):

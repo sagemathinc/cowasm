@@ -40953,6 +40953,32 @@ block- and file-failure cluster queries. Validation also used
 `patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. The
 adjacent `histogram.py:88` deferred display tag remains live.
 
+Follow-up literal-ellipsis dictionary audit on 2026-07-08 UTC: no corpus entry
+was promoted. The doctest runner now recognizes Sage-style numeric ellipsis
+wildcards inside structurally compared literal dictionaries, so order-insensitive
+literal-dict comparison can handle examples such as
+`0.476190476190...` against the runtime's full float display. The runner
+version is now 100, and the standalone smoke fixture includes a dictionary
+example that combines key-order drift with an ellipsis-suffixed numeric value.
+
+This made the remaining `sage/plot/histogram.py` `get_minmax_data()` TESTS
+example pass under the default browser-compatible profile, so the WASI source
+patch no longer marks `histogram.py:88` as `# known bug`; the obsolete no-op
+histogram hunk for line 73 was removed at the same time. Focused validation
+rebuilt and patched a fresh Sagelite source copy through the make target:
+
+```text
+histogram.py: 39 passed, 0 failed, 2 skipped
+```
+
+The focused dashboard is `.tmp/current-run/histogram-make.sqlite3`; it records
+runner version 100 and empty saved block- and file-failure cluster queries.
+Validation also used `node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch, a
+focused `--line 88` rerun against the refreshed patched source copy, and a
+synthetic one-block literal-dict ellipsis smoke.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
