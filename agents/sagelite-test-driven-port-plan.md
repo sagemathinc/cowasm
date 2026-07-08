@@ -39913,6 +39913,35 @@ unless one of those dependency boundaries changes. The useful next step
 remains a deliberately chosen backend/runtime cluster or a new source frontier
 that is not already covered by corpus, plan, and SQLite subtraction.
 
+Follow-up matrix echelonization backend pass on 2026-07-08 UTC: no corpus
+entry was promoted. A focused line rerun of the compact Judson near miss
+
+```text
+sage -t --line 46 src/sage/tests/books/judson_abstract_algebra/vect-sage-exercises.py
+```
+
+reproduced the known integer-matrix echelonization recursion cluster through
+`M.submodule([u, v, w])`. The traceback loops through
+`matrix2.Matrix._echelonize_ring()` and `dense_matrix().echelon_form()` until
+the runtime surfaces the masked terminal diagnostic
+`TypeError: module name must be a string` while importing
+`DiscreteValuationFields`.
+
+The WASI source patch now adds a narrow fallback in
+`src/sage/matrix/matrix2.pyx`: if the `ZZ` path's `dense_matrix()` conversion
+returns the same generic matrix object, `_echelonize_ring()` uses Sage's
+existing `_echelon_form_PID()` implementation instead of recursing back
+through `echelon_form()`. Specialized dense integer matrix backends still keep
+the existing faster path when available.
+
+Validation used a full `patch --dry-run -p1` of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite`, which applies cleanly. Runtime validation against the
+focused Judson line is still pending because this checkout currently lacks
+`sagemath/sagelite/build/wasi-sdk/cowasm-meson-build`, so there is no targeted
+`matrix2` relink path without starting a broader standalone rebuild; host
+`python3 -m Cython` is also unavailable in the current environment.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -7369,6 +7369,26 @@ diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
          [                  -2.0                   -5.0                    3.0]
          [                   4.0                    8.0 1.0303398304893499e+18]
      """
+diff -urN a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
+--- a/src/sage/matrix/matrix2.pyx
++++ b/src/sage/matrix/matrix2.pyx
+@@ -8268,10 +8268,13 @@
+         if self._base_ring == ZZ:
+             if 'include_zero_rows' in kwds and not kwds['include_zero_rows']:
+                 raise ValueError("cannot echelonize in place and delete zero rows")
+-            if transformation:
+-                d, a = self.dense_matrix().echelon_form(**kwds)
++            dense_self = self.dense_matrix()
++            if dense_self is self:
++                a, d, p = self._echelon_form_PID()
++            elif transformation:
++                d, a = dense_self.echelon_form(**kwds)
+             else:
+-                d = self.dense_matrix().echelon_form(**kwds)
++                d = dense_self.echelon_form(**kwds)
+             for c from 0 <= c < self.ncols():
+                 for r from 0 <= r < self.nrows():
+                     self.set_unsafe(r, c, d.get_unsafe(r, c))
 diff -urN a/src/sage/matrix/misc.pyx b/src/sage/matrix/misc.pyx
 --- a/src/sage/matrix/misc.pyx
 +++ b/src/sage/matrix/misc.pyx
