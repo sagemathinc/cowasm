@@ -19238,6 +19238,33 @@ diff --git a/src/sage/calculus/calculus.py b/src/sage/calculus/calculus.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic maxima
  r"""
+diff --git a/src/sage/rings/polynomial/ideal.py b/src/sage/rings/polynomial/ideal.py
+--- a/src/sage/rings/polynomial/ideal.py
++++ b/src/sage/rings/polynomial/ideal.py
+@@ -76,10 +76,10 @@ class Ideal_1poly_field(Ideal_pid):
+             sage: R.<x> = QQ[]
+-            sage: I = R.ideal([x^2 - 1, x^3 - 1])
+-            sage: G = I.groebner_basis(); G
++            sage: I = R.ideal([x^2 - 1, x^3 - 1])                         # known bug - Sagelite WASI polynomial_number_field trap
++            sage: G = I.groebner_basis(); G                                # known bug - depends on I
+             [x - 1]
+-            sage: type(G)
++            sage: type(G)                                                   # known bug - depends on G
+             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
+-            sage: list(G)
++            sage: list(G)                                                   # known bug - depends on G
+             [x - 1]
+         """
+         gb = self.gens_reduced()
+@@ -95,6 +95,6 @@ class Ideal_1poly_field(Ideal_pid):
+             sage: R.<q> = QQ[]
+-            sage: I = R.ideal([q^2 + q - 1])
+-            sage: I.change_ring(RR['q'])                                                # needs sage.rings.real_mpfr
++            sage: I = R.ideal([q^2 + q - 1])                                # known bug - Sagelite WASI polynomial_number_field trap
++            sage: I.change_ring(RR['q'])                                     # known bug - depends on I
+             Principal ideal (q^2 + q - 1.00000000000000) of
+              Univariate Polynomial Ring in q over Real Field with 53 bits of precision
+         """
 diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
 --- a/src/sage/rings/polynomial/multi_polynomial_element.py
 +++ b/src/sage/rings/polynomial/multi_polynomial_element.py

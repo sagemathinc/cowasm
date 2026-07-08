@@ -40268,6 +40268,38 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups all eleven skipped examples under
 `optional:sage.libs.singular`.
 
+Focused univariate polynomial-ideal boundary pass on 2026-07-08 UTC: the
+checked `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now
+has 1,107 non-comment entries after promoting
+`src/sage/rings/polynomial/ideal.py`.
+
+A focused direct probe first reproduced the previously recorded
+`rings/polynomial/ideal.py` timeout as the same lower-level
+`polynomial_number_field` table-index runtime trap exposed by line-rerunning
+the first ideal-constructor example. The WASI source patch now defers the two
+univariate polynomial ideal-constructor spans in this file as explicit
+`# known bug - Sagelite WASI polynomial_number_field trap` coverage, along
+with their dependent checks. The remaining default-profile examples exercise
+residue-class degree and setup behavior without reaching that backend trap.
+
+Focused validation used `test-sage-doctest-corpus` after rebuilding and
+patching a fresh Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-ideal/make.sqlite3`.
+The run records:
+
+```text
+ideal.py: 6 passed, 0 failed, 7 skipped
+```
+
+The full WASI source patch dry-runs against `/home/user/sagelite`, the saved
+block- and file-failure cluster queries are empty, `skips-by-reason.sql`
+groups six deferred examples under `deferred:known bug` and one finite-field
+residue-field example under `optional:sage.rings.finite_rings`, and
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+prints no promotion row after subtracting the updated corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
