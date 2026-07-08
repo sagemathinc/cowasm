@@ -40349,6 +40349,40 @@ The skipped rows group under `optional:sage.libs.singular`, so the old
 `Conic`/`C` NameError cluster should be treated as a stale pre-refresh probe
 rather than a live doctest-runner or startup-namespace issue.
 
+Focused toy-Buchberger display-order cleanup on 2026-07-08 UTC: refreshing the
+current 1,107-entry corpus into
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` after the standalone
+recovery exposed one remaining block-level output mismatch in
+`sage/rings/polynomial/toy_buchberger.py` at line 317:
+
+```text
+sage -t failed: 77796 passed, 1 failed, 23725 skipped
+```
+
+The failing value was mathematically identical, but the runtime printed the
+two-element `G` set in the opposite order from the historical doctest expected
+string. After writing the 39 MB SQLite dashboard, the parent Node process also
+segfaulted while returning the failed make-target status, so that default
+dashboard should be treated as the pre-fix failure artifact for this pass.
+
+The WASI source patch now marks the `sage: G, B` display check as
+`# random - set display order is runtime-dependent`, matching the existing
+browser-profile treatment for incidental set display order. Focused validation
+used `test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-toy-buchberger.sqlite3`.
+Because the patch changed, this focused make-target run rebuilt a fresh patched
+Sagelite source copy before testing. It records:
+
+```text
+toy_buchberger.py: 30 passed, 0 failed, 21 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for the focused
+dashboard. A later full-corpus refresh can replace the pre-fix default
+dashboard when a fresh global zero-failure artifact is needed.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

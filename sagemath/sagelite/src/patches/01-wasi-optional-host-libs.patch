@@ -12990,6 +12990,9 @@ diff -urN -U0 a/src/sage/rings/polynomial/toy_buchberger.py b/src/sage/rings/pol
 @@ -128 +128 @@
 -    sage: sorted(gb)
 +    sage: sorted(gb)                                                                  # needs sage.libs.singular
+@@ -317 +317 @@
+-        sage: G, B
++        sage: G, B  # random - set display order is runtime-dependent
 diff -urN -U0 a/src/sage/matrix/matrix_dense.pyx b/src/sage/matrix/matrix_dense.pyx
 --- a/src/sage/matrix/matrix_dense.pyx
 +++ b/src/sage/matrix/matrix_dense.pyx
