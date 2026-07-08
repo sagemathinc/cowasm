@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 96;
+const doctestRunnerVersion = 97;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1982,12 +1982,27 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             remaining = "".join(got_lines[index + 1:])
             if super().check_output(want, remaining, optionflags):
                 return True
+            if (
+                normalized_want != want
+                and super().check_output(normalized_want, remaining, optionflags)
+            ):
+                return True
         return False
 
     def __normalize_expected_warning_output(self, text):
         text = re.sub(
             r"(?m)^([ \\t]*)doctest:warning\\r?\\n[ \\t]*\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning):\\r?\\n",
             r"\\1doctest:...: \\2: \\n",
+            text,
+        )
+        text = re.sub(
+            r"(?m)^([ \\t]*)doctest:warning\\.\\.\\.:\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning):\\r?\\n",
+            r"\\1doctest:...: \\2: \\n",
+            text,
+        )
+        text = re.sub(
+            r"(?m)^([ \\t]*)doctest:warning\\.\\.\\.:\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning): ",
+            r"\\1doctest:...: \\2: ",
             text,
         )
         return re.sub(

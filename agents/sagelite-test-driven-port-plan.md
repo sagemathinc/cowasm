@@ -40741,6 +40741,33 @@ that `stats/basic_stats.py:282`, `proof/all.py:227`,
 `pretty_print.py:154`, and `fancy_repr.py:158` still fail under
 `--deferred=known-bug`, so those tags remain live.
 
+Follow-up warning-normalization deferred-tag audit on 2026-07-08 UTC: the
+doctest runner now normalizes Sage's `doctest:warning...:` expected-output
+form in addition to the earlier multiline warning form, and it applies the
+same normalized comparison after discarding earlier warning prefixes from a
+block's actual output. The runner version is now 97, and the standalone smoke
+fixture includes a warning example with an earlier unrelated warning before the
+target deprecation warning.
+
+This made the `sage/misc/functional.py` `krull_dimension(QQ)` warning-prefix
+example pass under `--deferred=known-bug`, so the WASI source patch no longer
+marks that prompt as a known bug. Focused validation records:
+
+```text
+functional.py --line 927 with --deferred=known-bug: 1 passed, 0 failed, 0 skipped
+functional.py: 90 passed, 0 failed, 337 skipped
+```
+
+Validation also used `node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. A broad
+`make -C sagemath/sagelite test-wasi-sdk-standalone` refresh was started and
+confirmed that the source patch applies during the make target, but was
+interrupted during unrelated full Cython regeneration after more than twenty
+minutes. The adjacent `stats/basic_stats.py:282` warning doctest still fails
+because its actual output contains an additional `mean` deprecation warning, so
+that tag remains live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

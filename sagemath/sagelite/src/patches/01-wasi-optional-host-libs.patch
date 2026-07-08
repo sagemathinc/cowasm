@@ -1160,15 +1160,6 @@ diff -urN a/src/sage/misc/functional.py b/src/sage/misc/functional.py
          sage: f(x) = (x + sin(3*x)) * exp(-3*x*I)
          sage: h(x) = f(x) - f(x).expand()
          sage: integral(h(x), (x, 0, 2*pi))
-@@ -922,7 +924,7 @@
-
-     EXAMPLES::
-
--        sage: krull_dimension(QQ)
-+        sage: krull_dimension(QQ)                                                       # known bug - Sagelite warning prefix normalization
-         doctest:warning...:
-         DeprecationWarning: please use the krull_dimension method
-         See https://github.com/sagemath/sage/issues/39311 for details.
 @@ -1141,16 +1143,16 @@
 
      Check if :issue:`37794` is fixed::
