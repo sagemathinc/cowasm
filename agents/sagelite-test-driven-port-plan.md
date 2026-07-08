@@ -40862,6 +40862,21 @@ confirmed that `sageinspect.py`'s empty-docstring formatting tag,
 pretty-printer fallback tags, and the sampled combinatorics display/order tags
 still fail under `--deferred=known-bug`, so those tags remain live.
 
+Follow-up deferred-rerun query pass on 2026-07-08 UTC: the saved
+`deferred-reruns.sql` dashboard now carries optional metadata into generated
+rerun commands when a deferred block is also tagged `# optional` or `# needs`.
+The triggering audit found that
+`sage/misc/package_dir.py:50` was listed as `deferred:known bug`, but the old
+generated `sage -t --deferred=known-bug --line ...` command still skipped the
+block because the same doctest inherited `# optional - !meson_editable`.
+
+The query now appends either `--optional` for bare optional blocks or a quoted
+`--optional=...` feature list extracted from block tags. Validation used the
+focused package-dir probe database to confirm the generated command includes
+`--optional='!meson_editable'`, and rerunning that command executes the block
+instead of leaving another skipped row. The block still fails under the
+current browser-compatible profile, so its source tag remains live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
