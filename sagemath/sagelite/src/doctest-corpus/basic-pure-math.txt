@@ -1078,6 +1078,8 @@ src/sage/games/quantumino.py
 src/sage/tests/books/judson_abstract_algebra/integers-sage.py
 src/sage/tests/books/judson_abstract_algebra/crypt-sage.py
 src/sage/tests/books/judson_abstract_algebra/cosets-sage-exercises.py
+src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+src/sage/tests/books/judson_abstract_algebra/vect-sage-exercises.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/domaines_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
 src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py

@@ -40002,6 +40002,38 @@ successfully and the full standalone target passed. The standalone lifecycle
 blocker from the prior matrix fallback pass is therefore cleared at the
 current CoWasm state.
 
+Follow-up Judson finite-field and vector corpus-growth pass on 2026-07-08 UTC:
+the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,101 non-comment entries after promoting
+`src/sage/tests/books/judson_abstract_algebra/finite-sage.py` and
+`src/sage/tests/books/judson_abstract_algebra/vect-sage-exercises.py`.
+
+The pass keeps nearby generated-book backend boundaries explicit: graph,
+coding/Hamming-code, and permutation-group Judson exercise files now record
+file-level `# sage.doctest: needs ...` skips instead of startup-name and
+dependent-name failures. A WASI-only PARI FFELT field-constructor adjustment
+forces the existing finite-field element variable-name replacement path for
+non-`x` generators, so examples such as `F.<a> = GF(5^4); a^458` print with
+`a` instead of leaking PARI's fallback `x`. The remaining generated-book
+finite-field discrete-log exception-text drift is tagged as one `# known bug`
+skip while the rest of the file stays active.
+
+Focused validation used the six-file Judson cluster batch and then the
+make-target corpus path with a two-file temporary corpus. The promotion
+database
+`.tmp/current-run/scheduled-2026-07-08-judson-boundary-tags/promoted-make.sqlite3`
+records:
+
+```text
+sage -t passed: 20 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `6cb3759218366b2ba6c06a58f35075c19b4d1b7a`,
+Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+node profile, and runner version 94.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
@@ -40060,4 +40092,3 @@ The next milestone is complete when:
 - failures can be grouped into actionable root-cause clusters;
 - the fast Sagelite standalone smoke remains separate and passes its Node,
   `python-wasi-sdk`, doctest, and Electron resource probes.
-

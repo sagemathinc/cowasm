@@ -15429,6 +15429,16 @@ diff --git a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py b/src/sage/r
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.pari
  r"""
+@@ -136,6 +137,9 @@
+         except PariError:
+             self._need_replace_varname = True
+             modulus_pari = modulus._pari_with_name()
++        import sys
++        if sys.platform == "wasi" and self.variable_name() != 'x':
++            self._need_replace_varname = True
+         self._gen_pari = modulus_pari.ffgen()
+         self._zero_element = self.element_class(self, 0)
+         self._one_element = self.element_class(self, 1)
 diff --git a/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx b/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
 --- a/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
 +++ b/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx
@@ -19024,6 +19034,44 @@ diff --git a/src/sage/quivers/representation.py b/src/sage/quivers/representatio
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.quivers sage.graphs sage.modules.free_module sage.rings.number_field
  r"""
+diff --git a/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py b/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
+--- a/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
++++ b/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.graphs
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py b/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.coding sage.matrix.matrix_mod2_dense cysignals.alarm
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+@@ -102,1 +102,1 @@
+-    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)
++    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
+diff --git a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
+--- a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
++++ b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.groups
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/struct-sage.py b/src/sage/tests/books/judson_abstract_algebra/struct-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/struct-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/struct-sage.py
+@@ -1,3 +1,4 @@
++# sage.doctest: needs sage.groups
+ ##          Sage Doctest File         ##
+ #**************************************#
+ #*    Generated from PreTeXt source   *#
 diff --git a/src/sage/manifolds/subset.py b/src/sage/manifolds/subset.py
 --- a/src/sage/manifolds/subset.py
 +++ b/src/sage/manifolds/subset.py
