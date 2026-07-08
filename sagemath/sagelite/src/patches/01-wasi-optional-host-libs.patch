@@ -6819,12 +6819,6 @@ diff -urN a/src/sage/misc/sage_timeit.py b/src/sage/misc/sage_timeit.py
 @@ -193 +193 @@
 -        sage: timeit("f()")
 +        sage: timeit("f()")                                                            # needs IPython
-diff -urN a/src/sage/misc/superseded.py b/src/sage/misc/superseded.py
---- a/src/sage/misc/superseded.py
-+++ b/src/sage/misc/superseded.py
-@@ -450 +450 @@
--            sage: blo()
-+            sage: blo()  # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 --- a/src/sage/misc/sagedoc.py
 +++ b/src/sage/misc/sagedoc.py

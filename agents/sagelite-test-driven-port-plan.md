@@ -40979,6 +40979,26 @@ Validation also used `node --check sagemath/sagelite/src/sagelite-node-repl.cjs`
 focused `--line 88` rerun against the refreshed patched source copy, and a
 synthetic one-block literal-dict ellipsis smoke.
 
+Follow-up warning deferred-tag audit on 2026-07-08 UTC: no corpus entry was
+promoted. A full-file `--deferred=known-bug` rerun of
+`sage/misc/superseded.py` found that the deprecated-function alias example with
+an explicit `replacement='BLOB'` now passes when executed in source order, so
+the WASI source patch no longer marks that prompt as `# known bug`.
+
+Focused validation against the updated patched source copy records:
+
+```text
+superseded.py: 50 passed, 0 failed, 16 skipped
+```
+
+The focused dashboard is `.tmp/current-run/superseded-after-untag.sqlite3`.
+Validation also used `node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. Adjacent
+focused probes confirmed that the `decorators.py`, `lazy_format.py`,
+`sage_timeit.py`, and `prandom.py` known-bug tags sampled in the same pass
+remain live under the current default node profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
