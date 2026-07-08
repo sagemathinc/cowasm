@@ -265,6 +265,7 @@ src/sage/libs/ntl/ntl_GF2.pyx
 src/sage/libs/ntl/ntl_GF2E.pyx
 src/sage/libs/ntl/ntl_GF2EContext.pyx
 src/sage/libs/ntl/ntl_GF2X.pyx
+src/sage/libs/ntl/ntl_GF2X_linkage.pxi
 src/sage/libs/ntl/ntl_mat_GF2.pyx
 src/sage/libs/ntl/ntl_ZZ.pyx
 src/sage/libs/ntl/ntl_ZZX.pyx

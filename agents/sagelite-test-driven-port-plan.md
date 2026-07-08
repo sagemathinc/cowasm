@@ -39271,6 +39271,44 @@ The smoke database records CoWasm commit
 and the patched source root
 `/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
 
+Focused NTL GF(2) linkage template corpus-growth pass on 2026-07-08:
+
+```text
+ntl_GF2X_linkage.pxi: 86 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/libs/ntl/ntl_GF2X_linkage.pxi` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,095
+non-comment entries in this checkout. The file adds direct default-profile
+coverage for NTL GF(2) polynomial linkage helpers without new WASI source tags
+or startup namespace changes.
+
+The candidate appeared only after extending the source-frontier scan beyond
+the default `.py` and `.pyx` suffixes to include `.pxi` and `.rst` sources. A
+focused template/frontier probe wrote dashboards under
+`.tmp/current-run/scheduled-2026-07-08-active-pxi/`. The smaller `.pxi/.rst`
+slice is not a promotion source: symbolic template files cluster around the
+stripped `sage.symbolic.expression` surface, `schur.pxi` needs the unavailable
+Symmetrica extension, `test_jupyter.rst` needs IPython/ipywidgets and
+symbolic support, and `constants_c_impl.pxi` exits with a worker `SIGSEGV`.
+
+The larger `.pxi` slice promoted only `ntl_GF2X_linkage.pxi`. The remaining
+template files are broader runtime or backend frontiers: dense mod-n matrix
+template coverage times out in a large random-matrix example; p-adic CR and
+ZZ_pEX linkage paths hit the known NTL context dynamic-link/runtime boundary;
+FP/FM p-adic templates, `nmod_poly_linkage.pxi`, `integral_points.pxi`,
+`padic_template_element.pxi`, and `series_impl.pxi` still have substantial
+block-failure clusters. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-active-pxi/ntl-gf2x-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`0966ade00e540f9ca1cd1b3ab4fd8510f1f6d9ad`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 93,
+and a 100% non-skipped pass rate.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
