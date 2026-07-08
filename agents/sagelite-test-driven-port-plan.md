@@ -41145,6 +41145,24 @@ returned status 0 in that direct run and recorded `passed|1|1|0|0`; the full
 standalone rerun before the script policy fix recorded the shutdown-segfault
 variant described above.
 
+Follow-up standalone validation and patch hygiene pass on 2026-07-08 UTC: no
+corpus entry was promoted. A fresh full
+`SAGELITE_MESON_COMPILE_JOBS=4 SAGELITE_CYTHON_GENERATE_JOBS=1 make -C
+sagemath/sagelite test-wasi-sdk-standalone` rebuilt Sagelite from the patched
+source copy and completed successfully:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run exercised the Cython generation retry loop, Meson compile/install,
+Node and `python-wasi-sdk` import probes, Electron resource side-module audit,
+and the standalone doctest smoke suite. While reviewing nearby stale-tag
+cleanup, the checked-in WASI source patch still contained a no-op
+`lazy_format.py:45` hunk left behind after the lazy-format displayhook
+`# known bug` tag was removed. That no-op hunk was dropped so future patch
+reviews show only real browser-profile metadata or source changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
