@@ -107,6 +107,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - The saved `file-error-reruns.sql` query extracts source-line breadcrumbs from
   file-level errors and emits `sage -t --line ...` commands for reproducing
   crashes that happened before a block row could be persisted.
+- The saved `deferred-reruns.sql` query extracts deferred skip block rows and
+  emits focused `sage -t --deferred=TAG --line ...` commands for stale
+  `# known bug`, `# not implemented`, `# not tested`, and `# py2` audits.
 - Function-signature traps are classified as `wasm_signature_mismatch`, so
   C/WASM ABI regressions are separated from generic runtime traps.
 - The dynamic-loader fallback for side-module `qsort` now performs comparator-
@@ -40516,6 +40519,18 @@ default deferred smoke: 1 passed, 0 failed, 2 skipped
 --deferred: 1 passed, 2 failed, 0 skipped
 MarkedOutput("56 µs") with --deferred=known-bug: 1 passed, 0 failed, 0 skipped
 ```
+
+Follow-up deferred-rerun query pass on 2026-07-08 UTC: the saved SQL dashboard
+queries now include `deferred-reruns.sql`, which turns skipped deferred block
+rows into focused stale-skip audit commands such as:
+
+```text
+sage -t --deferred=known-bug --line 17 /tmp/skipped.py
+```
+
+The standalone smoke fixture covers both `known bug` and `not implemented`
+normalization, so multi-word deferred tags are emitted in the hyphenated form
+accepted by `sage -t --deferred=...`.
 
 ## Phase 6: TypeScript/NPM Direction
 

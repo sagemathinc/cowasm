@@ -2681,7 +2681,11 @@ create table blocks (
   file_id integer not null,
   status text not null,
   failure_class text,
-  actual text
+  actual text,
+  start_line integer,
+  skip_reason text,
+  tags text,
+  source text
 );
 insert into runs (id) values (1);
 insert into files (
@@ -2806,6 +2810,36 @@ RuntimeError: memory access out of bounds
   '',
   40
 );
+insert into blocks (
+  file_id, status, failure_class, actual, start_line, skip_reason, tags, source
+) values (
+  6,
+  'skipped',
+  null,
+  null,
+  17,
+  'deferred:known bug',
+  'deferred,deferred:known bug',
+  '1 / 0  # known bug' || char(10)
+), (
+  6,
+  'skipped',
+  null,
+  null,
+  19,
+  'deferred:not implemented',
+  'deferred,deferred:not implemented',
+  '2 / 0  # not implemented' || char(10)
+), (
+  8,
+  'failed',
+  'output_mismatch',
+  'wrong',
+  23,
+  null,
+  '',
+  '3 + 3' || char(10)
+);
 SQL
 doctest_query_failures_by_class="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/failures-by-class.sql")"
 if ! printf '%s\n' "$doctest_query_failures_by_class" | grep -Fxq 'ModuleNotFoundError|1'; then
@@ -2844,6 +2878,16 @@ if ! printf '%s\n' "$doctest_query_file_error_reruns" | grep -Fxq 'wasm_signatur
   sqlite3 "$doctest_query_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: file-error rerun query did not extract the source-line reproduction command."
 fi
+doctest_query_deferred_reruns="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/deferred-reruns.sql")"
+for expected_deferred_rerun in \
+  'known-bug|/tmp/skipped.py|17|sage -t --deferred=known-bug --line 17 /tmp/skipped.py|1 / 0  # known bug' \
+  'not-implemented|/tmp/skipped.py|19|sage -t --deferred=not-implemented --line 19 /tmp/skipped.py|2 / 0  # not implemented'; do
+  if ! printf '%s\n' "$doctest_query_deferred_reruns" | grep -Fxq "$expected_deferred_rerun"; then
+    printf '%s\n' "$doctest_query_deferred_reruns" >&2
+    sqlite3 "$doctest_query_db" ".dump" >&2 || true
+    record_blocker "sagelite-blocked: deferred rerun query did not emit $expected_deferred_rerun."
+  fi
+done
 doctest_query_coverage_summary="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/file-coverage-summary.sql")"
 for expected_coverage_shape in \
   'file_error|4|0|0|3|0|0|0' \
