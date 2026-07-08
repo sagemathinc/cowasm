@@ -41078,6 +41078,33 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
 focused `--line 45` rerun still misses the non-contiguous setup state, so the
 full-file deferred rerun is the relevant stale-tag signal.
 
+Follow-up Weyl dictionary-order audit on 2026-07-08 UTC: no corpus entry was
+promoted. The strict source frontier remained empty, so the run stayed on the
+stale `# known bug` audit path and checked the two
+`sage/algebras/weyl_algebra.py` `factor_differentials()` tags that mention
+Sagelite WASI dictionary display order drift.
+
+The first focused `--line 540` probe was not a valid stale-tag signal because
+the prompt depends on earlier setup in the same method docstring and failed
+with `NameError: name 'x' is not defined`; its DB is
+`.tmp/current-run/scheduled-active/weyl-line-540.sqlite3`. A full-file
+`--deferred=known-bug` rerun against the staged Electron resource tree is the
+relevant check. It records 300 passed, 5 failed, and 15 skipped blocks in
+`.tmp/current-run/scheduled-active/weyl-known-bug-full.sqlite3`. The line 540
+and 552 blocks both still fail with `output_mismatch` because the actual dict
+display order differs from the expected doctest order, so the two Weyl
+dictionary-display tags should stay deferred.
+
+The prerequisite `make -C sagemath/sagelite test-wasi-sdk-standalone` rebuilt
+and staged `sagemath/sagelite/dist/wasi-sdk/electron-resources`, but the target
+currently finishes through Make with
+`sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts:
+passed|48|38|0|10` in `sagemath/sagelite/dist/wasi-sdk/status.txt`. The smoke
+run records runner version 102 and resource root
+`/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources`, so the
+resource tree was usable for the Weyl follow-up despite the standalone smoke
+count blocker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
