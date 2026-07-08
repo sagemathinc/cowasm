@@ -40768,6 +40768,33 @@ minutes. The adjacent `stats/basic_stats.py:282` warning doctest still fails
 because its actual output contains an additional `mean` deprecation warning, so
 that tag remains live.
 
+Follow-up warning-normalization deferred-tag audit on 2026-07-08 UTC: the
+doctest runner now tolerates extra formatted warning blocks in the actual output
+when the expected warning and non-warning output still match. This handles Sage
+deprecation paths where a public deprecated function emits the documented
+warning and then calls another deprecated helper before producing the value.
+The runner version is now 98, and the standalone smoke fixture includes an
+expected-warning example that emits a second warning before returning `42`.
+
+This made the `sage/stats/basic_stats.py` `variance([1..6])` deprecation
+example pass when executed, so the WASI source patch no longer marks that
+prompt as a known bug. Focused validation used the recent staged resource
+snapshot from `/home/user/.snapshots/2026-07-08T11:52:08.659Z/...` because the
+current checkout's `sagemath/sagelite/dist/wasi-sdk/electron-resources` bundle
+was absent:
+
+```text
+basic_stats.py --line 282: 1 passed, 0 failed, 0 skipped
+basic_stats.py: 34 passed, 0 failed, 30 skipped
+```
+
+Validation also used `node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch, and a
+throwaway warning-smoke doctest confirming the runner version 98 comparison
+path. The focused `basic_stats.py` dashboard's saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

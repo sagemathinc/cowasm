@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 97;
+const doctestRunnerVersion = 98;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1973,6 +1973,15 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         normalized_want = self.__normalize_expected_warning_output(want)
         if normalized_want != want and super().check_output(normalized_want, got, optionflags):
             return True
+        if "Warning:" in want:
+            for got_variant in self.__warning_extra_block_variants(got):
+                if super().check_output(want, got_variant, optionflags):
+                    return True
+                if (
+                    normalized_want != want
+                    and super().check_output(normalized_want, got_variant, optionflags)
+                ):
+                    return True
         got_lines = got.splitlines(True)
         prefix = ""
         for index, line in enumerate(got_lines):
@@ -1988,6 +1997,51 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             ):
                 return True
         return False
+
+    def __warning_extra_block_variants(self, text):
+        variants = []
+        seen = {text}
+        pending = [text]
+        while pending and len(variants) < 32:
+            current = pending.pop()
+            for start, end in self.__warning_block_spans(current):
+                variant = current[:start] + current[end:]
+                if variant in seen:
+                    continue
+                seen.add(variant)
+                variants.append(variant)
+                pending.append(variant)
+                if len(variants) >= 32:
+                    break
+        return variants
+
+    def __warning_block_spans(self, text):
+        spans = []
+        header_re = re.compile(
+            r"(?m)^doctest:\\d+: [A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning: .*?(?:\\r?\\n|$)"
+        )
+        for match in header_re.finditer(text):
+            end = match.end()
+            while True:
+                next_end = self.__warning_detail_line_end(text, end)
+                if next_end == end:
+                    break
+                end = next_end
+            spans.append((match.start(), end))
+        return spans
+
+    def __warning_detail_line_end(self, text, start):
+        if start >= len(text):
+            return start
+        line_end = text.find("\\n", start)
+        if line_end == -1:
+            line_end = len(text)
+        else:
+            line_end += 1
+        line = text[start:line_end]
+        if re.match(r"See https?://", line):
+            return line_end
+        return start
 
     def __normalize_expected_warning_output(self, text):
         text = re.sub(

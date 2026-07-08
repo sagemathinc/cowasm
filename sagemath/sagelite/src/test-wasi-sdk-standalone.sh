@@ -1877,6 +1877,15 @@ EXAMPLES::
     doctest:warning...:
     DeprecationWarning:
     target warning
+    sage: def cowasm_extra_warning_after_target():
+    ....:     warnings.warn("target first", DeprecationWarning)
+    ....:     warnings.warn("extra second", UserWarning)
+    ....:     return 42
+    sage: cowasm_extra_warning_after_target()
+    doctest:warning...:
+    DeprecationWarning:
+    target first
+    42
     sage: "17-adic Field with capped relative precision 20"
     ...-adic Field with capped relative precision ...
     sage: ZZ.random_element()  # random
