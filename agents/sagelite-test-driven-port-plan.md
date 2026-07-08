@@ -39672,6 +39672,34 @@ promotion batch: `sets-sage.py`, `finite-sage.py`, and
 field, permutation, and polynomial files expose broader algebra backend and
 dynamic-linkage gaps.
 
+Follow-up Judson frontier audit on 2026-07-08: no corpus entry was promoted.
+The curated corpus still contains 1,099 non-comment entries. A focused direct
+probe wrote
+`.tmp/current-run/scheduled-2026-07-08/judson-frontier.sqlite3` against the
+current patched Sagelite source tree and covered:
+`src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py`,
+`src/sage/tests/books/judson_abstract_algebra/finite-sage.py`,
+`src/sage/tests/books/judson_abstract_algebra/struct-sage.py`,
+`src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py`,
+`src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py`, and
+`src/sage/tests/books/judson_abstract_algebra/vect-sage-exercises.py`.
+
+The batch recorded:
+
+```text
+sage -t failed: 21 passed, 40 failed, 3 skipped
+```
+
+`doctest-corpus-candidates.py --strict-frontier` printed no uncovered clean
+runnable row. The two compact near misses remain non-promotion targets for
+now: `finite-sage.py` has finite-field generator-name and logarithm diagnostic
+drift, while `vect-sage-exercises.py` reaches the known matrix echelonization
+runtime boundary through `M.submodule([u, v, w])`. The larger Judson files
+remain blocked by coding, graph, permutation-group, and dependent-name
+clusters. Future scheduled runs should avoid repeating these generated-book
+files unless the finite-field display/log diagnostics, matrix echelonization,
+coding, graph, or permutation-group startup/backend profile changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
