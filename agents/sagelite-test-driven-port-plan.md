@@ -40420,6 +40420,34 @@ Treat the refreshed default dashboard as evidence of a full-corpus/parallel
 worker stability frontier, not as a deterministic doctest semantics failure in
 those two files.
 
+Follow-up doctest worker retry pass on 2026-07-08 UTC: runner version 95 now
+retries a single isolated doctest worker once when the child process exits
+because of a host signal such as `SIGBUS` or `SIGSEGV`. Timeouts, ordinary
+doctest failures, persistent worker failures, and workers that already wrote
+file results are still recorded through the existing SQLite failure paths.
+This targets the full-corpus/parallel stability frontier exposed by the
+previous dashboard, where focused reruns of `baxter_permutations.py` and
+`binary_recurrence_sequences.py` were clean.
+
+Focused validation against the two affected corpus files used the make target
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+`SAGELITE_DOCTEST_JOBS=2`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/retry-focused-make.sqlite3`.
+It records:
+
+```text
+baxter_permutations.py: 31 passed, 0 failed, 5 skipped
+binary_recurrence_sequences.py: 0 passed, 0 failed, 1 skipped
+two-file make rerun: 31 passed, 0 failed, 6 skipped
+```
+
+A scratch signal-retry fixture in
+`/home/user/cowasm/.tmp/current-run/retry-signal-once.sqlite3` confirms that a
+worker terminated once by signal is retried and then recorded as a passing
+file under runner version 95. A later full-corpus refresh can replace the
+runner-version-94 default dashboard and check whether the transient parallel
+worker crashes are eliminated in the broad run.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 94;
+const doctestRunnerVersion = 95;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -490,28 +490,48 @@ async function runDoctestFileTask({
   const workerOptionsPath = path.join(tmpDir, `worker-${index}.json`);
   const fileBegin = Date.now();
   try {
-    try {
-      await runDoctestFileWorker({
-        workerOptionsPath,
-        file,
-        resultPath,
-        statePath,
-        long: options.long,
-        optional: options.optional,
-        optionalFeatures: options.optionalFeatures,
-        blockKeys: options.blockKeys,
-        lines: options.lines,
-        sourceRoot: options.sourceRoot,
-        invocationCwd,
-        resourceRoot,
-        timeoutSeconds: options.timeoutSeconds,
-      });
-      const parsed = readJsonFile(resultPath);
-      return { index, files: parsed && Array.isArray(parsed.files) ? parsed.files : [] };
-    } catch (err) {
-      const parsed = readJsonFile(resultPath);
-      if (parsed && Array.isArray(parsed.files) && parsed.files.length > 0) {
-        return { index, files: parsed.files };
+    let lastErr = null;
+    const maxAttempts = 2;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      if (attempt > 1) {
+        for (const stalePath of [resultPath, statePath]) {
+          fs.rmSync(stalePath, { force: true });
+        }
+      }
+      try {
+        await runDoctestFileWorker({
+          workerOptionsPath,
+          file,
+          resultPath,
+          statePath,
+          long: options.long,
+          optional: options.optional,
+          optionalFeatures: options.optionalFeatures,
+          blockKeys: options.blockKeys,
+          lines: options.lines,
+          sourceRoot: options.sourceRoot,
+          invocationCwd,
+          resourceRoot,
+          timeoutSeconds: options.timeoutSeconds,
+        });
+        const parsed = readJsonFile(resultPath);
+        return { index, files: parsed && Array.isArray(parsed.files) ? parsed.files : [] };
+      } catch (err) {
+        const parsed = readJsonFile(resultPath);
+        if (parsed && Array.isArray(parsed.files) && parsed.files.length > 0) {
+          return { index, files: parsed.files };
+        }
+        lastErr = err;
+        if (attempt < maxAttempts && isRetriableDoctestWorkerError(err)) {
+          continue;
+        }
+        break;
+      }
+    }
+    {
+      const err = lastErr;
+      if (!err) {
+        throw new Error(`sage -t worker did not produce a result for ${file}`);
       }
       const state = readJsonFile(statePath);
       const failedPath =
@@ -531,6 +551,13 @@ async function runDoctestFileTask({
       fs.rmSync(filePath, { force: true });
     }
   }
+}
+
+function isRetriableDoctestWorkerError(err) {
+  if (!err || err.doctestTimedOut) {
+    return false;
+  }
+  return typeof err.doctestWorkerSignal === "string" && err.doctestWorkerSignal.length > 0;
 }
 
 async function runDoctestWorker(args, invocationCwd, pythonOptions) {
@@ -647,6 +674,7 @@ function runDoctestFileWorker({
         const err = new Error(`sage -t timed out after ${timeoutSeconds}s for ${file}`);
         err.stdout = stdout;
         err.stderr = stderr;
+        err.doctestTimedOut = true;
         reject(err);
         return;
       }
@@ -664,6 +692,8 @@ function runDoctestFileWorker({
       const err = new Error(detail);
       err.stdout = stdout;
       err.stderr = stderr;
+      err.doctestWorkerCode = code;
+      err.doctestWorkerSignal = signal;
       reject(err);
     });
   });
