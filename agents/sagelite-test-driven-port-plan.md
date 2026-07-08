@@ -39700,6 +39700,41 @@ clusters. Future scheduled runs should avoid repeating these generated-book
 files unless the finite-field display/log diagnostics, matrix echelonization,
 coding, graph, or permutation-group startup/backend profile changes.
 
+Follow-up low-prompt unnamed-source frontier audit on 2026-07-08:
+
+No new quiet corpus candidate was found. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus remains at
+1,099 non-comment entries. A fresh direct probe selected low-prompt files that
+were not already in the curated corpus and were not already named in this
+plan, then ran them with absolute patched-source paths under
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
+The probe wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-active/low-unnamed.sqlite3
+```
+
+and recorded:
+
+```text
+sage -t failed: 2 passed, 21 failed, 28 skipped
+```
+
+The strict promotion scan printed no uncovered clean runnable row. Most files
+in the batch were skipped-only under existing browser-profile dependency
+metadata, including small arithmetic, graph, NumPy-vector, GAP, modular,
+hyperelliptic, and lambda-bracket helpers.
+
+The only runnable files were `sage/libs/symmetrica/symmetrica.pxi` and
+`sage/libs/symmetrica/sb.pxi`. They are not narrow promotion targets yet:
+their failures are dominated by the unavailable
+`sage.libs.symmetrica.symmetrica` extension, with dependent missing-name
+fallout and a small amount of output drift after failed Symmetrica setup.
+Future scheduled runs should avoid repeating this exact low-prompt unnamed
+slice unless the Symmetrica extension is packaged for the default profile or
+the browser-profile skip policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
