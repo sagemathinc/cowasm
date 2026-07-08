@@ -9155,7 +9155,7 @@ diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
 +++ b/src/sage/plot/histogram.py
 @@ -73 +73 @@
 -            sage: h.get_minmax_data()  # rel tol 1e-15
-+            sage: h.get_minmax_data()  # rel tol 1e-15                             # known bug
++            sage: h.get_minmax_data()  # rel tol 1e-15
 @@ -88 +88 @@
 -            sage: h.get_minmax_data()
 +            sage: h.get_minmax_data()                                               # known bug

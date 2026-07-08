@@ -40877,6 +40877,34 @@ focused package-dir probe database to confirm the generated command includes
 instead of leaving another skipped row. The block still fails under the
 current browser-compatible profile, so its source tag remains live.
 
+Follow-up literal-dict tolerance audit on 2026-07-08 UTC: the doctest runner
+now applies literal-dictionary structural comparison inside the tolerance
+checker path, and compares numeric literal values with the active tolerance.
+The runner version is now 99. This clears the first
+`sage/plot/histogram.py` `get_minmax_data()` stale deferred tag, where the
+example already carried `# rel tol 1e-15` but previously failed before the
+literal-dict fallback could handle key-order and one-ulp float display drift.
+
+The WASI source patch no longer marks `histogram.py:73` as `# known bug`,
+while preserving its explicit relative tolerance. Focused validation used a
+fresh temporary Sagelite source copy patched with the checked-in WASI patch:
+
+```text
+histogram.py --line 73 with --deferred=known-bug: 1 passed, 0 failed, 0 skipped
+histogram.py: 38 passed, 0 failed, 3 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-literal-dict/histogram-full.sqlite3`;
+it records CoWasm commit `6bd14f4abfb9152d870998649d127630937487e5`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 99, a 100% non-skipped pass rate, and empty saved
+block- and file-failure cluster queries. Validation also used
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. The
+adjacent `histogram.py:88` deferred display tag remains live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

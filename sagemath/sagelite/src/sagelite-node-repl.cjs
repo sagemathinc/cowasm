@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 98;
+const doctestRunnerVersion = 99;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1956,7 +1956,10 @@ class __CowasmOutputChecker(doctest.OutputChecker):
                 return False
             if super().check_output(want_body, got, optionflags):
                 return True
-            return self.__check_tolerant_output(want_body, got, tolerance, optionflags)
+            return (
+                self.__check_tolerant_output(want_body, got, tolerance, optionflags)
+                or self.__check_literal_dict_output(want_body, got, tolerance)
+            )
         if super().check_output(want, got, optionflags):
             return True
         if self.__check_warning_output(want, got, optionflags):
@@ -2065,7 +2068,7 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             text,
         )
 
-    def __check_literal_dict_output(self, want, got):
+    def __check_literal_dict_output(self, want, got, tolerance=None):
         want = want.strip()
         got = got.strip()
         if not want.startswith("{") or not want.endswith("}"):
@@ -2073,9 +2076,9 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         if not got.startswith("{") or not got.endswith("}"):
             return False
         try:
-            want_tree = ast.parse(want, mode="eval")
-            got_tree = ast.parse(got, mode="eval")
-            return self.__canonical_literal_node(want_tree) == self.__canonical_literal_node(got_tree)
+            want_tree = self.__canonical_literal_node(ast.parse(want, mode="eval"))
+            got_tree = self.__canonical_literal_node(ast.parse(got, mode="eval"))
+            return self.__literal_nodes_equal(want_tree, got_tree, tolerance)
         except (SyntaxError, ValueError, TypeError):
             return False
 
@@ -2100,8 +2103,54 @@ class __CowasmOutputChecker(doctest.OutputChecker):
                     self.__canonical_literal_node(key),
                     self.__canonical_literal_node(value),
                 ))
-            return ("dict", frozenset(items))
+            return ("dict", tuple(items))
         raise ValueError(f"unsupported literal output node: {type(node).__name__}")
+
+    def __literal_nodes_equal(self, want, got, tolerance=None):
+        if want[0] != got[0]:
+            return False
+        if want[0] == "constant":
+            return self.__literal_constants_equal(want[1], got[1], tolerance)
+        if want[0] in ("list", "tuple"):
+            return len(want[1]) == len(got[1]) and all(
+                self.__literal_nodes_equal(want_item, got_item, tolerance)
+                for want_item, got_item in zip(want[1], got[1])
+            )
+        if want[0] == "dict":
+            remaining = list(got[1])
+            for want_key, want_value in want[1]:
+                match_index = None
+                for index, (got_key, got_value) in enumerate(remaining):
+                    if self.__literal_nodes_exact_equal(
+                        want_key, got_key
+                    ) and self.__literal_nodes_equal(want_value, got_value, tolerance):
+                        match_index = index
+                        break
+                if match_index is None:
+                    return False
+                remaining.pop(match_index)
+            return not remaining
+        return False
+
+    def __literal_constants_equal(self, want, got, tolerance=None):
+        if isinstance(want, (builtins.int, builtins.float)) and not isinstance(
+            want, builtins.bool
+        ):
+            if isinstance(got, (builtins.int, builtins.float)) and not isinstance(
+                got, builtins.bool
+            ):
+                mode = "hybrid"
+                tol = 1e-15
+                if tolerance is not None:
+                    mode = tolerance.get("mode", mode)
+                    tol = tolerance.get("tolerance", tol)
+                return self.__numbers_close(
+                    builtins.float(want), builtins.float(got), mode, builtins.float(tol)
+                )
+        return want == got
+
+    def __literal_nodes_exact_equal(self, want, got):
+        return want == got
 
     def __check_exception_line_output(self, want, got, optionflags):
         want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]
