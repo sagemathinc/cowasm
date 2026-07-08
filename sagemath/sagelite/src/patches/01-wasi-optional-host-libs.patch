@@ -2825,7 +2825,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
      EXAMPLES::
 
 -        sage: xsrange(10)
-+        sage: xsrange(10)                                                              # known bug
++        sage: xsrange(10)
          <...generator object at 0x...>
          sage: for i in xsrange(1,5):
          ....:     print(i)
@@ -2848,7 +2848,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          input, unless the waiver is signed by setting ``check=False``::
 
 -            sage: L = IntegerListsLex(3, floor=lambda i: 1 if i>=2 else 0)
-+            sage: L = IntegerListsLex(3, floor=lambda i: 1 if i>=2 else 0)              # known bug
++            sage: L = IntegerListsLex(3, floor=lambda i: 1 if i>=2 else 0)
              doctest:...
              A function has been given as input of the floor=[...] or ceiling=[...]
              arguments of IntegerListsLex. Please see the documentation for the caveats.

@@ -40555,6 +40555,29 @@ two remaining skipped rows are the existing optional
 `__getstate__()` dict display order still fail under `--deferred=known-bug`,
 so those tags remain live.
 
+Follow-up stale deferred-tag audit on 2026-07-08 UTC: focused
+`--deferred=known-bug` reruns found two more stale browser-profile tags.
+The self-contained `sage/arith/srange.pyx` `xsrange(10)` generator-repr
+example and the `sage/combinat/integer_lists/invlex.pyx`
+`IntegerListsLex(3, floor=...)` warning example now pass when executed, so the
+WASI source patch no longer marks those prompts as `# known bug`.
+
+Focused make-target validation rebuilt a fresh patched Sagelite source copy
+and ran a two-file corpus with failures disallowed:
+
+```text
+srange.pyx: 67 passed, 0 failed, 10 skipped
+invlex.pyx: 303 passed, 0 failed, 3 skipped
+two-file make rerun: 370 passed, 0 failed, 13 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-08-stale-tags/make.sqlite3`; it records
+runner version 96, empty block- and file-failure cluster queries, and only the
+existing optional/deferred skip groups. The adjacent
+`integer_lists/base.pyx` `__getstate__()` dict display check still fails under
+`--deferred=known-bug`, so that tag remains live.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
