@@ -40062,6 +40062,43 @@ metadata records CoWasm commit `362039b4f1a9ac26d2e7f2ba8582c8e90bfafbd1`,
 Sagelite source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
 node profile, and runner version 94.
 
+Focused Judson vector-space corpus-growth pass on 2026-07-08 UTC: the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus now has
+1,103 non-comment entries after promoting
+`src/sage/tests/books/judson_abstract_algebra/vect-sage.py`.
+
+A fresh current-source rerun first reduced the earlier vector-space near miss
+to one remaining display-layout mismatch:
+
+```text
+vect-sage.py: 54 passed, 1 failed, 0 skipped
+```
+
+The only remaining mismatch was `S.basis()`, where Sagelite prints the list of
+two rational basis vectors vertically instead of on one line. The WASI source
+patch now marks that display-only drift as
+`# known bug - Sagelite WASI vector-list display layout`, preserving the rest
+of the generated vector-space examples as runnable default-profile coverage.
+
+Focused validation used `test-sage-doctest-corpus` after rebuilding and
+patching a fresh Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-08-vect-sage/make.sqlite3`.
+The run records:
+
+```text
+vect-sage.py: 54 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`doctest-corpus-candidates.py --strict-frontier --min-runner-version 94`
+prints no promotion row after subtracting the updated corpus. The run metadata
+records CoWasm commit `ddc786e560e797d576e40fe6a22db62abbc79da5`, Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58`, node
+profile, runner version 94, and the patched source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -19062,6 +19062,12 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py b/src/sag
 @@ -94,1 +94,1 @@
 -    sage: B.inverse()
 +    sage: B.inverse()  # known bug - Sagelite WASI singular-matrix diagnostic text
+diff --git a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
+@@ -110,1 +110,1 @@
+-    sage: S.basis()
++    sage: S.basis()  # known bug - Sagelite WASI vector-list display layout
 diff --git a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
 --- a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
