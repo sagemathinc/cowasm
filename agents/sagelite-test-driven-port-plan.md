@@ -41369,6 +41369,31 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the file-scope row under
 `optional:sage.rings.number_field`.
 
+Follow-up stale-near-miss audit on 2026-07-08 UTC: no corpus entry was
+promoted. The strict historical candidate scan with the current source root,
+runner metadata guards, block-row guards, file-run guards, and
+`--min-runner-version 83` printed no uncovered clean promotion rows across
+`.tmp/current-run/**/*.sqlite3`. A source-frontier scan subtracting both the
+checked 1,108-entry corpus and every `src/sage/...` path already named in this
+plan also printed no unmentioned file with runnable prompts, even without the
+earlier 500-prompt cap.
+
+The only low-failure near misses left by the guarded historical scan were stale
+under the current patched source copy. Focused reruns now record:
+
+```text
+bugs.txt: 0 passed, 0 failed, 1 skipped
+kraus.py: 0 passed, 0 failed, 1 skipped
+cm.py: 0 passed, 0 failed, 1 skipped
+```
+
+`bugs.txt` is skipped by the current `sage.plot.plot3d` file-scope tag, while
+`sage/schemes/elliptic_curves/kraus.py` and `cm.py` are skipped by their
+current elliptic-curve/PARI/FLINT browser-profile boundary metadata. These
+historical near-miss rows should not be used as promotion evidence; future
+scheduled runs should start from a changed backend/runtime boundary or a new
+source frontier rather than resampling these three files.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
