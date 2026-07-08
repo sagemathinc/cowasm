@@ -5073,6 +5073,51 @@ The latest-run summary records CoWasm commit
 and a 100% non-skipped pass rate. The strict candidate helper prints no
 promotion row after subtracting the updated 1,108-entry corpus.
 
+Follow-up compact frontier audit on 2026-07-08:
+
+No new quiet corpus candidate was found. A strict scan across current scratch
+dashboards with
+`doctest-corpus-candidates.py --strict-frontier --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk --min-runner-version 83`
+printed no uncovered promotion rows. A source-minus-corpus scan that
+subtracted every `sage/...` and `src/sage/...` path mentioned in this plan
+also printed no unmentioned file with runnable prompts up through 500 prompts.
+The remaining unmentioned compact files have only skipped prompts under the
+current browser-profile metadata.
+
+A fresh Judson abstract-algebra book probe used absolute patched-source paths
+and wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-codex/judson-small/batch.sqlite3
+```
+
+The batch recorded:
+
+```text
+sage -t failed: 69 passed, 431 failed, 15 skipped
+```
+
+The strict promotion scan printed no uncovered clean rows. The failures are
+not a narrow source-tag promotion target: the dominant cluster is missing
+group-theory startup names such as `SymmetricGroup`,
+`CyclicPermutationGroup`, `DihedralGroup`, `AlternatingGroup`, and
+`QuaternionGroup`, with dependent `G`/`H`/`Q` fallout and additional
+attribute/output drift in boolean, field, permutation, and Sylow examples.
+Those constructors overlap the existing `sage.groups` browser-profile
+boundary already used elsewhere in the WASI patch, so the Judson group files
+should not be resampled until the stripped group/GAP startup surface changes.
+
+A focused current-source rerun of `sage/doctest/__main__.py` wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-08-codex/doctest-main/direct.sqlite3
+```
+
+It now records `0 passed, 0 failed, 9 skipped`, so the older focused CLI
+failure note for that file is stale under the current patched source. The file
+remains outside the quiet corpus because it contributes no non-skipped
+default-profile coverage.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
