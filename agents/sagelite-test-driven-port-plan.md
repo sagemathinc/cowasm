@@ -40795,6 +40795,31 @@ throwaway warning-smoke doctest confirming the runner version 98 comparison
 path. The focused `basic_stats.py` dashboard's saved block- and file-failure
 cluster queries are empty.
 
+Follow-up stateful deferred-tag audit on 2026-07-08 UTC: a full-file rerun
+found that the second `proof.all()` display example in
+`sage/structure/proof/all.py` now passes in source order without a
+browser-profile `# known bug` tag. A focused `--line 227
+--deferred=known-bug` rerun still fails because that line depends on the
+earlier output-producing `proof.number_field(False)` doctest block, which is
+outside the line-rerun setup replay contract; the full file is the relevant
+corpus behavior for this tag.
+
+Focused validation used the current patched Sagelite source tree and the
+2026-07-07 staged Electron resource bundle:
+
+```text
+proof/all.py: 31 passed, 0 failed, 0 skipped
+```
+
+The dashboard is `/tmp/sagelite-proof-all-untagged.sqlite3`; the saved block-
+and file-failure cluster queries are empty. Validation also used
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs` and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch. The
+adjacent lightweight pretty-printer fallback tags in `pretty_print.py:154` and
+`fancy_repr.py:158` remain live; direct focused reruns still produce the
+one-line list fallback and an unhandled `SomeIPythonRepr` set fallback,
+respectively, with the current staged resources.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
