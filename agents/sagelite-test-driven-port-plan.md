@@ -44236,6 +44236,24 @@ hyperplane-arrangement and matroid file-scope metadata. Re-running the widened
 200-prompt source-frontier scan with file-level skip directives excluded no
 longer reports either file.
 
+Follow-up compact-frontier confirmation on 2026-07-09 UTC: no corpus entry was
+promoted. After the hyperplane and matroid boundary tags landed, guarded
+source-frontier scans over the patched source tree, with plan-mentioned files
+subtracted and file-level skip directives excluded, returned no rows in the
+200-prompt-and-under band. Tightening the scan further with
+`--min-runnable-prompts 1` also returned no rows through 400 prompts, which
+means the remaining compact rows are either already documented, already covered
+by prompt-level skip metadata, or outside the current low-noise threshold.
+
+The current scratch databases under `.tmp/current-run/` contain no unresolved
+post-tag failure cluster: the only failed summaries are the pre-tag Chow,
+Judson Galois, hyperplane, and circuits-matroid probes, while the corresponding
+post-tag databases record skipped-only pass rows. Scheduled follow-ups should
+avoid repeating this compact scan unless the corpus, skip policy, source
+frontier filters, or Sagelite dependency boundary changes; the next useful work
+is either a targeted larger-cluster reproducer above the 400-prompt threshold
+or a runtime/backend fix tied to an already known failure class.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
