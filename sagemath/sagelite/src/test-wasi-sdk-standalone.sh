@@ -4264,6 +4264,21 @@ if [ "$doctest_source_frontier_missing_corpus_status" -ne 2 ] || \
   printf '%s\n' "$doctest_source_frontier_missing_corpus" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --corpus did not reject a missing file cleanly."
 fi
+set +e
+doctest_source_frontier_missing_source_root="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$probe_dir/no-such-source-root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_source_frontier_missing_source_root_status=$?
+set -e
+if [ "$doctest_source_frontier_missing_source_root_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_missing_source_root" | \
+    grep -Fq -- '--source-root does not name a Sagelite source tree:'; then
+  printf '%s\n' "$doctest_source_frontier_missing_source_root" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --source-root did not reject a missing Sagelite source tree cleanly."
+fi
 doctest_source_frontier_required_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \
   --source-root "$doctest_candidate_helper_source_root" \

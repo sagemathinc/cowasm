@@ -41904,6 +41904,16 @@ now reports an argparse status-2 error instead of silently filtering all
 source-existence-checked rows out of the scan. The standalone smoke script has
 a focused fixture for the missing source-root guard.
 
+Follow-up source-frontier source-root guard pass on 2026-07-09 UTC: no corpus
+entry was promoted. The guarded source-frontier make target over
+`.tmp/current-run/**/*.sqlite3` still printed no rows.
+
+The source-frontier helper now validates `--source-root` during argument
+parsing, matching the candidate helper. A wrapper typo that points at a
+missing or non-Sagelite tree now reports an argparse status-2 error instead of
+falling through to a later raw source-tree scan error. The standalone smoke
+script has a focused fixture for the missing source-root guard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

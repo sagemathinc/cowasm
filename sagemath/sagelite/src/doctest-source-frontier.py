@@ -233,6 +233,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
+    validate_source_root(parser, "--source-root", args.source_root)
     validate_existing_files(parser, "--corpus", [args.corpus])
     validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
     if args.strict_frontier:
@@ -270,6 +271,14 @@ def validate_existing_files(
     for path in paths:
         if not path.is_file():
             parser.error(f"{option} does not name a file: {path}")
+
+
+def validate_source_root(
+    parser: argparse.ArgumentParser, option: str, source_root: Path
+) -> None:
+    source_dir = source_root / "src" / "sage"
+    if not source_dir.is_dir():
+        parser.error(f"{option} does not name a Sagelite source tree: {source_root}")
 
 
 def normalize_extension(extension: str) -> str:
