@@ -19596,3 +19596,18 @@ diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
          running ._test_additive_associativity() . . . pass
          running ._test_an_element() . . . pass
          running ._test_associativity() . . . pass
+diff --git a/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py
+@@ -48,5 +48,3 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
+-        sage: x = polygen(ZZ, 'x')
+-        sage: F.<x> = NumberField(x^2 - 2)
+-        sage: R = lie_conformal_algebras.N2(F); R
+-        The N=2 super Lie conformal algebra over Number Field in x with defining polynomial x^2 - 2
++        sage: R = lie_conformal_algebras.N2(QQ); R
++        The N=2 super Lie conformal algebra over Rational Field
+         sage: R.inject_variables()
+@@ -114,2 +112,2 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
+-            sage: R = lie_conformal_algebras.N2(QQbar); R
++            sage: R = lie_conformal_algebras.N2(QQbar); R  # needs sage.rings.number_field
+             The N=2 super Lie conformal algebra over Algebraic Field

@@ -42425,6 +42425,33 @@ The file is now promoted into `basic-pure-math.txt`. The residual skips are
 intentional dependency or known-bug boundaries rather than hidden startup
 failures.
 
+Follow-up N=2 Lie conformal algebra corpus-growth pass on 2026-07-09: a
+small source-frontier scan found four skipped-only files and one runnable
+near-miss,
+`sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py`. The
+initial focused probe recorded `2 passed, 12 failed, 1 skipped`; the failures
+were the unported number-field/cypari2 setup, dependent missing doctest state,
+and a `QQbar` algebraic-field cache assertion.
+
+The WASI source patch now keeps the main N=2 super Lie conformal algebra
+examples runnable over `QQ`, where the bracket, degree, topological twist, and
+Neveu-Schwarz generator checks exercise the same algebraic behavior in the
+browser-compatible profile. The separate `QQbar` repr check is tagged as
+`# needs sage.rings.number_field`, preserving that boundary explicitly.
+Focused direct and make-target validation both record:
+
+```text
+n2_lie_conformal_algebra.py: 11 passed, 0 failed, 2 skipped
+```
+
+The make-target validation rebuilt a fresh patched Sagelite source copy and
+used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-next/n2-make.sqlite3`.
+Saved block- and file-failure cluster queries are empty; the remaining skips
+are the existing long `TestSuite` check and the explicit number-field
+dependency. The file is now promoted into `basic-pure-math.txt`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
