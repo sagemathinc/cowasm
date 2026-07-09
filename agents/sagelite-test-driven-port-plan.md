@@ -43935,6 +43935,22 @@ the same quiet frontier as the prior follow-up: useful next work needs either
 a fresh partial/full corpus dashboard or a deliberately chosen backend/runtime
 cluster, not another broad subtraction-only scan over the same scratch set.
 
+Follow-up doctest run lifecycle pass on 2026-07-09 UTC: no corpus entry was
+promoted. Runner version 105 now inserts newly started doctest runs with
+status `running` instead of the previous provisional `error` status, while
+still finalizing successful runs as `passed`, doctest failures as `failed`,
+handled parent signals as `interrupted`, and real runner exceptions as
+`error`.
+
+This keeps partial dashboards left by a live process, hard-killed parent, or
+external scheduler stop from looking like a completed runner error before the
+runner has had a chance to finalize. Focused validation confirmed the
+patched-source `env.py` run records `passed|40|31|0|9|105`, and a two-file
+live-status probe checkpointed the first file as `running|1|1|0|0|105|1`
+before a parent `SIGTERM` finalized the same run as
+`interrupted|1|1|0|0|105|1`. The guarded frontier make target remained
+quiet over the trusted scratch dashboard globs.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

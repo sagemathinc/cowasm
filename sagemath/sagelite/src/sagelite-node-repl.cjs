@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 104;
+const doctestRunnerVersion = 105;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -408,7 +408,7 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     source_root: options.sourceRoot,
     tmp_dir_root: options.tmpDirRoot,
     invocation_cwd: invocationCwd,
-    status: "error",
+    status: "running",
     total_blocks: 0,
     passed_blocks: 0,
     failed_blocks: 0,
@@ -462,6 +462,8 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     runError = err;
     if (err instanceof DoctestRunInterrupted) {
       run.status = "interrupted";
+    } else {
+      run.status = "error";
     }
   } finally {
     run.finished_at = new Date().toISOString();
