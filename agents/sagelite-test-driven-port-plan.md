@@ -41523,6 +41523,37 @@ have current file-scope skip metadata:
 `src/sage/rings/ring.pyx` at `TestSuite(QQ['x']).run(verbose=True)` and
 `src/sage/data_structures/stream.py` at `Stream_taylor.__eq__`.
 
+Follow-up ring TestSuite timeout audit on 2026-07-09 UTC: no corpus entry was
+promoted. A focused rerun of the remaining `src/sage/rings/ring.pyx` file-error
+cluster reproduced the timeout at the single active prompt:
+
+```text
+ring.pyx --line 140: timed out after 90s
+```
+
+The prompt runs the full verbose `TestSuite(QQ['x'])` over the univariate
+polynomial ring and is consistent with nearby polynomial TestSuite examples
+that are already tagged as long-running in the browser-compatible profile. The
+WASI source patch now marks only that prompt as `# long time`; a focused rerun
+against the patched source copy records:
+
+```text
+ring.pyx --line 140: 0 passed, 0 failed, 1 skipped
+```
+
+The focused dashboard is
+`.tmp/current-run/scheduled-2026-07-09-active/ring-line-140-after.sqlite3`; it
+records runner version 102, node profile, and a skipped block tagged
+`long time`. A focused `stream.py --line 1182` rerun already records the
+current `sage.rings.number_field` skip metadata, so the earlier stream
+file-error row is stale under the current patched source. Validation also used
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch, and a
+tight candidate-helper scan confirming no file-error rows remain when the old
+ring failure, new ring skip, and current stream skip databases are scanned
+together.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

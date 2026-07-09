@@ -19456,3 +19456,15 @@ diff --git a/src/sage/plot/plot3d/bugs.txt b/src/sage/plot/plot3d/bugs.txt
  We draw a spiral of spheres:
     sage: v = [(sin(i),cos(i),i) for i in [-4,-3.5,..4]]
     sage: S = sum(sphere(v[i], size=1/2, color=((i-4)/8, 1/2,(4-i)/8)) for i in range(len(v)))
+diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
+--- a/src/sage/rings/ring.pyx
++++ b/src/sage/rings/ring.pyx
+@@ -137,7 +137,7 @@ cdef class Ring(ParentWithGens):
+         sage: R.<x,y> = ZZ[]
+         sage: R.sum([x,y])
+         x + y
+-        sage: TestSuite(QQ['x']).run(verbose=True)
++        sage: TestSuite(QQ['x']).run(verbose=True)                                      # long time
+         running ._test_additive_associativity() . . . pass
+         running ._test_an_element() . . . pass
+         running ._test_associativity() . . . pass
