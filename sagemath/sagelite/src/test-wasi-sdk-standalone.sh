@@ -3196,6 +3196,15 @@ if [ "$doctest_candidate_helper_paths" != "src/sage/example/real_candidate.py" ]
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --paths-only output is not script-friendly."
 fi
+doctest_candidate_helper_glob_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --database-glob "$probe_dir/sagelite-doctest-candidate-helper*.sqlite3" \
+  --corpus "$doctest_candidate_helper_corpus")"
+if [ "$doctest_candidate_helper_glob_paths" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_glob_paths" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --database-glob did not scan matching databases."
+fi
 touch "$doctest_candidate_helper_source_root/src/sage/example/relative_candidate.py"
 printf '%s\n' "src/sage/example/relative_candidate.py" >"$doctest_candidate_helper_relative_corpus"
 sqlite3 "$doctest_candidate_helper_relative_db" <<SQL

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import os
 import posixpath
 import re
@@ -44,8 +45,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "database",
         type=Path,
-        nargs="+",
+        nargs="*",
         help="doctest SQLite database; pass more than one to scan several runs",
+    )
+    parser.add_argument(
+        "--database-glob",
+        action="append",
+        default=[],
+        metavar="PATTERN",
+        help=(
+            "glob for Sagelite doctest SQLite databases to scan; may be "
+            "repeated"
+        ),
     )
     parser.add_argument(
         "--corpus",
@@ -481,6 +492,15 @@ def parse_args() -> argparse.Namespace:
     args.exclude_skip_reason = parse_csv_values(args.exclude_skip_reason)
     args.only_skip_tag = parse_csv_values(args.only_skip_tag)
     args.exclude_skip_tag = parse_csv_values(args.exclude_skip_tag)
+    for pattern in args.database_glob:
+        args.database.extend(
+            Path(path) for path in sorted(glob.glob(pattern, recursive=True))
+        )
+    if not args.database:
+        parser.error(
+            "at least one doctest SQLite database or --database-glob match "
+            "is required"
+        )
     args.excluded_path_prefixes = (
         ()
         if args.include_doctest_self_tests

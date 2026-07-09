@@ -41684,6 +41684,29 @@ dashboard database instead of silently returning no candidates. Overriding
 the target complete with no rows, confirming the candidate target itself is
 still quiet when pointed at a valid dashboard.
 
+Follow-up candidate-glob tooling pass on 2026-07-09 UTC: no corpus entry was
+promoted. A source-frontier scan through the make target, with recursive
+scratch SQLite subtraction and `--min-runnable-prompts 1`, printed only the
+header row. The checked corpus remains at 1,108 non-comment entries.
+
+The candidate helper now accepts `--database-glob`, and the
+`sage-doctest-candidates` make target exposes it through
+`SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB`. This avoids relying on shell
+`globstar` expansion for scheduled scratch-database scans. The checked
+make-target scan completed with no promotion rows after subtracting the
+current corpus and plan-mentioned paths:
+
+```sh
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3' \
+  SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED=1 \
+  SAGELITE_DOCTEST_CANDIDATE_FLAGS='--strict-frontier --min-runner-version 83 --dedupe-paths'
+```
+
+`python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py` and `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh` also pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
