@@ -42138,6 +42138,38 @@ graph-focused pass should decide whether to lazy-load those class-level graph
 algorithm aliases for the browser profile or split another small no-optional
 algorithm batch; this pass intentionally avoided promoting graph corpus files.
 
+Follow-up graph class-startup linkage pass on 2026-07-09: no corpus entry was
+promoted. The scheduled run continued the graph backend cluster and split the
+next pure graph helper batch out from the optional `cliquer`/`planarity`
+dependency gate. The WASI source patch now builds `weakly_chordal`,
+`asteroidal_triples`, `comparability`, `hyperbolicity`,
+`isoperimetric_inequalities`, `spanning_tree`, `matchpoly`, and
+`graph_coloring` with the same core graph dependencies and `libcxx` link
+surface as the earlier graph startup helpers.
+
+The class-level `Graph.cliques_maximum` and `Graph.all_cliques` aliases now
+lazy-load through an unavailable WASI marker module, so doc-index generation
+skips the Cliquer-only aliases instead of importing the unbuilt `cliquer.pyx`
+source stub. Explicit clique methods remain a separate optional-backend
+follow-up because the current checkout lacks the external Cliquer headers
+needed to build `sage.graphs.cliquer`.
+
+Focused validation rebuilt the added graph side modules in the existing Meson
+tree, staged them into the ignored runtime install, and confirmed under
+`bin/python-wasi-sdk` that:
+
+```py
+import sage.rings.all
+from sage.graphs.graph import Graph
+G = Graph([(1, 2), (2, 3)])
+assert G.is_connected()
+```
+
+The first basic `Graph` constructor/import path now works after normal Sage
+ring initialization. Graph corpus promotion is still deferred until a focused
+doctest probe identifies a quiet graph file or the remaining graph algorithm
+boundaries are tagged.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

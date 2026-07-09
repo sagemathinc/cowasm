@@ -1829,7 +1829,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  foreach name, pyx : extension_data
 +  graph_extension_link_args = []
 +  graph_extension_dependencies = [py_dep, cysignals, flint, gmp]
-+  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph'
++  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly'
 +    graph_extension_link_args = cowasm_graph_libcxx_link_args
 +  else
 +    graph_extension_dependencies += [cliquer, planarity]
@@ -1851,7 +1851,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  foreach name, pyx : extension_data_cpp
 +  graph_cpp_extension_dependencies = [py_dep, cysignals, flint, gmp]
 +  graph_cpp_extension_link_args = cowasm_graph_libcxx_link_args
-+  if name != 'path_enumeration' and name != 'traversals'
++  if name != 'path_enumeration' and name != 'traversals' and name != 'graph_coloring'
 +    graph_cpp_extension_dependencies += [planarity]
 +  endif
 +
@@ -1867,6 +1867,21 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
 +    link_args: graph_cpp_extension_link_args,
    )
  endforeach
+
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -9492,8 +9492,8 @@ class Graph(GenericGraph):
+     from sage.graphs.graph_decompositions.cutwidth import cutwidth
+     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
+     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
+-    from sage.graphs.cliquer import all_max_clique as cliques_maximum
+-    from sage.graphs.cliquer import all_cliques
++    cliques_maximum = LazyImport('sage.graphs._cliquer_unavailable', 'all_max_clique', at_startup=True)
++    all_cliques = LazyImport('sage.graphs._cliquer_unavailable', 'all_cliques', at_startup=True)
+     from sage.graphs.spanning_tree import random_spanning_tree
+     from sage.graphs.spanning_tree import spanning_trees
+     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product
 diff -urN a/src/sage/libs/all.py b/src/sage/libs/all.py
 --- a/src/sage/libs/all.py
 +++ b/src/sage/libs/all.py
