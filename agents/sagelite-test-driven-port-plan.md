@@ -42051,6 +42051,40 @@ synthetic SQLite no-block file-error probe covering default versus
 `--subtract-file-error-runs` behavior, and the real recursive source-frontier
 make-wrapper scan above.
 
+Follow-up strict-frontier audit on 2026-07-09: no corpus entry was promoted.
+The checked `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus
+has 1,108 non-comment entries. Static inspection of the doctest CLI lifecycle
+path did not identify a narrow parent-process fix for the intermittent
+post-summary Node 139 reports: parent `sage -t` mode does not instantiate
+`python-wasm`, and per-file workers are already isolated at the child-process
+boundary.
+
+The current strict source-frontier and promotion-candidate scans against the
+scratch SQLite archive both printed no uncovered rows:
+
+```sh
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3'
+
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3' \
+  SAGELITE_DOCTEST_CANDIDATE_FLAGS='--strict-frontier --min-runner-version 83 --dedupe-paths'
+```
+
+Validation also compiled both helper scripts with:
+
+```sh
+python3 -m py_compile \
+  sagemath/sagelite/src/doctest-source-frontier.py \
+  sagemath/sagelite/src/doctest-corpus-candidates.py
+```
+
+Future scheduled runs should treat the current scratch archive as exhausted
+under the strict source-root, metadata, block-row, and mention-subtraction
+guards, and should either target a known backend/runtime cluster directly or
+sample a genuinely new source namespace.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
