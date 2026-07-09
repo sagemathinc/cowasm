@@ -16008,6 +16008,12 @@ diff --git a/src/sage/matroids/chow_ring_ideal.py b/src/sage/matroids/chow_ring_
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matroids
  r"""
+diff --git a/src/sage/matroids/circuits_matroid.pyx b/src/sage/matroids/circuits_matroid.pyx
+--- a/src/sage/matroids/circuits_matroid.pyx
++++ b/src/sage/matroids/circuits_matroid.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ r"""
 diff --git a/src/sage/manifolds/vector_bundle_fiber.py b/src/sage/manifolds/vector_bundle_fiber.py
 --- a/src/sage/manifolds/vector_bundle_fiber.py
 +++ b/src/sage/manifolds/vector_bundle_fiber.py
@@ -16548,6 +16554,12 @@ diff --git a/src/sage/geometry/hyperplane_arrangement/affine_subspace.py b/src/s
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.hyperplane_arrangement sage.matrix.matrix2
  """
+diff --git a/src/sage/geometry/hyperplane_arrangement/hyperplane.py b/src/sage/geometry/hyperplane_arrangement/hyperplane.py
+--- a/src/sage/geometry/hyperplane_arrangement/hyperplane.py
++++ b/src/sage/geometry/hyperplane_arrangement/hyperplane.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperplane_arrangement
+ r"""
 diff --git a/src/sage/parallel/decorate.py b/src/sage/parallel/decorate.py
 --- a/src/sage/parallel/decorate.py
 +++ b/src/sage/parallel/decorate.py

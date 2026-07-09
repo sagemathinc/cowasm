@@ -44203,6 +44203,39 @@ under the expected matroid and number-field/group/GAP/PARI file-scope
 metadata. A source-frontier scan with file-level skip directives excluded no
 longer reports either file.
 
+Follow-up hyperplane/matroid boundary pass on 2026-07-09 UTC: no corpus entry
+was promoted. A widened source-frontier scan with plan-mentioned files
+included and file-level skip directives excluded surfaced two remaining
+compact unclassified rows in the 200-prompt-and-under band:
+`src/sage/geometry/hyperplane_arrangement/hyperplane.py` and
+`src/sage/matroids/circuits_matroid.pyx`.
+
+Focused probes confirmed both are dependency-boundary files. `hyperplane.py`
+timed out before recording block rows at the `QuadraticField(2)` primitive
+example inside the broader hyperplane-arrangement stack. `circuits_matroid.pyx`
+recorded `27 passed, 117 failed, 1 skipped`, dominated by missing matroid
+catalog/constructor startup surface and dependent state failures.
+
+The WASI source patch now records those boundaries as file-level doctest
+metadata: `hyperplane.py` is tagged
+`# sage.doctest: needs sage.geometry.hyperplane_arrangement`, and
+`circuits_matroid.pyx` is tagged `# sage.doctest: needs sage.matroids`.
+Focused make-target validation against a freshly rebuilt patched source copy
+records:
+
+```text
+hyperplane.py: 0 passed, 0 failed, 1 skipped
+circuits_matroid.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-09-hyperplane-matroid/after-tags.sqlite3`;
+its saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the rows under the expected
+hyperplane-arrangement and matroid file-scope metadata. Re-running the widened
+200-prompt source-frontier scan with file-level skip directives excluded no
+longer reports either file.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
