@@ -5208,6 +5208,21 @@ must not hide a live frontier file, and reran the make-target frontier scan
 against the current scratch SQLite glob. The scan remained empty under the new
 strict defaults.
 
+Follow-up source-frontier shortcut pass on 2026-07-09: no corpus entry was
+promoted. The helper-level strict subtraction policy now has a
+`doctest-source-frontier.py --strict-frontier` shortcut, matching the existing
+candidate-helper shortcut and bundling the modern run-metadata, persisted
+block-row, file-level run, and source-root path guards. The
+`sage-doctest-source-frontier` make target now uses that shortcut by default
+while still passing `--min-runner-version 83`, invalid-database suppression,
+and the current scratch SQLite glob separately.
+
+Focused validation compiled the source-frontier and candidate helpers, checked
+the standalone smoke script syntax, and reran the make-target source-frontier
+scan against `.tmp/current-run/**/*.sqlite3`. The scan remained empty, and the
+standalone smoke fixture now asserts that `--strict-frontier` matches the
+spelled-out strict database subtraction behavior.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

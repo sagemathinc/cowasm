@@ -30,7 +30,7 @@ SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS ?= 0
 SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS ?= 1
 SAGELITE_DOCTEST_SOURCE_FRONTIER_EXTENSIONS ?=
 SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS ?= \
-  --strict-database-subtraction --min-runner-version 83 \
+  --strict-frontier --min-runner-version 83 \
   --ignore-invalid-databases --quiet-invalid-databases
 SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS ?=
 

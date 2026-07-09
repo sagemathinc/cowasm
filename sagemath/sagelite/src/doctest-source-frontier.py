@@ -130,6 +130,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--strict-frontier",
+        action="store_true",
+        help=(
+            "enable the standard scheduled source-frontier database guards: "
+            "modern run metadata, persisted block rows, file-level doctest "
+            "runs, and absolute paths under --source-root"
+        ),
+    )
+    parser.add_argument(
         "--min-runner-version",
         type=int,
         help=(
@@ -224,6 +233,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
+    if args.strict_frontier:
+        args.strict_database_subtraction = True
     if args.quiet_invalid_databases and not args.ignore_invalid_databases:
         parser.error(
             "--quiet-invalid-databases requires --ignore-invalid-databases"

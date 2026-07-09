@@ -4376,6 +4376,24 @@ src/sage/example/strict_database_frontier.py" ]; then
   sqlite3 "$doctest_source_frontier_stale_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier strict database subtraction hid live frontier rows."
 fi
+doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$doctest_source_frontier_focused_db" \
+  --subtract-database "$doctest_source_frontier_foreign_db" \
+  --subtract-database "$doctest_source_frontier_stale_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  --strict-frontier \
+  --min-runner-version 83 \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_strict_shortcut_paths" != "$doctest_source_frontier_strict_paths" ]; then
+  printf '%s\n' "$doctest_source_frontier_strict_shortcut_paths" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --strict-frontier did not match strict database subtraction."
+fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
   --quiet-invalid \
