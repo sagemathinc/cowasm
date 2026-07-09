@@ -19891,7 +19891,31 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 +            sage: gcd(p, q)                                                            # needs sage.rings.fraction_field
              (z^3 + z^2 + z)*x*y + (-2*z^2 + z)*x + (z^2 + z + 1)*y
 
-         Polynomials over polynomial rings are converted to a simpler polynomial
+        Polynomials over polynomial rings are converted to a simpler polynomial
+@@ -2169,17 +2169,22 @@ cdef class MPolynomial(CommutativePolynomial):
+             sage: P.gens()
+             ()
+         """
++        if self.is_unit():
++            return self
++        if other.is_unit():
++            return other
++
+         flatten = self._parent.flattening_morphism()
+         tgt = flatten.codomain()
+         if tgt is not self._parent and tgt._has_singular:
+             g = flatten(self).gcd(flatten(other))
+             return flatten.section()(g)
+
+         try:
+             self._parent._singular_().set_ring()
+             g = self._singular_().gcd(other._singular_())
+             return self._parent(g)
+-        except (TypeError, AttributeError):
++        except (TypeError, AttributeError, ImportError):
+             pass
+
+         gens = self.parent().gens()
 diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
 --- a/src/sage/rings/ring.pyx
 +++ b/src/sage/rings/ring.pyx

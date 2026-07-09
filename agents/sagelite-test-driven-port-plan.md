@@ -43244,6 +43244,31 @@ reruns for lines 910, 1372, and 2131 that each recorded `0 passed, 0 failed,
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite`.
 
+Follow-up `nth_root` runtime pass on 2026-07-09 UTC: no corpus entry was
+promoted. The focused example shifted to `multi_polynomial.pyx:2216` after the
+local patch hunk insertion and still times out under
+`sage -t --timeout 120 --line 2216`.
+
+The useful subproblem isolated in this pass is the fraction-field coercion
+inside `MPolynomial.nth_root`. Changing the flattened univariate polynomial to
+the fraction field previously reached multivariate-polynomial `gcd`, tried the
+unavailable Singular/pexpect path, and failed before the root-series code. The
+WASI source patch now gives `MPolynomial.gcd` an early return for unit operands
+and treats `ImportError` like the other unavailable-Singular fallbacks. With
+that patch compiled locally, the direct `pU.change_ring(K)` probe completes in
+about `0.04s`.
+
+The broader `FractionFieldElement._mul_` `SystemError` catch was explored and
+discarded from the tracked patch: it avoided one immediate low-level exception
+but left `pk.nth_root(5)` running past a 180-second guard, which points to
+unreduced fraction arithmetic rather than a cleared doctest. A full standalone
+WASI rebuild compiled the polynomial-gcd patch, but the namespace smoke remains
+blocked by the existing post-`rational.pyx` segmentation fault, and the focused
+`nth_root` line remains the active runtime frontier. The next useful pass should
+avoid routing this polynomial `nth_root` case through expensive fraction-field
+root-series arithmetic, or fix the generic multivariate-polynomial gcd path
+used by that arithmetic.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
