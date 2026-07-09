@@ -41987,6 +41987,35 @@ should use `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB` for patterns and
 reserve `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASES` for literal database
 paths.
 
+Scheduled recursive wrapper confirmation on 2026-07-09 UTC: no corpus entry
+was promoted. The checked default dashboard path
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` is present but
+zero bytes in this checkout, so scheduled candidate scans still need an
+explicit valid dashboard or scratch database glob.
+
+The guarded make-wrapper scans over the 3,480 recursive scratch SQLite
+databases under `.tmp/current-run/**/*.sqlite3` and
+`.tmp/codex-sagelite/**/*.sqlite3` both printed no rows and exited 0 with
+row-failure guards enabled:
+
+```sh
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3 .tmp/codex-sagelite/**/*.sqlite3' \
+  SAGELITE_DOCTEST_CANDIDATE_FAIL_ON_ROWS=1
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3 .tmp/codex-sagelite/**/*.sqlite3' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS=1
+```
+
+This reconfirms the current low-noise state: no uncovered clean promotion rows
+and no unmentioned source-frontier rows with runnable prompts are visible under
+the strict runner-version, file-run, persisted-block, current-source-root, and
+plan-mentioned-path guards. Future scheduled runs should start from a changed
+runtime/backend boundary, a regenerated default dashboard, or a deliberately
+broadened source-scope audit rather than repeating the same quiet recursive
+scan.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
