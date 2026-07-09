@@ -7708,6 +7708,17 @@ diff -urN a/src/sage/probability/probability_distribution.pyx b/src/sage/probabi
 @@ -1028 +1028 @@
 -            sage: P = T.plot()
 +            sage: P = T.plot()                                                       # needs sage.plot
+diff -urN a/src/sage/categories/finite_enumerated_sets.py b/src/sage/categories/finite_enumerated_sets.py
+--- a/src/sage/categories/finite_enumerated_sets.py
++++ b/src/sage/categories/finite_enumerated_sets.py
+@@ -526,2 +526,7 @@
++            # The chi-squared test samples at most 3000 elements, so very
++            # large categories are outside its useful range.
++            if n > 10**6:
++                return
++
+             T = RealDistribution('chisquared', n-1)
+             critical = T.cum_distribution_function_inv(0.99)
 diff -urN a/src/sage/stats/basic_stats.py b/src/sage/stats/basic_stats.py
 --- a/src/sage/stats/basic_stats.py
 +++ b/src/sage/stats/basic_stats.py

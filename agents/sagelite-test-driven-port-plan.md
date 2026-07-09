@@ -43497,6 +43497,39 @@ rows. Focused validation used `python3 -m py_compile` for
 near-miss, and promotion scans; the strict file-error scan now prints only its
 header row.
 
+Follow-up finite-enumerated-set random-test pass on 2026-07-09 UTC: no corpus
+entry was promoted. Strict trusted-database promotion, near-miss, file-error,
+and source-frontier scans remained quiet, but a widened historical file-error
+scan still reproduced `src/sage/rings/finite_rings/integer_mod.pyx:338` as a
+WASM trap:
+
+```text
+TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()
+```
+
+The failing path was Sage's generic finite-enumerated-set `_test_random()`.
+That test already documents that very large cardinalities should return
+early, but it called `RealDistribution('chisquared', n - 1)` before the
+existing `critical.is_NaN()` large-cardinality check. Under the Sagelite WASI
+runtime, GSL's inverse chi-square path aborts before returning a NaN for this
+enormous degree of freedom.
+
+The WASI source patch now adds an explicit `n > 10**6` early return before the
+GSL inverse call, keeping the normal chi-square smoke for moderate finite
+sets while avoiding an uninformative and abort-prone statistical test for huge
+categories. Focused validation against the active runtime records:
+
+```text
+integer_mod.pyx: 1 passed, 0 failed, 0 skipped
+```
+
+The moderate `cartesian_product([list(range(5)) for _ in range(5)])`
+`_test_random()` smoke still runs successfully. Validation also used
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, and a
+dry-run application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
+against `/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
