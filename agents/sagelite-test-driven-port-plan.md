@@ -41948,6 +41948,21 @@ source-frontier parser probe for the quiet-invalid guard, `git diff --check`,
 and guarded candidate/source-frontier make-target scans over the current
 scratch databases.
 
+Follow-up candidate database wrapper-control pass on 2026-07-09 UTC: no
+corpus entry was promoted. The candidate make target now exposes the
+positional database list as `SAGELITE_DOCTEST_CANDIDATE_DATABASES`, defaulting
+to the configured dashboard database while allowing scheduled scratch scans to
+set it empty when they intentionally rely only on
+`SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB`. This avoids coupling explicit
+scratch-dashboard scans to the default dashboard path being valid, while
+preserving the bare-target guard for absent or invalid default dashboards.
+
+Validation used `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`git diff --check`, `make -n` checks for the default database, empty database,
+relative database, and two-database wrapper forms, plus guarded candidate and
+source-frontier make-target scans over `.tmp/current-run/*.sqlite3` and
+`.tmp/codex-sagelite/*.sqlite3`, which printed no rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
