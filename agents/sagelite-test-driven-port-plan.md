@@ -42628,6 +42628,22 @@ The saved block- and file-failure cluster queries are empty, and
 outside the curated corpus until the number-field polyhedron backend is
 available in the browser-compatible profile.
 
+Follow-up source-frontier skip-noise pass on 2026-07-09: a fresh frontier
+scan without database subtraction still listed only file-level or prompt-level
+deferred coverage. Focused probes over the graph, symbolic, number-field,
+elliptic, MILP, coding, padic, GAP, MCQD, tdlib, and symbolic-data rows
+recorded skipped-only runs, with no block failures and no file-error clusters.
+Representative focused databases are in
+`.tmp/current-run/scheduled-2026-07-09-next-frontier/`.
+
+The source-frontier helper now has an `--exclude-file-skip-directives` flag,
+and the `sage-doctest-source-frontier` make target uses it by default together
+with the existing `--min-runnable-prompts 1` scheduled-run default. In the
+current patched source tree that make target emits no rows when run without a
+valid subtraction database, so future scheduled passes should move directly to
+cluster-driven probes unless a new dashboard database, dependency boundary, or
+skip policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

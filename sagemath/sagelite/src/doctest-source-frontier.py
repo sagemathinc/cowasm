@@ -185,6 +185,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--exclude-file-skip-directives",
+        action="store_true",
+        help=(
+            "suppress files with a file-level sage.doctest needs/optional "
+            "directive"
+        ),
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         help="maximum number of rows to print",
@@ -599,7 +607,7 @@ def iter_source_files(source_root: Path, extensions: tuple[str, ...]) -> list[Pa
     )
 
 
-def count_sage_prompts(path: Path) -> tuple[int, int]:
+def count_sage_prompts(path: Path) -> tuple[int, int, bool]:
     prompts = 0
     runnable_prompts = 0
     file_skip_directive = False
@@ -630,7 +638,7 @@ def count_sage_prompts(path: Path) -> tuple[int, int]:
                 ) = count_line_prompts(line, file_skip_directive, active_skip_directive)
                 prompts += prompt_counted
                 runnable_prompts += runnable_counted
-    return prompts, runnable_prompts
+    return prompts, runnable_prompts, file_skip_directive
 
 
 def count_line_prompts(
@@ -725,7 +733,13 @@ def main() -> int:
         if relative_path in audited:
             continue
 
-        prompt_count, runnable_prompt_count = count_sage_prompts(source_path)
+        (
+            prompt_count,
+            runnable_prompt_count,
+            file_skip_directive,
+        ) = count_sage_prompts(source_path)
+        if args.exclude_file_skip_directives and file_skip_directive:
+            continue
         if prompt_count < args.min_prompts:
             continue
         if args.max_prompts is not None and prompt_count > args.max_prompts:

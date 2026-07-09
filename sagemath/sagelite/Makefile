@@ -35,7 +35,7 @@ SAGELITE_DOCTEST_SOURCE_FRONTIER_EXTENSIONS ?=
 SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS ?= \
   --strict-frontier --min-runner-version 83 \
   --ignore-invalid-databases --quiet-invalid-databases
-SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS ?=
+SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS ?= --exclude-file-skip-directives
 
 all: test-wasi-sdk-standalone
 
