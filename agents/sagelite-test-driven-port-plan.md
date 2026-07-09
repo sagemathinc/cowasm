@@ -43156,6 +43156,35 @@ wrapper with `--suppress-superseded-failures` printed only the header row,
 confirming the remaining unsuppressed near-miss output is historical scratch
 data rather than a live porting cluster.
 
+Follow-up optional-run strict-frontier pass on 2026-07-09 UTC: no corpus entry
+was promoted. The scheduled source-frontier, promotion-candidate, and live
+file-error wrapper scans over `.tmp/current-run/**/*.sqlite3` again printed
+only header rows under the current plan-mentioned subtraction, strict
+runner-version gate, and superseded-failure suppression.
+
+A focused opt-in probe showed that
+`src/sage/modules/vector_numpy_integer_dense.pyx` is clean when NumPy doctests
+are explicitly enabled:
+
+```text
+vector_numpy_integer_dense.pyx: 6 passed, 0 failed, 0 skipped
+```
+
+That exposed a dashboard classification issue: strict promotion scans treated
+`sage -t --optional=numpy ...` databases as default-profile clean-candidate
+evidence, even though the default corpus would skip those examples. The
+candidate helper now has a `--require-default-run` guard, inherited by
+`--strict-frontier`, which filters opt-in `--optional`, `--long`/`-l`, and
+`--deferred` runs. The source-frontier helper applies the same default-run
+guard to strict database subtraction, so optional runs do not hide
+default-profile frontier files. Relaxed helper scans still report those
+opt-in runs when explicitly requested.
+
+Focused validation used `python3 -m py_compile` for both doctest helper
+scripts, `bash -n` for `test-wasi-sdk-standalone.sh`, the real
+`--optional=numpy` rerun above, an ad hoc source-frontier subtraction fixture,
+`git diff --check`, and the standard scheduled wrapper scans.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

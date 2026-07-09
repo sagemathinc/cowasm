@@ -126,7 +126,8 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help=(
             "subtract only modern file-level doctest runs with persisted block "
-            "rows and source paths under --source-root"
+            "rows, default doctest options, and source paths under "
+            "--source-root"
         ),
     )
     parser.add_argument(
@@ -143,7 +144,8 @@ def parse_args() -> argparse.Namespace:
         help=(
             "enable the standard scheduled source-frontier database guards: "
             "modern run metadata, persisted block rows, file-level doctest "
-            "runs, and absolute paths under --source-root"
+            "runs, default doctest options, and absolute paths under "
+            "--source-root"
         ),
     )
     parser.add_argument(
@@ -501,6 +503,10 @@ def latest_subtraction_run(
             command or ""
         ):
             continue
+        if strict_database_subtraction and not run_command_is_default_run(
+            command or ""
+        ):
+            continue
         return run_id
     return None
 
@@ -583,6 +589,20 @@ def run_command_is_focused_rerun(command: str) -> bool:
         if token.startswith("--line=") or token.startswith("--block-key="):
             return True
     return False
+
+
+def run_command_is_default_run(command: str) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+    opt_in_flags = {"--optional", "--long", "-l", "--deferred"}
+    for token in tokens:
+        if token in opt_in_flags:
+            return False
+        if any(token.startswith(f"{flag}=") for flag in opt_in_flags):
+            return False
+    return True
 
 
 def source_path_matches_root(path: str, source_root: Path) -> bool:

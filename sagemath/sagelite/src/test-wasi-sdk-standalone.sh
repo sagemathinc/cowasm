@@ -3069,6 +3069,7 @@ doctest_candidate_helper_relative_db="$probe_dir/sagelite-doctest-relative-candi
 doctest_candidate_helper_invalid_utf8_db="$probe_dir/sagelite-doctest-invalid-utf8-candidate-helper.sqlite3"
 doctest_candidate_helper_superseding_db="$probe_dir/sagelite-doctest-superseding-candidate-helper.sqlite3"
 doctest_candidate_helper_mentioned_db="$probe_dir/sagelite-doctest-mentioned-candidate-helper.sqlite3"
+doctest_candidate_helper_optional_db="$probe_dir/sagelite-doctest-optional-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_candidate_helper_relative_corpus="$probe_dir/sagelite-doctest-relative-corpus.txt"
@@ -3551,6 +3552,80 @@ if [ -n "$doctest_candidate_helper_focused_paths" ]; then
   printf '%s\n' "$doctest_candidate_helper_focused_paths" >&2
   sqlite3 "$doctest_candidate_helper_focused_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --require-file-run reported a focused line rerun."
+fi
+sqlite3 "$doctest_candidate_helper_optional_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+create table blocks (
+  file_id integer,
+  status text
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-03T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t --optional=numpy src/sage/example/optional_candidate.py',
+  'node',
+  'passed',
+  '$doctest_candidate_helper_source_root',
+  83
+);
+insert into files (
+  id, run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/optional_candidate.py',
+  'passed',
+  1,
+  1,
+  0,
+  0,
+  10
+);
+insert into blocks (file_id, status) values (1, 'passed');
+SQL
+doctest_candidate_helper_optional_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --strict-frontier \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_optional_db")"
+if [ -n "$doctest_candidate_helper_optional_paths" ]; then
+  printf '%s\n' "$doctest_candidate_helper_optional_paths" >&2
+  sqlite3 "$doctest_candidate_helper_optional_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --strict-frontier reported an opt-in optional run."
+fi
+doctest_candidate_helper_optional_relaxed="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_optional_db")"
+if [ "$doctest_candidate_helper_optional_relaxed" != "src/sage/example/optional_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_optional_relaxed" >&2
+  sqlite3 "$doctest_candidate_helper_optional_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates could not report an opt-in optional run outside strict mode."
 fi
 doctest_candidate_helper_covered_default="$("$src_dir/doctest-corpus-candidates.py" \
   --paths-only \
@@ -4646,6 +4721,14 @@ r"""
     24
 """
 PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/optional_candidate.py" <<'PY'
+r"""
+    sage: 13 + 13
+    26
+    sage: 14 + 14
+    28
+"""
+PY
 sqlite3 "$doctest_source_frontier_focused_db" <<SQL
 create table runs (
   id integer primary key,
@@ -4801,12 +4884,14 @@ doctest_source_frontier_strict_paths="$("$src_dir/doctest-source-frontier.py" \
   --subtract-database "$doctest_source_frontier_foreign_db" \
   --subtract-database "$doctest_source_frontier_stale_db" \
   --subtract-database "$doctest_source_frontier_file_error_db" \
+  --subtract-database "$doctest_candidate_helper_optional_db" \
   --ignore-invalid-databases \
   --quiet-invalid-databases \
   --strict-database-subtraction \
   --min-runner-version 83 \
   --min-runnable-prompts 1)"
 if [ "$doctest_source_frontier_strict_paths" != "src/sage/example/frontier_candidate.py
+src/sage/example/optional_candidate.py
 src/sage/example/strict_database_frontier.py
 src/sage/example/strict_file_error_frontier.py" ]; then
   printf '%s\n' "$doctest_source_frontier_strict_paths" >&2
@@ -4814,6 +4899,7 @@ src/sage/example/strict_file_error_frontier.py" ]; then
   sqlite3 "$doctest_source_frontier_foreign_db" ".dump" >&2 || true
   sqlite3 "$doctest_source_frontier_stale_db" ".dump" >&2 || true
   sqlite3 "$doctest_source_frontier_file_error_db" ".dump" >&2 || true
+  sqlite3 "$doctest_candidate_helper_optional_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier strict database subtraction hid live frontier rows."
 fi
 doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-frontier.py" \
@@ -4826,6 +4912,7 @@ doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-fronti
   --subtract-database "$doctest_source_frontier_foreign_db" \
   --subtract-database "$doctest_source_frontier_stale_db" \
   --subtract-database "$doctest_source_frontier_file_error_db" \
+  --subtract-database "$doctest_candidate_helper_optional_db" \
   --ignore-invalid-databases \
   --quiet-invalid-databases \
   --strict-frontier \
@@ -4845,6 +4932,7 @@ doctest_source_frontier_attempted_paths="$("$src_dir/doctest-source-frontier.py"
   --subtract-database "$doctest_source_frontier_foreign_db" \
   --subtract-database "$doctest_source_frontier_stale_db" \
   --subtract-database "$doctest_source_frontier_file_error_db" \
+  --subtract-database "$doctest_candidate_helper_optional_db" \
   --ignore-invalid-databases \
   --quiet-invalid-databases \
   --strict-frontier \
@@ -4852,6 +4940,7 @@ doctest_source_frontier_attempted_paths="$("$src_dir/doctest-source-frontier.py"
   --min-runner-version 83 \
   --min-runnable-prompts 1)"
 if [ "$doctest_source_frontier_attempted_paths" != "src/sage/example/frontier_candidate.py
+src/sage/example/optional_candidate.py
 src/sage/example/strict_database_frontier.py" ]; then
   printf '%s\n' "$doctest_source_frontier_attempted_paths" >&2
   sqlite3 "$doctest_source_frontier_file_error_db" ".dump" >&2 || true

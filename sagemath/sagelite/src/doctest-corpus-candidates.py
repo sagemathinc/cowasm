@@ -407,6 +407,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--require-default-run",
+        action="store_true",
+        help=(
+            "scan only default doctest runs, filtering opt-in --optional, "
+            "--long, and --deferred runs"
+        ),
+    )
+    parser.add_argument(
         "--ignore-invalid",
         action="store_true",
         help="skip missing, empty, or non-Sagelite databases during multi-database scans",
@@ -448,6 +456,7 @@ def parse_args() -> argparse.Namespace:
         args.require_run_metadata = True
         args.require_block_rows = True
         args.require_file_run = True
+        args.require_default_run = True
         args.require_source_root_path = True
         args.dedupe_paths = True
         args.suppress_superseded_failures = True
@@ -714,6 +723,7 @@ def latest_run_metadata(
     min_runner_version: int | None,
     require_run_metadata: bool,
     require_file_run: bool,
+    require_default_run: bool,
 ) -> tuple[int, Path | None] | None:
     filters = []
     parameters: list[object] = []
@@ -752,7 +762,10 @@ def latest_run_metadata(
     ).fetchall()
     row = None
     for candidate in rows:
-        if require_file_run and run_command_is_focused_rerun(candidate[2] or ""):
+        command = candidate[2] or ""
+        if require_file_run and run_command_is_focused_rerun(command):
+            continue
+        if require_default_run and not run_command_is_default_run(command):
             continue
         row = candidate
         break
@@ -779,6 +792,20 @@ def run_command_is_focused_rerun(command: str) -> bool:
         if token.startswith("--line=") or token.startswith("--block-key="):
             return True
     return False
+
+
+def run_command_is_default_run(command: str) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+    opt_in_flags = {"--optional", "--long", "-l", "--deferred"}
+    for token in tokens:
+        if token in opt_in_flags:
+            return False
+        if any(token.startswith(f"{flag}=") for flag in opt_in_flags):
+            return False
+    return True
 
 
 def files_table_has_column(db: sqlite3.Connection, column: str) -> bool:
@@ -1488,6 +1515,7 @@ def main() -> int:
                     args.min_runner_version,
                     args.require_run_metadata,
                     args.require_file_run,
+                    args.require_default_run,
                 )
                 if metadata is None:
                     continue
