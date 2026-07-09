@@ -155,6 +155,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
+- Recent doctest run lifecycle state can be audited with
+  `run-lifecycle-summary.sql`, so partial dashboards left by long corpus
+  refreshes, parent-signal interruption, or scheduler stops are distinguishable
+  from completed pass/fail dashboards.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
   SQLite aggregate counts, and checks that random doctests and skip-reason
   clusters are recorded with queryable metadata.
@@ -43950,6 +43954,23 @@ live-status probe checkpointed the first file as `running|1|1|0|0|105|1`
 before a parent `SIGTERM` finalized the same run as
 `interrupted|1|1|0|0|105|1`. The guarded frontier make target remained
 quiet over the trusted scratch dashboard globs.
+
+Follow-up run-lifecycle dashboard pass on 2026-07-09 UTC: no corpus entry was
+promoted. The saved SQL dashboard set now includes
+`run-lifecycle-summary.sql`, which lists recent runs with open/closed
+lifecycle state, run status, runner version, recorded file counts, file
+error/failure counts, aggregate block totals, source root, and command prefix.
+This gives scheduled runs a direct partial-dashboard audit for runner 103+
+checkpointed corpus refreshes and runner 104/105 interrupted runs without
+hand-writing lifecycle SQL.
+
+Focused validation ran the new query against the runner-104 signal fixture,
+where it reported the run as `closed|interrupted` with one recorded passing
+file, and against the runner-105 `env.py` fixture, where it reported
+`closed|passed` with one recorded passing file. Validation also used `sqlite3`
+syntax checks for every saved doctest SQL query, `git diff --check`, and the
+standard guarded frontier make target, which remained quiet over the trusted
+scratch dashboard globs.
 
 ## Phase 6: TypeScript/NPM Direction
 
