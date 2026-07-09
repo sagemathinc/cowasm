@@ -3432,6 +3432,51 @@ if [ -n "$doctest_candidate_helper_fail_on_rows_empty" ]; then
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --fail-on-rows reported a fully subtracted candidate scan."
 fi
+doctest_candidate_helper_unmatched_glob="$probe_dir/no-such-candidate-*.sqlite3"
+set +e
+doctest_candidate_helper_unmatched_glob_error="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --database-glob "$doctest_candidate_helper_unmatched_glob" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_unmatched_glob_status=$?
+set -e
+if [ "$doctest_candidate_helper_unmatched_glob_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_unmatched_glob_error" | \
+    grep -Fq 'database glob matched no files:'; then
+  printf '%s\n' "$doctest_candidate_helper_unmatched_glob_error" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates silently accepted an unmatched database glob."
+fi
+doctest_candidate_helper_unmatched_glob_ignored="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --database-glob "$doctest_candidate_helper_unmatched_glob" \
+  --ignore-invalid \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_unmatched_glob_ignored" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_unmatched_glob_ignored" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --ignore-invalid did not tolerate an unmatched database glob."
+fi
+set +e
+doctest_candidate_helper_only_unmatched_glob="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --database-glob "$doctest_candidate_helper_unmatched_glob" \
+  --ignore-invalid \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  2>&1)"
+doctest_candidate_helper_only_unmatched_glob_status=$?
+set -e
+if [ "$doctest_candidate_helper_only_unmatched_glob_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_only_unmatched_glob" | \
+    grep -Fq 'error: no valid Sagelite doctest databases were scanned'; then
+  printf '%s\n' "$doctest_candidate_helper_only_unmatched_glob" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not report an all-unmatched database glob scan."
+fi
 sqlite3 "$doctest_candidate_helper_mentioned_db" <<SQL
 create table runs (
   id integer primary key,

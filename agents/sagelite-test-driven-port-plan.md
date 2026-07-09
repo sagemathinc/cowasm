@@ -41774,6 +41774,28 @@ and a real guarded make-target scan against
 `.tmp/current-run/sagelite-corpus-runner95.sqlite3` plus
 `.tmp/current-run/**/*.sqlite3`, which printed no rows and exited 0.
 
+Scheduled candidate-glob hardening pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded candidate target over the runner-95 dashboard and
+recursive current-run scratch databases still printed no rows, and the
+source-frontier target over `.tmp/**/*.sqlite3` plus `/tmp/sagelite*.sqlite3`
+printed only its header under the default one-runnable-prompt filter.
+
+The candidate helper now treats unmatched `--database-glob` patterns as real
+input problems instead of silently ignoring them. By default an unmatched glob
+fails fast with an argparse error; under `--ignore-invalid` it is counted like
+an invalid database input, so an all-unmatched scan reports the existing "no
+valid Sagelite doctest databases were scanned" error while mixed valid/unmatched
+scans continue to work. This protects scheduled scratch-dashboard scans from
+typos or unexpectedly empty glob roots without changing the current
+`--ignore-invalid --quiet-invalid` make-target workflow.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, a
+focused synthetic SQLite glob probe for fail-fast, mixed valid/unmatched, and
+all-unmatched behavior, plus the guarded candidate and source-frontier make
+targets described above.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

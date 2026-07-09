@@ -497,11 +497,19 @@ def parse_args() -> argparse.Namespace:
     args.exclude_skip_reason = parse_csv_values(args.exclude_skip_reason)
     args.only_skip_tag = parse_csv_values(args.only_skip_tag)
     args.exclude_skip_tag = parse_csv_values(args.exclude_skip_tag)
+    args.unmatched_database_globs = []
     for pattern in args.database_glob:
-        args.database.extend(
-            Path(path) for path in sorted(glob.glob(pattern, recursive=True))
+        matches = sorted(glob.glob(pattern, recursive=True))
+        if not matches:
+            args.unmatched_database_globs.append(pattern)
+            continue
+        args.database.extend(Path(path) for path in matches)
+    if args.unmatched_database_globs and not args.ignore_invalid:
+        parser.error(
+            "database glob matched no files: "
+            + ", ".join(args.unmatched_database_globs)
         )
-    if not args.database:
+    if not args.database and not args.unmatched_database_globs:
         parser.error(
             "at least one doctest SQLite database or --database-glob match "
             "is required"
@@ -1386,6 +1394,18 @@ def main() -> int:
     valid_database_count = 0
     invalid_database_count = 0
     first_invalid_error = ""
+    if args.ignore_invalid:
+        for pattern in args.unmatched_database_globs:
+            invalid_database_count += 1
+            error = f"{pattern}: no files matched database glob"
+            if not first_invalid_error:
+                first_invalid_error = error
+            if not args.quiet_invalid:
+                print(
+                    f"warning: skipping unmatched database glob {pattern}: "
+                    "no files matched",
+                    file=sys.stderr,
+                )
     for database in args.database:
         if args.limit is not None and printed_rows >= args.limit:
             break
