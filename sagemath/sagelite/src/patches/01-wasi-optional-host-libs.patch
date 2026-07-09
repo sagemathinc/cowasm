@@ -20278,6 +20278,15 @@ diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
          running ._test_additive_associativity() . . . pass
          running ._test_an_element() . . . pass
          running ._test_associativity() . . . pass
+@@ -179 +179 @@ cdef class Ring(ParentWithGens):
+-        sage: TestSuite(ZZ['x','y']['t']).run()
++        sage: TestSuite(ZZ['x','y']['t']).run()                                        # needs sage.rings.polynomial.plural
+@@ -366 +366 @@ cdef class Ring(ParentWithGens):
+-            sage: (x + y) * R
++            sage: (x + y) * R                                                          # needs sage.rings.polynomial.plural
+@@ -369 +369 @@ cdef class Ring(ParentWithGens):
+-            sage: (x + y, z + y^3) * R
++            sage: (x + y, z + y^3) * R                                                 # needs sage.rings.polynomial.plural
 diff --git a/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py
 --- a/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py
 +++ b/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py

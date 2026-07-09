@@ -43853,6 +43853,33 @@ matrix by hand. The target intentionally uses the scratch dashboard globs by
 default because the checked `dist/wasi-sdk/sagelite-doctests.sqlite3` file may
 be empty between full corpus refreshes.
 
+Follow-up core ring corpus-growth pass on 2026-07-09 UTC: the curated corpus
+now includes `src/sage/rings/ring.pyx`. The standard guarded frontier target
+remained quiet, so this pass sampled the smallest unpromoted source-frontier
+file after scratch-database subtraction.
+
+The current `ring.pyx` rerun no longer hits the older
+`polynomial_number_field` file-level trap. It records block-level results, and
+the only failures were three examples that import the unavailable
+`sage.rings.polynomial.plural` backend through multivariate ideal and
+polynomial-sequence paths. The WASI source patch now marks those examples with
+`# needs sage.rings.polynomial.plural`, keeping the remaining ring-category,
+atomic-repr, and basic ideal-construction coverage runnable in the browser
+profile.
+
+Focused validation records:
+
+```text
+ring.pyx: 66 passed, 0 failed, 17 skipped
+```
+
+The validation database is
+`.tmp/current-run/ring-probe/ring-after-tags.sqlite3`; its saved block- and
+file-failure cluster queries are empty, and its skip groups are explicit
+`long time`, Singular, `plural`, p-adic, finite-ring, module, combinat/module,
+and complex-double boundaries. Validation also used `git diff --check` and a
+clean `patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
