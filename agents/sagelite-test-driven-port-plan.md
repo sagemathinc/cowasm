@@ -42666,6 +42666,19 @@ marked examples. This removes skipped-only rows such as
 from the runnable low-prompt frontier, while the scheduled make target remains
 quiet under the current filters.
 
+Follow-up runtime-scope classification on 2026-07-09: the NTL and
+hyperelliptic constructor file-level runtime crashes from the low-prompt batch
+are now explicit browser-profile skips. The WASI source patch marks
+`sage/libs/ntl/ntl_ZZ_pE.pyx` as `# sage.doctest: needs sage.libs.ntl` and
+`sage/schemes/hyperelliptic_curves/constructor.py` as needing the
+hyperelliptic, NTL, and p-adic backends. A focused rerun into
+`.tmp/current-run/scheduled-2026-07-09-runtime-scope/ntl-hyperelliptic.sqlite3`
+reports `sage -t passed: 0 passed, 0 failed, 2 skipped`. The adjacent
+`con_rational_function_field.py` timeout is still a separate cluster: tagging
+the first timeout setup exposed additional block failures in the same file, so
+it needs a dedicated conic/function-field triage pass rather than a narrow
+runtime-scope skip.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

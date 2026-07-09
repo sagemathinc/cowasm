@@ -84,6 +84,15 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  # distutils: libraries = NTL_LIBRARIES gmp m
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pE.pyx b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pE.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
+@@ -3,4 +3,5 @@
+ # distutils: include_dirs = NTL_INCDIR
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
++# sage.doctest: needs sage.libs.ntl
+ # distutils: language = c++
 diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
 --- a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
 +++ b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
@@ -397,6 +406,12 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py b/src/sa
 +++ b/src/sage/schemes/hyperelliptic_curves/jacobian_morphism.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl
+ r"""
+diff --git a/src/sage/schemes/hyperelliptic_curves/constructor.py b/src/sage/schemes/hyperelliptic_curves/constructor.py
+--- a/src/sage/schemes/hyperelliptic_curves/constructor.py
++++ b/src/sage/schemes/hyperelliptic_curves/constructor.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.schemes.hyperelliptic_curves sage.libs.ntl sage.rings.padics
  r"""
 diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage/stats/distributions/discrete_gaussian_lattice.py
 --- a/src/sage/stats/distributions/discrete_gaussian_lattice.py
