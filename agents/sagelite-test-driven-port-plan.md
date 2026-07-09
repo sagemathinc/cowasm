@@ -41640,6 +41640,22 @@ that opt-in behavior. The guarded recursive file-error scan across
 current source root, strict runner guards, runner version 83 minimum, and this
 plan as the mentioned-path subtraction file, printed no remaining rows.
 
+Follow-up recursive frontier confirmation on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded source-frontier scan against the checked corpus, this
+plan, `.tmp/**/*.sqlite3`, and `/tmp/sagelite*.sqlite3` printed no unmentioned
+source file with runnable prompts. Matching strict promotion, file-error, and
+near-miss scans over the same scratch database set, with runner-version,
+file-run, block-row, current-source-root, support-file, and mentioned-path
+guards, also printed no rows.
+
+Opt-in support-file diagnostics remained empty. The remaining skipped-only
+diagnostics were explicit optional backend boundaries such as GAP, graphs,
+FLINT, PARI, symbolic, modules, finite-ring, and real-field coverage; they are
+not promotion candidates under the current browser profile. The remaining
+zero-block diagnostics are old helper/module probes with no runnable block
+evidence, so they should not drive corpus growth unless a later source or
+runner change makes them extract real runnable doctests.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
