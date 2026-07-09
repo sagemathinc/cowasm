@@ -42561,6 +42561,40 @@ file-failure cluster queries are empty. The file remains outside the curated
 corpus until the integer dense matrix backend is available in the
 browser-compatible profile.
 
+Follow-up modular-form ambient boundary pass on 2026-07-09: the remaining
+low-prompt source-frontier scan without plan-mentioned subtraction found only
+`sage/doctest/__main__.py` and `sage/libs/pari/convert_flint.pyx`; focused
+probing recorded both as skipped-only under existing dependency metadata:
+
+```text
+sage -t passed: 0 passed, 0 failed, 11 skipped
+```
+
+A small modular/plot batch also produced no promotion candidate. Four files
+were already skipped-only under explicit boundaries, while
+`sage/modular/modform/ambient_g1.py` initially reported 25 failures, all from
+missing `ModularForms`/`CuspForms` startup names and dependent state. A direct
+REPL import probe showed that importing `ModularForms` reaches the unavailable
+`sage.matrix.matrix_integer_dense` extension through `arithgroup_element.pyx`,
+so the startup-name cluster is another integer dense matrix backend boundary
+rather than a runnable namespace gap.
+
+The WASI source patch now marks `ambient_g1.py` with the same file-level
+`# sage.doctest: needs sage.matrix.matrix_integer_dense` directive used by
+adjacent modular-arithgroup files. Focused direct validation recorded:
+
+```text
+ambient_g1.py: 0 passed, 0 failed, 1 skipped
+```
+
+Focused make-target validation rebuilt a fresh patched source copy and used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-agent/ambient-g1-make.sqlite3`.
+The saved skip query groups the file under
+`optional:sage.matrix.matrix_integer_dense`, and the saved block- and
+file-failure cluster queries are empty. The file remains outside the curated
+corpus until that backend is available.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

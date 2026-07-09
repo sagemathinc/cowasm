@@ -14945,6 +14945,12 @@ diff --git a/src/sage/modular/modform/half_integral.py b/src/sage/modular/modfor
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix_integer_dense
  r"""
+diff --git a/src/sage/modular/modform/ambient_g1.py b/src/sage/modular/modform/ambient_g1.py
+--- a/src/sage/modular/modform/ambient_g1.py
++++ b/src/sage/modular/modform/ambient_g1.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ r"""
 diff --git a/src/sage/modular/arithgroup/congroup.pyx b/src/sage/modular/arithgroup/congroup.pyx
 --- a/src/sage/modular/arithgroup/congroup.pyx
 +++ b/src/sage/modular/arithgroup/congroup.pyx
