@@ -42734,6 +42734,34 @@ The saved block- and file-failure cluster queries are empty, and
 outside the curated corpus until the symbolic hyperbolic-space backend is
 available in the browser-compatible profile.
 
+Follow-up scheduled frontier sanity pass on 2026-07-09: the configured
+dashboard database at `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`
+is still an empty SQLite placeholder, so saved SQL dashboards against that
+path report missing schema tables. The scheduled `sage-doctest-source-frontier`
+target remains quiet under the current plan-mentioned subtraction and
+file-level skip filters, and a scratch-database `sage-doctest-candidates` scan
+over `.tmp/current-run/*.sqlite3` and `.tmp/current-run/*/*.sqlite3` returned
+no promotion rows under the runner-version frontier gate.
+
+Focused direct validation also reconfirmed the already-curated typeset tail in
+the installed patched resource tree:
+
+```text
+ascii_art.py: 3 passed, 0 failed, 25 skipped
+character_art.py: 98 passed, 0 failed, 5 skipped
+character_art_factory.py: 32 passed, 0 failed, 26 skipped
+unicode_characters.py: 27 passed, 0 failed, 0 skipped
+symbols.py: 28 passed, 0 failed, 0 skipped
+unicode_art.py: 9 passed, 0 failed, 9 skipped
+```
+
+The focused run wrote
+`.tmp/current-run/typeset-tail-direct.sqlite3` and totals
+`197 passed, 0 failed, 65 skipped`. No corpus or browser-scope patch change
+was needed from this pass; the next useful scheduled work should keep following
+new failure clusters or changed backend boundaries rather than repeating the
+same quiet frontier scans.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
