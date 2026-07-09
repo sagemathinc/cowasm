@@ -41963,6 +41963,19 @@ relative database, and two-database wrapper forms, plus guarded candidate and
 source-frontier make-target scans over `.tmp/current-run/*.sqlite3` and
 `.tmp/codex-sagelite/*.sqlite3`, which printed no rows.
 
+Follow-up source-frontier database wrapper-control pass on 2026-07-09 UTC: no
+corpus entry was promoted. The source-frontier make target now exposes
+explicit subtraction databases as
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASES`, complementing the existing
+glob-based wrapper. Scheduled scans can now subtract one or more known
+scratch dashboards through make without depending on a glob pattern; absolute
+database paths pass through unchanged, and relative paths are resolved against
+`SAGELITE_DOCTEST_PATH_ROOT`, matching the candidate wrapper.
+
+Validation used `make -n` checks for the empty, absolute, relative, and
+two-database source-frontier wrapper forms, plus guarded candidate and
+source-frontier make-target scans over current scratch databases.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
