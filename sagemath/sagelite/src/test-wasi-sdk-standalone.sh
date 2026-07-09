@@ -3205,6 +3205,21 @@ if [ "$doctest_candidate_helper_glob_paths" != "src/sage/example/real_candidate.
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --database-glob did not scan matching databases."
 fi
+set +e
+doctest_candidate_helper_missing_mentioned="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --mentioned-file "$probe_dir/no-such-mentioned-file.md" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_missing_mentioned_status=$?
+set -e
+if [ "$doctest_candidate_helper_missing_mentioned_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_missing_mentioned" | \
+    grep -Fq -- '--mentioned-file does not name a file:'; then
+  printf '%s\n' "$doctest_candidate_helper_missing_mentioned" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --mentioned-file did not reject a missing file cleanly."
+fi
 touch "$doctest_candidate_helper_source_root/src/sage/example/relative_candidate.py"
 printf '%s\n' "src/sage/example/relative_candidate.py" >"$doctest_candidate_helper_relative_corpus"
 sqlite3 "$doctest_candidate_helper_relative_db" <<SQL
@@ -4188,6 +4203,22 @@ if [ "$doctest_source_frontier_support_paths" != "src/sage/example/frontier_cand
   printf '%s\n' "$doctest_source_frontier_support_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier did not subtract mentioned support-extension inputs."
+fi
+set +e
+doctest_source_frontier_missing_mentioned="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$probe_dir/no-such-mentioned-file.md" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_source_frontier_missing_mentioned_status=$?
+set -e
+if [ "$doctest_source_frontier_missing_mentioned_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_missing_mentioned" | \
+    grep -Fq -- '--mentioned-file does not name a file:'; then
+  printf '%s\n' "$doctest_source_frontier_missing_mentioned" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --mentioned-file did not reject a missing file cleanly."
 fi
 doctest_source_frontier_required_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \

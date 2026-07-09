@@ -440,6 +440,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.failure_detail_limit < 0:
         parser.error("--failure-detail-limit must be non-negative")
+    validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
     if args.strict_frontier:
         args.require_run_metadata = True
         args.require_block_rows = True
@@ -520,6 +521,14 @@ def parse_args() -> argparse.Namespace:
         else DEFAULT_EXCLUDED_PATH_PREFIXES
     )
     return args
+
+
+def validate_existing_files(
+    parser: argparse.ArgumentParser, option: str, paths: list[Path]
+) -> None:
+    for path in paths:
+        if not path.is_file():
+            parser.error(f"{option} does not name a file: {path}")
 
 
 def parse_csv_values(values: list[str]) -> list[str]:

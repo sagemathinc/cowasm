@@ -233,6 +233,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
+    validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
     if args.strict_frontier:
         args.strict_database_subtraction = True
     if args.quiet_invalid_databases and not args.ignore_invalid_databases:
@@ -260,6 +261,14 @@ def parse_args() -> argparse.Namespace:
         else DEFAULT_EXCLUDED_PATH_PREFIXES
     )
     return args
+
+
+def validate_existing_files(
+    parser: argparse.ArgumentParser, option: str, paths: list[Path]
+) -> None:
+    for path in paths:
+        if not path.is_file():
+            parser.error(f"{option} does not name a file: {path}")
 
 
 def normalize_extension(extension: str) -> str:

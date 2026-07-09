@@ -41866,6 +41866,22 @@ target's modern-run subtraction floor and the scheduled-run command lines. This
 keeps stale scratch dashboards from influencing target-driven promotion scans
 unless an audit explicitly overrides `SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
 
+Follow-up mention-file guard pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded candidate and source-frontier make targets over
+`.tmp/current-run/**/*.sqlite3` still printed no rows.
+
+The candidate and source-frontier helpers now validate every `--mentioned-file`
+path during argument parsing. A missing scheduled-run plan path is reported as
+an argparse status-2 error instead of a raw Python traceback, which keeps
+wrapper failures actionable while preserving the existing opt-out behavior of
+empty make variables. The standalone smoke script has focused fixtures for the
+missing mention-file guard in both helpers.
+
+Validation used `python3 -m py_compile` for the Sagelite doctest helper
+scripts, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, direct
+missing-`--mentioned-file` probes for both helpers, and the guarded candidate
+and source-frontier make-target scans over `.tmp/current-run/**/*.sqlite3`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
