@@ -42706,6 +42706,34 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the deferred blocks under explicit Singular,
 function-field, number-field, and long-test requirements.
 
+Follow-up hyperbolic-space boundary pass on 2026-07-09: the scheduled
+source-frontier and corpus-candidate make targets remained quiet under the
+plan-mentioned and current scratch-database subtraction filters, so this pass
+inspected the latest low-prompt probe clusters directly. The clearest narrow
+boundary was `sage/geometry/hyperbolic_space/hyperbolic_interface.py`, whose
+focused direct run recorded `0 passed, 25 failed, 0 skipped`; the first real
+import failed on the unavailable `sage.symbolic.expression` module, and the
+remaining `HyperbolicPlane`/`HyperbolicSpace` failures were dependent missing
+state.
+
+The WASI source patch now marks `hyperbolic_interface.py` with a file-level
+`# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic`
+directive. Focused make-target validation rebuilt a fresh patched source copy
+and used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-hyperbolic/hyperbolic-make.sqlite3`.
+The one-file run records:
+
+```text
+hyperbolic_interface.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the skip under
+`optional:sage.geometry.hyperbolic_space,sage.symbolic`. The file remains
+outside the curated corpus until the symbolic hyperbolic-space backend is
+available in the browser-compatible profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -18,6 +18,12 @@ diff --git a/src/sage/graphs/path_enumeration.pyx b/src/sage/graphs/path_enumera
 +# sage.doctest: needs sage.graphs
  r"""
  Path enumeration
+diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_interface.py b/src/sage/geometry/hyperbolic_space/hyperbolic_interface.py
+--- a/src/sage/geometry/hyperbolic_space/hyperbolic_interface.py
++++ b/src/sage/geometry/hyperbolic_space/hyperbolic_interface.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
+ r"""
 diff --git a/src/sage/manifolds/differentiable/scalarfield.py b/src/sage/manifolds/differentiable/scalarfield.py
 --- a/src/sage/manifolds/differentiable/scalarfield.py
 +++ b/src/sage/manifolds/differentiable/scalarfield.py
