@@ -43347,6 +43347,29 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; the latest-run
 metadata records runner version 102 in the default node profile.
 
+Follow-up Jupyter interact boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. The live near-miss scan with superseded-failure suppression surfaced
+only `src/sage/interacts/test_jupyter.rst`, where a focused rerun recorded
+`1 passed, 23 failed, 5 skipped`. The failures were dominated by the Jupyter
+interact fixture's unavailable `ipywidgets` setup and by
+`sage.repl.ipython_kernel.all_jupyter` importing the stripped
+`sage.symbolic.expression` stack.
+
+The WASI source patch now marks `test_jupyter.rst` with a file-level
+`# sage.doctest: needs IPython ipywidgets sage.symbolic` directive. Focused
+validation against the current patched source tree records:
+
+```text
+test_jupyter.rst: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the file under
+`optional:ipython,ipywidgets,sage.symbolic`; saved block- and file-failure
+cluster queries are empty. Re-running the recursive near-miss scan with the
+fresh database included prints only the header row, and a dry-run application
+of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` succeeds.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

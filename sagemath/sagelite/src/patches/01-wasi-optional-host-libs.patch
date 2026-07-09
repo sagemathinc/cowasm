@@ -16542,6 +16542,12 @@ diff --git a/src/sage/repl/ipython_kernel/widgets.py b/src/sage/repl/ipython_ker
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs IPython ipywidgets
  r"""
+diff --git a/src/sage/interacts/test_jupyter.rst b/src/sage/interacts/test_jupyter.rst
+--- a/src/sage/interacts/test_jupyter.rst
++++ b/src/sage/interacts/test_jupyter.rst
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython ipywidgets sage.symbolic
+ .. -*- coding: utf-8 -*-
 diff --git a/src/sage/rings/padics/pow_computer_relative.pyx b/src/sage/rings/padics/pow_computer_relative.pyx
 --- a/src/sage/rings/padics/pow_computer_relative.pyx
 +++ b/src/sage/rings/padics/pow_computer_relative.pyx
