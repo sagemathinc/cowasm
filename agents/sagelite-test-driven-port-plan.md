@@ -43919,6 +43919,22 @@ files `src/sage/typeset/symbols.py` and
 `src/sage/categories/examples/coxeter_groups.py` contained no runnable doctest
 blocks under the current extractor.
 
+Scheduled guarded frontier check on 2026-07-09 UTC, second follow-up: no
+corpus entry was promoted. The checked scratch dashboard set under
+`.tmp/current-run/**/*.sqlite3` plus `.tmp/codex-sagelite/**/*.sqlite3` again
+emitted no promotion-candidate, near-miss, file-error, skipped-only, or
+source-frontier rows through the consolidated
+`sage-doctest-guarded-frontier-check` make target.
+
+The run used strict frontier metadata, runner version `>= 95`,
+plan-mentioned subtraction, superseded-failure suppression for diagnostic
+candidate scans, deduplicated diagnostic/skipped-only paths, file-level
+skip-directive exclusion for skipped-only/source-frontier checks, and invalid
+scratch-database suppression. This leaves the current scheduled-run state at
+the same quiet frontier as the prior follow-up: useful next work needs either
+a fresh partial/full corpus dashboard or a deliberately chosen backend/runtime
+cluster, not another broad subtraction-only scan over the same scratch set.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
