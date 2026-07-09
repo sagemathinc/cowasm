@@ -41504,6 +41504,25 @@ failed rows for paths that have clean skipped-only or zero-block evidence in
 the scanned databases. A synthetic helper fixture in the standalone smoke
 script covers this multi-database case.
 
+Follow-up source-skip supersession audit on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded source-frontier scan against the checked corpus, this
+plan's mentioned paths, `.tmp/current-run/sagelite-corpus-runner95.sqlite3`,
+`.tmp/**/*.sqlite3`, and `/tmp/sagelite*.sqlite3` printed no unmentioned source
+file with runnable prompts. The matching strict promotion-candidate scan with
+current source-root, runner-version, file-run, block-row, invalid-database, and
+deduplicated-output guards also printed no uncovered clean runnable row.
+
+The diagnostic file-error scan exposed another stale historical-noise pattern:
+old file-scope failures were still reportable for paths whose current patched
+source now has a file-level `# sage.doctest: needs ...` or `optional ...`
+directive. `doctest-corpus-candidates.py --suppress-superseded-failures` now
+uses the selected `--source-root` to suppress those rows, and
+`--strict-frontier` inherits that behavior. A focused real scan dropped the
+remaining guarded file-error report from five rows to the two rows that do not
+have current file-scope skip metadata:
+`src/sage/rings/ring.pyx` at `TestSuite(QQ['x']).run(verbose=True)` and
+`src/sage/data_structures/stream.py` at `Stream_taylor.__eq__`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

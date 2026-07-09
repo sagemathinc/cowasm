@@ -2985,6 +2985,11 @@ touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_erro
 touch "$doctest_candidate_helper_source_root/src/sage/example/invalid_detail.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
+cat >"$doctest_candidate_helper_source_root/src/sage/example/source_skipped_error.py" <<'PY'
+# sage.doctest: needs sage.example.optional_backend
+"""
+"""
+PY
 cat >"$doctest_candidate_helper_source_root/src/sage/example/frontier_candidate.py" <<'PY'
 r"""
     sage: 1 + 1
@@ -3754,6 +3759,71 @@ if [ "$doctest_candidate_helper_superseded_near_misses" != "src/sage/example/nea
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress superseded near misses."
+fi
+doctest_candidate_helper_source_skip_db="$probe_dir/sagelite-doctest-source-skip-helper.sqlite3"
+sqlite3 "$doctest_candidate_helper_source_skip_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  failure_class text default '',
+  duration_ms integer
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-03T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t src/sage/example/source_skipped_error.py',
+  'node',
+  'failed',
+  '$doctest_candidate_helper_source_root',
+  83
+);
+insert into files (
+  id, run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, failure_class, duration_ms
+) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/source_skipped_error.py',
+  'error',
+  0,
+  0,
+  1,
+  0,
+  'ModuleNotFoundError',
+  13
+);
+SQL
+doctest_candidate_helper_source_skip_errors="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --suppress-superseded-failures \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_source_skip_db")"
+if [ -n "$doctest_candidate_helper_source_skip_errors" ]; then
+  printf '%s\n' "$doctest_candidate_helper_source_skip_errors" >&2
+  sqlite3 "$doctest_candidate_helper_source_skip_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress source-skipped file errors."
 fi
 doctest_candidate_helper_near_misses_override_root="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \

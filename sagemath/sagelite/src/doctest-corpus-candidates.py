@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 import posixpath
+import re
 import shlex
 import signal
 import sqlite3
@@ -21,6 +22,9 @@ REQUIRED_RUN_METADATA_COLUMNS = (
     "command",
     "run_profile",
     "status",
+)
+FILE_SKIP_DIRECTIVE_RE = re.compile(
+    r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
 )
 
 
@@ -524,6 +528,32 @@ def source_candidate_exists(relative_path: str, source_root: Path | None) -> boo
     if not source_root.exists():
         return True
     return (source_root / relative_path).exists()
+
+
+def current_source_has_file_skip(
+    relative_path: str, source_root: Path | None
+) -> bool:
+    if source_root is None or not relative_path.startswith("src/sage/"):
+        return False
+    path = source_root / relative_path
+    if not path.exists():
+        return False
+    try:
+        with path.open(encoding="utf-8", errors="replace") as handle:
+            return any(FILE_SKIP_DIRECTIVE_RE.search(line) for line in handle)
+    except OSError:
+        return False
+
+
+def current_source_file_skip_paths(
+    rows: list[tuple[str, int, int, int, int, int, int, str, str, str]],
+    source_root: Path | None,
+) -> set[str]:
+    return {
+        row[0]
+        for row in rows
+        if current_source_has_file_skip(row[0], source_root)
+    }
 
 
 def source_path_matches_root(path: str, source_root: Path | None) -> bool:
@@ -1336,6 +1366,9 @@ def main() -> int:
                             args.require_source_root_path,
                             args.include_covered,
                         )
+                    )
+                    superseded_failure_paths.update(
+                        current_source_file_skip_paths(rows, source_root)
                     )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
