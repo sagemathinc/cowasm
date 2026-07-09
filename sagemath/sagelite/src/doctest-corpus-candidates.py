@@ -1394,8 +1394,10 @@ def superseding_file_error_progress_paths(
         select path
         from files
         where run_id = ?
-          and status in ('passed', 'failed')
-          and total_blocks > 0
+          and status = 'passed'
+          and failed_blocks = 0
+          and passed_blocks > 0
+          and total_blocks - skipped_blocks > 0
         """,
         (run_id,),
     ).fetchall()

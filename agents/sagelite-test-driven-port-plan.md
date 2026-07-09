@@ -43578,6 +43578,24 @@ and a dry-run application of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against a
 fresh `/home/user/sagelite` copy succeeds.
 
+Follow-up file-error diagnostic suppression pass on 2026-07-09 UTC: no corpus
+entry was promoted. The trusted runner-95 promotion, near-miss, file-error,
+skipped-only, and source-frontier scans remained quiet after subtracting paths
+already mentioned in this plan. A widened historical file-error scan still
+showed stale rows for paths that now have focused passing evidence, such as the
+finite-enumerated-set random-test GSL trap.
+
+`doctest-corpus-candidates.py --suppress-superseded-failures` now treats a
+later clean runnable passing row for the same path as progress that supersedes
+an older file-level error. It no longer treats later failed rows as
+file-error-superseding progress. The standalone smoke fixture records this
+distinction with paired `error_candidate.py` and `stale_harness_error.py`
+rows: the clean focused rerun suppresses the former, while the failed rerun
+leaves the latter visible. Focused validation used `python3 -m py_compile`,
+`bash -n`, a direct SQLite fixture for the new suppression behavior, and the
+real widened `.tmp/current-run/**/*.sqlite3` diagnostic scan with
+plan-mentioned subtraction, which prints no file-error rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
