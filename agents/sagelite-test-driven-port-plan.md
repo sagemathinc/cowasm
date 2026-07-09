@@ -42474,6 +42474,39 @@ The saved block- and file-failure cluster queries are empty for that focused
 database. No new WASI source patch hunk was needed; the existing graph startup
 and resource-refresh work covers these doctests.
 
+Follow-up rankwidth corpus-growth pass on 2026-07-09: the refreshed graph
+resource bundle exposed `sage/graphs/graph_decompositions/rankwidth.pyx` as
+the next useful graph backend target. The initial focused probe improved from
+the old missing-rankwidth-extension cluster to `27 passed, 2 failed, 0
+skipped`; the two remaining failures were only the large-graph error-path
+setup using `graphs.RandomGNP(40, .5)`, which still requires the intentionally
+out-of-profile `graph_generators_pyx` helper.
+
+The Sagelite standalone build now enables Meson's `rankwidth` option and
+passes the existing `sagemath/rw` WASI archive into the cross file. The `rw`
+package now builds `librw.a` with `-fPIC`, which is required when the archive
+is linked into the WASI side module
+`rankwidth.cpython-314-wasm32-wasi.so`. A resumed standalone validation rebuilt
+and packaged the extension, and the graph smoke now checks
+`G.rank_decomposition()[0] == 1` before reporting:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The WASI source patch keeps the large-graph rankwidth error-path doctest
+runnable by using `Graph(40)` instead of the random generator extension. The
+focused make-target validation rebuilt a fresh patched Sagelite source copy and
+recorded:
+
+```text
+rankwidth.pyx: 29 passed, 0 failed, 0 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for
+`.tmp/current-run/scheduled-2026-07-09-graph-followup/rankwidth-focused-after-graph40.sqlite3`.
+The file is now promoted into `basic-pure-math.txt`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

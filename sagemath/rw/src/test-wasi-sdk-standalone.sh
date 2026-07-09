@@ -28,6 +28,7 @@ cd "$build_dir"
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -std=c99 \
   -pedantic \
+  -fPIC \
   -Oz \
   -DNDEBUG \
   -c rw.c \

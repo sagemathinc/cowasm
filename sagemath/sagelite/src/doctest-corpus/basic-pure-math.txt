@@ -1049,6 +1049,7 @@ src/sage/graphs/print_graphs.py
 src/sage/graphs/hypergraph_generators.py
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
+src/sage/graphs/graph_decompositions/rankwidth.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_sets.pyx
 src/sage/plot/arc.py
 src/sage/plot/arrow.py

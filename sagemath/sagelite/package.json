@@ -61,6 +61,7 @@
     "@cowasm/py-ninja": "workspace:*",
     "@cowasm/py-numpy": "workspace:*",
     "@cowasm/py-packaging": "workspace:*",
-    "@cowasm/py-platformdirs": "workspace:*"
+    "@cowasm/py-platformdirs": "workspace:*",
+    "@cowasm/rw": "workspace:*"
   }
 }

@@ -14909,6 +14909,12 @@ diff --git a/src/sage/graphs/graph_generators_pyx.pyx b/src/sage/graphs/graph_ge
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/graph_decompositions/rankwidth.pyx b/src/sage/graphs/graph_decompositions/rankwidth.pyx
+--- a/src/sage/graphs/graph_decompositions/rankwidth.pyx
++++ b/src/sage/graphs/graph_decompositions/rankwidth.pyx
+@@ -147 +147 @@
+-        sage: g = graphs.RandomGNP(40, .5)
++        sage: g = Graph(40)
 diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
 --- a/src/sage/graphs/graph_generators.py
 +++ b/src/sage/graphs/graph_generators.py
