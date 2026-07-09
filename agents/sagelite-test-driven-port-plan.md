@@ -42215,6 +42215,30 @@ smoke now reruns failed or marker-less `python-wasi-sdk` import probes with
 WASI import failure records an actionable import trace before reporting the
 blocker.
 
+Follow-up resource-rebuild attempt on 2026-07-09: no graph corpus entry was
+promoted. A focused `sage -t` probe for `src/sage/graphs/graph.py` could not
+start because the current `sagemath/sagelite/dist/wasi-sdk` tree still lacked
+the Electron resource bundle; `sagelite-doctests.sqlite3` at the default
+dashboard path was also a zero-byte placeholder from the partial build.
+
+An attempted `make -C sagemath/sagelite test-wasi-sdk-standalone` refreshed
+the patched Sagelite source tree and applied
+`01-wasi-optional-host-libs.patch` cleanly. The rebuild then entered a full
+serial Cython regeneration. The first generation pass hit a transient
+WASM-backed Cython segmentation fault at
+`src/sage/libs/pari/convert_sage_complex_double.pyx` and the standalone script
+advanced to retry 2/10. Retry 2 progressed normally but was still only around
+60/443 remaining Cython sources after several minutes, so the run was stopped
+before resource packaging. This was not a graph-specific backend failure; it
+was an operational prerequisite failure for Node-profile doctest probing.
+
+The next graph-focused scheduled run should either reuse a completed
+standalone resource bundle or start by making the standalone build resumable
+enough to avoid regenerating hundreds of unrelated Cython sources before each
+focused graph doctest probe. Until then, direct staged `python-wasi-sdk`
+imports can still test graph side-module linkage, but `sage -t --profile node`
+cannot run from this partial `dist/wasi-sdk` tree.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
