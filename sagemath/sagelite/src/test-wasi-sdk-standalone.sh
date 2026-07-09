@@ -3099,6 +3099,13 @@ cat >"$doctest_candidate_helper_source_root/src/sage/example/source_skipped_erro
 """
 """
 PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/source_long_time_frontier.py" <<'PY'
+# sage.doctest: long time
+r"""
+    sage: 6 + 6
+    12
+"""
+PY
 cat >"$doctest_candidate_helper_source_root/src/sage/example/frontier_candidate.py" <<'PY'
 r"""
     sage: 1 + 1
@@ -3139,6 +3146,7 @@ printf '%s\n' "src/sage/example/covered_frontier.py" >"$doctest_source_frontier_
   printf '%s\n' "previously audited src/sage/example/mentioned_frontier.py"
   printf '%s\n' "previously audited src/sage/example/mentioned_pyx_frontier.pyx"
   printf '%s\n' "previously audited src/sage/example/mentioned_rst_frontier.rst"
+  printf '%s\n' "previously audited src/sage/example/source_long_time_frontier.py"
 } >"$doctest_source_frontier_mentioned"
 printf '%s\n' "previously audited src/sage/example/frontier_candidate.py" >"$doctest_source_frontier_all_mentioned"
 sqlite3 "$doctest_candidate_helper_db" <<SQL
@@ -4620,6 +4628,20 @@ if [ "$doctest_source_frontier_support_paths" != "src/sage/example/frontier_cand
   printf '%s\n' "$doctest_source_frontier_support_paths" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier did not subtract mentioned support-extension inputs."
+fi
+doctest_source_frontier_file_skip_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --include-mentioned \
+  --exclude-file-skip-directives \
+  --min-prompts 1 \
+  --max-prompts 1)"
+if [ "$doctest_source_frontier_file_skip_paths" != "src/sage/example/mentioned_frontier.py
+src/sage/example/mentioned_pyx_frontier.pyx" ]; then
+  printf '%s\n' "$doctest_source_frontier_file_skip_paths" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier did not filter file-level long-time directives."
 fi
 set +e
 doctest_source_frontier_missing_mentioned="$("$src_dir/doctest-source-frontier.py" \

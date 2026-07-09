@@ -32,7 +32,9 @@ SAGE_PATH_RE = re.compile(
 )
 SAGE_PROMPT_RE = re.compile(r"^\s*sage:")
 FILE_SKIP_DIRECTIVE_RE = re.compile(
-    r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
+    r"^\s*#\s*sage\.doctest:\s*"
+    r"(?:.*\bneeds\b|.*\boptional\b|.*\blong time\b|.*\bknown bug\b|"
+    r".*\bnot implemented\b|.*\bnot tested\b)"
 )
 PROMPT_SKIP_DIRECTIVE_RE = re.compile(
     r"#.*\b"
@@ -190,8 +192,9 @@ def parse_args() -> argparse.Namespace:
         "--exclude-file-skip-directives",
         action="store_true",
         help=(
-            "suppress files with a file-level sage.doctest needs/optional "
-            "directive"
+            "suppress files with a file-level sage.doctest default-skip "
+            "directive such as needs, optional, long time, known bug, "
+            "not implemented, or not tested"
         ),
     )
     parser.add_argument(

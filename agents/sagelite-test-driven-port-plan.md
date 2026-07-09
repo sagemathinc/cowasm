@@ -5343,6 +5343,27 @@ and a 100% non-skipped pass rate. The saved block- and file-failure cluster
 queries are empty, and `doctest-corpus-candidates.py --strict-frontier` prints
 no promotion row after subtracting the updated corpus.
 
+Follow-up source-frontier file-skip pass on 2026-07-09: no corpus entry was
+promoted. A focused Axiom rerun confirmed that the older pexpect/interface
+near-miss breadcrumb is stale in the current patched source:
+`sage/interfaces/axiom.py` now records `0 passed, 0 failed, 1 skipped` under
+the file-level `# needs axiom pexpect subprocess` directive.
+
+The pass fixed a source-frontier tooling leak exposed by
+`sage/rings/polynomial/q_integer_valued_polynomials.py`: the current source has
+`# sage.doctest: long time` at file scope and `sage -t` records it as one
+file-level skip, but `doctest-source-frontier.py --exclude-file-skip-directives`
+only recognized file-level `needs` and `optional` directives. The helper now
+treats file-level `long time`, `known bug`, `not implemented`, and `not tested`
+as default-skip directives too, matching the prompt-level runnable-count
+policy. The standalone smoke fixture covers the long-time case.
+
+Focused validation compiled the source-frontier helper, checked the standalone
+smoke script syntax, and reran the 131-to-220 prompt frontier slice that had
+previously listed `q_integer_valued_polynomials.py`. The corrected scan no
+longer reports that file as runnable; the remaining rows are the already-known
+broader algebra, graph, quotient-ring, Lie, hyperplane, and matroid clusters.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
