@@ -42967,6 +42967,19 @@ with `SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED=` and the recursive
 subtraction enabled it printed only the header row, and with the opt-out set to
 `0` it reproduced the two stale rows above.
 
+Follow-up scheduled scan confirmation on 2026-07-09 UTC: no corpus entry was
+promoted. The standard make-target source-frontier, promotion-candidate, and
+live file-error scans over `.tmp/current-run/**/*.sqlite3` remained quiet under
+the current plan-mentioned subtraction, strict runner-version gate, support-file
+filter, and superseded-failure suppression. Broader direct scans over both
+`.tmp/**/*.sqlite3` and `/tmp/sagelite*.sqlite3` also printed only header rows
+for runnable source frontier, near-miss, and live file-error modes. A
+no-mention skipped-only audit still shows only explicit dependency-boundary
+rows, such as symbolic, combinatorics, graph, GAP, PARI, and modular-arithmetic
+requirements, so the next useful run should start from a changed dependency
+boundary, a refreshed runtime capability, or a deliberately selected backend
+cluster rather than another broad low-noise frontier scan.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
