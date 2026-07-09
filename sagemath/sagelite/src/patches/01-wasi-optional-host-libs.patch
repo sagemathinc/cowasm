@@ -20616,3 +20616,510 @@ diff --git a/src/sage/algebras/lie_algebras/morphism.py b/src/sage/algebras/lie_
 +            sage: phi(-X + 3*Y)                           # needs sage.symbolic
              -A + 3*B
              sage: K.<A,B,C> = LieAlgebra(QQ, {('A','B'): {'C':2}})
+
+diff --git a/src/sage/algebras/steenrod/steenrod_algebra.py b/src/sage/algebras/steenrod/steenrod_algebra.py
+--- a/src/sage/algebras/steenrod/steenrod_algebra.py
++++ b/src/sage/algebras/steenrod/steenrod_algebra.py
+@@ -296,9 +296,9 @@
+
+     sage: a.milnor() # same as a
+     Sq(1,2,1)
+-    sage: a.change_basis('adem')
++    sage: a.change_basis('adem')  # needs sage.matrix.matrix_mod2_dense
+     Sq^9 Sq^4 Sq^1 + Sq^11 Sq^2 Sq^1 + Sq^13 Sq^1
+-    sage: a.change_basis('adem').change_basis('milnor')
++    sage: a.change_basis('adem').change_basis('milnor')  # needs sage.matrix.matrix_mod2_dense
+     Sq(1,2,1)
+
+ Regardless of the prime, each element has an ``excess``, and if the
+@@ -370,15 +370,15 @@
+
+     sage: Sq(5).coproduct()
+     1 # Sq(5) + Sq(1) # Sq(4) + Sq(2) # Sq(3) + Sq(3) # Sq(2) + Sq(4) # Sq(1) + Sq(5) # 1
+-    sage: Sq(5).antipode()
++    sage: Sq(5).antipode()  # needs sage.matrix.matrix_mod2_dense
+     Sq(2,1) + Sq(5)
+     sage: d = Sq(0,0,1); d
+     Sq(0,0,1)
+-    sage: d.antipode()
++    sage: d.antipode()  # needs sage.matrix.matrix_mod2_dense
+     Sq(0,0,1)
+-    sage: Sq(4).antipode()
++    sage: Sq(4).antipode()  # needs sage.matrix.matrix_mod2_dense
+     Sq(1,1) + Sq(4)
+-    sage: (Sq(4) * Sq(2)).antipode()
++    sage: (Sq(4) * Sq(2)).antipode()  # needs sage.matrix.matrix_mod2_dense
+     Sq(6)
+     sage: SteenrodAlgebra(7).P(3,1).antipode()
+     P(3,1)
+@@ -386,7 +386,7 @@
+ Applying the antipode twice returns the original element::
+
+     sage: y = Sq(8)*Sq(4)
+-    sage: y == (y.antipode()).antipode()
++    sage: y == (y.antipode()).antipode()  # needs sage.matrix.matrix_mod2_dense
+     True
+
+ Internal representation: you can use any element as an iterator (``for
+@@ -394,20 +394,20 @@
+ dictionary with keys tuples representing basis elements and with
+ corresponding value representing the coefficient of that term::
+
+-    sage: c = Sq(5).antipode(); c
++    sage: c = Sq(5).antipode(); c  # needs sage.matrix.matrix_mod2_dense
+     Sq(2,1) + Sq(5)
+-    sage: for mono, coeff in c: print((coeff, mono))
++    sage: for mono, coeff in c: print((coeff, mono))  # needs sage.matrix.matrix_mod2_dense
+     (1, (5,))
+     (1, (2, 1))
+-    sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
++    sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}  # needs sage.matrix.matrix_mod2_dense
+     True
+-    sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
++    sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))  # needs sage.matrix.matrix_mod2_dense
+     [Sq(2,1), Sq(5)]
+-    sage: sorted(c.support())
++    sage: sorted(c.support())  # needs sage.matrix.matrix_mod2_dense
+     [(2, 1), (5,)]
+     sage: Adem = SteenrodAlgebra(basis='adem')
+-    sage: elt = Adem.Sq(10) + Adem.Sq(9) * Adem.Sq(1)
+-    sage: sorted(elt.monomials(), key=lambda x: tuple(x.support()))
++    sage: elt = Adem.Sq(10) + Adem.Sq(9) * Adem.Sq(1)  # needs sage.matrix.matrix_mod2_dense
++    sage: sorted(elt.monomials(), key=lambda x: tuple(x.support()))  # needs sage.matrix.matrix_mod2_dense
+     [Sq^9 Sq^1, Sq^10]
+
+     sage: A7 = SteenrodAlgebra(p=7)
+@@ -546,15 +546,15 @@
+             mod 5 Steenrod algebra, milnor basis
+             sage: SteenrodAlgebra(2, 'milnor').Sq(0,1)
+             Sq(0,1)
+-            sage: SteenrodAlgebra(2, 'adem').Sq(0,1)
++            sage: SteenrodAlgebra(2, 'adem').Sq(0,1)  # needs sage.matrix.matrix_mod2_dense
+             Sq^2 Sq^1 + Sq^3
+
+         TESTS::
+
+-            sage: TestSuite(SteenrodAlgebra()).run()
+-            sage: TestSuite(SteenrodAlgebra(profile=[4,3,2,2,1])).run()
+-            sage: TestSuite(SteenrodAlgebra(basis='adem')).run()
+-            sage: TestSuite(SteenrodAlgebra(basis='wall')).run()
++            sage: TestSuite(SteenrodAlgebra()).run()  # needs sage.matrix.matrix_mod2_dense
++            sage: TestSuite(SteenrodAlgebra(profile=[4,3,2,2,1])).run()  # needs sage.matrix.matrix_mod2_dense
++            sage: TestSuite(SteenrodAlgebra(basis='adem')).run()  # needs sage.matrix.matrix_mod2_dense
++            sage: TestSuite(SteenrodAlgebra(basis='wall')).run()  # needs sage.matrix.matrix_mod2_dense
+             sage: TestSuite(SteenrodAlgebra(basis='arnonc')).run()  # long time
+             sage: TestSuite(SteenrodAlgebra(basis='woody')).run()   # long time
+             sage: A3 = SteenrodAlgebra(3)
+@@ -861,21 +861,21 @@
+             sage: a
+             Sq(0,0,2)
+             sage: A2_adem = SteenrodAlgebra(2,'admissible')
+-            sage: A2_adem(a)
++            sage: A2_adem(a)  # needs sage.matrix.matrix_mod2_dense
+             Sq^8 Sq^4 Sq^2 + Sq^9 Sq^4 Sq^1 + Sq^10 Sq^3 Sq^1 +
+             Sq^10 Sq^4 + Sq^11 Sq^2 Sq^1 + Sq^12 Sq^2 + Sq^13 Sq^1
+             + Sq^14
+-            sage: SteenrodAlgebra(2, 'woodz')(a)
++            sage: SteenrodAlgebra(2, 'woodz')(a)  # needs sage.matrix.matrix_mod2_dense
+             Sq^6 Sq^7 Sq^1 + Sq^14 + Sq^4 Sq^7 Sq^3 + Sq^4 Sq^7
+             Sq^2 Sq^1 + Sq^12 Sq^2 + Sq^8 Sq^6 + Sq^8 Sq^4 Sq^2
+-            sage: SteenrodAlgebra(2, 'arnonc')(a)
++            sage: SteenrodAlgebra(2, 'arnonc')(a)  # needs sage.matrix.matrix_mod2_dense
+             Sq^4 Sq^2 Sq^8 + Sq^4 Sq^4 Sq^6 + Sq^4 Sq^6 Sq^4 +
+             Sq^6 Sq^8 + Sq^8 Sq^4 Sq^2 + Sq^8 Sq^6
+-            sage: SteenrodAlgebra(2, 'pst_llex')(a)
++            sage: SteenrodAlgebra(2, 'pst_llex')(a)  # needs sage.matrix.matrix_mod2_dense
+             P^1_3
+-            sage: SteenrodAlgebra(2, 'comm_revz')(a)
++            sage: SteenrodAlgebra(2, 'comm_revz')(a)  # needs sage.matrix.matrix_mod2_dense
+             c_0,1 c_1,1 c_0,3 c_2,1 + c_0,2 c_0,3 c_2,1 + c_1,3
+-            sage: SteenrodAlgebra(2, generic=True, basis='pst').P(0,0,2)
++            sage: SteenrodAlgebra(2, generic=True, basis='pst').P(0,0,2)  # needs sage.matrix.matrix_mod2_dense
+             P^1_3
+         """
+         from sage.algebras.steenrod.steenrod_algebra_misc import (
+@@ -939,19 +939,19 @@
+             sage: latex(x)
+             Q_{0} Q_{3} \mathcal{P}(2,2)
+             sage: b = Sq(0,2)
+-            sage: b.change_basis('adem')._latex_()
++            sage: b.change_basis('adem')._latex_()  # needs sage.matrix.matrix_mod2_dense
+             '\\text{Sq}^{4} \\text{Sq}^{2} + \\text{Sq}^{5} \\text{Sq}^{1} +
+             \\text{Sq}^{6}'
+-            sage: b.change_basis('woody')._latex_()
++            sage: b.change_basis('woody')._latex_()  # needs sage.matrix.matrix_mod2_dense
+             '\\text{Sq}^{2} \\text{Sq}^{3} \\text{Sq}^{1} + \\text{Sq}^{6} +
+             \\text{Sq}^{4} \\text{Sq}^{2}'
+-            sage: SteenrodAlgebra(2, 'arnona')(b)._latex_()
++            sage: SteenrodAlgebra(2, 'arnona')(b)._latex_()  # needs sage.matrix.matrix_mod2_dense
+             'X^{1}_{1} X^{2}_{2}  + X^{2}_{1}'
+             sage: SteenrodAlgebra(p=3, basis='serre-cartan').Q(0)._latex_()
+             '\\beta'
+-            sage: latex(Sq(2).change_basis('adem').coproduct())
++            sage: latex(Sq(2).change_basis('adem').coproduct())  # needs sage.matrix.matrix_mod2_dense
+             1 \otimes \text{Sq}^{2} + \text{Sq}^{1} \otimes \text{Sq}^{1} + \text{Sq}^{2} \otimes 1
+-            sage: latex(SteenrodAlgebra(basis='pst').P(0,0,2))
++            sage: latex(SteenrodAlgebra(basis='pst').P(0,0,2))  # needs sage.matrix.matrix_mod2_dense
+             P^{1}_{3}
+         """
+         import re
+@@ -1090,7 +1090,7 @@
+             Traceback (most recent call last):
+             ...
+             AttributeError: 'CombinatorialFreeModule_with_category.element_class' object has no attribute 'antipode'...
+-            sage: A(a).antipode() # convert to elt of A, then compute antipode
++            sage: A(a).antipode() # convert to elt of A, then compute antipode  # needs sage.matrix.matrix_mod2_dense
+             Sq(2,1) + Sq(5)
+
+             sage: G = SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]], basis='pst')
+@@ -1166,23 +1166,23 @@
+             sage: Milnor.product_on_basis((2,), (2,))
+             Sq(1,1)
+             sage: Adem = SteenrodAlgebra(basis='adem')
+-            sage: Adem.Sq(2) * Adem.Sq(2) # indirect doctest
++            sage: Adem.Sq(2) * Adem.Sq(2) # indirect doctest  # needs sage.matrix.matrix_mod2_dense
+             Sq^3 Sq^1
+
+         When multiplying elements from different bases, the left-hand
+         factor determines the form of the output::
+
+-            sage: Adem.Sq(2) * Milnor.Sq(2)
++            sage: Adem.Sq(2) * Milnor.Sq(2)  # needs sage.matrix.matrix_mod2_dense
+             Sq^3 Sq^1
+-            sage: Milnor.Sq(2) * Adem.Sq(2)
++            sage: Milnor.Sq(2) * Adem.Sq(2)  # needs sage.matrix.matrix_mod2_dense
+             Sq(1,1)
+
+         TESTS::
+
+-            sage: all(Adem(Milnor.Sq(n) ** 3)._repr_() == (Adem.Sq(n) ** 3)._repr_() for n in range(10))
++            sage: all(Adem(Milnor.Sq(n) ** 3)._repr_() == (Adem.Sq(n) ** 3)._repr_() for n in range(10))  # needs sage.matrix.matrix_mod2_dense
+             True
+             sage: Wall = SteenrodAlgebra(basis='wall')
+-            sage: Wall(Adem.Sq(4,4) * Milnor.Sq(4)) == Adem(Wall.Sq(4,4) * Milnor.Sq(4))
++            sage: Wall(Adem.Sq(4,4) * Milnor.Sq(4)) == Adem(Wall.Sq(4,4) * Milnor.Sq(4))  # needs sage.matrix.matrix_mod2_dense
+             True
+
+             sage: A3 = SteenrodAlgebra(p=3, basis='adem')
+@@ -1427,9 +1427,9 @@
+
+         The element `\text{Sq}(0,1)` is primitive::
+
+-            sage: SteenrodAlgebra(basis='adem').Sq(0,1).coproduct()
++            sage: SteenrodAlgebra(basis='adem').Sq(0,1).coproduct()  # needs sage.matrix.matrix_mod2_dense
+             1 # Sq^2 Sq^1 + 1 # Sq^3 + Sq^2 Sq^1 # 1 + Sq^3 # 1
+-            sage: SteenrodAlgebra(basis='pst').Sq(0,1).coproduct()
++            sage: SteenrodAlgebra(basis='pst').Sq(0,1).coproduct()  # needs sage.matrix.matrix_mod2_dense
+             1 # P^0_2 + P^0_2 # 1
+
+             sage: SteenrodAlgebra(p=3).P(4).coproduct()
+@@ -1482,19 +1482,19 @@
+         EXAMPLES::
+
+             sage: A = SteenrodAlgebra()
+-            sage: A.antipode_on_basis((4,))
++            sage: A.antipode_on_basis((4,))  # needs sage.matrix.matrix_mod2_dense
+             Sq(1,1) + Sq(4)
+-            sage: A.Sq(4).antipode()
++            sage: A.Sq(4).antipode()  # needs sage.matrix.matrix_mod2_dense
+             Sq(1,1) + Sq(4)
+             sage: Adem = SteenrodAlgebra(basis='adem')
+-            sage: Adem.Sq(4).antipode()
++            sage: Adem.Sq(4).antipode()  # needs sage.matrix.matrix_mod2_dense
+             Sq^3 Sq^1 + Sq^4
+-            sage: SteenrodAlgebra(basis='pst').Sq(3).antipode()
++            sage: SteenrodAlgebra(basis='pst').Sq(3).antipode()  # needs sage.matrix.matrix_mod2_dense
+             P^0_1 P^1_1 + P^0_2
+-            sage: a = SteenrodAlgebra(basis='wall_long').Sq(10)
+-            sage: a.antipode()
++            sage: a = SteenrodAlgebra(basis='wall_long').Sq(10)  # needs sage.matrix.matrix_mod2_dense
++            sage: a.antipode()  # needs sage.matrix.matrix_mod2_dense
+             Sq^1 Sq^2 Sq^4 Sq^1 Sq^2 + Sq^2 Sq^4 Sq^1 Sq^2 Sq^1 + Sq^8 Sq^2
+-            sage: a.antipode().antipode() == a
++            sage: a.antipode().antipode() == a  # needs sage.matrix.matrix_mod2_dense
+             True
+
+             sage: SteenrodAlgebra(p=3).P(6).antipode()
+@@ -1511,7 +1511,7 @@
+             sage: all(x.antipode().antipode() == x for x in A5.basis(25))
+             True
+             sage: H = SteenrodAlgebra(profile=[2,2,1])
+-            sage: H.Sq(1,2).antipode() in H
++            sage: H.Sq(1,2).antipode() in H  # needs sage.matrix.matrix_mod2_dense
+             True
+
+             sage: Q = A5.Q
+@@ -1744,8 +1744,8 @@
+         EXAMPLES::
+
+             sage: Adem = SteenrodAlgebra(basis='adem')
+-            sage: a = Adem.Sq(2) * Adem.Sq(1)
+-            sage: Adem.milnor(a)
++            sage: a = Adem.Sq(2) * Adem.Sq(1)  # needs sage.matrix.matrix_mod2_dense
++            sage: Adem.milnor(a)  # needs sage.matrix.matrix_mod2_dense
+             Sq(0,1) + Sq(3)
+         """
+         A = SteenrodAlgebra(p=self.prime(), basis='milnor', generic=self._generic)
+@@ -1784,28 +1784,28 @@
+             Sq^2 Sq^1
+             sage: a.change_basis('milnor')
+             Sq(0,1) + Sq(3)
+-            sage: a.change_basis('pst')
++            sage: a.change_basis('pst')  # needs sage.matrix.matrix_mod2_dense
+             P^0_1 P^1_1 + P^0_2
+-            sage: a.change_basis('milnor').change_basis('adem').change_basis('adem')
++            sage: a.change_basis('milnor').change_basis('adem').change_basis('adem')  # needs sage.matrix.matrix_mod2_dense
+             Sq^2 Sq^1
+-            sage: a.change_basis('wall') == a.change_basis('woody')
++            sage: a.change_basis('wall') == a.change_basis('woody')  # needs sage.matrix.matrix_mod2_dense
+             True
+
+         TESTS::
+
+             sage: a = sum(SteenrodAlgebra(basis='comm').basis(10))
+-            sage: a.change_basis('adem').change_basis('wall').change_basis('comm')._repr_() == a._repr_()
++            sage: a.change_basis('adem').change_basis('wall').change_basis('comm')._repr_() == a._repr_()  # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: a.change_basis('pst').change_basis('milnor').change_basis('comm')._repr_() == a._repr_()
++            sage: a.change_basis('pst').change_basis('milnor').change_basis('comm')._repr_() == a._repr_()  # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: a.change_basis('woody').change_basis('arnona').change_basis('comm')._repr_() == a._repr_()
++            sage: a.change_basis('woody').change_basis('arnona').change_basis('comm')._repr_() == a._repr_()  # needs sage.matrix.matrix_mod2_dense
+             True
+
+             sage: b = sum(SteenrodAlgebra(p=3).basis(41))
+             sage: b.change_basis('adem').change_basis('adem').change_basis('milnor')._repr_() == b._repr_()
+             True
+
+-            sage: SteenrodAlgebra(generic=True).P(0,2).change_basis('serre-cartan')
++            sage: SteenrodAlgebra(generic=True).P(0,2).change_basis('serre-cartan')  # needs sage.matrix.matrix_mod2_dense
+             P^4 P^2 + P^5 P^1 + P^6
+         """
+         from sage.algebras.steenrod.steenrod_algebra_bases import (
+@@ -1859,7 +1859,7 @@
+             Sq^2 Sq^1
+             sage: a.change_basis('milnor')
+             Sq(0,1) + Sq(3)
+-            sage: a.change_basis('pst')
++            sage: a.change_basis('pst')  # needs sage.matrix.matrix_mod2_dense
+             P^0_1 P^1_1 + P^0_2
+         """
+         if basis == 'milnor':
+@@ -2350,7 +2350,7 @@
+             ...
+             TypeError: entries must be nonnegative integers
+
+-            sage: SteenrodAlgebra(basis='serre-cartan').P(0,1)
++            sage: SteenrodAlgebra(basis='serre-cartan').P(0,1)  # needs sage.matrix.matrix_mod2_dense
+             Sq^2 Sq^1 + Sq^3
+             sage: SteenrodAlgebra(generic=True).P(2,0,1)
+             P(2,0,1)
+@@ -2507,7 +2507,7 @@
+             4 Q_1 Q_3 P(2,1)
+             sage: SteenrodAlgebra(basis='pst').an_element()
+             P^3_1
+-            sage: SteenrodAlgebra(basis='pst', profile=[3,2,1]).an_element()
++            sage: SteenrodAlgebra(basis='pst', profile=[3,2,1]).an_element()  # needs sage.matrix.matrix_mod2_dense
+             P^0_1
+         """
+         from sage.rings.finite_rings.finite_field_constructor import GF
+@@ -2736,9 +2736,9 @@
+             Sq(16)
+             sage: A.gen(200)
+             Sq(1606938044258990275541962092341162602522202993782792835301376)
+-            sage: SteenrodAlgebra(2, basis='adem').gen(2)
++            sage: SteenrodAlgebra(2, basis='adem').gen(2)  # needs sage.matrix.matrix_mod2_dense
+             Sq^4
+-            sage: SteenrodAlgebra(2, basis='pst').gen(2)
++            sage: SteenrodAlgebra(2, basis='pst').gen(2)  # needs sage.matrix.matrix_mod2_dense
+             P^2_1
+             sage: B = SteenrodAlgebra(5)
+             sage: B.gen(0)
+@@ -2958,7 +2958,7 @@
+
+         TESTS::
+
+-            sage: SteenrodAlgebra(2, profile=(3,2,1), basis='pst').top_class()
++            sage: SteenrodAlgebra(2, profile=(3,2,1), basis='pst').top_class()  # needs sage.matrix.matrix_mod2_dense
+             P^0_1 P^0_2 P^1_1 P^0_3 P^1_2 P^2_1
+             sage: SteenrodAlgebra(5, profile=((0,),(2,1,2,2))).top_class()
+             Q_0 Q_2 Q_3
+@@ -2978,7 +2978,7 @@
+         TESTS::
+
+             sage: A = SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
+-            sage: A.top_class().parent() is A
++            sage: A.top_class().parent() is A  # needs sage.matrix.matrix_mod2_dense
+             True
+         """
+         if not self.is_finite():
+@@ -3127,16 +3127,16 @@
+         elements can be used as iterators, and there are other useful
+         methods::
+
+-            sage: c = Sq(5).antipode(); c
++            sage: c = Sq(5).antipode(); c  # needs sage.matrix.matrix_mod2_dense
+             Sq(2,1) + Sq(5)
+-            sage: for mono, coeff in c: print((coeff, mono))
++            sage: for mono, coeff in c: print((coeff, mono))  # needs sage.matrix.matrix_mod2_dense
+             (1, (5,))
+             (1, (2, 1))
+-            sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
++            sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}  # needs sage.matrix.matrix_mod2_dense
+             True
+-            sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
++            sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))  # needs sage.matrix.matrix_mod2_dense
+             [Sq(2,1), Sq(5)]
+-            sage: sorted(c.support())
++            sage: sorted(c.support())  # needs sage.matrix.matrix_mod2_dense
+             [(2, 1), (5,)]
+
+         See the documentation for this module (type
+@@ -3152,7 +3152,7 @@
+                 sage: a = SteenrodAlgebra().Sq(3,2,1)
+                 sage: a.prime()
+                 2
+-                sage: a.change_basis('adem').prime()
++                sage: a.change_basis('adem').prime()  # needs sage.matrix.matrix_mod2_dense
+                 2
+                 sage: b = SteenrodAlgebra(p=7).basis(36)[0]
+                 sage: b.prime()
+@@ -3171,14 +3171,14 @@
+                 sage: a = SteenrodAlgebra().Sq(3,2,1)
+                 sage: a.basis_name()
+                 'milnor'
+-                sage: a.change_basis('adem').basis_name()
++                sage: a.change_basis('adem').basis_name()  # needs sage.matrix.matrix_mod2_dense
+                 'serre-cartan'
+-                sage: a.change_basis('wood____y').basis_name()
++                sage: a.change_basis('wood____y').basis_name()  # needs sage.matrix.matrix_mod2_dense
+                 'woody'
+                 sage: b = SteenrodAlgebra(p=7).basis(36)[0]
+                 sage: b.basis_name()
+                 'milnor'
+-                sage: a.change_basis('adem').basis_name()
++                sage: a.change_basis('adem').basis_name()  # needs sage.matrix.matrix_mod2_dense
+                 'serre-cartan'
+             """
+             return self.parent().prefix()
+@@ -3255,10 +3255,10 @@
+                 sage: all(x.degree() == x.milnor().degree() for x in SteenrodAlgebra(basis='wall').basis(11))
+                 True
+                 sage: a = SteenrodAlgebra(basis='pst').basis(10)[0]
+-                sage: a.degree() == a.change_basis('arnonc').degree()
++                sage: a.degree() == a.change_basis('arnonc').degree()  # needs sage.matrix.matrix_mod2_dense
+                 True
+                 sage: b = SteenrodAlgebra(basis='comm').basis(12)[1]
+-                sage: b.degree() == b.change_basis('adem').change_basis('arnona').degree()
++                sage: b.degree() == b.change_basis('adem').change_basis('arnona').degree()  # needs sage.matrix.matrix_mod2_dense
+                 True
+                 sage: all(x.degree() == 9 for x in SteenrodAlgebra(basis='comm').basis(9))
+                 True
+@@ -3335,10 +3335,10 @@
+                 sage: c = Sq(2) * Sq(1)
+                 sage: c.change_basis('milnor')
+                 Sq(0,1) + Sq(3)
+-                sage: c.change_basis('serre-cartan')
++                sage: c.change_basis('serre-cartan')  # needs sage.matrix.matrix_mod2_dense
+                 Sq^2 Sq^1
+                 sage: d = Sq(0,0,1)
+-                sage: d.change_basis('arnonc')
++                sage: d.change_basis('arnonc')  # needs sage.matrix.matrix_mod2_dense
+                 Sq^2 Sq^5 + Sq^4 Sq^2 Sq^1 + Sq^4 Sq^3 + Sq^7
+             """
+             A = self.parent()
+@@ -3368,14 +3368,14 @@
+                 True
+                 sage: c
+                 Sq(0,1) + Sq(3)
+-                sage: c._basis_dictionary('serre-cartan')
++                sage: c._basis_dictionary('serre-cartan')  # needs sage.matrix.matrix_mod2_dense
+                 {(2, 1): 1}
+-                sage: c.change_basis('serre-cartan')
++                sage: c.change_basis('serre-cartan')  # needs sage.matrix.matrix_mod2_dense
+                 Sq^2 Sq^1
+                 sage: d = Sq(0,0,1)
+-                sage: sorted(d._basis_dictionary('arnonc').items())
++                sage: sorted(d._basis_dictionary('arnonc').items())  # needs sage.matrix.matrix_mod2_dense
+                 [((2, 5), 1), ((4, 2, 1), 1), ((4, 3), 1), ((7,), 1)]
+-                sage: d.change_basis('arnonc')
++                sage: d.change_basis('arnonc')  # needs sage.matrix.matrix_mod2_dense
+                 Sq^2 Sq^5 + Sq^4 Sq^2 Sq^1 + Sq^4 Sq^3 + Sq^7
+
+             At odd primes::
+@@ -3418,12 +3418,12 @@
+                 sage: (a*b).coproduct() == (a.coproduct()) * (b.coproduct())
+                 True
+
+-                sage: c = a.change_basis('adem'); c.coproduct(algorithm='milnor')
++                sage: c = a.change_basis('adem'); c.coproduct(algorithm='milnor')  # needs sage.matrix.matrix_mod2_dense
+                 1 # Sq^2 + Sq^1 # Sq^1 + Sq^2 # 1
+-                sage: c = a.change_basis('adem'); c.coproduct(algorithm='adem')
++                sage: c = a.change_basis('adem'); c.coproduct(algorithm='adem')  # needs sage.matrix.matrix_mod2_dense
+                 1 # Sq^2 + Sq^1 # Sq^1 + Sq^2 # 1
+
+-                sage: d = a.change_basis('comm_long'); d.coproduct()
++                sage: d = a.change_basis('comm_long'); d.coproduct()  # needs sage.matrix.matrix_mod2_dense
+                 1 # s_2 + s_1 # s_1 + s_2 # 1
+
+                 sage: A7 = SteenrodAlgebra(p=7)
+@@ -3680,10 +3680,10 @@
+                 sage: [A.Sq(n) for n in range(9) if not A.Sq(n).is_decomposable()]
+                 [1, Sq(1), Sq(2), Sq(4), Sq(8)]
+                 sage: A = SteenrodAlgebra(basis='wall_long')
+-                sage: [A.Sq(n) for n in range(9) if not A.Sq(n).is_decomposable()]
++                sage: [A.Sq(n) for n in range(9) if not A.Sq(n).is_decomposable()]  # needs sage.matrix.matrix_mod2_dense
+                 [1, Sq^1, Sq^2, Sq^4, Sq^8]
+                 sage: A = SteenrodAlgebra(basis='arnona_long')
+-                sage: [A.Sq(n) for n in range(9) if not A.Sq(n).is_decomposable()]
++                sage: [A.Sq(n) for n in range(9) if not A.Sq(n).is_decomposable()]  # needs sage.matrix.matrix_mod2_dense
+                 [1, Sq^1, Sq^2, Sq^4, Sq^8]
+                 sage: A = SteenrodAlgebra(basis='woodz')
+                 sage: [A.Sq(n) for n in range(20) if not A.Sq(n).is_decomposable()] # long time
+@@ -3926,13 +3926,13 @@
+     elements of that Steenrod algebra are printed in that basis::
+
+         sage: adem = SteenrodAlgebra(2, 'adem')
+-        sage: x = adem.Sq(2,1)  # Sq(-) always means a Milnor basis element
+-        sage: x
++        sage: x = adem.Sq(2,1)  # Sq(-) always means a Milnor basis element  # needs sage.matrix.matrix_mod2_dense
++        sage: x  # needs sage.matrix.matrix_mod2_dense
+         Sq^4 Sq^1 + Sq^5
+         sage: y = Sq(0,1)    # unadorned Sq defines elements w.r.t. Milnor basis
+         sage: y
+         Sq(0,1)
+-        sage: adem(y)
++        sage: adem(y)  # needs sage.matrix.matrix_mod2_dense
+         Sq^2 Sq^1 + Sq^3
+         sage: adem5 = SteenrodAlgebra(5, 'serre-cartan')
+         sage: adem5.P(0,2)
+@@ -3941,11 +3941,11 @@
+     If you add or multiply elements defined using different bases, the
+     left-hand factor determines the form of the output::
+
+-        sage: SteenrodAlgebra(basis='adem').Sq(3) + SteenrodAlgebra(basis='pst').Sq(0,1)
++        sage: SteenrodAlgebra(basis='adem').Sq(3) + SteenrodAlgebra(basis='pst').Sq(0,1)  # needs sage.matrix.matrix_mod2_dense
+         Sq^2 Sq^1
+-        sage: SteenrodAlgebra(basis='pst').Sq(3) + SteenrodAlgebra(basis='milnor').Sq(0,1)
++        sage: SteenrodAlgebra(basis='pst').Sq(3) + SteenrodAlgebra(basis='milnor').Sq(0,1)  # needs sage.matrix.matrix_mod2_dense
+         P^0_1 P^1_1 + P^0_2
+-        sage: SteenrodAlgebra(basis='milnor').Sq(2) * SteenrodAlgebra(basis='arnonc').Sq(2)
++        sage: SteenrodAlgebra(basis='milnor').Sq(2) * SteenrodAlgebra(basis='arnonc').Sq(2)  # needs sage.matrix.matrix_mod2_dense
+         Sq(1,1)
+
+     You can get a list of basis elements in a given dimension::
+@@ -3981,11 +3981,11 @@
+     ::
+
+         sage: A_long = SteenrodAlgebra(2, 'arnon_a_long')
+-        sage: A_long(Sq(6))
++        sage: A_long(Sq(6))  # needs sage.matrix.matrix_mod2_dense
+         Sq^1 Sq^2 Sq^1 Sq^2 + Sq^2 Sq^4
+-        sage: SteenrodAlgebra(2, 'wall_long')(Sq(6))
++        sage: SteenrodAlgebra(2, 'wall_long')(Sq(6))  # needs sage.matrix.matrix_mod2_dense
+         Sq^2 Sq^1 Sq^2 Sq^1 + Sq^2 Sq^4
+-        sage: SteenrodAlgebra(2, 'comm_deg_long')(Sq(6))
++        sage: SteenrodAlgebra(2, 'comm_deg_long')(Sq(6))  # needs sage.matrix.matrix_mod2_dense
+         s_1 s_2 s_12 + s_2 s_4
+
+     .. rubric:: Sub-Hopf algebras of the Steenrod algebra:

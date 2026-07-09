@@ -44254,6 +44254,35 @@ frontier filters, or Sagelite dependency boundary changes; the next useful work
 is either a targeted larger-cluster reproducer above the 400-prompt threshold
 or a runtime/backend fix tied to an already known failure class.
 
+Focused large-frontier Steenrod algebra corpus-growth pass on 2026-07-09 UTC:
+
+```text
+steenrod_algebra.py: 603 passed, 0 failed, 104 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/steenrod/steenrod_algebra.py` to the curated corpus. A
+plan-mentioned-subtracted compact frontier scan remained quiet through the
+800-prompt band, so the pass sampled the larger unmentioned frontier and found
+that `steenrod_algebra.py` already preserves substantial default-profile
+coverage. The initial direct probe recorded `603 passed, 93 failed, 11
+skipped`; all failures clustered around basis-change, antipode, and
+non-Milnor-basis examples reaching the stripped
+`sage.matrix.matrix_mod2_dense` backend, plus dependent stale-name and
+test-suite output rows from that same missing module.
+
+The added WASI source patch marks exactly those 93 prompt rows as
+`# needs sage.matrix.matrix_mod2_dense`, preserving the Milnor-basis
+constructor, arithmetic, representation, profile, and odd-prime examples as
+default-profile coverage. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-large-frontier/steenrod-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the new skips under the intended dense GF(2)
+matrix backend requirement.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
