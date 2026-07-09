@@ -41833,6 +41833,26 @@ fail-fast, mixed valid/unmatched, and all-unmatched behavior, and the real
 source-frontier make target against `.tmp/current-run/**/*.sqlite3`, which
 printed no rows.
 
+Follow-up source-frontier wrapper mention-control pass on 2026-07-09 UTC: no
+corpus entry was promoted. The guarded source-frontier make target over
+`.tmp/current-run/**/*.sqlite3` still printed no rows.
+
+The `sage-doctest-source-frontier` make target now expands
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED` with `foreach`, matching the
+candidate target. This lets scheduled runs pass multiple mention-subtraction
+files and lets opt-in broad audits disable mention subtraction with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED=` instead of accidentally passing
+an empty `--mentioned-file` path to the helper.
+
+Validation used `python3 -m py_compile` for the Sagelite doctest helper
+scripts, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`git diff --check`, `make -n` checks for default, empty, and two-file mention
+settings, a guarded source-frontier make-target scan against
+`.tmp/current-run/**/*.sqlite3`, and an opt-out smoke with
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED=` that reported the expected
+broad frontier row (`src/sage/graphs/generic_graph.py`) when mention
+subtraction was disabled.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

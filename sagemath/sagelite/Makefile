@@ -250,7 +250,7 @@ sage-doctest-source-frontier:
 	python3 ${SRC}/doctest-source-frontier.py \
 	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
 	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
-	  --mentioned-file "${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED}" \
+	  $(foreach path,${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED},--mentioned-file "$(path)") \
 	  $(foreach pattern,${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB},--subtract-database-glob "$(if $(filter /%,$(pattern)),$(pattern),${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT}/$(pattern))") \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE}),--require-subtraction-database,) \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_SOURCE_FRONTIER_FAIL_ON_ROWS}),--fail-on-rows,) \
