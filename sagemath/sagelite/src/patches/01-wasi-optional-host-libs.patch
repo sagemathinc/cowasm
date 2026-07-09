@@ -19916,6 +19916,53 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              pass
 
          gens = self.parent().gens()
+diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
+--- a/src/sage/rings/polynomial/polynomial_element.pyx
++++ b/src/sage/rings/polynomial/polynomial_element.pyx
+@@ -11214,6 +11214,40 @@ cdef class Polynomial(CommutativePolynomial):
+                 raise ValueError("not a %s power" % Integer(n).ordinal_str())
+             return (self >> i).nth_root(n) << (i // n)
+
++        root_degree = self.degree() // n
++        if root_degree <= 4:
++            try:
++                leading_root = R(self.leading_coefficient().nth_root(n))
++                if root_degree == 1:
++                    constant_root = R(self.get_unsafe(0).nth_root(n))
++                    for a in (leading_root, -leading_root):
++                        for b in (constant_root, -constant_root):
++                            candidate_root = S({1: a, 0: b})
++                            if candidate_root**n == self:
++                                return candidate_root
++
++                candidate_root = S({root_degree: leading_root})
++                divisor = R(n) * leading_root**(n - 1)
++                for exponent in range(root_degree - 1, -1, -1):
++                    q_power = candidate_root**n
++                    coefficient_index = (n - 1) * root_degree + exponent
++                    numerator = (
++                        self[coefficient_index] - q_power[coefficient_index]
++                    )
++                    try:
++                        coefficient = numerator // divisor
++                    except ImportError:
++                        fraction_field = R.fraction_field()
++                        coefficient = R(
++                            fraction_field(numerator) / fraction_field(divisor)
++                        )
++                    candidate_root += S({exponent: coefficient})
++                if candidate_root**n == self:
++                    return candidate_root
++            except (ArithmeticError, AttributeError, NotImplementedError,
++                    TypeError, ValueError, ZeroDivisionError):
++                pass
++
+         if self.get_unsafe(0).is_one():
+             start = S.one()
+         else:
+             start = S(self.get_unsafe(0).nth_root(n))
+
+         cdef Polynomial p, q
 diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
 --- a/src/sage/rings/ring.pyx
 +++ b/src/sage/rings/ring.pyx

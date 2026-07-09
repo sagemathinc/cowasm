@@ -43269,6 +43269,36 @@ avoid routing this polynomial `nth_root` case through expensive fraction-field
 root-series arithmetic, or fix the generic multivariate-polynomial gcd path
 used by that arithmetic.
 
+Follow-up small-root reconstruction pass on 2026-07-09 UTC: no corpus entry
+was promoted. The focused `multi_polynomial.pyx:2216` runtime frontier now
+passes by avoiding the expensive fraction-field Newton path for small
+univariate perfect-power roots. The WASI source patch adds a guarded
+`Polynomial.nth_root` reconstruction path for root degree at most four; it
+builds candidate root coefficients from the leading term, verifies
+`candidate_root**n == self`, and falls back to the original fraction-field
+series algorithm when the reconstruction is not exact. A linear-root shortcut
+handles `degree == n` cases without coefficient division, which clears the
+plain `QQ[]` multivariate `a.nth_root(5)` example.
+
+Focused validation rebuilt `polynomial_element.cpython-314-wasm32-wasi.so`
+and the stale local `multi_polynomial` module copy, refreshed the local
+Electron resource hashes, and reran:
+
+```text
+nth-root-coeff-probe.py: 11 passed, 0 failed, 0 skipped
+nth-root-probe.py: 10 passed, 0 failed, 0 skipped
+polynomial_element.pyx --line 11135: 1 passed, 0 failed, 0 skipped
+multi_polynomial.pyx --line 2216: 1 passed, 0 failed, 0 skipped
+```
+
+A bounded full-file `multi_polynomial.pyx` check completed instead of timing
+out, recording `466 passed, 59 failed, 134 skipped`; those remaining failures
+cluster around older symbolic, GAP/libGAP, plural, fast-callable, and display
+drift boundaries rather than the cleared `nth_root` timeout. `git diff --check`
+passed, and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against a
+temporary Sagelite source copy succeeded.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
