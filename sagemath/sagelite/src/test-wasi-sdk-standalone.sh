@@ -4235,6 +4235,147 @@ src/sage/example/frontier_candidate.py	2	2" ]; then
   printf '%s\n' "$doctest_source_frontier_runnable_counts" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --include-runnable-prompts did not report runnable counts."
 fi
+doctest_source_frontier_focused_db="$probe_dir/sagelite-doctest-source-frontier-focused.sqlite3"
+doctest_source_frontier_foreign_db="$probe_dir/sagelite-doctest-source-frontier-foreign.sqlite3"
+doctest_source_frontier_stale_db="$probe_dir/sagelite-doctest-source-frontier-stale.sqlite3"
+cat >"$doctest_candidate_helper_source_root/src/sage/example/strict_database_frontier.py" <<'PY'
+r"""
+    sage: 9 + 9
+    18
+    sage: 10 + 10
+    20
+"""
+PY
+sqlite3 "$doctest_source_frontier_focused_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text
+);
+create table blocks (
+  file_id integer,
+  status text
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-08T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t --line 10 src/sage/example/strict_database_frontier.py',
+  'node',
+  'passed',
+  '$doctest_candidate_helper_source_root',
+  83
+);
+insert into files (id, run_id, path, status) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/strict_database_frontier.py',
+  'passed'
+);
+insert into blocks (file_id, status) values (1, 'passed');
+SQL
+sqlite3 "$doctest_source_frontier_foreign_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text
+);
+create table blocks (
+  file_id integer,
+  status text
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-08T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t src/sage/example/strict_database_frontier.py',
+  'node',
+  'passed',
+  '$doctest_candidate_helper_override_source_root',
+  83
+);
+insert into files (id, run_id, path, status) values (
+  1,
+  1,
+  '$doctest_candidate_helper_override_source_root/src/sage/example/strict_database_frontier.py',
+  'passed'
+);
+insert into blocks (file_id, status) values (1, 'passed');
+SQL
+sqlite3 "$doctest_source_frontier_stale_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text
+);
+insert into runs (id, source_root, runner_version) values (
+  1,
+  '$doctest_candidate_helper_source_root',
+  1
+);
+insert into files (id, run_id, path, status) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/strict_database_frontier.py',
+  'passed'
+);
+SQL
+doctest_source_frontier_strict_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$doctest_source_frontier_focused_db" \
+  --subtract-database "$doctest_source_frontier_foreign_db" \
+  --subtract-database "$doctest_source_frontier_stale_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  --strict-database-subtraction \
+  --min-runner-version 83 \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_strict_paths" != "src/sage/example/frontier_candidate.py
+src/sage/example/strict_database_frontier.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_strict_paths" >&2
+  sqlite3 "$doctest_source_frontier_focused_db" ".dump" >&2 || true
+  sqlite3 "$doctest_source_frontier_foreign_db" ".dump" >&2 || true
+  sqlite3 "$doctest_source_frontier_stale_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-source-frontier strict database subtraction hid live frontier rows."
+fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
   --quiet-invalid \

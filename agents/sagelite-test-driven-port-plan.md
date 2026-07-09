@@ -5185,6 +5185,29 @@ confirms it is no longer a default-profile failure. Future scheduled runs
 should treat this as resolved skip metadata rather than a runtime timeout
 cluster.
 
+Follow-up source-frontier hardening pass on 2026-07-09: no corpus entry was
+promoted. A strict candidate scan across `.tmp/current-run/**/*.sqlite3`
+printed only the header row, and the `sage-doctest-source-frontier` make
+target still printed no unmentioned source rows with runnable prompts after
+subtracting the current corpus, plan-mentioned paths, and scratch SQLite
+coverage.
+
+The pass closes a tooling asymmetry exposed by those empty scans:
+`doctest-corpus-candidates.py` already had `--strict-frontier`, while
+`doctest-source-frontier.py` subtracted every `files` row from scratch
+databases, including focused line reruns, stale metadata, or rows recorded
+against another source root. The source-frontier helper now supports strict
+database subtraction with modern run metadata, minimum runner-version,
+file-level run, persisted block-row, and source-root guards. The
+`sage-doctest-source-frontier` make target uses those guards by default for
+scheduled scratch-database subtraction.
+
+Focused validation compiled the source-frontier helper, checked the standalone
+smoke script syntax, exercised a generated fixture where a focused line rerun
+must not hide a live frontier file, and reran the make-target frontier scan
+against the current scratch SQLite glob. The scan remained empty under the new
+strict defaults.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

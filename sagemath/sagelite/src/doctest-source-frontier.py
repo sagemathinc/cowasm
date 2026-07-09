@@ -8,6 +8,7 @@ import glob
 import os
 import posixpath
 import re
+import shlex
 import sqlite3
 import sys
 from dataclasses import dataclass
@@ -17,6 +18,13 @@ from pathlib import Path
 DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
 DEFAULT_EXCLUDED_PATH_SUFFIXES = (".orig", ".rej")
 DEFAULT_EXTENSIONS = (".py", ".pyx")
+REQUIRED_RUN_METADATA_COLUMNS = (
+    "started_at",
+    "git_commit",
+    "command",
+    "run_profile",
+    "status",
+)
 SAGE_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?"
     r"\.(?:pyx|py|pxi|pxd|rst|txt)"
@@ -114,6 +122,22 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--strict-database-subtraction",
+        action="store_true",
+        help=(
+            "subtract only modern file-level doctest runs with persisted block "
+            "rows and source paths under --source-root"
+        ),
+    )
+    parser.add_argument(
+        "--min-runner-version",
+        type=int,
+        help=(
+            "when subtracting databases, use only the latest run whose "
+            "runner_version is at least this value"
+        ),
+    )
+    parser.add_argument(
         "--extension",
         action="append",
         default=[],
@@ -196,6 +220,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--max-prompts must be at least --min-prompts")
     if args.min_runnable_prompts < 0:
         parser.error("--min-runnable-prompts must not be negative")
+    if args.min_runner_version is not None and args.min_runner_version < 1:
+        parser.error("--min-runner-version must be positive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
     if args.quiet_invalid_databases and not args.ignore_invalid_databases:
@@ -269,6 +295,8 @@ def read_database_paths(
     source_root: Path,
     ignore_invalid: bool,
     quiet_invalid: bool,
+    strict_database_subtraction: bool,
+    min_runner_version: int | None,
 ) -> DatabasePathScan:
     audited: set[str] = set()
     valid_count = 0
@@ -276,7 +304,14 @@ def read_database_paths(
     first_invalid_error = ""
     for path in paths:
         try:
-            audited.update(read_one_database_paths(path, source_root))
+            audited.update(
+                read_one_database_paths(
+                    path,
+                    source_root,
+                    strict_database_subtraction,
+                    min_runner_version,
+                )
+            )
             valid_count += 1
         except (OSError, sqlite3.DatabaseError, SystemExit) as err:
             if not ignore_invalid:
@@ -297,12 +332,18 @@ def read_database_paths(
     )
 
 
-def read_one_database_paths(path: Path, source_root: Path) -> set[str]:
+def read_one_database_paths(
+    path: Path,
+    source_root: Path,
+    strict_database_subtraction: bool,
+    min_runner_version: int | None,
+) -> set[str]:
     if not path.exists():
         raise SystemExit(f"database not found: {path}")
     if path.stat().st_size == 0:
         raise SystemExit(f"empty doctest database: {path}")
     with sqlite3.connect(path) as db:
+        db.text_factory = lambda value: value.decode("utf-8", errors="replace")
         rows = db.execute(
             """
             select name
@@ -312,12 +353,159 @@ def read_one_database_paths(path: Path, source_root: Path) -> set[str]:
         ).fetchall()
         if not rows:
             raise SystemExit(f"not a Sagelite doctest database: {path}")
-        file_rows = db.execute("select distinct path from files").fetchall()
+
+        run_id = None
+        if strict_database_subtraction or min_runner_version is not None:
+            run_id = latest_subtraction_run(
+                path,
+                db,
+                strict_database_subtraction,
+                min_runner_version,
+            )
+            if run_id is None:
+                return set()
+            if strict_database_subtraction and not run_has_block_rows(db, run_id):
+                return set()
+
+        if run_id is None:
+            file_rows = db.execute("select distinct path from files").fetchall()
+        else:
+            file_rows = db.execute(
+                """
+                select distinct path
+                from files
+                where run_id = ?
+                """,
+                (run_id,),
+            ).fetchall()
     return {
         normalize_path(row_path, source_root)
         for (row_path,) in file_rows
         if row_path is not None
+        and (
+            not strict_database_subtraction
+            or source_path_matches_root(row_path, source_root)
+        )
     }
+
+
+def latest_subtraction_run(
+    database: Path,
+    db: sqlite3.Connection,
+    strict_database_subtraction: bool,
+    min_runner_version: int | None,
+) -> int | None:
+    if not table_exists(db, "runs"):
+        raise SystemExit(
+            f"not a Sagelite doctest database: {database} (missing table: runs)"
+        )
+    filters = []
+    parameters: list[object] = []
+    if strict_database_subtraction:
+        missing = [
+            column
+            for column in REQUIRED_RUN_METADATA_COLUMNS
+            if not table_has_column(db, "runs", column)
+        ]
+        if missing:
+            return None
+        filters.extend(
+            f"coalesce({column}, '') != ''"
+            for column in REQUIRED_RUN_METADATA_COLUMNS
+        )
+    if min_runner_version is not None:
+        if not table_has_column(db, "runs", "runner_version"):
+            return None
+        filters.append("runner_version >= ?")
+        parameters.append(min_runner_version)
+
+    command_expr = "command" if table_has_column(db, "runs", "command") else "''"
+    where_clause = f"where {' and '.join(filters)}" if filters else ""
+    rows = db.execute(
+        f"""
+        select id, {command_expr}
+        from runs
+        {where_clause}
+        order by id desc
+        """,
+        parameters,
+    ).fetchall()
+    for run_id, command in rows:
+        if strict_database_subtraction and run_command_is_focused_rerun(
+            command or ""
+        ):
+            continue
+        return run_id
+    return None
+
+
+def table_exists(db: sqlite3.Connection, table: str) -> bool:
+    return (
+        db.execute(
+            """
+            select 1
+            from sqlite_master
+            where type = 'table'
+              and name = ?
+            """,
+            (table,),
+        ).fetchone()
+        is not None
+    )
+
+
+def table_has_column(db: sqlite3.Connection, table: str, column: str) -> bool:
+    return any(
+        name == column
+        for _cid, name, *_rest in db.execute(f"pragma table_info({table})")
+    )
+
+
+def run_has_block_rows(db: sqlite3.Connection, run_id: int) -> bool:
+    if (
+        not table_exists(db, "blocks")
+        or not table_has_column(db, "files", "id")
+        or not table_has_column(db, "files", "run_id")
+        or not table_has_column(db, "blocks", "file_id")
+    ):
+        return False
+    return (
+        db.execute(
+            """
+            select 1
+            from blocks
+            join files on files.id = blocks.file_id
+            where files.run_id = ?
+            limit 1
+            """,
+            (run_id,),
+        ).fetchone()
+        is not None
+    )
+
+
+def run_command_is_focused_rerun(command: str) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+    for token in tokens:
+        if token in {"--line", "--block-key"}:
+            return True
+        if token.startswith("--line=") or token.startswith("--block-key="):
+            return True
+    return False
+
+
+def source_path_matches_root(path: str, source_root: Path) -> bool:
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        return True
+    try:
+        candidate.resolve().relative_to(source_root.resolve())
+    except ValueError:
+        return False
+    return True
 
 
 def iter_source_files(source_root: Path, extensions: tuple[str, ...]) -> list[Path]:
@@ -414,6 +602,8 @@ def main() -> int:
         source_root,
         args.ignore_invalid_databases,
         args.quiet_invalid_databases,
+        args.strict_database_subtraction,
+        args.min_runner_version,
     )
     audited = database_scan.audited_paths
     if (
