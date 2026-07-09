@@ -14951,6 +14951,12 @@ diff --git a/src/sage/modular/arithgroup/congroup.pyx b/src/sage/modular/arithgr
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix_integer_dense
  r"""
+diff --git a/src/sage/modular/arithgroup/congroup_sl2z.py b/src/sage/modular/arithgroup/congroup_sl2z.py
+--- a/src/sage/modular/arithgroup/congroup_sl2z.py
++++ b/src/sage/modular/arithgroup/congroup_sl2z.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matrix.matrix_integer_dense
+ r"""
 diff --git a/src/sage/schemes/elliptic_curves/ec_database.py b/src/sage/schemes/elliptic_curves/ec_database.py
 --- a/src/sage/schemes/elliptic_curves/ec_database.py
 +++ b/src/sage/schemes/elliptic_curves/ec_database.py

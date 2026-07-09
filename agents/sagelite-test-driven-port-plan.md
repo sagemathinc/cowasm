@@ -42536,6 +42536,31 @@ the symbolic vector and benchmark files still require broader symbolic setup,
 and the small pbori/PARI/doctest batch is skipped-only under the current
 browser profile.
 
+Follow-up modular-arithgroup boundary pass on 2026-07-09: focused probing of
+`sage/modular/arithgroup/congroup_sl2z.py` showed that the apparent missing
+`SL2Z` startup-name cluster is actually blocked by importing
+`sage.modular.arithgroup.congroup_sl2z`, which requires the unavailable
+`sage.matrix.matrix_integer_dense` extension through
+`arithgroup_element.pyx`. The WASI source patch now marks `congroup_sl2z.py`
+with a file-level `# sage.doctest: needs sage.matrix.matrix_integer_dense`
+directive, matching the adjacent arithgroup files that already depend on the
+same backend.
+
+Focused make-target validation rebuilt a fresh patched source copy and used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sl2z-make.sqlite3`.
+The one-file run records:
+
+```text
+congroup_sl2z.py: 0 passed, 0 failed, 1 skipped
+```
+
+`skips-by-reason.sql` groups the skip under
+`optional:sage.matrix.matrix_integer_dense`, and the saved block- and
+file-failure cluster queries are empty. The file remains outside the curated
+corpus until the integer dense matrix backend is available in the
+browser-compatible profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
