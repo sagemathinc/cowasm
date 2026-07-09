@@ -43626,6 +43626,20 @@ groups the skips under explicit optional reasons and has empty saved block-
 and file-failure cluster queries. Re-running the skipped-only diagnostic scan
 with `--exclude-file-skip-directives` now prints only the header row.
 
+Scheduled quiet-frontier check on 2026-07-09 UTC: no corpus entry was
+promoted. The default dashboard database at
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` was still present
+as a zero-byte file, so this pass used the current scratch corpus of trusted
+databases under `.tmp/current-run/**/*.sqlite3`.
+
+The guarded promotion-candidate, near-miss, file-error, source-frontier, and
+skipped-only scans all printed no candidate rows with the current
+plan-mentioned subtraction, strict runner metadata requirements, and
+superseded-failure suppression. The skipped-only scan also used
+`--exclude-file-skip-directives`, confirming that the latest whole-file
+optional-boundary cleanup did not leave a new skipped-only dependency file in
+the scheduled diagnostic frontier.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
