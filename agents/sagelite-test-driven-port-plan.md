@@ -43111,6 +43111,27 @@ is included, and a dry-run application of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` succeeds.
 
+Follow-up symbolic support-boundary pass on 2026-07-09 UTC: no corpus entry
+was promoted. A no-mention support-file diagnostic scan still showed the older
+`src/sage/symbolic/constants_c_impl.pxi` worker `SIGSEGV` from the July 8
+`.pxi` probe. The file is a symbolic support include for the constant `e`, and
+the broader symbolic stack is intentionally outside the current stripped
+browser-compatible profile, so the WASI source patch now marks it with a
+file-level `# sage.doctest: needs sage.symbolic` directive.
+
+Focused validation against the current patched source tree records:
+
+```text
+constants_c_impl.pxi: 0 passed, 0 failed, 1 skipped
+```
+
+The skipped-only database groups the file under `optional:sage.symbolic`, the
+support-file error diagnostic scan with `--suppress-superseded-failures` no
+longer reports the old `constants_c_impl.pxi` SIGSEGV when the fresh skip
+database is included, and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` succeeds with the new hunk.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
