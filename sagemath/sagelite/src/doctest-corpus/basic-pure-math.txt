@@ -1043,9 +1043,11 @@ src/sage/probability/random_variable.py
 src/sage/graphs/all.py
 src/sage/graphs/base/overview.py
 src/sage/graphs/cographs.py
+src/sage/graphs/line_graph.pyx
 src/sage/graphs/matching_covered_graph.py
 src/sage/graphs/print_graphs.py
 src/sage/graphs/hypergraph_generators.py
+src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
 src/sage/groups/perm_gps/partn_ref/refinement_sets.pyx
 src/sage/plot/arc.py

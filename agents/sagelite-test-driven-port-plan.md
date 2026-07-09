@@ -42452,6 +42452,28 @@ Saved block- and file-failure cluster queries are empty; the remaining skips
 are the existing long `TestSuite` check and the explicit number-field
 dependency. The file is now promoted into `basic-pure-math.txt`.
 
+Follow-up graph line/world-map corpus-growth pass on 2026-07-09: the
+refreshed standalone graph resources made two previously mentioned graph
+frontier files clean in the default Node profile. A small direct batch first
+confirmed `sage/graphs/generators/world_map.py` and
+`sage/graphs/line_graph.pyx` as clean candidates while adjacent small files
+still exposed symbolic/manifold, hyperelliptic, or graph-rankwidth failures.
+
+Both files are now promoted into `basic-pure-math.txt`. Focused make-target
+validation rebuilt a fresh patched Sagelite source tree and used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=2`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-port-plan/graph-clean-make.sqlite3`.
+The two-file corpus recorded:
+
+```text
+sage -t passed: 93 passed, 0 failed, 9 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that focused
+database. No new WASI source patch hunk was needed; the existing graph startup
+and resource-refresh work covers these doctests.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
