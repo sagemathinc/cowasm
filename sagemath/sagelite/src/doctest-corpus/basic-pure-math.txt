@@ -1033,6 +1033,7 @@ src/sage/schemes/weighted_projective/weighted_projective_space.py
 src/sage/schemes/elliptic_curves/kodaira_symbol.py
 src/sage/schemes/elliptic_curves/mod5family.py
 src/sage/schemes/plane_conics/constructor.py
+src/sage/schemes/plane_conics/con_rational_function_field.py
 src/sage/schemes/plane_quartics/quartic_constructor.py
 src/sage/schemes/plane_quartics/quartic_generic.py
 src/sage/numerical/gauss_legendre.pyx

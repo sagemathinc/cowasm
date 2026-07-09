@@ -42679,6 +42679,33 @@ the first timeout setup exposed additional block failures in the same file, so
 it needs a dedicated conic/function-field triage pass rather than a narrow
 runtime-scope skip.
 
+Focused rational-function conic corpus-growth pass on 2026-07-09:
+
+```text
+con_rational_function_field.py: 22 passed, 0 failed, 54 skipped
+```
+
+That one-file make-target validation adds
+`sage/schemes/plane_conics/con_rational_function_field.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 1115 non-comment entries. Direct sampling first recorded missing `Conic`
+startup-name failures and timeout-prone rational-function setup blocks, but
+`Conic` itself imports the stripped Singular-backed projective-curve stack, so
+startup seeding would be the wrong browser-profile boundary. The WASI source
+patch instead marks the `Conic(...)` setup and dependent rational-point checks
+as `# needs sage.libs.singular`, marks the function-field extension setup as
+`# needs sage.rings.function_field`, and marks the long rational-function
+coefficient setup as both long and Singular-backed.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after rebuilding a fresh patched source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-runtime-scope/conic-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the deferred blocks under explicit Singular,
+function-field, number-field, and long-test requirements.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
