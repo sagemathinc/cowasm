@@ -43477,6 +43477,26 @@ block- and file-failure cluster queries are empty, and a dry-run application of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` succeeds.
 
+Follow-up strict candidate metadata pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded promotion, near-miss, and source-frontier scans over the
+current scratch databases remained quiet. The live file-error diagnostic scan
+with plan-mentioned subtraction exposed only a stale runner-75 row for
+`src/sage/data_structures/bounded_integer_sequences.py`, a non-existent path in
+the current patched source tree where the real file is the already-covered
+`bounded_integer_sequences.pyx`.
+
+The candidate helper now treats `source_root` as required run metadata for
+`--strict-frontier` scans. Relaxed legacy database scans still work, but strict
+candidate diagnostics no longer use old databases that cannot prove their file
+paths are rooted in the selected Sagelite source tree. The standalone smoke
+fixture records this distinction with a legacy no-`source_root` database:
+relaxed scans still report the fixture candidate, while strict scans report no
+rows. Focused validation used `python3 -m py_compile` for
+`doctest-corpus-candidates.py`, `bash -n` for
+`test-wasi-sdk-standalone.sh`, and the real strict current-run file-error,
+near-miss, and promotion scans; the strict file-error scan now prints only its
+header row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

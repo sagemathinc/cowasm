@@ -4460,6 +4460,17 @@ if [ "$doctest_candidate_helper_legacy_no_root_paths" != "src/sage/example/real_
   sqlite3 "$doctest_candidate_helper_legacy_no_root_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not tolerate legacy runs tables without source_root."
 fi
+doctest_candidate_helper_legacy_no_root_strict_paths="$("$src_dir/doctest-corpus-candidates.py" \
+  --strict-frontier \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_legacy_no_root_db")"
+if [ -n "$doctest_candidate_helper_legacy_no_root_strict_paths" ]; then
+  printf '%s\n' "$doctest_candidate_helper_legacy_no_root_strict_paths" >&2
+  sqlite3 "$doctest_candidate_helper_legacy_no_root_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates strict scans did not require recorded source_root metadata."
+fi
 doctest_candidate_helper_empty_db="$probe_dir/sagelite-doctest-empty-helper.sqlite3"
 touch "$doctest_candidate_helper_empty_db"
 doctest_candidate_helper_quiet_stderr="$("$src_dir/doctest-corpus-candidates.py" \

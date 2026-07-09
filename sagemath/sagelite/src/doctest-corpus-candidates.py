@@ -24,6 +24,7 @@ REQUIRED_RUN_METADATA_COLUMNS = (
     "command",
     "run_profile",
     "status",
+    "source_root",
 )
 FILE_SKIP_DIRECTIVE_RE = re.compile(
     r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
