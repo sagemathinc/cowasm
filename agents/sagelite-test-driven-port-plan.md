@@ -5223,6 +5223,33 @@ scan against `.tmp/current-run/**/*.sqlite3`. The scan remained empty, and the
 standalone smoke fixture now asserts that `--strict-frontier` matches the
 spelled-out strict database subtraction behavior.
 
+Follow-up active scratch-frontier audit on 2026-07-09: no corpus entry was
+promoted. A strict candidate scan across the local scratch SQLite archive
+found 3,471 databases and printed only the header row:
+
+```sh
+sagemath/sagelite/src/doctest-corpus-candidates.py \
+  --strict-frontier \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk \
+  --min-runner-version 83 \
+  --ignore-invalid \
+  --quiet-invalid \
+  --database-glob '.tmp/current-run/**/*.sqlite3' \
+  --include-header
+```
+
+The matching source-frontier subtraction scan also printed only its header
+after subtracting the current 1,108-entry corpus, this plan's mentioned
+source paths, and the same strict scratch database set. A near-miss scan with
+`--max-failed 5` found no rows. Widening to `--max-failed 20` surfaced only
+broad backend/profile clusters rather than narrow promotion work:
+`sage/structure/element.pyx` still mixes pexpect, plural, FLINT,
+polynomial-division, argument-handling, and display-drift failures; the other
+rows are Lie-conformal, hyperelliptic, Axiom/pexpect, and IPython frontiers.
+Future scheduled runs should avoid treating those rows as source-tag-only
+corpus growth unless one of those backend boundaries changes or a specific
+cluster is selected for runtime work.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
