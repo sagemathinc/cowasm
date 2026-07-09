@@ -42865,6 +42865,36 @@ new `src/sage/rings/padics/padic_valuation.py` hunk. The file remains outside
 the curated corpus until the number-field-backed p-adic valuation stack is
 available in the browser-compatible profile.
 
+Follow-up toric-lattice startup namespace pass on 2026-07-09: no corpus entry
+was promoted. The standard scheduled source-frontier and clean-candidate scans
+remain quiet with the current plan-mentioned and scratch-SQLite subtraction
+filters. A stale scratch file-error row for `sage/geometry/toric_lattice.py`
+was rechecked against the current runner. The exact old crash reproducer now
+passes:
+
+```text
+toric_lattice.py --line 504: 1 passed, 0 failed, 0 skipped
+```
+
+The full file now runs to block-level failures instead of a file-scope matrix
+trap. Before the startup-namespace change it recorded `227 passed, 59 failed,
+3 skipped`; after exposing `ToricLattice` from the common doctest namespace
+and the WASI `sage.all` patch, it records:
+
+```text
+toric_lattice.py: 233 passed, 53 failed, 3 skipped
+```
+
+Focused line reruns for `loads(dumps(N)) is N` and both `sage_input(N,
+verify=True)` examples pass after the namespace change. The remaining
+full-file failures are still dominated by unavailable
+`sage.symbolic.expression` quotient paths, quotient display mismatches,
+PARI/cypari2 saturation gaps, and dependent state failures, so
+`toric_lattice.py` remains outside the curated corpus. Validation also ran
+`node --check sagemath/sagelite/src/sagelite-node-repl.cjs`, and a dry-run
+application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
+against `/home/user/sagelite` succeeds with the updated `sage.all` hunk.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

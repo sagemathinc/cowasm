@@ -1174,6 +1174,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
+        ("sage.geometry.toric_lattice", ("ToricLattice",)),
         ("sage.functions.bessel", ("bessel_J",)),
         ("sage.calculus.transforms.dwt", ("WaveletTransform",)),
         ("sage.functions.jacobi", ("jacobi",)),
