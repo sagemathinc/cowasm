@@ -42303,6 +42303,39 @@ Validation used `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
 current stale Meson metadata, and the synthetic guard probe. A full standalone
 resource rebuild was not run in this pass.
 
+Follow-up standalone resource completion pass on 2026-07-09: no corpus entry
+was promoted. A resumed
+`SAGELITE_STANDALONE_RESUME=1 make -C sagemath/sagelite
+test-wasi-sdk-standalone` completed the previously interrupted Cython and
+WASI side-module build, then packaged the Electron resource bundle. The first
+long resumed pass still needed fresh Cython generation because the existing
+Meson metadata predated the stable helper directory; it preserved progress
+across transient Cython segmentation faults in
+`sage/rings/finite_rings/element_givaro.pyx` and
+`sage/schemes/elliptic_curves/descent_two_isogeny.pyx`, then linked all
+side modules.
+
+The standalone script now runs host `timeout` probes through a foreground
+wrapper when GNU `timeout --foreground` is available. This prevents
+`python-wasi-sdk` and Node probe subprocesses from stopping under PTY job
+control during scheduled runs while preserving timeout enforcement. The
+package-local Ninja wrapper also exports the package-local Meson
+`PYTHONPATH`, so Meson's internal `build.ninja` regeneration can find
+`mesonbuild` during resumed builds.
+
+The graph startup smoke now records the current graph boundary explicitly:
+basic graph construction, connectivity, matching polynomial, and spanning-tree
+counting work in the standalone Node profile, while
+`Graph.chromatic_polynomial()` is expected to fail closed at the intentionally
+disabled FLINT integer-polynomial side-module boundary. The Electron manifest
+contract now includes `site-packages/sage/graphs/libcxx.so`, matching the
+packaged graph C++ side modules. The final resumed standalone validation
+reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

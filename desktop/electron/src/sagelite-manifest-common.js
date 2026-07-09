@@ -31,6 +31,7 @@ const expectedSageliteRuntimeDependencyPaths = Object.freeze([
 const expectedSageliteNativeLibraryPaths = Object.freeze([
   "deps/libcxx/libcxx.so",
   "deps/primecountpy/primecountpy/libcxx.so",
+  "site-packages/sage/graphs/libcxx.so",
   "site-packages/sage/libs/libcxx.so",
   "site-packages/sage/libs/ntl/libcxx.so",
   "site-packages/sage/rings/finite_rings/libcxx.so",

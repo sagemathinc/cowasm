@@ -264,6 +264,7 @@ chmod +x "$tool_bin_dir/meson"
 cat >"$tool_bin_dir/ninja" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
+export PYTHONPATH="$py_meson\${PYTHONPATH:+:\$PYTHONPATH}"
 exec "$py_ninja/bin/ninja" "\$@"
 EOF
 chmod +x "$tool_bin_dir/ninja"
@@ -315,6 +316,19 @@ fi
 if ! command -v timeout >/dev/null 2>&1; then
   record_blocker "sagelite-blocked: host timeout command is required for bounded Node.js runtime probes."
 fi
+
+timeout_supports_foreground=0
+if timeout --foreground 0 true >/dev/null 2>&1; then
+  timeout_supports_foreground=1
+fi
+
+run_host_timeout() {
+  if [ "$timeout_supports_foreground" -eq 1 ]; then
+    timeout --foreground "$@"
+  else
+    timeout "$@"
+  fi
+}
 
 pythonpath_parts=(
   "$cypari2_wasi_sdk"
@@ -611,7 +625,7 @@ run_node_import() {
   printf '## %s\n' "$label" >>"$node_import_log"
   set +e
   PYTHONPATH="$node_pythonpath" \
-    timeout "$node_import_timeout" \
+    run_host_timeout "$node_import_timeout" \
       node "$python_wasm/bin/python-wasm" -c "$wrapped_code" >>"$node_import_log" 2>&1
   local import_status=$?
   set -e
@@ -632,7 +646,7 @@ run_node_import() {
     printf '## %s verbose import trace after missing marker\n' "$label" >>"$node_import_log"
     set +e
     PYTHONPATH="$node_pythonpath" \
-      timeout "$node_import_timeout" \
+      run_host_timeout "$node_import_timeout" \
         node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" >>"$node_import_log" 2>&1
     local verbose_status=$?
     set -e
@@ -656,7 +670,7 @@ run_wasi_sdk_python_import() {
   set +e
   PYTHONPATH="$node_pythonpath" \
     PYTHONDONTWRITEBYTECODE=1 \
-    timeout "$node_import_timeout" \
+    run_host_timeout "$node_import_timeout" \
       "$bin_dir/python-wasi-sdk" -c "$wrapped_code" \
       >>"$wasi_sdk_python_import_log" 2>&1
   local import_status=$?
@@ -675,7 +689,7 @@ run_wasi_sdk_python_import() {
     set +e
     PYTHONPATH="$node_pythonpath" \
       PYTHONDONTWRITEBYTECODE=1 \
-      timeout "$node_import_timeout" \
+      run_host_timeout "$node_import_timeout" \
         "$bin_dir/python-wasi-sdk" -v -c "$wrapped_code" \
         >>"$wasi_sdk_python_import_log" 2>&1
     local verbose_status=$?
@@ -692,7 +706,7 @@ run_wasi_sdk_python_import() {
     set +e
     PYTHONPATH="$node_pythonpath" \
       PYTHONDONTWRITEBYTECODE=1 \
-      timeout "$node_import_timeout" \
+      run_host_timeout "$node_import_timeout" \
         "$bin_dir/python-wasi-sdk" -v -c "$wrapped_code" \
         >>"$wasi_sdk_python_import_log" 2>&1
     local verbose_status=$?
@@ -1476,15 +1490,20 @@ run_node_import \
 assert lrcalc.lrcoef([2, 1], [1], [2]) == 1
 print('sagelite-node-ok lrcalc Python extension smoke')"
 run_node_import \
-  "basic graph polynomial smoke" \
+  "basic graph polynomial boundary smoke" \
   "import sage.rings.all
 from sage.graphs.graph import Graph
 G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
-assert str(G.chromatic_polynomial()) == 'x^3 - 2*x^2 + x'
+try:
+    G.chromatic_polynomial()
+except ImportError as err:
+    assert 'FLINT integer polynomial side module is disabled on CoWasm WASI' in str(err)
+else:
+    raise AssertionError('chromatic_polynomial unexpectedly bypassed the FLINT boundary')
 assert str(G.matching_polynomial()) == 'x^3 - 2*x'
 assert G.spanning_trees_count() == 1
-print('sagelite-node-ok basic graph polynomial smoke')"
+print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
@@ -2032,7 +2051,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_smoke_db" "$doctest_smoke_file" \
       >"$doctest_smoke_log" 2>&1
@@ -2058,7 +2077,7 @@ COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
   COWASM_SAGELITE_DOCTEST_DB="" \
   SAGELITE_DOCTEST_DB="$doctest_env_db" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t "$doctest_env_db_file" \
       >"$doctest_env_db_log" 2>&1
 doctest_env_db_status=$?
@@ -2100,7 +2119,7 @@ set +e
   cd "$dist_dir" &&
   COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
     COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
-    timeout "$node_import_timeout" \
+    run_host_timeout "$node_import_timeout" \
       node "$src_dir/sagelite-node-repl.cjs" -t \
         --source-root "$probe_dir" \
         --sqlite "$doctest_source_root_relative_db" \
@@ -2188,7 +2207,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_file_directive_db" "$doctest_file_directive_file" \
       >"$doctest_file_directive_log" 2>&1
@@ -2238,7 +2257,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --jobs 2 \
       --sqlite "$doctest_parallel_db" \
@@ -2293,7 +2312,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_extra_string_db" "$doctest_extra_string_file" \
       >"$doctest_extra_string_log" 2>&1
@@ -2338,7 +2357,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --block-key "$doctest_block_key" \
       --tmpdir "$doctest_tmpdir_root" \
@@ -2372,7 +2391,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --block-key "$doctest_block_key" \
       --sqlite "$doctest_block_key_db" "$doctest_smoke_file" \
@@ -2406,7 +2425,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --line "$doctest_line" \
       --sqlite "$doctest_line_db" "$doctest_smoke_file" \
@@ -2450,7 +2469,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --line "$doctest_line_setup_line" \
       --sqlite "$doctest_line_setup_db" "$doctest_line_setup_file" \
@@ -2484,7 +2503,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --line 999999 \
       --sqlite "$doctest_missing_line_db" "$doctest_smoke_file" \
@@ -2514,7 +2533,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --line "$doctest_namespace_line" \
       --sqlite "$doctest_namespace_db" "$doctest_namespace_file" \
@@ -2564,7 +2583,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_namespace_leak_db" "$doctest_namespace_leak_file" \
       >"$doctest_namespace_leak_log" 2>&1
@@ -2602,7 +2621,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_stats_namespace_db" "$doctest_stats_namespace_file" \
       >"$doctest_stats_namespace_log" 2>&1
@@ -2642,7 +2661,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_user_globals_db" "$doctest_user_globals_file" \
       >"$doctest_user_globals_log" 2>&1
@@ -2723,7 +2742,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_missing_db" "$probe_dir/does-not-exist.py" \
       >"$doctest_missing_log" 2>&1
@@ -2759,7 +2778,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --timeout "$doctest_timeout_smoke_seconds" \
       --sqlite "$doctest_timeout_db" "$doctest_timeout_file" \
@@ -4875,7 +4894,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_state_db" "$doctest_state_file" \
       >"$doctest_state_log" 2>&1
@@ -4919,7 +4938,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --optional=cowasm_smoke \
       --sqlite "$doctest_optional_feature_db" "$doctest_smoke_file" \
@@ -4956,7 +4975,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --deferred=known-bug \
       --sqlite "$doctest_deferred_feature_db" "$doctest_smoke_file" \
@@ -4999,7 +5018,7 @@ set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
   COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
-  timeout "$node_import_timeout" \
+  run_host_timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_rel_tol_failure_db" "$doctest_rel_tol_failure_file" \
       >"$doctest_rel_tol_failure_log" 2>&1
@@ -5036,7 +5055,7 @@ run_electron_smoke() {
     cd "$resources_dir"
     PYTHONPATH= \
       COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
-      timeout "$electron_smoke_timeout" node sagelite-electron-smoke.cjs
+      run_host_timeout "$electron_smoke_timeout" node sagelite-electron-smoke.cjs
   ) >>"$electron_bundle_log" 2>&1
   local electron_bundle_status=$?
   set -e
