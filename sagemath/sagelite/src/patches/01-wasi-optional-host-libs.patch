@@ -19990,3 +19990,86 @@ diff --git a/src/sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.p
 -            sage: R = lie_conformal_algebras.N2(QQbar); R
 +            sage: R = lie_conformal_algebras.N2(QQbar); R  # needs sage.rings.number_field
              The N=2 super Lie conformal algebra over Algebraic Field
+diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
+--- a/src/sage/tensor/modules/comp.py
++++ b/src/sage/tensor/modules/comp.py
+@@ -245,0 +246 @@
++from itertools import permutations
+@@ -253,0 +255,19 @@
++def _permutation_sign(perm):
++    r"""
++    Return the sign of a permutation tuple of ``range(n)``.
++    """
++    inversions = 0
++    for i in range(len(perm)):
++        for j in range(i + 1, len(perm)):
++            if perm[i] > perm[j]:
++                inversions += 1
++    return -1 if inversions % 2 else 1
++
++
++def _index_permutations(n):
++    r"""
++    Return index permutations and their signs without importing GAP.
++    """
++    return [(perm, _permutation_sign(perm)) for perm in permutations(range(n))]
++
++
+@@ -2559 +2578,0 @@
+-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+@@ -2575 +2594 @@
+-        sym_group = SymmetricGroup(n_sym)
++        sym_group = _index_permutations(n_sym)
+@@ -2578,3 +2597 @@
+-            for perm in sym_group.list():
+-                # action of the permutation on [0,1,...,n_sym-1]:
+-                perm_action = [x - 1 for x in perm.domain()]
++            for perm_action, perm_sign in sym_group:
+@@ -2585 +2602 @@
+-            result[[ind]] = sum / sym_group.order()
++            result[[ind]] = sum / len(sym_group)
+@@ -2707 +2723,0 @@
+-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+@@ -2723 +2739 @@
+-        sym_group = SymmetricGroup(n_sym)
++        sym_group = _index_permutations(n_sym)
+@@ -2726,3 +2742 @@
+-            for perm in sym_group.list():
+-                # action of the permutation on [0,1,...,n_sym-1]:
+-                perm_action = [x - 1 for x in perm.domain()]
++            for perm_action, perm_sign in sym_group:
+@@ -2732 +2746 @@
+-                if perm.sign() == 1:
++                if perm_sign == 1:
+@@ -2736 +2750 @@
+-            result[[ind]] = sum / sym_group.order()
++            result[[ind]] = sum / len(sym_group)
+@@ -4235 +4248,0 @@
+-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+@@ -4317 +4330 @@
+-        sym_group = SymmetricGroup(n_sym)
++        sym_group = _index_permutations(n_sym)
+@@ -4320,3 +4333 @@
+-            for perm in sym_group.list():
+-                # action of the permutation on [0,1,...,n_sym-1]:
+-                perm_action = [x - 1 for x in perm.domain()]
++            for perm_action, perm_sign in sym_group:
+@@ -4327 +4338 @@
+-            result[[ind]] = sum / sym_group.order()
++            result[[ind]] = sum / len(sym_group)
+@@ -4495 +4505,0 @@
+-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+@@ -4579 +4589 @@
+-        sym_group = SymmetricGroup(n_sym)
++        sym_group = _index_permutations(n_sym)
+@@ -4582,3 +4592 @@
+-            for perm in sym_group.list():
+-                # action of the permutation on [0,1,...,n_sym-1]:
+-                perm_action = [x - 1 for x in perm.domain()]
++            for perm_action, perm_sign in sym_group:
+@@ -4588 +4596 @@
+-                if perm.sign() == 1:
++                if perm_sign == 1:
+@@ -4592 +4600 @@
+-            result[[ind]] = sum / sym_group.order()
++            result[[ind]] = sum / len(sym_group)

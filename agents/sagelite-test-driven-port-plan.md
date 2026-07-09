@@ -43299,6 +43299,31 @@ passed, and a dry-run application of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against a
 temporary Sagelite source copy succeeded.
 
+Focused tensor component symmetrization backend pass:
+
+```text
+comp.py: 944 passed, 62 failed, 3 skipped
+```
+
+This pass removes the GAP/libGAP import from `Components.symmetrize()` and
+`Components.antisymmetrize()` by enumerating index permutations locally and
+computing permutation parity directly. The same pure-Python helper is used for
+the symmetry-aware subclass overrides, so tensor component symmetrization no
+longer pulls in `sage.groups.perm_gps.permgroup_named.SymmetricGroup` just to
+iterate over a small symmetric group.
+
+Focused validation first confirmed that the formerly failing
+`s = c.symmetrize() ; s` example passes under the default node profile. A full
+`comp.py` rerun through the make-level corpus target then recorded 944 passed
+blocks, 62 failed blocks, and 3 skipped blocks in
+`/home/user/cowasm/.tmp/current-run/comp-after-patch-make.sqlite3`, improving
+the previous near-miss baseline of 854 passed and 152 failed blocks. The
+remaining failures are separate browser-profile clusters: multiprocessing
+examples that import `_multiprocessing`, dependent `s_par` name cascades, and
+matrix tuple display-format drift. `comp.py` therefore remains outside the
+curated corpus, but the former GAP-backed symmetrization cluster is no longer
+the blocker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
