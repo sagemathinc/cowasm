@@ -4325,6 +4325,63 @@ if [ -n "$doctest_candidate_helper_source_skip_errors" ]; then
   sqlite3 "$doctest_candidate_helper_source_skip_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress source-skipped file errors."
 fi
+doctest_candidate_helper_source_skip_skipped_db="$probe_dir/sagelite-doctest-source-skip-skipped-helper.sqlite3"
+sqlite3 "$doctest_candidate_helper_source_skip_skipped_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id, source_root, runner_version) values (1, '$doctest_candidate_helper_source_root', 83);
+insert into files (
+  id, run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/source_skipped_error.py',
+  'passed',
+  1,
+  0,
+  0,
+  1,
+  7
+);
+SQL
+doctest_candidate_helper_source_skip_skipped_default="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_source_skip_skipped_db")"
+if [ "$doctest_candidate_helper_source_skip_skipped_default" != "src/sage/example/source_skipped_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_source_skip_skipped_default" >&2
+  sqlite3 "$doctest_candidate_helper_source_skip_skipped_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not report source-skipped rows by default."
+fi
+doctest_candidate_helper_source_skip_skipped_excluded="$("$src_dir/doctest-corpus-candidates.py" \
+  --skipped-only \
+  --exclude-file-skip-directives \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_source_skip_skipped_db")"
+if [ -n "$doctest_candidate_helper_source_skip_skipped_excluded" ]; then
+  printf '%s\n' "$doctest_candidate_helper_source_skip_skipped_excluded" >&2
+  sqlite3 "$doctest_candidate_helper_source_skip_skipped_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --exclude-file-skip-directives did not suppress source-skipped rows."
+fi
 doctest_candidate_helper_near_misses_override_root="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \
   --exclude-block-failure-class NameError \

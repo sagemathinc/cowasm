@@ -188,6 +188,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--exclude-file-skip-directives",
+        action="store_true",
+        help=(
+            "suppress rows whose current source file already has a file-level "
+            "sage.doctest needs/optional directive"
+        ),
+    )
+    parser.add_argument(
         "--zero-blocks",
         action="store_true",
         help=(
@@ -949,6 +957,7 @@ def candidate_rows(
     mentioned: set[str],
     include_mentioned: bool,
     include_support_files: bool,
+    exclude_file_skip_directives: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -1279,6 +1288,10 @@ def candidate_rows(
             continue
         if not include_mentioned and relative_path in mentioned:
             continue
+        if exclude_file_skip_directives and current_source_has_file_skip(
+            relative_path, source_root
+        ):
+            continue
         if skipped_only and include_skip_reasons and include_skip_tags:
             one_line_failure_detail = combined_skip_metadata(
                 skip_reason_detail, skip_tag_detail
@@ -1561,6 +1574,7 @@ def main() -> int:
                     mentioned,
                     args.include_mentioned,
                     args.include_support_files,
+                    args.exclude_file_skip_directives,
                 )
                 if args.suppress_superseded_failures and (
                     args.near_misses or args.file_errors

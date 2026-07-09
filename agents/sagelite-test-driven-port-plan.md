@@ -43530,6 +43530,29 @@ sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, and a
 dry-run application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
 against `/home/user/sagelite`.
 
+Follow-up skipped-only diagnostic filter pass on 2026-07-09 UTC: no corpus
+entry was promoted. The guarded source-frontier, clean-candidate, near-miss,
+and file-error scans over `.tmp/current-run/**/*.sqlite3` remained quiet. The
+skipped-only diagnostic scan was still noisy with older dependency-boundary
+probe rows where the current patched source already carries a file-level
+`# sage.doctest: needs ...` directive.
+
+`doctest-corpus-candidates.py` now accepts
+`--exclude-file-skip-directives`, matching the source-frontier helper's
+boundary filter. The flag leaves skipped-only diagnostics unchanged by default,
+but lets scheduled audits suppress rows whose current source file is already a
+whole-file optional/needs boundary. Re-running the skipped-only scan with this
+flag removes the file-level boundary rows and leaves only block-level optional
+probe rows such as `mcqd.pyx`, `symengine.py`, `tdlib.pyx`, and
+`symbolic_data.py`, which are a different optional-coverage audit class rather
+than clean corpus-promotion candidates.
+
+Focused validation used `python3 -m py_compile` for
+`doctest-corpus-candidates.py`, `bash -n` for
+`test-wasi-sdk-standalone.sh`, a direct SQLite fixture proving default versus
+excluded skipped-only output, and the guarded skipped-only make-target scan
+with `--exclude-file-skip-directives`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
