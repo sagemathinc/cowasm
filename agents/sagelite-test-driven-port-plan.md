@@ -41486,6 +41486,24 @@ SQLite fixture for this case, and direct validation confirmed the helper
 prints the invalid diagnostic with a replacement character instead of
 crashing.
 
+Follow-up superseded-near-miss audit on 2026-07-09 UTC: no corpus entry was
+promoted. A guarded source-frontier scan against the checked corpus, this
+plan's mentioned paths, `.tmp/current-run/**/*.sqlite3`, and
+`/tmp/sagelite*.sqlite3` printed no unmentioned source file with runnable
+prompts. A guarded promotion-candidate scan across the runner-95 full
+dashboard and current scratch databases likewise printed no uncovered clean
+runnable rows.
+
+The remaining historical near-miss output was stale in the same way as the
+previous `cm.py`/`kraus.py` audit: old failed rows were still visible even
+when the same scan set contained newer skipped-only evidence for the normalized
+path. `doctest-corpus-candidates.py --strict-frontier` now enables a
+superseded-failure guard, also available directly as
+`--suppress-superseded-failures`, so near-miss and file-error audits suppress
+failed rows for paths that have clean skipped-only or zero-block evidence in
+the scanned databases. A synthetic helper fixture in the standalone smoke
+script covers this multi-database case.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

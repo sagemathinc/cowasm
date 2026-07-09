@@ -2961,6 +2961,7 @@ doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite
 doctest_candidate_helper_focused_db="$probe_dir/sagelite-doctest-focused-candidate-helper.sqlite3"
 doctest_candidate_helper_relative_db="$probe_dir/sagelite-doctest-relative-candidate-helper.sqlite3"
 doctest_candidate_helper_invalid_utf8_db="$probe_dir/sagelite-doctest-invalid-utf8-candidate-helper.sqlite3"
+doctest_candidate_helper_superseding_db="$probe_dir/sagelite-doctest-superseding-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_candidate_helper_relative_corpus="$probe_dir/sagelite-doctest-relative-corpus.txt"
@@ -3682,6 +3683,77 @@ if [ "$doctest_candidate_helper_near_misses_with_class" != "src/sage/example/nea
   printf '%s\n' "$doctest_candidate_helper_near_misses_with_class" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --near-misses did not report block failure classes."
+fi
+sqlite3 "$doctest_candidate_helper_superseding_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+create table blocks (
+  file_id integer,
+  status text,
+  tags text,
+  skip_reason text
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-03T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t src/sage/example/near_miss_name_error.py',
+  'node',
+  'passed',
+  '$doctest_candidate_helper_source_root',
+  83
+);
+insert into files (
+  id, run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py',
+  'passed',
+  1,
+  0,
+  0,
+  1,
+  8
+);
+insert into blocks (file_id, status, tags, skip_reason)
+values (1, 'skipped', 'needs:sage.example.optional_backend', 'optional:sage.example.optional_backend');
+SQL
+doctest_candidate_helper_superseded_near_misses="$("$src_dir/doctest-corpus-candidates.py" \
+  --near-misses \
+  --suppress-superseded-failures \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  "$doctest_candidate_helper_superseding_db")"
+if [ "$doctest_candidate_helper_superseded_near_misses" != "src/sage/example/near_miss_type_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_superseded_near_misses" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress superseded near misses."
 fi
 doctest_candidate_helper_near_misses_override_root="$("$src_dir/doctest-corpus-candidates.py" \
   --near-misses \

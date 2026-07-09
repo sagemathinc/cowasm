@@ -103,6 +103,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--suppress-superseded-failures",
+        action="store_true",
+        help=(
+            "when scanning several databases in diagnostic modes, suppress "
+            "failed rows for paths that also have clean skipped-only or "
+            "zero-block evidence in the scan set"
+        ),
+    )
+    parser.add_argument(
         "--strict-frontier",
         action="store_true",
         help=(
@@ -387,6 +396,9 @@ def parse_args() -> argparse.Namespace:
         args.require_block_rows = True
         args.require_file_run = True
         args.require_source_root_path = True
+        args.dedupe_paths = True
+        args.suppress_superseded_failures = True
+    if args.suppress_superseded_failures:
         args.dedupe_paths = True
     if args.exclude_block_failure_class and not args.near_misses:
         parser.error("--exclude-block-failure-class requires --near-misses")
@@ -1121,6 +1133,60 @@ def candidate_rows(
     return candidates
 
 
+def superseding_clean_paths(
+    db: sqlite3.Connection,
+    run_id: int,
+    covered: set[str],
+    source_root: Path | None,
+    include_non_sage: bool,
+    excluded_path_prefixes: tuple[str, ...],
+    require_source_root_path: bool,
+    include_covered: bool,
+) -> set[str]:
+    rows = db.execute(
+        """
+        select path
+        from files
+        where run_id = ?
+          and status = 'passed'
+          and failed_blocks = 0
+          and (
+            (
+              passed_blocks = 0
+              and skipped_blocks > 0
+              and total_blocks = skipped_blocks
+            )
+            or (
+              total_blocks = 0
+              and passed_blocks = 0
+              and skipped_blocks = 0
+            )
+          )
+        """,
+        (run_id,),
+    ).fetchall()
+
+    paths: set[str] = set()
+    for (path,) in rows:
+        if require_source_root_path and not source_path_matches_root(
+            path, source_root
+        ):
+            continue
+        relative_path = normalize_path(path, source_root)
+        if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
+            continue
+        if relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES):
+            continue
+        if not include_non_sage and not relative_path.startswith("src/sage/"):
+            continue
+        if not source_candidate_exists(relative_path, source_root):
+            continue
+        if not include_covered and relative_path in covered:
+            continue
+        paths.add(relative_path)
+    return paths
+
+
 def row_sort_key(
     row: tuple[str, int, int, int, int, int, int, str, str, str],
     near_misses: bool,
@@ -1161,6 +1227,7 @@ def main() -> int:
     collected_rows: list[
         tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
     ] = []
+    superseded_failure_paths: set[str] = set()
     if args.include_header:
         columns = [
             "path",
@@ -1255,6 +1322,21 @@ def main() -> int:
                     args.require_source_root_path,
                     args.include_covered,
                 )
+                if args.suppress_superseded_failures and (
+                    args.near_misses or args.file_errors
+                ):
+                    superseded_failure_paths.update(
+                        superseding_clean_paths(
+                            db,
+                            run_id,
+                            covered,
+                            source_root,
+                            args.include_non_sage,
+                            args.excluded_path_prefixes,
+                            args.require_source_root_path,
+                            args.include_covered,
+                        )
+                    )
         except (sqlite3.DatabaseError, SystemExit) as error:
             if args.ignore_invalid:
                 invalid_database_count += 1
@@ -1276,6 +1358,14 @@ def main() -> int:
                 printed_rows += 1
 
     if args.dedupe_paths:
+        if args.suppress_superseded_failures and (
+            args.near_misses or args.file_errors
+        ):
+            collected_rows = [
+                (database, row)
+                for database, row in collected_rows
+                if row[0] not in superseded_failure_paths
+            ]
         best_by_path: dict[
             str, tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
         ] = {}
