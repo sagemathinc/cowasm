@@ -37,6 +37,18 @@ SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS ?= \
   --strict-frontier --min-runner-version 95 \
   --ignore-invalid-databases --quiet-invalid-databases
 SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS ?= --exclude-file-skip-directives
+SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB ?= \
+  .tmp/current-run/**/*.sqlite3 .tmp/codex-sagelite/**/*.sqlite3
+SAGELITE_DOCTEST_GUARDED_RUNNER_VERSION ?= 95
+SAGELITE_DOCTEST_GUARDED_CANDIDATE_FLAGS = \
+  --strict-frontier --min-runner-version ${SAGELITE_DOCTEST_GUARDED_RUNNER_VERSION}
+SAGELITE_DOCTEST_GUARDED_DIAGNOSTIC_FLAGS = \
+  ${SAGELITE_DOCTEST_GUARDED_CANDIDATE_FLAGS} \
+  --suppress-superseded-failures --dedupe-paths \
+  --include-failure-detail --failure-detail-limit 240
+SAGELITE_DOCTEST_GUARDED_SOURCE_FLAGS = \
+  --strict-frontier --min-runner-version ${SAGELITE_DOCTEST_GUARDED_RUNNER_VERSION} \
+  --ignore-invalid-databases --quiet-invalid-databases
 
 all: test-wasi-sdk-standalone
 
@@ -251,6 +263,29 @@ sage-doctest-candidates:
 .PHONY: sage-doctest-candidate-paths
 sage-doctest-candidate-paths: SAGELITE_DOCTEST_CANDIDATE_FLAGS += --paths-only
 sage-doctest-candidate-paths: sage-doctest-candidates
+
+.PHONY: sage-doctest-guarded-frontier-check
+sage-doctest-guarded-frontier-check:
+	$(MAKE) -C ${CWD} sage-doctest-candidates \
+	  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+	  'SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB=${SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB}' \
+	  'SAGELITE_DOCTEST_CANDIDATE_FLAGS=${SAGELITE_DOCTEST_GUARDED_CANDIDATE_FLAGS}'
+	$(MAKE) -C ${CWD} sage-doctest-candidates \
+	  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+	  'SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB=${SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB}' \
+	  'SAGELITE_DOCTEST_CANDIDATE_FLAGS=${SAGELITE_DOCTEST_GUARDED_DIAGNOSTIC_FLAGS} --near-misses'
+	$(MAKE) -C ${CWD} sage-doctest-candidates \
+	  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+	  'SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB=${SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB}' \
+	  'SAGELITE_DOCTEST_CANDIDATE_FLAGS=${SAGELITE_DOCTEST_GUARDED_DIAGNOSTIC_FLAGS} --file-errors'
+	$(MAKE) -C ${CWD} sage-doctest-candidates \
+	  SAGELITE_DOCTEST_CANDIDATE_DATABASES= \
+	  'SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB=${SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB}' \
+	  'SAGELITE_DOCTEST_CANDIDATE_FLAGS=${SAGELITE_DOCTEST_GUARDED_CANDIDATE_FLAGS} --skipped-only --exclude-file-skip-directives --include-skip-tags --include-skip-reasons --dedupe-paths'
+	$(MAKE) -C ${CWD} sage-doctest-source-frontier \
+	  'SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB=${SAGELITE_DOCTEST_GUARDED_DATABASE_GLOB}' \
+	  'SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS=${SAGELITE_DOCTEST_GUARDED_SOURCE_FLAGS}' \
+	  SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS=--exclude-file-skip-directives
 
 .PHONY: sage-doctest-source-frontier
 sage-doctest-source-frontier:

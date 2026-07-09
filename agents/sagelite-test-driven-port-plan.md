@@ -43806,6 +43806,22 @@ The default dashboard database at
 active quick-audit source for this pass; the checked signal comes from the
 current scratch databases and the stricter make-wrapper scan defaults.
 
+Scheduled guarded frontier check on 2026-07-09 UTC, follow-up pass: no corpus
+entry was promoted. The promotion-candidate, near-miss, file-error,
+skipped-only, and source-frontier scans over `.tmp/current-run/**/*.sqlite3`
+plus `.tmp/codex-sagelite/**/*.sqlite3` remained quiet with strict frontier
+metadata, runner version `>= 95`, plan-mentioned subtraction, deduplicated path
+output, superseded-failure suppression for diagnostic failure modes, and
+file-level skip-directive exclusion for skipped-only and source-frontier
+checks.
+
+The scheduled audit is now encoded as
+`make -C sagemath/sagelite sage-doctest-guarded-frontier-check`, so future
+runs can exercise the standard guarded scan set without repeating the long flag
+matrix by hand. The target intentionally uses the scratch dashboard globs by
+default because the checked `dist/wasi-sdk/sagelite-doctests.sqlite3` file may
+be empty between full corpus refreshes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
