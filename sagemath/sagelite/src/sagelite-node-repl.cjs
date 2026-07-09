@@ -7,7 +7,15 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 103;
+const doctestRunnerVersion = 104;
+
+class DoctestRunInterrupted extends Error {
+  constructor(signal) {
+    super(`sage -t interrupted by ${signal || "signal"}`);
+    this.name = "DoctestRunInterrupted";
+    this.signal = signal || null;
+  }
+}
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -383,6 +391,8 @@ function parseDoctestFeatureList(value, optionName = "--optional") {
 
 async function runDoctestMode(args, invocationCwd, pythonOptions) {
   const options = parseDoctestArgs(args, invocationCwd);
+  const cancellation = createDoctestCancellation();
+  const cleanupSignalHandlers = installDoctestSignalHandlers(cancellation);
   const startedAt = new Date().toISOString();
   const sagelitePackageCommit = sageliteSourceCommit();
   const run = {
@@ -412,6 +422,7 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
   const tmpDir = fs.mkdtempSync(path.join(tmpDirRoot, ".sagelite-doctest-"));
   const begin = Date.now();
   let runId = null;
+  let runError = null;
   const pendingResults = new Map();
   let nextCheckpointIndex = 0;
   const checkpointResult = (result) => {
@@ -440,13 +451,24 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
       options,
       invocationCwd,
       resourceRoot: pythonOptions.resourceRoot,
+      cancellation,
       onResult: checkpointResult,
     });
+    if (cancellation.cancelled) {
+      throw new DoctestRunInterrupted(cancellation.signal);
+    }
     run.status = "finished";
+  } catch (err) {
+    runError = err;
+    if (err instanceof DoctestRunInterrupted) {
+      run.status = "interrupted";
+    }
   } finally {
     run.finished_at = new Date().toISOString();
     refreshDoctestRunTotals(run, begin);
-    if (run.status !== "error") {
+    if (cancellation.cancelled) {
+      run.status = "interrupted";
+    } else if (run.status === "finished") {
       run.status = run.failed_blocks === 0 ? "passed" : "failed";
     }
     if (run.status === "error" && run.failed_blocks === 0 && run.files.length > 0) {
@@ -461,9 +483,79 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
+    cleanupSignalHandlers();
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
+  if (runError && !(runError instanceof DoctestRunInterrupted)) {
+    throw runError;
+  }
   return run.status === "passed" ? 0 : 1;
+}
+
+function createDoctestCancellation() {
+  const activeChildren = new Map();
+  const cancellation = {
+    cancelled: false,
+    signal: null,
+    cancel(signal) {
+      if (cancellation.cancelled) {
+        return;
+      }
+      cancellation.cancelled = true;
+      cancellation.signal = signal || null;
+      for (const terminate of activeChildren.values()) {
+        terminate();
+      }
+    },
+    registerChild(child) {
+      let forceKill = null;
+      const terminate = () => {
+        if (child.exitCode !== null || child.signalCode !== null || child.killed) {
+          return;
+        }
+        child.kill("SIGTERM");
+        forceKill = setTimeout(() => {
+          if (child.exitCode === null && child.signalCode === null) {
+            child.kill("SIGKILL");
+          }
+        }, 2000);
+      };
+      activeChildren.set(child, terminate);
+      if (cancellation.cancelled) {
+        terminate();
+      }
+      return () => {
+        if (forceKill) {
+          clearTimeout(forceKill);
+        }
+        activeChildren.delete(child);
+      };
+    },
+  };
+  return cancellation;
+}
+
+function installDoctestSignalHandlers(cancellation) {
+  const signals = ["SIGINT", "SIGTERM"];
+  const handlers = new Map();
+  for (const signal of signals) {
+    const handler = () => {
+      if (cancellation.cancelled) {
+        process.exit(signal === "SIGINT" ? 130 : 143);
+      }
+      process.stderr.write(
+        `sage -t interrupted by ${signal}; checkpointing completed doctest results...\n`,
+      );
+      cancellation.cancel(signal);
+    };
+    handlers.set(signal, handler);
+    process.once(signal, handler);
+  }
+  return () => {
+    for (const [signal, handler] of handlers.entries()) {
+      process.removeListener(signal, handler);
+    }
+  };
 }
 
 async function runDoctestFileTasks({
@@ -473,12 +565,16 @@ async function runDoctestFileTasks({
   options,
   invocationCwd,
   resourceRoot,
+  cancellation = null,
   onResult = null,
 }) {
   const results = new Array(files.length);
   let nextIndex = 0;
   async function workerLoop() {
     while (true) {
+      if (cancellation && cancellation.cancelled) {
+        throw new DoctestRunInterrupted(cancellation.signal);
+      }
       const index = nextIndex;
       nextIndex += 1;
       if (index >= files.length) {
@@ -491,6 +587,7 @@ async function runDoctestFileTasks({
         options,
         invocationCwd,
         resourceRoot,
+        cancellation,
       });
       results[index] = result;
       if (onResult) {
@@ -509,6 +606,7 @@ async function runDoctestFileTask({
   options,
   invocationCwd,
   resourceRoot,
+  cancellation = null,
 }) {
   const resultPath = path.join(tmpDir, `result-${index}.json`);
   const statePath = path.join(tmpDir, `state-${index}.json`);
@@ -540,6 +638,7 @@ async function runDoctestFileTask({
           invocationCwd,
           resourceRoot,
           timeoutSeconds: options.timeoutSeconds,
+          cancellation,
         });
         const parsed = readJsonFile(resultPath);
         return { index, files: parsed && Array.isArray(parsed.files) ? parsed.files : [] };
@@ -549,6 +648,9 @@ async function runDoctestFileTask({
           return { index, files: parsed.files };
         }
         lastErr = err;
+        if (err instanceof DoctestRunInterrupted) {
+          throw err;
+        }
         if (attempt < maxAttempts && isRetriableDoctestWorkerError(err)) {
           continue;
         }
@@ -635,6 +737,7 @@ function runDoctestFileWorker({
   invocationCwd,
   resourceRoot,
   timeoutSeconds,
+  cancellation = null,
 }) {
   fs.writeFileSync(
     workerOptionsPath,
@@ -662,11 +765,18 @@ function runDoctestFileWorker({
     COWASM_SAGELITE_ELECTRON_RESOURCES: resourceRoot,
   };
   return new Promise((resolve, reject) => {
+    if (cancellation && cancellation.cancelled) {
+      reject(new DoctestRunInterrupted(cancellation.signal));
+      return;
+    }
     const child = spawn(process.execPath, [__filename, "--doctest-worker", workerOptionsPath], {
       cwd: invocationCwd,
       env: childEnv,
       stdio: ["ignore", "pipe", "pipe"],
     });
+    const unregisterChild = cancellation
+      ? cancellation.registerChild(child)
+      : () => {};
     let stdout = "";
     let stderr = "";
     let timedOut = false;
@@ -688,6 +798,7 @@ function runDoctestFileWorker({
       stderr = limitDiagnosticText(stderr + data.toString());
     });
     child.on("error", (err) => {
+      unregisterChild();
       if (timeout) {
         clearTimeout(timeout);
       }
@@ -697,6 +808,7 @@ function runDoctestFileWorker({
       reject(err);
     });
     child.on("close", (code, signal) => {
+      unregisterChild();
       if (timeout) {
         clearTimeout(timeout);
       }
@@ -709,6 +821,10 @@ function runDoctestFileWorker({
         err.stderr = stderr;
         err.doctestTimedOut = true;
         reject(err);
+        return;
+      }
+      if (cancellation && cancellation.cancelled) {
+        reject(new DoctestRunInterrupted(cancellation.signal || signal));
         return;
       }
       if (code === 0) {

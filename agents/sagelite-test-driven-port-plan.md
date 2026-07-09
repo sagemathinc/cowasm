@@ -43772,6 +43772,20 @@ Focused validation used `node --check` for `sagelite-node-repl.cjs`, a normal
 database contained the runner-103 run row and the completed `env.py` file row
 with `40` recorded blocks. `git diff --check` also passed.
 
+Follow-up doctest interruption finalization pass on 2026-07-09 UTC: no corpus
+entry was promoted. Runner version 104 now installs `SIGINT`/`SIGTERM`
+handlers in doctest mode, stops scheduling new files after cancellation,
+terminates active per-file worker children, and preserves an `interrupted`
+SQLite run status instead of allowing final pass/fail normalization to hide a
+parent-signal stop.
+
+Focused validation used `node --check` for `sagelite-node-repl.cjs`, `python3
+-m py_compile` for the candidate helpers, `bash -n` for the standalone smoke
+script, a normal `sage -t` run of `src/sage/env.py` that recorded
+`passed|40|31|0|9|104`, and a parent-`SIGTERM` probe over a fast doctest file
+followed by a sleeping doctest file. The interruption probe checkpointed the
+fast file row and recorded `interrupted|1|1|0|0|104`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
