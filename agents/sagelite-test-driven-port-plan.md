@@ -41554,6 +41554,42 @@ tight candidate-helper scan confirming no file-error rows remain when the old
 ring failure, new ring skip, and current stream skip databases are scanned
 together.
 
+Follow-up recursive diagnostic-noise audit on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded source-frontier scan against the checked corpus, this
+plan, `.tmp/**/*.sqlite3`, and `/tmp/sagelite*.sqlite3` still printed no
+unmentioned source file with runnable prompts. The matching strict promotion
+candidate scan over the current scratch dashboards also printed no uncovered
+clean runnable row.
+
+A fully recursive file-error scan was noisier than the previous narrow audit
+because it included older focused scratch databases from prior scheduled runs.
+Most early rows were already documented in this plan as broad backend,
+dependency, or source-scope frontiers, so `doctest-corpus-candidates.py` now
+accepts `--mentioned-file` and suppresses normalized `src/sage/...` paths that
+are already mentioned there unless `--include-mentioned` is passed. This brings
+the candidate helper's diagnostic subtraction behavior in line with
+`doctest-source-frontier.py`.
+
+With `--mentioned-file agents/sagelite-test-driven-port-plan.md`, the same
+recursive file-error scan drops the already documented historical clusters and
+leaves five unmentioned `.pxi` diagnostics from recent scratch probes:
+`src/sage/symbolic/constants_c_impl.pxi`,
+`src/sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi`,
+`src/sage/libs/linkages/padics/unram_shared.pxi`,
+`src/sage/rings/padics/CR_template.pxi`, and
+`src/sage/matrix/matrix_modn_dense_template.pxi`. These are low-level include
+files and are not immediate corpus-promotion candidates; they are useful
+follow-up diagnostics for symbolic, NTL, padic, and modular-matrix backend
+clusters.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, a
+synthetic SQLite mention-filter probe, and the recursive real file-error scan
+above. An attempted `make -C sagemath/sagelite test-wasi-sdk-standalone` was
+interrupted after more than ten minutes while rebuilding the refreshed patched
+Sagelite Cython source tree, before it reached the standalone smoke assertions.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

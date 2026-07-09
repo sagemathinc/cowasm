@@ -2962,6 +2962,7 @@ doctest_candidate_helper_focused_db="$probe_dir/sagelite-doctest-focused-candida
 doctest_candidate_helper_relative_db="$probe_dir/sagelite-doctest-relative-candidate-helper.sqlite3"
 doctest_candidate_helper_invalid_utf8_db="$probe_dir/sagelite-doctest-invalid-utf8-candidate-helper.sqlite3"
 doctest_candidate_helper_superseding_db="$probe_dir/sagelite-doctest-superseding-candidate-helper.sqlite3"
+doctest_candidate_helper_mentioned_db="$probe_dir/sagelite-doctest-mentioned-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_candidate_helper_relative_corpus="$probe_dir/sagelite-doctest-relative-corpus.txt"
@@ -3381,6 +3382,59 @@ if [ "$doctest_candidate_helper_include_covered" != "src/sage/example/real_candi
   printf '%s\n' "$doctest_candidate_helper_include_covered" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-covered did not report covered clean rows."
+fi
+sqlite3 "$doctest_candidate_helper_mentioned_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  duration_ms integer
+);
+insert into runs (id, source_root, runner_version) values (1, '$doctest_candidate_helper_source_root', 83);
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, duration_ms
+) values (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/mentioned_frontier.py',
+  'passed',
+  1,
+  1,
+  0,
+  0,
+  9
+);
+SQL
+doctest_candidate_helper_mentioned_default="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_mentioned_db")"
+if [ -n "$doctest_candidate_helper_mentioned_default" ]; then
+  printf '%s\n' "$doctest_candidate_helper_mentioned_default" >&2
+  sqlite3 "$doctest_candidate_helper_mentioned_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress mentioned rows."
+fi
+doctest_candidate_helper_include_mentioned="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --include-mentioned \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_mentioned_db")"
+if [ "$doctest_candidate_helper_include_mentioned" != "src/sage/example/mentioned_frontier.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_include_mentioned" >&2
+  sqlite3 "$doctest_candidate_helper_mentioned_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --include-mentioned did not report mentioned rows."
 fi
 doctest_candidate_helper_zero_blocks="$("$src_dir/doctest-corpus-candidates.py" \
   --zero-blocks \

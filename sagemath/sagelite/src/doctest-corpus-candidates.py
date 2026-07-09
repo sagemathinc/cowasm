@@ -26,6 +26,11 @@ REQUIRED_RUN_METADATA_COLUMNS = (
 FILE_SKIP_DIRECTIVE_RE = re.compile(
     r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
 )
+SAGE_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?"
+    r"\.(?:pyx|py|pxi|pxd|rst|txt)"
+    r"(?![A-Za-z0-9_./+-])"
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -89,6 +94,21 @@ def parse_args() -> argparse.Namespace:
             "probe results without changing the default promotion-candidate "
             "subtraction"
         ),
+    )
+    parser.add_argument(
+        "--mentioned-file",
+        type=Path,
+        action="append",
+        default=[],
+        help=(
+            "text file whose mentioned src/sage paths should be subtracted; "
+            "may be repeated"
+        ),
+    )
+    parser.add_argument(
+        "--include-mentioned",
+        action="store_true",
+        help="include rows already mentioned in --mentioned-file inputs",
     )
     parser.add_argument(
         "--include-doctest-self-tests",
@@ -522,6 +542,15 @@ def read_corpus(corpus: Path, source_root: Path | None) -> set[str]:
     return entries
 
 
+def read_mentioned(paths: list[Path]) -> set[str]:
+    mentioned: set[str] = set()
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for match in SAGE_PATH_RE.finditer(text):
+            mentioned.add(normalize_path(match.group(0), None))
+    return mentioned
+
+
 def source_candidate_exists(relative_path: str, source_root: Path | None) -> bool:
     if source_root is None or not relative_path.startswith("src/sage/"):
         return True
@@ -810,6 +839,8 @@ def candidate_rows(
     include_skip_tags: bool,
     require_source_root_path: bool,
     include_covered: bool,
+    mentioned: set[str],
+    include_mentioned: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -1138,6 +1169,8 @@ def candidate_rows(
             continue
         if not include_covered and relative_path in covered:
             continue
+        if not include_mentioned and relative_path in mentioned:
+            continue
         if skipped_only and include_skip_reasons and include_skip_tags:
             one_line_failure_detail = combined_skip_metadata(
                 skip_reason_detail, skip_tag_detail
@@ -1172,6 +1205,8 @@ def superseding_clean_paths(
     excluded_path_prefixes: tuple[str, ...],
     require_source_root_path: bool,
     include_covered: bool,
+    mentioned: set[str],
+    include_mentioned: bool,
 ) -> set[str]:
     rows = db.execute(
         """
@@ -1213,6 +1248,8 @@ def superseding_clean_paths(
             continue
         if not include_covered and relative_path in covered:
             continue
+        if not include_mentioned and relative_path in mentioned:
+            continue
         paths.add(relative_path)
     return paths
 
@@ -1253,6 +1290,7 @@ def main() -> int:
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     args = parse_args()
     show_database = len(args.database) > 1 and not args.paths_only
+    mentioned = read_mentioned(args.mentioned_file)
     covered_by_source_root: dict[Path | None, set[str]] = {}
     collected_rows: list[
         tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
@@ -1351,6 +1389,8 @@ def main() -> int:
                     args.include_skip_tags,
                     args.require_source_root_path,
                     args.include_covered,
+                    mentioned,
+                    args.include_mentioned,
                 )
                 if args.suppress_superseded_failures and (
                     args.near_misses or args.file_errors
@@ -1365,6 +1405,8 @@ def main() -> int:
                             args.excluded_path_prefixes,
                             args.require_source_root_path,
                             args.include_covered,
+                            mentioned,
+                            args.include_mentioned,
                         )
                     )
                     superseded_failure_paths.update(
