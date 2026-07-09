@@ -4670,6 +4670,19 @@ if [ "$doctest_candidate_helper_quiet_guard_status" -eq 0 ] || \
   record_blocker "sagelite-blocked: doctest-corpus-candidates --quiet-invalid guard did not fire."
 fi
 set +e
+doctest_source_frontier_quiet_guard="$("$src_dir/doctest-source-frontier.py" \
+  --quiet-invalid-databases \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  2>&1)"
+doctest_source_frontier_quiet_guard_status=$?
+set -e
+if [ "$doctest_source_frontier_quiet_guard_status" -eq 0 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_quiet_guard" | grep -Fq -- "--quiet-invalid-databases requires --ignore-invalid-databases"; then
+  printf '%s\n' "$doctest_source_frontier_quiet_guard" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --quiet-invalid-databases guard did not fire."
+fi
+set +e
 doctest_candidate_helper_block_detail_guard="$("$src_dir/doctest-corpus-candidates.py" \
   --only-block-failure-detail coercion \
   --corpus "$doctest_candidate_helper_corpus" \

@@ -41931,6 +41931,23 @@ and ignored-missing database probes for both helpers, `git diff --check`, and
 the guarded candidate and source-frontier make-target scans over
 `.tmp/current-run/**/*.sqlite3`, which printed no rows.
 
+Follow-up source-frontier quiet-invalid fixture pass on 2026-07-09 UTC: no
+corpus entry was promoted. The guarded candidate and source-frontier make
+targets over `.tmp/current-run/*.sqlite3` plus `.tmp/codex-sagelite/*.sqlite3`
+still printed no rows.
+
+The standalone smoke script now has a source-frontier parser fixture matching
+the existing candidate helper guard: `--quiet-invalid-databases` without
+`--ignore-invalid-databases` must fail with an argparse status-2 diagnostic.
+This keeps the scheduled scan wrappers from silently accepting inconsistent
+invalid-database settings if the helper argument plumbing is refactored.
+
+Validation used `python3 -m py_compile` for both helper scripts,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a direct
+source-frontier parser probe for the quiet-invalid guard, `git diff --check`,
+and guarded candidate/source-frontier make-target scans over the current
+scratch databases.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
