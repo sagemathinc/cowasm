@@ -42085,6 +42085,40 @@ under the strict source-root, metadata, block-row, and mention-subtraction
 guards, and should either target a known backend/runtime cluster directly or
 sample a genuinely new source namespace.
 
+Follow-up graph-backend linkage pass on 2026-07-09: no corpus entry was
+promoted. The scheduled run targeted the documented graph startup/backend
+cluster directly instead of repeating the exhausted low-noise frontier scans.
+`generic_graph_pyx` was already present in Sagelite's C-extension list, but the
+whole `src/sage/graphs/meson.build` extension loop depended on optional host
+`cliquer` and `planarity` libraries. Under WASI those dependencies are
+disablers, so the generic graph helper was omitted even though it only needs
+Python, cysignals, FLINT, and GMP.
+
+The WASI source patch now splits graph extension dependencies so
+`generic_graph_pyx` builds without `cliquer`/`planarity`, while the remaining
+graph C extensions still keep those optional graph-library dependencies. The
+same hunk links `generic_graph_pyx` with the existing `cowasm_libcxx` external
+property because FLINT brings in C++ runtime symbols even though the Cython
+source is generated as C. Focused validation used a clean
+`01-wasi-optional-host-libs.patch` dry-run, Meson reconfiguration of the
+existing WASI build tree, a targeted Ninja rebuild of
+`src/sage/graphs/generic_graph_pyx.cpython-314-wasm32-wasi.so`, and a staged
+runtime import:
+
+```sh
+import sage.rings.all
+import sage.graphs.generic_graph_pyx
+```
+
+That import now succeeds under `bin/python-wasi-sdk`. A direct import without
+the normal Sage ring initialization path reaches the existing
+`sage.rings.integer` circular-initialization behavior, so future graph-focused
+doctest probes should initialize through `sage.rings.all` or `sage.all` before
+treating graph import failures as backend regressions. The broader standalone
+`import sage.all` lifecycle smoke remains a separate runtime blocker when it
+wedges under `timeout`; it is no longer the first signal for this graph side
+module linkage issue.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
