@@ -5281,6 +5281,33 @@ strict scratch scan as the main activity unless new scratch databases, corpus
 entries, source tags, or runtime/backend behavior have changed; choose a
 specific backend cluster or a fresh unmentioned namespace instead.
 
+Follow-up p-adic stale-breadcrumb audit on 2026-07-09: no corpus entry was
+promoted. A strict candidate scan across the local scratch archive and the
+make-target source-frontier scan again printed no rows. The most recent
+file-error breadcrumb in
+`.tmp/current-run/scheduled-2026-07-09-padic-generic-full-after-tags2.sqlite3`
+pointed at `sage/rings/padics/padic_generic_element.pyx:858`, where
+`W.extension(x^2 + 3)` had previously trapped in the Artin-Hasse series
+doctest.
+
+Focused current-source reruns show that breadcrumb is stale under the checked
+WASI patch. The file now starts with a file-level
+`# sage.doctest: needs sage.libs.ntl` directive, and both the focused line
+rerun and full-file rerun record skipped-only clean results:
+
+```text
+padic_generic_element.pyx --line 858: 0 passed, 0 failed, 1 skipped
+padic_generic_element.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The fresh SQLite dashboards are
+`.tmp/current-run/scheduled-2026-07-09-active-padic-generic-line858.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-09-active-padic-generic-full-current.sqlite3`.
+Future scheduled runs should treat the older file-error row as superseded
+scratch evidence rather than a live NTL trap, unless the p-adic file-level
+skip policy changes.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
