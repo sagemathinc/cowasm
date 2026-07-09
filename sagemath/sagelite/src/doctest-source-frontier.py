@@ -130,6 +130,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--subtract-file-error-runs",
+        action="store_true",
+        help=(
+            "with strict database subtraction, also subtract modern non-focused "
+            "runs that reached file-level errors before persisting block rows"
+        ),
+    )
+    parser.add_argument(
         "--strict-frontier",
         action="store_true",
         help=(
@@ -337,6 +345,7 @@ def read_database_paths(
     ignore_invalid: bool,
     quiet_invalid: bool,
     strict_database_subtraction: bool,
+    subtract_file_error_runs: bool,
     min_runner_version: int | None,
 ) -> DatabasePathScan:
     audited: set[str] = set()
@@ -350,6 +359,7 @@ def read_database_paths(
                     path,
                     source_root,
                     strict_database_subtraction,
+                    subtract_file_error_runs,
                     min_runner_version,
                 )
             )
@@ -377,6 +387,7 @@ def read_one_database_paths(
     path: Path,
     source_root: Path,
     strict_database_subtraction: bool,
+    subtract_file_error_runs: bool,
     min_runner_version: int | None,
 ) -> set[str]:
     if not path.exists():
@@ -405,7 +416,13 @@ def read_one_database_paths(
             )
             if run_id is None:
                 return set()
-            if strict_database_subtraction and not run_has_block_rows(db, run_id):
+            if (
+                strict_database_subtraction
+                and not run_has_block_rows(db, run_id)
+                and not (
+                    subtract_file_error_runs and run_has_file_error_rows(db, run_id)
+                )
+            ):
                 return set()
 
         if run_id is None:
@@ -517,6 +534,28 @@ def run_has_block_rows(db: sqlite3.Connection, run_id: int) -> bool:
             from blocks
             join files on files.id = blocks.file_id
             where files.run_id = ?
+            limit 1
+            """,
+            (run_id,),
+        ).fetchone()
+        is not None
+    )
+
+
+def run_has_file_error_rows(db: sqlite3.Connection, run_id: int) -> bool:
+    if (
+        not table_exists(db, "files")
+        or not table_has_column(db, "files", "run_id")
+        or not table_has_column(db, "files", "status")
+    ):
+        return False
+    return (
+        db.execute(
+            """
+            select 1
+            from files
+            where run_id = ?
+              and status = 'error'
             limit 1
             """,
             (run_id,),
@@ -644,6 +683,7 @@ def main() -> int:
         args.ignore_invalid_databases,
         args.quiet_invalid_databases,
         args.strict_database_subtraction,
+        args.subtract_file_error_runs,
         args.min_runner_version,
     )
     audited = database_scan.audited_paths

@@ -42016,6 +42016,41 @@ runtime/backend boundary, a regenerated default dashboard, or a deliberately
 broadened source-scope audit rather than repeating the same quiet recursive
 scan.
 
+Scheduled attempted-frontier subtraction pass on 2026-07-09 UTC: no corpus
+entry was promoted. The deliberately broadened source-frontier audit with
+mention subtraction disabled first exposed only the already documented
+no-block file-error probes for `src/sage/rings/complex_arb.pyx` and
+`src/sage/rings/polynomial/multi_polynomial.pyx`. Those rows came from the
+historical prompt-band database whose latest modern run failed before
+persisting any block rows, so the standard strict source-frontier subtraction
+intentionally kept them visible.
+
+`doctest-source-frontier.py` now has an opt-in
+`--subtract-file-error-runs` mode for broad attempted-frontier audits. With
+strict database subtraction enabled, the new mode also subtracts modern
+non-focused runs that recorded file-level `status = 'error'` rows before any
+block rows were persisted. The default strict promotion scan still requires
+persisted block rows, so no-block file-error probes remain visible unless an
+audit explicitly asks for attempted-file subtraction.
+
+The recursive make-wrapper audit with this new flag, mention subtraction
+disabled, and the current scratch database globs printed no rows:
+
+```sh
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED= \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3 .tmp/codex-sagelite/**/*.sqlite3' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS='--subtract-file-error-runs --include-runnable-prompts --limit 25'
+```
+
+This distinguishes "not yet audited with persisted blocks" from "already
+attempted and failed at file scope" when scheduled runs deliberately broaden
+source-scope scans. Validation used `python3 -m py_compile` for both doctest
+helper scripts, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, a
+synthetic SQLite no-block file-error probe covering default versus
+`--subtract-file-error-runs` behavior, and the real recursive source-frontier
+make-wrapper scan above.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

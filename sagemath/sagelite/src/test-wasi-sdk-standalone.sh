@@ -4500,12 +4500,21 @@ fi
 doctest_source_frontier_focused_db="$probe_dir/sagelite-doctest-source-frontier-focused.sqlite3"
 doctest_source_frontier_foreign_db="$probe_dir/sagelite-doctest-source-frontier-foreign.sqlite3"
 doctest_source_frontier_stale_db="$probe_dir/sagelite-doctest-source-frontier-stale.sqlite3"
+doctest_source_frontier_file_error_db="$probe_dir/sagelite-doctest-source-frontier-file-error.sqlite3"
 cat >"$doctest_candidate_helper_source_root/src/sage/example/strict_database_frontier.py" <<'PY'
 r"""
     sage: 9 + 9
     18
     sage: 10 + 10
     20
+"""
+PY
+cat >"$doctest_candidate_helper_source_root/src/sage/example/strict_file_error_frontier.py" <<'PY'
+r"""
+    sage: 11 + 11
+    22
+    sage: 12 + 12
+    24
 """
 PY
 sqlite3 "$doctest_source_frontier_focused_db" <<SQL
@@ -4616,6 +4625,43 @@ insert into files (id, run_id, path, status) values (
   'passed'
 );
 SQL
+sqlite3 "$doctest_source_frontier_file_error_db" <<SQL
+create table runs (
+  id integer primary key,
+  started_at text,
+  git_commit text,
+  command text,
+  run_profile text,
+  status text,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text
+);
+insert into runs (
+  id, started_at, git_commit, command, run_profile, status, source_root,
+  runner_version
+) values (
+  1,
+  '2026-07-08T00:00:00.000Z',
+  'standalone-smoke-fixture',
+  'sage -t src/sage/example/strict_file_error_frontier.py',
+  'node',
+  'failed',
+  '$doctest_candidate_helper_source_root',
+  83
+);
+insert into files (id, run_id, path, status) values (
+  1,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/strict_file_error_frontier.py',
+  'error'
+);
+SQL
 doctest_source_frontier_strict_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \
   --source-root "$doctest_candidate_helper_source_root" \
@@ -4625,17 +4671,20 @@ doctest_source_frontier_strict_paths="$("$src_dir/doctest-source-frontier.py" \
   --subtract-database "$doctest_source_frontier_focused_db" \
   --subtract-database "$doctest_source_frontier_foreign_db" \
   --subtract-database "$doctest_source_frontier_stale_db" \
+  --subtract-database "$doctest_source_frontier_file_error_db" \
   --ignore-invalid-databases \
   --quiet-invalid-databases \
   --strict-database-subtraction \
   --min-runner-version 83 \
   --min-runnable-prompts 1)"
 if [ "$doctest_source_frontier_strict_paths" != "src/sage/example/frontier_candidate.py
-src/sage/example/strict_database_frontier.py" ]; then
+src/sage/example/strict_database_frontier.py
+src/sage/example/strict_file_error_frontier.py" ]; then
   printf '%s\n' "$doctest_source_frontier_strict_paths" >&2
   sqlite3 "$doctest_source_frontier_focused_db" ".dump" >&2 || true
   sqlite3 "$doctest_source_frontier_foreign_db" ".dump" >&2 || true
   sqlite3 "$doctest_source_frontier_stale_db" ".dump" >&2 || true
+  sqlite3 "$doctest_source_frontier_file_error_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-source-frontier strict database subtraction hid live frontier rows."
 fi
 doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-frontier.py" \
@@ -4647,6 +4696,7 @@ doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-fronti
   --subtract-database "$doctest_source_frontier_focused_db" \
   --subtract-database "$doctest_source_frontier_foreign_db" \
   --subtract-database "$doctest_source_frontier_stale_db" \
+  --subtract-database "$doctest_source_frontier_file_error_db" \
   --ignore-invalid-databases \
   --quiet-invalid-databases \
   --strict-frontier \
@@ -4655,6 +4705,28 @@ doctest_source_frontier_strict_shortcut_paths="$("$src_dir/doctest-source-fronti
 if [ "$doctest_source_frontier_strict_shortcut_paths" != "$doctest_source_frontier_strict_paths" ]; then
   printf '%s\n' "$doctest_source_frontier_strict_shortcut_paths" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --strict-frontier did not match strict database subtraction."
+fi
+doctest_source_frontier_attempted_paths="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$doctest_source_frontier_focused_db" \
+  --subtract-database "$doctest_source_frontier_foreign_db" \
+  --subtract-database "$doctest_source_frontier_stale_db" \
+  --subtract-database "$doctest_source_frontier_file_error_db" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  --strict-frontier \
+  --subtract-file-error-runs \
+  --min-runner-version 83 \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_attempted_paths" != "src/sage/example/frontier_candidate.py
+src/sage/example/strict_database_frontier.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_attempted_paths" >&2
+  sqlite3 "$doctest_source_frontier_file_error_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-source-frontier --subtract-file-error-runs did not subtract attempted file-error rows."
 fi
 set +e
 doctest_candidate_helper_quiet_guard="$("$src_dir/doctest-corpus-candidates.py" \
