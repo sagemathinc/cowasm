@@ -41,6 +41,12 @@ diff --git a/src/sage/manifolds/utilities.py b/src/sage/manifolds/utilities.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
  r"""
+diff --git a/src/sage/manifolds/subsets/closure.py b/src/sage/manifolds/subsets/closure.py
+--- a/src/sage/manifolds/subsets/closure.py
++++ b/src/sage/manifolds/subsets/closure.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
 diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/combinat_doctest.py
@@ -15119,6 +15125,12 @@ diff --git a/src/sage/repl/ipython_kernel/kernel.py b/src/sage/repl/ipython_kern
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs IPython
  """
+diff --git a/src/sage/repl/ipython_tests.py b/src/sage/repl/ipython_tests.py
+--- a/src/sage/repl/ipython_tests.py
++++ b/src/sage/repl/ipython_tests.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython
+ '''
 diff --git a/src/sage/rings/polynomial/pbori/frontend.py b/src/sage/rings/polynomial/pbori/frontend.py
 --- a/src/sage/rings/polynomial/pbori/frontend.py
 +++ b/src/sage/rings/polynomial/pbori/frontend.py
@@ -16548,6 +16560,12 @@ diff --git a/src/sage/interacts/test_jupyter.rst b/src/sage/interacts/test_jupyt
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs IPython ipywidgets sage.symbolic
  .. -*- coding: utf-8 -*-
+diff --git a/src/sage/interacts/library.py b/src/sage/interacts/library.py
+--- a/src/sage/interacts/library.py
++++ b/src/sage/interacts/library.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython ipywidgets sage.symbolic
+ r"""
 diff --git a/src/sage/rings/padics/pow_computer_relative.pyx b/src/sage/rings/padics/pow_computer_relative.pyx
 --- a/src/sage/rings/padics/pow_computer_relative.pyx
 +++ b/src/sage/rings/padics/pow_computer_relative.pyx

@@ -43370,6 +43370,30 @@ fresh database included prints only the header row, and a dry-run application
 of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` succeeds.
 
+Follow-up small frontend-boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. A raw low-prompt source-frontier sample with plan-mentioned files
+included exposed three already-audited dependency-frontier files:
+`sage/manifolds/subsets/closure.py`, `sage/repl/ipython_tests.py`, and
+`sage/interacts/library.py`.
+
+A focused precheck recorded `3 passed, 74 failed, 11 skipped`; the failure
+clusters were dominated by the stripped manifold/symbolic stack, missing
+IPython test-shell setup, and unavailable Jupyter interact dependencies. The
+WASI source patch now marks those files with file-level `# sage.doctest:
+needs ...` directives matching the existing browser-profile boundaries.
+Focused validation against the locally patched source copy records:
+
+```text
+closure.py: 0 passed, 0 failed, 1 skipped
+ipython_tests.py: 0 passed, 0 failed, 1 skipped
+library.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the rows under
+`optional:sage.manifolds,sage.symbolic`, `optional:ipython`, and
+`optional:ipython,ipywidgets,sage.symbolic`; saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
