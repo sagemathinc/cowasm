@@ -43132,6 +43132,30 @@ database is included, and a dry-run application of
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite` succeeds with the new hunk.
 
+Follow-up stale near-miss confirmation on 2026-07-09 UTC: no corpus entry was
+promoted. The standard scheduled source-frontier, clean-candidate, and live
+file-error scans over `.tmp/current-run/**/*.sqlite3` printed only header rows
+with plan-mentioned subtraction, strict runner-version gating, file-error
+subtraction, and superseded-failure suppression.
+
+A no-mention skipped-only audit still showed only explicit dependency-boundary
+rows. A plan-mentioned near-miss scan without superseded-failure suppression
+surfaced two old rows:
+`sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field.py` and
+`sage/libs/symmetrica/sc.pxi`. Both were stale relative to the current patched
+source tree. Fresh focused reruns recorded:
+
+```text
+hyperelliptic_rational_field.py: 0 passed, 0 failed, 1 skipped
+sc.pxi: 0 passed, 0 failed, 1 skipped
+```
+
+The fresh skip metadata groups them under `needs:sage.schemes` and
+`needs:sage.libs.symmetrica`, respectively. Re-running the recursive near-miss
+wrapper with `--suppress-superseded-failures` printed only the header row,
+confirming the remaining unsuppressed near-miss output is historical scratch
+data rather than a live porting cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
