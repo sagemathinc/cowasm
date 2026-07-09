@@ -42239,6 +42239,22 @@ focused graph doctest probe. Until then, direct staged `python-wasi-sdk`
 imports can still test graph side-module linkage, but `sage -t --profile node`
 cannot run from this partial `dist/wasi-sdk` tree.
 
+Follow-up standalone resumability pass on 2026-07-09: no graph corpus entry
+was promoted. The standalone script now supports
+`SAGELITE_STANDALONE_RESUME=1`, which keeps
+`build/wasi-sdk/cowasm-meson-build` instead of deleting it at startup and lets
+Ninja skip already-generated Cython outputs after an interrupted standalone
+resource build. The Meson helper wrappers, pkg-config stubs, and cross file
+now live under `build/wasi-sdk/.cowasm-standalone`, so resumed `build.ninja`
+files no longer point at a deleted temporary probe directory.
+
+The script still performs a clean build by default. In resume mode it discards
+older Meson build directories whose `build.ninja` was configured with the
+previous temp-directory cross file, so the first resumed run after this change
+may need one fresh configure/generation pass; later interrupted runs can reuse
+the stable helper paths. Validation for this pass covered shell syntax and the
+resume-argument guard, without running the full standalone rebuild.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

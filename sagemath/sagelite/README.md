@@ -14,6 +14,13 @@ Run the current probe with:
 make -C sagemath/sagelite test-wasi-sdk-standalone
 ```
 
+If a long standalone rebuild is interrupted after Meson has configured the
+Sagelite tree, resume it without discarding Ninja's partial Cython outputs:
+
+```sh
+SAGELITE_STANDALONE_RESUME=1 make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
 After the probe has staged `dist/wasi-sdk/electron-resources`, try the
 Node.js worker-backed Sagelite demo REPL with Sage syntax and preloaded
 `sage.all`:

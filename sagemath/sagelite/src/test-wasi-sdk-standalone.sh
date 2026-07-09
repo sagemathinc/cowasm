@@ -35,13 +35,33 @@ repo_dir="$(cd "$src_dir/../../.." && pwd)"
 # shellcheck source=/dev/null
 source "$repo_dir/core/build/src/test/clang-standalone-common.sh"
 
+resume_standalone_build="${SAGELITE_STANDALONE_RESUME:-0}"
+case "$resume_standalone_build" in
+  0|1)
+    ;;
+  *)
+    echo "SAGELITE_STANDALONE_RESUME must be 0 or 1" >&2
+    exit 2
+    ;;
+esac
+
 probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
+tool_dir="$build_dir/.cowasm-standalone"
+tool_bin_dir="$tool_dir/bin"
+tool_pkgconfig_dir="$tool_dir/pkgconfig"
+meson_build_dir="$build_dir/cowasm-meson-build"
 
 cowasm_standalone_probe "sagelite" wasi-sdk "$bin_dir" "$probe_dir"
 
-rm -rf "$dist_dir" "$build_dir/cowasm-meson-build"
-mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_dir/pkgconfig"
+rm -rf "$dist_dir"
+if [ "$resume_standalone_build" -eq 0 ]; then
+  rm -rf "$meson_build_dir"
+elif [ -f "$meson_build_dir/build.ninja" ] &&
+    ! grep -F "$tool_dir/cowasm-wasi.ini" "$meson_build_dir/build.ninja" >/dev/null; then
+  rm -rf "$meson_build_dir"
+fi
+mkdir -p "$dist_dir" "$meson_build_dir" "$tool_bin_dir" "$tool_pkgconfig_dir"
 
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
@@ -213,22 +233,22 @@ PY
   printf '%s %s modules\n' "$success_marker" "$module_count" >"$audit_log"
 }
 
-cat >"$probe_dir/bin/meson" <<EOF
+cat >"$tool_bin_dir/meson" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 export PYTHONPATH="$py_meson\${PYTHONPATH:+:\$PYTHONPATH}"
 exec python3 -m mesonbuild.mesonmain "\$@"
 EOF
-chmod +x "$probe_dir/bin/meson"
+chmod +x "$tool_bin_dir/meson"
 
-cat >"$probe_dir/bin/ninja" <<EOF
+cat >"$tool_bin_dir/ninja" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 exec "$py_ninja/bin/ninja" "\$@"
 EOF
-chmod +x "$probe_dir/bin/ninja"
+chmod +x "$tool_bin_dir/ninja"
 
-cat >"$probe_dir/bin/wasi-sdk-clang-next" <<EOF
+cat >"$tool_bin_dir/wasi-sdk-clang-next" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 args=()
@@ -243,9 +263,9 @@ for arg in "\$@"; do
 done
 exec "$bin_dir/wasi-sdk-clang-next" "\${args[@]}"
 EOF
-chmod +x "$probe_dir/bin/wasi-sdk-clang-next"
+chmod +x "$tool_bin_dir/wasi-sdk-clang-next"
 
-cat >"$probe_dir/bin/wasi-sdk-clang++-next" <<EOF
+cat >"$tool_bin_dir/wasi-sdk-clang++-next" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 args=()
@@ -260,9 +280,9 @@ for arg in "\$@"; do
 done
 exec "$bin_dir/wasi-sdk-clang++-next" "\${args[@]}"
 EOF
-chmod +x "$probe_dir/bin/wasi-sdk-clang++-next"
+chmod +x "$tool_bin_dir/wasi-sdk-clang++-next"
 
-export PATH="$probe_dir/bin:$PATH"
+export PATH="$tool_bin_dir:$PATH"
 
 if ! command -v meson >/dev/null 2>&1; then
   record_blocker "sagelite-blocked: package-local meson wrapper is not available on PATH."
@@ -306,7 +326,7 @@ m4rie_wasi_sdk="$repo_dir/sagemath/m4rie/dist/wasi-sdk"
 libpng_wasi_sdk="$repo_dir/core/libpng/dist/wasi-sdk"
 zlib_wasi_sdk="$repo_dir/core/zlib/dist/wasi-sdk"
 
-cat >"$probe_dir/pkgconfig/cblas.pc" <<EOF
+cat >"$tool_pkgconfig_dir/cblas.pc" <<EOF
 prefix=$gsl_wasi_sdk
 libdir=\${prefix}/lib
 includedir=\${prefix}/include
@@ -318,9 +338,9 @@ Libs: -L\${libdir} -lgslcblas -lm
 Cflags: -I\${includedir}
 EOF
 
-cp "$probe_dir/pkgconfig/cblas.pc" "$probe_dir/pkgconfig/blas.pc"
+cp "$tool_pkgconfig_dir/cblas.pc" "$tool_pkgconfig_dir/blas.pc"
 
-cat >"$probe_dir/pkgconfig/libpng.pc" <<EOF
+cat >"$tool_pkgconfig_dir/libpng.pc" <<EOF
 prefix=$libpng_wasi_sdk
 zlib_prefix=$zlib_wasi_sdk
 libdir=\${prefix}/lib
@@ -334,9 +354,9 @@ Libs: -L\${libdir} -lpng -L\${zlib_libdir} -lz -lm
 Cflags: -I\${includedir}
 EOF
 
-cp "$probe_dir/pkgconfig/libpng.pc" "$probe_dir/pkgconfig/png.pc"
-cp "$probe_dir/pkgconfig/libpng.pc" "$probe_dir/pkgconfig/png16.pc"
-pkg_config_paths+=("$probe_dir/pkgconfig")
+cp "$tool_pkgconfig_dir/libpng.pc" "$tool_pkgconfig_dir/png.pc"
+cp "$tool_pkgconfig_dir/libpng.pc" "$tool_pkgconfig_dir/png16.pc"
+pkg_config_paths+=("$tool_pkgconfig_dir")
 
 for pkg_dir in \
   "$repo_dir/sagemath/gmp/dist/wasi-sdk" \
@@ -364,12 +384,12 @@ do
 done
 pkg_config_path="$(IFS=:; echo "${pkg_config_paths[*]}")"
 
-cross_file="$probe_dir/cowasm-wasi.ini"
+cross_file="$tool_dir/cowasm-wasi.ini"
 pkg_config="$src_dir/cowasm-pkg-config.py"
 cat >"$cross_file" <<EOF
 [binaries]
-c = '$probe_dir/bin/wasi-sdk-clang-next'
-cpp = '$probe_dir/bin/wasi-sdk-clang++-next'
+c = '$tool_bin_dir/wasi-sdk-clang-next'
+cpp = '$tool_bin_dir/wasi-sdk-clang++-next'
 ar = '$bin_dir/wasi-sdk-llvm-ar-next'
 strip = '$bin_dir/wasi-sdk-llvm-strip-next'
 pkg-config = '$pkg_config'
@@ -391,35 +411,40 @@ cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allo
 cowasm_libcxx = '$libcxx_wasi_sdk/libcxx.so'
 EOF
 
-set +e
-PYTHONPATH="$pythonpath" \
-PKG_CONFIG_PATH="$pkg_config_path" \
-PKG_CONFIG_LIBDIR="$pkg_config_path" \
-PKG_CONFIG="$pkg_config" \
-  meson setup \
-    "$build_dir/cowasm-meson-build" \
-    "$build_dir" \
-    --cross-file "$cross_file" \
-    --prefix "$dist_dir" \
-    --default-library=static \
-    -Dbuild-docs=false \
-    -Dbliss=disabled \
-    -Dbrial=disabled \
-    -Dcoxeter3=disabled \
-    -Declib=disabled \
-    -Dlibbraiding=enabled \
-    -Dlibhomfly=disabled \
-    -Dmcqd=disabled \
-    -Drankwidth=disabled \
-    -Dsirocco=disabled \
-    -Dtdlib=disabled \
-    >"$log_file" 2>&1
-meson_status=$?
-set -e
+if [ "$resume_standalone_build" -eq 1 ] && [ -f "$meson_build_dir/build.ninja" ]; then
+  printf 'sagelite-resume: reusing existing Meson build directory %s\n' \
+    "$meson_build_dir" >"$log_file"
+else
+  set +e
+  PYTHONPATH="$pythonpath" \
+  PKG_CONFIG_PATH="$pkg_config_path" \
+  PKG_CONFIG_LIBDIR="$pkg_config_path" \
+  PKG_CONFIG="$pkg_config" \
+    meson setup \
+      "$meson_build_dir" \
+      "$build_dir" \
+      --cross-file "$cross_file" \
+      --prefix "$dist_dir" \
+      --default-library=static \
+      -Dbuild-docs=false \
+      -Dbliss=disabled \
+      -Dbrial=disabled \
+      -Dcoxeter3=disabled \
+      -Declib=disabled \
+      -Dlibbraiding=enabled \
+      -Dlibhomfly=disabled \
+      -Dmcqd=disabled \
+      -Drankwidth=disabled \
+      -Dsirocco=disabled \
+      -Dtdlib=disabled \
+      >"$log_file" 2>&1
+  meson_status=$?
+  set -e
 
-if [ "$meson_status" -ne 0 ]; then
-  tail -80 "$log_file" >&2
-  record_blocker "sagelite-blocked: meson setup failed; see $log_file for the first configure blocker."
+  if [ "$meson_status" -ne 0 ]; then
+    tail -80 "$log_file" >&2
+    record_blocker "sagelite-blocked: meson setup failed; see $log_file for the first configure blocker."
+  fi
 fi
 
 cython_targets_file="$probe_dir/cython-targets.txt"
@@ -433,7 +458,7 @@ awk '
       print outputs[i]
     }
   }
-' "$build_dir/cowasm-meson-build/build.ninja" >"$cython_targets_file"
+' "$meson_build_dir/build.ninja" >"$cython_targets_file"
 
 if [ -s "$cython_targets_file" ]; then
   cython_generate_status=0
@@ -446,7 +471,7 @@ if [ -s "$cython_targets_file" ]; then
     PKG_CONFIG_PATH="$pkg_config_path" \
     PKG_CONFIG_LIBDIR="$pkg_config_path" \
     PKG_CONFIG="$pkg_config" \
-      xargs ninja -j "$cython_generate_jobs" -C "$build_dir/cowasm-meson-build" \
+      xargs ninja -j "$cython_generate_jobs" -C "$meson_build_dir" \
         <"$cython_targets_file" >>"$dist_dir/meson-cython-generate.log" 2>&1
     cython_generate_status=$?
     set -e
@@ -465,7 +490,7 @@ PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
 PKG_CONFIG="$pkg_config" \
-  meson compile -j "$meson_compile_jobs" -C "$build_dir/cowasm-meson-build" >"$dist_dir/meson-compile.log" 2>&1
+  meson compile -j "$meson_compile_jobs" -C "$meson_build_dir" >"$dist_dir/meson-compile.log" 2>&1
 compile_status=$?
 set -e
 if [ "$compile_status" -ne 0 ]; then
@@ -478,7 +503,7 @@ PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
 PKG_CONFIG="$pkg_config" \
-  meson install -C "$build_dir/cowasm-meson-build" --destdir "$dist_dir/stage" >"$dist_dir/meson-install.log" 2>&1
+  meson install -C "$meson_build_dir" --destdir "$dist_dir/stage" >"$dist_dir/meson-install.log" 2>&1
 install_status=$?
 set -e
 if [ "$install_status" -ne 0 ]; then
