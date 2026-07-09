@@ -42980,6 +42980,31 @@ requirements, so the next useful run should start from a changed dependency
 boundary, a refreshed runtime capability, or a deliberately selected backend
 cluster rather than another broad low-noise frontier scan.
 
+Follow-up p-adic generic-element boundary pass on 2026-07-09 UTC: no corpus
+entry was promoted. A live file-error diagnostic scan still showed an older
+`src/sage/rings/padics/padic_generic_element.pyx` crash at
+`Qp(2).extension(x^3 - 2)`. A fresh focused rerun reproduced the same
+NTL-backed p-adic extension trap, and narrow line tagging only advanced the
+full-file crash to the next `W.extension(x^2 + 3)` examples. The file has many
+similar extension doctests, so the WASI source patch now marks
+`padic_generic_element.pyx` with a file-level `# sage.doctest: needs
+sage.libs.ntl` directive, matching the existing p-adic NTL template boundary
+instead of adding a long list of per-example skips.
+
+Focused validation against the current patched source tree records:
+
+```text
+padic_generic_element.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The skipped-only candidate report groups the file under
+`optional:sage.libs.ntl`, the saved file-error cluster query is empty for the
+fresh database, and the recursive file-error diagnostic scan with
+`--suppress-superseded-failures` no longer reports the stale
+`padic_generic_element.pyx` crash when the fresh skip database is included. A
+dry-run application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
+against `/home/user/sagelite` succeeds with the new hunk.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

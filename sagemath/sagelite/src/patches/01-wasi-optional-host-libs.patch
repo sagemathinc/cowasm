@@ -12754,6 +12754,11 @@ diff -urN -U0 a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/
 +            sage: up = loads(dumps(u))  # known bug - lattice p-adic pickle option drift
 +            sage: vp = loads(dumps(v))  # known bug - lattice p-adic pickle option drift
 +            sage: up + vp               # known bug - lattice p-adic pickle option drift
+diff -urN -U0 a/src/sage/rings/padics/padic_generic_element.pyx b/src/sage/rings/padics/padic_generic_element.pyx
+--- a/src/sage/rings/padics/padic_generic_element.pyx
++++ b/src/sage/rings/padics/padic_generic_element.pyx
+@@ -1,0 +1 @@
++# sage.doctest: needs sage.libs.ntl
 diff --git a/src/sage/rings/padics/padic_valuation.py b/src/sage/rings/padics/padic_valuation.py
 --- a/src/sage/rings/padics/padic_valuation.py
 +++ b/src/sage/rings/padics/padic_valuation.py
