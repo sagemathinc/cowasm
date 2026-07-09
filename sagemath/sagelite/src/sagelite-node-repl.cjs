@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 102;
+const doctestRunnerVersion = 103;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -411,33 +411,41 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
   fs.mkdirSync(tmpDirRoot, { recursive: true });
   const tmpDir = fs.mkdtempSync(path.join(tmpDirRoot, ".sagelite-doctest-"));
   const begin = Date.now();
+  let runId = null;
+  const pendingResults = new Map();
+  let nextCheckpointIndex = 0;
+  const checkpointResult = (result) => {
+    pendingResults.set(result.index, result);
+    while (pendingResults.has(nextCheckpointIndex)) {
+      const nextResult = pendingResults.get(nextCheckpointIndex);
+      pendingResults.delete(nextCheckpointIndex);
+      if (runId !== null) {
+        writeDoctestTaskResult(options.dbPath, runId, run, nextResult);
+      }
+      appendDoctestTaskResult(run, nextResult);
+      if (runId !== null) {
+        refreshDoctestRunTotals(run, begin);
+        updateDoctestRun(options.dbPath, runId, run);
+      }
+      nextCheckpointIndex += 1;
+    }
+  };
   try {
-    const results = await runDoctestFileTasks({
+    ensureDoctestSchema(options.dbPath);
+    runId = insertDoctestRun(options.dbPath, run);
+    await runDoctestFileTasks({
       files: options.files,
       jobs: Math.min(options.jobs, options.files.length),
       tmpDir,
       options,
       invocationCwd,
       resourceRoot: pythonOptions.resourceRoot,
+      onResult: checkpointResult,
     });
-    for (const result of results) {
-      if (Array.isArray(result.files)) {
-        for (const file of result.files) {
-          run.files.push(file);
-        }
-      }
-      if (result.errorFile) {
-        run.files.push(result.errorFile);
-      }
-    }
     run.status = "finished";
   } finally {
     run.finished_at = new Date().toISOString();
-    run.duration_ms = Date.now() - begin;
-    run.total_blocks = run.files.reduce((n, file) => n + file.total_blocks, 0);
-    run.passed_blocks = run.files.reduce((n, file) => n + file.passed_blocks, 0);
-    run.failed_blocks = run.files.reduce((n, file) => n + file.failed_blocks, 0);
-    run.skipped_blocks = run.files.reduce((n, file) => n + file.skipped_blocks, 0);
+    refreshDoctestRunTotals(run, begin);
     if (run.status !== "error") {
       run.status = run.failed_blocks === 0 ? "passed" : "failed";
     }
@@ -445,7 +453,11 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
       run.failed_blocks = run.files.length;
     }
     try {
-      writeDoctestSqlite(options.dbPath, run);
+      if (runId !== null) {
+        updateDoctestRun(options.dbPath, runId, run);
+      } else {
+        writeDoctestSqlite(options.dbPath, run);
+      }
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
@@ -461,6 +473,7 @@ async function runDoctestFileTasks({
   options,
   invocationCwd,
   resourceRoot,
+  onResult = null,
 }) {
   const results = new Array(files.length);
   let nextIndex = 0;
@@ -471,7 +484,7 @@ async function runDoctestFileTasks({
       if (index >= files.length) {
         return;
       }
-      results[index] = await runDoctestFileTask({
+      const result = await runDoctestFileTask({
         index,
         file: files[index],
         tmpDir,
@@ -479,6 +492,10 @@ async function runDoctestFileTasks({
         invocationCwd,
         resourceRoot,
       });
+      results[index] = result;
+      if (onResult) {
+        onResult(result);
+      }
     }
   }
   await Promise.all(Array.from({ length: jobs }, () => workerLoop()));
@@ -721,6 +738,17 @@ function appendDoctestFiles(run, parsed) {
   }
   for (const file of parsed.files) {
     run.files.push(file);
+  }
+}
+
+function appendDoctestTaskResult(run, result) {
+  if (Array.isArray(result.files)) {
+    for (const file of result.files) {
+      run.files.push(file);
+    }
+  }
+  if (result.errorFile) {
+    run.files.push(result.errorFile);
   }
 }
 
@@ -2918,6 +2946,33 @@ function writeDoctestSqlite(dbPath, run) {
   }
 }
 
+function writeDoctestTaskResult(dbPath, runId, run, result) {
+  const files = [];
+  if (Array.isArray(result.files)) {
+    files.push(...result.files);
+  }
+  if (result.errorFile) {
+    files.push(result.errorFile);
+  }
+  for (const file of files) {
+    const fileId = insertDoctestFile(dbPath, runId, file);
+    try {
+      insertDoctestBlocks(dbPath, fileId, file, run);
+    } catch (err) {
+      deleteDoctestFile(dbPath, fileId);
+      throw err;
+    }
+  }
+}
+
+function refreshDoctestRunTotals(run, begin) {
+  run.duration_ms = Date.now() - begin;
+  run.total_blocks = run.files.reduce((n, file) => n + file.total_blocks, 0);
+  run.passed_blocks = run.files.reduce((n, file) => n + file.passed_blocks, 0);
+  run.failed_blocks = run.files.reduce((n, file) => n + file.failed_blocks, 0);
+  run.skipped_blocks = run.files.reduce((n, file) => n + file.skipped_blocks, 0);
+}
+
 function insertDoctestRun(dbPath, run) {
   const rows = [
     "PRAGMA foreign_keys=ON;",
@@ -2949,6 +3004,24 @@ function insertDoctestRun(dbPath, run) {
     throw new Error(`could not determine doctest run id from sqlite output: ${rawRunId}`);
   }
   return Number(rawRunId);
+}
+
+function updateDoctestRun(dbPath, runId, run) {
+  sqliteExec(
+    dbPath,
+    `PRAGMA foreign_keys=ON;
+    BEGIN IMMEDIATE;
+    UPDATE runs SET
+      finished_at = ${sqlString(run.finished_at)},
+      status = ${sqlString(run.status)},
+      total_blocks = ${sqlNumber(run.total_blocks)},
+      passed_blocks = ${sqlNumber(run.passed_blocks)},
+      failed_blocks = ${sqlNumber(run.failed_blocks)},
+      skipped_blocks = ${sqlNumber(run.skipped_blocks)},
+      duration_ms = ${sqlNumber(run.duration_ms)}
+    WHERE id = ${sqlNumber(runId)};
+    COMMIT;`,
+  );
 }
 
 function insertDoctestFile(dbPath, runId, file) {

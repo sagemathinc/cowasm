@@ -43752,6 +43752,26 @@ against `.tmp/current-run/**/*.sqlite3` and `.tmp/codex-sagelite/**/*.sqlite3`,
 and a focused `sage -t` probe of `sol/lp_doctest.py` that recorded
 `0 passed, 0 failed, 1 skipped`.
 
+Follow-up long-corpus checkpoint pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded promotion-candidate, near-miss, file-error,
+skipped-only, and source-frontier scans over `.tmp/current-run/**/*.sqlite3`
+plus `.tmp/codex-sagelite/**/*.sqlite3` remained quiet with strict
+runner-version and plan-mentioned subtraction filters.
+
+The doctest runner now opens the SQLite run before dispatching workers and
+checkpoints completed file rows in original input order as soon as each
+contiguous worker result is available. Runner version 103 keeps the existing
+schema and final summaries, but updates run totals after each checkpoint, so
+an interrupted long corpus refresh leaves a queryable partial dashboard
+instead of the previous zero-byte default database until all workers finish.
+
+Focused validation used `node --check` for `sagelite-node-repl.cjs`, a normal
+`sage -t` run of `src/sage/env.py` that recorded
+`passed|40|31|0|9|103`, and an interruption probe over `env.py` followed by
+`real_mpfr.pyx`; after terminating the still-running parent, the SQLite
+database contained the runner-103 run row and the completed `env.py` file row
+with `40` recorded blocks. `git diff --check` also passed.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
