@@ -52,13 +52,33 @@ tool_bin_dir="$tool_dir/bin"
 tool_pkgconfig_dir="$tool_dir/pkgconfig"
 meson_build_dir="$build_dir/cowasm-meson-build"
 
+meson_build_uses_stable_tools() {
+  local meson_dir="$1"
+  local stable_tool_dir="$2"
+  local transient_tool_re='/tmp/tmp[^/]+/(bin|pkgconfig|cowasm-wasi[.]ini)'
+
+  if [ -d "$meson_dir/meson-info" ] &&
+      grep -R -F "$stable_tool_dir" "$meson_dir/meson-info" >/dev/null &&
+      ! grep -R -E "$transient_tool_re" "$meson_dir/meson-info" >/dev/null; then
+    return 0
+  fi
+
+  if [ -f "$meson_dir/meson-private/coredata.dat" ] &&
+      grep -a -F "$stable_tool_dir" "$meson_dir/meson-private/coredata.dat" >/dev/null &&
+      ! grep -a -E "$transient_tool_re" "$meson_dir/meson-private/coredata.dat" >/dev/null; then
+    return 0
+  fi
+
+  return 1
+}
+
 cowasm_standalone_probe "sagelite" wasi-sdk "$bin_dir" "$probe_dir"
 
 rm -rf "$dist_dir"
 if [ "$resume_standalone_build" -eq 0 ]; then
   rm -rf "$meson_build_dir"
 elif [ -f "$meson_build_dir/build.ninja" ] &&
-    ! grep -F "$tool_dir/cowasm-wasi.ini" "$meson_build_dir/build.ninja" >/dev/null; then
+    ! meson_build_uses_stable_tools "$meson_build_dir" "$tool_dir"; then
   rm -rf "$meson_build_dir"
 fi
 mkdir -p "$dist_dir" "$meson_build_dir" "$tool_bin_dir" "$tool_pkgconfig_dir"

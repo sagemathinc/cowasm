@@ -42255,6 +42255,27 @@ may need one fresh configure/generation pass; later interrupted runs can reuse
 the stable helper paths. Validation for this pass covered shell syntax and the
 resume-argument guard, without running the full standalone rebuild.
 
+Follow-up standalone resume-guard pass on 2026-07-09: no corpus entry was
+promoted. Static validation of the existing interrupted Meson build showed
+that Meson records the compiler and pkg-config helper wrappers in
+`meson-info` and `meson-private/coredata.dat`, while `build.ninja` does not
+necessarily contain the cross-file path. The previous resume compatibility
+guard therefore risked discarding even a freshly stable resumed build on every
+run.
+
+The standalone script now accepts a resumable Meson directory when Meson's
+introspection/coredata references the stable
+`build/wasi-sdk/.cowasm-standalone` helper tree and rejects directories that
+still reference deleted `/tmp/tmp...` helper paths. The current interrupted
+build tree is still correctly classified as stale because its metadata points
+at `/tmp/tmp.3bJkRQrcju`. A synthetic guard probe confirmed that stable helper
+metadata is accepted while stale and empty Meson metadata are rejected.
+
+Validation used `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`git diff --check`, a resumed `make -n` invocation, direct inspection of the
+current stale Meson metadata, and the synthetic guard probe. A full standalone
+resource rebuild was not run in this pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
