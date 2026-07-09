@@ -19752,6 +19752,146 @@ diff --git a/src/sage/plot/plot3d/bugs.txt b/src/sage/plot/plot3d/bugs.txt
  We draw a spiral of spheres:
     sage: v = [(sin(i),cos(i),i) for i in [-4,-3.5,..4]]
     sage: S = sum(sphere(v[i], size=1/2, color=((i-4)/8, 1/2,(4-i)/8)) for i in range(len(v)))
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -907,18 +907,18 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         ::
+
+-            sage: K.<z> = CyclotomicField(3)
+-            sage: R.<x,y> = K[]
+-            sage: f = x^2 + z*y
+-            sage: f.change_ring(K.embeddings(CC)[1])
++            sage: K.<z> = CyclotomicField(3)                                           # needs sage.rings.number_field
++            sage: R.<x,y> = K[]                                                        # needs sage.rings.number_field
++            sage: f = x^2 + z*y                                                        # needs sage.rings.number_field
++            sage: f.change_ring(K.embeddings(CC)[1])                                   # needs sage.rings.number_field
+             x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
+
+         ::
+
+-            sage: K.<w> = CyclotomicField(5)
+-            sage: R.<x,y> = K[]
+-            sage: f = x^2 + w*y
+-            sage: f.change_ring(K.embeddings(QQbar)[1])
++            sage: K.<w> = CyclotomicField(5)                                           # needs sage.rings.number_field
++            sage: R.<x,y> = K[]                                                        # needs sage.rings.number_field
++            sage: f = x^2 + w*y                                                        # needs sage.rings.number_field
++            sage: f.change_ring(K.embeddings(QQbar)[1])                                # needs sage.rings.number_field
+             x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
+
+         TESTS:
+@@ -1052,18 +1052,18 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         Multivariate polynomial over a cyclotomic field::
+
+-            sage: F.<zeta> = CyclotomicField(8)
+-            sage: P.<x,y> = F[]
+-            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
+-            sage: gap(p)     # indirect doctest
++            sage: F.<zeta> = CyclotomicField(8)                                        # needs sage.rings.number_field
++            sage: P.<x,y> = F[]                                                        # needs sage.rings.number_field
++            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y                        # needs sage.rings.number_field
++            sage: gap(p)     # indirect doctest                                        # needs sage.rings.number_field
+             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
+
+         Multivariate polynomial over a polynomial ring over a cyclotomic field::
+
+-            sage: S.<z> = F[]
+-            sage: P.<x,y> = S[]
+-            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
+-            sage: gap(p)     # indirect doctest
++            sage: S.<z> = F[]                                                          # needs sage.rings.number_field
++            sage: P.<x,y> = S[]                                                        # needs sage.rings.number_field
++            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z                # needs sage.rings.number_field
++            sage: gap(p)     # indirect doctest                                        # needs sage.rings.number_field
+             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
+         """
+         R = gap(self.parent())
+@@ -1090,18 +1090,18 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         Multivariate polynomial over a cyclotomic field::
+
+-            sage: F.<zeta> = CyclotomicField(8)
+-            sage: P.<x,y> = F[]
+-            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
+-            sage: libgap(p)  # indirect doctest
++            sage: F.<zeta> = CyclotomicField(8)                                        # needs sage.rings.number_field
++            sage: P.<x,y> = F[]                                                        # needs sage.rings.number_field
++            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y                        # needs sage.rings.number_field
++            sage: libgap(p)  # indirect doctest                                        # needs sage.rings.number_field
+             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
+
+         Multivariate polynomial over a polynomial ring over a cyclotomic field::
+
+-            sage: S.<z> = F[]
+-            sage: P.<x,y> = S[]
+-            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
+-            sage: libgap(p)  # indirect doctest
++            sage: S.<z> = F[]                                                          # needs sage.rings.number_field
++            sage: P.<x,y> = S[]                                                        # needs sage.rings.number_field
++            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z                # needs sage.rings.number_field
++            sage: libgap(p)  # indirect doctest                                        # needs sage.rings.number_field
+             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
+         """
+         from sage.libs.gap.libgap import libgap
+@@ -1369,25 +1369,25 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         Examples with different base ring::
+
+-            sage: R.<r> = GF(9); S.<s> = GF(81)
+-            sage: h = Hom(R,S)[0]; h
++            sage: R.<r> = GF(9); S.<s> = GF(81)                                        # needs sage.libs.ntl
++            sage: h = Hom(R,S)[0]; h                                                   # needs sage.libs.ntl
+             Ring morphism:
+               From: Finite Field in r of size 3^2
+               To:   Finite Field in s of size 3^4
+               Defn: r |--> 2*s^3 + 2*s^2 + 1
+-            sage: T.<X,Y> = R[]
+-            sage: f = r*X + Y
+-            sage: g = f.map_coefficients(h); g
++            sage: T.<X,Y> = R[]                                                        # needs sage.libs.ntl
++            sage: f = r*X + Y                                                          # needs sage.libs.ntl
++            sage: g = f.map_coefficients(h); g                                         # needs sage.libs.ntl
+             (-s^3 - s^2 + 1)*X + Y
+-            sage: g.parent()
++            sage: g.parent()                                                           # needs sage.libs.ntl
+             Multivariate Polynomial Ring in X, Y over Finite Field in s of size 3^4
+-            sage: h = lambda x: x.trace()
+-            sage: g = f.map_coefficients(h); g
++            sage: h = lambda x: x.trace()                                              # needs sage.libs.ntl
++            sage: g = f.map_coefficients(h); g                                         # needs sage.libs.ntl
+             X - Y
+-            sage: g.parent()
++            sage: g.parent()                                                           # needs sage.libs.ntl
+             Multivariate Polynomial Ring in X, Y over Finite Field in r of size 3^2
+-            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g
++            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g                    # needs sage.libs.ntl
+             X - Y
+-            sage: g.parent()
++            sage: g.parent()                                                           # needs sage.libs.ntl
+             Multivariate Polynomial Ring in X, Y over Finite Field of size 3
+         """
+@@ -2129,12 +2129,12 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         EXAMPLES::
+
+-            sage: Q.<z> = Frac(QQ['z'])
+-            sage: R.<x,y> = Q[]
+-            sage: r = x*y - (2*z-1)/(z^2+z+1) * x + y/z
+-            sage: p = r * (x + z*y - 1/z^2)
+-            sage: q = r * (x*y*z + 1)
+-            sage: gcd(p, q)
++            sage: Q.<z> = Frac(QQ['z'])                                                # needs sage.rings.fraction_field
++            sage: R.<x,y> = Q[]                                                        # needs sage.rings.fraction_field
++            sage: r = x*y - (2*z-1)/(z^2+z+1) * x + y/z                                # needs sage.rings.fraction_field
++            sage: p = r * (x + z*y - 1/z^2)                                            # needs sage.rings.fraction_field
++            sage: q = r * (x*y*z + 1)                                                   # needs sage.rings.fraction_field
++            sage: gcd(p, q)                                                            # needs sage.rings.fraction_field
+             (z^3 + z^2 + z)*x*y + (-2*z^2 + z)*x + (z^2 + z + 1)*y
+
+         Polynomials over polynomial rings are converted to a simpler polynomial
 diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
 --- a/src/sage/rings/ring.pyx
 +++ b/src/sage/rings/ring.pyx

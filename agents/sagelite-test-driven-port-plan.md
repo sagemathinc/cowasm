@@ -43209,6 +43209,41 @@ of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 recursive scratch-database subtraction plus file-error subtraction prints only
 the header row.
 
+Follow-up multivariate-polynomial boundary pass on 2026-07-09 UTC: no corpus
+entry was promoted. The standard guarded source-frontier, live file-error, and
+near-miss scans over `.tmp/current-run/**/*.sqlite3` remained quiet, so the
+scheduled run targeted the documented `sage/rings/polynomial/multi_polynomial.pyx`
+file-level crash directly.
+
+Focused full-file reruns advanced the stale line-910 cyclotomic-field crash
+through three narrower dependency boundaries. The WASI source patch now marks
+the `CyclotomicField(3)` and `CyclotomicField(5)` `change_ring` examples, the
+GAP/libGAP cyclotomic examples, the finite-field extension morphism block that
+loads NTL `ZZ_pContext.restore`, and the rational-function GCD setup with
+explicit `sage.rings.number_field`, `sage.libs.ntl`, or
+`sage.rings.fraction_field` metadata.
+
+After those classifications, the current full-file frontier is no longer the
+historical cyclotomic setup. The fresh database
+`.tmp/current-run/scheduled-2026-07-09-multi-polynomial/multi-polynomial-after-v5.sqlite3`
+records a file-level `Error` at:
+
+```text
+multi_polynomial.pyx:2211
+a.nth_root(5)
+RangeError: Maximum call stack size exceeded
+```
+
+That remaining failure is a plain multivariate polynomial `nth_root` example
+over `QQ[]`, so the next useful `multi_polynomial.pyx` pass should treat it as
+a polynomial runtime/recursion cluster rather than another dependency-scope
+tagging pass. Validation used a fresh patched source-copy rebuild, focused
+SQLite reruns through `multi_polynomial-after-v5.sqlite3`, focused `--line`
+reruns for lines 910, 1372, and 2131 that each recorded `0 passed, 0 failed,
+1 skipped`, `git diff --check`, and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
