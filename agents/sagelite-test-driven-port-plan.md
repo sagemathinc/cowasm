@@ -42595,6 +42595,39 @@ The saved skip query groups the file under
 file-failure cluster queries are empty. The file remains outside the curated
 corpus until that backend is available.
 
+Follow-up polyhedron number-field boundary pass on 2026-07-09: the normal
+source-frontier helper produced no rows after the plan-mentioned subtraction,
+so this pass used focused adjacent probes instead of another broad scan. The
+low-prompt pbori/PARI/doctest batch remained skipped-only, the modular
+modform adjacent batch was already covered by existing file-level integer
+dense matrix directives, and a small Judson textbook batch still exposed broad
+group, poset, symbolic, and number-field clusters rather than a clean
+promotion candidate.
+
+The clearest single backend boundary was
+`sage/geometry/polyhedron/backend_number_field.py`, which timed out at
+`NumberField(x^2 - x - 1, embedding=1.618)` before persisting useful block
+coverage. The WASI source patch now marks that file with a file-level
+`# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field`
+directive, matching the current browser profile where number-field polyhedron
+backend coverage is intentionally out of scope.
+
+Focused make-target validation rebuilt a fresh patched source copy and used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-port-plan-2/backend-number-field-make-v2.sqlite3`.
+The one-file run records:
+
+```text
+backend_number_field.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the skip under
+`optional:sage.geometry.polyhedron,sage.rings.number_field`. The file remains
+outside the curated corpus until the number-field polyhedron backend is
+available in the browser-compatible profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

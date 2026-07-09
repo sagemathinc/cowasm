@@ -16891,6 +16891,12 @@ diff --git a/src/sage/geometry/polyhedron/double_description.py b/src/sage/geome
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field
  r"""
+diff --git a/src/sage/geometry/polyhedron/backend_number_field.py b/src/sage/geometry/polyhedron/backend_number_field.py
+--- a/src/sage/geometry/polyhedron/backend_number_field.py
++++ b/src/sage/geometry/polyhedron/backend_number_field.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron sage.rings.number_field
+ r"""
 diff --git a/src/sage/geometry/triangulation/element.py b/src/sage/geometry/triangulation/element.py
 --- a/src/sage/geometry/triangulation/element.py
 +++ b/src/sage/geometry/triangulation/element.py
