@@ -240,7 +240,7 @@ sage-doctest-candidates:
 	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
 	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
 	  --min-passed "${SAGELITE_DOCTEST_CANDIDATE_MIN_PASSED}" \
-	  $(foreach path,${SAGELITE_DOCTEST_CANDIDATE_MENTIONED},--mentioned-file "$(path)") \
+	  $(foreach path,${SAGELITE_DOCTEST_CANDIDATE_MENTIONED},--mentioned-file "$(if $(filter /%,$(path)),$(path),${SAGELITE_DOCTEST_PATH_ROOT}/$(path))") \
 	  $(foreach pattern,${SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB},--database-glob "$(if $(filter /%,$(pattern)),$(pattern),${SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB_ROOT}/$(pattern))") \
 	  $(foreach database,${SAGELITE_DOCTEST_CANDIDATE_DATABASES},"$(if $(filter /%,$(database)),$(database),${SAGELITE_DOCTEST_PATH_ROOT}/$(database))") \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_CANDIDATE_FAIL_ON_ROWS}),--fail-on-rows,) \
@@ -256,7 +256,7 @@ sage-doctest-source-frontier:
 	python3 ${SRC}/doctest-source-frontier.py \
 	  --corpus "${SAGELITE_DOCTEST_CORPUS}" \
 	  --source-root "${SAGELITE_DOCTEST_SOURCE}" \
-	  $(foreach path,${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED},--mentioned-file "$(path)") \
+	  $(foreach path,${SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED},--mentioned-file "$(if $(filter /%,$(path)),$(path),${SAGELITE_DOCTEST_PATH_ROOT}/$(path))") \
 	  $(foreach database,${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASES},--subtract-database "$(if $(filter /%,$(database)),$(database),${SAGELITE_DOCTEST_PATH_ROOT}/$(database))") \
 	  $(foreach pattern,${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB},--subtract-database-glob "$(if $(filter /%,$(pattern)),$(pattern),${SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB_ROOT}/$(pattern))") \
 	  $(if $(filter 1 true yes,${SAGELITE_DOCTEST_SOURCE_FRONTIER_REQUIRE_DATABASE}),--require-subtraction-database,) \

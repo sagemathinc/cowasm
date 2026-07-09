@@ -42911,6 +42911,40 @@ on `doctest-corpus-candidates.py`, `bash -n` on
 new suppression rule, and the real recursive scratch file-error diagnostic
 scan over `.tmp/current-run/**/*.sqlite3`.
 
+Follow-up scheduled wrapper-path pass on 2026-07-09 UTC: no corpus entry was
+promoted. Direct strict scans over `.tmp/current-run/**/*.sqlite3` with the
+plan-mentioned subtraction printed only header rows for clean promotion
+candidates, live file-scope errors, and near misses under the current
+runner-version gate.
+
+The Make wrappers now normalize relative
+`SAGELITE_DOCTEST_CANDIDATE_MENTIONED` and
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED` entries against
+`SAGELITE_DOCTEST_PATH_ROOT`, matching the existing relative-path behavior for
+scratch database inputs. This keeps scheduled runs from failing when launched
+from the repository root with repo-relative mention-subtraction overrides such
+as `agents/sagelite-test-driven-port-plan.md`, even though the recipe itself
+runs under `make -C sagemath/sagelite`.
+
+Focused validation reran both make targets with that repo-relative override:
+
+```sh
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED='agents/sagelite-test-driven-port-plan.md' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_FLAGS='--strict-frontier' \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_FLAGS='--ignore-invalid-databases --quiet-invalid-databases'
+
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3' \
+  SAGELITE_DOCTEST_CANDIDATE_MENTIONED='agents/sagelite-test-driven-port-plan.md' \
+  SAGELITE_DOCTEST_CANDIDATE_FLAGS='--strict-frontier --min-runner-version 83 --dedupe-paths --include-header' \
+  SAGELITE_DOCTEST_CANDIDATE_INVALID_FLAGS='--ignore-invalid --quiet-invalid'
+```
+
+The source-frontier wrapper printed no rows, and the candidate wrapper printed
+only the header row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
