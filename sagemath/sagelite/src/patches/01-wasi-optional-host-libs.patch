@@ -20026,6 +20026,33 @@ diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/p
              start = S(self.get_unsafe(0).nth_root(n))
 
          cdef Polynomial p, q
+diff --git a/src/sage/graphs/mcqd.pyx b/src/sage/graphs/mcqd.pyx
+--- a/src/sage/graphs/mcqd.pyx
++++ b/src/sage/graphs/mcqd.pyx
+@@ -1,4 +1,5 @@
+ # distutils: language = c++
++# sage.doctest: needs mcqd sage.graphs
+
+ from cysignals.signals cimport sig_on, sig_off
+ from memory_allocator cimport MemoryAllocator
+diff --git a/src/sage/graphs/graph_decompositions/tdlib.pyx b/src/sage/graphs/graph_decompositions/tdlib.pyx
+--- a/src/sage/graphs/graph_decompositions/tdlib.pyx
++++ b/src/sage/graphs/graph_decompositions/tdlib.pyx
+@@ -1,5 +1,6 @@
+ # distutils: language = c++
+ # distutils: extra_compile_args = -std=c++11
++# sage.doctest: needs sage.graphs tdlib
+
+ r"""
+ Interface with TdLib (algorithms for tree decompositions)
+diff --git a/src/sage/databases/symbolic_data.py b/src/sage/databases/symbolic_data.py
+--- a/src/sage/databases/symbolic_data.py
++++ b/src/sage/databases/symbolic_data.py
+@@ -1,2 +1,4 @@
++# sage.doctest: needs database_symbolic_data
++
+ """
+ Ideals from the Symbolic Data project
 diff --git a/src/sage/rings/ring.pyx b/src/sage/rings/ring.pyx
 --- a/src/sage/rings/ring.pyx
 +++ b/src/sage/rings/ring.pyx

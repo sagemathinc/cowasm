@@ -43553,6 +43553,31 @@ Focused validation used `python3 -m py_compile` for
 excluded skipped-only output, and the guarded skipped-only make-target scan
 with `--exclude-file-skip-directives`.
 
+Follow-up optional dependency boundary pass on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded current-run promotion, near-miss, file-error, and
+source-frontier scans remained quiet. A widened skipped-only diagnostic scan
+still surfaced three whole-file optional dependency boundaries:
+`src/sage/graphs/mcqd.pyx`,
+`src/sage/graphs/graph_decompositions/tdlib.pyx`, and
+`src/sage/databases/symbolic_data.py`.
+
+The WASI source patch now marks those files with file-level
+`# sage.doctest: needs ...` directives for their unavailable optional
+backends. Focused validation against the active patched tree records:
+
+```text
+mcqd.pyx: 0 passed, 0 failed, 1 skipped
+tdlib.pyx: 0 passed, 0 failed, 1 skipped
+symbolic_data.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the rows under `optional:mcqd,sage.graphs`,
+`optional:sage.graphs,tdlib`, and `optional:database_symbolic_data`; saved
+block- and file-failure cluster queries are empty. `git diff --check` passes,
+and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against a
+fresh `/home/user/sagelite` copy succeeds.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
