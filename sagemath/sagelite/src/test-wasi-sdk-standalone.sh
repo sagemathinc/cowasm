@@ -1383,7 +1383,6 @@ print('sagelite-node-ok Sage PARI rational converter boundary')"
 cat >>"$followups_file" <<'EOFOLLOWUPS'
 sagelite-followup: rational polynomial roots over QQ exit before the Node.js polynomial helper smoke marker when promoted to the standalone import ladder.
 sagelite-followup: integer matrix right_kernel exits before the Node.js linear algebra smoke marker when promoted to the standalone import ladder.
-sagelite-followup: basic Graph and Poset construction stop at missing sage.graphs.generic_graph_pyx in the staged Electron resource tree.
 sagelite-followup: free-module basis and diagonal_matrix promotion need sage.rings.polynomial.plural packaged before Sequence-backed constructors can enter the standalone smoke.
 sagelite-followup: rectangular finite-field matrix row/column materialization triggers a dynamic-load malloc import LinkError when promoted to the Electron-shaped smoke.
 sagelite-followup: finite-field matrix row/column views, submatrix extraction, deletion, and row/column mutation pass isolated Electron-shaped probes but trigger the same dynamic-load malloc LinkError in the combined packaged smoke.
@@ -1405,6 +1404,16 @@ run_node_import \
   "import lrcalc
 assert lrcalc.lrcoef([2, 1], [1], [2]) == 1
 print('sagelite-node-ok lrcalc Python extension smoke')"
+run_node_import \
+  "basic graph polynomial smoke" \
+  "import sage.rings.all
+from sage.graphs.graph import Graph
+G = Graph([(1, 2), (2, 3)])
+assert G.is_connected()
+assert str(G.chromatic_polynomial()) == 'x^3 - 2*x^2 + x'
+assert str(G.matching_polynomial()) == 'x^3 - 2*x'
+assert G.spanning_trees_count() == 1
+print('sagelite-node-ok basic graph polynomial smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"

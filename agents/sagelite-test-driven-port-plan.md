@@ -42170,6 +42170,38 @@ ring initialization. Graph corpus promotion is still deferred until a focused
 doctest probe identifies a quiet graph file or the remaining graph algorithm
 boundaries are tagged.
 
+Follow-up graph chromatic-polynomial linkage pass on 2026-07-09: no corpus
+entry was promoted. The scheduled run continued the graph backend cluster from
+the basic `Graph` constructor/import surface and found the next focused
+runtime gap at `G.chromatic_polynomial()`, which stopped at
+`ModuleNotFoundError: No module named 'sage.graphs.chrompoly'`. The
+`chrompoly.pyx` extension only depends on cysignals, the memory allocator,
+GMP, and FLINT polynomial support, so the WASI source patch now builds it
+outside the optional `cliquer`/`planarity` graph-library gate alongside the
+other core graph helper modules.
+
+Focused validation rebuilt `chrompoly.cpython-314-wasm32-wasi.so` in the
+existing Meson tree, staged it into the ignored runtime install, and confirmed
+under both direct `python-wasi-sdk` and Node `python-wasm` resource execution
+that:
+
+```py
+import sage.rings.all
+from sage.graphs.graph import Graph
+G = Graph([(1, 2), (2, 3)])
+assert G.is_connected()
+assert str(G.chromatic_polynomial()) == 'x^3 - 2*x^2 + x'
+assert str(G.matching_polynomial()) == 'x^3 - 2*x'
+assert G.spanning_trees_count() == 1
+```
+
+The standalone Sagelite smoke now includes this graph polynomial probe, and
+the stale follow-up that still described basic `Graph` construction as blocked
+at missing `generic_graph_pyx` has been removed. The ad hoc staged validation
+also needed `core/libcxx` copied beside `sage/rings/polynomial`, matching the
+standalone installer's existing side-module staging behavior; this was a
+scratch install issue rather than a new `chrompoly` dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
