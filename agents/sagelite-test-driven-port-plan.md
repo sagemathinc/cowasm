@@ -41796,6 +41796,27 @@ focused synthetic SQLite glob probe for fail-fast, mixed valid/unmatched, and
 all-unmatched behavior, plus the guarded candidate and source-frontier make
 targets described above.
 
+Scheduled make-target quiet-scan confirmation on 2026-07-09 UTC: no corpus
+entry was promoted. The default source-frontier make target printed no rows
+with the checked corpus, current patched Sagelite source root, this plan as
+the mentioned-path subtraction, and the one-runnable-prompt filter. The
+candidate and source-frontier make targets also printed no rows when given the
+recursive current-run scratch SQLite glob:
+
+```sh
+make -C sagemath/sagelite sage-doctest-candidates \
+  SAGELITE_DOCTEST_CANDIDATE_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3'
+make -C sagemath/sagelite sage-doctest-source-frontier \
+  SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB='.tmp/current-run/**/*.sqlite3'
+```
+
+The bare `sage-doctest-candidates` target still reports the documented
+all-invalid scan when the default dashboard database is absent; that is the
+candidate helper's intentional guard, not evidence of a remaining promotion
+row. Future scheduled runs should continue to pass an explicit valid dashboard
+or scratch database glob for candidate scans until the default dashboard is
+regenerated.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
