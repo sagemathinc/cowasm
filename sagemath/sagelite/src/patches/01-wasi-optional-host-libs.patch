@@ -70,6 +70,12 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/fields-sage.py b/src/s
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.number_field sage.symbolic sage.libs.pari
  ##          Sage Doctest File         ##
+diff --git a/src/sage/tests/books/judson_abstract_algebra/galois-sage.py b/src/sage/tests/books/judson_abstract_algebra/galois-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/galois-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/galois-sage.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.groups sage.libs.gap sage.libs.pari
+ ##          Sage Doctest File         ##
 diff --git a/src/sage/tests/books/judson_abstract_algebra/groups-sage.py b/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
@@ -15993,6 +15999,12 @@ diff --git a/src/sage/manifolds/family.py b/src/sage/manifolds/family.py
 diff --git a/src/sage/matroids/chow_ring.py b/src/sage/matroids/chow_ring.py
 --- a/src/sage/matroids/chow_ring.py
 +++ b/src/sage/matroids/chow_ring.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.matroids
+ r"""
+diff --git a/src/sage/matroids/chow_ring_ideal.py b/src/sage/matroids/chow_ring_ideal.py
+--- a/src/sage/matroids/chow_ring_ideal.py
++++ b/src/sage/matroids/chow_ring_ideal.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matroids
  r"""

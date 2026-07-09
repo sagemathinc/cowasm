@@ -44171,6 +44171,38 @@ plan-mentioned files included, file-level skip directives excluded, and
 small-file frontier is exhausted until a dependency boundary or doctest
 collector policy changes.
 
+Follow-up matroid/Judson boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. With the guarded scratch frontier still quiet, a widened source
+frontier over the patched tree surfaced two compact unclassified rows:
+`src/sage/matroids/chow_ring_ideal.py` and
+`src/sage/tests/books/judson_abstract_algebra/galois-sage.py`.
+
+Focused probes confirmed both are dependency-boundary files rather than narrow
+runtime regressions. `chow_ring_ideal.py` recorded `1 passed, 125 failed, 0
+skipped`, dominated by missing `matroids`/`Matroid` startup surface and
+dependent polynomial-ideal state failures. `galois-sage.py` recorded `5
+passed, 76 failed, 0 skipped`, rooted at number-field construction through the
+current focused cypari2/PARI boundary, then dependent Galois-group and GAP
+permutation-group examples.
+
+The WASI source patch now records those boundaries as file-level doctest
+metadata: `chow_ring_ideal.py` is tagged `# sage.doctest: needs
+sage.matroids`, and `galois-sage.py` is tagged `# sage.doctest: needs
+sage.rings.number_field sage.groups sage.libs.gap sage.libs.pari`. Focused
+reruns against the refreshed patched source copy record:
+
+```text
+chow_ring_ideal.py: 0 passed, 0 failed, 1 skipped
+galois-sage.py: 0 passed, 0 failed, 1 skipped
+```
+
+The validation databases under
+`.tmp/current-run/scheduled-2026-07-09-boundary-tags/` have empty saved block-
+and file-failure cluster queries, and `skips-by-reason.sql` groups the rows
+under the expected matroid and number-field/group/GAP/PARI file-scope
+metadata. A source-frontier scan with file-level skip directives excluded no
+longer reports either file.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
