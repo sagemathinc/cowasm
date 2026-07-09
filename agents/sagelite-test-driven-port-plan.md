@@ -43661,6 +43661,41 @@ fixtures for timestamp and same-timestamp scan-order handling, `git diff
 --check`, and the strict make-target file-error scan, which printed only its
 header row.
 
+Follow-up real-MPFR PARI factorization boundary pass on 2026-07-09 UTC: no
+corpus entry was promoted. The standard guarded candidate and source-frontier
+make-wrapper scans over `.tmp/current-run/**/*.sqlite3` plus
+`.tmp/codex-sagelite/**/*.sqlite3` remained quiet. A deliberately widened
+no-mention file-error diagnostic scan still surfaced an older
+`src/sage/rings/real_mpfr.pyx` file-level crash at:
+
+```text
+k._factor_univariate_polynomial( x )
+```
+
+The method's docstring explicitly says the helper calls PARI, and the current
+focused rerun failed through the unported CoWasm cypari2 object-model path:
+
+```text
+NotImplementedError: CoWasm cypari2 currently supports only a focused PARI Gen subset
+```
+
+The WASI source patch now marks that contiguous real-polynomial factorization
+TESTS block with `# needs sage.libs.pari`. Focused validation against the
+current patched source tree records:
+
+```text
+real_mpfr.pyx --line 1330: 0 passed, 0 failed, 3 skipped
+```
+
+A full `real_mpfr.pyx` rerun now reaches block-level results instead of a
+file-level crash, recording `701 passed, 310 failed, 96 skipped`. The file
+therefore remains outside the curated corpus; the remaining failures cluster
+around broader real-number string conversion, display, and symbolic constants
+rather than this PARI factorization boundary. Validation also used
+`git diff --check` and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -4,6 +4,11 @@ diff --git a/src/sage/calculus/desolvers.py b/src/sage/calculus/desolvers.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic maxima scipy
  r"""
+diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
+--- a/src/sage/rings/real_mpfr.pyx
++++ b/src/sage/rings/real_mpfr.pyx
+@@ -1326,0 +1327 @@
++            sage: # needs sage.libs.pari
 diff -urN -U0 a/src/sage/symbolic/constants_c_impl.pxi b/src/sage/symbolic/constants_c_impl.pxi
 --- a/src/sage/symbolic/constants_c_impl.pxi
 +++ b/src/sage/symbolic/constants_c_impl.pxi
