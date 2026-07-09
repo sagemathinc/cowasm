@@ -41853,6 +41853,19 @@ settings, a guarded source-frontier make-target scan against
 broad frontier row (`src/sage/graphs/generic_graph.py`) when mention
 subtraction was disabled.
 
+Follow-up candidate runner-version default pass on 2026-07-09 UTC: no corpus
+entry was promoted. The guarded candidate and source-frontier make targets over
+`.tmp/current-run/**/*.sqlite3` both printed no rows, and a skipped-only
+candidate diagnostic across `.tmp/**/*.sqlite3` plus `/tmp/sagelite*.sqlite3`
+printed no rows after excluding explicit optional, needs, long-time, and
+deferred skip tags.
+
+The `sage-doctest-candidates` make target now defaults its helper flags to
+`--strict-frontier --min-runner-version 83`, matching the source-frontier
+target's modern-run subtraction floor and the scheduled-run command lines. This
+keeps stale scratch dashboards from influencing target-driven promotion scans
+unless an audit explicitly overrides `SAGELITE_DOCTEST_CANDIDATE_FLAGS`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
