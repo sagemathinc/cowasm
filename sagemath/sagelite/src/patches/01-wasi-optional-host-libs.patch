@@ -261,6 +261,12 @@ diff --git a/src/sage/interfaces/mathematica.py b/src/sage/interfaces/mathematic
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs mathematica pexpect subprocess
  r"""
+diff --git a/src/sage/interfaces/axiom.py b/src/sage/interfaces/axiom.py
+--- a/src/sage/interfaces/axiom.py
++++ b/src/sage/interfaces/axiom.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs axiom pexpect subprocess
+ r"""
 diff --git a/src/sage/interfaces/maxima.py b/src/sage/interfaces/maxima.py
 --- a/src/sage/interfaces/maxima.py
 +++ b/src/sage/interfaces/maxima.py

@@ -43394,6 +43394,32 @@ The saved skip query groups the rows under
 `optional:ipython,ipywidgets,sage.symbolic`; saved block- and
 file-failure cluster queries are empty.
 
+Follow-up Axiom interface boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. A strict source-frontier scan and trusted scratch-database candidate
+scans remained quiet for unmentioned clean, near-miss, and file-error rows, but
+an older mentioned near-miss for `src/sage/interfaces/axiom.py` still reproduced
+as an external-interface boundary:
+
+```text
+axiom.py: 4 passed, 20 failed, 112 skipped
+```
+
+The failures were untagged Axiom object/reducer smoke tests after importing
+`sage.interfaces.axiom` failed on the unavailable `pexpect` stack, while the
+file's existing `# optional - axiom` examples were already skipped. The WASI
+source patch now marks `axiom.py` with a file-level
+`# sage.doctest: needs axiom pexpect subprocess` directive, matching the
+existing Maxima, Maple, Mathematica, and other external-interface boundaries.
+Focused validation against the locally patched source copy records:
+
+```text
+axiom.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the row under `optional:axiom,pexpect,subprocess`,
+the saved block- and file-failure cluster queries are empty, and the source
+patch still applies cleanly in dry-run mode against `/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
