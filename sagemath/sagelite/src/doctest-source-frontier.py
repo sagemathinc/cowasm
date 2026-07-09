@@ -608,7 +608,7 @@ def run_command_is_default_run(command: str) -> bool:
 def source_path_matches_root(path: str, source_root: Path) -> bool:
     candidate = Path(path)
     if not candidate.is_absolute():
-        return True
+        return False
     try:
         candidate.resolve().relative_to(source_root.resolve())
     except ValueError:
