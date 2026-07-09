@@ -440,6 +440,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.failure_detail_limit < 0:
         parser.error("--failure-detail-limit must be non-negative")
+    validate_existing_files(parser, "--corpus", [args.corpus])
     validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
     if args.strict_frontier:
         args.require_run_metadata = True

@@ -233,6 +233,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("--min-runner-version must be positive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
+    validate_existing_files(parser, "--corpus", [args.corpus])
     validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
     if args.strict_frontier:
         args.strict_database_subtraction = True

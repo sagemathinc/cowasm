@@ -3220,6 +3220,20 @@ if [ "$doctest_candidate_helper_missing_mentioned_status" -ne 2 ] || \
   printf '%s\n' "$doctest_candidate_helper_missing_mentioned" >&2
   record_blocker "sagelite-blocked: doctest-corpus-candidates --mentioned-file did not reject a missing file cleanly."
 fi
+set +e
+doctest_candidate_helper_missing_corpus="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$probe_dir/no-such-candidate-corpus.txt" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_missing_corpus_status=$?
+set -e
+if [ "$doctest_candidate_helper_missing_corpus_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_missing_corpus" | \
+    grep -Fq -- '--corpus does not name a file:'; then
+  printf '%s\n' "$doctest_candidate_helper_missing_corpus" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --corpus did not reject a missing file cleanly."
+fi
 touch "$doctest_candidate_helper_source_root/src/sage/example/relative_candidate.py"
 printf '%s\n' "src/sage/example/relative_candidate.py" >"$doctest_candidate_helper_relative_corpus"
 sqlite3 "$doctest_candidate_helper_relative_db" <<SQL
@@ -4219,6 +4233,21 @@ if [ "$doctest_source_frontier_missing_mentioned_status" -ne 2 ] || \
     grep -Fq -- '--mentioned-file does not name a file:'; then
   printf '%s\n' "$doctest_source_frontier_missing_mentioned" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --mentioned-file did not reject a missing file cleanly."
+fi
+set +e
+doctest_source_frontier_missing_corpus="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$probe_dir/no-such-source-frontier-corpus.txt" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_source_frontier_missing_corpus_status=$?
+set -e
+if [ "$doctest_source_frontier_missing_corpus_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_missing_corpus" | \
+    grep -Fq -- '--corpus does not name a file:'; then
+  printf '%s\n' "$doctest_source_frontier_missing_corpus" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --corpus did not reject a missing file cleanly."
 fi
 doctest_source_frontier_required_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \

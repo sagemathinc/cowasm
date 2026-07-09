@@ -41882,6 +41882,18 @@ scripts, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, direct
 missing-`--mentioned-file` probes for both helpers, and the guarded candidate
 and source-frontier make-target scans over `.tmp/current-run/**/*.sqlite3`.
 
+Follow-up corpus-file guard pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded candidate and source-frontier make targets over
+`.tmp/current-run/**/*.sqlite3` still printed no rows.
+
+The candidate and source-frontier helpers now validate `--corpus` during
+argument parsing, matching the existing `--mentioned-file` guard. A missing
+corpus path is reported as an argparse status-2 error instead of a raw
+file-open traceback, so scheduled scans fail with a concise actionable
+diagnostic when a wrapper points at the wrong corpus file. The standalone
+smoke script has focused fixtures for the missing corpus guard in both
+helpers.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
