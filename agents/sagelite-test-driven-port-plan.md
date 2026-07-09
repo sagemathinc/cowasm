@@ -43896,6 +43896,29 @@ Validation used a full default rerun of
 `22 passed, 0 failed, 54 skipped`, plus a focused default `--line 18` rerun
 that recorded `0 passed, 0 failed, 1 skipped`.
 
+Scheduled guarded frontier follow-up on 2026-07-09 UTC: no corpus entry was
+promoted. The current guarded make target again emitted no promotion, near-miss,
+file-error, skipped-only, or source-frontier rows over the trusted scratch
+dashboard globs with runner version `>= 95`.
+
+A stricter manual source-frontier check also found no unmentioned runnable
+files after subtracting the current corpus and this plan, including small
+frontier scans up through 120 prompt lines and an unrestricted prompt-count
+scan. Without plan-mentioned subtraction, the only small runnable rows were the
+already-audited manifold/geometry probes
+`sage/geometry/riemannian_manifolds/surface3d_generators.py` and
+`sage/manifolds/vector_bundle_fiber_element.py`.
+
+Scratch candidate scans with `--include-mentioned` likewise emitted no clean
+promotion, near-miss, or unsuperseded file-error rows under the same strict
+runner metadata. As a runtime sanity check, focused reruns of existing corpus
+files `src/sage/typeset/symbols.py` and
+`src/sage/typeset/unicode_characters.py` recorded `28 passed, 0 failed,
+0 skipped` and `27 passed, 0 failed, 0 skipped`; tiny non-corpus probes
+`src/sage/rings/imaginary_unit.py` and
+`src/sage/categories/examples/coxeter_groups.py` contained no runnable doctest
+blocks under the current extractor.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
