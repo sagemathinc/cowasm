@@ -5154,6 +5154,37 @@ no uncovered clean row for this dashboard. Future scheduled runs should avoid
 repeating this exact compact slice unless one of those default browser-profile
 dependency boundaries changes.
 
+Follow-up scheduled frontier audit on 2026-07-09:
+
+No new quiet corpus candidate was found. The strict promotion scan under
+`.tmp/current-run/scheduled-2026-07-09-frontier-audit/` printed only the header
+row, and the source-frontier make target printed no unmentioned file with
+runnable prompts after subtracting the current corpus, plan-mentioned paths,
+and scratch SQLite coverage.
+
+The near-miss scan surfaced two stale elliptic-curve rows from older scratch
+dashboards: `sage/schemes/elliptic_curves/cm.py`, still split between the
+focused cypari2 object-model boundary and the disabled FLINT integer-polynomial
+side module, and `sage/schemes/elliptic_curves/kraus.py`, still blocked by
+optional Cremona data and dependent missing-name fallout. Neither is a narrow
+source-tag promotion target under the current browser-compatible profile.
+
+Focused line reruns clarified two current-source breadcrumbs:
+
+```text
+stream.py:1182: 0 passed, 0 failed, 1 skipped
+ring.pyx:140: 0 passed, 0 failed, 1 skipped
+```
+
+`stream.py:1182` is already classified as
+`optional:sage.rings.number_field`. `ring.pyx:140` previously timed out while
+running `TestSuite(QQ['x']).run(verbose=True)`, but the checked WASI patch now
+marks that example as `# long time`; the rerun in
+`.tmp/current-run/scheduled-2026-07-09-active/ring-line-140-after.sqlite3`
+confirms it is no longer a default-profile failure. Future scheduled runs
+should treat this as resolved skip metadata rather than a runtime timeout
+cluster.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
