@@ -43724,6 +43724,34 @@ is empty and its skip groups are symbolic, number-field, GAP, and
 and a clean `patch --dry-run -d /home/user/sagelite -p1` for the WASI source
 patch.
 
+Follow-up runner-floor scheduled scan pass on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded promotion-candidate, near-miss, file-error,
+skipped-only, and source-frontier scans over
+`.tmp/current-run/**/*.sqlite3` plus `.tmp/codex-sagelite/**/*.sqlite3`
+printed only header rows when run with strict frontier metadata, current
+plan-mentioned subtraction, file-level skip-directive exclusion where
+applicable, and a runner-version floor of 95.
+
+The default dashboard database at
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` is still a
+zero-byte file, so the broad corpus make target was not useful as a quick
+cluster source in this scheduled pass. A trial full-corpus refresh was stopped
+after it reached roughly worker 244 of the 1,117-file curated corpus without
+yet materializing a SQLite database. A narrow source-frontier check also
+confirmed that `src/sage/tests/books/computational_mathematics_with_sagemath/sol/lp_doctest.py`
+is already a file-level skipped dependency boundary for
+`sage.graphs` and `sage.numerical.mip`, not a promotion candidate.
+
+The `sage-doctest-candidates` and `sage-doctest-source-frontier` make-wrapper
+defaults now require `--min-runner-version 95` instead of 83. Scheduled scans
+can still opt down explicitly when auditing older scratch dashboards, but the
+default frontier now ignores pre-worker-retry databases that no longer match
+the current trusted doctest-runner contract. Validation used `python3 -m
+py_compile`, `bash -n`, `git diff --check`, the strict make-wrapper scans
+against `.tmp/current-run/**/*.sqlite3` and `.tmp/codex-sagelite/**/*.sqlite3`,
+and a focused `sage -t` probe of `sol/lp_doctest.py` that recorded
+`0 passed, 0 failed, 1 skipped`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
