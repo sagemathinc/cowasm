@@ -42392,6 +42392,39 @@ path can be promoted into the quiet corpus. Static validation used
 `python3 -m py_compile` for the doctest helper scripts, and a clean dry-run of
 `01-wasi-optional-host-libs.patch` against a disposable Sagelite source copy.
 
+Follow-up matching-covered graph corpus-growth pass on 2026-07-09: a full
+standalone resource refresh completed Cython generation, compile/link,
+installation, resource packaging, Node, Electron, relocated-resource, and
+doctest smokes, ending with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The refreshed resource bundle separated stale-resource noise from the real
+frontier in `sage/graphs/matching_covered_graph.py`. The stale pre-refresh
+probe had recorded `137 passed, 642 failed, 55 skipped`; rerunning the focused
+file after the standalone refresh improved that to
+`755 passed, 24 failed, 55 skipped`. The remaining failures were narrow graph
+startup names, symbolic graph-generator examples, a planarity boundary, and two
+known output/edge-subdivision drifts.
+
+The doctest runner now seeds `DiGraph`, `digraphs`, and `BipartiteGraph`
+alongside `Graph` and `graphs`, and the WASI `sage.all` patch exposes the same
+graph startup names for REPL parity. The Sagelite patch also tags the remaining
+matching-covered graph examples with explicit `sage.symbolic`,
+`sage.graphs.planarity`, or `known bug` metadata. With those tracked changes
+and the matching patched build copy, the focused file is clean in the default
+profile:
+
+```text
+matching_covered_graph.py: 748 passed, 0 failed, 86 skipped
+```
+
+The file is now promoted into `basic-pure-math.txt`. The residual skips are
+intentional dependency or known-bug boundaries rather than hidden startup
+failures.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

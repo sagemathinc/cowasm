@@ -3256,7 +3256,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,240 @@
+@@ -253,74 +253,243 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -3402,7 +3402,10 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    lazy_import('sage.game_theory', 'catalog', 'game_theory')
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.graphs.graph import Graph
++    from sage.graphs.digraph import DiGraph
++    from sage.graphs.bipartite_graph import BipartiteGraph
 +    lazy_import('sage.graphs.graph_generators', 'graphs')
++    lazy_import('sage.graphs.digraph_generators', 'digraphs')
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.groups.matrix_gps.linear import GL, SL
 +    from sage.logic.all import SymbolicLogic, propcalc
@@ -19122,6 +19125,73 @@ diff --git a/src/sage/graphs/bipartite_graph.py b/src/sage/graphs/bipartite_grap
  # autopep8: off
 +# sage.doctest: needs sage.graphs sage.rings.finite_rings
  r"""
+diff --git a/src/sage/graphs/matching_covered_graph.py b/src/sage/graphs/matching_covered_graph.py
+--- a/src/sage/graphs/matching_covered_graph.py
++++ b/src/sage/graphs/matching_covered_graph.py
+@@ -1365,6 +1365,7 @@
+
+         Providing with an edge of unknown data type::
+
++            sage: # needs sage.symbolic
+             sage: M = graphs.MurtyGraph()
+             sage: G = MatchingCoveredGraph(M)
+             sage: F = [None, 'edge', None]
+@@ -2541,6 +2542,7 @@
+             sage: K = graphs.CompleteBipartiteGraph(3, 3)
+             sage: J = graphs.HeawoodGraph()
+             sage: H = MatchingCoveredGraph(J)
++            sage: # needs sage.graphs.planarity
+             sage: H.is_brace() and not H.is_planar() and \
+             ....: H.is_regular(k=3) and H.girth() == 6
+             True
+@@ -2915,6 +2917,7 @@
+         Each of Petersen graph, Bicorn graph, Tricorn graph, Cubeplex graph,
+         Twinplex graph, Wagner graph is a brick::
+
++            sage: # needs sage.symbolic
+             sage: MatchingCoveredGraph(graphs.PetersenGraph()).is_brick() and \
+             ....: MatchingCoveredGraph(graphs.StaircaseGraph(4)).is_brick() and \
+             ....: MatchingCoveredGraph(graphs.TricornGraph()).is_brick() and \
+@@ -2925,6 +2928,7 @@
+
+         The Murty graph is the smallest simple brick that is not odd-intercyclic::
+
++            sage: # needs sage.symbolic
+             sage: M = graphs.MurtyGraph()
+             sage: G = MatchingCoveredGraph(M)
+             sage: G.is_brick()
+@@ -3027,6 +3031,7 @@
+             sage: G.is_brick(coNP_certificate=True)
+             (True, None, None, None, None)
+             sage: # K(4) ⊙ K(3, 3) is nonbipartite but not a brick
++            sage: # needs sage.symbolic
+             sage: H = graphs.MurtyGraph(); H.delete_edge(0, 1)
+             sage: G = MatchingCoveredGraph(H)
+             sage: G.is_brick(coNP_certificate=True)
+@@ -3041,6 +3046,7 @@
+             ....:     (17, 18), (17, 21), (18, 19), (18, 20), (19, 20), (20, 21)
+             ....: ])
+             sage: G = MatchingCoveredGraph(H)
++            sage: # known bug
+             sage: G.is_brick(coNP_certificate=True)
+             (False,
+              [[(12, 0, None), (4, 1, None), (4, 2, None), (9, 3, None)],
+@@ -3886,6 +3892,7 @@
+
+         Subdividing edges with at least one of which is a multiple edge::
+
++            sage: # needs sage.symbolic
+             sage: T = graphs.TricornGraph()
+             sage: G = MatchingCoveredGraph(T)
+             sage: G.allow_multiple_edges(True)
+@@ -3918,6 +3925,7 @@
+
+         Subdividing edges with at least one of which is nonexistent::
+
++            sage: # known bug
+             sage: G.subdivide_edges([(4, 5), (1, 5)], 4)
+             ....: # edges considered: (4, 5, None), (1, 5, None)
+             Traceback (most recent call last):
 diff --git a/src/sage/interfaces/magma.py b/src/sage/interfaces/magma.py
 --- a/src/sage/interfaces/magma.py
 +++ b/src/sage/interfaces/magma.py

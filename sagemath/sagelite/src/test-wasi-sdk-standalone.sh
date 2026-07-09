@@ -1492,11 +1492,14 @@ print('sagelite-node-ok lrcalc Python extension smoke')"
 run_node_import \
   "basic graph polynomial boundary smoke" \
   "import sage.rings.all
-from sage.all import graphs
+from sage.all import BipartiteGraph, DiGraph, digraphs, graphs
 from sage.graphs.graph import Graph
 assert graphs.PathGraph(3).order() == 3
+assert digraphs.Complete(3).order() == 3
 G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
+assert DiGraph(G).order() == 3
+assert BipartiteGraph(graphs.CycleGraph(4)).order() == 4
 try:
     G.chromatic_polynomial()
 except ImportError as err:
