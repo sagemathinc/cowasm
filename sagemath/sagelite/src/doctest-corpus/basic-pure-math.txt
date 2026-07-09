@@ -122,6 +122,7 @@ src/sage/algebras/steenrod/steenrod_algebra_mult.py
 src/sage/algebras/lie_algebras/abelian.py
 src/sage/algebras/lie_algebras/bch.py
 src/sage/algebras/lie_algebras/free_lie_algebra.py
+src/sage/algebras/lie_algebras/morphism.py
 src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
 src/sage/algebras/lie_algebras/quotient.py
 src/sage/algebras/lie_algebras/structure_coefficients.py

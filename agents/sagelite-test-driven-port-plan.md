@@ -44101,6 +44101,36 @@ number-field/symbolic/PARI file-scope metadata. Re-running the 80-prompt
 source-frontier check with file-level skip directives excluded now emits no
 rows.
 
+Focused Lie-algebra morphism corpus-growth pass:
+
+```text
+morphism.py: 105 passed, 0 failed, 40 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_algebras/morphism.py` to the curated corpus. Direct
+sampling first recorded 108 passed blocks, 37 failed blocks, and no skipped
+blocks. The failures were concentrated around upstream examples for semilinear
+number-field morphisms and symbolic-ring quotient morphisms: the default
+browser-compatible profile reaches the focused cypari2 number-field boundary
+for `NumberField(x^2 + 1)` and does not expose the broad symbolic ring `SR`.
+
+The added WASI source patch marks those number-field and symbolic doctest
+groups with explicit `# needs sage.rings.number_field` and
+`# needs sage.symbolic` metadata while preserving the rational Lie-algebra
+morphism construction, image, comparison, error, and test-suite examples as
+default-profile coverage. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-lie/morphism-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`784e958dccbde71f0de3391d45d41a24c979920a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+105, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty, and `skips-by-reason.sql` groups the 40 skipped
+blocks under the intended number-field and symbolic requirements.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

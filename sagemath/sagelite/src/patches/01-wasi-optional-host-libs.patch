@@ -20525,3 +20525,70 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -4568 +4568 @@
 -        sage: f.gcd(g, 1)
 +        sage: f.gcd(g, 1)                                                              # known bug - coerced method argument drift
+diff --git a/src/sage/algebras/lie_algebras/morphism.py b/src/sage/algebras/lie_algebras/morphism.py
+--- a/src/sage/algebras/lie_algebras/morphism.py
++++ b/src/sage/algebras/lie_algebras/morphism.py
+@@ -65,6 +65,7 @@
+     You can provide a base map, creating a semilinear map that (sometimes)
+     preserves the Lie bracket::
+
++        sage: # needs sage.rings.number_field
+         sage: R.<x> = ZZ[]
+         sage: K.<i> = NumberField(x^2 + 1)
+         sage: cc = K.hom([-i])
+@@ -81,6 +82,7 @@
+     Note that the Lie bracket should still be preserved, even though the map is no longer linear
+     over the base ring::
+
++        sage: # needs sage.rings.number_field
+         sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z':i}, ('X','Z'): {'W':1}})
+         sage: M.<A,B,C,D> = LieAlgebra(K, {('A','B'): {'C':-i}, ('A','C'): {'D':1}})
+         sage: phi = L.morphism({X:A, Y:B, Z:C, W:D}, base_map=cc)
+@@ -164,6 +166,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.number_field
+             sage: R.<x> = ZZ[]
+             sage: K.<i> = NumberField(x^2 + 1)
+             sage: cc = K.hom([-i])
+@@ -461,6 +464,7 @@
+
+     A quotient type Lie algebra morphism::
+
++        sage: # needs sage.symbolic
+         sage: K.<A,B> = LieAlgebra(SR, abelian=True)
+         sage: L.morphism({X: A, Y: B})
+         Lie algebra morphism:
+@@ -517,6 +521,7 @@
+
+         We check that we can specify a base map to get a semi-linear morphism of Lie algebras::
+
++            sage: # needs sage.rings.number_field
+             sage: R.<x> = ZZ[]
+             sage: K.<i> = NumberField(x^2 + 1)
+             sage: cc = K.hom([-i])
+@@ -623,17 +628,17 @@
+         EXAMPLES::
+
+             sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+-            sage: K.<A,B> = LieAlgebra(SR, abelian=True)
+-            sage: phi = L.morphism({X: A, Y: B})
+-            sage: phi(X)
++            sage: K.<A,B> = LieAlgebra(SR, abelian=True)  # needs sage.symbolic
++            sage: phi = L.morphism({X: A, Y: B})          # needs sage.symbolic
++            sage: phi(X)                                  # needs sage.symbolic
+             A
+-            sage: phi(Y)
++            sage: phi(Y)                                  # needs sage.symbolic
+             B
+-            sage: phi(Z)
++            sage: phi(Z)                                  # needs sage.symbolic
+             0
+-            sage: phi(W)
++            sage: phi(W)                                  # needs sage.symbolic
+             0
+-            sage: phi(-X + 3*Y)
++            sage: phi(-X + 3*Y)                           # needs sage.symbolic
+             -A + 3*B
+             sage: K.<A,B,C> = LieAlgebra(QQ, {('A','B'): {'C':2}})
