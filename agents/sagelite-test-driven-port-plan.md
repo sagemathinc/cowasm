@@ -42945,6 +42945,28 @@ make -C sagemath/sagelite sage-doctest-candidates \
 The source-frontier wrapper printed no rows, and the candidate wrapper printed
 only the header row.
 
+Follow-up source-frontier stale file-error subtraction pass on 2026-07-09 UTC:
+no corpus entry was promoted. A direct source-frontier scan with plan-mention
+subtraction disabled still surfaced only two already-audited high-prompt files:
+`sage/rings/complex_arb.pyx` and
+`sage/rings/polynomial/multi_polynomial.pyx`. Both are not fresh source
+frontiers; the July 4 prompt-band audit already recorded them as file-scope
+failures, with `complex_arb.pyx` timing out at the
+`CBF.has_coerce_map_from(ComplexBallField(42))` example and
+`multi_polynomial.pyx` hitting a JavaScript maximum-call-stack error while
+constructing a cyclotomic polynomial example.
+
+The scheduled Make wrapper now enables the source-frontier helper's
+`--subtract-file-error-runs` option by default through
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_SUBTRACT_FILE_ERRORS=1`. This keeps
+source-frontier output focused on never-attempted runnable files, while live
+runtime/import crashes remain visible through the candidate helper's
+`--file-errors` diagnostic mode. Validation reran the source-frontier wrapper
+with `SAGELITE_DOCTEST_SOURCE_FRONTIER_MENTIONED=` and the recursive
+`.tmp/current-run/**/*.sqlite3` scratch database glob; with file-error
+subtraction enabled it printed only the header row, and with the opt-out set to
+`0` it reproduced the two stale rows above.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
