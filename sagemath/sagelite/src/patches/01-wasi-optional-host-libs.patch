@@ -1817,7 +1817,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  foreach name, pyx : extension_data
 +  graph_extension_link_args = []
 +  graph_extension_dependencies = [py_dep, cysignals, flint, gmp]
-+  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly'
++  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly' or name == 'strongly_regular_db'
 +    graph_extension_link_args = cowasm_graph_libcxx_link_args
 +  else
 +    graph_extension_dependencies += [cliquer, planarity]
@@ -3256,7 +3256,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,239 @@
+@@ -253,74 +253,240 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -3402,6 +3402,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    lazy_import('sage.game_theory', 'catalog', 'game_theory')
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.graphs.graph import Graph
++    lazy_import('sage.graphs.graph_generators', 'graphs')
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.groups.matrix_gps.linear import GL, SL
 +    from sage.logic.all import SymbolicLogic, propcalc

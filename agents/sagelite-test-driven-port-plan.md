@@ -42366,6 +42366,32 @@ probe. The remaining graph skips are still explicit dependency boundaries such
 as broader `sage.graphs`, Nauty, NumPy, and numerical-MIP examples; no broad
 graph startup catalog was added in this pass.
 
+Follow-up graph generator startup pass on 2026-07-09: no corpus entry was
+promoted. The next focused probe targeted `sage/graphs/matching_covered_graph.py`
+after the basic graph backend became importable. The initial failure cluster
+was a startup namespace gap: upstream examples use `graphs.PetersenGraph()`,
+`graphs.StaircaseGraph()`, and related generator catalog calls without a local
+import, while the Sagelite doctest runner only seeded `Graph`.
+
+The doctest runner now seeds the lightweight `graphs` catalog through
+`sage.graphs.all`, and the WASI `sage.all` patch exposes the same name lazily
+for REPL parity. The graph Meson patch also moves `strongly_regular_db.pyx`
+out from behind the disabled Cliquer/planarity dependency gate, because
+resolving `graphs.PathGraph(...)` currently imports `sage.graphs.graph_generators`,
+which imports `sage.graphs.strongly_regular_db` at class definition time.
+The standalone graph smoke now checks `from sage.all import graphs` and
+`graphs.PathGraph(3)` alongside the existing basic `Graph` construction and
+polynomial-boundary checks.
+
+Focused validation confirmed that the existing resource bundle advances from
+`NameError: name 'graphs' is not defined` to
+`ModuleNotFoundError: No module named 'sage.graphs.strongly_regular_db'`; a
+fresh standalone resource rebuild is still needed before this graph generator
+path can be promoted into the quiet corpus. Static validation used
+`git diff --check`, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`python3 -m py_compile` for the doctest helper scripts, and a clean dry-run of
+`01-wasi-optional-host-libs.patch` against a disposable Sagelite source copy.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

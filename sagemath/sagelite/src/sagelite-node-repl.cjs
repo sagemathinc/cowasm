@@ -1181,6 +1181,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.functions.transcendental", ("dickman_rho",)),
         ("sage.functions.other", ("floor", "real_part")),
         ("sage.graphs.graph", ("Graph",)),
+        ("sage.graphs.all", ("graphs",)),
         ("sage.groups.abelian_gps.abelian_group", ("AbelianGroup",)),
         ("sage.groups.matrix_gps.linear", ("GL", "SL")),
         ("sage.homology.chain_complex", ("ChainComplex",)),

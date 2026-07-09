@@ -1492,7 +1492,9 @@ print('sagelite-node-ok lrcalc Python extension smoke')"
 run_node_import \
   "basic graph polynomial boundary smoke" \
   "import sage.rings.all
+from sage.all import graphs
 from sage.graphs.graph import Graph
+assert graphs.PathGraph(3).order() == 3
 G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
 try:
