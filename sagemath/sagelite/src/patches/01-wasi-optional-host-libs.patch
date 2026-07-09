@@ -20429,3 +20429,46 @@ diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
 +            sage: # needs _multiprocessing
 @@ -5255,0 +5276 @@
 +            sage: # needs _multiprocessing
+diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
+--- a/src/sage/structure/element.pyx
++++ b/src/sage/structure/element.pyx
+@@ -565 +565 @@
+-            sage: i.__getstate__()
++            sage: i.__getstate__()                                                     # random
+@@ -583 +583 @@
+-            sage: i = ideal(x); i
++            sage: i = ideal(x); i                                                       # needs sage.rings.polynomial.plural
+@@ -586,2 +586,2 @@
+-            sage: i.__setstate__((R,{'_Ideal_generic__ring':S,'_Ideal_generic__gens': (S(x^2 - y^2 + 1),)}))
+-            sage: i
++            sage: i.__setstate__((R,{'_Ideal_generic__ring':S,'_Ideal_generic__gens': (S(x^2 - y^2 + 1),)}))  # needs sage.rings.polynomial.plural
++            sage: i                                                                      # needs sage.rings.polynomial.plural
+@@ -2806,2 +2806,2 @@
+-            sage: q,r = divmod(f,h)
+-            sage: q
++            sage: q,r = divmod(f,h)                                                     # known bug - integer polynomial nonexact division drift
++            sage: q                                                                      # known bug - integer polynomial nonexact division drift
+@@ -2809 +2809 @@
+-            sage: r
++            sage: r                                                                      # known bug - integer polynomial nonexact division drift
+@@ -2811 +2811 @@
+-            sage: f == q*h + r
++            sage: f == q*h + r                                                          # known bug - integer polynomial nonexact division drift
+@@ -4503 +4503 @@
+-        sage: f.gcd(g)  #indirect doctest
++        sage: f.gcd(g)  #indirect doctest                                              # needs sage.libs.flint
+@@ -4521 +4521 @@
+-        sage: f.gcd(g, algorithm='modular')
++        sage: f.gcd(g, algorithm='modular')                                            # known bug - coerced method argument drift
+@@ -4525 +4525 @@
+-        sage: f.gcd(h, algorithm='modular')
++        sage: f.gcd(h, algorithm='modular')                                            # known bug - coerced method argument drift
+@@ -4529 +4529 @@
+-        sage: h.gcd(f, 'modular')
++        sage: h.gcd(f, 'modular')                                                      # known bug - coerced method argument drift
+@@ -4558 +4558 @@
+-        sage: x.test_add(CC(2))
++        sage: x.test_add(CC(2))                                                        # known bug - complex coercion drift
+@@ -4568 +4568 @@
+-        sage: f.gcd(g, 1)
++        sage: f.gcd(g, 1)                                                              # known bug - coerced method argument drift

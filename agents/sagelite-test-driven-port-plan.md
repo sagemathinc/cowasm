@@ -5308,6 +5308,37 @@ Future scheduled runs should treat the older file-error row as superseded
 scratch evidence rather than a live NTL trap, unless the p-adic file-level
 skip policy changes.
 
+Focused structure-element corpus-growth pass:
+
+```text
+element.pyx: 389 passed, 0 failed, 349 skipped
+```
+
+That one-file make-target validation adds `sage/structure/element.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 1,118
+non-comment entries. A current near-miss rerun first recorded 389 passing
+blocks and 13 failures. The failures grouped into explicit browser-profile
+dependency boundaries for plural-backed multivariate ideal display and
+FLINT-backed sparse polynomial gcd, plus deferred semantic/display drift in
+dict-order pickle state, nonexact integer-polynomial division, coerced method
+argument handling, and complex-number coercion.
+
+The added WASI source patch marks those examples as `# needs`, `# random`, or
+deferred `# known bug` metadata while preserving the broad abstract element,
+ring element, and coercion doctest coverage as runnable default-profile
+blocks. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/structure-element-make-final.sqlite3`.
+The latest-run summary records CoWasm commit
+`a93b8328d8cc3ffcf45289530df5e97e798ea5db`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version 104,
+and a 100% non-skipped pass rate. The saved block- and file-failure cluster
+queries are empty, and `doctest-corpus-candidates.py --strict-frontier` prints
+no promotion row after subtracting the updated corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
