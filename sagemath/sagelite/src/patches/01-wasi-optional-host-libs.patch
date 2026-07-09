@@ -154,6 +154,12 @@ diff --git a/src/sage/libs/singular/function.pyx b/src/sage/libs/singular/functi
 +# sage.doctest: needs sage.libs.singular sage.rings.polynomial.plural pexpect
  """
  libSingular: Functions
+diff --git a/src/sage/rings/complex_arb.pyx b/src/sage/rings/complex_arb.pyx
+--- a/src/sage/rings/complex_arb.pyx
++++ b/src/sage/rings/complex_arb.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.flint
+ r"""
 diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 --- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 +++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx

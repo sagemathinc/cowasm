@@ -43185,6 +43185,30 @@ scripts, `bash -n` for `test-wasi-sdk-standalone.sh`, the real
 `--optional=numpy` rerun above, an ad hoc source-frontier subtraction fixture,
 `git diff --check`, and the standard scheduled wrapper scans.
 
+Follow-up complex-ball FLINT boundary pass on 2026-07-09 UTC: no corpus entry
+was promoted. The raw strict source-frontier scan without plan-mentioned
+subtraction still exposed the previously audited `sage/rings/complex_arb.pyx`
+file-level timeout. Fresh focused probing showed that isolated
+`CBF.has_coerce_map_from(ComplexBallField(42))` now passes, but the full file
+still walks repeated FLINT/Arb root-isolation and number-field conversion
+runtime clusters before any block rows can be persisted.
+
+The WASI source patch now marks `complex_arb.pyx` with a file-level
+`# sage.doctest: needs sage.libs.flint` directive, matching the surrounding
+FLINT/Arb boundary treatment instead of carrying a long list of prompt-level
+root skips. Focused validation against the current patched source tree records:
+
+```text
+complex_arb.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the file under `optional:sage.libs.flint`, the
+saved block- and file-failure cluster queries are empty, a dry-run application
+of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` succeeds, and a strict source-frontier scan with
+recursive scratch-database subtraction plus file-error subtraction prints only
+the header row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
