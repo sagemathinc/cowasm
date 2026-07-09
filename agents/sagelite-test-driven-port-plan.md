@@ -42834,6 +42834,37 @@ helper remains outside the curated corpus until BRiAl/PBoRi is available in
 the browser-compatible profile; it should not be treated as a live runnable
 near miss under the current skip policy.
 
+Follow-up p-adic valuation boundary pass on 2026-07-09: no corpus entry was
+promoted. A filtered scratch file-error scan with
+`--suppress-superseded-failures --dedupe-paths` left
+`sage/rings/padics/padic_valuation.py` as a live p-adic/number-field
+frontier. Focused direct probes first reached quotient-polynomial
+number-field setup traps in
+`create_key_and_extra_args_for_number_field_from_valuation()` and
+`_normalize_number_field_data()`, then reached a Mac Lane
+`is_unramified()` timeout after the quotient setup was skipped.
+
+The WASI source patch now marks `padic_valuation.py` with a file-level
+`# sage.doctest: needs sage.rings.number_field sage.geometry.polyhedron`
+directive. Focused direct validation against the patched build tree with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and
+`--sqlite /home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-padic/padic-valuation-after-file-skip.sqlite3`
+records:
+
+```text
+padic_valuation.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the skip under
+`optional:sage.rings.number_field,sage.geometry.polyhedron`, and the saved
+block- and file-failure cluster queries are empty. A dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` with
+`patch --dry-run -p1` against `/home/user/sagelite` succeeds, including the
+new `src/sage/rings/padics/padic_valuation.py` hunk. The file remains outside
+the curated corpus until the number-field-backed p-adic valuation stack is
+available in the browser-compatible profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

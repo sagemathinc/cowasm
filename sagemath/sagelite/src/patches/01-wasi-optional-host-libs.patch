@@ -12753,6 +12753,12 @@ diff -urN -U0 a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/
 +            sage: up = loads(dumps(u))  # known bug - lattice p-adic pickle option drift
 +            sage: vp = loads(dumps(v))  # known bug - lattice p-adic pickle option drift
 +            sage: up + vp               # known bug - lattice p-adic pickle option drift
+diff --git a/src/sage/rings/padics/padic_valuation.py b/src/sage/rings/padics/padic_valuation.py
+--- a/src/sage/rings/padics/padic_valuation.py
++++ b/src/sage/rings/padics/padic_valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.geometry.polyhedron
+ r"""
 diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_template.pxi
 --- a/src/sage/rings/padics/CA_template.pxi
 +++ b/src/sage/rings/padics/CA_template.pxi
