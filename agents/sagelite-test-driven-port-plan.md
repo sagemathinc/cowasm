@@ -43089,6 +43089,28 @@ focused `convert_flint.pyx` doctest SQLite rerun, the raw low-prompt static
 scan, and the scheduled `sage-doctest-source-frontier` wrapper with recursive
 scratch database subtraction.
 
+Follow-up p-adic linkage support-boundary pass on 2026-07-09 UTC: no corpus
+entry was promoted. The live support-file diagnostic scan still showed an old
+`src/sage/libs/linkages/padics/unram_shared.pxi` file-level crash at the
+ramified `Qp(5).extension(x^2 - 5)` example. A fresh focused rerun reproduced
+the same NTL `ZZ_p` trap. A one-line skip only advanced the full-file probe to
+the next p-adic extension setup, so the WASI source patch now marks the
+support include with a file-level `# sage.doctest: needs sage.libs.ntl`
+directive, consistent with the surrounding p-adic NTL template boundaries.
+
+Focused validation against the current patched source tree records:
+
+```text
+unram_shared.pxi: 0 passed, 0 failed, 1 skipped
+```
+
+The skipped-only database groups the file under `optional:sage.libs.ntl`, the
+recursive file-error diagnostic scan with `--suppress-superseded-failures` no
+longer reports the older `unram_shared.pxi` crash when the fresh skip database
+is included, and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` succeeds.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -96,6 +96,11 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.ntl
  # distutils: libraries = NTL_LIBRARIES gmp m
+diff -urN -U0 a/src/sage/libs/linkages/padics/unram_shared.pxi b/src/sage/libs/linkages/padics/unram_shared.pxi
+--- a/src/sage/libs/linkages/padics/unram_shared.pxi
++++ b/src/sage/libs/linkages/padics/unram_shared.pxi
+@@ -1,0 +1 @@
++# sage.doctest: needs sage.libs.ntl
 diff --git a/src/sage/libs/ntl/ntl_ZZ_pE.pyx b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
 --- a/src/sage/libs/ntl/ntl_ZZ_pE.pyx
 +++ b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
