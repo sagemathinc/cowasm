@@ -42202,6 +42202,19 @@ also needed `core/libcxx` copied beside `sage/rings/polynomial`, matching the
 standalone installer's existing side-module staging behavior; this was a
 scratch install issue rather than a new `chrompoly` dependency boundary.
 
+Follow-up diagnostic pass on 2026-07-09: the latest partial
+`sagemath/sagelite/dist/wasi-sdk` build had compiled and staged the expanded
+Sage tree, but stopped before Electron resource packaging with
+`status.txt` reporting a `python-wasi-sdk` `import sage.all` failure and only
+the probe header in `wasi-sdk-python-import.log`. A direct reproduction against
+the staged `PYTHONPATH` succeeded under both `/home/user/cowasm/bin/python-wasi-sdk`
+and the underlying `python/cpython/bin/python-wasi-sdk`, so the stale status
+file was not a currently reproducible Sage import blocker. The standalone
+smoke now reruns failed or marker-less `python-wasi-sdk` import probes with
+`-v`, matching the Node-side diagnostic behavior and ensuring the next silent
+WASI import failure records an actionable import trace before reporting the
+blocker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

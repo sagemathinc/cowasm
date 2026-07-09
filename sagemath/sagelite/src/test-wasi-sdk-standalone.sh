@@ -626,10 +626,36 @@ run_wasi_sdk_python_import() {
         "$label" "$import_status" >>"$wasi_sdk_python_import_log"
       return
     fi
+    printf '## %s verbose import trace after status %s\n' "$label" "$import_status" >>"$wasi_sdk_python_import_log"
+    set +e
+    PYTHONPATH="$node_pythonpath" \
+      PYTHONDONTWRITEBYTECODE=1 \
+      timeout "$node_import_timeout" \
+        "$bin_dir/python-wasi-sdk" -v -c "$wrapped_code" \
+        >>"$wasi_sdk_python_import_log" 2>&1
+    local verbose_status=$?
+    set -e
+    if [ "$verbose_status" -eq 124 ]; then
+      tail -120 "$wasi_sdk_python_import_log" >&2
+      record_blocker "sagelite-blocked: verbose python-wasi-sdk import timed out after $node_import_timeout at $label; see $wasi_sdk_python_import_log for the first runtime blocker."
+    fi
     tail -120 "$wasi_sdk_python_import_log" >&2
     record_blocker "sagelite-blocked: python-wasi-sdk import failed at $label; see $wasi_sdk_python_import_log for the first runtime blocker."
   fi
   if ! grep -Fqx "$marker" "$wasi_sdk_python_import_log"; then
+    printf '## %s verbose import trace after missing marker\n' "$label" >>"$wasi_sdk_python_import_log"
+    set +e
+    PYTHONPATH="$node_pythonpath" \
+      PYTHONDONTWRITEBYTECODE=1 \
+      timeout "$node_import_timeout" \
+        "$bin_dir/python-wasi-sdk" -v -c "$wrapped_code" \
+        >>"$wasi_sdk_python_import_log" 2>&1
+    local verbose_status=$?
+    set -e
+    if [ "$verbose_status" -eq 124 ]; then
+      tail -120 "$wasi_sdk_python_import_log" >&2
+      record_blocker "sagelite-blocked: verbose python-wasi-sdk import timed out after $node_import_timeout at $label; see $wasi_sdk_python_import_log for the first runtime blocker."
+    fi
     tail -120 "$wasi_sdk_python_import_log" >&2
     record_blocker "sagelite-blocked: python-wasi-sdk import exited before completing $label; see $wasi_sdk_python_import_log for the first runtime blocker."
   fi
