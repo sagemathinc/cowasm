@@ -42814,6 +42814,26 @@ against `/home/user/sagelite` also succeeds, including the new
 `src/sage/numerical/mip.pyx` hunk. The file remains outside the curated corpus
 until the MIP backend is available in the browser-compatible profile.
 
+Follow-up PBoRi stale-frontier audit on 2026-07-09: no corpus entry was
+promoted. The recursive scratch near-miss scan still contained an older
+`sage/rings/polynomial/pbori/gbcore.py` failure row from before standalone
+prompt directive propagation handled separated `sage: # needs brial` markers
+consistently. A fresh focused direct run against the current patched source
+tree records:
+
+```text
+gbcore.py: 0 passed, 0 failed, 19 skipped
+```
+
+The saved skip query groups every block under `optional:brial`, and the saved
+block- and file-failure cluster queries are empty for
+`.tmp/current-run/scheduled-2026-07-09-gbcore/gbcore.sqlite3`. With that fresh
+database included, the diagnostic near-miss scan with
+`--suppress-superseded-failures` no longer reports `gbcore.py`. The PBoRi
+helper remains outside the curated corpus until BRiAl/PBoRi is available in
+the browser-compatible profile; it should not be treated as a live runnable
+near miss under the current skip policy.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
