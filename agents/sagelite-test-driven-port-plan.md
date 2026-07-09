@@ -42787,6 +42787,33 @@ The saved block- and file-failure cluster queries are empty, and
 source-frontier target remains quiet under the current plan-mentioned and
 scratch-database subtraction filters.
 
+Follow-up MIP backend boundary pass on 2026-07-09: scratch-dashboard
+file-error scans still showed `sage/numerical/mip.pyx` as a broad solver
+interface frontier. A fresh direct precheck against the current patched source
+tree recorded `16 passed, 693 failed, 56 skipped`; the failures are dominated
+by the unavailable mixed-integer-linear-programming backend rather than a
+narrow pure-math behavior cluster.
+
+The WASI source patch now marks `mip.pyx` with a file-level
+`# sage.doctest: needs sage.numerical.mip` directive, consistent with the
+existing `interactivelp_backend.pyx` and knapsack MIP metadata. A focused
+direct rerun with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and
+`--sqlite /home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-mip/postcheck.sqlite3`
+records:
+
+```text
+mip.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups the skip under `optional:sage.numerical.mip`, and
+the saved block- and file-failure cluster queries are empty. A dry-run
+application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
+against `/home/user/sagelite` also succeeds, including the new
+`src/sage/numerical/mip.pyx` hunk. The file remains outside the curated corpus
+until the MIP backend is available in the browser-compatible profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

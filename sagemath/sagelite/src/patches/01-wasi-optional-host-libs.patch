@@ -84,6 +84,12 @@ diff --git a/src/sage/numerical/backends/interactivelp_backend.pyx b/src/sage/nu
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.numerical.mip
  r"""
+diff --git a/src/sage/numerical/mip.pyx b/src/sage/numerical/mip.pyx
+--- a/src/sage/numerical/mip.pyx
++++ b/src/sage/numerical/mip.pyx
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.numerical.mip
+ r"""
 diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
 --- a/src/sage/libs/ntl/ntl_ZZ_pX.pyx
 +++ b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
