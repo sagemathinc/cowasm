@@ -853,18 +853,6 @@ diff -urN a/src/sage/rings/semirings/tropical_polynomial.py b/src/sage/rings/sem
              Graphics object consisting of 1 graphics primitive
  
          .. PLOT::
-diff -urN a/src/sage/graphs/base/overview.py b/src/sage/graphs/base/overview.py
---- a/src/sage/graphs/base/overview.py
-+++ b/src/sage/graphs/base/overview.py
-@@ -47,7 +47,7 @@
- and edges to other objects: the :mod:`graph backends
- <sage.graphs.base.graph_backends>`::
-
--    sage: Graph()._backend
-+    sage: Graph()._backend  # needs sage.graphs
-     <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
-
- A (di)graph backend is a simpler (di)graph class having only the most elementary
 diff -urN a/src/sage/tensor/modules/finite_rank_free_module.py b/src/sage/tensor/modules/finite_rank_free_module.py
 --- a/src/sage/tensor/modules/finite_rank_free_module.py
 +++ b/src/sage/tensor/modules/finite_rank_free_module.py
@@ -3268,7 +3256,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,238 @@
+@@ -253,74 +253,239 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -3413,6 +3401,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.calculus.transforms.dwt import WaveletTransform
 +    lazy_import('sage.game_theory', 'catalog', 'game_theory')
 +    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
++    from sage.graphs.graph import Graph
 +    from sage.groups.abelian_gps.abelian_group import AbelianGroup
 +    from sage.groups.matrix_gps.linear import GL, SL
 +    from sage.logic.all import SymbolicLogic, propcalc

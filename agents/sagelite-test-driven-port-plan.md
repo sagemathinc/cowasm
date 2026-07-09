@@ -42336,6 +42336,36 @@ reports:
 sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
 ```
 
+Follow-up graph backend overview corpus-growth pass on 2026-07-09: the
+completed standalone resource bundle was reused for a focused graph doctest
+probe. `sage/graphs/base/overview.py` now contributes default-profile runnable
+coverage instead of a skipped-only graph-backend row. The doctest runner seeds
+the lightweight `Graph` constructor in the common startup namespace, and the
+WASI `sage.all` patch exposes the same name for REPL parity on a fresh
+patched Sagelite source copy. This clears the file's only default-profile
+failure:
+
+```text
+NameError: name 'Graph' is not defined
+```
+
+Focused validation used the `test-sage-doctest-corpus` make target after a
+fresh patched source-tree rebuild, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/graph-next/overview-make.sqlite3`,
+recording `overview.py: 1 passed, 0 failed, 0 skipped`. A refreshed grouped
+graph probe over the current graph corpus tail plus the new overview file
+recorded:
+
+```text
+sage -t passed: 138 passed, 0 failed, 41 skipped
+```
+
+The saved block- and file-failure cluster queries are empty for that grouped
+probe. The remaining graph skips are still explicit dependency boundaries such
+as broader `sage.graphs`, Nauty, NumPy, and numerical-MIP examples; no broad
+graph startup catalog was added in this pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
