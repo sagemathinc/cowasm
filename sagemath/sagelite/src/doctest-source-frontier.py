@@ -612,6 +612,7 @@ def count_sage_prompts(path: Path) -> tuple[int, int, bool]:
     runnable_prompts = 0
     file_skip_directive = False
     active_skip_directive = False
+    active_skip_prompt_seen = False
     try:
         with path.open(encoding="utf-8") as handle:
             for line in handle:
@@ -620,7 +621,13 @@ def count_sage_prompts(path: Path) -> tuple[int, int, bool]:
                     runnable_counted,
                     file_skip_directive,
                     active_skip_directive,
-                ) = count_line_prompts(line, file_skip_directive, active_skip_directive)
+                    active_skip_prompt_seen,
+                ) = count_line_prompts(
+                    line,
+                    file_skip_directive,
+                    active_skip_directive,
+                    active_skip_prompt_seen,
+                )
                 prompts += prompt_counted
                 runnable_prompts += runnable_counted
     except UnicodeDecodeError:
@@ -628,6 +635,7 @@ def count_sage_prompts(path: Path) -> tuple[int, int, bool]:
         runnable_prompts = 0
         file_skip_directive = False
         active_skip_directive = False
+        active_skip_prompt_seen = False
         with path.open(encoding="latin-1") as handle:
             for line in handle:
                 (
@@ -635,7 +643,13 @@ def count_sage_prompts(path: Path) -> tuple[int, int, bool]:
                     runnable_counted,
                     file_skip_directive,
                     active_skip_directive,
-                ) = count_line_prompts(line, file_skip_directive, active_skip_directive)
+                    active_skip_prompt_seen,
+                ) = count_line_prompts(
+                    line,
+                    file_skip_directive,
+                    active_skip_directive,
+                    active_skip_prompt_seen,
+                )
                 prompts += prompt_counted
                 runnable_prompts += runnable_counted
     return prompts, runnable_prompts, file_skip_directive
@@ -645,14 +659,28 @@ def count_line_prompts(
     line: str,
     file_skip_directive: bool,
     active_skip_directive: bool,
-) -> tuple[int, int, bool, bool]:
+    active_skip_prompt_seen: bool,
+) -> tuple[int, int, bool, bool, bool]:
     if FILE_SKIP_DIRECTIVE_RE.search(line):
         file_skip_directive = True
-    if not line.strip():
+    stripped = line.strip()
+    if active_skip_directive and stripped in {'"""', "'''"}:
         active_skip_directive = False
+        active_skip_prompt_seen = False
+    # Sage standalone directives often sit above a blank separator before
+    # the examples they mark. Reset after the skipped prompt group, not before it.
+    if not stripped and active_skip_prompt_seen:
+        active_skip_directive = False
+        active_skip_prompt_seen = False
 
     if not SAGE_PROMPT_RE.match(line):
-        return 0, 0, file_skip_directive, active_skip_directive
+        return (
+            0,
+            0,
+            file_skip_directive,
+            active_skip_directive,
+            active_skip_prompt_seen,
+        )
 
     prompt_skip_directive = bool(PROMPT_SKIP_DIRECTIVE_RE.search(line))
     standalone_skip_directive = bool(STANDALONE_SKIP_DIRECTIVE_RE.match(line))
@@ -660,7 +688,14 @@ def count_line_prompts(
         file_skip_directive or active_skip_directive or prompt_skip_directive
     )
     active_skip_directive = active_skip_directive or standalone_skip_directive
-    return 1, int(runnable), file_skip_directive, active_skip_directive
+    active_skip_prompt_seen = active_skip_directive and not standalone_skip_directive
+    return (
+        1,
+        int(runnable),
+        file_skip_directive,
+        active_skip_directive,
+        active_skip_prompt_seen,
+    )
 
 
 def is_excluded_path(

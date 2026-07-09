@@ -42644,6 +42644,28 @@ valid subtraction database, so future scheduled passes should move directly to
 cluster-driven probes unless a new dashboard database, dependency boundary, or
 skip policy changes.
 
+Follow-up low-prompt frontier audit on 2026-07-09: the scheduled
+`sage-doctest-source-frontier` target still emits no rows with the
+plan-mentioned subtraction and current scratch databases, so this pass sampled
+the remaining low-prompt raw frontier without that subtraction. The focused
+batch in
+`.tmp/current-run/scheduled-2026-07-09-continuation/low-prompt-batch.sqlite3`
+found no promotion candidates: the Judson textbook rows still cluster around
+GAP/permutation/group and symbolic dependencies, manifold and interact files
+cluster around symbolic/IPython/plot setup, `con_rational_function_field.py`
+times out in rational-function conic setup, `ntl_ZZ_pE.pyx` reaches the known
+NTL trap, and `hyperelliptic_curves/constructor.py` reaches a p-adic
+function-signature mismatch.
+
+The useful tooling result from that audit is that `doctest-source-frontier.py`
+now treats standalone prompt directives like `sage: # needs brial` the same
+way the runner does when they are followed by a blank separator before the
+marked examples. This removes skipped-only rows such as
+`sage/rings/polynomial/pbori/frontend.py`,
+`sage/rings/polynomial/pbori/randompoly.py`, and `sage/doctest/__main__.py`
+from the runnable low-prompt frontier, while the scheduled make target remains
+quiet under the current filters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
