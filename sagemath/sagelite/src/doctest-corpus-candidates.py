@@ -84,6 +84,11 @@ def parse_args() -> argparse.Namespace:
         help="maximum number of rows to print after filtering and sorting",
     )
     parser.add_argument(
+        "--fail-on-rows",
+        action="store_true",
+        help="exit with status 1 after printing rows if any candidate rows remain",
+    )
+    parser.add_argument(
         "--include-header",
         action="store_true",
         help="print a tab-separated header row",
@@ -1521,6 +1526,7 @@ def main() -> int:
             ),
         )[: args.limit]:
             print_row(row, database, show_database, args)
+            printed_rows += 1
     if (
         args.ignore_invalid
         and invalid_database_count
@@ -1532,6 +1538,8 @@ def main() -> int:
             file=sys.stderr,
         )
         return 2
+    if args.fail_on_rows and printed_rows:
+        return 1
     return 0
 
 

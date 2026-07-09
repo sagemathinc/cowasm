@@ -3407,6 +3407,31 @@ if [ "$doctest_candidate_helper_include_covered" != "src/sage/example/real_candi
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --include-covered did not report covered clean rows."
 fi
+set +e
+doctest_candidate_helper_fail_on_rows="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --fail-on-rows \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_fail_on_rows_status=$?
+set -e
+if [ "$doctest_candidate_helper_fail_on_rows_status" -ne 1 ] || \
+  [ "$doctest_candidate_helper_fail_on_rows" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_fail_on_rows" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --fail-on-rows did not fail with remaining rows."
+fi
+doctest_candidate_helper_fail_on_rows_empty="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --fail-on-rows \
+  --corpus "$doctest_candidate_helper_covered_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ -n "$doctest_candidate_helper_fail_on_rows_empty" ]; then
+  printf '%s\n' "$doctest_candidate_helper_fail_on_rows_empty" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --fail-on-rows reported a fully subtracted candidate scan."
+fi
 sqlite3 "$doctest_candidate_helper_mentioned_db" <<SQL
 create table runs (
   id integer primary key,

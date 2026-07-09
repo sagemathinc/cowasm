@@ -41759,6 +41759,21 @@ low-noise scheduled-run workflow. Skipped-only source-shape audits remain
 available by overriding
 `SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=0`.
 
+Follow-up guarded candidate-target pass on 2026-07-09 UTC: no corpus entry was
+promoted. The candidate helper now accepts `--fail-on-rows`, mirroring the
+source-frontier helper so scheduled quiet-candidate checks can fail the target
+when a promotion row remains. The `sage-doctest-candidates` make target exposes
+this as `SAGELITE_DOCTEST_CANDIDATE_FAIL_ON_ROWS=1`.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, a
+synthetic SQLite probe confirming `--fail-on-rows` exits 1 with a remaining
+candidate and 0 after corpus subtraction, `make -n` for the make-wrapper flag,
+and a real guarded make-target scan against
+`.tmp/current-run/sagelite-corpus-runner95.sqlite3` plus
+`.tmp/current-run/**/*.sqlite3`, which printed no rows and exited 0.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
