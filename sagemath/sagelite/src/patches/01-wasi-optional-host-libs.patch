@@ -1829,7 +1829,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  foreach name, pyx : extension_data
 +  graph_extension_link_args = []
 +  graph_extension_dependencies = [py_dep, cysignals, flint, gmp]
-+  if name == 'generic_graph_pyx'
++  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph'
 +    graph_extension_link_args = cowasm_graph_libcxx_link_args
 +  else
 +    graph_extension_dependencies += [cliquer, planarity]
@@ -1845,6 +1845,26 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
 -    dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
 +    dependencies: graph_extension_dependencies,
 +    link_args: graph_extension_link_args,
+   )
+ endforeach
+@@ -142,4 +158,10 @@
+ foreach name, pyx : extension_data_cpp
++  graph_cpp_extension_dependencies = [py_dep, cysignals, flint, gmp]
++  graph_cpp_extension_link_args = cowasm_graph_libcxx_link_args
++  if name != 'path_enumeration' and name != 'traversals'
++    graph_cpp_extension_dependencies += [planarity]
++  endif
++
+   py.extension_module(
+     name,
+     sources: pyx,
+@@ -153,6 +175,7 @@
+       inc_flint,
+       inc_rings,
+     ],
+-    dependencies: [py_dep, cysignals, flint, gmp, planarity],
++    dependencies: graph_cpp_extension_dependencies,
++    link_args: graph_cpp_extension_link_args,
    )
  endforeach
 diff -urN a/src/sage/libs/all.py b/src/sage/libs/all.py

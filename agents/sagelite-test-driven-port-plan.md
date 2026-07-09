@@ -42119,6 +42119,25 @@ treating graph import failures as backend regressions. The broader standalone
 wedges under `timeout`; it is no longer the first signal for this graph side
 module linkage issue.
 
+Follow-up graph core-helper linkage pass on 2026-07-09: no corpus entry was
+promoted. After the `generic_graph_pyx` fix, the next focused
+`python-wasi-sdk` probe reached missing graph helper side modules rather than a
+runtime signature mismatch. The WASI source patch now builds the import-time
+core graph helpers `views`, `connectivity`, `distances_all_pairs`,
+`independent_sets`, `line_graph`, `path_enumeration`, and `traversals` without
+the optional `cliquer`/`planarity` dependency gate, while keeping the remaining
+graph extension modules behind the existing optional graph-library boundary.
+
+Focused validation rebuilt those side modules in the existing Meson tree and
+confirmed that `from sage.graphs.generic_graph import GenericGraph` succeeds
+after `import sage.rings.all` under `bin/python-wasi-sdk`. A minimal
+`from sage.graphs.graph import Graph` probe now advances past those helpers and
+stops at the broader graph algorithm stack, first
+`ModuleNotFoundError: No module named 'sage.graphs.weakly_chordal'`. The next
+graph-focused pass should decide whether to lazy-load those class-level graph
+algorithm aliases for the browser profile or split another small no-optional
+algorithm batch; this pass intentionally avoided promoting graph corpus files.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
