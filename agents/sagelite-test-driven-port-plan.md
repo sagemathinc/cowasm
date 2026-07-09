@@ -41669,6 +41669,21 @@ and the guarded scheduled-run command lines. This keeps documented historical
 diagnostics from reappearing in target-driven candidate scans while still
 allowing opt-in audits via `SAGELITE_DOCTEST_CANDIDATE_MENTIONED=`.
 
+Scheduled recursive candidate confirmation on 2026-07-09 UTC: no corpus entry
+was promoted. Direct guarded source-frontier, promotion-candidate, near-miss,
+and file-error scans against the checked corpus, this plan, `.tmp/**/*.sqlite3`,
+`/tmp/sagelite*.sqlite3`, and the current Sagelite source root printed no rows.
+The Make source-frontier target agreed when run with the same recursive
+database glob set and `--min-runnable-prompts 1`.
+
+The default `sage-doctest-candidates` target failed early because
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` is absent in this
+checkout, so the helper's all-invalid database guard reported no valid
+dashboard database instead of silently returning no candidates. Overriding
+`SAGELITE_DOCTEST_DB=.tmp/current-run/sagelite-corpus-runner95.sqlite3` made
+the target complete with no rows, confirming the candidate target itself is
+still quiet when pointed at a valid dashboard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
