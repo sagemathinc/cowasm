@@ -41468,6 +41468,24 @@ Those databases record runner version 102 at CoWasm commit
 smoke reruns are clean, so future scheduled runs should not treat that stale
 focused row as an active lazy-format frontier.
 
+Follow-up candidate-helper diagnostic pass on 2026-07-08 UTC: no corpus entry
+was promoted. The guarded source-frontier scan against the checked corpus,
+this plan's mentioned paths, and `.tmp/current-run/sagelite-corpus-runner95.sqlite3`
+printed no remaining unmentioned source file with runnable prompts. A guarded
+historical promotion scan with runner-version, file-run, block-row, and
+current-source-root checks also printed no uncovered clean promotion rows.
+
+The same historical file-error scan exposed a dashboard-tooling issue instead
+of a new Sage compatibility cluster: one scratch database contains invalid
+UTF-8 bytes in `failure_detail`, which previously made
+`doctest-corpus-candidates.py --file-errors --include-failure-detail` abort
+while SQLite decoded the result column. The helper now opens doctest databases
+with replacement decoding for text fields, so malformed crash diagnostics are
+still printable and filterable. The standalone smoke script has a synthetic
+SQLite fixture for this case, and direct validation confirmed the helper
+prints the invalid diagnostic with a replacement character instead of
+crashing.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

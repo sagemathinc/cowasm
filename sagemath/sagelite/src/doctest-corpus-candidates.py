@@ -549,6 +549,12 @@ def table_exists(db: sqlite3.Connection, table: str) -> bool:
     )
 
 
+def connect_doctest_database(database: Path) -> sqlite3.Connection:
+    db = sqlite3.connect(database)
+    db.text_factory = lambda value: value.decode("utf-8", errors="replace")
+    return db
+
+
 def runs_table_has_column(db: sqlite3.Connection, column: str) -> bool:
     return table_has_column(db, "runs", column)
 
@@ -1200,7 +1206,7 @@ def main() -> int:
         try:
             if not database.exists():
                 raise SystemExit(f"database not found: {database}")
-            with sqlite3.connect(database) as db:
+            with connect_doctest_database(database) as db:
                 require_doctest_schema(database, db)
                 metadata = latest_run_metadata(
                     db,

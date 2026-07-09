@@ -2960,6 +2960,7 @@ done
 doctest_candidate_helper_db="$probe_dir/sagelite-doctest-candidate-helper.sqlite3"
 doctest_candidate_helper_focused_db="$probe_dir/sagelite-doctest-focused-candidate-helper.sqlite3"
 doctest_candidate_helper_relative_db="$probe_dir/sagelite-doctest-relative-candidate-helper.sqlite3"
+doctest_candidate_helper_invalid_utf8_db="$probe_dir/sagelite-doctest-invalid-utf8-candidate-helper.sqlite3"
 doctest_candidate_helper_corpus="$probe_dir/sagelite-doctest-empty-corpus.txt"
 doctest_candidate_helper_covered_corpus="$probe_dir/sagelite-doctest-covered-corpus.txt"
 doctest_candidate_helper_relative_corpus="$probe_dir/sagelite-doctest-relative-corpus.txt"
@@ -2980,6 +2981,7 @@ touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/invalid_detail.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_type_error.py"
 cat >"$doctest_candidate_helper_source_root/src/sage/example/frontier_candidate.py" <<'PY'
@@ -3511,6 +3513,56 @@ src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError	No mo
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --failure-detail-limit did not bound file-scope diagnostics."
 fi
+sqlite3 "$doctest_candidate_helper_invalid_utf8_db" <<SQL
+create table runs (
+  id integer primary key,
+  source_root text,
+  runner_version integer
+);
+create table files (
+  id integer primary key,
+  run_id integer,
+  path text,
+  status text,
+  total_blocks integer,
+  passed_blocks integer,
+  failed_blocks integer,
+  skipped_blocks integer,
+  failure_class text default '',
+  failure_detail text default '',
+  duration_ms integer
+);
+insert into runs (id, source_root, runner_version) values (1, '$doctest_candidate_helper_source_root', 83);
+insert into files (
+  run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, failure_class, failure_detail, duration_ms
+) values (
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/invalid_detail.py',
+  'error',
+  0,
+  0,
+  0,
+  0,
+  'Error',
+  cast(X'696e76616c6964ff74657874' as text),
+  9
+);
+SQL
+doctest_candidate_helper_invalid_utf8_detail="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --include-failure-detail \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_invalid_utf8_db")"
+case "$doctest_candidate_helper_invalid_utf8_detail" in
+  "src/sage/example/invalid_detail.py	0	0	0	0	0	9	error	Error	invalid"*text)
+    ;;
+  *)
+    printf '%s\n' "$doctest_candidate_helper_invalid_utf8_detail" >&2
+    sqlite3 "$doctest_candidate_helper_invalid_utf8_db" ".dump" >&2 || true
+    record_blocker "sagelite-blocked: doctest-corpus-candidates --include-failure-detail did not tolerate invalid UTF-8 diagnostics."
+    ;;
+esac
 doctest_candidate_helper_file_errors_no_file_not_found="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \
   --exclude-file-failure-class FileNotFoundError \
