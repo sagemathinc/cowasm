@@ -16,6 +16,7 @@ from pathlib import Path
 
 DEFAULT_EXCLUDED_PATH_PREFIXES = ("src/sage/doctest/tests/",)
 DEFAULT_EXCLUDED_PATH_SUFFIXES = (".orig", ".rej")
+SUPPORT_ONLY_PATH_SUFFIXES = (".pxd", ".pxi")
 REQUIRED_RUN_METADATA_COLUMNS = (
     "started_at",
     "git_commit",
@@ -116,6 +117,14 @@ def parse_args() -> argparse.Namespace:
         help=(
             "include Sage doctest framework self-test fixtures, which are "
             "excluded by default because several files intentionally fail"
+        ),
+    )
+    parser.add_argument(
+        "--include-support-files",
+        action="store_true",
+        help=(
+            "include Cython support-only .pxd/.pxi file rows in candidate and "
+            "diagnostic output"
         ),
     )
     parser.add_argument(
@@ -598,6 +607,21 @@ def source_path_matches_root(path: str, source_root: Path | None) -> bool:
     return True
 
 
+def is_excluded_path(
+    relative_path: str,
+    excluded_prefixes: tuple[str, ...],
+    include_support_files: bool,
+) -> bool:
+    return (
+        any(relative_path.startswith(prefix) for prefix in excluded_prefixes)
+        or relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES)
+        or (
+            not include_support_files
+            and relative_path.endswith(SUPPORT_ONLY_PATH_SUFFIXES)
+        )
+    )
+
+
 def table_has_column(db: sqlite3.Connection, table: str, column: str) -> bool:
     return any(
         name == column
@@ -841,6 +865,7 @@ def candidate_rows(
     include_covered: bool,
     mentioned: set[str],
     include_mentioned: bool,
+    include_support_files: bool,
 ) -> list[tuple[str, int, int, int, int, int, int, str, str, str]]:
     failure_class_expr = (
         "coalesce(failure_class, '')"
@@ -1124,9 +1149,9 @@ def candidate_rows(
             skip_tag_detail = grouped_skipped_block_metadata(
                 db, run_id, path, "tags", True
             )
-        if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
-            continue
-        if relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES):
+        if is_excluded_path(
+            relative_path, excluded_path_prefixes, include_support_files
+        ):
             continue
         if file_errors and any(
             detail in one_line_failure_detail
@@ -1207,6 +1232,7 @@ def superseding_clean_paths(
     include_covered: bool,
     mentioned: set[str],
     include_mentioned: bool,
+    include_support_files: bool,
 ) -> set[str]:
     rows = db.execute(
         """
@@ -1238,9 +1264,9 @@ def superseding_clean_paths(
         ):
             continue
         relative_path = normalize_path(path, source_root)
-        if any(relative_path.startswith(prefix) for prefix in excluded_path_prefixes):
-            continue
-        if relative_path.endswith(DEFAULT_EXCLUDED_PATH_SUFFIXES):
+        if is_excluded_path(
+            relative_path, excluded_path_prefixes, include_support_files
+        ):
             continue
         if not include_non_sage and not relative_path.startswith("src/sage/"):
             continue
@@ -1391,6 +1417,7 @@ def main() -> int:
                     args.include_covered,
                     mentioned,
                     args.include_mentioned,
+                    args.include_support_files,
                 )
                 if args.suppress_superseded_failures and (
                     args.near_misses or args.file_errors
@@ -1407,6 +1434,7 @@ def main() -> int:
                             args.include_covered,
                             mentioned,
                             args.include_mentioned,
+                            args.include_support_files,
                         )
                     )
                     superseded_failure_paths.update(

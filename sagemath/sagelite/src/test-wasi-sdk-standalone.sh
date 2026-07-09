@@ -2982,6 +2982,7 @@ PY
 touch "$doctest_candidate_helper_source_root/src/sage/example/zero_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/skipped_candidate.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py"
+touch "$doctest_candidate_helper_source_root/src/sage/example/include_diagnostic.pxi"
 touch "$doctest_candidate_helper_source_root/src/sage/example/stale_harness_error.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/invalid_detail.py"
 touch "$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py"
@@ -3112,6 +3113,15 @@ insert into files (
   12
 ), (
   1,
+  '$doctest_candidate_helper_source_root/src/sage/example/include_diagnostic.pxi',
+  'error',
+  0,
+  0,
+  0,
+  0,
+  11
+), (
+  1,
   '$doctest_candidate_helper_source_root/src/sage/example/near_miss_name_error.py',
   'failed',
   3,
@@ -3134,6 +3144,11 @@ set
   failure_class = 'ModuleNotFoundError',
   failure_detail = 'No module named sage.example.optional_backend'
 where path = '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py';
+update files
+set
+  failure_class = 'RuntimeError',
+  failure_detail = 'support include fragments are not standalone doctest files'
+where path = '$doctest_candidate_helper_source_root/src/sage/example/include_diagnostic.pxi';
 update files
 set
   failure_class = 'FileNotFoundError',
@@ -3539,6 +3554,18 @@ src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError" ]; t
   printf '%s\n' "$doctest_candidate_helper_file_errors" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --file-errors did not report file-scope failures."
+fi
+doctest_candidate_helper_support_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --include-support-files \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_support_file_errors" != "src/sage/example/stale_harness_error.py	0	0	0	0	0	12	error	FileNotFoundError
+src/sage/example/error_candidate.py	0	0	0	0	0	15	error	ModuleNotFoundError
+src/sage/example/include_diagnostic.pxi	0	0	0	0	0	11	error	RuntimeError" ]; then
+  printf '%s\n' "$doctest_candidate_helper_support_file_errors" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --include-support-files did not report support-file diagnostics."
 fi
 doctest_candidate_helper_file_errors_limited="$("$src_dir/doctest-corpus-candidates.py" \
   --file-errors \

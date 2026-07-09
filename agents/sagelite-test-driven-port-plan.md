@@ -41590,6 +41590,25 @@ above. An attempted `make -C sagemath/sagelite test-wasi-sdk-standalone` was
 interrupted after more than ten minutes while rebuilding the refreshed patched
 Sagelite Cython source tree, before it reached the standalone smoke assertions.
 
+Follow-up support-file diagnostic audit on 2026-07-09 UTC: no corpus entry was
+promoted. The previous recursive file-error scan's remaining low-level
+`.pxi` diagnostics are support include fragments rather than standalone Sage
+doctest modules, so they should not keep scheduled candidate dashboards noisy
+by default. `doctest-corpus-candidates.py` now suppresses `.pxd` and `.pxi`
+rows unless `--include-support-files` is passed; this applies consistently to
+candidate rows and superseded-failure guards.
+
+Focused validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, `git diff --check`, and a
+synthetic SQLite probe confirming that a standalone `.py` file-error remains
+visible while a `.pxi` diagnostic is hidden by default and restored by
+`--include-support-files`. The existing standalone smoke fixture now covers
+that opt-in behavior. The guarded recursive file-error scan across
+`.tmp/**/*.sqlite3` and `/tmp/sagelite*.sqlite3`, with the checked corpus,
+current source root, strict runner guards, runner version 83 minimum, and this
+plan as the mentioned-path subtraction file, printed no remaining rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
