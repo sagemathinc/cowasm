@@ -41914,6 +41914,23 @@ missing or non-Sagelite tree now reports an argparse status-2 error instead of
 falling through to a later raw source-tree scan error. The standalone smoke
 script has a focused fixture for the missing source-root guard.
 
+Follow-up explicit database-path guard pass on 2026-07-09 UTC: no corpus entry
+was promoted. The candidate and source-frontier helpers now validate explicit
+database path arguments during argument parsing when invalid inputs are not
+being ignored. A typo in a positional candidate database or
+`--subtract-database` path now reports an argparse status-2 error, matching the
+existing unmatched-glob behavior. The `--ignore-invalid` and
+`--ignore-invalid-databases` multi-input workflows still tolerate missing
+explicit database paths when at least one valid database is scanned, and the
+standalone smoke script has focused fixtures for both the fail-fast and
+ignored-missing cases.
+
+Validation used `python3 -m py_compile` for both helper scripts,
+`bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, direct fail-fast
+and ignored-missing database probes for both helpers, `git diff --check`, and
+the guarded candidate and source-frontier make-target scans over
+`.tmp/current-run/**/*.sqlite3`, which printed no rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

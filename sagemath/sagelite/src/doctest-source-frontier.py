@@ -254,6 +254,8 @@ def parse_args() -> argparse.Namespace:
             "subtraction database glob matched no files: "
             + ", ".join(args.unmatched_subtract_database_globs)
         )
+    if not args.ignore_invalid_databases:
+        validate_existing_files(parser, "--subtract-database", args.subtract_database)
     args.extensions = tuple(
         normalize_extension(extension) for extension in args.extension
     ) or DEFAULT_EXTENSIONS

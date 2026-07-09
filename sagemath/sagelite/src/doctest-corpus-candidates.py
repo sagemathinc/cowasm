@@ -513,6 +513,8 @@ def parse_args() -> argparse.Namespace:
             "database glob matched no files: "
             + ", ".join(args.unmatched_database_globs)
         )
+    if not args.ignore_invalid:
+        validate_existing_files(parser, "database", args.database)
     if not args.database and not args.unmatched_database_globs:
         parser.error(
             "at least one doctest SQLite database or --database-glob match "

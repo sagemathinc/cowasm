@@ -3206,6 +3206,20 @@ if [ "$doctest_candidate_helper_glob_paths" != "src/sage/example/real_candidate.
   record_blocker "sagelite-blocked: doctest-corpus-candidates --database-glob did not scan matching databases."
 fi
 set +e
+doctest_candidate_helper_missing_database="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$probe_dir/no-such-candidate-database.sqlite3" \
+  2>&1)"
+doctest_candidate_helper_missing_database_status=$?
+set -e
+if [ "$doctest_candidate_helper_missing_database_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_missing_database" | \
+    grep -Fq -- 'database does not name a file:'; then
+  printf '%s\n' "$doctest_candidate_helper_missing_database" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not reject a missing explicit database cleanly."
+fi
+set +e
 doctest_candidate_helper_missing_mentioned="$("$src_dir/doctest-corpus-candidates.py" \
   --paths-only \
   --mentioned-file "$probe_dir/no-such-mentioned-file.md" \
@@ -3504,6 +3518,18 @@ if [ "$doctest_candidate_helper_unmatched_glob_ignored" != "src/sage/example/rea
   printf '%s\n' "$doctest_candidate_helper_unmatched_glob_ignored" >&2
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --ignore-invalid did not tolerate an unmatched database glob."
+fi
+doctest_candidate_helper_missing_database_ignored="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --ignore-invalid \
+  --quiet-invalid \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  "$probe_dir/no-such-candidate-database.sqlite3")"
+if [ "$doctest_candidate_helper_missing_database_ignored" != "src/sage/example/real_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_missing_database_ignored" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --ignore-invalid did not tolerate a missing explicit database."
 fi
 set +e
 doctest_candidate_helper_only_unmatched_glob="$("$src_dir/doctest-corpus-candidates.py" \
@@ -4279,6 +4305,21 @@ if [ "$doctest_source_frontier_missing_source_root_status" -ne 2 ] || \
   printf '%s\n' "$doctest_source_frontier_missing_source_root" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --source-root did not reject a missing Sagelite source tree cleanly."
 fi
+set +e
+doctest_source_frontier_missing_database="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --subtract-database "$probe_dir/no-such-source-frontier-database.sqlite3" \
+  2>&1)"
+doctest_source_frontier_missing_database_status=$?
+set -e
+if [ "$doctest_source_frontier_missing_database_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_missing_database" | \
+    grep -Fq -- '--subtract-database does not name a file:'; then
+  printf '%s\n' "$doctest_source_frontier_missing_database" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier did not reject a missing explicit database cleanly."
+fi
 doctest_source_frontier_required_paths="$("$src_dir/doctest-source-frontier.py" \
   --paths-only \
   --source-root "$doctest_candidate_helper_source_root" \
@@ -4365,6 +4406,20 @@ doctest_source_frontier_unmatched_glob_ignored="$("$src_dir/doctest-source-front
 if [ "$doctest_source_frontier_unmatched_glob_ignored" != "src/sage/example/frontier_candidate.py" ]; then
   printf '%s\n' "$doctest_source_frontier_unmatched_glob_ignored" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier --ignore-invalid-databases did not tolerate an unmatched database glob."
+fi
+doctest_source_frontier_missing_database_ignored="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database "$probe_dir/no-such-source-frontier-database.sqlite3" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_missing_database_ignored" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_missing_database_ignored" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --ignore-invalid-databases did not tolerate a missing explicit database."
 fi
 set +e
 doctest_source_frontier_only_unmatched_glob="$("$src_dir/doctest-source-frontier.py" \
