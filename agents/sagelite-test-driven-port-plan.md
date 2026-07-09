@@ -41817,6 +41817,22 @@ row. Future scheduled runs should continue to pass an explicit valid dashboard
 or scratch database glob for candidate scans until the default dashboard is
 regenerated.
 
+Follow-up source-frontier glob hardening pass on 2026-07-09 UTC: no corpus
+entry was promoted. The source-frontier helper now treats unmatched
+`--subtract-database-glob` patterns like the candidate helper treats unmatched
+`--database-glob` patterns. By default an unmatched subtraction glob fails
+fast with an argparse error; under `--ignore-invalid-databases` it is counted
+as an invalid subtraction input, so mixed valid/unmatched scans continue while
+all-unmatched scans report the existing "no valid Sagelite doctest databases
+were scanned" guard.
+
+Validation used `python3 -m py_compile` for the Sagelite doctest helper
+scripts, `bash -n sagemath/sagelite/src/test-wasi-sdk-standalone.sh`,
+`git diff --check`, a focused synthetic source-frontier probe covering
+fail-fast, mixed valid/unmatched, and all-unmatched behavior, and the real
+source-frontier make target against `.tmp/current-run/**/*.sqlite3`, which
+printed no rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

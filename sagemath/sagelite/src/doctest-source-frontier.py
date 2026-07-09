@@ -239,6 +239,18 @@ def parse_args() -> argparse.Namespace:
         parser.error(
             "--quiet-invalid-databases requires --ignore-invalid-databases"
         )
+    args.unmatched_subtract_database_globs = []
+    for pattern in args.subtract_database_glob:
+        matches = sorted(glob.glob(pattern, recursive=True))
+        if not matches:
+            args.unmatched_subtract_database_globs.append(pattern)
+            continue
+        args.subtract_database.extend(Path(path) for path in matches)
+    if args.unmatched_subtract_database_globs and not args.ignore_invalid_databases:
+        parser.error(
+            "subtraction database glob matched no files: "
+            + ", ".join(args.unmatched_subtract_database_globs)
+        )
     args.extensions = tuple(
         normalize_extension(extension) for extension in args.extension
     ) or DEFAULT_EXTENSIONS
@@ -295,10 +307,7 @@ def read_mentioned(paths: list[Path]) -> set[str]:
 
 
 def database_paths(args: argparse.Namespace) -> list[Path]:
-    paths = list(args.subtract_database)
-    for pattern in args.subtract_database_glob:
-        paths.extend(Path(path) for path in sorted(glob.glob(pattern, recursive=True)))
-    return paths
+    return list(args.subtract_database)
 
 
 def read_database_paths(
@@ -617,15 +626,28 @@ def main() -> int:
         args.min_runner_version,
     )
     audited = database_scan.audited_paths
+    invalid_count = database_scan.invalid_count
+    first_invalid_error = database_scan.first_invalid_error
+    if args.ignore_invalid_databases:
+        for pattern in args.unmatched_subtract_database_globs:
+            invalid_count += 1
+            error = f"{pattern}: no files matched subtraction database glob"
+            if not first_invalid_error:
+                first_invalid_error = error
+            if not args.quiet_invalid_databases:
+                print(
+                    f"warning: skipping unmatched subtraction database glob "
+                    f"{pattern}: no files matched",
+                    file=sys.stderr,
+                )
     if (
         args.ignore_invalid_databases
-        and database_scan.invalid_count
+        and invalid_count
         and database_scan.valid_count == 0
     ):
         print(
             "error: no valid Sagelite doctest databases were scanned"
-            f" ({database_scan.invalid_count} invalid; first: "
-            f"{database_scan.first_invalid_error})",
+            f" ({invalid_count} invalid; first: {first_invalid_error})",
             file=sys.stderr,
         )
         return 2

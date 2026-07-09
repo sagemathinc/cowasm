@@ -4246,6 +4246,53 @@ if [ "$doctest_source_frontier_all_invalid_status" -eq 0 ] || \
   printf '%s\n' "$doctest_source_frontier_all_invalid" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier all-invalid database guard did not fire."
 fi
+doctest_source_frontier_unmatched_glob="$probe_dir/no-such-source-frontier-*.sqlite3"
+set +e
+doctest_source_frontier_unmatched_glob_error="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --subtract-database-glob "$doctest_source_frontier_unmatched_glob" \
+  2>&1)"
+doctest_source_frontier_unmatched_glob_status=$?
+set -e
+if [ "$doctest_source_frontier_unmatched_glob_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_unmatched_glob_error" | \
+    grep -Fq 'subtraction database glob matched no files:'; then
+  printf '%s\n' "$doctest_source_frontier_unmatched_glob_error" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier silently accepted an unmatched database glob."
+fi
+doctest_source_frontier_unmatched_glob_ignored="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --mentioned-file "$doctest_source_frontier_mentioned" \
+  --subtract-database "$doctest_candidate_helper_db" \
+  --subtract-database-glob "$doctest_source_frontier_unmatched_glob" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  --min-runnable-prompts 1)"
+if [ "$doctest_source_frontier_unmatched_glob_ignored" != "src/sage/example/frontier_candidate.py" ]; then
+  printf '%s\n' "$doctest_source_frontier_unmatched_glob_ignored" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier --ignore-invalid-databases did not tolerate an unmatched database glob."
+fi
+set +e
+doctest_source_frontier_only_unmatched_glob="$("$src_dir/doctest-source-frontier.py" \
+  --paths-only \
+  --source-root "$doctest_candidate_helper_source_root" \
+  --corpus "$doctest_source_frontier_corpus" \
+  --subtract-database-glob "$doctest_source_frontier_unmatched_glob" \
+  --ignore-invalid-databases \
+  --quiet-invalid-databases \
+  2>&1)"
+doctest_source_frontier_only_unmatched_glob_status=$?
+set -e
+if [ "$doctest_source_frontier_only_unmatched_glob_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_source_frontier_only_unmatched_glob" | \
+    grep -Fq 'error: no valid Sagelite doctest databases were scanned'; then
+  printf '%s\n' "$doctest_source_frontier_only_unmatched_glob" >&2
+  record_blocker "sagelite-blocked: doctest-source-frontier did not report an all-unmatched database glob scan."
+fi
 set +e
 doctest_source_frontier_empty_glob="$("$src_dir/doctest-source-frontier.py" \
   --source-root "$doctest_candidate_helper_source_root" \
@@ -4256,7 +4303,7 @@ doctest_source_frontier_empty_glob="$("$src_dir/doctest-source-frontier.py" \
 doctest_source_frontier_empty_glob_status=$?
 set -e
 if [ "$doctest_source_frontier_empty_glob_status" -eq 0 ] || \
-  ! printf '%s\n' "$doctest_source_frontier_empty_glob" | grep -Fq -- "no Sagelite doctest databases matched subtraction inputs"; then
+  ! printf '%s\n' "$doctest_source_frontier_empty_glob" | grep -Fq -- "subtraction database glob matched no files:"; then
   printf '%s\n' "$doctest_source_frontier_empty_glob" >&2
   record_blocker "sagelite-blocked: doctest-source-frontier empty required database glob guard did not fire."
 fi
