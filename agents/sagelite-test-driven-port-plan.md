@@ -43324,6 +43324,29 @@ matrix tuple display-format drift. `comp.py` therefore remains outside the
 curated corpus, but the former GAP-backed symmetrization cluster is no longer
 the blocker.
 
+Follow-up tensor component corpus-growth pass:
+
+```text
+comp.py: 907 passed, 0 failed, 102 skipped
+```
+
+That one-file make-target validation adds `sage/tensor/modules/comp.py` to the
+curated corpus. The WASI source patch now applies the earlier local
+permutation backend fix through a single valid `comp.py` hunk sequence, so all
+four component symmetrization and antisymmetrization implementations avoid the
+GAP-backed `SymmetricGroup` import in the default browser-compatible profile.
+
+The added doctest metadata classifies the remaining browser-profile boundaries:
+parallel tensor examples are tagged with `# needs _multiprocessing`, vector
+basis display ordering is marked `# random`, and tuple matrix display-layout
+drift is deferred as `# known bug`. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/comp-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+metadata records runner version 102 in the default node profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
