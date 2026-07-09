@@ -44066,6 +44066,41 @@ runner wrapper, `git diff --check`, and a one-file
 queries were empty; the remaining skips are the file's upstream `# not tested`
 plot/display examples.
 
+Follow-up Judson backend-boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. A fresh small source-frontier sample without plan-mentioned
+subtraction surfaced four uncovered Judson textbook files:
+`permute-sage.py`, `fields-sage.py`, `isomorph-sage.py`, and
+`groups-sage.py`.
+
+The initial four-file probe recorded 55 passed, 194 failed, and 1 skipped
+block. Focused import probing showed the group-theory failures are not a
+doctest namespace gap: `SymmetricGroup` currently reaches the unavailable
+`sage.libs.gap.libgap` backend. The field-theory file is likewise outside the
+browser profile because its examples rely on symbolic number-field syntax,
+PARI-backed number fields, and the unported broader cypari2 object model.
+
+The WASI source patch now records those boundaries with file-level doctest
+metadata: the group-theory files are tagged
+`# sage.doctest: needs sage.groups sage.libs.gap`, and `fields-sage.py` is
+tagged
+`# sage.doctest: needs sage.rings.number_field sage.symbolic sage.libs.pari`.
+Focused validation against the patched source copy records:
+
+```text
+permute-sage.py: 0 passed, 0 failed, 1 skipped
+fields-sage.py: 0 passed, 0 failed, 1 skipped
+isomorph-sage.py: 0 passed, 0 failed, 1 skipped
+groups-sage.py: 0 passed, 0 failed, 1 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-09-judson-frontier/after-boundary-tags.sqlite3`;
+its saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the rows under the expected GAP/group and
+number-field/symbolic/PARI file-scope metadata. Re-running the 80-prompt
+source-frontier check with file-level skip directives excluded now emits no
+rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

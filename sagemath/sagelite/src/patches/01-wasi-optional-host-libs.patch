@@ -64,6 +64,30 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/combin
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.graphs sage.plot sage.geometry.polyhedron sage.groups sage.combinat
  """
+diff --git a/src/sage/tests/books/judson_abstract_algebra/fields-sage.py b/src/sage/tests/books/judson_abstract_algebra/fields-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/fields-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/fields-sage.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.number_field sage.symbolic sage.libs.pari
+ ##          Sage Doctest File         ##
+diff --git a/src/sage/tests/books/judson_abstract_algebra/groups-sage.py b/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/groups-sage.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ ##          Sage Doctest File         ##
+diff --git a/src/sage/tests/books/judson_abstract_algebra/isomorph-sage.py b/src/sage/tests/books/judson_abstract_algebra/isomorph-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/isomorph-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/isomorph-sage.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ ##          Sage Doctest File         ##
+diff --git a/src/sage/tests/books/judson_abstract_algebra/permute-sage.py b/src/sage/tests/books/judson_abstract_algebra/permute-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/permute-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/permute-sage.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.groups sage.libs.gap
+ ##          Sage Doctest File         ##
 diff --git a/src/sage/algebras/askey_wilson.py b/src/sage/algebras/askey_wilson.py
 --- a/src/sage/algebras/askey_wilson.py
 +++ b/src/sage/algebras/askey_wilson.py
