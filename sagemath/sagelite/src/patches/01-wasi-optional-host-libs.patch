@@ -14829,6 +14829,11 @@ diff --git a/src/sage/rings/lazy_series.py b/src/sage/rings/lazy_series.py
 diff --git a/src/sage/symbolic/expression.pyx b/src/sage/symbolic/expression.pyx
 --- a/src/sage/symbolic/expression.pyx
 +++ b/src/sage/symbolic/expression.pyx
+@@ -7,3 +7,4 @@
+ # pynac/basic.h includes
+ #   factory/factory.h    so this ^ is needed to find it
++# sage.doctest: needs sage.symbolic maxima sage.libs.singular
+ """
 @@ -3975,2 +3975,2 @@
 -            sage: b = polygen(FiniteField(9), 'b')
 -            sage: SR('I') * b

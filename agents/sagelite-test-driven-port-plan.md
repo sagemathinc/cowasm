@@ -42762,6 +42762,31 @@ was needed from this pass; the next useful scheduled work should keep following
 new failure clusters or changed backend boundaries rather than repeating the
 same quiet frontier scans.
 
+Follow-up symbolic-expression boundary pass on 2026-07-09: a direct probe of
+`sage/symbolic/expression.pyx` timed out at the `simplify_factorial()` example
+on line 11093, where the implementation calls through Maxima. The file is the
+heavy Pynac/Singular/Maxima symbolic expression core and remains outside the
+stripped browser-compatible profile, matching the existing treatment of many
+dependent `sage.symbolic.expression` imports.
+
+The WASI source patch now marks `expression.pyx` with a file-level
+`# sage.doctest: needs sage.symbolic maxima sage.libs.singular` directive.
+Focused make-target validation rebuilt a fresh patched source copy and used
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-symbolic-expression/expression-make-v3.sqlite3`.
+The one-file run records:
+
+```text
+expression.pyx: 0 passed, 0 failed, 1 skipped
+```
+
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the skip under
+`optional:sage.symbolic,maxima,sage.libs.singular`. The scheduled
+source-frontier target remains quiet under the current plan-mentioned and
+scratch-database subtraction filters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
