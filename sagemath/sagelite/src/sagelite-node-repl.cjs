@@ -1219,6 +1219,8 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.tableau", ("SemistandardTableau", "SemistandardTableaux", "StandardTableau", "StandardTableaux", "Tableau", "Tableaux")),
         ("sage.combinat.tableau_tuple", ("StandardTableauTuple", "StandardTableauTuples", "TableauTuples")),
         ("sage.combinat.partition_tuple", ("PartitionTuple", "PartitionTuples")),
+        ("sage.combinat.posets.lattices", ("LatticePoset",)),
+        ("sage.combinat.posets.posets", ("Poset",)),
         ("sage.combinat.subset", ("Subsets", "powerset", "subsets")),
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
@@ -1310,7 +1312,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.magmas", ("Magmas",)),
         ("sage.categories.monoids", ("Monoids",)),
         ("sage.categories.permutation_groups", ("PermutationGroups",)),
-        ("sage.categories.posets", ("Posets",)),
+        ("sage.combinat.posets.poset_examples", ("Posets", "posets")),
         ("sage.categories.semigroups", ("Semigroups",)),
         ("sage.categories.semirings", ("Semirings",)),
         ("sage.categories.tensor", ("tensor",)),
@@ -1512,12 +1514,30 @@ def __cowasm_seed_common_doctest_globals(namespace):
             pass
     except BaseException:
         pass
+    try:
+        from sage.combinat.posets.poset_examples import Posets as CatalogPosets
+        from sage.combinat.posets.poset_examples import posets as posets_catalog
+        namespace["Posets"] = CatalogPosets
+        namespace.setdefault("posets", posets_catalog)
+        try:
+            import sage.all as sage_all
+            setattr(sage_all, "Posets", CatalogPosets)
+            if not hasattr(sage_all, "posets"):
+                setattr(sage_all, "posets", posets_catalog)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
     if "ModulesWithBasis" in namespace:
         namespace.setdefault("FreeModules", namespace["ModulesWithBasis"])
-    if "Posets" in namespace:
-        namespace.setdefault("PartiallyOrderedSets", namespace["Posets"])
+    try:
+        from sage.categories.posets import Posets as CategoryPosets
+        namespace.setdefault("PartiallyOrderedSets", CategoryPosets)
+    except BaseException:
+        if "Posets" in namespace:
+            namespace.setdefault("PartiallyOrderedSets", namespace["Posets"])
     if "RingIdeals" in namespace:
         namespace.setdefault("Ideals", namespace["RingIdeals"])
     try:

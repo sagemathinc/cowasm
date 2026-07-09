@@ -1090,6 +1090,7 @@ src/sage/games/hexad.py
 src/sage/games/quantumino.py
 src/sage/tests/books/judson_abstract_algebra/integers-sage.py
 src/sage/tests/books/judson_abstract_algebra/sets-sage.py
+src/sage/tests/books/judson_abstract_algebra/boolean-sage.py
 src/sage/tests/books/judson_abstract_algebra/crypt-sage.py
 src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py
 src/sage/tests/books/judson_abstract_algebra/cosets-sage-exercises.py

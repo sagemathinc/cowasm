@@ -44041,6 +44041,31 @@ skips under the expected optional `sage.manifolds,sage.symbolic` and
 source-frontier scan with file-level skip directives excluded now leaves only
 the known Judson group-theory batch in the 80-prompt-and-under runnable set.
 
+Follow-up Judson boolean-poset corpus-growth pass on 2026-07-09 UTC: the
+curated corpus now includes
+`src/sage/tests/books/judson_abstract_algebra/boolean-sage.py`. A fresh
+unpromoted-Judson sample showed the file's failures were a startup namespace
+cluster, not a graph or GAP backend boundary: Sagelite was seeding `Posets`
+from `sage.categories.posets`, while Sage's textbook poset examples expect the
+catalog class from `sage.combinat.posets.poset_examples`.
+
+The doctest runner now seeds `Poset`, `LatticePoset`, the `Posets` catalog
+class, and the lowercase `posets` catalog in the common doctest namespace, and
+the WASI `sage.all` patch exposes the same startup surface on a fresh patched
+Sagelite source copy while preserving `PartiallyOrderedSets` as the category
+alias. Focused validation records:
+
+```text
+boolean-sage.py: 51 passed, 0 failed, 11 skipped
+```
+
+Validation used direct `sage -t --timeout 120`, `node --check` for the doctest
+runner wrapper, `git diff --check`, and a one-file
+`make -C sagemath/sagelite test-sage-doctest-corpus` run with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`. The saved block- and file-failure cluster
+queries were empty; the remaining skips are the file's upstream `# not tested`
+plot/display examples.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
