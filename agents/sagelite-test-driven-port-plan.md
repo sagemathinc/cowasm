@@ -44283,6 +44283,35 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the new skips under the intended dense GF(2)
 matrix backend requirement.
 
+Focused generic-polynomial-element corpus-growth pass on 2026-07-09 UTC:
+
+```text
+polynomial_element_generic.py: 221 passed, 0 failed, 63 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/polynomial_element_generic.py` to the curated corpus.
+A compact mentioned-frontier probe first recorded `226 passed, 34 failed, 24
+skipped`; the failures were dependency and runtime-boundary clusters rather
+than a file-level crash. The WASI source patch now marks the QQbar sparse
+polynomial coercion cache drift and integer-polynomial nonexact division
+drift as deferred known bugs, and marks the unavailable quaternion algebra,
+FLINT integer-polynomial gcd, number-field, and PPL/Newton-polygon examples
+with explicit `# needs ...` metadata.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through
+`make -C sagemath/sagelite test-sage-doctest-corpus`, using a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-09-polynomial-element/polynomial-element-make-3.sqlite3`.
+The latest-run summary records CoWasm commit
+`d8ceb85256f41ae21e2958cc760fd0704f36d533`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+105, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty, and `skips-by-reason.sql` groups the new skips
+under the intended PPL, FLINT, quaternion, number-field, and known-bug
+boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

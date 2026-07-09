@@ -2723,19 +2723,37 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
 --- a/src/sage/rings/polynomial/polynomial_element_generic.py
 +++ b/src/sage/rings/polynomial/polynomial_element_generic.py
-@@ -29,7 +29,8 @@
- #  as published by the Free Software Foundation; either version 2 of
- #  the License, or (at your option) any later version.
- #                  https://www.gnu.org/licenses/
- # ****************************************************************************
+@@ -31,0 +32 @@
 +import sys
- from sage.rings.polynomial.polynomial_element import (
-     Polynomial,
-     Polynomial_generic_dense,
-@@ -1610,13 +1611,14 @@
- # XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
- # until at least until 4.5.0 unpickle correctly as polynomials implemented #
- # via FLINT.                                                               #
+@@ -564,0 +566 @@
++            sage: # known bug - QQbar sparse polynomial coercion cache drift
+@@ -834,0 +837 @@
++            sage: # known bug - integer polynomial nonexact division drift
+@@ -841,0 +845 @@
++            sage: # needs sage.algebras.quaternion_algebra
+@@ -936 +940 @@
+-            sage: gcd(p, q)
++            sage: gcd(p, q)                                                            # needs sage.libs.flint
+@@ -938 +942 @@
+-            sage: gcd(p, q, algorithm='dense')
++            sage: gcd(p, q, algorithm='dense')                                        # needs sage.libs.flint
+@@ -954 +958 @@
+-            sage: (6*x).gcd(9)
++            sage: (6*x).gcd(9)                                                         # needs sage.libs.flint
+@@ -1093,0 +1098 @@
++            sage: # needs sage.rings.number_field
+@@ -1171,0 +1177 @@
++            sage: # needs ppl
+@@ -1198,0 +1205 @@
++            sage: # needs ppl
+@@ -1366,0 +1374 @@
++            sage: # needs ppl
+@@ -1432,0 +1441 @@
++            sage: # needs ppl
+@@ -1506 +1515 @@
+-            sage: Q.roots(algorithm='sage')  # indirect doctest
++            sage: Q.roots(algorithm='sage')  # indirect doctest                         # needs ppl
+@@ -1610,10 +1620,11 @@
 -try:
 -    from sage.rings.polynomial.polynomial_rational_flint import (
 -        Polynomial_rational_flint,

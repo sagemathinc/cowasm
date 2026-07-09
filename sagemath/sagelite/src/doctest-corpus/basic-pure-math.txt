@@ -46,6 +46,7 @@ src/sage/rings/derivation.py
 src/sage/rings/ideal_monoid.py
 src/sage/rings/invariants/invariant_theory.py
 src/sage/rings/invariants/reconstruction.py
+src/sage/rings/polynomial/polynomial_element_generic.py
 src/sage/rings/polynomial/polydict.pyx
 src/sage/rings/polynomial/ideal.py
 src/sage/rings/polynomial/laurent_polynomial_ring.py
