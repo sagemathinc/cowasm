@@ -42895,6 +42895,22 @@ PARI/cypari2 saturation gaps, and dependent state failures, so
 application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
 against `/home/user/sagelite` succeeds with the updated `sage.all` hunk.
 
+Follow-up superseded file-error diagnostic pass on 2026-07-09: no corpus entry
+was promoted. The scheduled source-frontier target remains quiet, while the
+default candidate target still reports the known empty default dashboard
+database at `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`.
+
+The diagnostic candidate helper now treats a newer scanned full-file run that
+persists block rows for a path as superseding older file-scope error rows for
+that same path. This keeps `--file-errors --suppress-superseded-failures`
+focused on live runtime/import crashes instead of stale rows such as the old
+`toric_lattice.py` file-level crash, which is now superseded by a newer run
+that reaches ordinary block failures. Validation used `python3 -m py_compile`
+on `doctest-corpus-candidates.py`, `bash -n` on
+`test-wasi-sdk-standalone.sh`, a focused synthetic two-database probe for the
+new suppression rule, and the real recursive scratch file-error diagnostic
+scan over `.tmp/current-run/**/*.sqlite3`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

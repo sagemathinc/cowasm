@@ -1335,6 +1335,53 @@ def superseding_clean_paths(
     return paths
 
 
+def superseding_file_error_progress_paths(
+    db: sqlite3.Connection,
+    run_id: int,
+    covered: set[str],
+    source_root: Path | None,
+    include_non_sage: bool,
+    excluded_path_prefixes: tuple[str, ...],
+    require_source_root_path: bool,
+    include_covered: bool,
+    mentioned: set[str],
+    include_mentioned: bool,
+    include_support_files: bool,
+) -> set[str]:
+    rows = db.execute(
+        """
+        select path
+        from files
+        where run_id = ?
+          and status in ('passed', 'failed')
+          and total_blocks > 0
+        """,
+        (run_id,),
+    ).fetchall()
+
+    paths: set[str] = set()
+    for (path,) in rows:
+        if require_source_root_path and not source_path_matches_root(
+            path, source_root
+        ):
+            continue
+        relative_path = normalize_path(path, source_root)
+        if is_excluded_path(
+            relative_path, excluded_path_prefixes, include_support_files
+        ):
+            continue
+        if not include_non_sage and not relative_path.startswith("src/sage/"):
+            continue
+        if not source_candidate_exists(relative_path, source_root):
+            continue
+        if not include_covered and relative_path in covered:
+            continue
+        if not include_mentioned and relative_path in mentioned:
+            continue
+        paths.add(relative_path)
+    return paths
+
+
 def row_sort_key(
     row: tuple[str, int, int, int, int, int, int, str, str, str],
     near_misses: bool,
@@ -1504,6 +1551,22 @@ def main() -> int:
                             args.include_support_files,
                         )
                     )
+                    if args.file_errors:
+                        superseded_failure_paths.update(
+                            superseding_file_error_progress_paths(
+                                db,
+                                run_id,
+                                covered,
+                                source_root,
+                                args.include_non_sage,
+                                args.excluded_path_prefixes,
+                                args.require_source_root_path,
+                                args.include_covered,
+                                mentioned,
+                                args.include_mentioned,
+                                args.include_support_files,
+                            )
+                        )
                     superseded_failure_paths.update(
                         current_source_file_skip_paths(rows, source_root)
                     )

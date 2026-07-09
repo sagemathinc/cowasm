@@ -4079,6 +4079,16 @@ insert into files (
   0,
   1,
   8
+), (
+  2,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/error_candidate.py',
+  'failed',
+  3,
+  2,
+  1,
+  0,
+  18
 );
 insert into blocks (file_id, status, tags, skip_reason)
 values (1, 'skipped', 'needs:sage.example.optional_backend', 'optional:sage.example.optional_backend');
@@ -4095,6 +4105,19 @@ if [ "$doctest_candidate_helper_superseded_near_misses" != "src/sage/example/nea
   sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
   sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress superseded near misses."
+fi
+doctest_candidate_helper_superseded_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --suppress-superseded-failures \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  "$doctest_candidate_helper_superseding_db")"
+if [ "$doctest_candidate_helper_superseded_file_errors" != "src/sage/example/stale_harness_error.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_superseded_file_errors" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress superseded file errors with newer block rows."
 fi
 doctest_candidate_helper_source_skip_db="$probe_dir/sagelite-doctest-source-skip-helper.sqlite3"
 sqlite3 "$doctest_candidate_helper_source_skip_db" <<SQL
