@@ -41656,6 +41656,19 @@ zero-block diagnostics are old helper/module probes with no runnable block
 evidence, so they should not drive corpus growth unless a later source or
 runner change makes them extract real runnable doctests.
 
+Follow-up candidate-target audit on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded source-frontier, strict promotion, near-miss, and
+file-error scans against the checked corpus, this plan, `.tmp/**/*.sqlite3`,
+and `/tmp/sagelite*.sqlite3` printed no rows. The remaining skipped-only rows
+were explicit optional/deferred dependency boundaries and not runnable
+promotion candidates under the current node/browser-compatible profile.
+
+The `sage-doctest-candidates` Make target now passes this plan as the default
+`--mentioned-file` subtraction, matching the existing source-frontier target
+and the guarded scheduled-run command lines. This keeps documented historical
+diagnostics from reappearing in target-driven candidate scans while still
+allowing opt-in audits via `SAGELITE_DOCTEST_CANDIDATE_MENTIONED=`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
