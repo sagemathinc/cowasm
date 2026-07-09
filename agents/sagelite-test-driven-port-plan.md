@@ -43880,6 +43880,22 @@ file-failure cluster queries are empty, and its skip groups are explicit
 and complex-double boundaries. Validation also used `git diff --check` and a
 clean `patch --dry-run -d /home/user/sagelite -p1` for the WASI source patch.
 
+Follow-up conic optional-boundary audit on 2026-07-09 UTC: no corpus entry was
+promoted and no runtime namespace change was made. The recent focused
+`con_rational_function_field.py:18` probe was a `Conic(...)` example already
+tagged `# needs sage.libs.singular`; the default focused `--line 18` rerun now
+records the block as skipped, while forcing `--optional=sage.libs.singular`
+reaches the expected stripped-profile boundary where
+`sage.schemes.plane_conics.constructor` cannot import
+`sage.libs.singular.function`.
+
+The safe conclusion is that eager `Conic` exposure in the WASI `sage.all`
+startup namespace would be wrong until Singular is part of the browser profile.
+Validation used a full default rerun of
+`src/sage/schemes/plane_conics/con_rational_function_field.py`, which recorded
+`22 passed, 0 failed, 54 skipped`, plus a focused default `--line 18` rerun
+that recorded `0 passed, 0 failed, 1 skipped`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
