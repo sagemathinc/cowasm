@@ -41976,6 +41976,17 @@ Validation used `make -n` checks for the empty, absolute, relative, and
 two-database source-frontier wrapper forms, plus guarded candidate and
 source-frontier make-target scans over current scratch databases.
 
+Scheduled wrapper confirmation on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded candidate target over `.tmp/current-run/*.sqlite3` plus
+`.tmp/codex-sagelite/*.sqlite3` printed no rows, and the guarded
+source-frontier target over the same 600 scratch SQLite databases also printed
+no rows. A probe that intentionally passed `.tmp/current-run/*.sqlite3`
+through `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASES` failed as a missing
+explicit database path, confirming the documented split: scheduled scans
+should use `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASE_GLOB` for patterns and
+reserve `SAGELITE_DOCTEST_SOURCE_FRONTIER_DATABASES` for literal database
+paths.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
