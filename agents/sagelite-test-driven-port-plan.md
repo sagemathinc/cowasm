@@ -43994,6 +43994,32 @@ groups the row under explicit `sage.geometry.polyhedron` and `ppl` file-scope
 skip metadata. Validation also used `git diff --check` and a clean
 `patch --dry-run -d /home/user/sagelite -p1` for the full WASI source patch.
 
+Follow-up manifold boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. A small prompt-count source-frontier scan without plan-mentioned
+subtraction still surfaced the already-audited manifold rows
+`sage/geometry/riemannian_manifolds/surface3d_generators.py` and
+`sage/manifolds/vector_bundle_fiber_element.py`, which are not quiet
+browser-profile targets because they require the symbolic/manifold surface
+stack and the vector-bundle/free-module manifold stack respectively.
+
+The WASI source patch now records those boundaries as file-level doctest
+metadata: `surface3d_generators.py` is tagged
+`# sage.doctest: needs sage.manifolds sage.symbolic`, and
+`vector_bundle_fiber_element.py` is tagged
+`# sage.doctest: needs sage.manifolds sage.modules.free_module`. Focused
+validation against a freshly rebuilt patched source copy records:
+
+```text
+surface3d_generators.py: 0 passed, 0 failed, 1 skipped
+vector_bundle_fiber_element.py: 0 passed, 0 failed, 1 skipped
+```
+
+The scratch database `/tmp/sagelite-manifold-boundary.sqlite3` groups the
+skips under the expected optional `sage.manifolds,sage.symbolic` and
+`sage.manifolds,sage.modules.free_module` reasons. A repeated small
+source-frontier scan with file-level skip directives excluded now leaves only
+the known Judson group-theory batch in the 80-prompt-and-under runnable set.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

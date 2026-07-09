@@ -19321,6 +19321,12 @@ diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_geodesic.py b/src/sag
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
  r"""
+diff --git a/src/sage/geometry/riemannian_manifolds/surface3d_generators.py b/src/sage/geometry/riemannian_manifolds/surface3d_generators.py
+--- a/src/sage/geometry/riemannian_manifolds/surface3d_generators.py
++++ b/src/sage/geometry/riemannian_manifolds/surface3d_generators.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
 diff --git a/src/sage/combinat/abstract_tree.py b/src/sage/combinat/abstract_tree.py
 --- a/src/sage/combinat/abstract_tree.py
 +++ b/src/sage/combinat/abstract_tree.py
@@ -19508,6 +19514,12 @@ diff --git a/src/sage/manifolds/differentiable/affine_connection.py b/src/sage/m
 +++ b/src/sage/manifolds/differentiable/affine_connection.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.manifolds sage.symbolic
+ r"""
+diff --git a/src/sage/manifolds/vector_bundle_fiber_element.py b/src/sage/manifolds/vector_bundle_fiber_element.py
+--- a/src/sage/manifolds/vector_bundle_fiber_element.py
++++ b/src/sage/manifolds/vector_bundle_fiber_element.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.manifolds sage.modules.free_module
  r"""
 diff --git a/src/sage/schemes/elliptic_curves/period_lattice.py b/src/sage/schemes/elliptic_curves/period_lattice.py
 --- a/src/sage/schemes/elliptic_curves/period_lattice.py
