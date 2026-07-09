@@ -43972,6 +43972,28 @@ syntax checks for every saved doctest SQL query, `git diff --check`, and the
 standard guarded frontier make target, which remained quiet over the trusted
 scratch dashboard globs.
 
+Follow-up PPL backend boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. The guarded frontier target stayed quiet over the trusted scratch
+dashboard globs, and the only useful small stale source-frontier row in the
+80-to-100 prompt band was the already-audited
+`src/sage/geometry/polyhedron/backend_ppl.py` PPL/polyhedron backend cluster.
+
+The WASI source patch now gives `backend_ppl.py` the same file-level
+`# sage.doctest: needs sage.geometry.polyhedron ppl` metadata already used by
+adjacent polyhedron backend modules. Focused make-target validation rebuilt a
+fresh patched source tree with a one-file corpus and recorded:
+
+```text
+backend_ppl.py: 0 passed, 0 failed, 1 skipped
+```
+
+The validation database is
+`.tmp/current-run/scheduled-2026-07-09-backend-ppl/make.sqlite3`; its saved
+block- and file-failure cluster queries are empty, and `skips-by-reason.sql`
+groups the row under explicit `sage.geometry.polyhedron` and `ppl` file-scope
+skip metadata. Validation also used `git diff --check` and a clean
+`patch --dry-run -d /home/user/sagelite -p1` for the full WASI source patch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

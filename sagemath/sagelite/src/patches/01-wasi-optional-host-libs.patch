@@ -16018,6 +16018,12 @@ diff --git a/src/sage/geometry/polyhedron/backend_field.py b/src/sage/geometry/p
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.number_field sage.geometry.polyhedron
  """
+diff --git a/src/sage/geometry/polyhedron/backend_ppl.py b/src/sage/geometry/polyhedron/backend_ppl.py
+--- a/src/sage/geometry/polyhedron/backend_ppl.py
++++ b/src/sage/geometry/polyhedron/backend_ppl.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.geometry.polyhedron ppl
+ """
 diff --git a/src/sage/graphs/graph_database.py b/src/sage/graphs/graph_database.py
 --- a/src/sage/graphs/graph_database.py
 +++ b/src/sage/graphs/graph_database.py
