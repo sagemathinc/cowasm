@@ -9,6 +9,12 @@ diff -urN -U0 a/src/sage/symbolic/constants_c_impl.pxi b/src/sage/symbolic/const
 +++ b/src/sage/symbolic/constants_c_impl.pxi
 @@ -1,0 +1 @@
 +# sage.doctest: needs sage.symbolic
+diff --git a/src/sage/symbolic/symengine.py b/src/sage/symbolic/symengine.py
+--- a/src/sage/symbolic/symengine.py
++++ b/src/sage/symbolic/symengine.py
+@@ -1,1 +1,2 @@
++# sage.doctest: optional - symengine_py
+ r"""
 diff --git a/src/sage/graphs/matching.py b/src/sage/graphs/matching.py
 --- a/src/sage/graphs/matching.py
 +++ b/src/sage/graphs/matching.py
@@ -243,6 +249,12 @@ diff --git a/src/sage/combinat/posets/linear_extensions.py b/src/sage/combinat/p
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs sage.modules
  r"""
+diff --git a/src/sage/combinat/cluster_algebra_quiver/interact.py b/src/sage/combinat/cluster_algebra_quiver/interact.py
+--- a/src/sage/combinat/cluster_algebra_quiver/interact.py
++++ b/src/sage/combinat/cluster_algebra_quiver/interact.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs IPython ipywidgets sage.graphs sage.modules sage.symbolic
+ """
 diff --git a/src/sage/databases/cremona.py b/src/sage/databases/cremona.py
 --- a/src/sage/databases/cremona.py
 +++ b/src/sage/databases/cremona.py
@@ -14974,6 +14986,9 @@ diff --git a/src/sage/rings/polynomial/binary_form_reduce.py b/src/sage/rings/po
 diff --git a/src/sage/libs/gap/all_documented_functions.py b/src/sage/libs/gap/all_documented_functions.py
 --- a/src/sage/libs/gap/all_documented_functions.py
 +++ b/src/sage/libs/gap/all_documented_functions.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.libs.gap
+ """nodoctest
 @@ -9,3 +9,4 @@
 +    sage: # needs sage.libs.gap
      sage: from sage.libs.gap.all_documented_functions import *
@@ -19441,6 +19456,12 @@ diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.rings.polynomial.plural sage.libs.pari
  r"""
+diff --git a/src/sage/categories/lambda_bracket_algebras_with_basis.py b/src/sage/categories/lambda_bracket_algebras_with_basis.py
+--- a/src/sage/categories/lambda_bracket_algebras_with_basis.py
++++ b/src/sage/categories/lambda_bracket_algebras_with_basis.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.combinat sage.modules sage.rings.number_field
+ """
 diff --git a/src/sage/rings/polynomial/laurent_polynomial.pyx b/src/sage/rings/polynomial/laurent_polynomial.pyx
 --- a/src/sage/rings/polynomial/laurent_polynomial.pyx
 +++ b/src/sage/rings/polynomial/laurent_polynomial.pyx

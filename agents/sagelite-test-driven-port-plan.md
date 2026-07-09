@@ -43596,6 +43596,36 @@ leaves the latter visible. Focused validation used `python3 -m py_compile`,
 real widened `.tmp/current-run/**/*.sqlite3` diagnostic scan with
 plan-mentioned subtraction, which prints no file-error rows.
 
+Follow-up optional skip-boundary cleanup pass on 2026-07-09 UTC: no corpus
+entry was promoted. The guarded source-frontier, promotion-candidate,
+near-miss, and file-error scans remained quiet. A skipped-only diagnostic scan
+with file-level skip directives excluded still surfaced four already
+dependency-gated files whose current source had only block-level optional
+metadata:
+`src/sage/combinat/cluster_algebra_quiver/interact.py`,
+`src/sage/libs/gap/all_documented_functions.py`,
+`src/sage/symbolic/symengine.py`, and
+`src/sage/categories/lambda_bracket_algebras_with_basis.py`.
+
+The WASI source patch now marks those files with file-level doctest
+directives for their whole-file optional boundaries: Jupyter/IPython plus
+cluster algebra dependencies, GAP, SymEngine, and the Lie-conformal category
+number-field/module/combinatorics stack. Focused make-target validation after
+rebuilding a fresh patched source copy records:
+
+```text
+interact.py: 0 passed, 0 failed, 1 skipped
+all_documented_functions.py: 0 passed, 0 failed, 1 skipped
+symengine.py: 0 passed, 0 failed, 1 skipped
+lambda_bracket_algebras_with_basis.py: 0 passed, 0 failed, 1 skipped
+```
+
+The focused database at
+`.tmp/current-run/scheduled-2026-07-09-optional-boundaries/make.sqlite3`
+groups the skips under explicit optional reasons and has empty saved block-
+and file-failure cluster queries. Re-running the skipped-only diagnostic scan
+with `--exclude-file-skip-directives` now prints only the header row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
