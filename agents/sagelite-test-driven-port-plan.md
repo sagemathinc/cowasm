@@ -44131,6 +44131,46 @@ The latest-run summary records CoWasm commit
 cluster queries are empty, and `skips-by-reason.sql` groups the 40 skipped
 blocks under the intended number-field and symbolic requirements.
 
+Follow-up small-file boundary audit on 2026-07-09 UTC: no corpus entry was
+promoted. Direct probes against remaining compact `sage.misc`,
+`sage.structure`, and `sage.stats` files outside the curated corpus recorded
+zero default-profile passing blocks. Most files extracted no blocks under the
+current doctest collector; the useful skipped-only rows already carry explicit
+upstream or WASI browser-profile metadata.
+
+The checked direct probes wrote:
+
+```text
+.tmp/current-run/scheduled-2026-07-09-small-files/direct.sqlite3:
+  copying.py, mathml.py, coerce_exceptions.py, gens_py.py,
+  parent_base.pyx, and sage_object_test.py: 0 passed, 0 failed, 0 skipped
+  package_dir.py: 0 passed, 0 failed, 18 skipped
+  sphinxify.py: 0 passed, 0 failed, 1 skipped
+
+.tmp/current-run/scheduled-2026-07-09-small-files/direct-remaining.sqlite3:
+  allocator.pyx, func_persist.py, latex_standalone_test.py, latex_test.py,
+  pager.py, pickle_old.pyx, proof.py, and sageinspect_test.py:
+  0 passed, 0 failed, 0 skipped
+  cython.py: 0 passed, 0 failed, 1 skipped
+  map_threaded.py: 0 passed, 0 failed, 5 skipped
+  randstate.pyx: 0 passed, 0 failed, 1 skipped
+  reset.pyx: 0 passed, 0 failed, 35 skipped
+
+.tmp/current-run/scheduled-2026-07-09-small-files/stats.sqlite3:
+  discrete_gaussian_integer.pyx, discrete_gaussian_lattice.py,
+  intlist.pyx, and time_series.pyx: each 0 passed, 0 failed, 1 skipped
+```
+
+The skipped-only candidate query groups these rows under expected optional or
+dependency tags such as `sphinx`, `sage.misc.cython`, `sage.symbolic`,
+`numpy`, `sage.groups`/`sage.libs.gap`/`sage.libs.ntl`/`sage.libs.pari`,
+`sage.modules`, `meson_editable`, `!meson_editable`, `IPython`, and known-bug
+metadata. A source-frontier scan over the patched source tree with
+plan-mentioned files included, file-level skip directives excluded, and
+`--max-prompts 80` still emits no rows, confirming that this low-noise
+small-file frontier is exhausted until a dependency boundary or doctest
+collector policy changes.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
