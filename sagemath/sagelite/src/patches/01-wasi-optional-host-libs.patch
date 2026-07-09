@@ -15749,6 +15749,12 @@ diff --git a/src/sage/symbolic/random_tests.py b/src/sage/symbolic/random_tests.
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic
  """
+diff --git a/src/sage/symbolic/benchmark.py b/src/sage/symbolic/benchmark.py
+--- a/src/sage/symbolic/benchmark.py
++++ b/src/sage/symbolic/benchmark.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.symbolic
+ r"""
 diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/premierspas_doctest.py

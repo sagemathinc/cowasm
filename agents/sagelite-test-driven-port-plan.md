@@ -43420,6 +43420,34 @@ The saved skip query groups the row under `optional:axiom,pexpect,subprocess`,
 the saved block- and file-failure cluster queries are empty, and the source
 patch still applies cleanly in dry-run mode against `/home/user/sagelite`.
 
+Follow-up symbolic benchmark boundary pass on 2026-07-09 UTC: no corpus entry
+was promoted. The standard guarded source-frontier, clean-candidate,
+near-miss, and live file-error scans remained quiet with the current scratch
+databases, but a deliberately widened historical near-miss scan still showed
+`src/sage/symbolic/benchmark.py` as a stale symbolic-stack failure:
+
+```text
+benchmark.py: 5 passed, 22 failed, 0 skipped
+```
+
+The failures were all symbolic benchmark setup/name failures such as missing
+`var`, `expand`, `acos`, symbolic variables, and constants from the stripped
+browser-compatible `sage.symbolic` stack. The WASI source patch now marks
+`benchmark.py` with a file-level `# sage.doctest: needs sage.symbolic`
+directive, matching the existing symbolic module boundaries. Focused
+validation against the locally patched source copy records:
+
+```text
+benchmark.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skipped-only candidate query groups the row under
+`optional:sage.symbolic`, `git diff --check` passes, and a dry-run application
+of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against a
+fresh `/home/user/sagelite` copy succeeds. The focused `sage -t` command wrote
+the clean SQLite result and printed the passed summary, then hit the known
+post-summary Node shutdown segfault with exit status 139.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
