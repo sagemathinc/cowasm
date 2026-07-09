@@ -41730,6 +41730,20 @@ make -C sagemath/sagelite sage-doctest-candidates \
 sagemath/sagelite/src/doctest-corpus-candidates.py` and `bash -n
 sagemath/sagelite/src/test-wasi-sdk-standalone.sh` also pass.
 
+Follow-up source-frontier default pass on 2026-07-09 UTC: no corpus entry was
+promoted. Direct source-frontier scans against the checked corpus, current
+patched Sagelite source root, and this plan as the mentioned-path subtraction
+printed no rows once `--min-runnable-prompts 1` was applied. Without that
+runnable-prompt filter, the frontier was still dominated by files whose Sage
+prompts are already covered by explicit file-level or prompt-level dependency
+metadata, such as graph, number-field, symbolic, and finite-ring boundaries.
+
+`make -C sagemath/sagelite sage-doctest-source-frontier` now defaults
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS` to `1`, matching the
+low-noise scheduled-run workflow. Skipped-only source-shape audits remain
+available by overriding
+`SAGELITE_DOCTEST_SOURCE_FRONTIER_MIN_RUNNABLE_PROMPTS=0`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
