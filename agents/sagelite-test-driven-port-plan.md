@@ -5250,6 +5250,37 @@ Future scheduled runs should avoid treating those rows as source-tag-only
 corpus growth unless one of those backend boundaries changes or a specific
 cluster is selected for runtime work.
 
+Follow-up scheduled frontier audit on 2026-07-09: no corpus entry was
+promoted. The checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus currently
+has 1,115 non-comment entries in this checkout, and the local scratch archive
+contains 3,564 SQLite dashboards under `.tmp/current-run`.
+
+The strict candidate scan again printed only its header row:
+
+```sh
+sagemath/sagelite/src/doctest-corpus-candidates.py \
+  --strict-frontier \
+  --source-root /home/user/cowasm/sagemath/sagelite/build/wasi-sdk \
+  --min-runner-version 83 \
+  --ignore-invalid \
+  --quiet-invalid \
+  --database-glob '.tmp/current-run/**/*.sqlite3' \
+  --include-header
+```
+
+The matching make-target source-frontier scan printed no file rows:
+
+```sh
+make -C sagemath/sagelite sage-doctest-source-frontier
+```
+
+Focused validation compiled both frontier helpers with
+`python3 -m py_compile`. Future scheduled runs should not repeat the broad
+strict scratch scan as the main activity unless new scratch databases, corpus
+entries, source tags, or runtime/backend behavior have changed; choose a
+specific backend cluster or a fresh unmentioned namespace instead.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
