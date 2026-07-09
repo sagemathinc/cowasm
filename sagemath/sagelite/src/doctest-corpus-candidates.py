@@ -157,8 +157,8 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help=(
             "when scanning several databases in diagnostic modes, suppress "
-            "failed rows for paths that also have clean skipped-only or "
-            "zero-block evidence in the scan set"
+            "failed rows for paths that have later clean evidence in the scan "
+            "set"
         ),
     )
     parser.add_argument(
@@ -733,7 +733,7 @@ def latest_run_metadata(
     require_run_metadata: bool,
     require_file_run: bool,
     require_default_run: bool,
-) -> tuple[int, Path | None] | None:
+) -> tuple[int, Path | None, str] | None:
     filters = []
     parameters: list[object] = []
     if require_file_run and not runs_table_has_column(db, "command"):
@@ -754,6 +754,9 @@ def latest_run_metadata(
         filters.append("runner_version >= ?")
         parameters.append(min_runner_version)
     command_expr = "command" if runs_table_has_column(db, "command") else "''"
+    started_at_expr = (
+        "started_at" if runs_table_has_column(db, "started_at") else "''"
+    )
     source_root_expr = (
         "source_root" if runs_table_has_column(db, "source_root") else "NULL"
     )
@@ -762,7 +765,7 @@ def latest_run_metadata(
         where_clause = "where " + " and ".join(filters)
     rows = db.execute(
         f"""
-        select id, {source_root_expr}, {command_expr}
+        select id, {source_root_expr}, {command_expr}, {started_at_expr}
         from runs
         {where_clause}
         order by id desc
@@ -786,8 +789,8 @@ def latest_run_metadata(
         return None
     if row is None:
         raise SystemExit("no doctest runs found in database")
-    run_id, source_root, _command = row
-    return run_id, Path(source_root) if source_root else None
+    run_id, source_root, _command, started_at = row
+    return run_id, Path(source_root) if source_root else None, started_at or ""
 
 
 def run_command_is_focused_rerun(command: str) -> bool:
@@ -1456,6 +1459,12 @@ def row_sort_key(
     return (-passed, skipped, failed, duration, "", path)
 
 
+def run_order_key(
+    started_at: str, database_index: int, run_id: int
+) -> tuple[str, int, int]:
+    return (started_at, database_index, run_id)
+
+
 def main() -> int:
     if hasattr(signal, "SIGPIPE"):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
@@ -1464,9 +1473,14 @@ def main() -> int:
     mentioned = read_mentioned(args.mentioned_file)
     covered_by_source_root: dict[Path | None, set[str]] = {}
     collected_rows: list[
-        tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
+        tuple[
+            Path,
+            tuple[str, int, int, int, int, int, int, str, str, str],
+            tuple[str, int, int],
+        ]
     ] = []
-    superseded_failure_paths: set[str] = set()
+    source_skip_failure_paths: set[str] = set()
+    superseding_failure_path_order: dict[str, tuple[str, int, int]] = {}
     if args.include_header:
         columns = [
             "path",
@@ -1518,7 +1532,7 @@ def main() -> int:
                     "no files matched",
                     file=sys.stderr,
                 )
-    for database in args.database:
+    for database_index, database in enumerate(args.database):
         if args.limit is not None and printed_rows >= args.limit:
             break
         try:
@@ -1535,7 +1549,8 @@ def main() -> int:
                 )
                 if metadata is None:
                     continue
-                run_id, db_source_root = metadata
+                run_id, db_source_root, started_at = metadata
+                current_run_order = run_order_key(started_at, database_index, run_id)
                 if args.require_block_rows and not run_has_block_rows(db, run_id):
                     continue
                 source_root = args.source_root or db_source_root
@@ -1581,8 +1596,25 @@ def main() -> int:
                 if args.suppress_superseded_failures and (
                     args.near_misses or args.file_errors
                 ):
-                    superseded_failure_paths.update(
-                        superseding_clean_paths(
+                    for path in superseding_clean_paths(
+                        db,
+                        run_id,
+                        covered,
+                        source_root,
+                        args.include_non_sage,
+                        args.excluded_path_prefixes,
+                        args.require_source_root_path,
+                        args.include_covered,
+                        mentioned,
+                        args.include_mentioned,
+                        args.include_support_files,
+                    ):
+                        if current_run_order > superseding_failure_path_order.get(
+                            path, ("", -1, -1)
+                        ):
+                            superseding_failure_path_order[path] = current_run_order
+                    if args.file_errors:
+                        for path in superseding_file_error_progress_paths(
                             db,
                             run_id,
                             covered,
@@ -1594,25 +1626,14 @@ def main() -> int:
                             mentioned,
                             args.include_mentioned,
                             args.include_support_files,
-                        )
-                    )
-                    if args.file_errors:
-                        superseded_failure_paths.update(
-                            superseding_file_error_progress_paths(
-                                db,
-                                run_id,
-                                covered,
-                                source_root,
-                                args.include_non_sage,
-                                args.excluded_path_prefixes,
-                                args.require_source_root_path,
-                                args.include_covered,
-                                mentioned,
-                                args.include_mentioned,
-                                args.include_support_files,
-                            )
-                        )
-                    superseded_failure_paths.update(
+                        ):
+                            if current_run_order > superseding_failure_path_order.get(
+                                path, ("", -1, -1)
+                            ):
+                                superseding_failure_path_order[path] = (
+                                    current_run_order
+                                )
+                    source_skip_failure_paths.update(
                         current_source_file_skip_paths(rows, source_root)
                     )
         except (sqlite3.DatabaseError, SystemExit) as error:
@@ -1627,7 +1648,7 @@ def main() -> int:
 
         valid_database_count += 1
         if args.dedupe_paths:
-            collected_rows.extend((database, row) for row in rows)
+            collected_rows.extend((database, row, current_run_order) for row in rows)
         else:
             for row in rows:
                 if args.limit is not None and printed_rows >= args.limit:
@@ -1640,14 +1661,18 @@ def main() -> int:
             args.near_misses or args.file_errors
         ):
             collected_rows = [
-                (database, row)
-                for database, row in collected_rows
-                if row[0] not in superseded_failure_paths
+                (database, row, row_run_order)
+                for database, row, row_run_order in collected_rows
+                if row[0] not in source_skip_failure_paths
+                and not (
+                    superseding_failure_path_order.get(row[0], ("", -1, -1))
+                    > row_run_order
+                )
             ]
         best_by_path: dict[
             str, tuple[Path, tuple[str, int, int, int, int, int, int, str, str, str]]
         ] = {}
-        for database, row in collected_rows:
+        for database, row, _row_run_order in collected_rows:
             path = row[0]
             current = best_by_path.get(path)
             if current is None or row_sort_key(

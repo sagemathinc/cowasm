@@ -43640,6 +43640,27 @@ superseded-failure suppression. The skipped-only scan also used
 optional-boundary cleanup did not leave a new skipped-only dependency file in
 the scheduled diagnostic frontier.
 
+Follow-up superseded-failure ordering pass on 2026-07-09 UTC: no corpus entry
+was promoted. The guarded near-miss, file-error, and source-frontier scans over
+`.tmp/current-run/**/*.sqlite3` plus `.tmp/codex-sagelite/**/*.sqlite3`
+remained quiet with the current plan-mentioned subtraction.
+
+The candidate helper's `--suppress-superseded-failures` mode now treats clean
+evidence as suppressing only older failure rows for the same path. It orders
+modern runs by `started_at`, then by scan order and run id as a tie-breaker,
+so a stale file-error database can be hidden by a later clean focused run
+without masking a newer regression if an older clean database is also present.
+The standalone smoke fixture now covers both directions: older file errors are
+suppressed by later clean runnable rows, while newer file errors remain visible
+when the clean evidence is older.
+
+Validation used `python3 -m py_compile
+sagemath/sagelite/src/doctest-corpus-candidates.py`, `bash -n
+sagemath/sagelite/src/test-wasi-sdk-standalone.sh`, direct SQLite regression
+fixtures for timestamp and same-timestamp scan-order handling, `git diff
+--check`, and the strict make-target file-error scan, which printed only its
+header row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -4270,6 +4270,20 @@ if [ "$doctest_candidate_helper_superseded_file_errors" != "src/sage/example/sta
   sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not suppress superseded file errors with newer passing block rows."
 fi
+doctest_candidate_helper_newer_file_errors="$("$src_dir/doctest-corpus-candidates.py" \
+  --file-errors \
+  --suppress-superseded-failures \
+  --paths-only \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_superseding_db" \
+  "$doctest_candidate_helper_db")"
+if [ "$doctest_candidate_helper_newer_file_errors" != "src/sage/example/stale_harness_error.py
+src/sage/example/error_candidate.py" ]; then
+  printf '%s\n' "$doctest_candidate_helper_newer_file_errors" >&2
+  sqlite3 "$doctest_candidate_helper_db" ".dump" >&2 || true
+  sqlite3 "$doctest_candidate_helper_superseding_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: doctest-corpus-candidates suppressed newer file errors with older passing block rows."
+fi
 doctest_candidate_helper_source_skip_db="$probe_dir/sagelite-doctest-source-skip-helper.sqlite3"
 sqlite3 "$doctest_candidate_helper_source_skip_db" <<SQL
 create table runs (
