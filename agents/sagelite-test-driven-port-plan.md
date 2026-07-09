@@ -42507,6 +42507,35 @@ The saved block- and file-failure cluster queries are empty for
 `.tmp/current-run/scheduled-2026-07-09-graph-followup/rankwidth-focused-after-graph40.sqlite3`.
 The file is now promoted into `basic-pure-math.txt`.
 
+Follow-up corpus-tail validation pass on 2026-07-09: no new corpus entry was
+needed, because the checked-in `basic-pure-math.txt` tail already included the
+small graph, statistics, games, and typeset files adjacent to the latest graph
+work. Focused direct validation over the current installed resource bundle
+confirmed those entries are still clean:
+
+```text
+character_art.py: 98 passed, 0 failed, 5 skipped
+character_art_factory.py: 32 passed, 0 failed, 26 skipped
+unicode_characters.py: 27 passed, 0 failed, 0 skipped
+symbols.py: 28 passed, 0 failed, 0 skipped
+catalog.py: 1 passed, 0 failed, 0 skipped
+discrete_gaussian_polynomial.py: 21 passed, 0 failed, 3 skipped
+hexad.py: 53 passed, 0 failed, 0 skipped
+quantumino.py: 57 passed, 0 failed, 42 skipped
+hypergraph_generators.py: 10 passed, 0 failed, 19 skipped
+```
+
+The focused SQLite probes are in
+`.tmp/current-run/scheduled-2026-07-09-next-probes/typeset-more.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-09-next-probes/games-stats-graph.sqlite3`;
+their saved block- and file-failure cluster queries are empty. Nearby
+low-prompt frontier probes did not produce a new runnable promotion candidate:
+the Judson abstract-algebra files cluster on GAP-backed permutation-group
+startup names, `congroup_sl2z.py` clusters on the missing `SL2Z` startup name,
+the symbolic vector and benchmark files still require broader symbolic setup,
+and the small pbori/PARI/doctest batch is skipped-only under the current
+browser profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
