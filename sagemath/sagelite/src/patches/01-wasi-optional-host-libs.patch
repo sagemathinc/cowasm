@@ -1119,6 +1119,22 @@ diff -urN a/src/sage/libs/gap/util.pyx b/src/sage/libs/gap/util.pyx
  """
  Utility functions for GAP
  """
+diff -urN a/src/sage/modules/vector_symbolic_dense.py b/src/sage/modules/vector_symbolic_dense.py
+--- a/src/sage/modules/vector_symbolic_dense.py
++++ b/src/sage/modules/vector_symbolic_dense.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.symbolic
+ """
+ Dense vectors over the symbolic ring
+ """
+diff -urN a/src/sage/modules/vector_symbolic_sparse.py b/src/sage/modules/vector_symbolic_sparse.py
+--- a/src/sage/modules/vector_symbolic_sparse.py
++++ b/src/sage/modules/vector_symbolic_sparse.py
+@@ -1,2 +1,3 @@
++# sage.doctest: needs sage.symbolic
+ """
+ Sparse vectors over the symbolic ring
+ """
 diff -urN a/src/sage/modules/vector_callable_symbolic_dense.py b/src/sage/modules/vector_callable_symbolic_dense.py
 --- a/src/sage/modules/vector_callable_symbolic_dense.py
 +++ b/src/sage/modules/vector_callable_symbolic_dense.py

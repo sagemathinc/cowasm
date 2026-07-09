@@ -43448,6 +43448,35 @@ fresh `/home/user/sagelite` copy succeeds. The focused `sage -t` command wrote
 the clean SQLite result and printed the passed summary, then hit the known
 post-summary Node shutdown segfault with exit status 139.
 
+Follow-up symbolic vector boundary pass on 2026-07-09 UTC: no corpus entry was
+promoted. The standard guarded source-frontier, promotion-candidate, and live
+file-error scans over `.tmp/current-run/**/*.sqlite3` remained quiet. A widened
+near-miss scan over `.tmp/**/*.sqlite3` and `/tmp/sagelite*.sqlite3` still
+surfaced stale rows for `src/sage/modules/vector_symbolic_dense.py` and
+`src/sage/modules/vector_symbolic_sparse.py`; a fresh focused precheck against
+the current patched source tree reproduced the old boundary:
+
+```text
+vector_symbolic_dense.py: 1 passed, 27 failed, 0 skipped
+vector_symbolic_sparse.py: 1 passed, 27 failed, 0 skipped
+```
+
+Both modules import `sage.symbolic.expression` at module scope and their
+doctests are symbolic simplification coverage, so the WASI source patch now
+marks them with file-level `# sage.doctest: needs sage.symbolic` directives,
+consistent with the existing `vector_callable_symbolic_dense.py` boundary.
+Focused validation against the locally patched source tree records:
+
+```text
+vector_symbolic_dense.py: 0 passed, 0 failed, 1 skipped
+vector_symbolic_sparse.py: 0 passed, 0 failed, 1 skipped
+```
+
+The saved skip query groups both rows under `optional:sage.symbolic`, the saved
+block- and file-failure cluster queries are empty, and a dry-run application of
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
+`/home/user/sagelite` succeeds.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
