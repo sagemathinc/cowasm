@@ -43063,6 +43063,32 @@ fresh database, and the recursive file-error diagnostic scan with
 dry-run application of `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`
 against `/home/user/sagelite` succeeds with the new hunk.
 
+Follow-up prompt-skip source-frontier pass on 2026-07-09 UTC: no corpus entry
+was promoted. The standard source-frontier, promotion-candidate, and live
+file-error wrapper scans over `.tmp/current-run/**/*.sqlite3` remained quiet.
+A deliberately raw low-prompt static source-frontier scan, without plan
+mention subtraction or SQLite subtraction, still surfaced
+`src/sage/libs/pari/convert_flint.pyx` with two supposedly runnable prompts.
+Focused doctest validation showed this was stale static metadata rather than a
+runtime cluster:
+
+```text
+convert_flint.pyx: 0 passed, 0 failed, 2 skipped
+```
+
+Both prompts are inline PARI dependency doctests of the form
+`# indirect doctest, needs sage.libs.pari`. The doctest runner skips those
+correctly, but `doctest-source-frontier.py` only counted prompt-level skip
+comments that started immediately with `# needs` or related tags. The helper
+now treats `needs`, `optional`, `long time`, `known bug`, `not implemented`,
+and `not tested` markers anywhere in the prompt comment as skipped. After the
+change, the raw low-prompt scan with `--min-runnable-prompts 1` prints no
+rows, and the scheduled source-frontier wrapper prints only the header row.
+Validation used `python3 -m py_compile` for both doctest helper scripts, the
+focused `convert_flint.pyx` doctest SQLite rerun, the raw low-prompt static
+scan, and the scheduled `sage-doctest-source-frontier` wrapper with recursive
+scratch database subtraction.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

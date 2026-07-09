@@ -35,8 +35,8 @@ FILE_SKIP_DIRECTIVE_RE = re.compile(
     r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
 )
 PROMPT_SKIP_DIRECTIVE_RE = re.compile(
-    r"#\s*"
-    r"(?:needs\b|optional\b|long time\b|known bug\b|not implemented\b|not tested\b)"
+    r"#.*\b"
+    r"(?:needs|optional|long time|known bug|not implemented|not tested)\b"
 )
 STANDALONE_SKIP_DIRECTIVE_RE = re.compile(
     r"^\s*sage:\s*#\s*"
