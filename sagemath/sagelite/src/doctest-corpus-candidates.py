@@ -442,6 +442,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--failure-detail-limit must be non-negative")
     validate_existing_files(parser, "--corpus", [args.corpus])
     validate_existing_files(parser, "--mentioned-file", args.mentioned_file)
+    if args.source_root is not None:
+        validate_source_root(parser, "--source-root", args.source_root)
     if args.strict_frontier:
         args.require_run_metadata = True
         args.require_block_rows = True
@@ -530,6 +532,14 @@ def validate_existing_files(
     for path in paths:
         if not path.is_file():
             parser.error(f"{option} does not name a file: {path}")
+
+
+def validate_source_root(
+    parser: argparse.ArgumentParser, option: str, source_root: Path
+) -> None:
+    source_dir = source_root / "src" / "sage"
+    if not source_dir.is_dir():
+        parser.error(f"{option} does not name a Sagelite source tree: {source_root}")
 
 
 def parse_csv_values(values: list[str]) -> list[str]:

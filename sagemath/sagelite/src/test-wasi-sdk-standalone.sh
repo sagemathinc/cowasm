@@ -3234,6 +3234,21 @@ if [ "$doctest_candidate_helper_missing_corpus_status" -ne 2 ] || \
   printf '%s\n' "$doctest_candidate_helper_missing_corpus" >&2
   record_blocker "sagelite-blocked: doctest-corpus-candidates --corpus did not reject a missing file cleanly."
 fi
+set +e
+doctest_candidate_helper_missing_source_root="$("$src_dir/doctest-corpus-candidates.py" \
+  --paths-only \
+  --source-root "$probe_dir/no-such-source-root" \
+  --corpus "$doctest_candidate_helper_corpus" \
+  "$doctest_candidate_helper_db" \
+  2>&1)"
+doctest_candidate_helper_missing_source_root_status=$?
+set -e
+if [ "$doctest_candidate_helper_missing_source_root_status" -ne 2 ] || \
+  ! printf '%s\n' "$doctest_candidate_helper_missing_source_root" | \
+    grep -Fq -- '--source-root does not name a Sagelite source tree:'; then
+  printf '%s\n' "$doctest_candidate_helper_missing_source_root" >&2
+  record_blocker "sagelite-blocked: doctest-corpus-candidates --source-root did not reject a missing Sagelite source tree cleanly."
+fi
 touch "$doctest_candidate_helper_source_root/src/sage/example/relative_candidate.py"
 printf '%s\n' "src/sage/example/relative_candidate.py" >"$doctest_candidate_helper_relative_corpus"
 sqlite3 "$doctest_candidate_helper_relative_db" <<SQL
