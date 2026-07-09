@@ -19569,6 +19569,193 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/s
 @@ -102,1 +102,1 @@
 -    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)
 +    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
+diff --git a/src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py b/src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py
+@@ -58,2 +58,2 @@
+-    sage: G = AdditiveAbelianGroup([14])
+-    sage: G.order()
++    sage: G = AdditiveAbelianGroup([14])  # needs sage.symbolic
++    sage: G.order()  # needs sage.symbolic
+@@ -64,1 +64,1 @@
+-    sage: G.list()
++    sage: G.list()  # needs sage.symbolic
+@@ -70,2 +70,2 @@
+-    sage: a = G.gen(0)
+-    sage: a
++    sage: a = G.gen(0)  # needs sage.symbolic
++    sage: a  # needs sage.symbolic
+@@ -76,1 +76,1 @@
+-    sage: a + a
++    sage: a + a  # needs sage.symbolic
+@@ -81,1 +81,1 @@
+-    sage: a + a + a + a
++    sage: a + a + a + a  # needs sage.symbolic
+@@ -86,1 +86,1 @@
+-    sage: 4*a
++    sage: 4*a  # needs sage.symbolic
+@@ -91,1 +91,1 @@
+-    sage: 37*a
++    sage: 37*a  # needs sage.symbolic
+@@ -96,1 +96,1 @@
+-    sage: G([2])
++    sage: G([2])  # needs sage.symbolic
+@@ -101,1 +101,1 @@
+-    sage: b = G([2]); b
++    sage: b = G([2]); b  # needs sage.symbolic
+@@ -106,1 +106,1 @@
+-    sage: b + b
++    sage: b + b  # needs sage.symbolic
+@@ -111,1 +111,1 @@
+-    sage: 2*b == 4*a
++    sage: 2*b == 4*a  # needs sage.symbolic
+@@ -116,1 +116,1 @@
+-    sage: 7*b
++    sage: 7*b  # needs sage.symbolic
+@@ -121,1 +121,1 @@
+-    sage: b.order()
++    sage: b.order()  # needs sage.symbolic
+@@ -126,1 +126,1 @@
+-    sage: c = a - 6*b; c
++    sage: c = a - 6*b; c  # needs sage.symbolic
+@@ -131,1 +131,1 @@
+-    sage: c + c + c + c
++    sage: c + c + c + c  # needs sage.symbolic
+@@ -136,1 +136,1 @@
+-    sage: c.order()
++    sage: c.order()  # needs sage.symbolic
+@@ -141,1 +141,1 @@
+-    sage: H = G.submodule([b]); H
++    sage: H = G.submodule([b]); H  # needs sage.symbolic
+@@ -146,1 +146,1 @@
+-    sage: H.list()
++    sage: H.list()  # needs sage.symbolic
+@@ -151,1 +151,1 @@
+-    sage: H.order()
++    sage: H.order()  # needs sage.symbolic
+@@ -156,1 +156,1 @@
+-    sage: e = H.gen(0); e
++    sage: e = H.gen(0); e  # needs sage.symbolic
+@@ -161,1 +161,1 @@
+-    sage: 3*e
++    sage: 3*e  # needs sage.symbolic
+@@ -166,1 +166,1 @@
+-    sage: e.order()
++    sage: e.order()  # needs sage.symbolic
+@@ -171,1 +171,1 @@
+-    sage: f = 12*a; f
++    sage: f = 12*a; f  # needs sage.symbolic
+@@ -176,1 +176,1 @@
+-    sage: f.order()
++    sage: f.order()  # needs sage.symbolic
+@@ -181,1 +181,1 @@
+-    sage: K = G.submodule([f]); K
++    sage: K = G.submodule([f]); K  # needs sage.symbolic
+@@ -186,1 +186,1 @@
+-    sage: K.order()
++    sage: K.order()  # needs sage.symbolic
+@@ -191,1 +191,1 @@
+-    sage: K.list()
++    sage: K.list()  # needs sage.symbolic
+@@ -196,1 +196,1 @@
+-    sage: K.gen(0)
++    sage: K.gen(0)  # needs sage.symbolic
+@@ -201,1 +201,1 @@
+-    sage: H == K
++    sage: H == K  # needs sage.symbolic
+@@ -255,1 +255,1 @@
+-    sage: H.order()
++    sage: H.order()     # optional - gap_package_polycyclic
+@@ -261,1 +261,1 @@
+-    sage: K.order()
++    sage: K.order()     # optional - gap_package_polycyclic
+@@ -280,2 +280,2 @@
+-    sage: G=CyclicPermutationGroup(14)
+-    sage: a = G.gen(0); a
++    sage: G=CyclicPermutationGroup(14)  # needs sage.libs.gap
++    sage: a = G.gen(0); a  # needs sage.libs.gap
+@@ -286,2 +286,2 @@
+-    sage: b = a^2
+-    sage: b = a^2; b
++    sage: b = a^2  # needs sage.libs.gap
++    sage: b = a^2; b  # needs sage.libs.gap
+@@ -292,1 +292,1 @@
+-    sage: b.order()
++    sage: b.order()  # needs sage.libs.gap
+@@ -297,1 +297,1 @@
+-    sage: a*a*b*b*b
++    sage: a*a*b*b*b  # needs sage.libs.gap
+@@ -302,1 +302,1 @@
+-    sage: c = a^37*b^26; c
++    sage: c = a^37*b^26; c  # needs sage.libs.gap
+@@ -307,1 +307,1 @@
+-    sage: c.order()
++    sage: c.order()  # needs sage.libs.gap
+@@ -312,2 +312,2 @@
+-    sage: H = G.subgroup([a^2])
+-    sage: H.order()
++    sage: H = G.subgroup([a^2])  # needs sage.libs.gap
++    sage: H.order()  # needs sage.libs.gap
+@@ -318,1 +318,1 @@
+-    sage: H.gen(0)
++    sage: H.gen(0)  # needs sage.libs.gap
+@@ -323,1 +323,1 @@
+-    sage: H.list()
++    sage: H.list()  # needs sage.libs.gap
+@@ -372,1 +372,1 @@
+-    sage: G = CyclotomicField(14)
++    sage: G = CyclotomicField(14)  # needs sage.rings.number_field
+@@ -373,1 +373,1 @@
+-    sage: w = G.gen(0); w
++    sage: w = G.gen(0); w  # needs sage.rings.number_field
+@@ -378,1 +378,1 @@
+-    sage: wc = CDF(w)
++    sage: wc = CDF(w)  # needs sage.rings.number_field
+@@ -379,1 +379,1 @@
+-    sage: wc.abs()
++    sage: wc.abs()  # needs sage.rings.number_field
+@@ -384,1 +384,1 @@
+-    sage: wc.arg()/N(2*pi/14)
++    sage: wc.arg()/N(2*pi/14)  # needs sage.rings.number_field
+@@ -389,1 +389,1 @@
+-    sage: b = w^2
++    sage: b = w^2  # needs sage.rings.number_field
+@@ -390,1 +390,1 @@
+-    sage: b.multiplicative_order()
++    sage: b.multiplicative_order()  # needs sage.rings.number_field
+@@ -395,1 +395,1 @@
+-    sage: bc = CDF(b); bc
++    sage: bc = CDF(b); bc  # needs sage.rings.number_field
+@@ -400,1 +400,1 @@
+-    sage: bc.abs()
++    sage: bc.abs()  # needs sage.rings.number_field
+@@ -405,1 +405,1 @@
+-    sage: bc.arg()/N(2*pi/14)
++    sage: bc.arg()/N(2*pi/14)  # needs sage.rings.number_field
+@@ -410,1 +410,1 @@
+-    sage: sg = [b^i for i in range(7)]; sg
++    sage: sg = [b^i for i in range(7)]; sg  # needs sage.rings.number_field
+@@ -417,1 +417,1 @@
+-    sage: c = sg[3]; d = sg[5]
++    sage: c = sg[3]; d = sg[5]  # needs sage.rings.number_field
+@@ -418,1 +418,1 @@
+-    sage: c*d
++    sage: c*d  # needs sage.rings.number_field
+@@ -423,1 +423,1 @@
+-    sage: c = sg[3]; d = sg[6]
++    sage: c = sg[3]; d = sg[6]  # needs sage.rings.number_field
+@@ -424,1 +424,1 @@
+-    sage: c*d in sg
++    sage: c*d in sg  # needs sage.rings.number_field
+@@ -429,1 +429,1 @@
+-    sage: c*d == sg[2]
++    sage: c*d == sg[2]  # needs sage.rings.number_field
+@@ -434,1 +434,1 @@
+-    sage: sg[5]*sg[6] == sg[4]
++    sage: sg[5]*sg[6] == sg[4]  # needs sage.rings.number_field
+@@ -439,1 +439,1 @@
+-    sage: G.multiplication_table(elements=sg)
++    sage: G.multiplication_table(elements=sg)  # needs sage.rings.number_field
 diff --git a/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py b/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/cosets-sage.py

@@ -43696,6 +43696,34 @@ rather than this PARI factorization boundary. Validation also used
 `sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch` against
 `/home/user/sagelite`.
 
+Follow-up Judson cyclic-group corpus-growth pass on 2026-07-09 UTC: the
+curated corpus now includes
+`src/sage/tests/books/judson_abstract_algebra/cyclic-sage.py`. A widened
+historical file-error scan surfaced the file's old crash at
+`CyclotomicField(14)`; a current focused rerun showed that this had become a
+block-level number-field boundary rather than a worker crash.
+
+The WASI source patch now keeps the generated chapter's dependency boundaries
+explicit: the additive abelian group section is marked
+`# needs sage.symbolic` because its integer free-module path imports the
+unavailable symbolic expression backend, the permutation-group section is
+marked `# needs sage.libs.gap`, the upstream polycyclic subgroup follow-up
+checks inherit `# optional - gap_package_polycyclic`, and the cyclotomic tail
+is marked `# needs sage.rings.number_field`.
+
+Focused validation through the make target records:
+
+```text
+cyclic-sage.py: 20 passed, 0 failed, 68 skipped
+```
+
+The validation database is
+`.tmp/current-run/cyclic-make.sqlite3`; its saved block-failure cluster query
+is empty and its skip groups are symbolic, number-field, GAP, and
+`gap_package_polycyclic` boundaries. Validation also used `git diff --check`
+and a clean `patch --dry-run -d /home/user/sagelite -p1` for the WASI source
+patch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
