@@ -44312,6 +44312,34 @@ cluster queries are empty, and `skips-by-reason.sql` groups the new skips
 under the intended PPL, FLINT, quaternion, number-field, and known-bug
 boundaries.
 
+Focused interval-poset corpus-growth pass on 2026-07-10 UTC:
+
+```text
+interval_posets.py: 525 passed, 0 failed, 76 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/interval_posets.py` to the curated corpus. The scheduled pass
+first confirmed that strict, plan-mentioned-subtracted source-frontier scans
+over the current scratch dashboard archive stayed quiet in both the
+801-to-1600 prompt band and the 1601-and-up prompt band. With mention
+subtraction disabled, the 400-to-900 prompt frontier surfaced
+`interval_posets.py` as a larger already-audited combinatorics candidate near
+existing Dyck-word, binary-tree, and poset corpus coverage.
+
+Focused direct validation recorded 525 passing default-profile blocks, no
+failures, and 76 explicit skips. Focused make-target validation used a
+temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=180`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-interval-posets/make.sqlite3`.
+The latest-run summary records CoWasm commit
+`84805f70ac95c2066b13e5eff04a1a59d6db4f7e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+105, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty, and `skips-by-reason.sql` groups the skipped rows
+under existing optional `sage.combinat`, `sage.modules`,
+`sage.rings.finite_rings`, `sage.plot`, random, and long-time metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
