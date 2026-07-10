@@ -1329,7 +1329,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.functions.jacobi", ("jacobi",)),
         ("sage.functions.trig", ("cos", "sin", "tan")),
         ("sage.functions.transcendental", ("dickman_rho",)),
-        ("sage.functions.other", ("floor", "real_part")),
+        ("sage.functions.other", ("ceil", "floor", "real_part")),
         ("sage.graphs.graph", ("Graph",)),
         ("sage.graphs.digraph", ("DiGraph",)),
         ("sage.graphs.bipartite_graph", ("BipartiteGraph",)),

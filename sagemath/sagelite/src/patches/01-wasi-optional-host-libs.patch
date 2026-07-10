@@ -6084,6 +6084,77 @@ diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 @@ -1954 +1954 @@
 -            sage: r.algebraic_dependency(5)
 +            sage: r.algebraic_dependency(5)                                              # known bug
+diff -urN a/src/sage/rings/real_mpfi.pyx b/src/sage/rings/real_mpfi.pyx
+--- a/src/sage/rings/real_mpfi.pyx
++++ b/src/sage/rings/real_mpfi.pyx
+@@ -124,0 +125 @@
++    sage: # needs sage.symbolic
+@@ -744 +745 @@
+-            sage: RIF.algebraic_closure() is CIF
++            sage: RIF.algebraic_closure() is CIF                                         # known bug
+@@ -805 +806 @@
+-            sage: phi = RIF.coerce_map_from(AA); phi
++            sage: phi = RIF.coerce_map_from(AA); phi                                     # needs sage.rings.number_field
+@@ -1258 +1259 @@
+-            sage: a = RealIntervalField(428)(factorial(100)/exp(2)); a
++            sage: a = RealIntervalField(428)(factorial(100)/exp(2)); a                  # needs sage.symbolic
+@@ -1260 +1261 @@
+-            sage: a.diameter()
++            sage: a.diameter()                                                          # needs sage.symbolic
+@@ -1808 +1810 @@
+-            sage: RIF(-golden_ratio, -10^-6)._str_question_style(10, 3, 'e', False)
++            sage: RIF(-golden_ratio, -10^-6)._str_question_style(10, 3, 'e', False)      # needs sage.symbolic
+@@ -1847 +1849 @@
+-            sage: v = RIF(AA(2-sqrt(3)))
++            sage: v = RIF(AA(2-sqrt(3)))                                                # needs sage.symbolic
+@@ -1848 +1850 @@
+-            sage: v
++            sage: v                                                                      # needs sage.symbolic
+@@ -1850 +1852 @@
+-            sage: v.str(error_digits=1)
++            sage: v.str(error_digits=1)                                                  # needs sage.symbolic
+@@ -1852 +1854 @@
+-            sage: v.str(style='brackets')
++            sage: v.str(style='brackets')                                                # needs sage.symbolic
+@@ -1854 +1856 @@
+-            sage: -v
++            sage: -v                                                                     # needs sage.symbolic
+@@ -2477 +2481 @@
+-            sage: RIF(-sqrt(2)).fp_rank_diameter()
++            sage: RIF(-sqrt(2)).fp_rank_diameter()                                      # needs sage.symbolic
+@@ -2483 +2487 @@
+-            sage: d = (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
++            sage: d = (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()                  # needs sage.symbolic
+@@ -2486 +2490 @@
+-            sage: d in [diam32, diam64]
++            sage: d in [diam32, diam64]                                                 # needs sage.symbolic
+@@ -3596 +3601 @@
+-            sage: phi.simplest_rational() == fibonacci(362)/fibonacci(361)
++            sage: phi.simplest_rational() == fibonacci(362)/fibonacci(361)              # needs sage.libs.pari
+@@ -4984 +4989 @@
+-            sage: r.algebraic_dependency(5)
++            sage: r.algebraic_dependency(5)                                              # needs sage.matrix.matrix_integer_dense
+@@ -4992 +4997 @@
+-            sage: r.algebraic_dependency(5)
++            sage: r.algebraic_dependency(5)                                              # needs sage.matrix.matrix_integer_dense
+@@ -5000 +5005 @@
+-            sage: r.algebraic_dependency(5)
++            sage: r.algebraic_dependency(5)                                              # needs sage.matrix.matrix_integer_dense
+@@ -5070 +5075 @@
+-            sage: gamma(RIF(100))
++            sage: gamma(RIF(100))                                                        # needs sage.symbolic
+@@ -5072 +5077 @@
+-            sage: gamma(RIF(-10000/3))
++            sage: gamma(RIF(-10000/3))                                                   # needs sage.symbolic
+@@ -5093 +5098 @@
+-            sage: gamma(RIF(-3/2,-1/2))
++            sage: gamma(RIF(-3/2,-1/2))                                                  # needs sage.symbolic
+@@ -5143 +5148 @@
+-            sage: zeta(RIF(3))
++            sage: zeta(RIF(3))                                                           # needs sage.symbolic
+@@ -5145 +5150 @@
+-            sage: _.parent()
++            sage: _.parent()                                                             # needs sage.symbolic
 diff -urN a/src/sage/rings/complex_double.pyx b/src/sage/rings/complex_double.pyx
 --- a/src/sage/rings/complex_double.pyx
 +++ b/src/sage/rings/complex_double.pyx

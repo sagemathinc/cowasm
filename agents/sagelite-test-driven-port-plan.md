@@ -44399,6 +44399,33 @@ fallout, and one WASM memory trap. A pure-helper probe kept
 quiet corpus because they still expose broad startup, number-field, or
 polynomial-number-field runtime clusters.
 
+Focused real-interval corpus-growth pass on 2026-07-10 UTC:
+
+```text
+real_mpfi.pyx: 865 passed, 0 failed, 96 skipped
+```
+
+That one-file make-target validation adds `sage/rings/real_mpfi.pyx` to the
+curated corpus. The initial focused probe recorded 867 passing blocks, 27
+failures, and 67 skipped blocks. The only startup namespace fix was adding the
+lightweight `ceil` function to the doctest runner's common globals, matching
+the existing `floor` surface. The remaining failures were classified as
+explicit browser-profile boundaries: symbolic constants/functions, algebraic
+real coercion through number-field support, PARI-backed Fibonacci object-model
+coverage, dense integer-matrix algebraic-dependency support, and one interval
+field identity drift deferred as `# known bug`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-real-mpfi/real-mpfi-make-3.sqlite3`.
+The latest-run summary records CoWasm commit
+`e4e5497175de5101d97daf7a7a16404723a58056`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+105, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
