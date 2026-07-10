@@ -27,7 +27,9 @@ REQUIRED_RUN_METADATA_COLUMNS = (
     "source_root",
 )
 FILE_SKIP_DIRECTIVE_RE = re.compile(
-    r"^\s*#\s*sage\.doctest:\s*(?:.*\bneeds\b|.*\boptional\b)"
+    r"^\s*#\s*sage\.doctest:\s*"
+    r"(?:.*\bneeds\b|.*\boptional\b|.*\blong time\b|.*\bknown bug\b|"
+    r".*\bnot implemented\b|.*\bnot tested\b)"
 )
 SAGE_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])(?:src/)?sage/[A-Za-z0-9_./+-]+?"

@@ -4441,6 +4441,16 @@ insert into files (
   0,
   1,
   7
+), (
+  2,
+  1,
+  '$doctest_candidate_helper_source_root/src/sage/example/source_long_time_frontier.py',
+  'passed',
+  1,
+  0,
+  0,
+  1,
+  7
 );
 SQL
 doctest_candidate_helper_source_skip_skipped_default="$("$src_dir/doctest-corpus-candidates.py" \
@@ -4449,7 +4459,8 @@ doctest_candidate_helper_source_skip_skipped_default="$("$src_dir/doctest-corpus
   --source-root "$doctest_candidate_helper_source_root" \
   --corpus "$doctest_candidate_helper_corpus" \
   "$doctest_candidate_helper_source_skip_skipped_db")"
-if [ "$doctest_candidate_helper_source_skip_skipped_default" != "src/sage/example/source_skipped_error.py" ]; then
+if [ "$doctest_candidate_helper_source_skip_skipped_default" != "src/sage/example/source_long_time_frontier.py
+src/sage/example/source_skipped_error.py" ]; then
   printf '%s\n' "$doctest_candidate_helper_source_skip_skipped_default" >&2
   sqlite3 "$doctest_candidate_helper_source_skip_skipped_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates did not report source-skipped rows by default."

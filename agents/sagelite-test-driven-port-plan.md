@@ -5364,6 +5364,25 @@ previously listed `q_integer_valued_polynomials.py`. The corrected scan no
 longer reports that file as runnable; the remaining rows are the already-known
 broader algebra, graph, quotient-ring, Lie, hyperplane, and matroid clusters.
 
+Follow-up candidate-helper file-skip pass on 2026-07-10: no corpus entry was
+promoted. The strict source-frontier target and strict scratch near-miss scans
+printed no uncovered runnable rows, so the pass hardened the matching
+candidate-helper source filter instead of forcing a noisy corpus addition.
+
+`doctest-corpus-candidates.py --exclude-file-skip-directives` now recognizes
+file-level `# sage.doctest: long time`, `known bug`, `not implemented`, and
+`not tested` directives in addition to `needs` and `optional`, matching the
+source-frontier helper's default-skip policy. The standalone smoke fixture now
+checks that a file-level long-time skipped row is still reported by default
+for dependency-boundary audits, but is suppressed when
+`--exclude-file-skip-directives` is requested.
+
+Focused validation compiled the candidate helper, checked the standalone
+smoke script syntax, exercised a synthetic SQLite fixture for the new
+long-time candidate-helper path, reran the strict source-frontier make target,
+and confirmed the live skipped-only candidate scan still reports only
+explicit dependency-boundary rows.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
