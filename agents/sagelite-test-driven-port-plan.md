@@ -44470,6 +44470,41 @@ integer_ring.pyx: 203 passed, 0 failed, 27 skipped
 rational.pyx --line 3905: 1 passed, 0 failed, 0 skipped
 ```
 
+Focused complex-MPFR corpus-growth pass on 2026-07-10 UTC:
+
+```text
+complex_mpfr.pyx: 445 passed, 0 failed, 96 skipped
+```
+
+That one-file make-target validation adds `sage/rings/complex_mpfr.pyx` to
+the curated corpus. Runner version 107 resolves the lazy imaginary unit `I`
+and seeds the lightweight `real`, `imag`, and `cot` helpers in the common
+doctest namespace, which clears the startup-surface failures exposed by the
+runner-106 Cython docstring isolation pass. The remaining complex-MPFR
+clusters are now explicit browser-profile metadata: PARI-backed complex
+polynomial factorization, PARI conversion, and incomplete gamma examples are
+tagged `# needs sage.libs.pari`; symbolic `cot`/`exp` examples are tagged
+`# needs sage.symbolic`; algebraic-dependency examples are tagged
+`# needs sage.matrix.matrix_integer_dense`; and the isolated full-stream
+`ComplexNumber(42,0)` constructor drift is deferred as `# known bug`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy through:
+
+```sh
+make -C sagemath/sagelite test-sage-doctest-corpus \
+  SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-complex-mpfr/complex-mpfr-corpus.txt \
+  SAGELITE_DOCTEST_ALLOW_FAILURES=0 \
+  SAGELITE_DOCTEST_TIMEOUT=180 \
+  SAGELITE_DOCTEST_JOBS=1 \
+  SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-complex-mpfr/complex-mpfr-make.sqlite3
+```
+
+The latest-run summary records CoWasm commit
+`f11576475d5c717c8b424ebae5c9d4eecd9bea1a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+107, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
