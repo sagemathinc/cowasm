@@ -44552,6 +44552,41 @@ The latest-run summary records Sagelite package commit
 107, and a 100% non-skipped pass rate. The saved block- and file-failure
 cluster queries are empty.
 
+Focused down-up algebra corpus-growth pass on 2026-07-10 UTC:
+
+```text
+down_up_algebra.py: 198 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/down_up_algebra.py` to the curated corpus. The archived larger-
+frontier probe had stopped in a WASM memory trap during a Verma-module test
+suite. A fresh full-file probe localized the first current failure more
+precisely: the periodic-weight example reached `CyclotomicField(6)` and
+trapped with a function-signature mismatch. Marking that contiguous block as
+needing `sage.rings.number_field` exposed seven ordinary follow-up failures
+instead of a file-level crash.
+
+The follow-up pass separates those failures cleanly. The periodic-weight block
+is skipped under its number-field requirement, and the tableaux block is
+skipped under `sage.combinat.crystals`. The lightweight
+`PartitionsInBox` constructor is now exposed by both the WASI `sage.all`
+surface and the common doctest namespace, allowing the Young-lattice down-up
+relations to remain runnable default-profile coverage.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/down-up-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`18150740491adf27c4e3e2966f4cec30943cfd5e`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+107, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty; `skips-by-reason.sql` groups six number-field
+blocks, two crystal blocks, and one existing long-time block under their
+intended metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

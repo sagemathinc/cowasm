@@ -1209,7 +1209,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.non_decreasing_parking_function", ("NonDecreasingParkingFunction", "NonDecreasingParkingFunctions")),
         ("sage.combinat.parking_functions", ("ParkingFunction",)),
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
-        ("sage.combinat.partition", ("Partition", "Partitions")),
+        ("sage.combinat.partition", ("Partition", "Partitions", "PartitionsInBox")),
         ("sage.combinat.perfect_matching", ("PerfectMatching",)),
         ("sage.combinat.permutation", ("Arrangements", "Permutation", "Permutations")),
         ("sage.combinat.regular_sequence", ("RegularSequenceRing",)),

@@ -3511,7 +3511,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 +    from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction, NonDecreasingParkingFunctions
 +    from sage.combinat.parking_functions import ParkingFunction
-+    from sage.combinat.partition import Partition
++    from sage.combinat.partition import Partition, Partitions, PartitionsInBox
 +    from sage.combinat.perfect_matching import PerfectMatching
 +    from sage.combinat.regular_sequence import RegularSequenceRing
 +    from sage.combinat.root_system.cartan_type import CartanType
@@ -21703,3 +21703,13 @@ diff --git a/src/sage/rings/quotient_ring_element.py b/src/sage/rings/quotient_r
 +            sage: I2 = ideal([Q(f) for f in I1.gens()])                      # needs sage.libs.singular
 +            sage: f = Q((a*b + c*d + 1)^2  + e)                              # needs sage.libs.singular
 +            sage: f.reduce(I2.gens())                                        # needs sage.libs.singular
+diff --git a/src/sage/algebras/down_up_algebra.py b/src/sage/algebras/down_up_algebra.py
+--- a/src/sage/algebras/down_up_algebra.py
++++ b/src/sage/algebras/down_up_algebra.py
+@@ -543,2 +543,3 @@
++        sage: # needs sage.combinat.crystals
+         sage: B = crystals.Tableaux(['A',1], shape=[5])
+         sage: [b.weight() for b in B]
+@@ -549 +550,2 @@
++        sage: # needs sage.rings.number_field
+         sage: k.<z6> = CyclotomicField(6)
