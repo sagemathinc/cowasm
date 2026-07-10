@@ -44524,6 +44524,34 @@ The latest-run summary records CoWasm commit
 107, and a 100% non-skipped pass rate. The saved block- and file-failure
 cluster queries are empty.
 
+Focused quotient-ring element corpus-growth pass on 2026-07-10 UTC:
+
+```text
+quotient_ring_element.py: 45 passed, 0 failed, 161 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/quotient_ring_element.py` to the curated corpus. The initial
+focused probe recorded 48 passing blocks, 72 failures, and 86 skipped blocks.
+The failures formed one backend cluster: multivariate quotient construction
+reaches the unavailable Singular-backed `sage.rings.polynomial.plural`
+implementation, followed by dependent stale-name failures and a few false
+passes that reused names from earlier docstrings.
+
+The WASI source patch now marks the affected multivariate quotient setup and
+dependent examples with explicit `# needs sage.libs.singular` metadata while
+preserving univariate quotient rings, Steenrod quotient elements, and other
+backend-independent examples as default-profile coverage. Focused validation
+rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/manual-2026-07-10-quotient-ring/make.sqlite3`.
+The latest-run summary records Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+107, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

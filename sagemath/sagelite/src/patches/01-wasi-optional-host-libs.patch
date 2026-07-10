@@ -21471,3 +21471,235 @@ diff --git a/src/sage/rings/complex_mpfr.pyx b/src/sage/rings/complex_mpfr.pyx
 @@ -3227 +3227 @@
 -            sage: p(z)
 +            sage: p(z)                                                                  # needs sage.matrix.matrix_integer_dense
+diff --git a/src/sage/rings/quotient_ring_element.py b/src/sage/rings/quotient_ring_element.py
+--- a/src/sage/rings/quotient_ring_element.py
++++ b/src/sage/rings/quotient_ring_element.py
+@@ -62 +62 @@
+-        sage: S = R.quo(x^2 + y^2); S
++        sage: S = R.quo(x^2 + y^2); S                                      # needs sage.libs.singular
+@@ -72,2 +72,2 @@
+-        sage: S.<a,b> = R.quotient(x^2 + y^2)
+-        sage: a
++        sage: S.<a,b> = R.quotient(x^2 + y^2)                               # needs sage.libs.singular
++        sage: a                                                              # needs sage.libs.singular
+@@ -75 +75 @@
+-        sage: b
++        sage: b                                                              # needs sage.libs.singular
+@@ -77 +77 @@
+-        sage: a^2 + b^2 == 0
++        sage: a^2 + b^2 == 0                                                 # needs sage.libs.singular
+@@ -79 +79 @@
+-        sage: b.lift()
++        sage: b.lift()                                                       # needs sage.libs.singular
+@@ -81 +81 @@
+-        sage: (a^3 + b^2).lift()
++        sage: (a^3 + b^2).lift()                                             # needs sage.libs.singular
+@@ -237 +237 @@
+-            sage: S = R.quotient(I, names=R.variable_names())
++            sage: S = R.quotient(I, names=R.variable_names())                # needs sage.libs.singular
+@@ -239 +239 @@
+-            sage: latex(a)
++            sage: latex(a)                                                   # needs sage.libs.singular
+@@ -397 +397 @@
+-            sage: S = R.quotient_ring( R.ideal(x2**2 + x1 - 2, x1**2 - 1) )
++            sage: S = R.quotient_ring( R.ideal(x2**2 + x1 - 2, x1**2 - 1) ) # needs sage.libs.singular
+@@ -477 +477 @@
+-            sage: K = R.quotient(x^2 - y^3).fraction_field()
++            sage: K = R.quotient(x^2 - y^3).fraction_field()                 # needs sage.libs.singular
+@@ -479,2 +479,2 @@
+-            sage: f = K.hom((t^3, t^2))
+-            sage: list(map(f, K.gens()))
++            sage: f = K.hom((t^3, t^2))                                      # needs sage.libs.singular
++            sage: list(map(f, K.gens()))                                     # needs sage.libs.singular
+@@ -482,2 +482,2 @@
+-            sage: xbar, ybar = K.gens()
+-            sage: f(1/ybar)
++            sage: xbar, ybar = K.gens()                                      # needs sage.libs.singular
++            sage: f(1/ybar)                                                  # needs sage.libs.singular
+@@ -485 +485 @@
+-            sage: f(xbar/ybar)
++            sage: f(xbar/ybar)                                               # needs sage.libs.singular
+@@ -498 +498 @@
+-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
++            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)        # needs sage.libs.singular
+@@ -500 +500 @@
+-            sage: int(S(-3))                # indirect doctest
++            sage: int(S(-3))                # indirect doctest              # needs sage.libs.singular
+@@ -502 +502 @@
+-            sage: type(int(S(-3)))
++            sage: type(int(S(-3)))                                           # needs sage.libs.singular
+@@ -504 +504 @@
+-            sage: int(a)
++            sage: int(a)                                                     # needs sage.libs.singular
+@@ -617,3 +617,3 @@
+-            sage: S.<a,b> = R.quo(x^2 + y^2)
+-            sage: c = a*a + b
+-            sage: hash(a) != hash(b)
++            sage: S.<a,b> = R.quo(x^2 + y^2)                                 # needs sage.libs.singular
++            sage: c = a*a + b                                                # needs sage.libs.singular
++            sage: hash(a) != hash(b)                                         # needs sage.libs.singular
+@@ -628 +628 @@
+-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
++            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)        # needs sage.libs.singular
+@@ -630 +630 @@
+-            sage: a > b    # indirect doctest
++            sage: a > b    # indirect doctest                               # needs sage.libs.singular
+@@ -632 +632 @@
+-            sage: b > a
++            sage: b > a                                                     # needs sage.libs.singular
+@@ -634 +634 @@
+-            sage: a == loads(dumps(a))
++            sage: a == loads(dumps(a))                                       # needs sage.libs.singular
+@@ -646,4 +646,4 @@
+-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+-            sage: Q = F.quo(I)
+-            sage: Q.0^4    # indirect doctest
++            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')  # needs sage.libs.singular
++            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F            # needs sage.libs.singular
++            sage: Q = F.quo(I)                                               # needs sage.libs.singular
++            sage: Q.0^4    # indirect doctest                                # needs sage.libs.singular
+@@ -658,2 +658,2 @@
+-            sage: S.<x1,y1> = QuotientRing(R, I)
+-            sage: x1^4
++            sage: S.<x1,y1> = QuotientRing(R, I)                             # needs sage.libs.singular
++            sage: x1^4                                                       # needs sage.libs.singular
+@@ -684,3 +684,3 @@
+-            sage: Q = R.quo(I)
+-            sage: f = Q(z*y + 2*x)
+-            sage: f.lt()
++            sage: Q = R.quo(I)                                               # needs sage.libs.singular
++            sage: f = Q(z*y + 2*x)                                           # needs sage.libs.singular
++            sage: f.lt()                                                      # needs sage.libs.singular
+@@ -706,3 +706,3 @@
+-            sage: Q = R.quo(I)
+-            sage: f = Q(z*y + 2*x)
+-            sage: f.lm()
++            sage: Q = R.quo(I)                                               # needs sage.libs.singular
++            sage: f = Q(z*y + 2*x)                                           # needs sage.libs.singular
++            sage: f.lm()                                                      # needs sage.libs.singular
+@@ -728,3 +728,3 @@
+-            sage: Q = R.quo(I)
+-            sage: f = Q(z*y + 2*x)
+-            sage: f.lc()
++            sage: Q = R.quo(I)                                               # needs sage.libs.singular
++            sage: f = Q(z*y + 2*x)                                           # needs sage.libs.singular
++            sage: f.lc()                                                      # needs sage.libs.singular
+@@ -753 +753 @@
+-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
++            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)        # needs sage.libs.singular
+@@ -755 +755 @@
+-            sage: a.variables()
++            sage: a.variables()                                              # needs sage.libs.singular
+@@ -757 +757 @@
+-            sage: b.variables()
++            sage: b.variables()                                              # needs sage.libs.singular
+@@ -759 +759 @@
+-            sage: s = a^2 + b^2 + 1; s
++            sage: s = a^2 + b^2 + 1; s                                      # needs sage.libs.singular
+@@ -761 +761 @@
+-            sage: s.variables()
++            sage: s.variables()                                              # needs sage.libs.singular
+@@ -763 +763 @@
+-            sage: (a + b).variables()
++            sage: (a + b).variables()                                        # needs sage.libs.singular
+@@ -776 +776 @@
+-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
++            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)        # needs sage.libs.singular
+@@ -778 +778 @@
+-            sage: a.monomials()
++            sage: a.monomials()                                              # needs sage.libs.singular
+@@ -780 +780 @@
+-            sage: (a + a*b).monomials()
++            sage: (a + a*b).monomials()                                      # needs sage.libs.singular
+@@ -782 +782 @@
+-            sage: R.zero().monomials()
++            sage: R.zero().monomials()                                       # needs sage.libs.singular
+@@ -799,2 +799,2 @@
+-            sage: Q = P.quo(I)
+-            sage: Q._singular_()
++            sage: Q = P.quo(I)                                               # needs sage.libs.singular
++            sage: Q._singular_()                                             # needs sage.libs.singular
+@@ -810 +810 @@
+-            sage: xbar = Q(x); xbar
++            sage: xbar = Q(x); xbar                                          # needs sage.libs.singular
+@@ -812 +812 @@
+-            sage: xbar._singular_()
++            sage: xbar._singular_()                                          # needs sage.libs.singular
+@@ -814 +814 @@
+-            sage: Q(xbar._singular_()) # a round-trip
++            sage: Q(xbar._singular_()) # a round-trip                        # needs sage.libs.singular
+@@ -819 +819 @@
+-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
++            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)        # needs sage.libs.singular
+@@ -821 +821 @@
+-            sage: (a - 2/3*b)._singular_()
++            sage: (a - 2/3*b)._singular_()                                   # needs sage.libs.singular
+@@ -823 +823 @@
+-            sage: S((a - 2/3*b)._singular_())
++            sage: S((a - 2/3*b)._singular_())                                # needs sage.libs.singular
+@@ -839,3 +839,3 @@
+-            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
+-            sage: xbar, ybar = Q.gens()
+-            sage: magma(xbar)                   # optional - magma
++            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))             # needs sage.libs.singular
++            sage: xbar, ybar = Q.gens()                                      # needs sage.libs.singular
++            sage: magma(xbar)                   # optional - magma           # needs sage.libs.singular
+@@ -843 +843 @@
+-            sage: xbar._magma_init_(magma)      # optional - magma
++            sage: xbar._magma_init_(magma)      # optional - magma           # needs sage.libs.singular
+@@ -857,3 +857,3 @@
+-            sage: Q = R.quotient([x^2 - y])
+-            sage: x, y = Q.gens()
+-            sage: f = (x^3 + 2*y^2*x)^7; f
++            sage: Q = R.quotient([x^2 - y])                                  # needs sage.libs.singular
++            sage: x, y = Q.gens()                                            # needs sage.libs.singular
++            sage: f = (x^3 + 2*y^2*x)^7; f                                   # needs sage.libs.singular
+@@ -861 +861 @@
+-            sage: mf = macaulay2(f); mf         # optional - macaulay2
++            sage: mf = macaulay2(f); mf         # optional - macaulay2       # needs sage.libs.singular
+@@ -864 +864 @@
+-            sage: mf.sage()                     # optional - macaulay2
++            sage: mf.sage()                     # optional - macaulay2       # needs sage.libs.singular
+@@ -866 +866 @@
+-            sage: mf.sage() == f                # optional - macaulay2
++            sage: mf.sage() == f                # optional - macaulay2       # needs sage.libs.singular
+@@ -868 +868 @@
+-            sage: Q(mf)                         # optional - macaulay2
++            sage: Q(mf)                         # optional - macaulay2       # needs sage.libs.singular
+@@ -881,3 +881,3 @@
+-            sage: Q = R.quotient([x^2 - y], names=R.gens())
+-            sage: x, y = Q.gens()
+-            sage: f = (x^3 + 2*y^2*x)^7; f
++            sage: Q = R.quotient([x^2 - y], names=R.gens())                  # needs sage.libs.singular
++            sage: x, y = Q.gens()                                            # needs sage.libs.singular
++            sage: f = (x^3 + 2*y^2*x)^7; f                                   # needs sage.libs.singular
+@@ -885 +885 @@
+-            sage: macaulay2(f)                  # optional - macaulay2
++            sage: macaulay2(f)                  # optional - macaulay2       # needs sage.libs.singular
+@@ -888 +888 @@
+-            sage: _.sage()                      # optional - macaulay2
++            sage: _.sage()                      # optional - macaulay2       # needs sage.libs.singular
+@@ -897,4 +897,4 @@
+-            sage: Q = R.quotient([x^2 - y], names=R.gens())
+-            sage: x, y = Q.gens()
+-            sage: f = (x^3 + 2*y^2*x)^7
+-            sage: macaulay2(f)                  # optional - macaulay2
++            sage: Q = R.quotient([x^2 - y], names=R.gens())                  # needs sage.libs.singular
++            sage: x, y = Q.gens()                                            # needs sage.libs.singular
++            sage: f = (x^3 + 2*y^2*x)^7                                     # needs sage.libs.singular
++            sage: macaulay2(f)                  # optional - macaulay2       # needs sage.libs.singular
+@@ -903,2 +903,2 @@
+-            sage: macaulay2.use(R.quotient([x, y]))     # optional - macaulay2
+-            sage: macaulay2(f)                  # optional - macaulay2
++            sage: macaulay2.use(R.quotient([x, y]))     # optional - macaulay2 # needs sage.libs.singular
++            sage: macaulay2(f)                  # optional - macaulay2       # needs sage.libs.singular
+@@ -936,4 +936,4 @@
+-            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
+-            sage: I2 = ideal([Q(f) for f in I1.gens()])
+-            sage: f = Q((a*b + c*d + 1)^2  + e)
+-            sage: f.reduce(I2.gens())
++            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))             # needs sage.libs.singular
++            sage: I2 = ideal([Q(f) for f in I1.gens()])                      # needs sage.libs.singular
++            sage: f = Q((a*b + c*d + 1)^2  + e)                              # needs sage.libs.singular
++            sage: f.reduce(I2.gens())                                        # needs sage.libs.singular
