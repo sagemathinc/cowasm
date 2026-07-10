@@ -928,6 +928,7 @@ src/sage/matrix/change_ring.pyx
 src/sage/matrix/args.pyx
 src/sage/matrix/constructor.pyx
 src/sage/matrix/docs.py
+src/sage/matrix/special.py
 src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
 src/sage/matrix/matrix_double_sparse.pyx
 src/sage/matrix/echelon_matrix.pyx

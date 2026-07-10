@@ -44365,6 +44365,40 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=180`,
 The latest-run summary records runner version 105 and a 100% non-skipped pass
 rate; saved block- and file-failure cluster queries are empty.
 
+Focused matrix-special corpus-growth pass on 2026-07-10 UTC:
+
+```text
+special.py: 439 passed, 0 failed, 148 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/special.py` to the
+curated corpus. A fresh larger-frontier probe first recorded the file as a
+matrix near miss with 439 passing blocks, 50 failures, and 98 skipped blocks.
+The failures grouped into explicit browser-profile boundaries for symbolic
+matrix construction, PARI-backed kernel/eigen computations, number-field and
+elliptic-curve examples, group-algebra setup, rational dense/sparse matrix
+implementation availability, and a small set of random/display drifts.
+
+The added WASI source patch marks those examples with explicit `# needs ...`
+metadata or deferred `# known bug` metadata while preserving the ordinary
+random matrix, special matrix constructor, block matrix, companion matrix,
+rotation matrix, and random-subspace coverage as default-profile doctests.
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-codex-next/matrix-special-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the strict
+candidate helper prints no promotion row after subtracting the updated corpus.
+
+The same scheduled pass rejected several larger frontier probes as broad
+backend work rather than narrow corpus promotion. Asymptotic term/growth and
+species probes were dominated by symbolic/GAP dependencies, dependent-name
+fallout, and one WASM memory trap. A pure-helper probe kept
+`commutative_dga.py`, `morphism.pyx`, and `lazy_series_ring.py` outside the
+quiet corpus because they still expose broad startup, number-field, or
+polynomial-number-field runtime clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -7442,6 +7442,159 @@ diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
          sage: B = random_bistochastic_matrix(MS)
          sage: B.is_bistochastic()
          True
+diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
+--- a/src/sage/matrix/special.py
++++ b/src/sage/matrix/special.py
+@@ -400 +400 @@
+-        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
++        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A  # known bug - dense matrix summary repr differs in WASI runtime
+@@ -424 +424 @@
+-        sage: type(A)
++        sage: type(A)                                                         # needs sage.matrix.matrix_rational_dense
+@@ -432 +432 @@
+-        sage: type(A)
++        sage: type(A)                                                         # needs sage.matrix.matrix_rational_sparse
+@@ -448 +448 @@
+-        sage: all(a.numerator() in range(-2, 3) and
++        sage: all(a.numerator() in range(-2, 3) and                           # known bug - rational random bounds drift in WASI runtime
+@@ -454 +454 @@
+-        sage: all(a.numerator() in range(-2, 3) and
++        sage: all(a.numerator() in range(-2, 3) and                           # known bug - rational random bounds drift in WASI runtime
+@@ -594 +594 @@
+-        sage: B.right_kernel() == C.right_kernel()
++        sage: B.right_kernel() == C.right_kernel()                            # needs sage.libs.pari
+@@ -598 +598 @@
+-        sage: B.column_space() == L.right_kernel()
++        sage: B.column_space() == L.right_kernel()                             # needs sage.libs.pari
+@@ -600 +600 @@
+-        sage: B.left_kernel() == L.row_space()
++        sage: B.left_kernel() == L.row_space()                                 # needs sage.libs.pari
+@@ -1021 +1021 @@
+-        sage: G = CyclicPermutationGroup(7)
++        sage: G = CyclicPermutationGroup(7)                                    # needs sage.groups
+@@ -1023 +1023 @@
+-        sage: A = G.algebra(R)
++        sage: A = G.algebra(R)                                                 # needs sage.groups
+@@ -1024 +1024 @@
+-        sage: zero_matrix(A, 3, 3)
++        sage: zero_matrix(A, 3, 3)                                             # needs sage.groups
+@@ -1316 +1316 @@
+-        sage: E = elementary_matrix(4, row1=1, scale=I)
++        sage: E = elementary_matrix(4, row1=1, scale=I)                        # needs sage.rings.number_field
+@@ -1317 +1317 @@
+-        sage: E.parent()
++        sage: E.parent()                                                       # needs sage.rings.number_field
+@@ -1325 +1325 @@
+-        sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
++        sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))                 # needs sage.rings.number_field
+@@ -1326 +1326 @@
+-        sage: E.parent()
++        sage: E.parent()                                                       # needs sage.rings.number_field
+@@ -2015 +2015 @@
+-        sage: matrix.block([
++        sage: matrix.block([                                                   # needs sage.schemes.elliptic_curves
+@@ -2383 +2383 @@
+-        sage: y = var('y')
++        sage: y = var('y')                                                     # needs sage.symbolic
+@@ -2384 +2384 @@
+-        sage: q = y^3 - 2*y + 1
++        sage: q = y^3 - 2*y + 1                                                # needs sage.symbolic
+@@ -2385 +2385 @@
+-        sage: companion_matrix(q)
++        sage: companion_matrix(q)                                              # needs sage.symbolic
+@@ -2390 +2390 @@
+-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)
++        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                      # needs sage.symbolic
+@@ -2392 +2392 @@
+-        sage: coeff_list
++        sage: coeff_list                                                       # needs sage.symbolic
+@@ -2394 +2394 @@
+-        sage: companion_matrix(coeff_list)
++        sage: companion_matrix(coeff_list)                                     # needs sage.symbolic
+@@ -2948 +2948 @@
+-        sage: B.right_kernel() == C.right_kernel()
++        sage: B.right_kernel() == C.right_kernel()                            # needs sage.libs.pari
+@@ -2952 +2952 @@
+-        sage: B.column_space() == L.right_kernel()
++        sage: B.column_space() == L.right_kernel()                             # needs sage.libs.pari
+@@ -2954 +2954 @@
+-        sage: B.left_kernel() == L.row_space()
++        sage: B.left_kernel() == L.row_space()                                 # needs sage.libs.pari
+@@ -2969 +2969 @@
+-        sage: A.right_kernel() == C.right_kernel()
++        sage: A.right_kernel() == C.right_kernel()                            # needs sage.libs.pari
+@@ -2973 +2973 @@
+-        sage: A.column_space() == L.right_kernel()
++        sage: A.column_space() == L.right_kernel()                             # needs sage.libs.pari
+@@ -2975 +2975 @@
+-        sage: A.left_kernel() == L.row_space()
++        sage: A.left_kernel() == L.row_space()                                 # needs sage.libs.pari
+@@ -3094 +3094 @@
+-        sage: K = NumberField(y^2 - 2*y - 2, 'y')
++        sage: K = NumberField(y^2 - 2*y - 2, 'y')                              # needs sage.rings.number_field
+@@ -3095 +3095 @@
+-        sage: C = random_matrix(K, 3, algorithm='unimodular')
++        sage: C = random_matrix(K, 3, algorithm='unimodular')                  # needs sage.rings.number_field
+@@ -3096 +3096 @@
+-        sage: C  # random
++        sage: C  # random                                                     # needs sage.rings.number_field
+@@ -3100 +3100 @@
+-        sage: det(C)
++        sage: det(C)                                                           # needs sage.rings.number_field
+@@ -3102 +3102 @@
+-        sage: C.base_ring() is K
++        sage: C.base_ring() is K                                               # needs sage.rings.number_field
+@@ -3457 +3457 @@
+-        sage: eigenvalues = A.eigenvalues()
++        sage: eigenvalues = A.eigenvalues()                                    # needs sage.libs.pari
+@@ -3458 +3458 @@
+-        sage: S = A.right_eigenmatrix()[1]
++        sage: S = A.right_eigenmatrix()[1]                                     # needs sage.libs.pari
+@@ -3459 +3459 @@
+-        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
++        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                      # needs sage.libs.pari
+@@ -3460 +3460 @@
+-        sage: sorted(eigenvalues) == sorted(eigenvalues2)
++        sage: sorted(eigenvalues) == sorted(eigenvalues2)                      # needs sage.libs.pari
+@@ -3477 +3477 @@
+-        sage: S = B.right_eigenmatrix()[1]
++        sage: S = B.right_eigenmatrix()[1]                                     # needs sage.libs.pari
+@@ -3478 +3478 @@
+-        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
++        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                      # needs sage.libs.pari
+@@ -3479 +3479 @@
+-        sage: all(e in eigenvalues for e in eigenvalues2)
++        sage: all(e in eigenvalues for e in eigenvalues2)                      # needs sage.libs.pari
+@@ -3684 +3684 @@
+-        sage: x,y = var('x,y')
++        sage: x,y = var('x,y')                                                 # needs sage.symbolic
+@@ -3685 +3685 @@
+-        sage: v = vector((x,y))
++        sage: v = vector((x,y))                                                # needs sage.symbolic
+@@ -3686 +3686 @@
+-        sage: vector_on_axis_rotation_matrix(v, 1)
++        sage: vector_on_axis_rotation_matrix(v, 1)                             # needs sage.symbolic
+@@ -3689 +3689 @@
+-        sage: vector_on_axis_rotation_matrix(v, 0)
++        sage: vector_on_axis_rotation_matrix(v, 0)                             # needs sage.symbolic
+@@ -3692 +3692 @@
+-        sage: vector_on_axis_rotation_matrix(v, 0) * v
++        sage: vector_on_axis_rotation_matrix(v, 0) * v                         # needs sage.symbolic
+@@ -3694 +3694 @@
+-        sage: vector_on_axis_rotation_matrix(v, 1) * v
++        sage: vector_on_axis_rotation_matrix(v, 1) * v                         # needs sage.symbolic
+@@ -3787 +3787 @@
+-        sage: x,y,z = var('x,y,z')
++        sage: x,y,z = var('x,y,z')                                             # needs sage.symbolic
+@@ -3788 +3788 @@
+-        sage: v = vector((x,y,z))
++        sage: v = vector((x,y,z))                                              # needs sage.symbolic
+@@ -3789 +3789 @@
+-        sage: ith_to_zero_rotation_matrix(v, 2)
++        sage: ith_to_zero_rotation_matrix(v, 2)                                # needs sage.symbolic
+@@ -3793 +3793 @@
+-        sage: ith_to_zero_rotation_matrix(v, 2) * v
++        sage: ith_to_zero_rotation_matrix(v, 2) * v                            # needs sage.symbolic
 diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
 --- a/src/sage/matrix/change_ring.pyx
 +++ b/src/sage/matrix/change_ring.pyx
