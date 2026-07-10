@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 105;
+const doctestRunnerVersion = 106;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1882,7 +1882,7 @@ def __cowasm_raw_docstring_source(text, node):
 
 def __cowasm_docstrings(filename, text):
     if not filename.endswith(".py"):
-        if os.path.basename(filename) == "rational.pyx":
+        if filename.endswith(".pyx"):
             yielded = False
             for item in __cowasm_triple_quoted_docstrings(filename, text):
                 yielded = True

@@ -44426,6 +44426,50 @@ The latest-run summary records CoWasm commit
 105, and a 100% non-skipped pass rate. The saved block- and file-failure
 cluster queries are empty.
 
+Focused Cython docstring-isolation runner pass on 2026-07-10 UTC:
+
+The next larger numeric probe, `sage/rings/complex_mpfr.pyx`, exposed a
+doctest-runner extraction bug rather than an immediately promotable corpus
+file. The initial full-file probe recorded:
+
+```text
+complex_mpfr.pyx: 356 passed, 114 failed, 71 skipped
+```
+
+Most of the output mismatches were caused by `.pyx` fallback extraction
+treating all Sage prompts in the file as one doctest stream. An early
+`CC = ComplexField(200)` example therefore leaked into later docstrings whose
+expected output assumes the default 53-bit `CC`. Runner version 106 generalizes
+the existing rational-only triple-quoted Cython docstring splitter to all
+`.pyx` files, so separate Cython docstrings restore the protected startup
+namespace before execution.
+
+Focused validation confirmed the direct reproducer now passes:
+
+```text
+complex_mpfr.pyx --line 406: 1 passed, 0 failed, 0 skipped
+```
+
+The broader `complex_mpfr.pyx` probe improved to:
+
+```text
+complex_mpfr.pyx: 433 passed, 37 failed, 71 skipped
+```
+
+The remaining failures are now genuine follow-up clusters rather than the
+precision leak: PARI/cypari2 object-model gaps in complex polynomial
+factorization and `gamma_inc`, symbolic `I`/`exp` startup boundaries, missing
+startup helpers such as `real`, `imag`, and `cot`, and one algebraic
+dependency path that reaches matrix LLL support. The file remains outside the
+quiet corpus pending explicit tagging or runtime work for those clusters.
+
+Regression checks kept existing Cython coverage quiet:
+
+```text
+integer_ring.pyx: 203 passed, 0 failed, 27 skipped
+rational.pyx --line 3905: 1 passed, 0 failed, 0 skipped
+```
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
