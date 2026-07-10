@@ -44340,6 +44340,31 @@ cluster queries are empty, and `skips-by-reason.sql` groups the skipped rows
 under existing optional `sage.combinat`, `sage.modules`,
 `sage.rings.finite_rings`, `sage.plot`, random, and long-time metadata.
 
+Focused finite-dimensional algebra category corpus-growth pass on 2026-07-10
+UTC:
+
+```text
+finite_dimensional_algebras_with_basis.py: 49 passed, 0 failed, 263 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/finite_dimensional_algebras_with_basis.py` to the curated
+corpus. The initial focused probe recorded 28 passed, 30 failed, and 254
+skipped blocks. The main fix was a startup namespace gap: the WASI `sage.all`
+surface and doctest runner now expose `ExteriorAlgebra`, which makes the
+file's exterior-algebra ideal examples runnable. The remaining failures were
+explicitly classified instead of hidden: a Descent algebra idempotent-lift
+block is tagged as `# needs sage.combinat.descent_algebra`, and three
+matrix-list display-format drifts are deferred as `# known bug`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=180`,
+`SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-10-large-sample/finite-dimensional-algebras-make-2.sqlite3`.
+The latest-run summary records runner version 105 and a 100% non-skipped pass
+rate; saved block- and file-failure cluster queries are empty.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

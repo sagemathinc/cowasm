@@ -1278,6 +1278,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.algebras.lie_algebras.all", ("lie_algebras",)),
         ("sage.algebras.lie_conformal_algebras.all", ("LieConformalAlgebra", "lie_conformal_algebras")),
         ("sage.algebras.commutative_dga", ("GradedCommutativeAlgebra",)),
+        ("sage.algebras.clifford_algebra", ("ExteriorAlgebra",)),
         ("sage.algebras.free_algebra", ("FreeAlgebra",)),
         ("sage.algebras.octonion_algebra", ("OctonionAlgebra",)),
         ("sage.algebras.steenrod.steenrod_algebra", ("SteenrodAlgebra", "Sq")),

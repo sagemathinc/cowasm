@@ -3392,7 +3392,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,246 @@
+@@ -253,74 +253,247 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -3494,6 +3494,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 +    from sage.categories.vector_spaces import VectorSpaces
 +    from sage.algebras.lie_conformal_algebras.all import LieConformalAlgebra, lie_conformal_algebras
++    from sage.algebras.clifford_algebra import ExteriorAlgebra
 +    from sage.algebras.commutative_dga import GradedCommutativeAlgebra
 +    from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra, Sq
 +    import sage.algebras.catalog as algebras
@@ -21141,3 +21142,32 @@ diff --git a/src/sage/algebras/steenrod/steenrod_algebra.py b/src/sage/algebras/
          s_1 s_2 s_12 + s_2 s_4
 
      .. rubric:: Sub-Hopf algebras of the Steenrod algebra:
+
+diff --git a/src/sage/categories/finite_dimensional_algebras_with_basis.py b/src/sage/categories/finite_dimensional_algebras_with_basis.py
+--- a/src/sage/categories/finite_dimensional_algebras_with_basis.py
++++ b/src/sage/categories/finite_dimensional_algebras_with_basis.py
+@@ -746,16 +746,16 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
+                 [0 1]}
+                 sage: e = list(A.basis())
+-                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]
++                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]  # known bug - matrix list display differs in WASI runtime
+                 [
+                 [1 0]  [0 0]
+                 [0 0], [1 0]
+                 ]
+-                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]
++                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]  # known bug - matrix list display differs in WASI runtime
+                 [
+                 [1 0]  [0 1]
+                 [0 0], [0 0]
+                 ]
+-                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]
++                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]  # known bug - matrix list display differs in WASI runtime
+                 [
+                 [1 0]  [0 1]  [0 0]  [0 0]
+                 [0 0], [0 0], [1 0], [0 1]
+@@ -918,2 +918,3 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
+-
++
++                sage: # needs sage.combinat.descent_algebra
+                 sage: B = DescentAlgebra(QQ, 4).B()
