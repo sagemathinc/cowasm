@@ -22594,6 +22594,9 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 diff --git a/src/sage/geometry/toric_lattice.py b/src/sage/geometry/toric_lattice.py
 --- a/src/sage/geometry/toric_lattice.py
 +++ b/src/sage/geometry/toric_lattice.py
+@@ -643,1 +643,2 @@ class ToricLattice_generic(FreeModule_ambient_pid):
++            sage: # needs ppl
+             sage: K = Cone([(1,0,0),(0,1,0)])
 @@ -1412,6 +1412,31 @@ class ToricLattice_quotient(FGP_Module_class):
              assert len(gens) == 1
              return (-gens[0],)

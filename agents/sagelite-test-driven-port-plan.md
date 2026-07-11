@@ -45780,6 +45780,40 @@ namespace prompt and its dependent state fallout.  `toric_lattice.py` remains
 outside the quiet corpus; the `Cone` group is now the largest coherent
 cluster.
 
+Focused toric-cone dependency classification pass on 2026-07-11 UTC:
+
+The remaining four-block `Cone` group was not a missing lightweight namespace
+export. Importing `sage.geometry.cone.Cone` directly succeeds, but constructing
+the example immediately resolves PPL's `Linear_Expression` and raises
+`FeatureNotPresentError` because the browser profile does not ship `ppl`.
+Exposing `Cone` in the common doctest namespace would therefore only replace
+the initial `NameError` with the underlying unavailable-backend error.
+
+The WASI source patch now places a standalone `# needs ppl` directive before
+the contiguous issue-19603 regression group. The doctest runner propagates
+that dependency to the constructor and its three state-dependent prompts, so
+all four are recorded as `optional:ppl` rather than as artificial namespace
+and state failures. A direct full-file run and the provenance-correct one-file
+make target agree:
+
+```text
+toric_lattice.py: 281 passed, 1 failed, 7 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-toric-ppl/make.sqlite3`. It records 289
+blocks under runner version 108 and the node profile, with both Sagelite source
+and package commit `f575cf6224f749763d7c875229cbd684e5939e58`. Compared with
+the preceding `281 passed, 5 failed, 3 skipped` dashboard, exactly the four
+PPL-backed blocks become explicit skips; runnable pass coverage is unchanged.
+
+The complete accumulated patch applies successfully with the project's
+sequential `patch -p1` mechanism to a pristine archive, and the resulting
+`toric_lattice.py` matches the make target's generated source byte for byte.
+Only the independent rank-two `Q.an_element()` display choice remains. That
+single backend-normalization mismatch is the next focused toric cluster;
+`toric_lattice.py` remains outside the quiet corpus until it is resolved.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
