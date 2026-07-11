@@ -44970,6 +44970,35 @@ and one dependent output mismatch. That cluster starts at the Specht-module
 examples around source line 1856 and is the next focused reproducer;
 `colored_permutations.py` remains outside the quiet corpus.
 
+Focused colored-permutation representation-theory boundary pass on 2026-07-11
+UTC:
+
+```text
+colored_permutations.py: 410 passed, 0 failed, 154 skipped
+```
+
+The WASI patch now propagates `# needs sage.libs.gap` across 23 independent
+Specht-module, simple-module, invariant-module, maximal-submodule, character,
+display, and morphism doctest groups. This converts the previous 29 direct
+`sage.libs.gap.libgap` import failures, 43 dependent-name failures, and one
+dependent output mismatch into explicit browser-profile dependency metadata.
+
+A strict fresh-source one-file make-target run records 564 blocks, including
+75 `optional:sage.libs.gap` skips, 54
+`optional:sage.groups.libgap_wrapper` skips, and the existing single NTL skip.
+It has no block failure or file-level error, and the saved block- and
+file-error cluster queries are empty. The database is
+`.tmp/current-run/scheduled-2026-07-11-colored-permutations-gap/make-libgap.sqlite3`;
+it records CoWasm commit `f0ff94dc8ecdf469e500f3f6408e32469365ba6b`,
+Sagelite package commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+runner version 108, and the node profile. The complete patch applies cleanly
+to `/home/user/sagelite` in a dry run.
+
+`sage/combinat/colored_permutations.py` is now part of the curated quiet
+corpus. Full-corpus validation is deferred because this pass changes only
+source dependency annotations; the strict complete-file run exercises every
+new directive group.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

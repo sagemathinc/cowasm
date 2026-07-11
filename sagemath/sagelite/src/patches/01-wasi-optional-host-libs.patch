@@ -22046,3 +22046,75 @@ diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/color
 @@ -1040 +1051,2 @@
 +            sage: # needs sage.groups.libgap_wrapper
              sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
+diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/colored_permutations.py
+--- a/src/sage/combinat/colored_permutations.py
++++ b/src/sage/combinat/colored_permutations.py
+@@ -1856 +1856,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[2,1], [1]], GF(2))
+@@ -1873 +1874,2 @@
++            sage: # needs sage.libs.gap
+             sage: L = B4.simple_module([[], [3,1]], GF(2))
+@@ -2157 +2159,2 @@
++        sage: # needs sage.libs.gap
+         sage: IM = TM.invariant_module()
+@@ -2427 +2430,2 @@
++            sage: # needs sage.libs.gap
+             sage: TM.specht_module() is B5.specht_module([[2], [2,1]], QQ)
+@@ -2508 +2512,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B5.specht_module([[1,1], [2,1]], GF(3))
+@@ -2553 +2558,2 @@
++            sage: # needs sage.libs.gap
+             sage: B5.specht_module([[1,1], [2,1]], GF(3))
+@@ -2565 +2571,2 @@
++            sage: # needs sage.libs.gap
+             sage: latex(B4.specht_module([[2,1],[1]], GF(3)))
+@@ -2587 +2594,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[1], [2,1]], QQ)
+@@ -2604 +2612,2 @@
++            sage: # needs sage.libs.gap
+             sage: Y = X.specht_module()
+@@ -2653 +2662,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B5.specht_module([[1], [2,2]], QQ)
+@@ -2672 +2682,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[2,1], [1]], QQ)
+@@ -2697 +2708,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[1], [2,1]], GF(3))
+@@ -2717 +2729,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[2,1], [1]], GF(3))
+@@ -2748 +2761,2 @@
++        sage: # needs sage.libs.gap
+         sage: SM = B4.specht_module([[1], [2,1]], GF(3))
+@@ -2764 +2778,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[1], [2,1]], GF(3))
+@@ -2811 +2826,2 @@
++            sage: # needs sage.libs.gap
+             sage: SM = B4.specht_module([[1], [2,1]], GF(3))
+@@ -2825 +2841,2 @@
++            sage: # needs sage.libs.gap
+             sage: latex(B4.specht_module([[2,1], [1]], GF(3)).maximal_submodule())
+@@ -2857 +2874,2 @@
++        sage: # needs sage.libs.gap
+         sage: SM = B5.specht_module([[1,1], [2,1]], GF(3))
+@@ -2868 +2886,2 @@
++        sage: # needs sage.libs.gap
+         sage: SM = TM.specht_module()
+@@ -2884 +2903,2 @@
++        sage: # needs sage.libs.gap
+         sage: BM = matrix(B3.simple_module(la, GF(3)).brauer_character()
+@@ -2930 +2950,2 @@
++            sage: # needs sage.libs.gap
+             sage: D = B4.simple_module([[2,1], [1]], GF(3))
+@@ -2952 +2973,2 @@
++            sage: # needs sage.libs.gap
+             sage: B4.simple_module([[1], [3]], GF(3))
+@@ -2964 +2986,2 @@
++            sage: # needs sage.libs.gap
+             sage: latex(B4.simple_module([[2,1],[1]], GF(3)))

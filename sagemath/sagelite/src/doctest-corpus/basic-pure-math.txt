@@ -345,6 +345,7 @@ src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/core.py
 src/sage/combinat/combination.py
+src/sage/combinat/colored_permutations.py
 src/sage/combinat/combinatorial_map.py
 src/sage/combinat/cyclic_sieving_phenomenon.py
 src/sage/combinat/debruijn_sequence.pyx
