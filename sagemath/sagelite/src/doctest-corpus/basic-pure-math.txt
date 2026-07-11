@@ -17,6 +17,7 @@ src/sage/rings/real_mpfi.pyx
 src/sage/rings/real_double.pyx
 src/sage/rings/real_double_element_gsl.pyx
 src/sage/rings/complex_mpfr.pyx
+src/sage/rings/complex_interval.pyx
 src/sage/rings/complex_double.pyx
 src/sage/rings/complex_conversion.pyx
 src/sage/rings/convert/mpfi.pyx

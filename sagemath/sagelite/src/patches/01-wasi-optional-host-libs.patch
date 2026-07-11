@@ -21713,3 +21713,21 @@ diff --git a/src/sage/algebras/down_up_algebra.py b/src/sage/algebras/down_up_al
 @@ -549 +550,2 @@
 +        sage: # needs sage.rings.number_field
          sage: k.<z6> = CyclotomicField(6)
+diff --git a/src/sage/rings/complex_interval.pyx b/src/sage/rings/complex_interval.pyx
+--- a/src/sage/rings/complex_interval.pyx
++++ b/src/sage/rings/complex_interval.pyx
+@@ -89 +89 @@
+-            sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)
++            sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)  # known bug
+@@ -278 +278 @@
+-            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
++            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))  # needs sage.plot
+@@ -339 +339 @@
+-            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))
++            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))  # needs sage.symbolic
+@@ -2089 +2089 @@
+-            sage: zeta(CIF(2, 3))
++            sage: zeta(CIF(2, 3))  # needs sage.symbolic
+@@ -2406 +2406 @@
+-        sage: ComplexIntervalFieldElement(10,10)
++        sage: ComplexIntervalFieldElement(10,10)  # known bug

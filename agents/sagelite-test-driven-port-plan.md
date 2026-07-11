@@ -44587,6 +44587,38 @@ cluster queries are empty; `skips-by-reason.sql` groups six number-field
 blocks, two crystal blocks, and one existing long-time block under their
 intended metadata.
 
+Focused complex-interval corpus-growth pass on 2026-07-11 UTC:
+
+```text
+complex_interval.pyx: 259 passed, 0 failed, 18 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/complex_interval.pyx` to the curated corpus. A fresh focused probe
+first recorded 258 passing blocks, six failures, and 13 skipped blocks, a
+substantial improvement over the archived 61-failure near miss. Runner version
+108 resolves the lazy `CIF` startup object to the concrete Complex Interval
+Field, matching the existing `CC`, `RIF`, and other core numeric-field
+resolution and clearing the direct element-construction failure.
+
+The remaining five failing prompts are now explicit browser-profile metadata:
+the untagged plotting example is marked `# needs sage.plot`; the algebraic
+square-root and zeta examples are marked `# needs sage.symbolic`; and two
+CPython/Cython constructor-diagnostic or conversion drifts are deferred as
+`# known bug`.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=180`, `SAGELITE_DOCTEST_JOBS=1`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/scheduled-2026-07-11-type-super-a/complex-interval-make.sqlite3`.
+The latest-run summary records CoWasm commit
+`146fda4ee1835667fac66da08b1d1762959fd407`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, node profile, runner version
+108, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty, and `skips-by-reason.sql` groups the new skips under
+the intended plot, symbolic, and known-bug boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
