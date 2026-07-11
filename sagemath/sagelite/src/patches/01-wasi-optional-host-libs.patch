@@ -19850,6 +19850,20 @@ diff --git a/src/sage/modules/fg_pid/fgp_module.py b/src/sage/modules/fg_pid/fgp
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.modules.free_module sage.matrix.matrix2
  r"""
+@@ -1436,7 +1437,12 @@
+         # This matrix T gives each basis element of self._V in terms
+         # of our new optimized V, modulo the W's.
+         A = V.basis_matrix().stack(self._W.basis_matrix())
+-        B, d = A._clear_denom()
++        clear_denom = getattr(A, "_clear_denom", None)
++        if clear_denom is None:
++            d = A.denominator()
++            B = (d * A).change_ring(ZZ)
++        else:
++            B, d = clear_denom()
+         H, U = B.hermite_form(transformation=True)
+         Y = H.solve_left(d*self._V.basis_matrix())
+         T = Y * U.matrix_from_columns(range(V.rank()))
 diff --git a/src/sage/symbolic/expression_conversions.py b/src/sage/symbolic/expression_conversions.py
 --- a/src/sage/symbolic/expression_conversions.py
 +++ b/src/sage/symbolic/expression_conversions.py

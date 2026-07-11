@@ -45554,6 +45554,50 @@ gaps, and dependent setup failures. `toric_lattice.py` remains outside the
 quiet corpus; the quotient-coordinate matrix path is the next coherent
 runtime cluster.
 
+Focused toric-lattice generic-matrix denominator pass on 2026-07-11 UTC:
+
+The quotient-coordinate failures came from a backend-selection assumption in
+`FGP_Module.optimized()`. In a full Sage build, the stacked rational basis
+matrix supplies a specialized `_clear_denom()` implementation. The stripped
+WASI profile instead constructs `Matrix_generic_dense`; asking that matrix for
+the missing method fell through Sage's category lookup and produced the
+misleading
+`ToricLattice_quotient_with_category.element_class ... category_for`
+exception.
+
+The WASI source patch now retains the specialized fast path when
+`_clear_denom()` exists and otherwise uses the matrix-wide denominator,
+multiplies through, and changes the result to `ZZ` before the existing Hermite
+form calculation. This keeps the correction local to the finitely generated
+PID-module optimization path while supporting the generic matrix backend used
+by Sagelite.
+
+A complete file rerun improves the archived result without adding skips:
+
+```text
+toric_lattice.py: 256 passed, 30 failed, 3 skipped
+```
+
+The provenance-correct make-target database is
+`.tmp/current-run/scheduled-2026-07-11-toric-clear-denom/make.sqlite3`; it
+records 289 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the preceding
+`245 passed, 41 failed, 3 skipped` dashboard, exactly eleven failed blocks
+become passes and no passing coverage regresses. All ten `category_for`
+exceptions disappear: seven of their direct prompts now pass and three reach
+separate representation mismatches, while dependent quotient construction,
+generator, vector, coordinate, equality, and pickle checks account for the
+remaining recovered coverage.
+
+The complete accumulated patch applies successfully to a pristine archive
+and to the make target's clean local clone, and the generated `fgp_module.py`
+matches the independently patched source. The remaining failures comprise 22
+representation mismatches, two focused PARI object-model gaps, their dependent
+state failures, one unavailable `Cone` namespace group, and one positive-dual
+point semantic mismatch. `toric_lattice.py` remains outside the quiet corpus;
+the representation mismatches are now the largest coherent cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
