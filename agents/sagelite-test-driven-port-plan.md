@@ -45865,6 +45865,20 @@ last runnable mismatch becomes a pass without adding a skip. This promotes
 `sage/geometry/toric_lattice.py` to a quiet browser-profile candidate; adding
 it to the curated corpus is the next corpus-growth decision.
 
+Toric-lattice corpus promotion on 2026-07-11 UTC:
+
+`src/sage/geometry/toric_lattice.py` is now included in the curated
+`basic-pure-math.txt` corpus. The promotion uses the provenance-correct
+one-file make-target dashboard above: all 282 runnable blocks pass, the seven
+PPL-dependent blocks are explicitly classified, and there are no file-level
+errors. No broader runtime or runner behavior changed in this promotion, so a
+second full 1,000-plus-file corpus run would not add validation beyond the
+already completed direct and make-target runs.
+
+This closes the archived toric-lattice failure frontier. Future scheduled
+runs should select a different known backend/runtime cluster rather than
+resampling this file.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

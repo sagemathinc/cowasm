@@ -292,6 +292,7 @@ src/sage/libs/ntl/ntl_lzz_pContext.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
 src/sage/geometry/linear_expression.py
+src/sage/geometry/toric_lattice.py
 src/sage/geometry/pseudolines.py
 src/sage/geometry/polyhedron/base_number_field.py
 src/sage/geometry/polyhedron/backend_polymake.py
