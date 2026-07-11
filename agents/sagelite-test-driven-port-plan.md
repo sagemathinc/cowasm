@@ -45174,6 +45174,48 @@ output cascade around patched lines 808--1029. Separate clusters include the
 FLINT integer-polynomial boundary and lazy-series precision/output behavior,
 so `lazy_series_ring.py` remains outside the quiet corpus.
 
+Focused lazy-series implicit-solver dependency pass on 2026-07-11 UTC:
+
+The 25 failures from patched lines 808--1029 all evaluated lazy implicit
+solutions through `sage.rings.polynomial.multi_polynomial_sequence`, whose
+module import requires the unavailable `sage.rings.polynomial.plural`
+backend. The WASI patch now propagates `# needs sage.libs.singular` from the
+setup prompt of each of fifteen independent groups: the underdetermined
+fraction-field examples, Laurent and multivariate series, coupled systems,
+derivative tests, composition, and the expected bad-order diagnostic.
+
+A fresh-source rebuild also exposed that the preceding symbolic pass had used
+zero-context hunks whose positions drifted when the complete patch was applied
+from scratch. Several directives landed in prose or between a prompt and its
+expected output, and the two earlier Singular solver directives landed after
+their setup. A final contextual correction section now moves those directives
+to the intended setup prompts. Rebuilding the patched source from
+`/home/user/sagelite` reproduces the corrected file exactly and avoids the
+downstream namespace failures seen in the intermediate validation run.
+
+The final complete-file make-target run records:
+
+```text
+lazy_series_ring.py: 589 passed, 47 failed, 408 skipped
+```
+
+The database is
+`.tmp/current-run/manual-2026-07-11-lazy-singular/make.sqlite3`. Compared with
+the preceding `658 passed, 72 failed, 314 skipped` dashboard, the pass converts
+25 failures and 69 setup or dependent passing blocks into 94 explicit skips.
+The final 408 skips include 140 `sage.libs.singular` and 88 `sage.symbolic`
+rows. There is no file-level error and no remaining `NameError`; the ordinary
+failures are 35 output mismatches, nine `NotImplementedError`, two `TypeError`,
+and one `ModuleNotFoundError`.
+
+Two direct `sage.rings.polynomial.plural` traces remain outside the audited
+implicit-solver region: a Laurent-series TestSuite division failure around
+patched line 1954 and multivariate fraction-field construction around patched
+line 3094. They are the next focused Singular reproducers. Other remaining
+clusters include the FLINT integer-polynomial boundary and lazy-series
+precision/output behavior, so `lazy_series_ring.py` remains outside the quiet
+corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

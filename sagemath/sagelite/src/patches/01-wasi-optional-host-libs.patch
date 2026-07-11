@@ -22209,3 +22209,233 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +        sage: # needs sage.symbolic
 @@ -4421,0 +4435 @@
 +            sage: # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -802,0 +803 @@
++            sage: # needs sage.libs.singular
+@@ -818,0 +820 @@
++            sage: # needs sage.libs.singular
+@@ -829,0 +832 @@
++            sage: # needs sage.libs.singular
+@@ -844,0 +848 @@
++            sage: # needs sage.libs.singular
+@@ -856,0 +861 @@
++             sage: # needs sage.libs.singular
+@@ -867,0 +873 @@
++            sage: # needs sage.libs.singular
+@@ -921,0 +928 @@
++            sage: # needs sage.libs.singular
+@@ -927,0 +935 @@
++            sage: # needs sage.libs.singular
+@@ -944,0 +953 @@
++            sage: # needs sage.libs.singular
+@@ -953,0 +963 @@
++            sage: # needs sage.libs.singular
+@@ -964,0 +975 @@
++            sage: # needs sage.libs.singular
+@@ -975,0 +987 @@
++            sage: # needs sage.libs.singular
+@@ -990,0 +1003 @@
++            sage: # needs sage.libs.singular
+@@ -1013,0 +1027 @@
++            sage: # needs sage.libs.singular
+@@ -1022,0 +1037 @@
++            sage: # needs sage.libs.singular
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -740,17 +740,17 @@
+             1 + 2*z + 2*z^4 + O(z^7)
+             sage: all(g[i] == sol[i] for i in range(50))
+             True
+-            sage: # needs sage.symbolic
+ 
+         Some more examples over different rings::
+ 
++            sage: # needs sage.symbolic
+             sage: L.<z> = LazyPowerSeriesRing(SR)
+             sage: G = L.undefined(0)
+             sage: L.define_implicitly([(G, [ln(2)])], [diff(G) - exp(-G(-z))])
+-            sage: # needs sage.symbolic
+             sage: G
+             log(2) + z + 1/2*z^2 + (-1/12*z^4) + 1/45*z^6 + O(z^7)
+ 
++            sage: # needs sage.symbolic
+             sage: L.<z> = LazyPowerSeriesRing(RR)
+             sage: G = L.undefined(0)
+             sage: L.define_implicitly([(G, [log(2)])], [diff(G) - exp(-G(-z))])
+@@ -1060,7 +1060,6 @@
+             sage: Y = tensor([p[[]],p[1]])
+             sage: A = T.undefined(name="A")
+             sage: B = T.undefined(name="B")
+-            sage: # needs sage.libs.singular
+             sage: T.define_implicitly([A, B], [X*A - Y*B])
+             sage: A
+             <repr(...) failed: ValueError: could not determine any coefficients:
+@@ -1070,11 +1069,11 @@
+         non-vanishing equations::
+ 
+             sage: L.<x> = LazyPowerSeriesRing(QQ)
++            sage: # needs sage.libs.singular
+             sage: A = L.undefined()
+             sage: eq1 = diff(A, x) + diff(A, x, 2)
+             sage: eq2 = A + diff(A, x) + diff(A, x, 2)
+             sage: L.define_implicitly([A], [eq1, eq2])
+-            sage: # needs sage.libs.singular
+             sage: A[1]
+             Traceback (most recent call last):
+             ...
+@@ -1084,6 +1083,7 @@
+             equation 1:
+                 coefficient [0]: 2*series[2] + series[1] == 0
+ 
++            sage: # needs sage.libs.singular
+             sage: A = L.undefined()
+             sage: eq1 = diff(A, x) + diff(A, x, 2)
+             sage: eq2 = A + diff(A, x) + diff(A, x, 2)
+@@ -2266,7 +2266,6 @@
+         Return the Taylor expansion around `0` of the function ``f``.
+ 
+         INPUT:
+-            sage: # needs sage.symbolic
+ 
+         - ``f`` -- a function such that one of the following works:
+ 
+@@ -2275,9 +2274,9 @@
+             and has a ``derivative`` method
+ 
+         EXAMPLES::
+-            sage: # needs sage.symbolic
+ 
+             sage: L.<z> = LazyLaurentSeriesRing(QQ)
++            sage: # needs sage.symbolic
+             sage: x = SR.var('x')
+             sage: f(x) = (1 + x) / (1 - x^2)
+             sage: L.taylor(f)
+@@ -2286,6 +2285,7 @@
+         For inputs as symbolic functions/expressions, the function must
+         not have any poles at `0`::
+ 
++            sage: # needs sage.symbolic
+             sage: f(x) = (1 + x^2) / sin(x^2)
+             sage: L.taylor(f)
+             <repr(...) failed: ValueError: power::eval(): division by zero>
+@@ -2595,7 +2595,6 @@
+         We have the overpartition generating function::
+ 
+             sage: ~th4
+-            sage: # needs sage.symbolic
+             1 + 2*q + 4*q^2 + 8*q^3 + 14*q^4 + 24*q^5 + 40*q^6 + 64*q^7 + 100*q^8
+              + 154*q^9 + 232*q^10 + 344*q^11 + 504*q^12 + 728*q^13 + 1040*q^14
+              + 1472*q^15 + 2062*q^16 + O(q^17)
+@@ -2606,6 +2605,7 @@
+         We give an example over the :class:`SymbolicRing` with the input
+         `w = e^{\pi i z}` and verify the periodicity::
+ 
++            sage: # needs sage.symbolic
+             sage: L.<q> = LazyLaurentSeriesRing(SR)
+             sage: z = SR.var('z')
+             sage: theta = L.jacobi_theta(exp(pi*I*z))
+@@ -2714,7 +2714,6 @@
+ 
+         .. SEEALSO::
+ 
+-            sage: # needs sage.symbolic
+             :meth:`polylog`
+ 
+         EXAMPLES::
+@@ -2725,6 +2724,7 @@
+             sage: L.polylog(2)
+             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+ 
++            sage: # needs sage.symbolic
+             sage: L.<x> = LazyLaurentSeriesRing(SR)
+             sage: L.dilog()
+             x + 1/4*x^2 + 1/9*x^3 + 1/16*x^4 + 1/25*x^5 + 1/36*x^6 + 1/49*x^7 + O(x^8)
+@@ -3378,7 +3378,6 @@
+ 
+           * the substitution `f(z_1, \ldots, z_n)`, where `(z_1, \ldots, z_n)`
+             are the generators of ``self``
+-            sage: # needs sage.symbolic
+           * `f` is a function with no poles at `0` and has a ``derivative``
+             method
+ 
+@@ -3390,10 +3389,10 @@
+         EXAMPLES::
+ 
+             sage: L.<z> = LazyPowerSeriesRing(QQ)
++            sage: # needs sage.symbolic
+             sage: x = SR.var('x')
+             sage: f(x) = (1 + x) / (1 - x^3)
+             sage: L.taylor(f)
+-            sage: # needs sage.symbolic
+             1 + z + z^3 + z^4 + z^6 + O(z^7)
+             sage: (1 + z) / (1 - z^3)
+             1 + z + z^3 + z^4 + z^6 + O(z^7)
+@@ -3405,6 +3404,7 @@
+         not have any poles at `0`::
+ 
+             sage: L.<z> = LazyPowerSeriesRing(QQ, sparse=True)
++            sage: # needs sage.symbolic
+             sage: f = 1 / sin(x)
+             sage: L.taylor(f)
+             <repr(...) failed: ValueError: power::eval(): division by zero>
+@@ -4380,7 +4380,6 @@
+         sage: P = PseudoDifferentialOperatorRing(a)
+         sage: D = P.gen()
+         sage: D * a^5
+-        sage: # needs sage.symbolic
+         a^5*Da + 5*a^4
+         sage: D * b
+         b*Da
+@@ -4393,7 +4392,6 @@
+          + (-25/1024*a^4*b^4 + 45/256*a^2*b^3 - 3/8*b^2)*Da^-6
+          + (-125/4096*a^5*b^5 + 75/512*a^3*b^4 - 117/256*a*b^3)*Da^-7
+          + (-625/16384*a^6*b^6 + 125/1024*a^4*b^5 - 327/1024*a^2*b^4 + 9/16*b^3)*Da^-8
+-        sage: # needs sage.symbolic
+          + O(Da^-9)
+         sage: phi * psi
+         1 + O(Da^-7)
+@@ -4402,8 +4400,8 @@
+ 
+     Next, we compute the Lax formulation of the KdV hierarchy. First, we
+     construct the operator `L`::
+-        sage: # needs sage.symbolic
+ 
++        sage: # needs sage.symbolic
+         sage: x = SR.var('x')
+         sage: P = PseudoDifferentialOperatorRing(x)
+         sage: D = P.gen()
+@@ -4416,6 +4414,7 @@
+     `\partial^j` for `j \geq 0`). Here, we specifically take `P_3` and
+     recover the KdV equation (after setting the final result to `u_t`)::
+ 
++        sage: # needs sage.symbolic
+         sage: P3 = (L^(3/2)).truncate(1)
+         sage: P3
+         Dx^3 + 3/2*u(x)*Dx + 3/4*diff(u(x), x)
+@@ -4424,6 +4423,7 @@
+ 
+     We perform the same computation for the Boussinesq equation::
+ 
++        sage: # needs sage.symbolic
+         sage: v = function('v', nargs=1)(x)
+         sage: L = D^3 + u*D + v
+         sage: P2 = (L^(2/3)).truncate(1)
+@@ -4447,7 +4447,6 @@
+             sage: L1 = PseudoDifferentialOperatorRing(t)
+             sage: L2 = PseudoDifferentialOperatorRing(t, True, t.parent())
+             sage: L1 is L2
+-            sage: # needs sage.symbolic
+             True
+ 
+             sage: R = PolynomialRing(QQ, 'x,t')
+@@ -4469,6 +4468,7 @@
+ 
+         EXAMPLES::
+ 
++            sage: # needs sage.symbolic
+             sage: t = SR.var('t')
+             sage: P = PseudoDifferentialOperatorRing(t)
+             sage: TestSuite(P).run()
