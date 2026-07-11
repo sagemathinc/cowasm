@@ -44684,6 +44684,35 @@ equation solving, symmetric-function startup/backend coverage, and stream
 cache/display semantics, so `stream.py` remains outside the curated quiet
 corpus.
 
+Focused stream symmetric-function boundary pass on 2026-07-11 UTC:
+
+The runner-108 stream dashboard contained 16 direct or dependent failures in
+three doctest groups rooted at `SymmetricFunctions(QQ)`. These examples need
+the stripped symmetric-function implementation rather than additional common
+namespace seeding: they exercise a symmetric-function fraction field,
+pseudodifferential composition over the Schur basis, and stream plethysm.
+
+The WASI source patch now propagates `# needs sage.combinat.sf` from each
+group's setup boundary. This classifies all 29 prompts in those groups together
+and prevents missing setup names from being reported as independent runtime
+failures or later prompts from producing misleading stateful results.
+
+A fresh patched-source rebuild applied the complete WASI patch cleanly.
+Focused one-file make-target validation records:
+
+```text
+stream.py: 1197 passed, 13 failed, 199 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-11-stream-sf/after-sf.sqlite3`; it records
+29 blocks under `optional:sage.combinat.sf`, no file-level errors, and runner
+version 108 under the node profile. The saved block-failure query now contains
+only six Singular-backed polynomial-equation failures and seven cache/display
+output mismatches. This reduces the focused failure count from 29 to 13 while
+leaving `stream.py` outside the curated quiet corpus for those two remaining
+clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

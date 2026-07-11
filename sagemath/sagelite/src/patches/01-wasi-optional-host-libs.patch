@@ -547,6 +547,8 @@ diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream
 +            sage: # needs sage.symbolic
 @@ -1236,0 +1242 @@
 +            sage: # needs sage.symbolic
+@@ -1448,0 +1455 @@
++            sage: # needs sage.combinat.sf
 @@ -3200,2 +3207,3 @@
              sage: f = Stream_exact([2, 5, 7, 11], 1)
 +            sage: # needs sage.libs.ntl
@@ -559,6 +561,10 @@ diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream
              sage: f = Stream_exact([2, 0, 7, 11], -1)
 +            sage: # needs sage.libs.ntl
              sage: P = PseudoDifferentialOperatorRing(polygen(GF(8)['t'], 'a'))
+@@ -3307,0 +3317 @@
++            sage: # needs sage.combinat.sf
+@@ -3799,0 +3810 @@
++            sage: # needs sage.combinat.sf
 diff -urN a/src/sage/categories/euclidean_domains.py b/src/sage/categories/euclidean_domains.py
 --- a/src/sage/categories/euclidean_domains.py
 +++ b/src/sage/categories/euclidean_domains.py
