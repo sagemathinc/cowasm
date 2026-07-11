@@ -44879,6 +44879,31 @@ This reduces the focused failure count from 135 to 34; the remaining clusters
 are separate number-field/PARI object-model gaps, QQbar construction state,
 and diagnostic mismatches. `morphism.pyx` remains outside the quiet corpus.
 
+Focused ring-morphism final dependency-boundary pass on 2026-07-11 UTC:
+
+```text
+morphism.pyx: 388 passed, 0 failed, 396 skipped
+```
+
+That strict one-file make-target validation adds `sage/rings/morphism.pyx` to
+the curated corpus. The prior 34 failures were dependent fallout from setup
+prompts that had already reached unavailable backends but whose later prompts
+resumed against stale doctest namespace state. The WASI patch now propagates
+the established NTL, Singular, PARI, and number-field requirements across the
+affected identity-map, inverse-image, QQbar quotient, inverse-morphism,
+base-map, and fraction-field groups.
+
+Fresh-source validation rebuilt the patched Sagelite copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, a 180-second timeout, and one
+worker. The database is
+`.tmp/current-run/manual-2026-07-11-morphism-final/make.sqlite3`; it records
+CoWasm commit `929bf4c7fe821a8dbfde15e50eebf3b08f0f4fc8`, Sagelite package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, runner version 108, the
+node profile, and a 100% non-skipped pass rate. The saved block- and file-error
+cluster queries are empty. A complete patch dry run against
+`/home/user/sagelite` also succeeds.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

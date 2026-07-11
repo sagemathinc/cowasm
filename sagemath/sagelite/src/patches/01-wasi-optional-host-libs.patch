@@ -30,6 +30,12 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 +    sage: # needs sage.libs.ntl
      sage: k = GF(2)
      sage: R.<x> = k[]
+@@ -371,1 +377,1 @@
+-    sage: phi4 = RingHomomorphism_cover(H); phi4
++    sage: phi4 = RingHomomorphism_cover(H); phi4                                # needs sage.libs.ntl
+@@ -375,1 +381,1 @@
+-    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5
++    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5                          # needs sage.libs.ntl
 @@ -795,2 +801,3 @@
 +            sage: # needs sage.libs.ntl
              sage: R.<x> = ZZ[]
@@ -37,6 +43,12 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 @@ -931,1 +938,2 @@
 +            sage: # needs sage.rings.number_field
              sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')
+@@ -942,1 +950,2 @@
++            sage: # needs sage.rings.number_field
+             sage: K.<a> = NumberField(QQ['x']('x^2+2'))
+@@ -993,1 +1002,2 @@
++            sage: # needs sage.rings.number_field sage.libs.singular
+             sage: R.<x,y> = QQbar[]
 @@ -1077,1 +1085,2 @@
 +            sage: # needs sage.libs.singular
              sage: B.<c,d> = R.quotient(R.ideal(x))
@@ -58,9 +70,15 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 @@ -1303,1 +1317,2 @@
 +            sage: # needs sage.libs.singular
              sage: QQ['t'].hom([x*y^2], R)._graph_ideal()
+@@ -1313,1 +1328,2 @@
++            sage: # needs sage.rings.number_field sage.libs.singular
+             sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')
 @@ -1327,1 +1342,2 @@
 +            sage: # needs sage.rings.number_field
              sage: K.<a> = QuadraticField(2)
+@@ -1405,1 +1421,1 @@
+-            sage: f.inverse()
++            sage: f.inverse()                                                           # needs sage.libs.singular
 @@ -1420,1 +1436,2 @@
 +            sage: # needs sage.libs.singular
              sage: f.is_injective()
@@ -76,15 +94,30 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 @@ -1543,1 +1563,2 @@
 +            sage: # needs sage.libs.ntl
              sage: A.<t> = GF(7^3)
-@@ -1586,1 +1607,2 @@
+@@ -1564,1 +1585,1 @@
+-            sage: S.hom([x, y, 0], R).inverse()
++            sage: S.hom([x, y, 0], R).inverse()                                        # needs sage.libs.singular
+@@ -1569,1 +1590,1 @@
+-            sage: R.hom([2*z, 3*z], T).inverse()
++            sage: R.hom([2*z, 3*z], T).inverse()                                       # needs sage.libs.singular
+@@ -1573,1 +1594,2 @@
 +            sage: # needs sage.libs.singular
              sage: Q.<u,v> = R.quotient([x^5, y^4])
+@@ -1586,1 +1608,1 @@
+-            sage: f = R.hom([2*t], R)
++            sage: f = R.hom([2*t], R)                                                  # needs sage.libs.pari
 @@ -1635,1 +1657,2 @@
 +            sage: # needs sage.libs.singular
              sage: f._graph_ideal()[0].groebner_basis.is_in_cache()
 @@ -1644,1 +1667,2 @@
 +            sage: # needs sage.libs.ntl
              sage: F4.<a> = GF(2^2, modulus=[1,1,1])
+@@ -1766,1 +1790,2 @@
++            sage: # needs sage.rings.number_field
+             sage: K.<i> = NumberField(x^2 + 1)
+@@ -1854,1 +1879,2 @@
++            sage: # needs sage.rings.number_field
+             sage: K.<i> = NumberField(x^2 + 1)
 @@ -1929,1 +1953,2 @@
 +            sage: # needs sage.libs.pari
              sage: R.<x> = QQ[]
@@ -97,6 +130,9 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 @@ -2303,1 +2330,2 @@
 +            sage: # needs sage.libs.singular
              sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+@@ -2411,1 +2439,2 @@
++            sage: # needs sage.rings.number_field
+             sage: A.<a> = ZZ.extension(x^2 - 2)
 @@ -2480,1 +2508,2 @@
 +            sage: # needs sage.libs.singular
              sage: f = S.hom([x + 1]).extend_to_fraction_field()
