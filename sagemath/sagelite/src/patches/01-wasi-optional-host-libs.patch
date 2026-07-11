@@ -7,60 +7,129 @@ diff --git a/src/sage/calculus/desolvers.py b/src/sage/calculus/desolvers.py
 diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 --- a/src/sage/rings/morphism.pyx
 +++ b/src/sage/rings/morphism.pyx
-@@ -196,2 +196,3 @@
+@@ -110,1 +110,2 @@
++    sage: # needs sage.libs.singular
+     sage: S.<a,b> = quo(R, ideal(1 + y^2))
+@@ -196,2 +197,3 @@
      sage: R.<x> = PolynomialRing(QQ)
 +    sage: # needs sage.libs.pari
      sage: S.<sqrt2> = R.quo(x^2 - 2)
-@@ -278,2 +279,3 @@
+@@ -278,2 +280,3 @@
 +    sage: # needs sage.rings.number_field
      sage: K.<zeta7> = CyclotomicField(7)
      sage: c = K.hom([1/zeta7]); c
-@@ -293,2 +295,3 @@
+@@ -293,2 +296,3 @@
      sage: R.<x> = PolynomialRing(QQ)
 +    sage: # needs sage.rings.number_field
      sage: K.<beta> = NumberField(x^3 - 2)
-@@ -337,2 +340,3 @@
+@@ -337,2 +341,3 @@
 +    sage: # needs sage.rings.number_field
      sage: K.<zeta7> = CyclotomicField(7)
      sage: c = K.hom([1/zeta7])
-@@ -352,2 +356,3 @@
+@@ -352,2 +357,3 @@
 +    sage: # needs sage.libs.ntl
      sage: k = GF(2)
      sage: R.<x> = k[]
-@@ -795,2 +800,3 @@
+@@ -795,2 +801,3 @@
 +            sage: # needs sage.libs.ntl
              sage: R.<x> = ZZ[]
              sage: K.<a> = GF(7^2)
-@@ -931,1 +937,2 @@
+@@ -931,1 +938,2 @@
 +            sage: # needs sage.rings.number_field
              sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')
-@@ -1096,1 +1103,2 @@
+@@ -1077,1 +1085,2 @@
++            sage: # needs sage.libs.singular
+             sage: B.<c,d> = R.quotient(R.ideal(x))
+@@ -1094,1 +1103,2 @@
++            sage: # needs sage.libs.singular
+             sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')
+@@ -1096,1 +1106,2 @@
 +            sage: # needs sage.libs.ntl
              sage: F8.<a> = GF(2^3)
-@@ -1142,1 +1150,2 @@
+@@ -1142,1 +1153,2 @@
 +            sage: # needs sage.libs.ntl
              sage: F4.<a> = GF(2^2, modulus=[1,1,1])
-@@ -1233,1 +1242,2 @@
+@@ -1214,1 +1226,2 @@
++            sage: # needs sage.libs.singular
+             sage: S = R.quotient(x^2 + y^2 + z^2 - 1)
+@@ -1233,1 +1246,2 @@
 +            sage: # needs sage.rings.number_field
              sage: A.<a> = QuadraticField(2)
-@@ -1327,1 +1337,2 @@
+@@ -1303,1 +1317,2 @@
++            sage: # needs sage.libs.singular
+             sage: QQ['t'].hom([x*y^2], R)._graph_ideal()
+@@ -1327,1 +1342,2 @@
 +            sage: # needs sage.rings.number_field
              sage: K.<a> = QuadraticField(2)
-@@ -1533,1 +1544,2 @@
+@@ -1420,1 +1436,2 @@
++            sage: # needs sage.libs.singular
+             sage: f.is_injective()
+@@ -1515,1 +1532,2 @@
++            sage: # needs sage.libs.singular
+             sage: A.<z,w> = K['z,w'].quotient('z*w - 1')
+@@ -1529,1 +1547,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<s,u,t> = QQ['s,u,t'].quotient('u-t^2')
+@@ -1533,1 +1552,2 @@
 +            sage: # needs sage.rings.number_field
              sage: K.<sqrt2> = QuadraticField(2)
-@@ -1543,1 +1555,2 @@
+@@ -1543,1 +1563,2 @@
 +            sage: # needs sage.libs.ntl
              sage: A.<t> = GF(7^3)
-@@ -1644,1 +1657,2 @@
+@@ -1586,1 +1607,2 @@
++            sage: # needs sage.libs.singular
+             sage: Q.<u,v> = R.quotient([x^5, y^4])
+@@ -1635,1 +1657,2 @@
++            sage: # needs sage.libs.singular
+             sage: f._graph_ideal()[0].groebner_basis.is_in_cache()
+@@ -1644,1 +1667,2 @@
 +            sage: # needs sage.libs.ntl
              sage: F4.<a> = GF(2^2, modulus=[1,1,1])
-@@ -1929,1 +1943,2 @@
+@@ -1929,1 +1953,2 @@
 +            sage: # needs sage.libs.pari
              sage: R.<x> = QQ[]
-@@ -2260,1 +2275,2 @@
+@@ -1973,1 +1998,2 @@
++            sage: # needs sage.libs.singular
+             sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+@@ -2260,1 +2286,2 @@
 +            sage: # needs sage.libs.pari
              sage: R.<x> = QQ[]
+@@ -2303,1 +2330,2 @@
++            sage: # needs sage.libs.singular
+             sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+@@ -2480,1 +2508,2 @@
++            sage: # needs sage.libs.singular
+             sage: f = S.hom([x + 1]).extend_to_fraction_field()
+@@ -2624,1 +2653,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a,b> = R.quo(x^2 + y^2)
+@@ -2644,1 +2674,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a,b> = R.quo(x^2 + y^2)
+@@ -2665,1 +2696,2 @@
++            sage: # needs sage.libs.singular
+             sage: R.<x,y> = QQ['x,y'].quotient('x^2 * y^2')
+@@ -2715,1 +2747,2 @@
++        sage: # needs sage.libs.singular
+         sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+@@ -2771,1 +2804,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+@@ -2798,1 +2832,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+@@ -2861,1 +2896,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+@@ -2885,1 +2921,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+@@ -2984,1 +3021,2 @@
++            sage: # needs sage.libs.ntl
+             sage: K = Frac(GF(25)['T'])
+@@ -3181,1 +3219,2 @@
++        sage: # needs sage.libs.singular
+         sage: S.<u,v> = R.quotient(x^2 + y^2)
 diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 --- a/src/sage/rings/real_mpfr.pyx
 +++ b/src/sage/rings/real_mpfr.pyx

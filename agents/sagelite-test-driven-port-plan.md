@@ -44848,6 +44848,37 @@ It is the next focused reproducer; `morphism.pyx` remains outside the quiet
 corpus until that later NTL group and the remaining tail of the file have been
 audited.
 
+Focused ring-morphism NTL-tail and Singular-boundary pass on 2026-07-11 UTC:
+
+The finite-field fraction-field reproducer at the previous patched line 3000
+reached the unavailable NTL `ZZ_pContext::restore` import while constructing
+`Frac(GF(25)['T'])`. The WASI patch now propagates
+`# needs sage.libs.ntl` from that setup prompt. A fresh-source focused rerun at
+the resulting line 3022 records one intended dependency skip and no failure.
+
+With the file-level crash frontier removed, a complete `morphism.pyx` run
+finished and exposed 135 ordinary block failures. The dominant actionable
+cluster was 32 direct `sage.rings.polynomial.plural` import failures plus
+stateful fallout in multivariate quotient, graph-ideal, inverse-image,
+comparison, pickling, and tensor-product doctests. The patch now propagates
+`# needs sage.libs.singular` from each independent construction or computation
+boundary instead of leaving dependent prompts as missing-name failures.
+
+Fresh-source validation applies the complete WASI patch cleanly and records:
+
+```text
+morphism.pyx: 390 passed, 34 failed, 360 skipped
+```
+
+The final database is
+`.tmp/current-run/scheduled-2026-07-11-morphism-ntl-tail/final.sqlite3`. It
+records 784 blocks, no file-level error, runner version 108, the node profile,
+and zero remaining `sage.rings.polynomial.plural` failures. The saved
+Singular skip groups contain 201 blocks, including combined dependency tags.
+This reduces the focused failure count from 135 to 34; the remaining clusters
+are separate number-field/PARI object-model gaps, QQbar construction state,
+and diagnostic mismatches. `morphism.pyx` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
