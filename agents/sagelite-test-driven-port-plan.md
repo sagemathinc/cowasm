@@ -45102,6 +45102,42 @@ cluster. The next focused cluster is the 19 direct
 684 and their dependent namespace-state fallout. `lazy_series_ring.py`
 remains outside the quiet corpus.
 
+Focused lazy-series Symmetrica dependency pass on 2026-07-11 UTC:
+
+An explicit import probe showed that both
+`sage.combinat.sf.sf.SymmetricFunctions` and
+`sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions` immediately
+reach the unavailable `sage.libs.symmetrica.symmetrica` side module. The
+missing constructor names were therefore a backend boundary rather than a
+startup-namespace omission.
+
+The WASI patch now propagates `# needs sage.libs.symmetrica` across fifteen
+independent lazy symmetric-function doctest groups. This covers the
+commutative and noncommutative constructors, their tensor-product examples,
+implicit definitions, coercion checks, TestSuite runs, element construction,
+and homogeneous-component helpers. A fresh-source one-file make-target run
+records:
+
+```text
+lazy_series_ring.py: 688 passed, 103 failed, 253 skipped
+```
+
+Compared with the preceding `692 passed, 192 failed, 160 skipped` dashboard,
+the pass converts 89 failures and four successful but setup-dependent blocks
+into 96 explicit Symmetrica skips, including three blocks that also require
+`lrcalc_python`. No `SymmetricFunctions` or
+`NonCommutativeSymmetricFunctions` failure remains, and the file has no
+file-level error. The database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-sf/make.sqlite3`; it records 1,044
+blocks under runner version 108 and the node profile. The complete source
+patch applies cleanly in a fresh dry run against `/home/user/sagelite`.
+
+The next coherent namespace cluster is the symbolic setup boundary beginning
+at patched line 746: eight direct `SR` failures plus related `diff`, `var`,
+`function`, and `sage.symbolic.expression` failures. Output mismatches remain
+the largest broad class but span unrelated semantics, so
+`lazy_series_ring.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

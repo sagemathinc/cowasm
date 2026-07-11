@@ -22145,3 +22145,36 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -4515 +4522,2 @@
 +            sage: # known bug
              sage: L._monomial(2*(t + t^2)/(t^2 + t^3), 3)
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -683,0 +684 @@
++            sage: # needs sage.libs.symmetrica
+@@ -874,0 +876 @@
++            sage: # needs sage.libs.symmetrica
+@@ -890,0 +893 @@
++            sage: # needs sage.libs.symmetrica
+@@ -903,0 +907 @@
++            sage: # needs sage.libs.symmetrica
+@@ -1034,0 +1039 @@
++            sage: # needs sage.libs.symmetrica
+@@ -1252,0 +1258 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3442,0 +3449 @@
++        sage: # needs sage.libs.symmetrica
+@@ -3475,0 +3483 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3484,0 +3493 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3574,0 +3584 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3590,0 +3601 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3641,0 +3653 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3666,0 +3679 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3674,0 +3688 @@
++            sage: # needs sage.libs.symmetrica
+@@ -3835,0 +3850 @@
++            sage: # needs sage.libs.symmetrica
