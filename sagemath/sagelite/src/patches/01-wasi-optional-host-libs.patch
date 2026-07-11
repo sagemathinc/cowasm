@@ -22118,3 +22118,12 @@ diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/color
 @@ -2964 +2986,2 @@
 +            sage: # needs sage.libs.gap
              sage: latex(B4.simple_module([[2,1],[1]], GF(3)))
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -356 +356,2 @@
++            sage: # known bug
+             sage: L = LazyLaurentSeriesRing(QQ, 't')
+@@ -779 +780,2 @@
++            sage: # known bug
+             sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1,f2"].fraction_field())

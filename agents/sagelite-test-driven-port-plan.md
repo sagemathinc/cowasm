@@ -44999,6 +44999,41 @@ corpus. Full-corpus validation is deferred because this pass changes only
 source dependency annotations; the strict complete-file run exercises every
 new directive group.
 
+Focused lazy-series crash-frontier pass on 2026-07-11 UTC:
+
+The archived larger-frontier database stopped in
+`sage/rings/lazy_series_ring.py` while reducing
+`(1 + t) / (1 + t + t^2)`. A current line rerun reproduced the issue as a
+120-second timeout in the polynomial-number-field gcd path. Since the example
+is ordinary rational-function arithmetic over `QQ`, the WASI patch now defers
+that contiguous conversion group narrowly as `# known bug` rather than
+misclassifying it as an optional number-field requirement.
+
+Continuing the full file reached a second independent host-runtime failure in
+`LazySeriesRing.define_implicitly`: subtracting a solved formal series over
+`QQ(x,y,f1,f2)` terminated the worker with a function-signature mismatch. That
+single contiguous implicit-series example is also deferred as a known bug.
+Focused reruns of the two former crash prompts now complete and record four
+and two intended deferred blocks, respectively.
+
+With both file-level frontiers removed, a complete 180-second probe finishes
+and records:
+
+```text
+lazy_series_ring.py: 693 passed, 250 failed, 101 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-series/after-implicit-tag.sqlite3`.
+It has no file-level error and turns the previous crash-only frontier into a
+complete 1,044-block dashboard. The remaining failures are 154 `NameError`,
+55 output mismatches, 24 `TypeError`, nine `NotImplementedError`, four
+`ModuleNotFoundError`, three `AttributeError`, and one `ValueError`. The next
+focused cluster is the `define_implicitly` cascade beginning around line 707:
+an explicit diagnostic import confirms that `diff` is available, after which
+the computation reaches the unavailable Singular-backed polynomial solver.
+`lazy_series_ring.py` remains outside the curated quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
