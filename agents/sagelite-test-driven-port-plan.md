@@ -45814,6 +45814,57 @@ Only the independent rank-two `Q.an_element()` display choice remains. That
 single backend-normalization mismatch is the next focused toric cluster;
 `toric_lattice.py` remains outside the quiet corpus until it is resolved.
 
+Focused primitive quotient-basis normalization pass on 2026-07-11 UTC:
+
+The final toric mismatch was a coordinate-basis difference rather than an
+isolated display choice. For
+`N3 / N3.span([N3(1, 2, 3)])`, the generic Smith backend selected the images
+of the second and third ambient basis vectors. Full Sage's PARI-backed Smith
+transformation instead starts with the primitive image of the first ambient
+basis vector and completes it to an integral quotient basis. Merely replacing
+`an_element()` would have made its subsequent conversion coordinates wrong.
+
+The toric quotient normalization now handles every nonzero torsion-free rank,
+generalizing the preceding rank-one fix. It examines ambient basis images in
+order using an independent generic FGP quotient, chooses the first primitive
+image, and uses a one-row Smith transformation to extend that image to a
+unimodular basis. The selected first generator keeps its canonical ambient
+lift; the remaining generators are integral combinations of the original
+Smith generators. Torsion quotients and torsion-free quotients without a
+primitive ambient basis image retain the generic backend's generators.
+
+A focused runtime probe confirms the normalized rank-two basis and its
+coordinates:
+
+```text
+Q.an_element()                         N3[1, 0, 0]
+Q.gens()                               (N3[1, 0, 0], N3[0, 1, 1])
+[g.vector() for g in Q.gens()]         [(1, 0), (0, 1)]
+N2(Q.an_element())                     N2(1, 0)
+```
+
+The earlier positive-direction rank-one quotient still reports
+`(N[0, -1, 0],)` with generator coordinate `(1)`. The complete accumulated
+patch applies sequentially to a pristine archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the resulting
+`toric_lattice.py` matches the make target's generated source byte for byte.
+
+The direct whole-file run and provenance-correct one-file make target agree:
+
+```text
+toric_lattice.py: 282 passed, 0 failed, 7 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-toric-final/make-provenance-final.sqlite3`.
+It records 289 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `281 passed, 1 failed, 7 skipped` dashboard, the
+last runnable mismatch becomes a pass without adding a skip. This promotes
+`sage/geometry/toric_lattice.py` to a quiet browser-profile candidate; adding
+it to the curated corpus is the next corpus-growth decision.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -22597,7 +22597,7 @@ diff --git a/src/sage/geometry/toric_lattice.py b/src/sage/geometry/toric_lattic
 @@ -643,1 +643,2 @@ class ToricLattice_generic(FreeModule_ambient_pid):
 +            sage: # needs ppl
              sage: K = Cone([(1,0,0),(0,1,0)])
-@@ -1412,6 +1412,31 @@ class ToricLattice_quotient(FGP_Module_class):
+@@ -1412,6 +1412,41 @@ class ToricLattice_quotient(FGP_Module_class):
              assert len(gens) == 1
              return (-gens[0],)
          return gens
@@ -22606,23 +22606,33 @@ diff --git a/src/sage/geometry/toric_lattice.py b/src/sage/geometry/toric_lattic
 +        """
 +        Return Smith form generators with a canonical ambient lift.
 +
-+        For a torsion-free quotient of rank one, prefer the first ambient
-+        basis vector whose image is a generator.  This makes the choice
-+        independent of the matrix backend's Smith transformation.
++        For a torsion-free quotient, prefer the first ambient basis vector
++        whose image is primitive, then extend it to an integral basis.  This
++        makes the choice independent of the matrix backend's Smith
++        transformation.
 +        """
 +        try:
 +            return self._toric_smith_form_gens
 +        except AttributeError:
 +            pass
 +        generators = FGP_Module_class.smith_form_gens.f(self)
-+        if len(generators) == 1 and self.is_torsion_free():
-+            generator = generators[0]
-+            lift = generator.lift()
-+            relations = self.W()
++        if generators and self.is_torsion_free():
++            from sage.matrix.constructor import matrix
++
++            generic = FGP_Module_class(self.V(), self.W())
 +            for basis_element in self.V().gens():
-+                if (basis_element - lift in relations or
-+                        basis_element + lift in relations):
-+                    generators = (self(basis_element),)
++                coordinates = generic(basis_element).vector()
++                diagonal, left, right = matrix(ZZ, [coordinates]).smith_form()
++                if diagonal[0, 0].is_unit():
++                    change = right.inverse().change_ring(ZZ)
++                    change.rescale_row(0, left[0, 0])
++                    normalized = [self(basis_element)]
++                    zero = generators[0] * 0
++                    for row in change.rows()[1:]:
++                        normalized.append(sum(
++                            (coefficient * generator for coefficient, generator
++                             in zip(row, generators)), zero))
++                    generators = tuple(normalized)
 +                    break
 +        self._toric_smith_form_gens = generators
 +        return generators
