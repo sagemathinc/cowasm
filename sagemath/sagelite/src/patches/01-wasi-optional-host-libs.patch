@@ -22519,3 +22519,13 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -4273 +4273 @@
 -            sage: -L.polylogarithm(-1)
 +            sage: -L.polylogarithm(-1)                                  # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -4347,6 +4347,7 @@
+         sage: phi = P(lambda n: (n-2) * a^(n+2) * b^(n+2), valuation=-2); phi
+         -4*Da^2 - 3*a*b*Da - 2*a^2*b^2 - a^3*b^3*Da^-1 + a^5*b^5*Da^-3
+          + 2*a^6*b^6*Da^-4 + O(Da^-5)
++        sage: # needs sage.libs.singular
+         sage: psi = ~phi; psi
+         -1/4*Da^-2 + 3/16*a*b*Da^-3 + (-1/64*a^2*b^2 - 3/8*b)*Da^-4

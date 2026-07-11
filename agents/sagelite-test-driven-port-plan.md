@@ -45370,6 +45370,48 @@ remaining clusters are two early Dirichlet state mismatches, two broad
 TestSuite outputs, and one multivariate representation-format drift.
 `lazy_series_ring.py` remains outside the quiet corpus.
 
+Focused lazy pseudodifferential Singular-boundary pass on 2026-07-11 UTC:
+
+The three inverse and product representation failures use the same implicit
+coefficient solver as the earlier Singular-backed lazy-series groups.
+Inverting `phi` introduces `FESDUMMY` coefficients, and evaluating them reaches
+the `PolynomialSequence` linear solver that depends on the unavailable
+Singular backend. The WASI patch now propagates `# needs sage.libs.singular`
+from the inverse prompt through its two dependent product checks, while
+leaving the polynomial ring, operator ring, generator, and `phi` construction
+runnable.
+
+Focused `--line` reruns at patched lines 4391, 4398, and 4400 each record one
+intended Singular skip with no failure. Applying the complete accumulated
+patch to a fresh archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds and reproduces the
+generated `lazy_series_ring.py` byte for byte. The make target also rebuilds
+the patched source from the developer checkout and applies the complete patch
+successfully.
+
+The direct complete-file run and the fresh one-file make-target dashboard
+agree:
+
+```text
+lazy_series_ring.py: 601 passed, 5 failed, 438 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-pseudodiff/make.sqlite3`; it records
+1,044 blocks under runner version 108 and the node profile, with no file-level
+error. Compared with the preceding `601 passed, 8 failed, 435 skipped`
+dashboard, this converts exactly the three targeted pseudodifferential
+failures into explicit `sage.libs.singular` skips without reducing passing
+coverage.
+
+All five remaining ordinary failures are output mismatches. The next coherent
+cluster is the two early lazy Dirichlet state mismatches at patched lines 306
+and 308, where indexing returns `0` and `1` instead of the expected Möbius
+series and zero. Separate remaining clusters are the two broad TestSuite
+outputs at patched lines 1920 and 2773 and one multivariate representation
+format drift at patched line 3355. `lazy_series_ring.py` remains outside the
+quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
