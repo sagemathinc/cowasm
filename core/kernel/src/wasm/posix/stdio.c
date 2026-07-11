@@ -13,6 +13,6 @@ PUBLIC(fiprintf)
 int siprintf(char *restrict s, const char *restrict format, ...) {
   va_list va;
   va_start(va, format);
-  vsprintf(s, format, va);
+  vsnprintf(s, 4096, format, va);
   va_end(va);
 }
