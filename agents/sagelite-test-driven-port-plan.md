@@ -45598,6 +45598,51 @@ state failures, one unavailable `Cone` namespace group, and one positive-dual
 point semantic mismatch. `toric_lattice.py` remains outside the quiet corpus;
 the representation mismatches are now the largest coherent cluster.
 
+Focused generic integer-matrix echelon normalization pass on 2026-07-11 UTC:
+
+The largest toric representation cluster came from the stripped matrix
+backend rather than toric arithmetic. Integer matrices are represented by
+`Matrix_generic_dense` in Sagelite. Its generic PID echelon routine left
+negative pivots and did not reduce entries above later pivots, so equivalent
+sublattices acquired noncanonical signs and bases. The available Euclidean
+routine already implements Sage's integer Hermite convention, including
+positive pivot normalization and a transformation matrix.
+
+The WASI source patch now uses that Euclidean routine for generic dense
+integer `echelon_form()` and `hermite_form()` calls. It computes and caches
+pivot columns for the in-place echelon path and preserves the invariant
+`T*A == E` when a transformation is requested. A representative matrix with
+rows `(1, 1, 0)` and `(3, 2, 1)` now has the canonical basis rows
+`(1, 0, 1)` and `(0, 1, -1)` instead of `(1, 1, 0)` and `(0, -1, 1)`.
+
+The complete accumulated patch applies to a pristine checkout of Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its generated
+`matrix2.pyx` matches the independently patched source byte for byte. The
+compiled standalone build completes all import and doctest probes up to its
+pre-existing corpus-candidate optional-run fixture blocker.
+
+The direct complete-file run and provenance-correct one-file make-target
+dashboard agree:
+
+```text
+toric_lattice.py: 267 passed, 19 failed, 3 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-toric-hnf/make.sqlite3`; it records 289
+blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `256 passed, 30 failed, 3 skipped` dashboard,
+exactly eleven representation failures become passes and no skip is added.
+This closes the negative-pivot and unreduced-basis cluster, including all
+affected quotient, sublattice, LaTeX, constructor, and dual representations.
+
+The remaining 19 failures comprise eleven output mismatches, five dependent
+`NameError` blocks, two PARI-backed `NotImplementedError` blocks, and one
+positive-dual `ValueError`. The output mismatches are now separate clusters:
+multiline sequence display, quotient-generator sign/selection, and one
+`an_element()` choice. `toric_lattice.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

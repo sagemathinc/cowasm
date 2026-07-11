@@ -22579,3 +22579,39 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +            sage: L.some_elements()[:6]                    # known bug - Sagelite finite-field negative monomial display drift
              [0, 1, q,
               q + q^2 + q^3,
+
+diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
+--- a/src/sage/matrix/matrix2.pyx
++++ b/src/sage/matrix/matrix2.pyx
+@@ -8268,6 +8268,15 @@ cdef class Matrix(Matrix1):
+             dense_self = self.dense_matrix()
+             if dense_self is self:
+-                a, d, p = self._echelon_form_PID()
++                d = self.__copy__()
++                a = d._hermite_form_euclidean(
++                    transformation=transformation,
++                    normalization=lambda pivot: -1 if pivot < 0 else 1)
++                p = []
++                for r in range(d.nrows()):
++                    for c in range(d.ncols()):
++                        if not d.get_unsafe(r, c).is_zero():
++                            p.append(c)
++                            break
+             elif transformation:
+                 d, a = dense_self.echelon_form(**kwds)
+             else:
+@@ -17163,7 +17163,13 @@ cdef class Matrix(Matrix1):
+             sage: U * A == H
+             True
+         """
+-        left, H, _ = self._echelon_form_PID()
++        if isinstance(self.base_ring(), IntegerRing_class):
++            H = self.__copy__()
++            left = H._hermite_form_euclidean(
++                transformation=True,
++                normalization=lambda pivot: -1 if pivot < 0 else 1)
++        else:
++            left, H, _ = self._echelon_form_PID()
+         if not include_zero_rows:
+             i = H.nrows() - 1
+             while H.row(i) == 0:
