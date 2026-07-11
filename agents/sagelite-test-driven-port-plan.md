@@ -44813,6 +44813,41 @@ to a separate number-field inverse-image boundary at line 935,
 `morphism.pyx` remains outside the curated quiet corpus until that later
 cluster and the rest of the file have been audited.
 
+Focused ring-morphism continuing backend-boundary pass on 2026-07-11 UTC:
+
+The continuing audit resumed at the number-field inverse-image example left
+by the preceding pass and advanced the full-file crash frontier from patched
+line 938 to patched line 3000. The first reproducer,
+`QuadraticField(2).hom([v], S)`, timed out after 60 seconds. Later quadratic
+extension, graph-ideal, and inverse-morphism examples reached the same
+number-field construction boundary. Those four groups now propagate
+`# needs sage.rings.number_field` from their setup prompts.
+
+Four finite-field quotient, splitting-field, and inverse-morphism groups
+failed through the unavailable NTL `ZZ_pContext::restore` dynamic import.
+They now propagate `# needs sage.libs.ntl`. Two additional univariate quotient
+comparison groups over `QQ` timed out while constructing
+`R.quotient(x^2 + x + 1)`, matching the already established PARI-backed
+irreducibility boundary, and now propagate `# needs sage.libs.pari`.
+
+The complete WASI patch was applied to a freshly copied Sagelite source tree.
+Ten focused line reruns from that fresh copy all passed with only their
+intended dependency skips; their SQLite databases are under
+`.tmp/current-run/manual-2026-07-11-morphism-followup/fresh/`. A continuing
+60-second full-file probe then advanced to a separate finite-field fraction-
+field boundary at patched line 3000:
+
+```text
+K = Frac(GF(25)['T'])
+LinkError: ... NTL::ZZ_pContext::restore(): function import requires a callable
+```
+
+That database is
+`.tmp/current-run/manual-2026-07-11-morphism-followup/fresh/continuing.sqlite3`.
+It is the next focused reproducer; `morphism.pyx` remains outside the quiet
+corpus until that later NTL group and the remaining tail of the file have been
+audited.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

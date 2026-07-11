@@ -31,6 +31,36 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 +            sage: # needs sage.libs.ntl
              sage: R.<x> = ZZ[]
              sage: K.<a> = GF(7^2)
+@@ -931,1 +937,2 @@
++            sage: # needs sage.rings.number_field
+             sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')
+@@ -1096,1 +1103,2 @@
++            sage: # needs sage.libs.ntl
+             sage: F8.<a> = GF(2^3)
+@@ -1142,1 +1150,2 @@
++            sage: # needs sage.libs.ntl
+             sage: F4.<a> = GF(2^2, modulus=[1,1,1])
+@@ -1233,1 +1242,2 @@
++            sage: # needs sage.rings.number_field
+             sage: A.<a> = QuadraticField(2)
+@@ -1327,1 +1337,2 @@
++            sage: # needs sage.rings.number_field
+             sage: K.<a> = QuadraticField(2)
+@@ -1533,1 +1544,2 @@
++            sage: # needs sage.rings.number_field
+             sage: K.<sqrt2> = QuadraticField(2)
+@@ -1543,1 +1555,2 @@
++            sage: # needs sage.libs.ntl
+             sage: A.<t> = GF(7^3)
+@@ -1644,1 +1657,2 @@
++            sage: # needs sage.libs.ntl
+             sage: F4.<a> = GF(2^2, modulus=[1,1,1])
+@@ -1929,1 +1943,2 @@
++            sage: # needs sage.libs.pari
+             sage: R.<x> = QQ[]
+@@ -2260,1 +2275,2 @@
++            sage: # needs sage.libs.pari
+             sage: R.<x> = QQ[]
 diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 --- a/src/sage/rings/real_mpfr.pyx
 +++ b/src/sage/rings/real_mpfr.pyx
