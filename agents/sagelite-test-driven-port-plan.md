@@ -45138,6 +45138,42 @@ at patched line 746: eight direct `SR` failures plus related `diff`, `var`,
 the largest broad class but span unrelated semantics, so
 `lazy_series_ring.py` remains outside the quiet corpus.
 
+Focused lazy-series symbolic namespace pass on 2026-07-11 UTC:
+
+The symbolic frontier separated into two dependency classes. Groups using
+`SR`, symbolic function definitions, or symbolic transcendental expressions
+require the unavailable `sage.symbolic` backend. Two `diff`-only implicit
+series groups over `QQ` were not symbolic dependencies: an explicit import of
+`sage.calculus.functional.diff` made their setup work, after which coefficient
+evaluation reached the unavailable Singular-backed polynomial solver. Those
+groups are therefore classified as `sage.libs.singular` instead.
+
+The WASI patch now propagates `# needs sage.symbolic` across twelve independent
+symbolic lazy-series groups and `# needs sage.libs.singular` across the two
+implicit-series solver groups. Focused reruns of representative symbolic,
+Singular, Laurent-Taylor, and pseudodifferential examples record only the
+intended dependency skips. The complete patch also applies cleanly in a dry
+run against `/home/user/sagelite`.
+
+A complete 300-second file run records:
+
+```text
+lazy_series_ring.py: 658 passed, 72 failed, 314 skipped
+```
+
+Compared with the preceding `688 passed, 103 failed, 253 skipped` dashboard,
+this converts 31 failures and 30 successful but setup-dependent blocks into 61
+explicit skips. No `NameError` remains. The 72 ordinary failures are now 55
+output mismatches, nine `NotImplementedError`, six `TypeError`, and two
+`ModuleNotFoundError` rows, with no file-level error. The database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-symbolic/full.sqlite3`; its 314
+skips include 88 `sage.symbolic` and 46 `sage.libs.singular` rows in total.
+
+The next coherent cluster is the remaining Singular-backed implicit-series
+output cascade around patched lines 808--1029. Separate clusters include the
+FLINT integer-polynomial boundary and lazy-series precision/output behavior,
+so `lazy_series_ring.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

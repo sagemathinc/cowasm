@@ -22178,3 +22178,34 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +            sage: # needs sage.libs.symmetrica
 @@ -3835,0 +3850 @@
 +            sage: # needs sage.libs.symmetrica
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -742,0 +743 @@
++            sage: # needs sage.symbolic
+@@ -748,0 +750 @@
++            sage: # needs sage.symbolic
+@@ -1045,0 +1048 @@
++            sage: # needs sage.libs.singular
+@@ -1058,0 +1062 @@
++            sage: # needs sage.libs.singular
+@@ -2249,0 +2254 @@
++            sage: # needs sage.symbolic
+@@ -2257,0 +2263 @@
++            sage: # needs sage.symbolic
+@@ -2576,0 +2583 @@
++            sage: # needs sage.symbolic
+@@ -2694,0 +2702 @@
++            sage: # needs sage.symbolic
+@@ -3357,0 +3366 @@
++            sage: # needs sage.symbolic
+@@ -3371,0 +3381 @@
++            sage: # needs sage.symbolic
+@@ -4357,0 +4368 @@
++        sage: # needs sage.symbolic
+@@ -4369,0 +4381 @@
++        sage: # needs sage.symbolic
+@@ -4377,0 +4390 @@
++        sage: # needs sage.symbolic
+@@ -4421,0 +4435 @@
++            sage: # needs sage.symbolic
