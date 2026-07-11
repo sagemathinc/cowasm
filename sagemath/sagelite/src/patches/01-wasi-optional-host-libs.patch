@@ -22452,3 +22452,33 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
              sage: R.<a,b,c> = PolynomialRing(ZZ)
              sage: L = LazyPowerSeriesRing(ZZ, 'a,b,c')
              sage: aa, bb, cc = L.gens()
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -392 +392 @@
+-            sage: L(1/(1-z), valuation=-4)
++            sage: L(1/(1-z), valuation=-4)                              # needs sage.libs.flint
+@@ -394 +394 @@
+-            sage: L(z^-3/(1-z), valuation=-4)
++            sage: L(z^-3/(1-z), valuation=-4)                           # needs sage.libs.flint
+@@ -396 +396 @@
+-            sage: L(z^3/(1-z), valuation=-4)
++            sage: L(z^3/(1-z), valuation=-4)                            # needs sage.libs.flint
+@@ -399 +399 @@
+-            sage: L(z^3/(1-z), valuation=0)
++            sage: L(z^3/(1-z), valuation=0)                             # needs sage.libs.flint
+@@ -1730 +1730 @@
+-        sage: 1 / (1 - 2*z)^3
++        sage: 1 / (1 - 2*z)^3                                          # needs sage.libs.flint
+@@ -1744 +1744,2 @@
++        sage: # needs sage.libs.flint
+         sage: f = 1 / (z + z^2)
+@@ -2030 +2031 @@
+-            sage: 1/(1 - z)
++            sage: 1/(1 - z)                                            # needs sage.libs.flint
+@@ -2057 +2058 @@
+-            sage: L.some_elements()[:7]
++            sage: L.some_elements()[:7]                                # needs sage.libs.flint
+@@ -3305 +3306 @@
+-            sage: L.some_elements()[:6]
++            sage: L.some_elements()[:6]                                # needs sage.libs.flint

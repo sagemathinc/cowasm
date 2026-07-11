@@ -45254,6 +45254,44 @@ integer-polynomial `NotImplementedError` rows; lazy-series precision and
 representation mismatches remain separate semantic work, so
 `lazy_series_ring.py` stays outside the quiet corpus.
 
+Focused lazy-series FLINT integer-polynomial boundary pass on 2026-07-11 UTC:
+
+The nine direct `NotImplementedError` rows all reached the deliberately
+disabled FLINT implementation for integer polynomials. They occur in four
+valuation-conversion examples, one integer Laurent-series power, one stateful
+truncation group, the Laurent generator example, and the integer-base
+`some_elements()` examples for lazy Laurent and power series. The WASI patch
+now marks those exact operations as requiring `sage.libs.flint`, while leaving
+their successful ring setup and adjacent generic or finite-field examples
+runnable.
+
+The truncation group is marked from its failing `f = 1 / (z + z^2)` setup
+prompt through its six dependent examples. This removes the original FLINT
+error together with four misleading output mismatches and two stale-namespace
+`TypeError` rows. Focused `--line` reruns of all nine direct reproducers record
+only the intended FLINT skips.
+
+Applying the complete patch to a fresh archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, and the resulting
+`lazy_series_ring.py` matches the checked build source byte for byte. The
+direct full-file run and the one-file make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 585 passed, 29 failed, 430 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-flint/make.sqlite3`; it records
+1,044 blocks under runner version 108 and the node profile. Compared with the
+preceding `585 passed, 44 failed, 415 skipped` dashboard, the pass converts all
+nine direct FLINT failures and six dependent failures into 15 explicit skips.
+All 29 remaining ordinary failures are output mismatches, with no file-level
+error. The next coherent cluster is the lazy-series precision-state drift in
+the `polylog` and `dilog` examples around patched lines 2674--2725, where 11
+rows expect truncation at roughly `O(z^8)` but retain a prior precision and
+render through `O(z^18)`. `lazy_series_ring.py` remains outside the quiet
+corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
