@@ -45063,6 +45063,45 @@ ordinary block clusters, including symbolic and symmetric-function namespace
 boundaries, are still separate follow-up work, and `lazy_series_ring.py`
 remains outside the curated quiet corpus.
 
+Focused lazy-series rational-function timeout pass on 2026-07-11 UTC:
+
+The multivariate `QQ` TestSuite timeout came from
+`LazyPowerSeriesRing.some_elements()`, not ring construction or an opaque
+TestSuite loop. A verbose suite run stopped in `_test_additive_associativity`,
+and splitting the fixture showed that constructing
+`(1 - 2*z^3)/(1 - z + 3*z^2)` was the first operation that did not return.
+This matches the stateful polynomial/number-field rational-function defect
+already documented by the earlier lazy-Laurent conversion reproducer. The
+WASI patch now defers only that multivariate rational TestSuite group as
+`# known bug`.
+
+Two continuing fresh-source runs exposed the same normalization defect in
+independent paths. The multivariate `L.taylor(f)` example invokes the pure
+Python function `(1 + x)/(1 + y)` directly on lazy generators before reaching
+its symbolic fallback, and `_monomial` attempts to simplify
+`2*(t + t^2)/(t^2 + t^3)`. Both timed out at the worker boundary and are now
+narrowly classified as known bugs without skipping their adjacent ring setup
+or unrelated tests.
+
+After those three boundaries were classified, a fresh one-file make-target
+run completed without a file-level error:
+
+```text
+lazy_series_ring.py: 692 passed, 192 failed, 160 skipped
+```
+
+The database is
+`.tmp/current-run/manual-2026-07-11-lazy-testsuite/make-3.sqlite3`. It records
+1,044 blocks under runner version 108 and the node profile. The 160 skipped
+blocks include 46 known-bug, 36 Singular, 35 symbolic, and 28 module-boundary
+rows. The remaining ordinary failures are 120 `NameError`, 51 output
+mismatches, nine `NotImplementedError`, eight `TypeError`, three
+`ModuleNotFoundError`, and one `AttributeError`; there is no file-level crash
+cluster. The next focused cluster is the 19 direct
+`SymmetricFunctions is not defined` failures beginning around patched line
+684 and their dependent namespace-state fallout. `lazy_series_ring.py`
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

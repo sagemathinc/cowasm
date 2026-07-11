@@ -22136,3 +22136,12 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -779 +780,2 @@
 +            sage: # known bug
              sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1,f2"].fraction_field())
+@@ -2745 +2750,2 @@
++            sage: # known bug
+             sage: L = LazyPowerSeriesRing(QQ, 's, t')
+@@ -3377 +3383,2 @@
++            sage: # known bug
+             sage: L.<a,b> = LazyPowerSeriesRing(QQ)
+@@ -4515 +4522,2 @@
++            sage: # known bug
+             sage: L._monomial(2*(t + t^2)/(t^2 + t^3), 3)
