@@ -45412,6 +45412,42 @@ outputs at patched lines 1920 and 2773 and one multivariate representation
 format drift at patched line 3355. `lazy_series_ring.py` remains outside the
 quiet corpus.
 
+Focused lazy Dirichlet state-dependency pass on 2026-07-11 UTC:
+
+The two early Dirichlet mismatches were stale-namespace artifacts. The
+upstream source already marked `s = L(m, valuation=0)` as requiring
+`sage.symbolic`, because `L` is still over an earlier `QQ` Dirichlet ring when
+`m` is constructed after rebinding `D` over `ZZ`; converting between those
+rings enters `sage.symbolic.ring`. The two following index checks were
+untagged, so the browser profile skipped the assignment and evaluated `s[0]`
+and `s[1]` against an older lazy series, producing the misleading `0` and `1`
+outputs.
+
+The WASI patch now propagates the existing symbolic dependency explicitly to
+both dependent index prompts. An exact seven-block reproducer preserves four
+runnable setup blocks and records the assignment plus both index checks as
+three `optional:sage.symbolic` skips with no failure. Applying the complete
+accumulated patch to a fresh archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds and reproduces the
+make-target generated `lazy_series_ring.py` byte for byte.
+
+The direct complete-file run and fresh one-file make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 601 passed, 3 failed, 440 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-dirichlet-state/make.sqlite3`; it
+records 1,044 blocks under runner version 108 and the node profile, with no
+file-level error. Compared with the preceding
+`601 passed, 5 failed, 438 skipped` dashboard, the pass converts exactly the
+two stale-state mismatches into explicit symbolic skips without reducing
+passing coverage. The remaining three failures are output mismatches: the two
+broad TestSuite outputs at patched lines 1920 and 2773 and the multivariate
+representation-format drift at patched line 3355. `lazy_series_ring.py`
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

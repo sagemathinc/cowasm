@@ -22529,3 +22529,13 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +        sage: # needs sage.libs.singular
          sage: psi = ~phi; psi
          -1/4*Da^-2 + 3/16*a*b*Da^-3 + (-1/64*a^2*b^2 - 3/8*b)*Da^-4
+          + (-5/256*a^3*b^3 + 13/64*a*b^2)*Da^-5
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -306 +306 @@
+-            sage: s[0]
++            sage: s[0]                                                                  # needs sage.symbolic
+@@ -308 +308 @@
+-            sage: s[1]
++            sage: s[1]                                                                  # needs sage.symbolic
