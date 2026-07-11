@@ -45034,6 +45034,35 @@ an explicit diagnostic import confirms that `diff` is available, after which
 the computation reaches the unavailable Singular-backed polynomial solver.
 `lazy_series_ring.py` remains outside the curated quiet corpus.
 
+Focused lazy-series Singular dependency pass on 2026-07-11 UTC:
+
+The first `define_implicitly` example over `QQ` reaches the unavailable
+`sage.rings.polynomial.plural` backend when its solved series is expanded.
+The WASI patch now marks that group as `# needs sage.libs.singular`. Because
+the following exercise reuses the skipped `L, z` setup, the patch propagates
+the same requirement from its first prompt. A later rational-function
+recurrence reaches `sage.rings.polynomial.plural` directly at `R[1]`, so its
+independent setup group carries the same dependency metadata.
+
+Fresh-source patch application succeeds. Focused reruns at patched lines 708,
+728, and 762 each record one intended `optional:sage.libs.singular` skip and
+no failure. Their databases are under
+`.tmp/current-run/scheduled-2026-07-11-lazy-series-singular/`.
+
+An intermediate complete-file run after the first annotation recorded
+`684 passed, 248 failed, 112 skipped`, reducing the prior dashboard by two
+failures while exposing the two stateful continuation groups. Complete-file
+validation of the final three-group patch then reached a separate late-file
+runtime frontier: both 180- and 300-second runs stalled in
+`LazyPowerSeriesRing.__init__` at patched line 2751 while running
+`TestSuite(L).run(skip='_test_fraction_field')`; the longer timeout also ended
+with a host segmentation fault after the worker was killed. Those databases
+are `make-final.sqlite3` and `make-final-300.sqlite3` in the same directory.
+This TestSuite timeout is the next focused crash reproducer. The remaining
+ordinary block clusters, including symbolic and symmetric-function namespace
+boundaries, are still separate follow-up work, and `lazy_series_ring.py`
+remains outside the curated quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

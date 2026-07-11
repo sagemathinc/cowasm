@@ -22124,6 +22124,15 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -356 +356,2 @@
 +            sage: # known bug
              sage: L = LazyLaurentSeriesRing(QQ, 't')
+@@ -706 +707,2 @@
++            sage: # needs sage.libs.singular
+             sage: L.<z> = LazyPowerSeriesRing(QQ)
+@@ -725 +727,2 @@
++            sage: # needs sage.libs.singular
+             sage: g = L.undefined()
+@@ -758 +761,2 @@
++            sage: # needs sage.libs.singular
+             sage: q, y = QQ['q,y'].fraction_field().gens()
 @@ -779 +780,2 @@
 +            sage: # known bug
              sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1,f2"].fraction_field())
