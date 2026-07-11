@@ -44619,6 +44619,40 @@ The latest-run summary records CoWasm commit
 cluster queries are empty, and `skips-by-reason.sql` groups the new skips under
 the intended plot, symbolic, and known-bug boundaries.
 
+Focused abstract-valuation runtime-boundary pass on 2026-07-11 UTC:
+
+The archived frontier database identified
+`sage/rings/valuation/valuation.py` as a file-level timeout in
+`DiscreteValuation.mac_lane_approximants` at line 424. A fresh 180-second
+probe reproduced the timeout on `v.mac_lane_approximants(x^2 + 1)`. After
+isolating that first p-adic example group, the next probe reached the same
+known backend family in the function-field case at line 470:
+
+```text
+LinkError: WebAssembly.Instance(): Import #9 "env"
+"_ZNK3NTL11ZZ_pContext7restoreEv": function import requires a callable
+```
+
+The WASI source patch now gives the abstract valuation module an explicit
+file-level browser-profile boundary for `sage.rings.padics`,
+`sage.rings.function_field`, `sage.rings.number_field`, and `sage.libs.ntl`.
+This matches the existing file-level treatment of the adjacent inductive and
+limit valuation modules and prevents future frontier refreshes from spending
+three minutes rediscovering the same NTL dynamic-import failure.
+
+Rebuilding a fresh patched Sagelite source copy applied the complete WASI
+patch cleanly. Focused direct validation with a 60-second timeout records:
+
+```text
+valuation.py: 0 passed, 0 failed, 1 skipped
+```
+
+The final database is
+`.tmp/current-run/scheduled-2026-07-11-valuation/final.sqlite3`. Its saved
+block-failure and file-error cluster queries are empty, while
+`skips-by-reason.sql` records one file-level skip under the four intended
+backend requirements. The module remains outside the curated runnable corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

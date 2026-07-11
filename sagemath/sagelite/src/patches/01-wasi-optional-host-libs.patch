@@ -248,6 +248,12 @@ diff --git a/src/sage/rings/valuation/limit_valuation.py b/src/sage/rings/valuat
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.pari
  r"""
+diff --git a/src/sage/rings/valuation/valuation.py b/src/sage/rings/valuation/valuation.py
+--- a/src/sage/rings/valuation/valuation.py
++++ b/src/sage/rings/valuation/valuation.py
+@@ -1,1 +1,2 @@
++# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.ntl
+ r"""
 diff --git a/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx b/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
 --- a/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
 +++ b/src/sage/rings/polynomial/multi_polynomial_ring_base.pyx
