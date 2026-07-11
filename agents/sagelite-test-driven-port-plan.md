@@ -44942,6 +44942,34 @@ That run records CoWasm commit
 file-level error. The complete WASI patch also applies cleanly in a dry run
 against `/home/user/sagelite`.
 
+Focused colored-permutation libgap-wrapper boundary pass on 2026-07-11 UTC:
+
+```text
+colored_permutations.py: 410 passed, 73 failed, 81 skipped
+```
+
+The preceding block dashboard separated 52 failures in the
+`ShephardToddFamily` examples from the later representation-theory failures.
+Those examples enter the unavailable `sage.groups.libgap_wrapper` module
+through the public `groups.misc.ShephardToddFamily(...)` constructor even
+when the resulting colored-permutation arithmetic would otherwise be pure.
+The WASI patch now propagates `# needs sage.groups.libgap_wrapper` from eleven
+independent constructor groups, including their TestSuite, Coxeter-matrix,
+simple-reflection, iteration, degree, and codegree assertions.
+
+A fresh-source one-file make-target run records 54 blocks under
+`optional:sage.groups.libgap_wrapper`, with no remaining failure in that
+module cluster and no file-level error. The database is
+`.tmp/current-run/scheduled-2026-07-11-colored-permutations-gap/make-fixed.sqlite3`.
+The complete patch also applies cleanly in a dry run against
+`/home/user/sagelite`.
+
+The remaining 73 failures are a separate representation-theory boundary: 29
+direct `sage.libs.gap.libgap` import failures plus 43 dependent-name failures
+and one dependent output mismatch. That cluster starts at the Specht-module
+examples around source line 1856 and is the next focused reproducer;
+`colored_permutations.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

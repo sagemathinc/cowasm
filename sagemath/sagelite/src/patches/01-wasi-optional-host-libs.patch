@@ -22007,3 +22007,42 @@ diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/color
 @@ -2155 +2155 @@
 -        sage: TM.brauer_character()
 +        sage: TM.brauer_character()  # needs sage.libs.ntl
+diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/colored_permutations.py
+--- a/src/sage/combinat/colored_permutations.py
++++ b/src/sage/combinat/colored_permutations.py
+@@ -458 +458,2 @@
++        sage: # needs sage.groups.libgap_wrapper
+         sage: groups.misc.ShephardToddFamily(6, 1, 4)
+@@ -475 +476,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 1, 3)
+@@ -490 +492,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
+@@ -498 +501,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: coxeter_tests = ["_test_descents", "_test_has_descent",
+@@ -533 +537,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: groups.misc.ShephardToddFamily(6, 2, 3)
+@@ -553 +558,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 6, 4)
+@@ -604 +610,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(2, 2, 3)
+@@ -715 +722,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(4, 2, 3)
+@@ -898 +906,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 3, 2)
+@@ -992 +1001,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
+@@ -1003 +1013,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: prod(G.degrees()) == G.cardinality()
+@@ -1040 +1051,2 @@
++            sage: # needs sage.groups.libgap_wrapper
+             sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
