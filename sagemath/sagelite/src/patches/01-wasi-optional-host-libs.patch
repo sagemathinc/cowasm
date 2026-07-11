@@ -4,6 +4,33 @@ diff --git a/src/sage/calculus/desolvers.py b/src/sage/calculus/desolvers.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic maxima scipy
  r"""
+diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
+--- a/src/sage/rings/morphism.pyx
++++ b/src/sage/rings/morphism.pyx
+@@ -196,2 +196,3 @@
+     sage: R.<x> = PolynomialRing(QQ)
++    sage: # needs sage.libs.pari
+     sage: S.<sqrt2> = R.quo(x^2 - 2)
+@@ -278,2 +279,3 @@
++    sage: # needs sage.rings.number_field
+     sage: K.<zeta7> = CyclotomicField(7)
+     sage: c = K.hom([1/zeta7]); c
+@@ -293,2 +295,3 @@
+     sage: R.<x> = PolynomialRing(QQ)
++    sage: # needs sage.rings.number_field
+     sage: K.<beta> = NumberField(x^3 - 2)
+@@ -337,2 +340,3 @@
++    sage: # needs sage.rings.number_field
+     sage: K.<zeta7> = CyclotomicField(7)
+     sage: c = K.hom([1/zeta7])
+@@ -352,2 +356,3 @@
++    sage: # needs sage.libs.ntl
+     sage: k = GF(2)
+     sage: R.<x> = k[]
+@@ -795,2 +800,3 @@
++            sage: # needs sage.libs.ntl
+             sage: R.<x> = ZZ[]
+             sage: K.<a> = GF(7^2)
 diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 --- a/src/sage/rings/real_mpfr.pyx
 +++ b/src/sage/rings/real_mpfr.pyx

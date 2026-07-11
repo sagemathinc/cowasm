@@ -44785,6 +44785,34 @@ cluster queries are empty. The 126 skipped blocks include 43 symbolic, 31
 PARI, and 13 known-bug rows, with the remainder under existing architecture
 and optional-package metadata.
 
+Focused ring-morphism backend-boundary pass on 2026-07-11 UTC:
+
+The archived larger-frontier database recorded `sage/rings/morphism.pyx` as a
+WASM memory trap at the first univariate quotient example. A fresh focused
+rerun localized the current behavior more precisely: constructing
+`R.quo(x^2 - 2)` over `QQ` timed out after 180 seconds while the quotient
+factory tested the modulus for irreducibility. The same constructor path is
+already classified elsewhere in Sage's doctests as PARI-backed coverage.
+
+The WASI source patch now propagates `# needs sage.libs.pari` across that
+quotient-morphism group. Continuing the full-file probe exposed and classified
+three more independent backend boundaries: the top-level cyclotomic and real
+number-field examples need `sage.rings.number_field`, the finite-field
+quotient identity-map group needs `sage.libs.ntl`, and the extension/base-map
+composition group reaches the unavailable NTL `ZZ_pContext::restore` dynamic
+import. Focused reruns of the affected quotient, cyclotomic, pickling,
+finite-field quotient, and extension prompts now all complete without failures
+and record only their intended dependency skips in SQLite.
+
+The complete WASI patch applies cleanly in a fresh dry run. The focused
+databases are under
+`.tmp/current-run/scheduled-2026-07-11-morphism/directive-*.sqlite3`; their
+saved block-failure queries are empty. A continuing full-file probe advances
+to a separate number-field inverse-image boundary at line 935,
+`QuadraticField(2).hom([v], S)`, which is the next focused reproducer.
+`morphism.pyx` remains outside the curated quiet corpus until that later
+cluster and the rest of the file have been audited.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
