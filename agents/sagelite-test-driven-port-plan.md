@@ -45292,6 +45292,46 @@ rows expect truncation at roughly `O(z^8)` but retain a prior precision and
 render through `O(z^18)`. `lazy_series_ring.py` remains outside the quiet
 corpus.
 
+Focused lazy-series skipped-reset precision pass on 2026-07-11 UTC:
+
+The precision drift came from doctest option state rather than lazy-series
+arithmetic. The preceding Jacobi-theta group sets
+`L.options.display_length = 17`, but its reset followed a standalone
+`# needs sage.symbolic` directive. In the default node profile, directive
+propagation therefore skipped the reset together with the unavailable
+symbolic examples and leaked the longer display length into later docstrings.
+
+The WASI patch now marks each prompt in that symbolic group inline instead of
+using one propagating standalone directive. The original reset consequently
+runs in the default profile, while a future symbolic-enabled profile preserves
+the upstream execution order and its `O(q^17)` expectations. The complete
+lazy-series portion of the patch applies sequentially to the pristine Sagelite
+source and reproduces the generated build file byte for byte. A fresh
+make-target rebuild applies the complete WASI patch successfully.
+
+The direct full-file run and the fresh one-file make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 601 passed, 14 failed, 429 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-precision/final-make.sqlite3`; it
+records 1,044 blocks under runner version 108 and the node profile, with no
+file-level error. Compared with the preceding
+`585 passed, 29 failed, 430 skipped` dashboard, the pass clears all eleven
+targeted `polylog`/`dilog` mismatches and four later false precision mismatches
+in power-series construction and `some_elements()`. The existing reset moves
+from an unintended symbolic skip to a passing block.
+
+All 14 remaining failures are output mismatches. The next coherent backend
+cluster is six lazy Dirichlet-series representations that raise
+`ModuleNotFoundError: sage.symbolic.expression`, at patched lines 1428--1528
+and 4313--4323. Separate remaining clusters are two broad TestSuite outputs,
+three pseudodifferential conversion failures, two early Dirichlet state
+mismatches, and one multivariate representation-format drift.
+`lazy_series_ring.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

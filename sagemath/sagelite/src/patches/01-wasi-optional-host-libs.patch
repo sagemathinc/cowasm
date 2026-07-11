@@ -22482,3 +22482,19 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -3305 +3306 @@
 -            sage: L.some_elements()[:6]
 +            sage: L.some_elements()[:6]                                # needs sage.libs.flint
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -2609,5 +2609,4 @@
+-            sage: # needs sage.symbolic
+-            sage: L.<q> = LazyLaurentSeriesRing(SR)
+-            sage: z = SR.var('z')
+-            sage: theta = L.jacobi_theta(exp(pi*I*z))
+-            sage: theta
++            sage: L.<q> = LazyLaurentSeriesRing(SR)                     # needs sage.symbolic
++            sage: z = SR.var('z')                                       # needs sage.symbolic
++            sage: theta = L.jacobi_theta(exp(pi*I*z))                   # needs sage.symbolic
++            sage: theta                                                 # needs sage.symbolic
+@@ -2619 +2618 @@
+-            sage: theta.map_coefficients(lambda c: c(z=z+1))
++            sage: theta.map_coefficients(lambda c: c(z=z+1))            # needs sage.symbolic
