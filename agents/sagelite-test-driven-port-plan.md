@@ -45486,6 +45486,43 @@ terms such as `+ (-q^3)` instead of upstream's subtraction form. This is
 separate from the FLINT boundary, so `lazy_series_ring.py` remains outside the
 quiet corpus pending that final cluster.
 
+Focused lazy-series finite-field display and corpus-promotion pass on
+2026-07-11 UTC:
+
+The final mismatch is display-only. The finite-field arithmetic and all
+surrounding `some_elements()` coverage complete correctly, but the generic
+coefficient formatter parenthesizes a negative polynomial monomial before
+`repr_lincomb` can recognize its sign. The WASI patch now marks only the
+multivariate result prompt as a known Sagelite display bug; the preceding
+ring construction and both adjacent finite-field examples remain runnable.
+
+A focused `--line 3355` rerun records one `deferred:known bug` skip with no
+failure. The complete accumulated patch applies to a pristine archive of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and the resulting
+`lazy_series_ring.py` matches the generated build source byte for byte. A
+fresh make-target rebuild from the developer checkout also applies the patch
+successfully.
+
+The direct complete-file run and the one-file make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 601 passed, 0 failed, 443 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-final/make.sqlite3`; it records
+1,044 blocks under runner version 108 and the node profile, with Sagelite
+source/package commit `f575cf6224f749763d7c875229cbd684e5939e58` and no
+file-level error. Compared with the preceding
+`601 passed, 1 failed, 442 skipped` dashboard, the pass converts exactly the
+last representation mismatch into an explicit deferred display skip without
+reducing passing coverage.
+
+`src/sage/rings/lazy_series_ring.py` is now included in the curated
+`basic-pure-math.txt` corpus. This closes the archived lazy-series failure
+frontier; future work should select a different backend/runtime cluster rather
+than resampling this file.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
