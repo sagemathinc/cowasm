@@ -45643,6 +45643,47 @@ positive-dual `ValueError`. The output mismatches are now separate clusters:
 multiline sequence display, quotient-generator sign/selection, and one
 `an_element()` choice. `toric_lattice.py` remains outside the quiet corpus.
 
+Focused rational-kernel dispatch pass on 2026-07-11 UTC:
+
+The two remaining PARI-backed toric failures shared a matrix-backend dispatch
+bug. `RationalField` is a `NumberField`, so a generic dense matrix over `QQ`
+reached `_right_kernel_matrix_over_number_field()` before the existing generic
+field-kernel fallback. That path calls the intentionally incomplete cypari2
+object model, even though Sage's exact echelon-based kernel implementation is
+already sufficient for rational matrices.
+
+The WASI source patch now reserves the PARI kernel path for non-rational number
+fields. Rational matrices fall through to `_right_kernel_matrix_over_field()`,
+while true number fields retain their existing dispatch. This is a shared
+matrix-runtime fix rather than toric-specific metadata.
+
+The complete accumulated patch applies to a pristine archive of Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; its patched `matrix2.pyx`
+matches the generated build source byte for byte. A full Cython generation
+pass completed all 481 pending sources, and the WASM compile/link pass
+completed all 1,002 targets. A direct staged Node runtime probe then verified
+the generic rational kernel and both affected toric operations:
+
+```text
+[   1    0 -1/3]
+[   0    1 -2/3]
+Sublattice <N(1, 0, 1), N(0, 1, -1)>
+2-d lattice, quotient of 3-d lattice M by Sublattice <M(1, -1, -1)>
+toric-rational-kernel-ok
+```
+
+The probe checks `A * K.transpose() == 0`, saturation idempotence, and
+`Ns.dual()`. It therefore closes the two direct cypari2 failures at patched
+lines 682 and 1089 and the two dependent `Ns_sat` state failures at lines 683
+and 685. The broader standalone smoke stopped later with its status-77 runtime
+boundary: a Node/WASM bus error at the integer-lists smoke after the first 20
+import probes passed. Because that stop occurs before Electron resources are
+staged, this pass does not claim a refreshed SQLite whole-file count. The
+archived `267 passed, 19 failed, 3 skipped` dashboard remains the comparison
+baseline; the next provenance-correct full-file run should confirm the four
+targeted recoveries. The unrelated representation, `Cone`, and positive-dual
+generator clusters keep `toric_lattice.py` outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
