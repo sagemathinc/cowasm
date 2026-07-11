@@ -22591,6 +22591,43 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 +    # Keep basis sequences on one line, matching Sage's interactive display.
 +    return Sequence(vecs, universe=V, check=False, immutable=True, cr=False)
 
+diff --git a/src/sage/geometry/toric_lattice.py b/src/sage/geometry/toric_lattice.py
+--- a/src/sage/geometry/toric_lattice.py
++++ b/src/sage/geometry/toric_lattice.py
+@@ -1412,6 +1412,31 @@ class ToricLattice_quotient(FGP_Module_class):
+             assert len(gens) == 1
+             return (-gens[0],)
+         return gens
++
++    def smith_form_gens(self):
++        """
++        Return Smith form generators with a canonical ambient lift.
++
++        For a torsion-free quotient of rank one, prefer the first ambient
++        basis vector whose image is a generator.  This makes the choice
++        independent of the matrix backend's Smith transformation.
++        """
++        try:
++            return self._toric_smith_form_gens
++        except AttributeError:
++            pass
++        generators = FGP_Module_class.smith_form_gens.f(self)
++        if len(generators) == 1 and self.is_torsion_free():
++            generator = generators[0]
++            lift = generator.lift()
++            relations = self.W()
++            for basis_element in self.V().gens():
++                if (basis_element - lift in relations or
++                        basis_element + lift in relations):
++                    generators = (self(basis_element),)
++                    break
++        self._toric_smith_form_gens = generators
++        return generators
+-
++
+     # Should be overridden in derived classes.
+     Element = ToricLattice_quotient_element
+
 diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
 --- a/src/sage/matrix/matrix2.pyx
 +++ b/src/sage/matrix/matrix2.pyx

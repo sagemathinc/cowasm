@@ -45735,6 +45735,51 @@ the unavailable `Cone` namespace group and its state fallout, and one
 positive-dual generator semantic mismatch. `toric_lattice.py` therefore
 remains outside the quiet corpus.
 
+Focused rank-one quotient-generator normalization pass on 2026-07-11 UTC:
+
+The remaining toric quotient-coordinate failures came from another observable
+Smith-backend choice.  For a torsion-free rank-one quotient, the generic
+matrix backend selected the last ambient basis vector and the opposite
+coordinate orientation, while full Sage's backend selected the first ambient
+basis vector whose quotient image is primitive.  This changed `gens()`,
+element `vector()` coordinates, positive-direction handling, and dependent
+representations even though the quotient arithmetic was equivalent.
+
+The WASI source patch now overrides the toric quotient's Smith generators only
+for this rank-one torsion-free case.  It starts with the inherited Smith
+generator, scans ambient basis vectors in order, and selects the first vector
+equal to that generator up to a relation and sign.  Relation membership is
+used directly to avoid recursively asking the quotient for coordinates.  The
+implementation calls the inherited cached method's underlying function so its
+instance-level cache caller cannot shadow the toric normalization; the
+normalized result has its own cache.  Higher-rank and torsion quotients retain
+the generic FGP behavior.
+
+A focused smoke records `15 passed, 0 failed, 0 skipped` for the canonical
+generator, `an_element()`, both affected element vectors, positive-point and
+positive-dual-point orientation, and an unchanged non-toric FGP quotient.  The
+complete accumulated patch applies to a pristine archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the patched
+`toric_lattice.py` matches the make target's generated source.
+
+The provenance-correct one-file make-target dashboard is
+`.tmp/current-run/scheduled-2026-07-11-toric-canonical-make.sqlite3`:
+
+```text
+toric_lattice.py: 281 passed, 5 failed, 3 skipped
+```
+
+It records 289 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.  Compared with the preceding
+`275 passed, 11 failed, 3 skipped` dashboard, exactly six rank-one generator,
+coordinate, and orientation failures become passes without adding a skip.  A
+separate rank-two `Q.an_element()` display mismatch remains independent of the
+rank-one normalization.  The other four failures are the unavailable `Cone`
+namespace prompt and its dependent state fallout.  `toric_lattice.py` remains
+outside the quiet corpus; the `Cone` group is now the largest coherent
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
