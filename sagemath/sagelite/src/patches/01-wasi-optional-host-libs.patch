@@ -22539,3 +22539,12 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -308 +308 @@
 -            sage: s[1]
 +            sage: s[1]                                                                  # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -1889 +1889 @@
+-            sage: TestSuite(L).run()
++            sage: TestSuite(L).run()                                    # needs sage.libs.flint
+@@ -2739 +2739 @@
+-            sage: TestSuite(L).run(skip='_test_fraction_field')
++            sage: TestSuite(L).run(skip='_test_fraction_field')         # needs sage.libs.flint

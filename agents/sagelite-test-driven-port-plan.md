@@ -45448,6 +45448,44 @@ broad TestSuite outputs at patched lines 1920 and 2773 and the multivariate
 representation-format drift at patched line 3355. `lazy_series_ring.py`
 remains outside the quiet corpus.
 
+Focused lazy-series TestSuite FLINT-boundary pass on 2026-07-11 UTC:
+
+The two broad TestSuite failures both came from the same intentionally
+unavailable backend. The suites call each ring's `some_elements()` method;
+its rational lazy-series examples compute a polynomial gcd and select Sage's
+disabled FLINT integer-polynomial implementation. The WASI patch now marks
+only the two affected suite prompts as requiring `sage.libs.flint`. Their
+`LazyLaurentSeriesRing(ZZ, 't')` and `LazyPowerSeriesRing(ZZ, 't')`
+construction remains runnable, as do the following category checks and the
+suite coverage over other base rings.
+
+Focused `--line` reruns at patched lines 1920 and 2773 each record one
+`optional:sage.libs.flint` skip with no failure. Applying the complete
+accumulated patch to a clean local clone of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, including both new hunks
+at their expected generated-source lines.
+
+The direct complete-file run and clean-clone make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 601 passed, 1 failed, 442 skipped
+```
+
+The provenance-correct make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-testsuite/final-make.sqlite3`; it
+records 1,044 blocks under runner version 108 and the node profile, with
+Sagelite source/package commit
+`f575cf6224f749763d7c875229cbd684e5939e58` and no file-level error. Compared
+with the preceding `601 passed, 3 failed, 440 skipped` dashboard, the pass
+converts exactly the two targeted TestSuite failures into FLINT skips without
+reducing passing coverage.
+
+The only remaining failure is the multivariate finite-field representation
+format drift at patched line 3355: negative monomials render as parenthesized
+terms such as `+ (-q^3)` instead of upstream's subtraction form. This is
+separate from the FLINT boundary, so `lazy_series_ring.py` remains outside the
+quiet corpus pending that final cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
