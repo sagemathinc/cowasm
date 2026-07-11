@@ -22439,3 +22439,16 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
              sage: t = SR.var('t')
              sage: P = PseudoDifferentialOperatorRing(t)
              sage: TestSuite(P).run()
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -1923,2 +1923,2 @@
+-            sage: L = LazyLaurentSeriesRing(GF(5)['x, y'], 't')
+-            sage: TestSuite(L).run()
++            sage: L = LazyLaurentSeriesRing(GF(5)['x, y'], 't')                          # needs sage.libs.singular
++            sage: TestSuite(L).run()                                                    # needs sage.libs.singular
+@@ -3056,3 +3057,4 @@
++            sage: # needs sage.libs.singular
+             sage: R.<a,b,c> = PolynomialRing(ZZ)
+             sage: L = LazyPowerSeriesRing(ZZ, 'a,b,c')
+             sage: aa, bb, cc = L.gens()

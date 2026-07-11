@@ -45216,6 +45216,44 @@ clusters include the FLINT integer-polynomial boundary and lazy-series
 precision/output behavior, so `lazy_series_ring.py` remains outside the quiet
 corpus.
 
+Focused lazy-series direct Singular boundary pass on 2026-07-11 UTC:
+
+The finite-field multivariate Laurent `TestSuite` is nondeterministic. A
+focused rerun exposed only finite-field equality failures, while the preceding
+complete dashboard's same block included a direct
+`sage.rings.polynomial.plural` import trace during division. The WASI patch now
+marks both the `GF(5)['x, y']` ring construction and its TestSuite inline as
+requiring `sage.libs.singular`. Inline tags are intentional here: an initial
+standalone directive also propagated into the following valid `Zmod(6)` group,
+so the final scope preserves those three passing blocks.
+
+The multivariate integer fraction-field example failed while constructing
+`(1 + a + b) / (1 + a*b + c^3)`, before its two existing Singular-tagged
+conversion checks. A standalone `sage.libs.singular` directive now covers the
+stateful seven-block group from polynomial-ring setup through the dependent
+lazy-series equality.
+
+Focused reruns at final patched lines 1954 and 3095 record two and four
+intended Singular skips, respectively, with no failures. Rebuilding the full
+patched source from `/home/user/sagelite` applies every patch hunk cleanly and
+reproduces the checked `lazy_series_ring.py` byte for byte. The final direct
+run and the one-file make-target run agree:
+
+```text
+lazy_series_ring.py: 585 passed, 44 failed, 415 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-direct-singular/make.sqlite3`.
+Compared with the preceding `589 passed, 47 failed, 408 skipped` dashboard,
+this converts three direct or dependent failures and four setup passes into
+seven explicit Singular skips. The remaining failures are 33 output
+mismatches, nine `NotImplementedError`, and two `TypeError` rows, with no
+file-level error. The next coherent backend cluster is the nine direct FLINT
+integer-polynomial `NotImplementedError` rows; lazy-series precision and
+representation mismatches remain separate semantic work, so
+`lazy_series_ring.py` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
