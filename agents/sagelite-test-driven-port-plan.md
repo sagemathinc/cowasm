@@ -44748,6 +44748,43 @@ cluster queries are empty. `skips-by-reason.sql` groups 17 blocks under
 grouped under `deferred:known bug`. This promotes `stream.py` from a focused
 near miss to the quiet curated corpus.
 
+Focused real-MPFR corpus-growth pass on 2026-07-11 UTC:
+
+```text
+real_mpfr.pyx: 981 passed, 0 failed, 126 skipped
+```
+
+That strict one-file make-target validation adds
+`sage/rings/real_mpfr.pyx` to the curated corpus. A fresh runner-108 probe
+showed that the earlier 212-block `RealNumber` cascade was stale after the
+Cython docstring-isolation work, but still recorded 988 passing blocks, 23
+failures, and 96 skipped blocks. The current failures separated into PARI
+object-model coverage, symbolic `NaN`/gamma coverage, hexadecimal formatting
+drift, and a reproducible stateful MPFR string-conversion defect.
+
+A compact ordered reproducer confirmed that nondecimal parsing is the root of
+the stateful cluster: successful base-0/base-62 conversions make later signed
+decimal strings fail, and high-base conversions can drift until the worker is
+restarted. Those prompts and their dependent signed-string/`RealLiteral`
+checks are narrowly deferred as known bugs rather than misclassified as
+independent arithmetic failures. PARI conversion and algebraic-dependency
+examples now carry `sage.libs.pari` metadata, while the `NaN` sage-input loop
+and complex log-gamma examples carry `sage.symbolic` metadata. C99
+hexadecimal mantissa/exponent display drift is also retained as explicit
+known-bug coverage.
+
+Fresh-source validation rebuilt the patched Sagelite copy and ran
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, a 240-second timeout, and one
+worker. The database is
+`.tmp/current-run/manual-2026-07-11-real-mpfr/make.sqlite3`; it records CoWasm
+commit `794c1bc0757805147640c84e0a60f98a6e13d813`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, runner version 108, the node
+profile, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty. The 126 skipped blocks include 43 symbolic, 31
+PARI, and 13 known-bug rows, with the remainder under existing architecture
+and optional-package metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

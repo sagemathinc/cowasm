@@ -13,6 +13,7 @@ src/sage/rings/rational_field.py
 src/sage/rings/bernmm.pyx
 src/sage/rings/bernoulli_mod_p.pyx
 src/sage/rings/real_field.py
+src/sage/rings/real_mpfr.pyx
 src/sage/rings/real_mpfi.pyx
 src/sage/rings/real_double.pyx
 src/sage/rings/real_double_element_gsl.pyx
