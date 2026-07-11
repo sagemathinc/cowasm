@@ -44653,6 +44653,37 @@ block-failure and file-error cluster queries are empty, while
 `skips-by-reason.sql` records one file-level skip under the four intended
 backend requirements. The module remains outside the curated runnable corpus.
 
+Focused Taylor-stream dependency-boundary pass on 2026-07-11 UTC:
+
+The current `sage/data_structures/stream.py` dashboard still mixed a compact
+runtime dependency cluster into its broader semantic failures. Its
+`Stream_taylor` constructor imports `sage.symbolic.ring` even when the input is
+an ordinary polynomial, while symbolic function declarations require the same
+stripped symbolic surface. The archived focused database recorded 62 failed
+blocks, including 33 direct or dependent failures in these Taylor examples.
+
+The WASI source patch now propagates `# needs sage.symbolic` across the six
+contiguous Taylor doctest groups that exercise this constructor. Existing
+number-field annotations remain on the rational-function equality example,
+so the metadata continues to describe both boundaries where applicable.
+
+A clean patched-source rebuild with four Cython generation jobs restored the
+standalone Electron resources after an earlier interrupted build. The complete
+source patch applies cleanly in a fresh dry run. Focused direct validation now
+records:
+
+```text
+stream.py: 1210 passed, 29 failed, 170 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-11-stream/after-taylor.sqlite3`; it has no
+file-level errors and records runner version 108 under the node profile. The
+remaining failures are separate clusters around Singular-backed polynomial
+equation solving, symmetric-function startup/backend coverage, and stream
+cache/display semantics, so `stream.py` remains outside the curated quiet
+corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

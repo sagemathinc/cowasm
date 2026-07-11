@@ -516,7 +516,15 @@ diff -urN a/src/sage/stats/distributions/discrete_gaussian_lattice.py b/src/sage
 diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream.py
 --- a/src/sage/data_structures/stream.py
 +++ b/src/sage/data_structures/stream.py
-@@ -1179,5 +1179,5 @@
+@@ -1105,0 +1106 @@
++        sage: # needs sage.symbolic
+@@ -1130,0 +1132 @@
++            sage: # needs sage.symbolic
+@@ -1153,0 +1156 @@
++            sage: # needs sage.symbolic
+@@ -1173,0 +1177 @@
++            sage: # needs sage.symbolic
+@@ -1179,5 +1183,5 @@
 -            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)
 +            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)  # needs sage.rings.number_field
              sage: f == g
@@ -524,7 +532,7 @@ diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream
 -            sage: f == h
 +            sage: f == h  # needs sage.rings.number_field
              True
-@@ -1185,5 +1185,5 @@
+@@ -1185,5 +1189,5 @@
 -            sage: F(y) = cos(y)^2 + sin(y)^2 + y
 -            sage: G(y) = y + 1
 -            sage: f = Stream_taylor(F, True)
@@ -535,15 +543,19 @@ diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream
 +            sage: f = Stream_taylor(F, True)      # needs sage.symbolic
 +            sage: g = Stream_taylor(G, False)     # needs sage.symbolic
 +            sage: f == g                          # needs sage.symbolic
-@@ -3200,2 +3200,3 @@
+@@ -1204,0 +1209 @@
++            sage: # needs sage.symbolic
+@@ -1236,0 +1242 @@
++            sage: # needs sage.symbolic
+@@ -3200,2 +3207,3 @@
              sage: f = Stream_exact([2, 5, 7, 11], 1)
 +            sage: # needs sage.libs.ntl
              sage: P = PseudoDifferentialOperatorRing(polygen(GF(8), 'a'))
-@@ -3217,2 +3218,3 @@
+@@ -3217,2 +3225,3 @@
              sage: f = Stream_exact([2, 5, 7, 11], 1)
 +            sage: # needs sage.libs.ntl
              sage: P = PseudoDifferentialOperatorRing(polygen(GF(8), 'a'))
-@@ -3239,2 +3241,3 @@
+@@ -3239,2 +3248,3 @@
              sage: f = Stream_exact([2, 0, 7, 11], -1)
 +            sage: # needs sage.libs.ntl
              sage: P = PseudoDifferentialOperatorRing(polygen(GF(8)['t'], 'a'))
