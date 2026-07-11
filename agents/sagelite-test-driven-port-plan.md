@@ -45684,6 +45684,57 @@ baseline; the next provenance-correct full-file run should confirm the four
 targeted recoveries. The unrelated representation, `Cone`, and positive-dual
 generator clusters keep `toric_lattice.py` outside the quiet corpus.
 
+Focused basis-sequence display normalization pass on 2026-07-11 UTC:
+
+The first provenance-recorded whole-file rerun after the rational-kernel
+dispatch change confirms the four intended recoveries:
+
+```text
+toric_lattice.py: 271 passed, 15 failed, 3 skipped
+```
+
+This improves the preceding `267 passed, 19 failed, 3 skipped` dashboard by
+exactly the two direct saturation/dual operations and their two dependent
+state blocks. No PARI-backed kernel failure remains.
+
+The next coherent cluster was four basis-sequence display mismatches.
+`basis_seq()` creates a legacy `Sequence(..., cr=True)`, while full Sage's
+IPython pretty printer ignores that flag for interactive display. Sagelite
+uses CPython's display hook and therefore exposed the multiline legacy
+`_repr_` instead of the expected one-line basis. The WASI source patch now
+constructs basis sequences with `cr=False`, preserving their universe,
+immutability, and element semantics. Explicit `Sequence(cr=True)` calls retain
+their multiline `repr()` behavior.
+
+The complete accumulated patch applies successfully with the project's
+sequential `patch -p1` mechanism to a clean local clone of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. The make target then rebuilt its
+patched source copy from the developer checkout and completed the final
+one-file dashboard:
+
+```text
+toric_lattice.py: 275 passed, 11 failed, 3 skipped
+```
+
+The final database is
+`.tmp/current-run/scheduled-2026-07-11-toric-kernel-confirm/final.sqlite3`.
+It records 289 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the kernel-only
+dashboard, exactly the four targeted multiline basis displays become passes;
+there is no new failure or skip. A separate three-block scratch smoke records
+`3 passed, 0 failed, 0 skipped` for ambient and sublattice basis displays plus
+the preserved explicit multiline `Sequence(cr=True)` representation.
+
+Refreshing the standalone bundle completed all 429 pending Cython-generation
+targets with four jobs, all 1,002 WASM compile/link targets, installation, and
+41 packaged Node import probes. It staged a fresh Electron resource manifest,
+then reached the pre-existing status-77 corpus-candidate optional-run fixture
+blocker. The remaining toric failures are seven unrelated output mismatches,
+the unavailable `Cone` namespace group and its state fallout, and one
+positive-dual generator semantic mismatch. `toric_lattice.py` therefore
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

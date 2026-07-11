@@ -22580,6 +22580,17 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
              [0, 1, q,
               q + q^2 + q^3,
 
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -827,4 +827,6 @@ def basis_seq(V, vecs):
+     for z in vecs:
+         z.set_immutable()
+-    return Sequence(vecs, universe=V, check=False, immutable=True, cr=True)
++    # Sagelite uses CPython's display hook rather than IPython's pretty printer.
++    # Keep basis sequences on one line, matching Sage's interactive display.
++    return Sequence(vecs, universe=V, check=False, immutable=True, cr=False)
+
 diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
 --- a/src/sage/matrix/matrix2.pyx
 +++ b/src/sage/matrix/matrix2.pyx
