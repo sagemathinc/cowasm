@@ -44713,6 +44713,41 @@ output mismatches. This reduces the focused failure count from 29 to 13 while
 leaving `stream.py` outside the curated quiet corpus for those two remaining
 clusters.
 
+Focused stream implicit-equation boundary pass on 2026-07-11 UTC:
+
+The remaining 13 failures in the runner-108 stream dashboard shared two
+closely related causes. Six prompts directly reached the unavailable
+Singular-backed polynomial-equation solver, while five cache or representation
+checks were dependent fallout from those failed computations. The final two
+independent mismatches were nondeterministic object-address display and the
+process-global `FESDUMMY` variable counter.
+
+The WASI source patch now propagates `# needs sage.libs.singular` from the
+seven implicit-equation computation boundaries, including the
+pseudodifferential-operator representation that computes coefficients lazily.
+The object-list display remains runnable under `# random`, and the three
+dummy-variable-number assertions are deferred narrowly as `# known bug`
+instead of hiding their surrounding arithmetic setup.
+
+A fresh patched-source rebuild applied the complete WASI patch cleanly.
+Strict one-file make-target validation with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, a 180-second timeout, and one worker
+records:
+
+```text
+stream.py: 1190 passed, 0 failed, 219 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-11-stream-singular/final.sqlite3`; it
+records CoWasm commit `17197eb4a39adfc5105fe2c015ae2ee4084cca35`, Sagelite
+package commit `f575cf6224f749763d7c875229cbd684e5939e58`, runner version
+108, and a 100% non-skipped pass rate. The saved block- and file-failure
+cluster queries are empty. `skips-by-reason.sql` groups 17 blocks under
+`optional:sage.libs.singular`, while the three dummy-counter assertions are
+grouped under `deferred:known bug`. This promotes `stream.py` from a focused
+near miss to the quiet curated corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

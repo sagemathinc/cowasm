@@ -549,6 +549,39 @@ diff -urN a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream
 +            sage: # needs sage.symbolic
 @@ -1448,0 +1455 @@
 +            sage: # needs sage.combinat.sf
+@@ -1577 +1584,2 @@
++            sage: # needs sage.libs.singular
+             sage: A[1]
+@@ -1679 +1687,2 @@
++            sage: # needs sage.libs.singular
+             sage: C[6]
+@@ -1739 +1748 @@
+-            sage: C._input_streams
++            sage: C._input_streams  # random
+@@ -1780 +1789,2 @@
++            sage: # needs sage.libs.singular
+             sage: C[1]
+@@ -1936 +1946,2 @@
++            sage: # needs sage.libs.singular
+             sage: C[3]  # indirect doctest
+@@ -2019 +2030 @@
+-            sage: C._collect_equations(0)
++            sage: C._collect_equations(0)  # known bug - dummy variable numbering differs in Sagelite WASI profile
+@@ -2084 +2095 @@
+-            sage: C._cache
++            sage: C._cache  # known bug - dummy variable numbering differs in Sagelite WASI profile
+@@ -2086 +2097 @@
+-            sage: lin_coeffs
++            sage: lin_coeffs  # known bug - dummy variable numbering differs in Sagelite WASI profile
+@@ -2088 +2099,2 @@
++            sage: # needs sage.libs.singular
+             sage: C._solve_linear_equations_and_subs(lin_coeffs)
+@@ -2141 +2153,2 @@
++            sage: # needs sage.libs.singular
+             sage: C[3]  # indirect doctest
+@@ -3048 +3061,2 @@
++            sage: # needs sage.libs.singular
+             sage: X  # indirect doctest
 @@ -3200,2 +3207,3 @@
              sage: f = Stream_exact([2, 5, 7, 11], 1)
 +            sage: # needs sage.libs.ntl
