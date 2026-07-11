@@ -45332,6 +45332,44 @@ three pseudodifferential conversion failures, two early Dirichlet state
 mismatches, and one multivariate representation-format drift.
 `lazy_series_ring.py` remains outside the quiet corpus.
 
+Focused lazy Dirichlet symbolic-representation pass on 2026-07-11 UTC:
+
+The six failures in the `prod`, `sum`, and `polylogarithm` examples all
+constructed valid lazy Dirichlet series, but rendering their coefficients
+imported the unavailable `sage.symbolic.expression` module. The WASI patch now
+marks only those six representation prompts inline as requiring
+`sage.symbolic`. Their shared ring and polynomial setup remains runnable, and
+the adjacent non-symbolic Laurent and power-series examples are unaffected.
+
+Focused `--line` reruns at patched lines 1428, 1431, 1528, 4311, 4316, and
+4321 each record one intended symbolic skip with no failure. Rebuilding the
+WASI source from pristine Sagelite applies the complete accumulated patch and
+places all six directives at the expected generated-source lines.
+
+The direct complete-file run and the one-file make-target dashboard agree:
+
+```text
+lazy_series_ring.py: 601 passed, 8 failed, 435 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-11-lazy-dirichlet/make.sqlite3`; it records
+1,044 blocks under runner version 108 and the node profile, with no file-level
+error. Compared with the preceding `601 passed, 14 failed, 429 skipped`
+dashboard, this converts exactly the six targeted representation failures to
+six `sage.symbolic` skips without reducing passing coverage. The final 435
+skips include 94 rows carrying `sage.symbolic`; 91 of those have the plain
+optional symbolic tag, while two are also long-time tests and one also needs
+PARI.
+
+All eight remaining ordinary failures are recorded as output mismatches. The
+next coherent cluster is the three pseudodifferential inverse/product
+representations at patched lines 4390--4399, where coefficient conversion
+raises `TypeError: unable to convert (-4)*FESDUMMY_0 to a rational`. Separate
+remaining clusters are two early Dirichlet state mismatches, two broad
+TestSuite outputs, and one multivariate representation-format drift.
+`lazy_series_ring.py` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

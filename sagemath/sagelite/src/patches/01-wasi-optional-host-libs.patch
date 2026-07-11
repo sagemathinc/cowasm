@@ -22498,3 +22498,24 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -2619 +2618 @@
 -            sage: theta.map_coefficients(lambda c: c(z=z+1))
 +            sage: theta.map_coefficients(lambda c: c(z=z+1))            # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -1398 +1398 @@
+-            sage: D.prod(lambda p: (1+D(1, valuation=p)).inverse(), Primes())
++            sage: D.prod(lambda p: (1+D(1, valuation=p)).inverse(), Primes())  # needs sage.symbolic
+@@ -1401 +1401 @@
+-            sage: D.prod(lambda p: D(1, valuation=p), Primes(), add_one=True)
++            sage: D.prod(lambda p: D(1, valuation=p), Primes(), add_one=True)  # needs sage.symbolic
+@@ -1498 +1498 @@
+-            sage: D.sum(lambda p: D(1, valuation=p), Primes())
++            sage: D.sum(lambda p: D(1, valuation=p), Primes())           # needs sage.symbolic
+@@ -4263 +4263 @@
+-            sage: L.polylogarithm(z)
++            sage: L.polylogarithm(z)                                    # needs sage.symbolic
+@@ -4268 +4268 @@
+-            sage: L.polylogarithm(1)
++            sage: L.polylogarithm(1)                                    # needs sage.symbolic
+@@ -4273 +4273 @@
+-            sage: -L.polylogarithm(-1)
++            sage: -L.polylogarithm(-1)                                  # needs sage.symbolic
