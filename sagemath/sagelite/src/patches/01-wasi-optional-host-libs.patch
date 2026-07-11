@@ -22001,3 +22001,9 @@ diff --git a/src/sage/rings/complex_interval.pyx b/src/sage/rings/complex_interv
 @@ -2406 +2406 @@
 -        sage: ComplexIntervalFieldElement(10,10)
 +        sage: ComplexIntervalFieldElement(10,10)  # known bug
+diff --git a/src/sage/combinat/colored_permutations.py b/src/sage/combinat/colored_permutations.py
+--- a/src/sage/combinat/colored_permutations.py
++++ b/src/sage/combinat/colored_permutations.py
+@@ -2155 +2155 @@
+-        sage: TM.brauer_character()
++        sage: TM.brauer_character()  # needs sage.libs.ntl

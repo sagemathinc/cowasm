@@ -44904,6 +44904,44 @@ node profile, and a 100% non-skipped pass rate. The saved block- and file-error
 cluster queries are empty. A complete patch dry run against
 `/home/user/sagelite` also succeeds.
 
+Focused colored-permutation NTL crash-boundary pass on 2026-07-11 UTC:
+
+The archived frontier identified `sage/combinat/colored_permutations.py` as a
+file-level dynamic-link failure in `TabloidModule.brauer_character()`. A fresh
+full-file probe reproduced the same failure at line 2155 before any block rows
+could be persisted:
+
+```text
+LinkError: WebAssembly.Instance(): Import #9 "env"
+"_ZNK3NTL11ZZ_pContext7restoreEv": function import requires a callable
+```
+
+The WASI source patch now marks that single modular-character computation as
+`# needs sage.libs.ntl`, leaving the surrounding rational tabloid arithmetic
+and finite-field module construction runnable. With the crash boundary
+classified, a continuing full-file probe completes and records:
+
+```text
+colored_permutations.py: 412 passed, 125 failed, 27 skipped
+```
+
+The resulting database is
+`.tmp/current-run/scheduled-2026-07-11-colored-permutations/after-brauer-tag.sqlite3`.
+It has no file-level error and turns the previous crash-only row into an
+actionable block dashboard. The remaining failures form separate GAP/libgap
+setup and dependent-state clusters, led by missing
+`sage.groups.libgap_wrapper` and `sage.libs.gap.libgap`; the file therefore
+remains outside the curated quiet corpus for a later focused boundary pass.
+
+Fresh-source make-target validation rebuilt and patched the Sagelite source
+copy, then reproduced the same counts in
+`.tmp/current-run/scheduled-2026-07-11-colored-permutations/make.sqlite3`.
+That run records CoWasm commit
+`b673aa27a164c749367bb3871253bab36f4d949a`, Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, runner version 108, and no
+file-level error. The complete WASI patch also applies cleanly in a dry run
+against `/home/user/sagelite`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
