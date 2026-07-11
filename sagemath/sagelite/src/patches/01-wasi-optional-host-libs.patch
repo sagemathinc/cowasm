@@ -629,6 +629,14 @@ diff --git a/src/sage/modules/free_module_integer.py b/src/sage/modules/free_mod
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.modules.free_module
  """
+@@ -42,1 +43,0 @@
+-from sage.symbolic.constants import pi, e
+@@ -1089,3 +1089,5 @@
++        from sage.symbolic.constants import pi, e
++
+         if exact_form:
+             return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
+         return D**(1/r) * (r/(2*pi*e)).sqrt()
 diff --git a/src/sage/modules/free_module_morphism.py b/src/sage/modules/free_module_morphism.py
 --- a/src/sage/modules/free_module_morphism.py
 +++ b/src/sage/modules/free_module_morphism.py

@@ -45523,6 +45523,37 @@ reducing passing coverage.
 frontier; future work should select a different backend/runtime cluster rather
 than resampling this file.
 
+Focused toric-lattice eager-symbolic-import pass on 2026-07-11 UTC:
+
+The archived `sage/geometry/toric_lattice.py` dashboard still reproduced its
+previous `233 passed, 53 failed, 3 skipped` result under runner version 108.
+Its largest cluster was 25 `sage.symbolic.expression` import failures in
+otherwise integer quotient-lattice operations. Tracebacks showed that the
+common cause was not symbolic toric arithmetic: importing
+`sage.modules.free_module_integer` eagerly loaded symbolic constants `pi` and
+`e`, although those constants are used only by
+`IntegerLattice.gaussian_heuristic()`.
+
+The WASI source patch now imports `pi` and `e` locally in
+`gaussian_heuristic()`. This preserves the symbolic dependency of that method
+while allowing the integer free-module implementation to load without the
+stripped symbolic-expression backend. A complete focused file rerun records:
+
+```text
+toric_lattice.py: 245 passed, 41 failed, 3 skipped
+```
+
+The before and after databases are
+`.tmp/current-run/scheduled-2026-07-11-toric-lattice/before.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-11-toric-lattice/after-lazy-symbolics.sqlite3`.
+The change restores 12 passing blocks and removes the entire missing-symbolic-
+module cluster without adding skips. The remaining failures are separate
+clusters: 19 representation mismatches, ten quotient-coordinate failures that
+reach the unavailable generic-matrix `_clear_denom` path, two PARI saturation
+gaps, and dependent setup failures. `toric_lattice.py` remains outside the
+quiet corpus; the quotient-coordinate matrix path is the next coherent
+runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
