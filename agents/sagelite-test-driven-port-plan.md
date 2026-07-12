@@ -46330,6 +46330,53 @@ libSingular-era `NotImplementedError`.  The finite-field representation,
 `nth_root` conversion, and specialization-parent mismatches remain separate,
 so `multi_polynomial.pyx` stays outside the quiet corpus.
 
+Focused multivariate-polynomial Gaussian-GCD dependency pass on 2026-07-12
+UTC:
+
+The apparent runnable result at patched line 2159 was a false positive caused
+by stale doctest state. Its producer,
+`R.<x,y> = GaussianIntegers()[]`, is already marked as needing
+`sage.rings.number_field` and is skipped in the default browser profile. The
+untagged `x.gcd(x)` row therefore reused an unrelated earlier `x`; its displayed
+`x` did not prove Gaussian-integer polynomial GCD support.
+
+A focused default rerun before the fix made the state leak explicit: the
+producer recorded an `optional:sage.rings.number_field` skip and the target
+raised `NameError` in the fresh namespace. Enabling that optional feature did
+not make the example runnable because the stripped WASI `sage.all` namespace
+deliberately does not expose `GaussianIntegers`; both setup and target then
+recorded `NameError`. The source patch now gives `x.gcd(x)` the same focused
+number-field dependency metadata as its producer and preserves Sage's upstream
+exception expectation rather than claiming unsupported coverage.
+
+The final focused line-2159 rerun records exactly two intended
+`optional:sage.rings.number_field` skips, for setup and target, with no failure.
+The complete accumulated patch applies successfully to a clean archive of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte. The provenance-correct one-file make-target dashboard records:
+
+```text
+multi_polynomial.pyx: 467 passed, 3 failed, 189 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-gcd-runnable/make-final.sqlite3`. It
+records 659 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the preceding
+`467 passed, 4 failed, 188 skipped` dashboard, exactly the stale-state GCD row
+becomes an intended number-field skip; all genuine runnable results are
+unchanged.
+
+The remaining three failures are independent output/runtime mismatches. The
+smallest next runnable-coverage cleanup is patched line 903: Frobenius change
+of ring succeeds and the following round-trip equality passes, but the generic
+finite-field backend displays coefficients as `6*a + 5` and `6*a + 1` rather
+than the equal characteristic-seven forms `-a - 2` and `-a + 1`. The
+`nth_root` conversion and specialization-parent mismatches remain separate, so
+`multi_polynomial.pyx` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -22894,3 +22894,9 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 @@ -2144 +2144 @@ cdef class MPolynomial(CommutativePolynomial):
 -            sage: _.parent()
 +            sage: _.parent()                                                           # needs sage.libs.singular
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -2156 +2156 @@ cdef class MPolynomial(CommutativePolynomial):
+-            sage: x.gcd(x)
++            sage: x.gcd(x)                                                             # needs sage.rings.number_field
