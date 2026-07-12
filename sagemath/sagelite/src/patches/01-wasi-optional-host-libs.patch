@@ -22910,3 +22910,42 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 @@ -2156 +2156 @@ cdef class MPolynomial(CommutativePolynomial):
 -            sage: x.gcd(x)
 +            sage: x.gcd(x)                                                             # needs sage.rings.number_field
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -245,0 +246,8 @@
++
++def _isidentifier(value):
++    """Return whether ``value`` is a valid Sage variable identifier."""
++    from keyword import iskeyword
++    return (value not in ('exec', 'print')
++            and not iskeyword(value)
++            and value.isidentifier())
++
+@@ -349 +356,0 @@
+-        from sage.symbolic.ring import isidentifier
+@@ -359,2 +366 @@
+-        from sage.misc.latex import latex
+-        from sage.symbolic.ring import SR
++        from sage.misc.latex import latex, latex_variable_name
+@@ -365 +371 @@
+-                if not isidentifier(v) else (v,)
++                if not _isidentifier(v) else (v,)
+@@ -369 +375,5 @@
+-                latex_name = ', '.join(latex(SR(v)) for v in var if v)
++                if all(_isidentifier(v) for v in var):
++                    latex_name = ', '.join(latex_variable_name(v) for v in var if v)
++                else:
++                    from sage.symbolic.ring import SR
++                    latex_name = ', '.join(latex(SR(v)) for v in var if v)
+@@ -372 +382 @@
+-                if not isidentifier(v):
++                if not _isidentifier(v):
+@@ -2798 +2807,0 @@
+-        from sage.symbolic.ring import isidentifier
+@@ -2811 +2820 @@
+-                or isidentifier(str(self.exponent)):
++                or _isidentifier(str(self.exponent)):
+@@ -4606 +4615 @@
+-            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')
++            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')               # needs sage.rings.number_field

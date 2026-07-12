@@ -46489,6 +46489,43 @@ candidate/source-frontier fixtures now scope their source files and database
 subtractions to the assertions they exercise. Legacy databases without block
 status metadata retain aggregate-count compatibility.
 
+Focused asymptotic growth-group identifier boundary pass on 2026-07-12 UTC:
+
+The only unsuperseded file-error row left by the guarded dashboard audit was
+the historical `growth_group.py` crash at
+`GrowthGroup('(QQ_+)^x')`. On the current runtime the focused row no longer
+trapped, but it still failed because `Variable.__init__` imported the missing
+symbolic ring merely to validate and typeset the simple identifier `x`.
+
+The WASI source patch now uses Python's identifier/keyword checks and Sage's
+lightweight `latex_variable_name` path for simple variable names. Composite
+expressions retain the original symbolic parser, so this does not claim
+symbolic-expression coverage. The same helper replaces the second symbolic
+identifier import in monomial element display. The focused constructor row at
+patched line 4708 now passes.
+
+The full-file rerun then exposed the earlier cyclotomic number-field signature
+trap at patched line 4615. That one example now carries the focused
+`sage.rings.number_field` dependency metadata; the surrounding rational and
+complex factory coverage remains runnable. The final provenance-correct
+one-file make-target dashboard records:
+
+```text
+growth_group.py: 473 passed, 474 failed, 5 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-growth-group/make-provenance.sqlite3`.
+It records 952 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Unlike the archived timeout,
+memory-trap, and signature-mismatch dashboards, the file now completes and
+persists an actionable block frontier. The remaining failures are dominated
+by the genuine symbolic boundary: 181 direct missing
+`sage.symbolic.expression` rows plus dependent setup-name failures; 108
+independent output mismatches remain for later generic-backend investigation.
+`growth_group.py` therefore remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
