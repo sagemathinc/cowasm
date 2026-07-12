@@ -20669,6 +20669,15 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              True
          """
          return multi_derivative(self, args)
+@@ -505,7 +505,7 @@ cdef class MPolynomial(CommutativePolynomial):
+             {(0, 0, 1): 1}
+             sage: testR.<a,b,c> = PolynomialRing(QQ,3)
+             sage: id_ringA = ideal([a^2 - b, b^2 - c, c^2 - a])
+-            sage: id_ringB = ideal(id_ringA.gens()).change_ring(PolynomialRing(QQ,'c,b,a'))
++            sage: id_ringB = ideal(id_ringA.gens()).change_ring(PolynomialRing(QQ,'c,b,a'))  # needs sage.rings.polynomial.plural
+         """
+         if not self:
+             return {}
 @@ -907,18 +907,18 @@ cdef class MPolynomial(CommutativePolynomial):
 
          ::
@@ -20805,6 +20814,19 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 +            sage: g.parent()                                                           # needs sage.libs.ntl
              Multivariate Polynomial Ring in X, Y over Finite Field of size 3
          """
+@@ -1654,10 +1657,10 @@ cdef class MPolynomial(CommutativePolynomial):
+             sage: R.<x,y> = QQ[]
+             sage: p = (y^2 + 6)*(x - 1) - y*(x^2 + 1)
+             sage: q = (x^2 + 6)*(y - 1) - x*(y^2 + 1)
+-            sage: p.subresultants(q, y)
++            sage: p.subresultants(q, y)  # needs sage.rings.polynomial.plural
+             [2*x^6 - 22*x^5 + 102*x^4 - 274*x^3 + 488*x^2 - 552*x + 288,
+              -x^3 - x^2*y + 6*x^2 + 5*x*y - 11*x - 6*y + 6]
+-            sage: p.subresultants(q, x)
++            sage: p.subresultants(q, x)  # needs sage.rings.polynomial.plural
+             [2*y^6 - 22*y^5 + 102*y^4 - 274*y^3 + 488*y^2 - 552*y + 288,
+              x*y^2 + y^3 - 5*x*y - 6*y^2 + 6*x + 11*y - 6]
+         """
 @@ -1830,10 +1833,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
          ::
@@ -20849,6 +20871,15 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              True
              sage: R = RR['x,y,z']
              sage: f = R.random_element()
+@@ -2001,7 +2004,7 @@ cdef class MPolynomial(CommutativePolynomial):
+         TESTS::
+
+             sage: R.<x,y> = ZZ[]
+-            sage: x.inverse_mod(x*y-1)
++            sage: x.inverse_mod(x*y-1)  # needs sage.rings.polynomial.plural
+             y
+         """
+         P = self.parent()
 @@ -2129,12 +2132,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
          EXAMPLES::
@@ -20892,6 +20923,18 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              pass
 
          gens = self.parent().gens()
+@@ -2228,9 +2231,9 @@ cdef class MPolynomial(CommutativePolynomial):
+             sage: S.<z,t> = R[]
+             sage: T.<u,v> = S[]
+             sage: p = (1 + x*u + y + v) * (1 + z*t)
+-            sage: (p**3).nth_root(3)
++            sage: (p**3).nth_root(3)  # needs sage.rings.polynomial.plural
+             (x*z*t + x)*u + (z*t + 1)*v + (y + 1)*z*t + y + 1
+-            sage: (p**3).nth_root(3).parent() is p.parent()
++            sage: (p**3).nth_root(3).parent() is p.parent()  # needs sage.rings.polynomial.plural
+             True
+             sage: ((1+x+z+t)**2).nth_root(3)
+             Traceback (most recent call last):
 diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
 --- a/src/sage/rings/polynomial/polynomial_element.pyx
 +++ b/src/sage/rings/polynomial/polynomial_element.pyx

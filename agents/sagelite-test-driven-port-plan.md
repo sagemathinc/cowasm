@@ -45954,6 +45954,47 @@ with their dependent-state rows; fast-callable wrappers, PARI-backed
 Lorentzian checks, startup-name drift, and unrelated output mismatches remain
 independent. `multi_polynomial.pyx` stays outside the quiet corpus.
 
+Focused multivariate-polynomial plural-boundary pass on 2026-07-12 UTC:
+
+The six targeted prompts independently reached the unavailable
+`sage.rings.polynomial.plural` backend through ideal ring changes,
+subresultants, integer-polynomial modular inversion, and nested-polynomial
+root extraction. Their surrounding rational and integer polynomial setup is
+runnable, and the adjacent non-perfect-power diagnostic remains an independent
+output mismatch, so broad doctest-region directives would have hidden useful
+coverage.
+
+The WASI source patch now gives each of the six backend operations a narrow
+`# needs sage.rings.polynomial.plural` tag. Focused `--line` reruns at patched
+lines 508, 1657, 1660, 2004, 2231, and 2233 each record exactly one intended
+optional skip with no failure. The complete accumulated patch applies
+successfully to a pristine archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte.
+
+The direct full-file run and provenance-correct one-file make target agree:
+
+```text
+multi_polynomial.pyx: 453 passed, 27 failed, 179 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-multi-plural/make.sqlite3`. It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `453 passed, 33 failed, 173 skipped` dashboard,
+exactly the six targeted failures become
+`optional:sage.rings.polynomial.plural` skips; runnable pass coverage and all
+other failures are unchanged.
+
+The remaining 27 failures are independent clusters. The next coherent
+backend boundary is the five-block fast-callable interpreter group at lines
+317--328: one `wrapper_py` import failure, its dependent `vf` row, and three
+`wrapper_el` import failures. The Singular CRT setup group, PARI-backed
+Lorentzian checks, startup-name drift, and output mismatches remain separate.
+`multi_polynomial.pyx` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
