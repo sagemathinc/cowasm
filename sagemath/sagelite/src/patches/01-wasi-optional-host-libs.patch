@@ -22960,6 +22960,24 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -2811 +2820 @@
 -                or isidentifier(str(self.exponent)):
 +                or _isidentifier(str(self.exponent)):
+@@ -3051,6 +3060,6 @@
+-            sage: G = GrowthGroup('log(x)^ZZ')
+-            sage: lx = G(raw_element=1); lx
++            sage: G = GrowthGroup('log(x)^ZZ')                                  # needs sage.symbolic
++            sage: lx = G(raw_element=1); lx                                     # needs sage.symbolic
+             log(x)
+-            sage: rp = lx._rpow_element_('e'); rp
++            sage: rp = lx._rpow_element_('e'); rp                               # needs sage.symbolic
+             x
+-            sage: rp.parent()
++            sage: rp.parent()                                                   # needs sage.symbolic
+@@ -3061,3 +3070,3 @@
+-            sage: G = GrowthGroup('log(x)^SR')
+-            sage: lx = G('log(x)')
+-            sage: lx._rpow_element_(2)
++            sage: G = GrowthGroup('log(x)^SR')                                  # needs sage.symbolic
++            sage: lx = G('log(x)')                                              # needs sage.symbolic
++            sage: lx._rpow_element_(2)                                          # needs sage.symbolic
 @@ -4606 +4615 @@
 -            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')
 +            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')               # needs sage.rings.number_field

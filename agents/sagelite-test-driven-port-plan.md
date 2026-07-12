@@ -46564,6 +46564,37 @@ mismatches, eight `AttributeError` rows, five `ValueError` rows, and two
 the next focused pass should distinguish the 48 surviving output mismatches
 from downstream symbolic setup failures before changing backend behavior.
 
+Focused logarithmic-monomial dependency pass on 2026-07-12 UTC:
+
+The `_rpow_element_` examples for `log(x)^ZZ` and `log(x)^SR` construct
+composite symbolic variables. Without the symbolic package, the first
+constructor failed while its dependent prompts continued against stale state,
+producing misleading `x`, parent, and missing-name diagnostics. This was not a
+generic growth-group arithmetic defect.
+
+The WASI source patch now gives all seven prompts in those two contiguous
+examples the focused `sage.symbolic` dependency metadata. The focused
+line-3061 rerun records one symbolic skip with no failure. The complete patch
+applies successfully to a pristine clone of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the provenance-correct
+one-file make-target dashboard records:
+
+```text
+growth_group.py: 586 passed, 354 failed, 12 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-growth-log-symbolic/results/make.sqlite3`.
+It records 952 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared by block index with the
+preceding `586 passed, 361 failed, 5 skipped` dashboard, exactly seven failed
+rows become intended symbolic skips; every prior pass and skip is unchanged.
+The surviving output-mismatch count is 45. `growth_group.py` remains outside
+the quiet corpus; the next focused pass should classify the direct composite
+`Variable` parser rows near the start of the file separately from later
+symbolic setup cascades.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
