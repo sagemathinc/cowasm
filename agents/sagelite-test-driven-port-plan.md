@@ -46411,6 +46411,42 @@ conversion in `nth_root` at patched line 2235 and the specialization-parent
 shape at patched line 2331. `multi_polynomial.pyx` remains outside the quiet
 corpus.
 
+Focused multivariate-polynomial nested-`nth_root` dependency pass on
+2026-07-12 UTC:
+
+The failure at patched line 2235 was the third row of the same nested
+polynomial-ring example whose two successful `nth_root` rows already declare
+the `sage.rings.polynomial.plural` dependency. In the browser profile, the
+generic backend cannot convert the flattened multivariate polynomial into the
+nested univariate ring and raises `TypeError` before it can establish Sage's
+documented `ValueError` for a non-power. Changing the expected exception would
+therefore have claimed support for an unavailable conversion path.
+
+The WASI source patch now gives the final non-power row the same focused
+Plural metadata as the rest of the operation. Its ring construction remains
+runnable. A focused line-2235 rerun records exactly one
+`optional:sage.rings.polynomial.plural` skip with no failure.
+
+The complete accumulated patch applies successfully to a clean archive of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`. The
+provenance-correct one-file make-target dashboard records:
+
+```text
+multi_polynomial.pyx: 468 passed, 1 failed, 190 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-nth-root/make-final.sqlite3`. It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `468 passed, 2 failed, 189 skipped` dashboard,
+exactly the unsupported nested-`nth_root` row becomes an intended Plural skip;
+all runnable results are unchanged.
+
+The only remaining failure is the specialization-parent shape at patched line
+2331. `multi_polynomial.pyx` remains outside the quiet corpus pending that
+independent investigation.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

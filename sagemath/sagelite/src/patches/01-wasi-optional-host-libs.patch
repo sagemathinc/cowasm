@@ -20933,7 +20933,8 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 -            sage: (p**3).nth_root(3).parent() is p.parent()
 +            sage: (p**3).nth_root(3).parent() is p.parent()  # needs sage.rings.polynomial.plural
              True
-             sage: ((1+x+z+t)**2).nth_root(3)
+-            sage: ((1+x+z+t)**2).nth_root(3)
++            sage: ((1+x+z+t)**2).nth_root(3)  # needs sage.rings.polynomial.plural
              Traceback (most recent call last):
 @@ -2882,3 +2890,4 @@ cdef class MPolynomial(CommutativePolynomial):
 +            sage: # needs sage.libs.singular
