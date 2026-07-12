@@ -46595,6 +46595,39 @@ the quiet corpus; the next focused pass should classify the direct composite
 `Variable` parser rows near the start of the file separately from later
 symbolic setup cascades.
 
+Focused asymptotic composite-variable dependency pass on 2026-07-12 UTC:
+
+`Variable.extract_variable_names` imported the symbolic ring before handling
+even the empty string or a plain identifier.  The WASI patch now returns those
+two lightweight cases directly, so `extract_variable_names('')` and
+`extract_variable_names('x')` remain runnable without broadening the symbolic
+surface.  Composite expressions still use Sage's symbolic parser; their direct
+constructor, validation, variable-extraction, and substitution doctests now
+carry focused `sage.symbolic` metadata instead of failing through a missing
+`sage.symbolic.expression` import.
+
+The complete accumulated patch applies successfully to the pinned Sagelite
+source.  A clean standalone rebuild completes through parallel Cython
+generation, WASI compile/install, the side-module audit, Node imports, SQLite
+doctest helpers, and staged plus relocated Electron-resource probes.  The
+provenance-correct one-file make-target dashboard records:
+
+```text
+growth_group.py: 588 passed, 319 failed, 45 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-growth-variable/make.sqlite3`.  It
+records 952 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.  Compared by block index with the
+preceding `586 passed, 354 failed, 12 skipped` dashboard, exactly two failed
+rows become passes and 33 failed rows become intended symbolic skips; all 586
+prior passes and 12 prior skips are unchanged.  The surviving output-mismatch
+count falls from 45 to 37.  `growth_group.py` remains outside the quiet corpus;
+the next focused pass should separate the remaining logarithm-operation
+diagnostics near lines 812--1012 from downstream symbolic setup state.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

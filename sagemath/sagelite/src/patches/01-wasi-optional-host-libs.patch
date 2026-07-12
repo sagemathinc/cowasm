@@ -22981,3 +22981,113 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4606 +4615 @@
 -            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')
 +            sage: ExponentialGrowthGroup.factory(CyclotomicField(3), 'n')               # needs sage.rings.number_field
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -289 +289 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable(('x', 'log(y)')); repr(v), v.variable_names()
++        sage: v = Variable(('x', 'log(y)')); repr(v), v.variable_names()         # needs sage.symbolic
+@@ -291 +291 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable(('x', 'log(x)')); repr(v), v.variable_names()
++        sage: v = Variable(('x', 'log(x)')); repr(v), v.variable_names()         # needs sage.symbolic
+@@ -298 +298 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable('log(x)'); repr(v), v.variable_names()
++        sage: v = Variable('log(x)'); repr(v), v.variable_names()                # needs sage.symbolic
+@@ -300 +300 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable('log(log(x))'); repr(v), v.variable_names()
++        sage: v = Variable('log(log(x))'); repr(v), v.variable_names()           # needs sage.symbolic
+@@ -310 +310 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable('e^x', ignore=('e',)); repr(v), v.variable_names()
++        sage: v = Variable('e^x', ignore=('e',)); repr(v), v.variable_names()    # needs sage.symbolic
+@@ -315 +315 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable('(e^n)', ignore=('e',)); repr(v), v.variable_names()
++        sage: v = Variable('(e^n)', ignore=('e',)); repr(v), v.variable_names()  # needs sage.symbolic
+@@ -317 +317 @@ class Variable(CachedRepresentation, SageObject):
+-        sage: v = Variable('(e^(n*log(n)))', ignore=('e',)); repr(v), v.variable_names()
++        sage: v = Variable('(e^(n*log(n)))', ignore=('e',)); repr(v), v.variable_names()  # needs sage.symbolic
+@@ -334 +334 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('(:-)')
++            sage: Variable('(:-)')                                              # needs sage.symbolic
+@@ -486 +486 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('log(x)').variable_names()
++            sage: Variable('log(x)').variable_names()                           # needs sage.symbolic
+@@ -502 +502 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('log(x)').is_monomial()
++            sage: Variable('log(x)').is_monomial()                              # needs sage.symbolic
+@@ -536 +536 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('exp(x)')
++            sage: Variable.extract_variable_names('exp(x)')                     # needs sage.symbolic
+@@ -538 +538 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('sin(cos(ln(x)))')
++            sage: Variable.extract_variable_names('sin(cos(ln(x)))')            # needs sage.symbolic
+@@ -543 +543 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('log(77w)')
++            sage: Variable.extract_variable_names('log(77w)')                   # needs sage.symbolic
+@@ -545 +545 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('log(x')
++            sage: Variable.extract_variable_names('log(x')                      # needs sage.symbolic
+@@ -549 +549 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('x)')
++            sage: Variable.extract_variable_names('x)')                         # needs sage.symbolic
+@@ -553 +553 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('log)x(')
++            sage: Variable.extract_variable_names('log)x(')                     # needs sage.symbolic
+@@ -557 +557 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('log(x)+y')
++            sage: Variable.extract_variable_names('log(x)+y')                   # needs sage.symbolic
+@@ -559 +559 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('icecream(summer)')
++            sage: Variable.extract_variable_names('icecream(summer)')           # needs sage.symbolic
+@@ -564 +564 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a + b')
++            sage: Variable.extract_variable_names('a + b')                      # needs sage.symbolic
+@@ -566 +566 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a+b')
++            sage: Variable.extract_variable_names('a+b')                        # needs sage.symbolic
+@@ -568 +568 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a +b')
++            sage: Variable.extract_variable_names('a +b')                       # needs sage.symbolic
+@@ -570 +570 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('+a')
++            sage: Variable.extract_variable_names('+a')                         # needs sage.symbolic
+@@ -572 +572 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a+')
++            sage: Variable.extract_variable_names('a+')                         # needs sage.symbolic
+@@ -576 +576 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('b!')
++            sage: Variable.extract_variable_names('b!')                         # needs sage.symbolic
+@@ -578 +578 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('-a')
++            sage: Variable.extract_variable_names('-a')                         # needs sage.symbolic
+@@ -580 +580 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a*b')
++            sage: Variable.extract_variable_names('a*b')                        # needs sage.symbolic
+@@ -582 +582 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('2^q')
++            sage: Variable.extract_variable_names('2^q')                        # needs sage.symbolic
+@@ -584 +584 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('77')
++            sage: Variable.extract_variable_names('77')                         # needs sage.symbolic
+@@ -589 +589 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable.extract_variable_names('a + (b + c) + d')
++            sage: Variable.extract_variable_names('a + (b + c) + d')            # needs sage.symbolic
+@@ -592,4 +592,6 @@ class Variable(CachedRepresentation, SageObject):
+-        from sage.symbolic.ring import SR
+         if s == '':
+             return ()
++        if _isidentifier(s):
++            return (s,)
++        from sage.symbolic.ring import SR
+         return tuple(str(s) for s in SR(s).variables())
+@@ -599 +601 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('x^2')._substitute_({'x': SR.var('z')})
++            sage: Variable('x^2')._substitute_({'x': SR.var('z')})               # needs sage.symbolic
+@@ -601 +603 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: _.parent()
++            sage: _.parent()                                                     # needs sage.symbolic
+@@ -606 +608 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('1/x')._substitute_({'x': 'z'})
++            sage: Variable('1/x')._substitute_({'x': 'z'})                       # needs sage.symbolic
+@@ -613 +615 @@ class Variable(CachedRepresentation, SageObject):
+-            sage: Variable('1/x')._substitute_({'x': 0})
++            sage: Variable('1/x')._substitute_({'x': 0})                         # needs sage.symbolic
