@@ -655,6 +655,15 @@ diff --git a/src/sage/rings/asymptotic/misc.py b/src/sage/rings/asymptotic/misc.
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.symbolic sage.rings.asymptotic
  r"""
+@@ -152,1 +153,0 @@
+-    from sage.symbolic.ring import SR
+@@ -159,1 +159,1 @@
+-        abbreviations = {ZZ: 'ZZ', QQ: 'QQ', SR: 'SR',
++        abbreviations = {ZZ: 'ZZ', QQ: 'QQ',
+@@ -167,0 +168,3 @@
++        from sage.symbolic.ring import SR
++        if P is SR:
++            return 'SR'
 diff --git a/src/sage/rings/function_field/derivations_polymod.py b/src/sage/rings/function_field/derivations_polymod.py
 --- a/src/sage/rings/function_field/derivations_polymod.py
 +++ b/src/sage/rings/function_field/derivations_polymod.py
@@ -22941,6 +22950,11 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -372 +382 @@
 -                if not isidentifier(v):
 +                if not _isidentifier(v):
+@@ -378,2 +388,3 @@
++                    from sage.symbolic.ring import SR
+                     latex_name = latex(SR(var_repr))
+-                except (TypeError, ValueError):
++                except (ModuleNotFoundError, TypeError, ValueError):
 @@ -2798 +2807,0 @@
 -        from sage.symbolic.ring import isidentifier
 @@ -2811 +2820 @@

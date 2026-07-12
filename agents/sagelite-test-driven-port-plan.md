@@ -46526,6 +46526,44 @@ by the genuine symbolic boundary: 181 direct missing
 independent output mismatches remain for later generic-backend investigation.
 `growth_group.py` therefore remains outside the quiet corpus.
 
+Focused asymptotic parent-representation pass on 2026-07-12 UTC:
+
+The largest non-symbolic output-mismatch cluster came from
+`parent_to_repr_short`, which imported `sage.symbolic.ring.SR` unconditionally
+before abbreviating ordinary parents such as `ZZ`, `QQ`, real and complex
+fields, and their polynomial rings. The import made otherwise working growth
+groups fail only when their parent or element was displayed.
+
+The WASI patch now handles the supported numeric abbreviations first and
+imports `SR` only for the symbolic-parent fallback. Symbolic parents keep the
+same behavior when the symbolic package is present. The newly reachable
+Cartesian-product constructors also exposed a latent custom-variable display
+bug from the preceding identifier pass: that branch referenced `SR` without a
+local import. It now attempts symbolic LaTeX parsing when available and uses
+the existing plain-string LaTeX fallback when the symbolic module is absent.
+
+The provenance-correct one-file make-target dashboard records:
+
+```text
+growth_group.py: 586 passed, 361 failed, 5 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-growth-repr/make-final.sqlite3`. It records
+952 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared by block index with the preceding `473 passed, 474 failed, 5 skipped`
+dashboard, exactly 113 failed rows become passes and no prior pass or skip
+regresses. Sixty-five rows are direct numeric-parent representation wins and
+48 more are product/custom-display rows unlocked by the fallback fix.
+
+The remaining failures are still dominated by the genuine symbolic boundary:
+151 `NameError` rows and 147 direct `ModuleNotFoundError` rows, plus 48 output
+mismatches, eight `AttributeError` rows, five `ValueError` rows, and two
+`TypeError` rows. `growth_group.py` therefore remains outside the quiet corpus;
+the next focused pass should distinguish the 48 surviving output mismatches
+from downstream symbolic setup failures before changing backend behavior.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
