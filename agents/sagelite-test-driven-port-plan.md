@@ -46045,6 +46045,45 @@ backend boundary is the four-row Singular CRT setup group at patched lines
 the remaining output mismatches stay separate, so `multi_polynomial.pyx`
 remains outside the quiet corpus.
 
+Focused multivariate-polynomial Singular CRT boundary pass on 2026-07-12 UTC:
+
+The four-row CRT group starts by explicitly requesting the Singular
+multivariate-polynomial implementation.  That constructor imports
+`sage.rings.polynomial.multi_polynomial_libsingular`, which is intentionally
+disabled because the browser profile does not ship libSingular.  The following
+three rows depend entirely on the missing `R`, `x`, and `f` setup, so treating
+their `NameError` results as separate failures overstated runnable coverage.
+
+The WASI source patch now places a standalone `# needs sage.libs.singular`
+directive immediately before the constructor.  The runner propagates that
+dependency through the contiguous CRT group.  A focused setup rerun records
+one intended optional skip with no failure, and the complete accumulated patch
+applies successfully to a pristine archive of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.  Its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte.
+
+The provenance-correct one-file make-target dashboard records:
+
+```text
+multi_polynomial.pyx: 458 passed, 18 failed, 183 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-singular-crt/make.sqlite3`.  It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `458 passed, 22 failed, 179 skipped` dashboard,
+exactly the Singular constructor and its three dependent rows become
+`optional:sage.libs.singular` skips; runnable pass coverage and all other
+failures are unchanged.
+
+The remaining 18 failures are independent clusters.  The next coherent group
+is the four-row startup namespace drift at patched lines 2084--2087:
+`random_vector` is absent, followed by three dependent name failures.  The two
+PARI-backed Lorentzian checks and the remaining output mismatches stay
+separate, so `multi_polynomial.pyx` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

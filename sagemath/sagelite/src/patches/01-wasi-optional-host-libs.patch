@@ -20935,6 +20935,11 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              True
              sage: ((1+x+z+t)**2).nth_root(3)
              Traceback (most recent call last):
+@@ -2882,3 +2890,4 @@ cdef class MPolynomial(CommutativePolynomial):
++            sage: # needs sage.libs.singular
+             sage: R.<x> = PolynomialRing(QQ, implementation="singular")
+             sage: f = R(3)
+             sage: f.crt(5, x-1, x-2) % ((x-1)*(x-2))
 diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
 --- a/src/sage/rings/polynomial/polynomial_element.pyx
 +++ b/src/sage/rings/polynomial/polynomial_element.pyx
