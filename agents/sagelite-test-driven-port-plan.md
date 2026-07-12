@@ -46291,6 +46291,45 @@ example is explicitly Singular-dependent, but its `_.parent()` result row is
 not yet covered by that metadata and runs against stale underscore state.
 `multi_polynomial.pyx` remains outside the quiet corpus.
 
+Focused multivariate-polynomial GCD parent boundary pass on 2026-07-12 UTC:
+
+The failure at patched line 2152 was not an independent polynomial operation.
+It inspects the parent of `_`, whose intended value is produced by the
+immediately preceding Singular-dependent `gcd(p, q)` example.  Because that
+example is skipped in the browser profile, `_` retained an unrelated Boolean
+result and the dependent row raised `AttributeError`.
+
+The WASI source patch now gives the `_.parent()` row the same focused
+`sage.libs.singular` dependency metadata as its producer.  The surrounding
+polynomial-ring construction remains runnable, and no broader method or
+docstring coverage is hidden.  A focused line-2152 rerun records exactly one
+`optional:sage.libs.singular` skip with no failure.
+
+The complete accumulated patch applies successfully to a clean `git archive`
+of Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte.  The provenance-correct one-file make-target dashboard records:
+
+```text
+multi_polynomial.pyx: 467 passed, 4 failed, 188 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-gcd-parent/make.sqlite3`.  It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `467 passed, 5 failed, 187 skipped` dashboard,
+exactly the dependent underscore-result failure becomes an intended Singular
+skip; runnable pass coverage and all other results are unchanged.
+
+The remaining four failures are independent output/runtime mismatches.  The
+smallest next runnable-coverage cleanup is patched line 2159: the generic
+backend successfully computes `x.gcd(x)` over the Gaussian-integer coefficient
+ring and returns `x`, while the upstream doctest still expects the
+libSingular-era `NotImplementedError`.  The finite-field representation,
+`nth_root` conversion, and specialization-parent mismatches remain separate,
+so `multi_polynomial.pyx` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
