@@ -22820,3 +22820,27 @@ diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
          if not include_zero_rows:
              i = H.nrows() - 1
              while H.row(i) == 0:
+diff --git a/src/sage/ext/interpreters/meson.build b/src/sage/ext/interpreters/meson.build
+--- a/src/sage/ext/interpreters/meson.build
++++ b/src/sage/ext/interpreters/meson.build
+@@ -69,3 +69,12 @@ interpreters_dep = declare_dependency(
++interpreter_dependencies = {
++  'wrapper_cc': [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
++  'wrapper_cdf': [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
++  'wrapper_el': [py_dep, cysignals],
++  'wrapper_py': [py_dep, cysignals],
++  'wrapper_rdf': [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
++  'wrapper_rr': [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
++}
++
+ foreach name, pyx : extension_data
+   py.extension_module(
+     name,
+@@ -73,6 +82,6 @@ foreach name, pyx : extension_data
+     subdir: 'sage/ext/interpreters',
+     install: true,
+     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
+-    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
++    dependencies: interpreter_dependencies[name],
+   )
+ endforeach

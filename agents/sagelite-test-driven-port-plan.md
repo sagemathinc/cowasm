@@ -45995,6 +45995,56 @@ backend boundary is the five-block fast-callable interpreter group at lines
 Lorentzian checks, startup-name drift, and output mismatches remain separate.
 `multi_polynomial.pyx` stays outside the quiet corpus.
 
+Focused fast-callable interpreter runtime pass on 2026-07-12 UTC:
+
+The five-block cluster at patched lines 317--328 was a build-graph defect,
+not an optional mathematical backend.  Sagelite's Meson target gave all six
+generated interpreter wrappers one shared dependency list containing `mpc`.
+CoWasm intentionally exposes MPC as a disabled dependency, so Meson silently
+disabled even `wrapper_py` and `wrapper_el`, although neither generated
+extension uses MPC.
+
+The WASI source patch now assigns dependencies per interpreter.  The complex,
+real/complex double, and MPFR wrappers retain their original dependency set
+and remain disabled with MPC, while the generic Python-object and Sage-element
+wrappers build from only Python and cysignals.  A clean standalone build grew
+from 1,002 to 1,006 Meson compile/link steps and installed exactly:
+
+```text
+wrapper_py.cpython-314-wasm32-wasi.so
+wrapper_el.cpython-314-wasm32-wasi.so
+```
+
+The standalone smoke script now exercises both interpreters through
+`fast_callable(...)` and `fast_float(...).op_list()`.  The focused smoke and
+the full file dashboard confirm that generic callable evaluation and all three
+fast-float operation-list examples work.  The full-file result is:
+
+```text
+multi_polynomial.pyx: 458 passed, 22 failed, 179 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-fast-callable/full.sqlite3`.  Compared
+with the preceding `453 passed, 27 failed, 179 skipped` dashboard, exactly the
+five targeted failures become passes; skip coverage is unchanged and there is
+no file-level error.  The relevant rows at lines 317, 320, 324, 326, and 328
+all record `passed`.
+
+The clean standalone build, install, side-module audit, and runtime import
+phases succeeded.  Its broader shell smoke later reached the pre-existing
+candidate-helper guard
+`doctest-corpus-candidates could not report an opt-in optional run outside
+strict mode`; the make wrapper treats that recorded status-77 follow-up as a
+nonfatal blocked probe.  This is independent of the interpreter build and the
+focused runtime validation above.
+
+The remaining 22 failures are independent clusters.  The next coherent
+backend boundary is the four-row Singular CRT setup group at patched lines
+2890--2894.  Startup `random_vector` drift, PARI-backed Lorentzian checks, and
+the remaining output mismatches stay separate, so `multi_polynomial.pyx`
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

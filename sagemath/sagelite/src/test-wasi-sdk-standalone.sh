@@ -1348,6 +1348,18 @@ assert h.subs({a: 1, b: 2, c: 3}) == QQ(225)
 assert h.derivative(c).subs({a: 1, b: 2, c: 3}) == QQ(90)
 assert (h - (a + 2*b + 3*c + 1)**2).is_zero()
 print('sagelite-node-ok multivariate polynomial smoke')"
+run_node_import "fast callable interpreter smoke" "from sage.all import QQ, PolynomialRing
+from sage.ext.fast_callable import fast_callable
+from sage.ext.fast_eval import fast_float
+K = PolynomialRing(QQ, ('x', 'y', 'z'))
+x, y, z = K.gens()
+zero = K(0)
+compiled = fast_callable(zero)
+assert compiled(0, 0, 0) == QQ(0)
+assert fast_float(K(0)).op_list() == [('load_const', 0.0), 'return']
+assert fast_float(K(17)).op_list() == [('load_const', 0.0), ('load_const', 17.0), 'add', 'return']
+assert fast_float(y).op_list() == [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 1), ('ipow', 1), 'mul', 'add', 'return']
+print('sagelite-node-ok fast callable interpreter smoke')"
 run_node_import "Laurent polynomial smoke" "from sage.all import QQ, LaurentPolynomialRing
 R = LaurentPolynomialRing(QQ, 't')
 t = R.gen()
