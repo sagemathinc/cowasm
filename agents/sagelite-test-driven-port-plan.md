@@ -46447,6 +46447,48 @@ The only remaining failure is the specialization-parent shape at patched line
 2331. `multi_polynomial.pyx` remains outside the quiet corpus pending that
 independent investigation.
 
+Focused multivariate-polynomial specialization-parent runtime pass on
+2026-07-12 UTC:
+
+The final failure exposed a generic-backend bug in
+`SpecializationMorphism`, not a representation difference. The morphism first
+flattens the specialization dictionary keys, but its polynomial-tower loop
+then compared those flattened keys directly with generators from the original
+tower. Singular-backed generators happened to mask that mismatch; generic
+generators did not. The values for `b` and `c` were evaluated correctly, but
+the codomain incorrectly retained `a`, `b`, and `c` instead of dropping the
+two specialized generators.
+
+The WASI source patch now tests `phi(t)` against the flattened dictionary when
+reconstructing each tower level. The focused line-2331 rerun consequently
+returns the documented nested univariate parent, while the specialized
+polynomial remains equal to `a*k^2 + 56*l + 25`. The complete accumulated
+patch applies successfully to the pinned Sagelite source, and the final
+provenance-correct one-file dashboard records:
+
+```text
+multi_polynomial.pyx: 469 passed, 0 failed, 190 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-specialization-parent/make-final.sqlite3`.
+It records 659 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the preceding
+`468 passed, 1 failed, 190 skipped` dashboard, exactly the specialization
+parent row becomes a pass. `multi_polynomial.pyx` is now included in the
+checked-in quiet pure-math corpus.
+
+The shared specialization module rerun records `132 passed, 0 failed, 18
+skipped`. A clean standalone rebuild and smoke also completes through Meson
+configure/compile/install, Node imports, SQLite doctest helpers, and staged
+plus relocated Electron-resource probes. That broader validation exposed and
+fixed two latent dashboard-smoke issues: near-miss scans now require a failed
+block row when compatible block-status metadata is available, and the optional
+candidate/source-frontier fixtures now scope their source files and database
+subtractions to the assertions they exercise. Legacy databases without block
+status metadata retain aggregate-count compatibility.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

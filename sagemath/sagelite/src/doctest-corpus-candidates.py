@@ -828,11 +828,17 @@ def files_table_has_column(db: sqlite3.Connection, column: str) -> bool:
 
 def can_filter_block_failure_classes(db: sqlite3.Connection) -> bool:
     return (
+        can_read_block_status(db)
+        and table_has_column(db, "blocks", "failure_class")
+    )
+
+
+def can_read_block_status(db: sqlite3.Connection) -> bool:
+    return (
         table_exists(db, "blocks")
         and files_table_has_column(db, "id")
         and table_has_column(db, "blocks", "file_id")
         and table_has_column(db, "blocks", "status")
-        and table_has_column(db, "blocks", "failure_class")
     )
 
 
@@ -1121,6 +1127,15 @@ def candidate_rows(
     elif near_misses:
         block_failure_filter = ""
         query_parameters: list[object] = [run_id, min_passed, max_failed]
+        if can_read_block_status(db):
+            block_failure_filter = """
+              and exists (
+                select 1
+                from blocks
+                where blocks.file_id = files.id
+                  and blocks.status = 'failed'
+              )
+            """
         if excluded_block_failure_classes or only_block_failure_classes:
             if not can_filter_block_failure_classes(db):
                 raise SystemExit(

@@ -7581,6 +7581,9 @@ diff -urN a/src/sage/rings/polynomial/flatten.py b/src/sage/rings/polynomial/fla
 +            sage: H = End(P)                                                         # needs sage.schemes
 +            sage: f = H([z^2 + c])                                                   # needs sage.schemes
 +            sage: f.specialization({c:1})                                            # needs sage.modules sage.schemes
+@@ -563 +563 @@
+-            new = [t for t in old if t not in D]
++            new = [t for t in old if phi(t) not in D]
 @@ -673 +673 @@
 -            sage: phi
 +            sage: phi                                                                # known bug - morphism repr differs in the WASI runtime

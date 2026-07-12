@@ -3691,6 +3691,14 @@ if [ -n "$doctest_candidate_helper_focused_paths" ]; then
   sqlite3 "$doctest_candidate_helper_focused_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates --require-file-run reported a focused line rerun."
 fi
+cat >"$doctest_candidate_helper_source_root/src/sage/example/optional_candidate.py" <<'PY'
+r"""
+    sage: 13 + 13
+    26
+    sage: 14 + 14
+    28
+"""
+PY
 sqlite3 "$doctest_candidate_helper_optional_db" <<SQL
 create table runs (
   id integer primary key,
@@ -3765,6 +3773,7 @@ if [ "$doctest_candidate_helper_optional_relaxed" != "src/sage/example/optional_
   sqlite3 "$doctest_candidate_helper_optional_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: doctest-corpus-candidates could not report an opt-in optional run outside strict mode."
 fi
+rm -f "$doctest_candidate_helper_source_root/src/sage/example/optional_candidate.py"
 doctest_candidate_helper_covered_default="$("$src_dir/doctest-corpus-candidates.py" \
   --paths-only \
   --corpus "$doctest_candidate_helper_covered_corpus" \
@@ -4710,6 +4719,7 @@ doctest_source_frontier_file_skip_paths="$("$src_dir/doctest-source-frontier.py"
   --corpus "$doctest_source_frontier_corpus" \
   --mentioned-file "$doctest_source_frontier_mentioned" \
   --include-mentioned \
+  --subtract-database "$doctest_candidate_helper_db" \
   --exclude-file-skip-directives \
   --min-prompts 1 \
   --max-prompts 1)"
