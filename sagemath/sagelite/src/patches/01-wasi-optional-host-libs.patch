@@ -20661,7 +20661,13 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
 
          TESTS:
-@@ -1052,18 +1052,18 @@ cdef class MPolynomial(CommutativePolynomial):
+@@ -951,1 +951,2 @@ cdef class MPolynomial(CommutativePolynomial):
++            sage: # needs sage.libs.gap
+             sage: R.<x,y,z> = QQ[]
+@@ -1039,1 +1040,2 @@ cdef class MPolynomial(CommutativePolynomial):
++            sage: # needs sage.libs.gap
+             sage: R.<x,y,z> = ZZ[]
+@@ -1052,18 +1054,18 @@ cdef class MPolynomial(CommutativePolynomial):
 
          Multivariate polynomial over a cyclotomic field::
 
@@ -20688,7 +20694,10 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
          """
          R = gap(self.parent())
-@@ -1090,18 +1090,18 @@ cdef class MPolynomial(CommutativePolynomial):
+@@ -1077,1 +1079,2 @@ cdef class MPolynomial(CommutativePolynomial):
++            sage: # needs sage.libs.gap
+             sage: R.<x,y,z> = ZZ[]
+@@ -1090,18 +1093,18 @@ cdef class MPolynomial(CommutativePolynomial):
 
          Multivariate polynomial over a cyclotomic field::
 

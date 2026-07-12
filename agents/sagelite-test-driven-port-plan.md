@@ -45879,6 +45879,40 @@ This closes the archived toric-lattice failure frontier. Future scheduled
 runs should select a different known backend/runtime cluster rather than
 resampling this file.
 
+Focused multivariate-polynomial GAP boundary pass on 2026-07-11 UTC:
+
+The completed `multi_polynomial.pyx` dashboard still recorded 59 ordinary
+failures after the earlier `nth_root` runtime fix. The next coherent cluster
+was the default symmetry test plus the legacy GAP and libgap conversion
+examples: seven prompts imported the unavailable `sage.libs.gap.libgap`
+backend, with dependent name failures and otherwise passing state blocks in
+the same doctest groups.
+
+The WASI source patch now propagates `# needs sage.libs.gap` from each of the
+three independent setup boundaries. This keeps the surrounding change-ring,
+coefficient, GCD, and perfect-power coverage runnable while recording all 22
+GAP-related blocks under explicit optional dependency metadata.
+
+A provenance-correct one-file make-target run records:
+
+```text
+multi_polynomial.pyx: 460 passed, 46 failed, 153 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-11-multi-polynomial-next/make.sqlite3`.
+It records 659 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the fresh
+`466 passed, 59 failed, 134 skipped` baseline, the GAP and dependent-state
+failure cluster is empty; 19 blocks are grouped under
+`optional:sage.libs.gap` and three under the combined GAP/groups requirement.
+The complete accumulated patch applies successfully to a pristine archive,
+and its patched `multi_polynomial.pyx` matches the make target's generated
+source. The remaining 46 failures are separate symbolic, Singular, fast
+callable, PARI object-model, and output/diagnostic clusters, so the file
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
