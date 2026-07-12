@@ -46249,6 +46249,48 @@ derivative coefficients `3` and `-2` are equal in the characteristic-five
 coefficient ring.  The other failures remain separate, so
 `multi_polynomial.pyx` stays outside the quiet corpus.
 
+Focused multivariate-polynomial generic-representation pass on 2026-07-12
+UTC:
+
+The two targeted examples exercise working generic-backend arithmetic.  In
+the browser profile, `PolynomialRing(FiniteField(5))` selects
+`MPolynomial_polydict` because the libSingular implementation is absent.  Its
+derivative displays the characteristic-five coefficient as `3`, which is the
+same field element as the libSingular expectation `-2`.  Skipping the examples
+would therefore have hidden useful polynomial coverage.
+
+The WASI source patch now gives the class and derivative examples their
+generic-backend expectations.  The focused class rerun at patched line 358
+passes.  The derivative's isolated line-360 rerun encounters the existing
+focused-rerun setup limitation because the preceding output-producing
+`type(f)` example separates it from the `f` assignment, so the whole-file
+dashboard is authoritative for that stateful row.
+
+The complete accumulated patch applies successfully to a clean `git archive`
+of Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte.  The direct full-file run and provenance-correct one-file make target
+agree:
+
+```text
+multi_polynomial.pyx: 467 passed, 5 failed, 187 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-generic-repr/make.sqlite3`.  It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `465 passed, 7 failed, 187 skipped` dashboard,
+exactly the class and derivative representation mismatches become passes;
+skip coverage and all other results are unchanged.
+
+The remaining five failures comprise four independent output/runtime
+mismatches and one dependent underscore-result `AttributeError`.  The smallest
+remaining dependency-boundary cleanup is patched line 2152: the preceding GCD
+example is explicitly Singular-dependent, but its `_.parent()` result row is
+not yet covered by that metadata and runs against stale underscore state.
+`multi_polynomial.pyx` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
