@@ -664,6 +664,15 @@ diff --git a/src/sage/rings/asymptotic/misc.py b/src/sage/rings/asymptotic/misc.
 +        from sage.symbolic.ring import SR
 +        if P is SR:
 +            return 'SR'
+diff --git a/src/sage/rings/asymptotic/misc.py b/src/sage/rings/asymptotic/misc.py
+--- a/src/sage/rings/asymptotic/misc.py
++++ b/src/sage/rings/asymptotic/misc.py
+@@ -755 +755,4 @@ def strip_symbolic(expression):
+-    from sage.symbolic.ring import SymbolicRing
++    try:
++        from sage.symbolic.ring import SymbolicRing
++    except ModuleNotFoundError:
++        return expression
 diff --git a/src/sage/rings/function_field/derivations_polymod.py b/src/sage/rings/function_field/derivations_polymod.py
 --- a/src/sage/rings/function_field/derivations_polymod.py
 +++ b/src/sage/rings/function_field/derivations_polymod.py

@@ -46666,6 +46666,41 @@ and two each of `ValueError` and `TypeError`.  `growth_group.py` remains
 outside the quiet corpus; the next focused pass should classify direct
 symbolic setup rows separately from their dependent missing-name cascades.
 
+Focused non-symbolic exponent pass on 2026-07-12 UTC:
+
+`strip_symbolic` imported `sage.symbolic.ring.SymbolicRing` before checking
+whether its argument was symbolic.  Consequently ordinary integer and rational
+exponents in otherwise supported growth groups failed when the browser profile
+omitted `sage.symbolic.expression`.
+
+The WASI patch now treats a missing symbolic package as proof that the supplied
+object is already non-symbolic and returns it unchanged.  When the symbolic
+package is present, the existing parent check and symbolic numeric unwrapping
+remain unchanged.  The focused power row at patched line 2924 passes, and the
+complete accumulated patch applies successfully to a pristine clone of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; its patched
+`growth_group.py` and `misc.py` match the focused runtime sources byte for byte.
+
+The direct one-file dashboard records:
+
+```text
+growth_group.py: 675 passed, 232 failed, 45 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-strip-symbolic/full-direct.sqlite3`.
+Compared by block index with the preceding `659 passed, 248 failed, 45 skipped`
+dashboard, exactly 16 failed rows become passes; all 659 prior passes and all
+45 skips are unchanged.  The wins include rational monomial powers, comparison
+helpers, and their contiguous dependent assertions.
+
+A provenance-correct make-target refresh was not recorded in this pass because
+multiple unrelated scheduled runs repeatedly occupied and rewrote the shared
+Sagelite build/dist directories with different source trees.  The overlapping
+local rebuild was stopped rather than treating mixed artifacts as authoritative.
+The next isolated build should refresh the make-target dashboard before taking
+another growth-group cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
