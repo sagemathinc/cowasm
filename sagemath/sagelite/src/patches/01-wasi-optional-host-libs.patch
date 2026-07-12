@@ -22849,3 +22849,15 @@ diff --git a/src/sage/ext/interpreters/meson.build b/src/sage/ext/interpreters/m
 +    dependencies: interpreter_dependencies[name],
    )
  endforeach
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -552 +552 @@ cdef class MPolynomial(CommutativePolynomial):
+-                return D
++                return {key: D[key] for key in sorted(D)}
+@@ -567 +567 @@ cdef class MPolynomial(CommutativePolynomial):
+-        return D
++        return {key: D[key] for key in sorted(D)}
+@@ -843 +843 @@ cdef class MPolynomial(CommutativePolynomial):
+-        return {k: self._parent(d[k]) for k in d}
++        return {k: self._parent(d[k]) for k in sorted(d)}

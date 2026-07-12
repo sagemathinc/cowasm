@@ -46122,6 +46122,47 @@ object-model `NotImplementedError` rows in the Lorentzian checks, and one
 dependent underscore-result `AttributeError`. They are independent clusters,
 so `multi_polynomial.pyx` remains outside the quiet corpus.
 
+Focused multivariate-polynomial dictionary-ordering pass on 2026-07-12 UTC:
+
+Three of the remaining output mismatches had mathematically correct values but
+unstable dictionary display order. The generic `_mpoly_dict_recursive` path
+returned monomials in backend insertion order, while `homogeneous_components`
+returned degrees in the order produced by the polynomial iterator. That made
+their public dictionary representations depend on the active polynomial
+backend even though Sage's documented examples use sorted exponent and degree
+keys.
+
+The WASI source patch now constructs both result dictionaries in sorted-key
+order. Both return paths in `_mpoly_dict_recursive` are covered, including the
+recursive coefficient-ring branch, and `homogeneous_components` sorts weighted
+and unweighted degree keys through the shared return path. Focused reruns at
+patched lines 481, 821, and 830 each record one pass with no failure or skip.
+
+The complete accumulated patch applies successfully to a pristine archive of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte. A clean standalone rebuild compiled and installed all 1,004 Meson
+targets; its broader smoke reached the pre-existing nonfatal candidate-helper
+status-77 follow-up after completing the build, install, and resource phases.
+
+The direct full-file run and provenance-correct one-file make target agree:
+
+```text
+multi_polynomial.pyx: 465 passed, 11 failed, 183 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-dict-order/make.sqlite3`. It records 659
+blocks under runner version 108 and the node profile, with both Sagelite source
+and package commit `f575cf6224f749763d7c875229cbd684e5939e58`. Compared with
+the preceding `462 passed, 14 failed, 183 skipped` dashboard, exactly the three
+dictionary-order output mismatches become passes; skip coverage and all other
+failures are unchanged.
+
+The remaining 11 failures comprise eight independent output mismatches, two
+focused cypari2 object-model `NotImplementedError` rows in the Lorentzian
+checks, and one dependent underscore-result `AttributeError`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
