@@ -3831,7 +3831,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.modular.modsym.g1list import G1list
 +    from sage.modular.modsym.p1list import P1List
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
-+    from sage.modules.free_module_element import vector
++    from sage.modules.free_module_element import vector, random_vector
 +    from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 +    from sage.plot.colors import hue
 +    from sage.plot.graphics import Graphics

@@ -1344,6 +1344,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.modular.drinfeld_modform.ring", ("DrinfeldModularForms",)),
         ("sage.modular.modsym.g1list", ("G1list",)),
         ("sage.modular.modsym.p1list", ("P1List",)),
+        ("sage.modules.free_module_element", ("random_vector",)),
         ("sage.plot.colors", ("hue",)),
         ("sage.plot.graphics", ("Graphics",)),
         ("sage.plot.arc", ("arc",)),

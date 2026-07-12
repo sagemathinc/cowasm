@@ -46084,6 +46084,44 @@ is the four-row startup namespace drift at patched lines 2084--2087:
 PARI-backed Lorentzian checks and the remaining output mismatches stay
 separate, so `multi_polynomial.pyx` remains outside the quiet corpus.
 
+Focused multivariate-polynomial random-vector namespace pass on 2026-07-12 UTC:
+
+The four reported startup failures at patched lines 2084--2087 came from one
+missing standard Sage constructor. The stripped WASI `sage.all` branch
+imported `vector` from `sage.modules.free_module_element` but omitted its
+public companion `random_vector`, and the Sagelite doctest seed list had the
+same omission. The implementation and its integer-vector dependencies were
+already built, so this was a startup-surface defect rather than an optional
+backend boundary.
+
+The WASI source patch now exposes `random_vector` beside `vector`, and the
+doctest runner seeds the same constructor for the currently installed runtime.
+The focused line-2084 rerun records one pass with no failure or skip. In the
+full file, the `R` and `f` setup, random vector construction, both weighted
+degree computations, and their equality check all record `passed`.
+
+The provenance-correct one-file make-target dashboard records:
+
+```text
+multi_polynomial.pyx: 462 passed, 14 failed, 183 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-random-vector/make.sqlite3`. It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `458 passed, 18 failed, 183 skipped` dashboard,
+exactly the missing constructor and its three reported dependent rows become
+passes; skip coverage is unchanged. The complete accumulated patch applies
+successfully to a pristine archive of that Sagelite commit, and the patched
+`multi_polynomial.pyx` matches the make target's generated source byte for
+byte.
+
+The remaining 14 failures comprise 11 output mismatches, two focused cypari2
+object-model `NotImplementedError` rows in the Lorentzian checks, and one
+dependent underscore-result `AttributeError`. They are independent clusters,
+so `multi_polynomial.pyx` remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
