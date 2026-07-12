@@ -46628,6 +46628,44 @@ count falls from 45 to 37.  `growth_group.py` remains outside the quiet corpus;
 the next focused pass should separate the remaining logarithm-operation
 diagnostics near lines 812--1012 from downstream symbolic setup state.
 
+Focused empty growth-variable display pass on 2026-07-12 UTC:
+
+The generic growth-group setup cascade came from `Variable('')`, the internal
+variable used by `GenericGrowthGroup(ZZ)`.  The preceding identifier fallback
+still sent the empty name through the symbolic LaTeX branch because the empty
+string is not a Python identifier.  That imported the unavailable symbolic
+ring before generic arithmetic could start.
+
+The WASI source patch now treats an empty variable as part of the lightweight
+identifier display path.  It produces the same empty LaTeX name without a
+symbolic import, while composite expressions continue to use the symbolic
+parser.  The focused `GenericGrowthGroup(ZZ)` row at patched line 1122 passes.
+The complete accumulated patch applies successfully to a pristine clone of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and its patched
+growth-group source matches the make target's generated source byte for byte.
+
+The provenance-correct one-file make-target dashboard records:
+
+```text
+growth_group.py: 659 passed, 248 failed, 45 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-growth-empty-variable/make.sqlite3`.
+It records 952 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.  Compared by block index with the
+preceding `588 passed, 319 failed, 45 skipped` dashboard, exactly 71 failed
+rows become passes; all 588 prior passes and all 45 skips are unchanged.  The
+make-target worker printed the complete SQLite summary before the known
+post-summary Node shutdown segfault, and the dashboard lifecycle is complete.
+
+The remaining failures comprise 126 `NameError` rows, 86 direct
+`ModuleNotFoundError` rows, 23 output mismatches, nine `AttributeError` rows,
+and two each of `ValueError` and `TypeError`.  `growth_group.py` remains
+outside the quiet corpus; the next focused pass should classify direct
+symbolic setup rows separately from their dependent missing-name cascades.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

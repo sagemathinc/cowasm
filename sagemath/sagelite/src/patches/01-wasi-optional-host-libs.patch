@@ -22942,7 +22942,7 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 +                if not _isidentifier(v) else (v,)
 @@ -369 +375,5 @@
 -                latex_name = ', '.join(latex(SR(v)) for v in var if v)
-+                if all(_isidentifier(v) for v in var):
++                if all(not v or _isidentifier(v) for v in var):
 +                    latex_name = ', '.join(latex_variable_name(v) for v in var if v)
 +                else:
 +                    from sage.symbolic.ring import SR
