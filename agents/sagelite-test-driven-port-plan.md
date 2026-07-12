@@ -46163,6 +46163,47 @@ The remaining 11 failures comprise eight independent output mismatches, two
 focused cypari2 object-model `NotImplementedError` rows in the Lorentzian
 checks, and one dependent underscore-result `AttributeError`.
 
+Focused multivariate-polynomial Lorentzian PARI-boundary pass on 2026-07-12
+UTC:
+
+The two failing degree-two `is_lorentzian()` examples both reached the same
+matrix characteristic-polynomial path. That path converts the Gram matrix to
+a PARI matrix and requires cypari2 operations beyond CoWasm's deliberately
+focused PARI `Gen` subset. Later Lorentzian examples for linear, constant,
+zero, inhomogeneous, and negative-coefficient polynomials already run without
+that backend, so a method-wide dependency directive would have hidden useful
+coverage.
+
+The WASI source patch now gives only the two degree-two calls explicit
+`# needs sage.libs.pari` metadata. A focused rerun at patched line 2770 records
+exactly one intended optional skip. The second target also records the intended
+skip; its isolated `--line` rerun additionally exposes the existing filter
+limitation that the preceding assignment cannot reconstruct the earlier ring
+state, so the full-file dashboard is the authoritative validation for that
+stateful example.
+
+The make target rebuilt its source tree from Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` and applied the complete
+accumulated patch successfully. The direct full-file run and the
+provenance-correct one-file make target agree:
+
+```text
+multi_polynomial.pyx: 465 passed, 9 failed, 185 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-lorentzian-pari/make.sqlite3`. It
+records 659 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the preceding
+`465 passed, 11 failed, 183 skipped` dashboard, exactly the two cypari2
+object-model failures become `optional:sage.libs.pari` skips; runnable pass
+coverage and all other results are unchanged.
+
+The remaining nine failures comprise eight independent output mismatches and
+one dependent underscore-result `AttributeError`. `multi_polynomial.pyx`
+remains outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

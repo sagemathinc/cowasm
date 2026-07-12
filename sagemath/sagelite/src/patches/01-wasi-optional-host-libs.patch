@@ -22861,3 +22861,12 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 @@ -843 +843 @@ cdef class MPolynomial(CommutativePolynomial):
 -        return {k: self._parent(d[k]) for k in d}
 +        return {k: self._parent(d[k]) for k in sorted(d)}
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -2768 +2768 @@ cdef class MPolynomial(CommutativePolynomial):
+-            sage: p.is_lorentzian()
++            sage: p.is_lorentzian()                                                    # needs sage.libs.pari
+@@ -2771 +2771 @@ cdef class MPolynomial(CommutativePolynomial):
+-            sage: p.is_lorentzian()
++            sage: p.is_lorentzian()                                                    # needs sage.libs.pari
