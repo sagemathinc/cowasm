@@ -46377,6 +46377,40 @@ than the equal characteristic-seven forms `-a - 2` and `-a + 1`. The
 `nth_root` conversion and specialization-parent mismatches remain separate, so
 `multi_polynomial.pyx` stays outside the quiet corpus.
 
+Focused multivariate-polynomial Frobenius-representation pass on 2026-07-12
+UTC:
+
+The generic finite-field backend correctly applies the Frobenius map and the
+following round-trip equality still returns `True`. Its coefficient
+representatives differ only syntactically from the libSingular-era doctest:
+`6*a + 5` and `6*a + 1` are respectively equal to `-a - 2` and `-a + 1` in
+characteristic seven. Skipping this row would therefore hide working finite-
+field polynomial coverage.
+
+The WASI source patch now records the generic-backend representation. A
+focused rerun at patched line 903 passes with the expected and actual output
+identical. The make target rebuilt its source tree from Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` and applied the complete
+accumulated patch successfully. The provenance-correct one-file dashboard
+records:
+
+```text
+multi_polynomial.pyx: 468 passed, 2 failed, 189 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-12-frobenius-repr/make.sqlite3`. It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+Compared with the preceding `467 passed, 3 failed, 189 skipped` dashboard,
+exactly the Frobenius representation mismatch becomes a pass; skip coverage
+and all other results are unchanged.
+
+The remaining two failures are independent: the generic nested-polynomial
+conversion in `nth_root` at patched line 2235 and the specialization-parent
+shape at patched line 2331. `multi_polynomial.pyx` remains outside the quiet
+corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -22897,6 +22897,12 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
 --- a/src/sage/rings/polynomial/multi_polynomial.pyx
 +++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -900 +900 @@ cdef class MPolynomial(CommutativePolynomial):
+-            x^2 + (-a - 2)*y^2 + (-a + 1)*x + (2*a + 2)*y
++            x^2 + (6*a + 5)*y^2 + (6*a + 1)*x + (2*a + 2)*y
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
 @@ -2156 +2156 @@ cdef class MPolynomial(CommutativePolynomial):
 -            sage: x.gcd(x)
 +            sage: x.gcd(x)                                                             # needs sage.rings.number_field
