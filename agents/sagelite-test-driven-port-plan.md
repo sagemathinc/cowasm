@@ -45913,6 +45913,47 @@ source. The remaining 46 failures are separate symbolic, Singular, fast
 callable, PARI object-model, and output/diagnostic clusters, so the file
 remains outside the quiet corpus.
 
+Focused multivariate-polynomial symbolic-boundary pass on 2026-07-12 UTC:
+
+The next largest coherent startup cluster comprised ten plain symbolic-ring
+prompts and three number-field setups that call `symbolic_expression`. Seven
+dependent number-field prompts were still passing against stale `R`, `K`,
+`x`, and `f` bindings after their intended setup failed, so the original
+dashboard understated the dependency boundary.
+
+The WASI source patch now marks the four `_symbolic_` conversion/evaluation
+prompts, the five symbolic-coefficient derivative prompts, the standalone
+symbolic `change_ring` check, and all ten number-field setup/dependent prompts
+with explicit browser-profile metadata. The number-field groups carry both
+`sage.symbolic` and `sage.rings.number_field`; unrelated rational, real,
+finite-field, and derivative setup examples remain runnable.
+
+Focused `--line` reruns at patched lines 178, 389, 929, 1836, 1913, and 1937
+each record one intended optional skip with no failure. The complete patch
+applies successfully to a clean local clone of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. The direct full-file run and the
+provenance-correct one-file make target agree:
+
+```text
+multi_polynomial.pyx: 453 passed, 33 failed, 173 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-multi-symbolic/make.sqlite3`. It records
+659 blocks under runner version 108 and the node profile, with both Sagelite
+source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. Compared with the preceding
+`460 passed, 46 failed, 153 skipped` dashboard, all 13 direct symbolic failures
+and seven stale-state passes become 20 explicit skips: ten under
+`optional:sage.symbolic` and ten under the combined symbolic/number-field
+requirement.
+
+The remaining 33 failures are separate clusters. The next coherent backend
+boundary is the six direct `sage.rings.polynomial.plural` import failures,
+with their dependent-state rows; fast-callable wrappers, PARI-backed
+Lorentzian checks, startup-name drift, and unrelated output mismatches remain
+independent. `multi_polynomial.pyx` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -20634,6 +20634,41 @@ diff --git a/src/sage/plot/plot3d/bugs.txt b/src/sage/plot/plot3d/bugs.txt
 diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
 --- a/src/sage/rings/polynomial/multi_polynomial.pyx
 +++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -175,12 +175,12 @@ cdef class MPolynomial(CommutativePolynomial):
+
+             sage: R.<x,y> = QQ[]
+             sage: f = x^3 + y
+-            sage: g = f._symbolic_(SR); g
++            sage: g = f._symbolic_(SR); g  # needs sage.symbolic
+             x^3 + y
+-            sage: g(x=2, y=2)
++            sage: g(x=2, y=2)              # needs sage.symbolic
+             10
+-            sage: g = SR(f)
+-            sage: g(x=2, y=2)
++            sage: g = SR(f)                # needs sage.symbolic
++            sage: g(x=2, y=2)              # needs sage.symbolic
+             10
+         """
+         d = dict([(repr(g), R.var(g)) for g in self.parent().gens()])
+@@ -386,12 +386,12 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         Polynomials over the symbolic ring (just for fun....)::
+
+-            sage: x = var("x")
+-            sage: S.<u, v> = PolynomialRing(SR)
+-            sage: f = u*v*x
+-            sage: f.derivative(x) == u*v
++            sage: x = var("x")                    # needs sage.symbolic
++            sage: S.<u, v> = PolynomialRing(SR)   # needs sage.symbolic
++            sage: f = u*v*x                       # needs sage.symbolic
++            sage: f.derivative(x) == u*v          # needs sage.symbolic
+             True
+-            sage: f.derivative(u) == v*x
++            sage: f.derivative(u) == v*x          # needs sage.symbolic
+             True
+         """
+         return multi_derivative(self, args)
 @@ -907,18 +907,18 @@ cdef class MPolynomial(CommutativePolynomial):
 
          ::
@@ -20661,6 +20696,15 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
              x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
 
          TESTS:
+@@ -926,7 +926,7 @@ cdef class MPolynomial(CommutativePolynomial):
+         Check that :issue:`25022` is fixed::
+
+             sage: K.<x,y> = ZZ[]
+-            sage: (x*y).change_ring(SR).monomials()
++            sage: (x*y).change_ring(SR).monomials()  # needs sage.symbolic
+             [x*y]
+
+         Check that :issue:`36832` is fixed::
 @@ -951,1 +951,2 @@ cdef class MPolynomial(CommutativePolynomial):
 +            sage: # needs sage.libs.gap
              sage: R.<x,y,z> = QQ[]
@@ -20761,7 +20805,51 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 +            sage: g.parent()                                                           # needs sage.libs.ntl
              Multivariate Polynomial Ring in X, Y over Finite Field of size 3
          """
-@@ -2129,12 +2129,12 @@ cdef class MPolynomial(CommutativePolynomial):
+@@ -1830,10 +1833,10 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         ::
+
+-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']
+-            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f
++            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']  # needs sage.symbolic sage.rings.number_field
++            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                 # needs sage.symbolic sage.rings.number_field
+             1/17*x^19 - 2/3*x + 1/6*y + 1/3
+-            sage: f.denominator()
++            sage: f.denominator()                                              # needs sage.symbolic sage.rings.number_field
+             102
+
+         Finally, we try to compute the denominator of a polynomial with
+@@ -1907,12 +1910,12 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         ::
+
+-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']
+-            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f
++            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']  # needs sage.symbolic sage.rings.number_field
++            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                            # needs sage.symbolic sage.rings.number_field
+             1/17*y^19 - 2/3*x + 1/3
+-            sage: f.numerator()
++            sage: f.numerator()                                                 # needs sage.symbolic sage.rings.number_field
+             3*y^19 - 34*x + 17
+-            sage: f == f.numerator()
++            sage: f == f.numerator()                                            # needs sage.symbolic sage.rings.number_field
+             False
+
+         We try to compute the numerator of a polynomial with coefficients in
+@@ -1931,9 +1934,9 @@ cdef class MPolynomial(CommutativePolynomial):
+
+         ::
+
+-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']
+-            sage: f = K.random_element()
+-            sage: f.numerator() / f.denominator() == f
++            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']  # needs sage.symbolic sage.rings.number_field
++            sage: f = K.random_element()                                          # needs sage.symbolic sage.rings.number_field
++            sage: f.numerator() / f.denominator() == f                            # needs sage.symbolic sage.rings.number_field
+             True
+             sage: R = RR['x,y,z']
+             sage: f = R.random_element()
+@@ -2129,12 +2132,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
          EXAMPLES::
 
