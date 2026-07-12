@@ -46204,6 +46204,51 @@ The remaining nine failures comprise eight independent output mismatches and
 one dependent underscore-result `AttributeError`. `multi_polynomial.pyx`
 remains outside the quiet corpus.
 
+Focused multivariate-polynomial ideal-display Singular-boundary pass on
+2026-07-12 UTC:
+
+Two remaining output mismatches came from successful ideal construction whose
+display path imported `sage.rings.polynomial.plural`.  The
+`MPolynomialIdeal` module already declares a file-wide
+`sage.libs.singular` doctest dependency, and the browser profile deliberately
+does not ship libSingular, so these were backend-boundary failures rather than
+incorrect ideal generators.
+
+The WASI source patch now marks only the displayed results of
+`f.jacobian_ideal()` and `g.content_ideal()` as needing
+`sage.libs.singular`.  Their surrounding ring, polynomial, gradient, and
+coefficient setup remains runnable.  The focused line-1197 rerun records one
+intended optional skip.  The line-1322 rerun records the same intended target
+skip plus the existing focused-rerun setup limitation: its `R` definition is
+separated from the target by an output-producing example, so the full-file
+dashboard is authoritative for that stateful block.
+
+The make target regenerated its source tree from Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` and applied the complete
+accumulated patch successfully.  The direct full-file run and the
+provenance-correct one-file make target agree:
+
+```text
+multi_polynomial.pyx: 465 passed, 7 failed, 187 skipped
+```
+
+The make-target database is
+`.tmp/current-run/scheduled-2026-07-12-ideal-repr/make-final.sqlite3`.  It
+records 659 blocks under runner version 108 and the node profile, with both
+Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.  Compared with the preceding
+`465 passed, 9 failed, 185 skipped` dashboard, exactly the two
+Singular-dependent ideal displays become `optional:sage.libs.singular` skips;
+runnable pass coverage and all other failures are unchanged.
+
+The remaining seven failures comprise six independent output mismatches and
+one dependent underscore-result `AttributeError`.  The next coherent pair is
+the generic-backend representation drift at patched lines 358 and 360: the
+polynomial class differs from the libSingular class, while the displayed
+derivative coefficients `3` and `-2` are equal in the characteristic-five
+coefficient ring.  The other failures remain separate, so
+`multi_polynomial.pyx` stays outside the quiet corpus.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
