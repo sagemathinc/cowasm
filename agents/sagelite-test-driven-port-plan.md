@@ -48070,6 +48070,30 @@ the same ordered C probe without importing Sage. Comparing that result with
 the now-covered standalone path will separate dynamic-loader/libc integration
 from `str_to_bytes` and `RealNumber._set` before changing either runtime layer.
 
+Minimal MPFR side-module parser isolation on 2026-07-13 UTC:
+
+The standalone MPFR package smoke now loads a minimal `mpfr-side.so` through
+CoWasm's `dlopen` implementation and calls a stage-reporting version of the
+same ordered parser sequence. The side module statically contains MPFR and GMP
+while importing memory, allocation, libc, and signal services from a minimal
+main WASI module, matching the important dynamic-extension boundary without
+starting Python or Sage. Both layers pass in the same package run:
+
+```text
+mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz parse-state special-functions nextafter fma rootn hypot trig special-values
+mpfr-side-ok parse-state
+```
+
+This rules out the generic side-module relocation, imported allocator/libc,
+and MPFR parser path for the exact ordered reproducer. It does not rule out a
+Python-runtime-specific interaction, but it moves the narrowest remaining
+boundary to the Cython conversion path: `str_to_bytes`, the buffer passed into
+`mpfr_set_str`, and `RealNumber._set`. The next parser-state pass should add a
+small instrumented helper beside `sage.rings.real_mpfr` that reports the exact
+byte buffer and base immediately before `mpfr_set_str`, then compare direct
+construction with the stateful doctest sequence without changing MPFR or the
+dynamic loader.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

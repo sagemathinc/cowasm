@@ -7,6 +7,8 @@ TARBALL = ${UPSTREAM}/mpfr-${VERSION}.tar.xz
 TARBALL_SHA256 = b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01
 BUILD_WASI_SDK = ${BUILD}/wasi-sdk
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+DYLINK_WASI_SDK = ${CWD}/../../core/dylink/dist/wasm/libdylink-wasi-sdk.a
+DYLINK_RUNTIME = ${CWD}/../../core/dylink/dist/index.js
 
 all: test-wasi-sdk-standalone
 
@@ -21,6 +23,12 @@ ${GMP_WASI_SDK}/lib/libgmp.a:
 ${GMP_WASM}/lib/libgmp.a:
 	$(MAKE) -C ${PACKAGES}/gmp wasm
 
+${DYLINK_WASI_SDK}:
+	$(MAKE) -C ${CWD}/../../core/dylink dist/wasm/libdylink-wasi-sdk.a
+
+${DYLINK_RUNTIME}:
+	$(MAKE) -C ${CWD}/../../core/dylink dist/index.js
+
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
@@ -28,10 +36,10 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build ${DYLINK_WASI_SDK} ${DYLINK_RUNTIME}
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${DYLINK_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

@@ -7,6 +7,7 @@ bin_dir="$(cd "$3" && pwd)"
 gmp_dir="$(cd "$4" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
+dylink_archive="$(cd "$(dirname "$5")" && pwd)/$(basename "$5")"
 
 # shellcheck source=/dev/null
 source "$repo_dir/core/build/src/test/clang-standalone-common.sh"
@@ -63,24 +64,10 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfr-test" |
   grep -F "mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz parse-state special-functions nextafter fma rootn hypot trig special-values"
 
-cat >"$probe_dir/mpfr-side.c" <<'EOF'
-#include <mpfr.h>
-
-__attribute__((visibility("default")))
-int mpfr_side_smoke(void) {
-  mpfr_t x;
-  mpfr_init2(x, 128);
-  mpfr_const_pi(x, MPFR_RNDN);
-  int ok = mpfr_cmp_ui(x, 3) > 0;
-  mpfr_clear(x);
-  return ok;
-}
-EOF
-
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -shared \
   -fPIC \
-  "$probe_dir/mpfr-side.c" \
+  "$src_dir/test-mpfr-side.c" \
   -I"$dist_dir/include" \
   -I"$gmp_dir/include" \
   -L"$dist_dir/lib" \
@@ -88,5 +75,27 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -lmpfr \
   -lgmp \
   -lm \
-  "${standalone_ldlibs[@]}" \
   -o "$probe_dir/mpfr-side.so"
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -O0 \
+  -fPIC \
+  -fvisibility-main \
+  "$src_dir/test-mpfr-dylink.c" \
+  "$dylink_archive" \
+  -Wl,--import-memory \
+  -Wl,--import-table \
+  -Wl,--allow-undefined \
+  -Wl,--allow-multiple-definition \
+  -Wl,--export-all \
+  -Wl,--export=malloc \
+  -Wl,--export=free \
+  -Wl,--export=raise \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/app.wasm"
+
+(
+  cd "$probe_dir"
+  COWASM_DYLINK_CALL_MAIN_CTORS=0 \
+    node "$repo_dir/core/dylink/test/wasi/app.js"
+) | grep -F "mpfr-side-ok parse-state"
