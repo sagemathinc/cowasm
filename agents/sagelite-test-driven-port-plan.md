@@ -48831,6 +48831,34 @@ conversions, finite-dimensional matrix-list displays, matrix-group iteration,
 and complex-root backend cluster. The next pass should continue with a
 different native semantic row rather than those reproduced boundaries.
 
+Native complex-interval argument-group promotion pass on 2026-07-13 UTC:
+
+The browser-profile `# known bug` annotation on `ArgumentGroup(CIF)` is stale.
+An isolated deferred replay and a normal whole-file deferred replay both
+produce the documented unit-circle group over the real interval field. The
+adjacent `ArgumentGroup(CBF)` row remains guarded because it still constructs
+the argument-of-elements group over the complex ball field instead of the
+documented unit-circle group over the real ball field.
+
+Removing only the CIF annotation and replaying the shared patched file in the
+default browser profile records:
+
+```text
+argument_groups.py: 256 passed, 0 failed, 79 skipped
+```
+
+The isolated, deferred whole-file, and shared-source default databases are
+respectively `/tmp/cowasm-argument-cif-line-deferred.sqlite3`,
+`/tmp/cowasm-argument-cif-full-deferred.sqlite3`, and
+`/tmp/cowasm-argument-cif-shared-default.sqlite3`. Pristine validation archived
+exactly the 1,242 source files named by the complete patch from pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`. The complete patch applies
+without rejects to that sparse pristine tree, the reconstructed target matches
+the shared patched source byte for byte, and its default replay gives the same
+256/0/79 result in `/tmp/cowasm-argument-cif-pristine-default.sqlite3`. The
+next pass should continue with another native semantic row while retaining the
+reproduced complex-ball representation boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
