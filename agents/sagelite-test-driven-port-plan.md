@@ -48271,6 +48271,38 @@ non-contiguous setup and therefore are not independent promotion evidence.
 The next deferred-coverage pass should give one of those stateful files a
 whole-file audit or select another native row whose focused setup is complete.
 
+Native category named-class deferred promotion pass on 2026-07-13 UTC:
+
+Whole-file replay supplies the non-contiguous setup that the earlier focused
+probe lacked. With its single `# known bug` row enabled,
+`sage/categories/category.py` records 413 passed blocks, no failures, and 44
+skips. The warning emitted by
+`C._make_named_class("element_class", "ElementMethods")` matches Sage's
+expected diagnostic; only the source-line number varies behind the existing
+ellipsis. The stale WASI annotation is therefore removed.
+
+After applying the complete accumulated patch to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, the default
+whole-file run records:
+
+```text
+category.py: 413 passed, 0 failed, 44 skipped
+```
+
+The initial three-file deferred audit and final pristine default database are
+respectively
+`.tmp/current-run/scheduled-2026-07-13-stateful-deferred-next/full-three.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-stateful-deferred-next/pristine-category-default.sqlite3`.
+The complete patch applies without rejects and `git diff --check` is clean.
+
+The same whole-file audit confirms that the joined-feature traceback row still
+differs because the WASI traceback retains explicit frames, while the atomic
+write append check still returns `Hello WorldHELLO` instead of `HELLO World`.
+Those two annotations remain. The next deferred pass should select another
+small native row from the clean dashboard or address one of these underlying
+diagnostic/filesystem semantics clusters directly.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

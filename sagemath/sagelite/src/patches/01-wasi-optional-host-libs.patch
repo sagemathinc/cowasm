@@ -6951,9 +6951,6 @@ diff -urN a/src/sage/categories/graded_algebras_with_basis.py b/src/sage/categor
 diff -urN a/src/sage/categories/category.py b/src/sage/categories/category.py
 --- a/src/sage/categories/category.py
 +++ b/src/sage/categories/category.py
-@@ -1585 +1585 @@
--            sage: C._make_named_class("element_class",  "ElementMethods")
-+            sage: C._make_named_class("element_class",  "ElementMethods")              # known bug
 @@ -1795 +1795 @@
 -            sage: Algebras(QQ).required_methods()
 +            sage: Algebras(QQ).required_methods()                                      # random
