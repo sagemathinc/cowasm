@@ -14360,6 +14360,12 @@ diff -urN -U0 a/src/sage/rings/polynomial/infinite_polynomial_ring.py b/src/sage
 @@ -708 +708 @@
 -            sage: TestSuite(Y).run(skip='_test_elements')
 +            sage: TestSuite(Y).run(skip=['_test_elements', '_test_fraction_field'])
+@@ -939 +939 @@
+-                sage: M(c)  # known bug
++                sage: M(c)
+@@ -946 +946 @@
+-                sage: a[0] * P.one()    # known bug
++                sage: a[0] * P.one()
 diff -urN -U0 a/src/sage/rings/polynomial/hilbert.pyx b/src/sage/rings/polynomial/hilbert.pyx
 --- a/src/sage/rings/polynomial/hilbert.pyx
 +++ b/src/sage/rings/polynomial/hilbert.pyx
@@ -21122,9 +21128,6 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -4529 +4529 @@
 -        sage: h.gcd(f, 'modular')
 +        sage: h.gcd(f, 'modular')                                                      # known bug - coerced method argument drift
-@@ -4558 +4558 @@
--        sage: x.test_add(CC(2))
-+        sage: x.test_add(CC(2))                                                        # known bug - complex coercion drift
 @@ -4568 +4568 @@
 -        sage: f.gcd(g, 1)
 +        sage: f.gcd(g, 1)                                                              # known bug - coerced method argument drift

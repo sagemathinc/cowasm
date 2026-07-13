@@ -48572,6 +48572,43 @@ dependent rows fail with `NameError`. The next pass should choose another
 native semantic row with complete runnable setup, leaving these dependency and
 runner-scope boundaries explicit.
 
+Native infinite-polynomial and complex-dispatch promotion pass on 2026-07-13
+UTC:
+
+Three more deferred rows are stale in the browser profile. Both
+`InfinitePolynomialRing` coercion regressions now return `a_0`: coercing an
+infinite-polynomial generator into the corresponding ring over a polynomial
+base, and multiplying that generator by a multivariate polynomial ring's
+identity. The complex common-parent dispatch check in
+`sage/structure/element.pyx` also raises the documented missing-method
+`AttributeError`. All three pass in normal whole-file order with deferred rows
+enabled, so their `# known bug` annotations are removed.
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. Both reconstructed files match the shared patched source byte for
+byte, and their default replay records:
+
+```text
+infinite_polynomial_ring.py: 286 passed, 0 failed,   5 skipped
+element.pyx:                  390 passed, 0 failed, 348 skipped
+combined:                     676 passed, 0 failed, 353 skipped
+```
+
+The two exploratory deferred audits are
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next2/four-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next2/second-four-deferred.sqlite3`;
+the final reconstructed-source run is
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next2/pristine-default.sqlite3`.
+The same audits retain direct evidence for the neighboring boundaries: Jordan
+element ordering, Python-versus-Sage integer type identity, constraint
+dictionary order, and six-vertex displays still differ; UFD radical and PID
+gcd/xgcd checks time out; and polynomial division plus modular-gcd dispatch in
+`element.pyx` still fail. The next pass should continue with another bounded
+native semantic row and avoid those reproduced ordering, display, timeout, and
+coerced-method clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
