@@ -46701,6 +46701,29 @@ local rebuild was stopped rather than treating mixed artifacts as authoritative.
 The next isolated build should refresh the make-target dashboard before taking
 another growth-group cluster.
 
+Focused Cartesian growth-product constructor pass on 2026-07-13 UTC:
+
+`GenericProduct._element_constructor_` imported the symbolic ring before
+examining its input.  This made plain string conversion for otherwise supported
+Cartesian growth groups depend on the unavailable symbolic package, including
+the `GrowthGroup('(QQ_+)^n * n^QQ')('n')` setup at patched line 1030.
+
+The WASI patch now handles string splitting without importing the symbolic
+ring.  It resolves `SR` only in the later parent-aware conversion branch, where
+symbolic multiplication actually needs it, and treats a missing symbolic
+package as a non-symbolic parent.  An isolated exact-method harness exercises
+the string, same-parent, and foreign-parent paths with `sage.symbolic` absent;
+all three pass, and the patched module compiles with `py_compile`.
+
+The complete accumulated patch applies cleanly to a fresh clone of Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, and `git diff --check`
+passes there.  A WASM dashboard refresh was not recorded: the shared
+build/dist tree changed during the first focused attempt, and a clean
+standalone retry then stopped in the existing Meson Cython generation stage
+before producing Electron resources.  This pass therefore makes no dashboard
+count claim; the next isolated build should rerun patched line 1030 and the
+full `growth_group.py` file.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
