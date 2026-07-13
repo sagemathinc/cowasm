@@ -23836,3 +23836,12 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -5062 +5062 @@ class GrowthGroupFactory(UniqueFactory):
 -        sage: GrowthGroup('x^ZZ * log(x)^ZZ * y^QQ')
 +        sage: GrowthGroup('x^ZZ * log(x)^ZZ * y^QQ')  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -5068 +5068 @@ class GrowthGroupFactory(UniqueFactory):
+-        sage: GrowthGroup('exp(x)^ZZ * x^ZZ')
++        sage: GrowthGroup('exp(x)^ZZ * x^ZZ')  # needs sage.symbolic
+@@ -5070 +5070 @@ class GrowthGroupFactory(UniqueFactory):
+-        sage: GrowthGroup('(e^x)^ZZ * x^ZZ')
++        sage: GrowthGroup('(e^x)^ZZ * x^ZZ')  # needs sage.symbolic
