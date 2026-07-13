@@ -48213,6 +48213,37 @@ NTL/PARI pass should reduce the preceding GF2E prompt sequence to the smallest
 ordered reproducer for the later `e._sage_()` cloning trap rather than relying
 on the isolated line result.
 
+Native derivation and rational-field deferred promotion pass on 2026-07-13 UTC:
+
+The clean corpus dashboard identified three single-row native candidates that
+pass as isolated `--line --deferred=known-bug` reruns. Whole-file replay from a
+freshly patched copy of Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` confirms two stale annotations:
+
+```text
+derivation.py: 380 passed, 0 failed, 69 skipped
+rational_field.py: 145 passed, 0 failed, 67 skipped
+```
+
+The promoted rows are the finite-field twisted-derivation LaTeX display and
+the identity automorphism display from `QQ.automorphisms()`. Their whole-file
+databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-next-deferred/derivation-full.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-next-deferred/rational-field-full.sqlite3`.
+
+The third isolated candidate is not safe to promote. The `ImageSubobject` hash
+comparison passes alone but fails in full-file order with `False`, so its
+browser-profile annotation remains. The audit also reconfirms that the
+q-binomial Python-2-literal setup leaves `r` undefined and that the rational
+gamma signature diagnostic still differs from its expected CPython wording;
+those annotations remain. The complete accumulated patch applies successfully
+to the pinned clean source archive, and `git diff --check` is clean.
+
+The next deferred-coverage pass should continue with another small native
+single-row cluster from the clean dashboard, requiring whole-file replay before
+promotion so state-sensitive candidates like `ImageSubobject` are retained.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

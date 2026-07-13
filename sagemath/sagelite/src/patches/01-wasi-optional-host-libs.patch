@@ -2145,9 +2145,6 @@ diff -urN a/src/sage/rings/rational_field.py b/src/sage/rings/rational_field.py
 @@ -140 +147 @@
 -            sage: RationalField() in Fields() # indirect doctest
 +            sage: RationalField() in Fields() # indirect doctest                        # needs sage.categories
-@@ -631 +638 @@
--            sage: QQ.automorphisms()
-+            sage: QQ.automorphisms()                                                    # known bug
 @@ -1414,0 +1422 @@
 +            sage: # needs sage.modules
 @@ -1617,0 +1626 @@
@@ -11400,15 +11397,6 @@ diff -urN a/src/sage/rings/derivation.py b/src/sage/rings/derivation.py
              sage: S.<x,y> = R.quo([X^5, Y^5])
              sage: f = x^3*S.derivation(); f
              x^3*d/dx
-@@ -2023,7 +2031,7 @@
-             sage: k.<a> = GF(5^3)
-             sage: Frob = k.frobenius_endomorphism()
-             sage: der = k.derivation(a + 1, twist=Frob)
--            sage: latex(der)
-+            sage: latex(der)  # known bug
-             \left(a + 1\right)  \left(\left[a \mapsto a^{5}\right] - \text{id}\right)
-         """
-         scalar = self._scalar
 @@ -2152,13 +2160,13 @@
              sage: R.<x,y> = QQ[]
              sage: K = R.fraction_field()
