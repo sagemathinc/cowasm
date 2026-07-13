@@ -47892,6 +47892,46 @@ matches the tested source byte for byte. CoWasm also passes `git diff --check`.
 The remaining complete-dashboard failure frontier is the existing
 `sage/libs/ntl/ntl_GF2E.pyx` WASM trap at line 337.
 
+NTL GF2E native-context setup pass on 2026-07-13 UTC:
+
+The final failure from the 1,139-file dashboard is clear without skipping NTL
+arithmetic or wrapper semantics. The line-337 finite-field construction passes
+in isolation but traps through cypari2 after the earlier examples have created
+several PARI-backed Sage finite fields. Replacing only that line moves the same
+cumulative failure to the later digit-list setup, confirming that repeated
+high-level finite-field construction is the trigger rather than the represented
+GF2E value or comparison operation.
+
+The copy, cross-context comparison, and two digit-list examples now construct
+their degree-2, degree-4, and degree-8 moduli directly with
+`ntl.GF2EContext`. Their documented NTL results remain unchanged, while the
+dedicated `ntl.GF2E(a, k)` example continues to exercise Sage finite-field to
+NTL conversion. A full direct-file rerun and a strict one-file make-target run
+both record:
+
+```text
+ntl_GF2E.pyx: 69 passed, 0 failed, 1 skipped
+```
+
+The strict result is in
+`.tmp/current-run/scheduled-2026-07-13-ntl-gf2e/make.sqlite3`. A strict
+three-file replay of all failure frontiers from the preceding complete
+dashboard records:
+
+```text
+comp.py: 907 passed, 0 failed, 102 skipped
+real_double.pyx: 281 passed, 0 failed, 32 skipped
+ntl_GF2E.pyx: 69 passed, 0 failed, 1 skipped
+sage -t passed: 1257 passed, 0 failed, 135 skipped
+```
+
+That database is
+`.tmp/current-run/scheduled-2026-07-13-ntl-gf2e/frontier.sqlite3`. The complete
+WASI patch reapplies successfully to the source tree used by the make target,
+and the rebuilt patched GF2E source reproduces the direct validation. The next
+pass should refresh the complete 1,139-file corpus to establish a zero-failure
+dashboard and then choose the next corpus-growth or deferred-coverage cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
