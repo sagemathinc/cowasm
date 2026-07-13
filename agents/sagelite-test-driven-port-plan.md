@@ -47067,6 +47067,36 @@ element construction and representation failures beginning around patched line
 2763, replacing only their reliance on the unavailable startup symbol `x`
 while keeping exponent, multiplication, and LaTeX behavior active.
 
+Direct monomial representation and multiplication pass on 2026-07-13 UTC:
+
+The representation, LaTeX, and multiplication examples now construct
+monomial elements through `raw_element`.  This removes only their dependency
+on the unavailable symbolic startup variable `x`; positive, negative, and
+rational exponent formatting, direct `_mul_`, ordinary multiplication, and
+equality remain active.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 735 passed, 104 failed, 113 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-monomial-element/repr-mul.sqlite3`.
+Compared by block index with a fresh rerun of the preceding dashboard, exactly
+13 failures become passes; all other 939 block statuses are unchanged.  The
+focused exponent replacement also passes by itself, but combining it with
+this batch reproducibly leaves the full shared-namespace run in the existing
+`ExponentialGrowthGroupFunctor` common-parent runtime trap at line 4701.  The
+unchanged baseline and this 13-row batch both complete, so the exponent example
+remains unchanged until that cumulative coercion-state interaction can be
+isolated.  The complete patch passes `git diff --check`, and its new hunks
+apply to the pinned Sagelite source.  The next focused pass should examine the
+remaining `_log_factor_` failures around patched lines 2977--2990, separating
+the symbolic `exp(x)` construction and default logarithm lookup from the
+already-runnable custom-local logarithm path.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -23446,3 +23446,35 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -2508 +2508 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
 -            sage: GrowthGroup('(QQ_+)^(x*log(x))').variable_names()
 +            sage: GrowthGroup('(QQ_+)^(x*log(x))').variable_names()  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2772 +2772 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: P(x^5)  # indirect doctest
++            sage: P(raw_element=5)  # indirect doctest
+@@ -2774 +2774 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: P(x^(1/2))  # indirect doctest
++            sage: P(raw_element=1/2)  # indirect doctest
+@@ -2779 +2779 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: P(x^-1)  # indirect doctest
++            sage: P(raw_element=-1)  # indirect doctest
+@@ -2781 +2781 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: P(x^-42)  # indirect doctest
++            sage: P(raw_element=-42)  # indirect doctest
+@@ -2827 +2827 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: latex(P(x^5))  # indirect doctest
++            sage: latex(P(raw_element=5))  # indirect doctest
+@@ -2829 +2829 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: latex(P(x^(1/2)))  # indirect doctest
++            sage: latex(P(raw_element=1/2))  # indirect doctest
+@@ -2834 +2834 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: latex(P(x^-1))  # indirect doctest
++            sage: latex(P(raw_element=-1))  # indirect doctest
+@@ -2836 +2836 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: latex(P(x^-42))  # indirect doctest
++            sage: latex(P(raw_element=-42))  # indirect doctest
+@@ -2860,2 +2860,2 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: a = P(x^2)
+-            sage: b = P(x^3)
++            sage: a = P(raw_element=2)
++            sage: b = P(raw_element=3)
