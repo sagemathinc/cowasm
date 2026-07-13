@@ -47324,6 +47324,37 @@ should classify the symbolic setup and dependent exponentiation examples
 beginning around patched line 4007 while preserving the already-active raw
 base arithmetic.
 
+Exponential exponentiation boundary pass on 2026-07-13 UTC:
+
+The ordinary positive-integer element now uses `raw_element=7`, retaining its
+active construction and `7^x` representation assertion without the unavailable
+startup symbol `x`. The assumption lifecycle, fractional-power extension into
+`SR^x`, and dependent symbolic-parent assertions now carry focused
+`sage.symbolic` metadata. The separate symbolic-constant-subring setup and its
+two dependent exponentiation assertions carry the same metadata, while the
+ordinary product-group and `x` construction rows remain active.
+
+The raw-base line passes in a focused rerun and the fractional-power target
+records its intended dependency skip. A full direct-file rerun against the
+validated Electron resources records:
+
+```text
+growth_group.py: 761 passed, 53 failed, 138 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-exponentiation/full.sqlite3`.
+Compared by block index with the preceding exponential-element dashboard,
+exactly one `NameError` failure becomes a pass and eight dependent failures
+become `optional:sage.symbolic` skips; the other 943 block statuses and all
+unchanged non-random passing outputs remain identical. Sequential application
+of the complete patch to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, the resulting module
+matches the tested source byte for byte and compiles with `py_compile`, and
+both source trees pass `git diff --check`. The next focused pass should examine
+the default logarithm dependency in `_log_factor_` around patched line 4069
+while retaining the already-passing explicit `locals={'log': ...}` path.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

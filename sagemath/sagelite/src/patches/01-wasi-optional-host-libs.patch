@@ -23649,3 +23649,32 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 +            sage: b = P(raw_element=3)
              sage: c = a._mul_(b); c
              6^x
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3982,10 +3982,10 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-            sage: assume(SR.an_element() > 0)
+-            sage: a = P(7^x); a
++            sage: assume(SR.an_element() > 0)  # needs sage.symbolic
++            sage: a = P(raw_element=7); a
+             7^x
+-            sage: b = a^(1/2); b
++            sage: b = a^(1/2); b  # needs sage.symbolic
+             sqrt(7)^x
+-            sage: b.parent()
++            sage: b.parent()  # needs sage.symbolic
+             Growth Group SR^x
+-            sage: b^12
++            sage: b^12  # needs sage.symbolic
+             117649^x
+-            sage: forget()
++            sage: forget()  # needs sage.symbolic
+@@ -3995 +3995 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-             sage: SCR = SR.subring(no_variables=True)
++             sage: SCR = SR.subring(no_variables=True)  # needs sage.symbolic
+@@ -3999 +3999 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-             sage: x^SCR(1)
++             sage: x^SCR(1)  # needs sage.symbolic
+@@ -4001 +4001 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-             sage: _.parent()
++             sage: _.parent()  # needs sage.symbolic
