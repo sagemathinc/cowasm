@@ -46749,6 +46749,30 @@ was farther through the serial Cython stage.  The next dashboard refresh should
 measure both the Cartesian constructor and monomial string changes together,
 then classify the surviving direct failures rather than their setup cascades.
 
+Isolated standalone resume reliability pass on 2026-07-13 UTC:
+
+The pending dashboard rebuild exposed two orchestration defects before runtime
+staging.  Meson persisted its Cython compiler as the ambient command `cython`,
+but the standalone probe's stable tool directory contained only Meson, Ninja,
+and compiler wrappers.  A resumed build therefore failed regeneration when the
+host `PATH` no longer happened to provide Cython.  The probe now creates and
+checks a stable package-local `cython` wrapper backed by the pinned WASI Cython
+tree, alongside its other persistent tools.
+
+The same isolated retry also showed that a relative direct-script dist argument
+became a Meson prefix relative to the build directory.  The script now creates
+and canonicalizes the dist directory before configuring Meson, matching the
+already-canonical build and tool paths.
+
+Validation resumed the previously interrupted isolated tree through all 445
+remaining generation targets and all 1,006 compile/link targets.  This directly
+exercised Meson regeneration with the new stable Cython wrapper.  The first
+install used the pre-fix relative prefix and consequently staged beneath the
+Meson build directory; attempting to change that configured prefix afterward
+invalidated the generated Ninja file, so no Electron-resource or doctest count
+is claimed.  The next isolated run should start with the canonicalized script
+and refresh the combined Cartesian/monomial `growth_group.py` dashboard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

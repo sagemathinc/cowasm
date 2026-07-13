@@ -7,7 +7,8 @@ if [ "$#" -ne 24 ]; then
 fi
 
 build_dir="$(cd "$1" && pwd)"
-dist_dir="$2"
+mkdir -p "$2"
+dist_dir="$(cd "$2" && pwd)"
 bin_dir="$(cd "$3" && pwd)"
 cpython_wasm="$(cd "$4" && pwd)"
 py_cython="$(cd "$5" && pwd)"
@@ -270,6 +271,14 @@ exec "$py_ninja/bin/ninja" "\$@"
 EOF
 chmod +x "$tool_bin_dir/ninja"
 
+cat >"$tool_bin_dir/cython" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export PYTHONPATH="$py_cython\${PYTHONPATH:+:\$PYTHONPATH}"
+exec "$bin_dir/python-wasi-sdk" -m cython "\$@"
+EOF
+chmod +x "$tool_bin_dir/cython"
+
 cat >"$tool_bin_dir/wasi-sdk-clang-next" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
@@ -312,6 +321,10 @@ fi
 
 if ! command -v ninja >/dev/null 2>&1; then
   record_blocker "sagelite-blocked: package-local ninja wrapper is not available on PATH."
+fi
+
+if ! command -v cython >/dev/null 2>&1; then
+  record_blocker "sagelite-blocked: package-local Cython wrapper is not available on PATH."
 fi
 
 if ! command -v timeout >/dev/null 2>&1; then
