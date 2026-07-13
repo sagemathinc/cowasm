@@ -6362,9 +6362,6 @@ diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 @@ -1667 +1667 @@
 -            sage: RDF(1.5).__pari__()
 +            sage: RDF(1.5).__pari__()                                                   # needs sage.libs.pari
-@@ -1952 +1952 @@
--            sage: r = sqrt(RDF(2)); r
-+            sage: r = sqrt(RDF(2)); r                                                    # known bug
 @@ -1954 +1954 @@
 -            sage: r.algebraic_dependency(5)
 +            sage: r.algebraic_dependency(5)                                              # known bug

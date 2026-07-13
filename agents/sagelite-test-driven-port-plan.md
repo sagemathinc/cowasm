@@ -47962,6 +47962,38 @@ The quiet curated corpus now provides a zero-failure baseline. The next pass
 should use it to select a high-value explicit deferred skip or dependency
 boundary for focused coverage growth, rather than repeat a broad source scan.
 
+Native real-double deferred promotion pass on 2026-07-13 UTC:
+
+The zero-failure dashboard seeded a focused stale-deferred audit. Enabling all
+seven `# known bug` rows in `sage/tensor/modules/comp.py` leaves the ordinary
+907 blocks passing and reproduces seven tuple-of-matrices layout mismatches.
+Enabling all four such rows in `sage/libs/ntl/ntl_GF2X.pyx` leaves 108 ordinary
+blocks passing and reproduces the four documented GF2X conversion/display
+gaps. Those tags remain necessary; the audit databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-clean-corpus/deferred-comp/full.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-clean-corpus/deferred-ntl-gf2x.sqlite3`.
+
+The adjacent `sage/rings/real_double.pyx` audit did find one stale tag. Native
+`r = sqrt(RDF(2)); r` now produces the documented machine double, so its
+`# known bug` annotation is removed. The following
+`r.algebraic_dependency(5)` still reaches the deliberately unported cypari2
+object-model path and remains deferred. A strict one-file make-target run,
+after rebuilding the patched Sagelite source from the pinned checkout,
+records:
+
+```text
+real_double.pyx: 282 passed, 0 failed, 31 skipped
+```
+
+That database is
+`.tmp/current-run/scheduled-2026-07-13-clean-corpus/real-double-promoted.sqlite3`.
+The complete patch applies successfully and `git diff --check` is clean. The
+next deferred-coverage pass should audit the neighboring
+`sage/rings/real_mpfr.pyx` known-bug cluster, keeping PARI-backed operations
+deferred while promoting any native real-field setup or output rows that now
+pass independently.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
