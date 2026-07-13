@@ -3521,8 +3521,6 @@ diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/bin
 @@ -1478 +1479 @@
 -            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list)
 +            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list) # needs sage.libs.pari
-@@ -1716,0 +1718 @@
-+            sage: # known bug
 @@ -1810,0 +1813 @@
 +            sage: # needs sage.libs.pari
 diff -urN a/src/sage/quadratic_forms/quadratic_form__split_local_covering.py b/src/sage/quadratic_forms/quadratic_form__split_local_covering.py
@@ -7152,18 +7150,12 @@ diff -urN a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
 diff -urN a/src/sage/misc/lazy_import.pyx b/src/sage/misc/lazy_import.pyx
 --- a/src/sage/misc/lazy_import.pyx
 +++ b/src/sage/misc/lazy_import.pyx
-@@ -31 +31 @@
--    sage: ZZ
-+    sage: ZZ                                                                          # known bug - warning stream is not captured by Sagelite doctest runner
 @@ -48 +48 @@
 -        sage: isinstance(QQbar, Parent)
 +        sage: isinstance(QQbar, Parent)                                               # needs sage.rings.number_field
 @@ -175 +175 @@
 -        sage: my_ZZ(123)
 +        sage: my_ZZ(123)
-@@ -211 +211 @@
--            sage: lazy_ZZ._get_object() is ZZ
-+            sage: lazy_ZZ._get_object() is ZZ                                         # known bug - startup namespace resolves a distinct integer-ring singleton
 @@ -250 +250 @@
 -            sage: my_rats
 +            sage: my_rats

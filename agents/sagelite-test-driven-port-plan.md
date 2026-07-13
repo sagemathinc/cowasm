@@ -48609,6 +48609,38 @@ gcd/xgcd checks time out; and polynomial division plus modular-gcd dispatch in
 native semantic row and avoid those reproduced ordering, display, timeout, and
 coerced-method clusters.
 
+Native lazy-import and binary-form invariant promotion pass on 2026-07-13 UTC:
+
+Three more WASI-added `# known bug` annotations are stale. The lazy-import
+startup example now captures and normalizes the expected `at_startup=True`
+warning, and resolving an independently constructed lazy integer ring returns
+the startup namespace's `ZZ` singleton. The randomized binary quadratic-form
+setup also preserves a square discriminant after a unimodular matrix action.
+All three examples pass in normal whole-file order with deferred rows enabled,
+so their browser-profile annotations are removed.
+
+The focused deferred audits are
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next3/lazy-import-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next4/second-four-deferred.sqlite3`.
+Applying the complete accumulated patch to a fresh archive of pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and the reconstructed files match the previously validated patched source byte
+for byte. Their combined default replay records:
+
+```text
+lazy_import.pyx: 270 passed, 0 failed,  26 skipped
+binary_qf.py:    243 passed, 0 failed, 116 skipped
+combined:        513 passed, 0 failed, 142 skipped
+```
+
+That final database is
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next4/pristine-combined-default.sqlite3`.
+The bounded audits retain direct evidence for adjacent category ordering,
+modular-cusp representation, matrix diagnostic, persistence, polynomial test
+suite, and finite-field book-example boundaries. The next pass should continue
+with another native semantic row that has complete whole-file setup.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
