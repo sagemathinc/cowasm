@@ -48303,6 +48303,40 @@ Those two annotations remain. The next deferred pass should select another
 small native row from the clean dashboard or address one of these underlying
 diagnostic/filesystem semantics clusters directly.
 
+Native warning and representation deferred promotion pass on 2026-07-13 UTC:
+
+Whole-file replay confirms that two more single-row `# known bug` annotations
+are stale. The lazy disjoint-union membership check emits the expected warning
+and returns `True`, while the binary-tree ASCII-art example renders exactly as
+documented. After removing those two WASI-added annotations and applying the
+complete accumulated patch to a fresh archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the default runs record:
+
+```text
+disjoint_union_enumerated_sets.py: 59 passed, 0 failed, 70 skipped
+binary_tree.py: 625 passed, 0 failed, 118 skipped
+```
+
+The initial five-file deferred audit and final freshly patched default run are
+respectively
+`.tmp/current-run/scheduled-2026-07-13-native-warning-next/five-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-warning-next/pristine-final-default.sqlite3`.
+The latter also keeps the neighboring `prandom.py` annotation enabled and
+passes with 67 runnable blocks and seven skips. The complete patch applies
+without rejects and `git diff --check` is clean.
+
+The audit deliberately retains three tempting annotations. `Words('ab')`
+still reports its element-class dictionary in the opposite insertion order,
+and `QuadraticForm(1)` still exposes explicit traceback frames. `_pyrand()`
+passed once in the five-file deferred audit but trapped in a subsequent
+isolated default worker with the documented out-of-bounds `memcpy`; its
+state-sensitive tag therefore remains. Separate whole-file checks also retain
+the banner deprecation-warning drift, the lightweight pretty-printer fallback,
+and the non-ASCII character-art source-conversion tag. The next deferred pass
+should continue with another native single-row candidate and repeat it in an
+isolated default worker before promotion.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

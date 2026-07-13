@@ -5755,12 +5755,6 @@ diff -urN a/src/sage/combinat/skew_partition.py b/src/sage/combinat/skew_partiti
 -            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()
 +            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()       # needs pexpect
              (q^5*t^6 - q^5*t^5 + q^4*t^6 - q^4*t^5 - q^4*t^3 + q^4*t^2 - q^3*t^3 - q^2*t^4 + q^3*t^2 + q^2*t^3 - q*t^4 + q*t^3 + q*t - q + t - 1)/(q^5*t^6 - q^4*t^5 - q^3*t^4 - q^3*t^3 + q^2*t^3 + q^2*t^2 + q*t - 1)
-diff -urN a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/disjoint_union_enumerated_sets.py
---- a/src/sage/sets/disjoint_union_enumerated_sets.py
-+++ b/src/sage/sets/disjoint_union_enumerated_sets.py
-@@ -332 +332 @@
--            sage: U4._is_a(Composition([3,2,1,1]))
-+            sage: U4._is_a(Composition([3,2,1,1]))                                     # known bug
 diff -urN a/src/sage/combinat/six_vertex_model.py b/src/sage/combinat/six_vertex_model.py
 --- a/src/sage/combinat/six_vertex_model.py
 +++ b/src/sage/combinat/six_vertex_model.py
@@ -5988,15 +5982,6 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
              Finite poset containing 1 elements
          """
          if (not with_leaves) and (not self):
-@@ -3364,7 +3364,7 @@
-             True
-
-             sage: x = g.over(l).over(l).over(g).over(g)
--            sage: ascii_art(x)
-+            sage: ascii_art(x)                                                         # known bug
-              o
-               \
-               _o_
 diff -urN a/src/sage/combinat/triangles_FHM.py b/src/sage/combinat/triangles_FHM.py
 --- a/src/sage/combinat/triangles_FHM.py
 +++ b/src/sage/combinat/triangles_FHM.py
