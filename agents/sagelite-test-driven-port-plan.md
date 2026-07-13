@@ -48510,6 +48510,40 @@ guarded. The next deferred pass should audit another native warning or
 semantic row whose complete setup is available, continuing to require
 whole-file and pristine default replay before promotion.
 
+Native infinity, action, and pseudomorphism promotion pass on 2026-07-13 UTC:
+
+Five more WASI-added `# known bug` rows are stale. The unsigned-infinity
+LaTeX helper returns the documented string exactly. Both weak-reference
+action examples now reach Sage's failed-`repr` wrapper instead of raising the
+underlying `RuntimeError` directly. The finite-field pseudomorphism evaluation
+and representation also use the documented `z`/`z3` generator names. All five
+rows pass in normal whole-file order with deferred rows enabled, so their
+browser-profile annotations are removed.
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` exits successfully
+without rejects. The three reconstructed files match the shared patched
+source byte for byte, and their default replay records:
+
+```text
+infinity.py:                       254 passed, 0 failed, 69 skipped
+action.pyx:                         73 passed, 0 failed, 34 skipped
+free_module_pseudohomspace.py:      68 passed, 0 failed,  5 skipped
+combined:                          395 passed, 0 failed, 108 skipped
+```
+
+The initial deferred audit and final pristine default run are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next/second-six-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next/pristine-default.sqlite3`.
+The same bounded audit retains live annotations for image-subobject hashing,
+pairwise-subset tests, indexed-element collection identity, PARI conversion
+hashing, feature tracebacks, source-file lookup, complex-ball argument groups,
+and negative-factorial diagnostics. The Gosper randomized deferred invariant
+also remains guarded after hanging in an isolated worker. The next pass should
+continue with a different native semantic row and avoid those reproduced
+failure clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

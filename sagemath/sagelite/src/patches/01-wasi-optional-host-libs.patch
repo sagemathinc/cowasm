@@ -4152,14 +4152,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 
 --- a/src/sage/rings/infinity.py
 +++ b/src/sage/rings/infinity.py
-@@ -781,6 +781,6 @@
-         EXAMPLES::
-
--            sage: UnsignedInfinityRing(5)._latex_()
-+            sage: UnsignedInfinityRing(5)._latex_()                                    # known bug
-             '(<\\infty)'
-         """
-         return "(<\\infty)"
 @@ -1203,9 +1203,9 @@
              sage: InfinityRing.has_coerce_map_from(AA)                                  # needs sage.rings.number_field
              True
@@ -7017,15 +7009,9 @@ diff -urN a/src/sage/categories/monoids.py b/src/sage/categories/monoids.py
 diff -urN a/src/sage/categories/action.pyx b/src/sage/categories/action.pyx
 --- a/src/sage/categories/action.pyx
 +++ b/src/sage/categories/action.pyx
-@@ -23 +23 @@
--        sage: A
-+        sage: A                                                                         # known bug
 @@ -37 +37 @@
 -        sage: gc.collect()
 +        sage: gc.collect()                                                              # random
-@@ -299 +299 @@
--            sage: A
-+            sage: A                                                                     # known bug
 diff -urN a/src/sage/categories/super_algebras_with_basis.py b/src/sage/categories/super_algebras_with_basis.py
 --- a/src/sage/categories/super_algebras_with_basis.py
 +++ b/src/sage/categories/super_algebras_with_basis.py
@@ -12482,15 +12468,9 @@ diff -urN -U0 a/src/sage/algebras/octonion_algebra.pyx b/src/sage/algebras/octon
 diff -urN -U0 a/src/sage/modules/free_module_pseudohomspace.py b/src/sage/modules/free_module_pseudohomspace.py
 --- a/src/sage/modules/free_module_pseudohomspace.py
 +++ b/src/sage/modules/free_module_pseudohomspace.py
-@@ -52 +52 @@
--        sage: h(e)
-+        sage: h(e)                                                                      # known bug
 @@ -80 +80 @@
 -            sage: TestSuite(H).run()
 +            sage: TestSuite(H).run()                                                    # needs sage.libs.pari
-@@ -142 +142 @@
--            sage: H([[1, z], [z, z^2]])
-+            sage: H([[1, z], [z, z^2]])                                                 # known bug
 @@ -296 +296 @@
 -            sage: TestSuite(PHS).run()  # indirect doctest
 +            sage: TestSuite(PHS).run()  # indirect doctest                              # needs sage.libs.pari
