@@ -47384,6 +47384,40 @@ comparison examples beginning around patched line 4108, separating the
 symbolic `SR` assumption path from the ordinary signed-base comparison that
 can use direct raw-element construction.
 
+Exponential comparison dependency and direct-construction pass on 2026-07-13
+UTC:
+
+The `SR` comparison setup, assumption lifecycle, and dependent comparison now
+carry focused `sage.symbolic` dependency metadata. The ordinary positive-base
+parent construction remains active. The separate signed-base comparison now
+constructs its elements from the documented string form, avoiding only the
+unavailable startup symbol `x` while preserving product-parent conversion,
+root-of-unity handling, ordering, and the expected `False` result.
+
+Focused reruns record the symbolic assumption as a dependency skip and the
+signed-base comparison as a pass. A full direct-file rerun against the
+validated isolated Electron resources records:
+
+```text
+growth_group.py: 762 passed, 47 failed, 143 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-comparison/full.sqlite3`.
+Compared by block index with the preceding default-logarithm dashboard,
+exactly four failures become `optional:sage.symbolic` skips and one failure
+becomes a pass; every other block status is unchanged. Because the new passing
+comparison updates the shared `_` value, two later already-failing dependent
+parent checks now diagnose a stale `bool` rather than a stale `tuple`; this
+does not change their status and identifies the next stateful substitution
+cluster clearly. The accumulated patch applies sequentially to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the resulting module matches the
+tested source byte for byte and compiles with `py_compile`, and the patched
+tree passes `git diff --check`. The next focused pass should examine the
+exponential substitution examples beginning around patched line 4138,
+classifying the symbolic target while keeping the integer substitution and
+its result-parent check active through raw-element construction.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
