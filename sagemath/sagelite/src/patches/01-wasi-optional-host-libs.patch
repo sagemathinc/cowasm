@@ -8143,9 +8143,6 @@ diff -urN a/src/sage/typeset/ascii_art.py b/src/sage/typeset/ascii_art.py
 diff -urN a/src/sage/misc/temporary_file.py b/src/sage/misc/temporary_file.py
 --- a/src/sage/misc/temporary_file.py
 +++ b/src/sage/misc/temporary_file.py
-@@ -233 +233 @@
--        sage: with open(target_file, 'r') as f:
-+        sage: with open(target_file, 'r') as f:                                      # known bug - WASI append mode does not support this overwrite check
 @@ -252,2 +252,2 @@
 -        sage: _ = os.umask(0o022)
 -        sage: with atomic_write(target_file) as f:

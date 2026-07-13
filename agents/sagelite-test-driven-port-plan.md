@@ -48337,6 +48337,39 @@ and the non-ASCII character-art source-conversion tag. The next deferred pass
 should continue with another native single-row candidate and repeat it in an
 isolated default worker before promotion.
 
+WASI seek-to-zero filesystem repair on 2026-07-13 UTC:
+
+The atomic-write append annotation exposed a shared runtime bug rather than a
+Sagelite-only incompatibility. Both the base WASI `fd_write` implementation
+and the kernel POSIX `write`/`writev` bridge tested the tracked file offset by
+truthiness. After `seek(0)`, the valid wasm32 offset `0n` was therefore treated
+as absent and the next write used the host descriptor's current position at
+the end of the file. This produced `Hello WorldHELLO` instead of overwriting
+the first five bytes.
+
+Both write paths now distinguish an undefined offset from `0n`, and the kernel
+C smoke covers writing `Hello World`, seeking to zero, writing `HELLO`, and
+reading back `HELLO World`. The C smoke, the `wasi-js` and kernel TypeScript
+builds, a direct Python-Wasm reproduction, and a standalone nine-block
+Sagelite regression all pass.
+
+Enabling the previously deferred row in normal whole-file order records:
+
+```text
+temporary_file.py: 74 passed, 0 failed, 6 skipped
+```
+
+After removing the stale annotation, applying the complete accumulated patch
+without rejects to a fresh archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` records the same default result.
+The deferred and pristine-default databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-seek-zero/temporary-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-seek-zero/pristine-temporary-file-default.sqlite3`.
+The next shared-runtime pass should refresh the clean corpus because the
+seek-to-zero repair affects all Python and C filesystem consumers, not only
+this Sagelite helper.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

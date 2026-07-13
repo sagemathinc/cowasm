@@ -14,6 +14,7 @@ To build and run natively:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -40,6 +41,30 @@ long long time0() {
 extern char* user_from_uid(uid_t uid, int nouser);
 
 #include <limits.h>
+
+static void test_seek_to_zero_overwrite(void) {
+  const char* path = "/tmp/seek-to-zero-overwrite";
+  const char* initial = "Hello World";
+  const char* replacement = "HELLO";
+  char contents[12] = {0};
+
+  int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0600);
+  if (fd == -1 || write(fd, initial, 11) != 11 || lseek(fd, 0, SEEK_SET) != 0 ||
+      write(fd, replacement, 5) != 5 || lseek(fd, 0, SEEK_SET) != 0 ||
+      read(fd, contents, 11) != 11 || close(fd) != 0) {
+    perror("seek-to-zero overwrite");
+    unlink(path);
+    exit(1);
+  }
+  unlink(path);
+
+  if (strcmp(contents, "HELLO World") != 0) {
+    fprintf(stderr, "seek-to-zero overwrite produced '%s'\n", contents);
+    exit(1);
+  }
+  printf("seek-to-zero overwrite: %s\n", contents);
+}
+
 int main(int argc, char** argv) {
 #ifdef __cowasm__
   printf("PAGE_SIZE=%d\n", PAGE_SIZE);
@@ -62,6 +87,8 @@ int main(int argc, char** argv) {
   }
   close(fd);
   unlink(path);
+
+  test_seek_to_zero_overwrite();
 
   int n = 10000000;
   if (argc > 1) {

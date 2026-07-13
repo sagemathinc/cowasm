@@ -881,10 +881,10 @@ export default class WASI {
                   iov,
                   w,
                   iov.byteLength - w,
-                  stats.offset ? Number(stats.offset) : null
+                  stats.offset === undefined ? null : Number(stats.offset)
                 );
                 // log(`just wrote i=${i} bytes`);
-                if (stats.offset) stats.offset += BigInt(i);
+                if (stats.offset !== undefined) stats.offset += BigInt(i);
                 w += i;
               }
               //console.log("fd_write", fd, "  wrote ", w);

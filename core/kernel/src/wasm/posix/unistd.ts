@@ -55,9 +55,9 @@ export default function unistd(context) {
         data,
         written,
         data.byteLength - written,
-        stats.offset ? Number(stats.offset) : null
+        stats.offset === undefined ? null : Number(stats.offset)
       );
-      if (stats.offset) {
+      if (stats.offset !== undefined) {
         stats.offset += BigInt(n);
       }
       written += n;
