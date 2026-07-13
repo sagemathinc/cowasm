@@ -3568,12 +3568,6 @@ diff -urN a/src/sage/quadratic_forms/quadratic_form__reduction_theory.py b/src/s
 @@ -306 +306 @@
 -        sage: Q.minkowski_reduction_for_4vars__SP()
 +        sage: Q.minkowski_reduction_for_4vars__SP()                                  # random - tuple pretty-printer display differs in Sagelite
-diff -urN a/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py b/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
---- a/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
-+++ b/src/sage/quadratic_forms/quadratic_form__ternary_Tornaria.py
-@@ -74 +74 @@
--        sage: Q.matrix().gcd()
-+        sage: Q.matrix().gcd()                                                        # known bug - Sagelite uses a generic dense matrix backend without gcd here
 diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
 --- a/src/sage/dynamics/finite_dynamical_system.py
 +++ b/src/sage/dynamics/finite_dynamical_system.py
@@ -13444,6 +13438,24 @@ diff -urN -U0 a/src/sage/matrix/matrix_generic_dense.pyx b/src/sage/matrix/matri
 @@ -77 +77 @@
 -            sage: Matrix_generic_dense(M, (x, y), True, True)
 +            sage: Matrix_generic_dense(M, (x, y), True, True)                        # needs sage.libs.pari
+@@ -177,0 +178,17 @@
++
++    def gcd(self):
++        """
++        Return the greatest common divisor of all entries of ``self``.
++
++        This provides the same entrywise operation as integer dense matrices
++        when the generic dense implementation is used as a fallback.
++
++        EXAMPLES::
++
++            sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
++            sage: A = Matrix_generic_dense(MatrixSpace(ZZ, 2), [6, 15, -6, 150])
++            sage: A.gcd()
++            3
++        """
++        from sage.arith.misc import gcd
++        return gcd(self._entries)
 diff -urN -U0 a/src/sage/matrix/action.pyx b/src/sage/matrix/action.pyx
 --- a/src/sage/matrix/action.pyx
 +++ b/src/sage/matrix/action.pyx

@@ -48963,6 +48963,41 @@ expectations; shell syntax, Node syntax, and `git diff --check` are clean.
 The next deferred audit can return to native semantic candidates without
 counting directive-scope artifacts as Sage backend failures.
 
+Generic dense matrix gcd backend pass on 2026-07-13 UTC:
+
+The browser-profile deferral on
+`sage/quadratic_forms/quadratic_form__ternary_Tornaria.py:74` exposed a small
+backend capability gap rather than a presentation difference. The stripped
+runtime constructs the quadratic form's integer matrix as
+`Matrix_generic_dense`, whose entries are `[2, 0, 0, 2]`, but only Sage's
+specialized integer-dense matrix class provided `gcd()`. The existing generic
+Sage arithmetic helper already computes the required entrywise value `2`.
+
+`Matrix_generic_dense.gcd()` now delegates to that helper, giving generic
+dense fallback matrices the same entrywise operation as integer-dense
+matrices. Its own doctest checks a nontrivial matrix with positive and negative
+entries. The Tornaria annotation is removed, and a focused rebuild of only the
+affected Cython side module followed by a two-file whole-file replay records:
+
+```text
+matrix_generic_dense.pyx:                    71 passed, 0 failed,  4 skipped
+quadratic_form__ternary_Tornaria.py:          58 passed, 0 failed, 41 skipped
+combined:                                    129 passed, 0 failed, 45 skipped
+```
+
+The dashboard and copy-on-write validation resource bundle are under
+`.tmp/current-run/scheduled-2026-07-13-generic-matrix-gcd/`. Applying the
+complete accumulated WASI source patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. Both reconstructed changed sources match the shared patched source
+byte for byte.
+
+The same pass audited the single deferred collection-ABC row in
+`modules/with_basis/indexed_element.pyx`; it remains live because the runtime
+returns `True` where the upstream known-bug row expects `False`. The next pass
+should continue with another native backend operation or stale semantic row,
+avoiding that confirmed collection-ABC boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
