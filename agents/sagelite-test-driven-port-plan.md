@@ -47834,6 +47834,37 @@ at line 337. The saved block- and file-cluster queries reproduce these three
 groups. The next focused pass should address the 69-row tensor component
 representation cluster while preserving the component arithmetic checks.
 
+Tensor basis-sequence display semantics pass on 2026-07-13 UTC:
+
+The 69-row `sage/tensor/modules/comp.py` representation cluster is clear
+without rewriting or deferring its expected component representations. The
+cluster was a regression from the earlier `basis_seq(..., cr=False)` source
+workaround: full Sage's IPython display keeps a top-level basis sequence on one
+line, but nested `str(basis)` deliberately retains the legacy multiline form
+used by `Components._repr_()`.
+
+The WASI source patch now preserves upstream `Sequence(..., cr=True)` basis
+semantics. Runner version 109 gives the Node REPL and doctest display hooks the
+matching top-level behavior by rendering a `Sequence_generic` through an
+ordinary list while leaving explicit `str()` unchanged. The standalone
+doctest smoke covers both sides of that contract.
+
+Focused validation against a consistently staged runtime records:
+
+```text
+sequence display smoke: 3 passed, 0 failed, 0 skipped
+comp.py: 907 passed, 0 failed, 102 skipped
+```
+
+The complete tensor result is in
+`.tmp/current-run/scheduled-2026-07-13-tensor-repr/full-runner109-fixed.sqlite3`.
+The patch applies sequentially to the pinned Sagelite source, the Node and
+shell syntax checks pass, and `git diff --check` is clean. A direct Node REPL
+probe also prints `Sequence([1, 2, 3], cr=True)` compactly while preserving
+the multiline escaped result of `str(...)`. The remaining complete-dashboard
+frontiers are the twelve-row `real_double.pyx` symbolic-setup cascade and the
+existing `ntl_GF2E.pyx` WASM trap.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

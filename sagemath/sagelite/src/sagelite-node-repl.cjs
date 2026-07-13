@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 108;
+const doctestRunnerVersion = 109;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -96,7 +96,9 @@ async function main() {
   });
 
   await python.exec(`
+import builtins
 import code
+import sys
 import warnings
 
 warnings.filterwarnings(
@@ -106,6 +108,19 @@ warnings.filterwarnings(
 )
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
+from sage.structure.sequence import Sequence_generic as __CowasmSequence
+
+__cowasm_sagelite_displayhook_delegate = sys.displayhook
+
+def __cowasm_sagelite_displayhook(value):
+    if isinstance(value, __CowasmSequence):
+        if value is not None:
+            builtins._ = value
+            print(repr(list(value)))
+        return
+    __cowasm_sagelite_displayhook_delegate(value)
+
+sys.displayhook = __cowasm_sagelite_displayhook
 
 __cowasm_sagelite_do_preparse = True
 __cowasm_sagelite_console = code.InteractiveConsole(globals())
@@ -1002,6 +1017,7 @@ warnings.filterwarnings(
 
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
+from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
 __cowasm_files = ${JSON.stringify(JSON.stringify(files))}
 __cowasm_result_path = ${JSON.stringify(resultPath)}
@@ -1060,7 +1076,9 @@ __cowasm_displayhook_delegate = None
 
 def __cowasm_doctest_displayhook(value):
     try:
-        if __cowasm_displayhook_delegate is not None:
+        if isinstance(value, __CowasmSequence):
+            sys.stdout.write(repr(list(value)) + "\\n")
+        elif __cowasm_displayhook_delegate is not None:
             __cowasm_displayhook_delegate(value)
         else:
             sys.__displayhook__(value)
