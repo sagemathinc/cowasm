@@ -47206,6 +47206,34 @@ next focused pass should classify the symbolic monomial-group construction and
 identity examples around patched lines 3307--3318, while retaining ordinary
 string-variable construction coverage.
 
+Symbolic monomial-group constructor boundary pass on 2026-07-13 UTC:
+
+The constructor example using `log(SR.var('y'))` and the identity test comparing
+symbolic-object and parsed-string logarithmic variables both exercise symbolic
+normalization. Those four prompts now carry focused `sage.symbolic` dependency
+metadata. The ordinary `MonomialGrowthGroup(ZZ, 'x')` construction and its
+representation remain active and passing.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 744 passed, 79 failed, 129 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-constructor/full.sqlite3`.
+Compared by block index with the preceding minimum-construction dashboard,
+exactly four failures become `optional:sage.symbolic` skips; every other block
+status and every non-random passing output are unchanged. The complete patch
+applies to Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+the resulting growth-group module matches the tested source byte for byte and
+compiles with `py_compile`, and the patched tree passes `git diff --check`.
+The next focused pass should examine the monomial conversion examples around
+patched lines 3394--3398, replacing only their reliance on the unavailable
+startup symbol `x` where direct raw-element construction preserves the tested
+conversion and representation behavior.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
