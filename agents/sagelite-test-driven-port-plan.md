@@ -48859,6 +48859,41 @@ the shared patched source byte for byte, and its default replay gives the same
 next pass should continue with another native semantic row while retaining the
 reproduced complex-ball representation boundary.
 
+Native exterior-algebra homology and ideal-diagnostic promotion pass on
+2026-07-13 UTC:
+
+Three browser-profile `# known bug` annotations in
+`sage/algebras/clifford_algebra.py` are stale. The boundary and coboundary
+chain complexes over `QQ` both return the documented homology dictionaries,
+and the exterior-ideal Groebner-basis check over `ZZ` raises the documented
+`NotImplementedError`. All three rows pass in normal whole-file order with
+deferred tests enabled, so their annotations are removed.
+
+The deferred audit is `/tmp/cowasm-clifford-deferred.sqlite3`. It retains three
+live neighboring boundaries: both integral homology dictionaries display the
+two-torsion factor as `C-2 x C2`, and the coboundary test suite still reports a
+pickling inequality. Removing only the three stale guards and replaying the
+shared patched file in the default browser profile records:
+
+```text
+clifford_algebra.py: 562 passed, 0 failed, 64 skipped
+```
+
+The shared-source default database is
+`/tmp/cowasm-clifford-default.sqlite3`. Applying the complete accumulated patch
+to a fresh archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed file matches the shared patched source byte for byte and gives
+the same 562/0/64 result in
+`/tmp/cowasm-clifford-pristine-default.sqlite3`.
+
+The same pass reconfirmed three other deferred boundaries rather than
+promoting them: `exp(z).pade(1, 1)` and the exhaustive cyclotomic-value loop
+each consume their full 600-second file timeout, while `version()` still has a
+warning/output mismatch. The next pass should continue with a different
+bounded native semantic row, avoiding those timeout and presentation
+clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
