@@ -47234,6 +47234,34 @@ patched lines 3394--3398, replacing only their reliance on the unavailable
 startup symbol `x` where direct raw-element construction preserves the tested
 conversion and representation behavior.
 
+Direct monomial conversion and representation pass on 2026-07-13 UTC:
+
+The two lightweight conversion examples now construct their monomial elements
+from explicit raw exponents while retaining the expected `x` and `x^(-333)`
+representations. This removes only their reliance on the unavailable startup
+symbol `x`. The neighboring `log(x)^2` conversion crosses the symbolic
+expression backend directly and now carries focused `sage.symbolic`
+dependency metadata.
+
+Focused reruns of the two raw-element rows pass independently, while the
+logarithmic row records its intended dependency skip. A full direct-file rerun
+against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 746 passed, 76 failed, 130 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-conversion/full-pristine.sqlite3`.
+Compared by block index with the preceding constructor-boundary dashboard,
+exactly two failures become passes and one failure becomes an
+`optional:sage.symbolic` skip; the other 949 block statuses are unchanged. The
+new patch fragment applies cleanly to the preceding accumulated source, the
+tested module compiles with `py_compile`, and CoWasm passes `git diff --check`.
+The next focused pass should classify the logarithmic generator examples near
+patched lines 3564 and 3592, keeping the ordinary monomial and exponential
+generator coverage active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
