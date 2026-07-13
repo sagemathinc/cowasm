@@ -47677,6 +47677,38 @@ classify the three symbolic exponential-variable construction and dependent
 inspection pairs at patched lines 5095--5102, retaining the active plain
 Gaussian-exponent factory controls immediately above them.
 
+Symbolic exponential-variable normalization boundary pass on 2026-07-13 UTC:
+
+The three factory constructions using `(e^(n*log(n)))`, `(e^n)`, and their
+Cartesian product all normalize non-identifier variable expressions through
+the unavailable symbolic backend. Those constructions and their three
+dependent `_var_` inspection prompts now carry focused `sage.symbolic`
+dependency metadata. The neighboring `n^(ZZ[I])`, `n^(I*ZZ)`, and
+`n^(ZZ*I)` Gaussian-exponent factories remain active; focused controls for the
+first and last forms pass.
+
+The focused rerun records six intended symbolic skips and two passing Gaussian
+controls. A full direct-file rerun against the validated isolated Electron
+resources records:
+
+```text
+growth_group.py: 764 passed, 3 failed, 185 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-variable-factory/full.sqlite3`.
+Compared by block index with the preceding exponential-factory dashboard,
+exactly the six targeted failures become `optional:sage.symbolic` skips; all
+other 946 statuses are unchanged. The only changed outputs among unchanged
+statuses are five `# random` rows, so every unchanged non-random passing output
+is identical. The complete accumulated patch applies to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the resulting growth-group module
+matches the tested source byte for byte and compiles with `py_compile`, and
+both source trees pass `git diff --check`. The next focused pass should
+classify the logarithmic Gaussian-exponent product at patched line 5108 while
+retaining the active plain Gaussian-exponent factory controls immediately
+above it.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
