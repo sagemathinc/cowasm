@@ -47289,6 +47289,41 @@ failures beginning around patched line 3830, replacing only their reliance on
 the unavailable startup symbol `x` where direct raw-element construction keeps
 the intended base, representation, and LaTeX behavior active.
 
+Direct exponential element construction, representation, and multiplication
+pass on 2026-07-13 UTC:
+
+The base accessor, ordinary representation, and LaTeX examples now construct
+integer, rational, and root-of-unity elements from explicit raw bases. The
+`QQ^x` representation examples use `ExponentialGrowthGroup(QQ, 'x')`
+directly because the factory's product parent deliberately does not accept the
+element-level `raw_element` keyword. This keeps the examples on the exact
+element class under test without importing the unavailable symbolic startup
+name `x`.
+
+The neighboring multiplication example now uses the positive-integer
+exponential parent and explicit raw bases. This retains the direct `_mul_`,
+equality, operator multiplication, and resulting `6^x`/`12^x` assertions
+without routing construction through either the symbolic ring or the signed
+`ZZ^x` product parent.
+
+Focused checks cover the changed base, ordinary/LaTeX, and multiplication
+assertions, including a six-row representation rerun with the direct parent
+setup. A full direct-file rerun against the validated Electron resources
+records:
+
+```text
+growth_group.py: 760 passed, 62 failed, 130 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-exponential-element-root/full.sqlite3`.
+Compared by block index with the preceding generator dashboard, exactly twelve
+`NameError` failures become passes; the other 940 block statuses and all
+unchanged non-random passing outputs remain identical. The next focused pass
+should classify the symbolic setup and dependent exponentiation examples
+beginning around patched line 4007 while preserving the already-active raw
+base arithmetic.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

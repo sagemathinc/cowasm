@@ -23581,3 +23581,71 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 -            sage: GrowthGroup('log(x)^QQ').gens_logarithmic()
 +            sage: MonomialGrowthGroup(QQ, Variable('x', repr='log(x)', latex_name=r'\log(x)')).gens_logarithmic()
              (log(x),)
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3803,5 +3803,5 @@ class ExponentialGrowthElement(GenericGrowthElement):
+             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+             sage: P = GrowthGroup('(ZZ_+)^x')
+-            sage: P(42^x).base
++            sage: P(raw_element=42).base
+             42
+         """
+@@ -3823,10 +3823,10 @@ class ExponentialGrowthElement(GenericGrowthElement):
+         EXAMPLES::
+
+-            sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+-            sage: P = GrowthGroup('QQ^x')
++            sage: from sage.rings.asymptotic.growth_group import ExponentialGrowthGroup
++            sage: P = ExponentialGrowthGroup(QQ, 'x')
+             sage: P(1)._repr_()
+             '1'
+-            sage: P(5^x)  # indirect doctest
++            sage: P(raw_element=5)  # indirect doctest
+             5^x
+-            sage: P((1/2)^x)  # indirect doctest
++            sage: P(raw_element=1/2)  # indirect doctest
+             (1/2)^x
+@@ -3836,6 +3836,6 @@ class ExponentialGrowthElement(GenericGrowthElement):
+             sage: from sage.rings.asymptotic.growth_group import ExponentialNonGrowthGroup
+             sage: from sage.groups.misc_gps.argument_groups import RootsOfUnityGroup
+             sage: UU = ExponentialNonGrowthGroup(RootsOfUnityGroup(), 'x')
+-            sage: UU((-1)^x)  # indirect doctest
++            sage: UU(raw_element=-1)  # indirect doctest
+             (-1)^x
+
+@@ -3874,10 +3874,10 @@ class ExponentialGrowthElement(GenericGrowthElement):
+         TESTS::
+
+-            sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+-            sage: P = GrowthGroup('QQ^x')
++            sage: from sage.rings.asymptotic.growth_group import ExponentialGrowthGroup
++            sage: P = ExponentialGrowthGroup(QQ, 'x')
+             sage: latex(P(1))
+             1
+-            sage: latex(P(5^x))  # indirect doctest
++            sage: latex(P(raw_element=5))  # indirect doctest
+             5^{x}
+-            sage: latex(P((1/2)^x))  # indirect doctest
++            sage: latex(P(raw_element=1/2))  # indirect doctest
+             \left(\frac{1}{2}\right)^{x}
+@@ -3887,6 +3887,6 @@ class ExponentialGrowthElement(GenericGrowthElement):
+             sage: from sage.rings.asymptotic.growth_group import ExponentialNonGrowthGroup
+             sage: from sage.groups.misc_gps.argument_groups import RootsOfUnityGroup
+             sage: UU = ExponentialNonGrowthGroup(RootsOfUnityGroup(), 'x')
+-            sage: latex(UU((-1)^x))  # indirect doctest
++            sage: latex(UU(raw_element=-1))  # indirect doctest
+             \left(-1\right)^{x}
+
+@@ -3924,8 +3924,8 @@ class ExponentialGrowthElement(GenericGrowthElement):
+         EXAMPLES::
+
+             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+-            sage: P = GrowthGroup('ZZ^x')
+-            sage: a = P(2^x)
+-            sage: b = P(3^x)
++            sage: P = GrowthGroup('(ZZ_+)^x')
++            sage: a = P(raw_element=2)
++            sage: b = P(raw_element=3)
+             sage: c = a._mul_(b); c
+             6^x
