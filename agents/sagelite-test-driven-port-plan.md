@@ -48765,6 +48765,40 @@ traceback, serialization, HTML, allocation, and constructor-diagnostic
 boundaries. The next pass should continue with another native semantic row,
 avoiding those reproduced clusters.
 
+Native skew-polynomial interpolation promotion pass on 2026-07-13 UTC:
+
+Five browser-profile `# known bug` annotations in
+`sage/rings/polynomial/skew_polynomial_ring.py` are stale. The low-level and
+ring-method Lagrange interpolation examples both return `x + t`; evaluating
+the low-level result recovers its prescribed values; and the two dependent
+evaluation-point examples return the documented minimal vanishing polynomial.
+All five rows pass in normal whole-file order with deferred tests enabled, so
+their annotations are removed.
+
+The three-file deferred audit is
+`.tmp/current-run/scheduled-2026-07-13-next-native-audit/three-file.sqlite3`.
+The skew-polynomial file passes all 159 runnable blocks, while its four
+remaining skips retain explicit PARI boundaries. The same audit confirms that
+the neighboring generic and finitely generated matrix-group rows still fail
+because of unavailable iteration, generator, normalization, and subgroup
+behavior, so those annotations remain in place.
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed file matches the shared patched source byte for
+byte, and both default-profile replays record:
+
+```text
+skew_polynomial_ring.py: 159 passed, 0 failed, 4 skipped
+```
+
+The shared-source and reconstructed-source databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-skew-polynomial-promotion/shared-default.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-skew-polynomial-promotion/pinned-default.sqlite3`.
+The next pass should continue with another native semantic row whose complete
+whole-file setup is runnable in the browser profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
