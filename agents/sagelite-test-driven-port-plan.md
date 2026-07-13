@@ -46980,6 +46980,34 @@ pass should classify the logarithmic factory representation and `an_element`
 examples around patched lines 1881--1935, keeping non-symbolic monomial and
 exponential coverage active.
 
+Logarithmic representation and sample-element boundary pass on 2026-07-13 UTC:
+
+The five failures in the representation and `_an_element_` examples around
+patched lines 1881--1935 all construct growth groups whose variable strings
+contain `log(...)`.  Parsing those non-identifier variables reaches
+`sage.symbolic.expression`, which is intentionally unavailable in the browser
+profile.  Those five examples now carry focused `sage.symbolic` dependency
+metadata.  The neighboring generic, monomial, exponential, hash, and
+`some_elements` examples remain active and passing.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 717 passed, 129 failed, 106 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-repr-element/full-final.sqlite3`.
+Compared by block index with the preceding dashboard, exactly five failures
+become `optional:sage.symbolic` skips; the other 947 block statuses are
+unchanged.  The complete accumulated patch applies to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the patched module compiles
+with `py_compile`.  The next focused pass should examine the partial-conversion
+stateful cluster around patched lines 2101--2117, separating its symbolic
+exponent setup from the conversion and split behavior that may be expressible
+through a direct raw-element construction.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

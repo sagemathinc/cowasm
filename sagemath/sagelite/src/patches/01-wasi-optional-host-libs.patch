@@ -23392,3 +23392,21 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
              Growth Group SR^y
 -            sage: forget()
 +            sage: forget()  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -1881 +1881 @@ def _repr_(self, condense=False):
+-            sage: GrowthGroup('log(x)^QQ')  # indirect doctest
++            sage: GrowthGroup('log(x)^QQ')  # indirect doctest  # needs sage.symbolic
+@@ -1886 +1886 @@ def _repr_(self, condense=False):
+-            sage: GrowthGroup('log(x)^QQ')._repr_(condense=True)
++            sage: GrowthGroup('log(x)^QQ')._repr_(condense=True)  # needs sage.symbolic
+@@ -1931 +1931 @@ def _an_element_(self):
+-            sage: GrowthGroup('log(z)^QQ').an_element()  # indirect doctest
++            sage: GrowthGroup('log(z)^QQ').an_element()  # indirect doctest  # needs sage.symbolic
+@@ -1933 +1933 @@ def _an_element_(self):
+-            sage: GrowthGroup('(QQ_+)^(x*log(x))').an_element()  # indirect doctest
++            sage: GrowthGroup('(QQ_+)^(x*log(x))').an_element()  # indirect doctest  # needs sage.symbolic
+@@ -1935 +1935 @@ def _an_element_(self):
+-            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest
++            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest  # needs sage.symbolic
