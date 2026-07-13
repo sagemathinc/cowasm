@@ -47648,65 +47648,6 @@ classify the exponential `GrowthGroup('exp(x)^ZZ * x^ZZ')` and
 5070, retaining the active positive-rational-base and Gaussian-exponent product
 controls around that cluster.
 
-Growth-group exponential factory boundary pass on 2026-07-13 UTC:
-
-The `GrowthGroup('exp(x)^ZZ * x^ZZ')` and
-`GrowthGroup('(e^x)^ZZ * x^ZZ')` factory examples now carry focused
-`sage.symbolic` dependency metadata. Focused controls for the
-positive-rational-base Cartesian product and Gaussian-integer exponent product
-remain active and pass.
-
-The focused exponential-factory rerun records both intended dependency skips.
-A full direct-file rerun against the validated isolated Electron resources
-records:
-
-```text
-growth_group.py: 764 passed, 9 failed, 179 skipped
-```
-
-The latest run in the database is
-`.tmp/current-run/scheduled-2026-07-13-growth-factory-exponential/full.sqlite3`.
-Compared by block index with the preceding logarithmic-product dashboard,
-exactly the two exponential factory failures become
-`optional:sage.symbolic` skips; the other 950 block statuses and all unchanged
-non-random passing outputs are identical. The accumulated patch applies cleanly
-to Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, the resulting
-growth-group module matches the tested source byte for byte and compiles with
-`py_compile`, and CoWasm passes `git diff --check`. The next focused pass should
-classify the symbolic variable-normalization tests at patched lines 5095--5102
-and the logarithmic Gaussian-exponent product at line 5108, retaining the
-active plain Gaussian-exponent factory controls immediately above them.
-
-Growth-group exponential Cartesian-product boundary pass on 2026-07-13 UTC:
-
-The `GrowthGroup('exp(x)^ZZ * x^ZZ')` and
-`GrowthGroup('(e^x)^ZZ * x^ZZ')` factory examples now carry focused
-`sage.symbolic` dependency metadata. Focused controls for the
-positive-rational-base Cartesian product and Gaussian-integer exponent product
-remain active and pass.
-
-The focused exponential-product rerun records both intended dependency skips.
-A full direct-file rerun against the validated isolated Electron resources
-records:
-
-```text
-growth_group.py: 764 passed, 9 failed, 179 skipped
-```
-
-The database is
-`.tmp/current-run/scheduled-2026-07-13-growth-factory-exponential/full.sqlite3`.
-Compared by block index with the preceding logarithmic-product dashboard,
-exactly the two exponential Cartesian-product failures become
-`optional:sage.symbolic` skips; the other 950 block statuses and all unchanged
-non-random passing outputs are identical. The accumulated growth-group patch
-fragments apply sequentially to Sagelite commit
-`f575cf6224f749763d7c875229cbd684e5939e58`; the resulting module matches the
-tested source byte for byte and compiles with `py_compile`, and CoWasm passes
-`git diff --check`. The next focused pass should classify the three symbolic
-exponential-variable construction and dependent inspection pairs at patched
-lines 5095--5102, retaining the active positive-rational-base and
-Gaussian-exponent product controls around the factory cluster.
-
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
