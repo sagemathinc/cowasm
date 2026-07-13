@@ -47592,6 +47592,32 @@ the `GrowthGroup` factory examples beginning around patched line 5052,
 preserving the active identifier-only, rational-base, and Gaussian-exponent
 factory coverage around that cluster.
 
+Growth-group logarithmic factory boundary pass on 2026-07-13 UTC:
+
+The `GrowthGroup('log(x)^QQ')` factory example now carries focused
+`sage.symbolic` dependency metadata. Focused controls for the identifier-only
+`GrowthGroup('x^ZZ')`, positive-rational-base Cartesian product, and Gaussian
+integer exponent factory paths remain active and pass.
+
+The focused logarithmic rerun records its intended dependency skip. A full
+direct-file rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 13 failed, 175 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-factory-log/full.sqlite3`.
+Compared by block index with the preceding non-growth-category dashboard,
+exactly the logarithmic factory failure becomes an `optional:sage.symbolic`
+skip; the other 951 block statuses and all unchanged non-random passing outputs
+are identical. The new patch fragment applies cleanly to the preceding
+validated source, the resulting module matches the tested source byte for byte
+and compiles with `py_compile`, and CoWasm passes `git diff --check`. The next
+focused pass should classify the logarithmic Cartesian-product factory examples
+at patched lines 5060 and 5062, retaining the active positive-rational-base and
+Gaussian-exponent product controls around that cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

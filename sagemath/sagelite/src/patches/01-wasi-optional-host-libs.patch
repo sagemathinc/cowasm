@@ -23821,3 +23821,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4820 +4820 @@ class GenericNonGrowthGroup(GenericGrowthGroup):
 -            sage: ExponentialNonGrowthGroup._initial_category_(SR)
 +            sage: ExponentialNonGrowthGroup._initial_category_(SR)  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -5052 +5052 @@ class GrowthGroupFactory(UniqueFactory):
+-        sage: GrowthGroup('log(x)^QQ')
++        sage: GrowthGroup('log(x)^QQ')  # needs sage.symbolic
