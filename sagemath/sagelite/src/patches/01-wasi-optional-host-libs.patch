@@ -3413,19 +3413,6 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -            sage: phi(V.0) == V.1
 +            sage: phi(V.0) == V.1                                                       # needs sage.symbolic
              True
-@@ -119,10 +119,10 @@
-         The following tests against a bug that was fixed in
-         :issue:`9944`. The method ``zero()`` calls this hom space with
-         a function, not with a matrix, and that case had previously
-         not been taken care of::
-
--            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
--            sage: V.Hom(V).zero()   # indirect doctest
-+            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)                            # known bug
-+            sage: V.Hom(V).zero()   # indirect doctest                                 # known bug
-             Free module morphism defined by the matrix
-             [0 0 0]
-             [0 0 0]
 --- a/src/sage/modules/quotient_module.py
 +++ b/src/sage/modules/quotient_module.py
 @@ -540,9 +540,9 @@

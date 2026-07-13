@@ -48544,6 +48544,34 @@ also remains guarded after hanging in an isolated worker. The next pass should
 continue with a different native semantic row and avoid those reproduced
 failure clusters.
 
+Native free-module homspace promotion pass on 2026-07-13 UTC:
+
+Both WASI-added `# known bug` rows in
+`sage/modules/free_module_homspace.py` are stale. A whole-file deferred replay
+constructs the rational-span module and prints the zero homomorphism with the
+documented zero matrix, domain, and codomain. Removing the annotations and
+replaying the freshly reconstructed file in the default browser profile gives:
+
+```text
+free_module_homspace.py: 39 passed, 0 failed, 8 skipped
+```
+
+The initial four-file audit and final pristine default run are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-followup/four-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-followup/pristine-default.sqlite3`.
+The complete accumulated patch applies without rejects to a fresh archive of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The other bounded probes do not justify promotion. File-level dependency
+directives skip the integer-matrix and filtered-vector-space examples in this
+browser profile. The factorization block also exposes a directive-scope
+artifact: its `P` and `f` setup rows inherit the preceding optional dependency
+tag, while the later standalone `# known bug` resets that tag and makes five
+dependent rows fail with `NameError`. The next pass should choose another
+native semantic row with complete runnable setup, leaving these dependency and
+runner-scope boundaries explicit.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
