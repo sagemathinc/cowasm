@@ -48094,6 +48094,47 @@ byte buffer and base immediately before `mpfr_set_str`, then compare direct
 construction with the stateful doctest sequence without changing MPFR or the
 dynamic loader.
 
+Python WASM locale ABI and real-MPFR promotion pass on 2026-07-13 UTC:
+
+The parser-state defect is in the Python host boundary rather than Cython's
+byte conversion. Both `python.wasm` and the `sage.rings.real_mpfr` side module
+import `localeconv`, but the kernel import fallback returned address zero.
+MPFR consequently read changing low-memory data as the C locale's
+`decimal_point` pointer, explaining why mixed-case, signed, and nondecimal
+parses failed only after particular earlier examples. The standalone and
+minimal-dylink smokes pass because their main WASI modules provide libc's real
+`localeconv` implementation instead of that Python-specific stub.
+
+The kernel now lazily allocates a stable wasm32 `struct lconv` for the POSIX/C
+locale, with `.` as the decimal point, empty grouping and monetary strings,
+and the fourteen one-byte fields set to `CHAR_MAX`. Focused TypeScript tests
+check the exact pointer layout, stable reuse, and allocator-failure retry;
+the kernel C smokes also remain clean.
+
+Enabling the remaining real-MPFR known-bug rows with this runtime changes the
+focused result from 985 passed, nine failed, and 113 skipped to:
+
+```text
+real_mpfr.pyx: 993 passed, 1 failed, 113 skipped
+```
+
+The sole failure is the independent CPython `float.hex()` exponent-format
+drift. The recovered rows cover mixed-case base 36, signed decimal and
+negative zero, base 16 and base 37, and MPFR hexadecimal mantissa formatting.
+After removing those nine stale annotations, the default direct-file run is:
+
+```text
+real_mpfr.pyx: 993 passed, 0 failed, 114 skipped
+```
+
+The passing database is
+`.tmp/current-run/scheduled-2026-07-13-localeconv-fix/real-mpfr-strict-cwd.sqlite3`.
+The accumulated Sagelite patch dry-runs against the pinned clean source, the
+kernel TypeScript and Jest checks pass, and `git diff --check` is clean. The
+next shared-runtime validation should refresh the curated corpus, retaining
+the one genuine `float.hex()` deferred row while checking other locale-aware
+numeric modules for newly runnable coverage.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

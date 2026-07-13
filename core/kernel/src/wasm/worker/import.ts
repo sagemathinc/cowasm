@@ -21,6 +21,45 @@ export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
   return i - charPtr;
 }
 
+/**
+ * Build the wasm32 representation returned by C's localeconv() for the
+ * POSIX/C locale.  WASI libc's struct lconv contains ten pointers followed
+ * by fourteen one-byte fields, rounded up to four-byte alignment.
+ */
+export function createPosixLocaleconv(
+  memory: WebAssembly.Memory,
+  allocate: (bytes: number) => number
+): () => number {
+  let localePtr = 0;
+
+  return () => {
+    if (localePtr != 0) {
+      return localePtr;
+    }
+
+    const structSize = 56;
+    const decimalPointPtr = structSize;
+    const emptyStringPtr = decimalPointPtr + 2;
+    const allocationSize = emptyStringPtr + 1;
+    localePtr = allocate(allocationSize);
+    if (localePtr == 0) {
+      return 0;
+    }
+
+    const bytes = new Uint8Array(memory.buffer);
+    bytes.fill(0, localePtr, localePtr + allocationSize);
+    const view = new DataView(memory.buffer);
+    view.setUint32(localePtr, localePtr + decimalPointPtr, true);
+    for (let i = 1; i < 10; i += 1) {
+      view.setUint32(localePtr + 4 * i, localePtr + emptyStringPtr, true);
+    }
+    bytes.fill(127, localePtr + 40, localePtr + 54);
+    bytes[localePtr + decimalPointPtr] = ".".charCodeAt(0);
+
+    return localePtr;
+  };
+}
+
 export interface Options {
   wasmEnv?: { [name: string]: Function }; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
@@ -513,7 +552,21 @@ async function doWasmImport({
     wasmOpts.env.atof = (nptr: number) => parseFloatNumber(nptr, 0);
   }
   if (wasmOpts.env.localeconv == null) {
-    wasmOpts.env.localeconv = () => 0;
+    wasmOpts.env.localeconv = createPosixLocaleconv(memory, (bytes) => {
+      let malloc = wasm?.exports?.malloc;
+      if (typeof malloc != "function") {
+        const mallocPtr = wasm?.exports?.__WASM_EXPORT__malloc;
+        if (typeof mallocPtr == "function") {
+          malloc = table.get(Number(mallocPtr()));
+        }
+      }
+      if (typeof malloc != "function") {
+        throw Error(
+          "localeconv requires malloc from the main WebAssembly module"
+        );
+      }
+      return Number(malloc(bytes));
+    });
   }
   const mathFns = {
     acos: Math.acos,
