@@ -46724,6 +46724,31 @@ before producing Electron resources.  This pass therefore makes no dashboard
 count claim; the next isolated build should rerun patched line 1030 and the
 full `growth_group.py` file.
 
+Focused monomial string-conversion pass on 2026-07-13 UTC:
+
+`MonomialGrowthGroup._convert_` sent every string containing its variable
+through the symbolic ring, even when the input was already one of the simple
+forms documented by the method: `x^7`, `1/x`, `x^(-2)`, or `x^-2`.  This made
+plain monomial construction depend on `sage.symbolic.expression` and directly
+failed nine rows in the last available one-file dashboard, including the
+`m^2`/`m^0` variable-name examples.
+
+The WASI patch now parses an exact variable power or reciprocal directly in
+the growth group's base ring.  Parenthesized exponents are unwrapped once;
+invalid or more general expressions retain the existing symbolic fallback.
+An extracted exact-method harness covers integer and rational powers, the
+reciprocal and identity forms, unrelated-string rejection, and preservation of
+the symbolic fallback.  The patched module compiles with `py_compile`.
+
+The complete accumulated patch applies successfully to a fresh clone of
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; `git diff --check`
+passes, and its patched `growth_group.py` matches the focused validation source
+byte for byte.  A new WASM dashboard is not claimed in this pass because a
+separate isolated standalone rebuild was already running in the workspace and
+was farther through the serial Cython stage.  The next dashboard refresh should
+measure both the Cartesian constructor and monomial string changes together,
+then classify the surviving direct failures rather than their setup cascades.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

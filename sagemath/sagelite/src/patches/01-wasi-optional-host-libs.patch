@@ -23118,3 +23118,24 @@ diff --git a/src/sage/rings/asymptotic/growth_group_cartesian.py b/src/sage/ring
              if P is SR:
                  from sage.symbolic.operators import mul_vararg
                  if data.operator() == mul_vararg:
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3457,5 +3457,17 @@ class MonomialGrowthGroup(GenericGrowthGroup):
+         except AttributeError:
+             if var not in str(data):
+                 return  # this has to end here
++            if isinstance(data, str):
++                if data == '1/' + var:
++                    return self.base()(-1)
++                power_prefix = var + '^'
++                if data.startswith(power_prefix):
++                    exponent = data[len(power_prefix):]
++                    if exponent.startswith('(') and exponent.endswith(')'):
++                        exponent = exponent[1:-1]
++                    try:
++                        return self.base()(exponent)
++                    except (TypeError, ValueError):
++                        pass
+             from sage.symbolic.ring import SR
+             return self._convert_(SR(data))
