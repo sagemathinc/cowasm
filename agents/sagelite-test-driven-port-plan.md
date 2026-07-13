@@ -49032,6 +49032,53 @@ byte-identical to the shared patched source and syntax-checks cleanly. The
 reconstructed replay wrote a closed passing SQLite result before the already
 documented post-summary Node teardown segfault.
 
+Sagelite tall-container doctest display repair on 2026-07-13 UTC:
+
+Python 3.14's standard `doctest` runner resets `sys.displayhook` from
+`sys.__displayhook__` while executing examples.  Sagelite's custom hook
+therefore delegated successful values to the raw CPython representation and
+bypassed Sage's tall-list formatter.  Tuples and lists containing matrices or
+vectors were printed one item at a time instead of in Sage's horizontal
+layout, even though the lightweight `TallListRepr` implementation was already
+available in the browser profile.
+
+The custom doctest hook now applies `TallListRepr` to list and tuple values and
+falls back to the existing CPython delegate when the representer declines the
+object.  Sequence handling and the existing failed-`repr` diagnostic remain
+unchanged.  The standalone doctest smoke now covers a tuple of two integer
+matrices and expects 53 total blocks, 41 passes, no failures, and 12 classified
+skips.
+
+The shared formatter repair makes 15 WASI-only `# known bug` annotations stale
+across six files: the Hamilton quaternion matrix-action tuple, the Gamma0 cusp
+matrix witness, two alternating-sign-matrix lists, seven tensor-component
+matrix tuples, three finite-dimensional principal-ideal matrix lists, and the
+Judson vector-space basis list.  Applying the complete accumulated patch to a
+fresh archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.  A
+default-profile replay from that reconstructed source records:
+
+```text
+free_algebra_quotient.py:                  75 passed, 0 failed,   1 skipped
+cusps.py:                                 124 passed, 0 failed,  25 skipped
+combinat_doctest.py:                       51 passed, 0 failed,   0 skipped
+tensor/modules/comp.py:                   914 passed, 0 failed,  95 skipped
+finite_dimensional_algebras_with_basis.py: 52 passed, 0 failed, 260 skipped
+vect-sage.py:                              55 passed, 0 failed,   0 skipped
+combined:                                1271 passed, 0 failed, 381 skipped
+```
+
+The seven-block focused displayhook regression and the reconstructed default
+dashboard are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next8/displayhook-regression-final.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next8/pristine-final-default.sqlite3`.
+The same audit reconfirms that the Sigma0 matrix backend type, cachefunc
+documentation warning, and asymptotic multiline-exception rows are separate
+live boundaries.  The next shared-runner pass should finish a standard
+standalone resource rebuild and refresh the full clean corpus before using the
+new formatter to audit other presentation guards.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -1078,6 +1078,15 @@ def __cowasm_doctest_displayhook(value):
     try:
         if isinstance(value, __CowasmSequence):
             sys.stdout.write(repr(list(value)) + "\\n")
+        elif isinstance(value, (list, tuple)):
+            from sage.repl.display.fancy_repr import TallListRepr
+            formatted = TallListRepr().format_string(value)
+            if formatted != "--- object not handled by representer ---":
+                sys.stdout.write(formatted + "\\n")
+            elif __cowasm_displayhook_delegate is not None:
+                __cowasm_displayhook_delegate(value)
+            else:
+                sys.__displayhook__(value)
         elif __cowasm_displayhook_delegate is not None:
             __cowasm_displayhook_delegate(value)
         else:

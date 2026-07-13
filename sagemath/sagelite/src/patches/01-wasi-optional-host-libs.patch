@@ -9018,28 +9018,6 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/dom
    (Real Field with 17 bits of precision, Real Field with 42 bits of precision)
 
  Sage example in ./sol/domaines.tex, line 46::
-diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
---- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
-+++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/combinat_doctest.py
-@@ -138,7 +138,7 @@
-
-   sage: list(AlternatingSignMatrices(1))
-   [[1]]
--  sage: list(AlternatingSignMatrices(2))
-+  sage: list(AlternatingSignMatrices(2))  # known bug - Sagelite list-of-matrices display layout differs
-   [
-   [1 0]  [0 1]
-   [0 1], [1 0]
-@@ -146,7 +146,7 @@
-
- Sage example in ./sol/combinat.tex, line 361::
-
--  sage: list(AlternatingSignMatrices(3))
-+  sage: list(AlternatingSignMatrices(3))  # known bug - Sagelite list-of-matrices display layout differs
-   [
-   [1 0 0]  [0 1 0]  [1 0 0]  [ 0  1  0]  [0 0 1]  [0 1 0]  [0 0 1]
-   [0 1 0]  [1 0 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [0 1 0]
-
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/float_doctest.py
@@ -10719,15 +10697,6 @@ diff -urN a/src/sage/modular/cusps.py b/src/sage/modular/cusps.py
              2/3
          """
          if parent is None:
-@@ -509,7 +509,7 @@
-             sage: Cusp(1,0)
-             Infinity
-             sage: z = Cusp(1,0)
--            sage: x.is_gamma0_equiv(z, 3, 'matrix')
-+            sage: x.is_gamma0_equiv(z, 3, 'matrix')  # known bug - tuple/matrix repr differs in Sagelite WASI profile
-             (
-                   [-1  1]
-             True, [-3  2]
 @@ -890,13 +890,14 @@
              sage: Cusp(oo).galois_action(3, 50)
              Infinity
@@ -12039,9 +12008,6 @@ diff -urN -U0 a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx b/src/sage/
 diff -urN -U0 a/src/sage/algebras/free_algebra_quotient.py b/src/sage/algebras/free_algebra_quotient.py
 --- a/src/sage/algebras/free_algebra_quotient.py
 +++ b/src/sage/algebras/free_algebra_quotient.py
-@@ -292 +292 @@
--            sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].matrix_action()
-+            sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].matrix_action()  # known bug - tuple of matrices is vertically formatted in Sagelite WASI doctests
 @@ -390 +390 @@
 -        sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)  # much fast than the above
 +        sage: R.<i,j,k> = QuaternionAlgebra(QQ,-1,-1)  # much fast than the above      # needs sage.algebras.quaternion_algebra
@@ -20321,12 +20287,6 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/domains-sage.py b/src/
 @@ -129,1 +129,1 @@
 -    sage: four^-1
 +    sage: four^-1  # needs sage.rings.number_field
-diff --git a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
---- a/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
-+++ b/src/sage/tests/books/judson_abstract_algebra/vect-sage.py
-@@ -110,1 +110,1 @@
--    sage: S.basis()
-+    sage: S.basis()  # known bug - Sagelite WASI vector-list display layout
 diff --git a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
 --- a/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/homomorph-sage-exercises.py
@@ -20906,9 +20866,6 @@ diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
 @@ -289 +309 @@
 -        sage: basis = V.basis() ; basis
 +        sage: basis = V.basis() ; basis  # random
-@@ -1322 +1342 @@
--            sage: c[:], c1[:]
-+            sage: c[:], c1[:]  # known bug - tuple matrix display layout drift
 @@ -1550,0 +1571 @@
 +            sage: # needs _multiprocessing
 @@ -1658,0 +1680 @@
@@ -20923,9 +20880,6 @@ diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
 +            sage: # needs _multiprocessing
 @@ -2144,0 +2171 @@
 +            sage: # needs _multiprocessing
-@@ -2476 +2503 @@
--            sage: c[:], s[:]
-+            sage: c[:], s[:]  # known bug - tuple matrix display layout drift
 @@ -2559 +2585,0 @@
 -        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 @@ -2575 +2601 @@
@@ -20939,9 +20893,6 @@ diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
 @@ -2585 +2609 @@
 -            result[[ind]] = sum / sym_group.order()
 +            result[[ind]] = sum / len(sym_group)
-@@ -2615 +2639 @@
--            sage: c[:], s[:]
-+            sage: c[:], s[:]  # known bug - tuple matrix display layout drift
 @@ -2707 +2730,0 @@
 -        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 @@ -2723 +2746 @@
@@ -20958,18 +20909,6 @@ diff --git a/src/sage/tensor/modules/comp.py b/src/sage/tensor/modules/comp.py
 @@ -2736 +2757 @@
 -            result[[ind]] = sum / sym_group.order()
 +            result[[ind]] = sum / len(sym_group)
-@@ -2883 +2904 @@
--        sage: a[:], b[:], s[:]
-+        sage: a[:], b[:], s[:]  # known bug - tuple matrix display layout drift
-@@ -2904 +2925 @@
--        sage: b[:], c[:], s[:]
-+        sage: b[:], c[:], s[:]  # known bug - tuple matrix display layout drift
-@@ -2937 +2958 @@
--        sage: a[:], d[:], s[:]
-+        sage: a[:], d[:], s[:]  # known bug - tuple matrix display layout drift
-@@ -2956 +2977 @@
--        sage: d[:], e[:], s[:]
-+        sage: d[:], e[:], s[:]  # known bug - tuple matrix display layout drift
 @@ -3448,0 +3470 @@
 +            sage: # needs _multiprocessing
 @@ -3468,0 +3491 @@
@@ -21629,26 +21568,6 @@ diff --git a/src/sage/algebras/steenrod/steenrod_algebra.py b/src/sage/algebras/
 diff --git a/src/sage/categories/finite_dimensional_algebras_with_basis.py b/src/sage/categories/finite_dimensional_algebras_with_basis.py
 --- a/src/sage/categories/finite_dimensional_algebras_with_basis.py
 +++ b/src/sage/categories/finite_dimensional_algebras_with_basis.py
-@@ -746,16 +746,16 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
-                 [0 1]}
-                 sage: e = list(A.basis())
--                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]
-+                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]  # known bug - matrix list display differs in WASI runtime
-                 [
-                 [1 0]  [0 0]
-                 [0 0], [1 0]
-                 ]
--                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]
-+                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]  # known bug - matrix list display differs in WASI runtime
-                 [
-                 [1 0]  [0 1]
-                 [0 0], [0 0]
-                 ]
--                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]
-+                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]  # known bug - matrix list display differs in WASI runtime
-                 [
-                 [1 0]  [0 1]  [0 0]  [0 0]
-                 [0 0], [0 0], [1 0], [0 1]
 @@ -918,2 +918,3 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 -
 +
