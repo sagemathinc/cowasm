@@ -48894,6 +48894,40 @@ warning/output mismatch. The next pass should continue with a different
 bounded native semantic row, avoiding those timeout and presentation
 clusters.
 
+Native complex-interval two-argument constructor promotion pass on
+2026-07-13 UTC:
+
+The browser-profile `# known bug` annotation on
+`ComplexIntervalFieldElement(10,10)` in
+`sage/rings/complex_interval.pyx` is stale. A whole-file deferred replay
+constructs the documented `10 + 10*I`, so the annotation is removed. The
+neighboring Airy conversion, overlap, and argument-free constructor-diagnostic
+rows still fail and remain guarded.
+
+Removing only that annotation and replaying the shared patched file in the
+default browser profile records:
+
+```text
+complex_interval.pyx: 260 passed, 0 failed, 17 skipped
+```
+
+The four-file deferred audit and shared-source default replay are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next7/third-four-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next7/complex-interval-default.sqlite3`.
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed target matches the shared patched source byte for
+byte and gives the same 260/0/17 result in
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next7/pristine-default.sqlite3`.
+
+The bounded audit also reconfirmed the generic polynomial TestSuite,
+real-double algebraic-dependency, recursively-enumerated interruption, NTL
+GF2E conversion, image-set hashing, pairwise-subset equality, ordered-multiset
+dictionary-order, and bounded regular-sequence clusters. The next pass should
+continue with another native semantic row outside those reproduced
+boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
