@@ -47008,6 +47008,36 @@ stateful cluster around patched lines 2101--2117, separating its symbolic
 exponent setup from the conversion and split behavior that may be expressible
 through a direct raw-element construction.
 
+Direct partial-conversion constructor pass on 2026-07-13 UTC:
+
+The stateful constructor example around patched lines 2101--2117 now supplies
+the negative rational base through `raw_element`, avoiding only the symbolic
+power expression that required the unavailable startup `SR`.  The conversion
+still raises and exposes `PartialConversionValueError.element`; its
+representation, repeated-conversion guard, split, and reconstruction paths are
+therefore exercised.  The repeated-conversion check has the expected exception
+message but Sagelite's WASI traceback keeps that message on one line, so that
+single formatting assertion is narrowly deferred as a known bug.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 722 passed, 123 failed, 107 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-partial-conversion/full-final.sqlite3`.
+Compared by block index with the preceding dashboard, five cascading failures
+become passes and the independent traceback-format mismatch becomes
+`deferred:known bug`; the other 946 block statuses are unchanged.  The complete
+accumulated patch applies to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, its patched module matches the
+tested source byte for byte, compiles with `py_compile`, and passes
+`git diff --check`.  The next focused pass should classify the logarithmic
+common-parent and generator-introspection failures around patched lines
+2360--2508, keeping ordinary non-logarithmic product-group coverage active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

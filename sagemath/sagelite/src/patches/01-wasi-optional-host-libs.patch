@@ -23345,6 +23345,15 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
 --- a/src/sage/rings/asymptotic/growth_group.py
 +++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2101,3 +2101,3 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: n = SR.var('n')
++            sage: negative_base = -1/42
+             sage: try:
+-            ....:     G((-1/42)^n)
++            ....:     G(raw_element=negative_base)
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
 @@ -1044 +1044 @@ def _rpow_(self, base):
 -        sage: SCR = SR.subring(no_variables=True)
 +        sage: SCR = SR.subring(no_variables=True)  # needs sage.symbolic
@@ -23410,3 +23419,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -1935 +1935 @@ def _an_element_(self):
 -            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest
 +            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2108 +2108 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: G(a)
++            sage: G(a)  # known bug - Sagelite WASI multiline exception formatting
