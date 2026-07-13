@@ -47097,6 +47097,34 @@ remaining `_log_factor_` failures around patched lines 2977--2990, separating
 the symbolic `exp(x)` construction and default logarithm lookup from the
 already-runnable custom-local logarithm path.
 
+Focused monomial logarithm-factor dependency pass on 2026-07-13 UTC:
+
+The `exp(x)` growth-group setup and its base-2 logarithm example both require
+the unavailable symbolic expression backend.  The direct polynomial-exponent
+example also reaches the symbolic backend through the default `log(2)` lookup.
+Those three examples now carry focused `sage.symbolic` dependency metadata.
+The preceding non-symbolic `log_factor` error path and the following custom
+local logarithm example remain active and passing.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 735 passed, 101 failed, 116 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-log-factor/full.sqlite3`.
+Compared by block index with the preceding monomial-element dashboard, exactly
+three failures become `optional:sage.symbolic` skips; all other 949 block
+statuses are unchanged.  Focused reruns of patched lines 2977 and 2990 also
+record the expected dependency skips.  The complete patch passes
+`git diff --check`, its new hunks apply to the pinned Sagelite source, and the
+patched module compiles with `py_compile`.  The next focused pass should
+examine the monomial substitution examples beginning around patched line 3132,
+separating their unavailable symbolic substitutions from raw-element cases
+that can remain active in the browser profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

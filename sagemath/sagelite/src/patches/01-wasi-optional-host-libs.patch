@@ -23478,3 +23478,14 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 -            sage: b = P(x^3)
 +            sage: a = P(raw_element=2)
 +            sage: b = P(raw_element=3)
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2965,2 +2965,2 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G = GrowthGroup('exp(x)^ZZ * x^ZZ')
+-            sage: log(G('exp(x)'), base=2)
++            sage: G = GrowthGroup('exp(x)^ZZ * x^ZZ')  # needs sage.symbolic
++            sage: log(G('exp(x)'), base=2)  # needs sage.symbolic
+@@ -2978 +2978 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G(raw_element=log2)._log_factor_(base=2)
++            sage: G(raw_element=log2)._log_factor_(base=2)  # needs sage.symbolic
