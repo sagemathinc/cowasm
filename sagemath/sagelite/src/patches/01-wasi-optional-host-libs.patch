@@ -23139,3 +23139,31 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 +                        pass
              from sage.symbolic.ring import SR
              return self._convert_(SR(data))
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -104 +104 @@
+-    sage: GrowthGroup('log(z)^QQ')
++    sage: GrowthGroup('log(z)^QQ')  # needs sage.symbolic
+@@ -122 +122 @@
+-    sage: C = GrowthGroup('(QQ_+)^z * z^QQ * log(z)^QQ'); C
++    sage: C = GrowthGroup('(QQ_+)^z * z^QQ * log(z)^QQ'); C  # needs sage.symbolic
+@@ -128 +128 @@
+-    sage: C.an_element()
++    sage: C.an_element()  # needs sage.symbolic
+@@ -135 +135 @@
+-    sage: C.cartesian_factors()
++    sage: C.cartesian_factors()  # needs sage.symbolic
+@@ -184 +184 @@
+-    sage: GrowthGroup('x^ZZ * log(x)^ZZ') is GrowthGroup('log(x)^ZZ * x^ZZ')
++    sage: GrowthGroup('x^ZZ * log(x)^ZZ') is GrowthGroup('log(x)^ZZ * x^ZZ')  # needs sage.symbolic
+@@ -197,5 +197,5 @@
+-    sage: G = GrowthGroup('(QQ_+)^x * x^ZZ * log(x)^QQ * y^QQ')
+-    sage: G.an_element()
++    sage: G = GrowthGroup('(QQ_+)^x * x^ZZ * log(x)^QQ * y^QQ')  # needs sage.symbolic
++    sage: G.an_element()  # needs sage.symbolic
+     (1/2)^x*x*log(x)^(1/2)*y^(1/2)
+-    sage: x, y = var('x y')
+-    sage: G(2^x * log(x) * y^(1/2)) * G(x^(-5) * 5^x * y^(1/3))
++    sage: x, y = var('x y')  # needs sage.symbolic
++    sage: G(2^x * log(x) * y^(1/2)) * G(x^(-5) * 5^x * y^(1/3))  # needs sage.symbolic

@@ -46813,6 +46813,30 @@ should separate direct symbolic setup rows from their missing-name cascades,
 with the logarithm-operation diagnostics near lines 814--954 remaining a
 compact independently reproducible mismatch cluster.
 
+Opening growth-group symbolic metadata pass on 2026-07-13 UTC:
+
+The opening module narrative still mixed nine direct logarithmic/symbolic
+examples with dependent missing-name failures.  Those examples now carry
+focused `sage.symbolic` dependency metadata, including the dependent prompts
+that use `C`, `G`, `x`, and `y`.  The complete accumulated patch applies to the
+pinned Sagelite source, and `git diff --check` passes in that patched tree.
+
+A direct full-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 715 passed, 183 failed, 54 skipped
+```
+
+The focused database is
+`.tmp/current-run/scheduled-2026-07-13-growth-cartesian-isolated/growth-symbolic-tagged.sqlite3`.
+Compared by block index with the preceding isolated dashboard, exactly nine
+failures become intended `optional:sage.symbolic` skips; all 715 passes and all
+45 existing skips are unchanged.  The next focused pass should classify the
+remaining logarithm-operation group around patched lines 810--1025, separating
+symbolic construction and coefficient evaluation from lightweight
+growth-group error paths.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
