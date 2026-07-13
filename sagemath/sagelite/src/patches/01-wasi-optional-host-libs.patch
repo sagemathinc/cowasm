@@ -23787,3 +23787,31 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4462 +4462 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 -            sage: forget()
 +            sage: forget()  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -4503,3 +4503,3 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+             sage: from sage.rings.asymptotic.growth_group import ExponentialGrowthGroup
+-            sage: ExponentialGrowthGroup(SR, 'n').an_element()  # indirect doctest
++            sage: ExponentialGrowthGroup(SR, 'n').an_element()  # indirect doctest  # needs sage.symbolic
+             Traceback (most recent call last):
+@@ -4509,3 +4509,3 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: assume(SR.an_element() > 0)
+-            sage: ExponentialGrowthGroup(SR, 'n').an_element()  # indirect doctest
++            sage: assume(SR.an_element() > 0)  # needs sage.symbolic
++            sage: ExponentialGrowthGroup(SR, 'n').an_element()  # indirect doctest  # needs sage.symbolic
+             some_variable^n
+@@ -4511,4 +4511,4 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+             some_variable^n
+-            sage: forget()
+-            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 'n').an_element()  # indirect doctest
++            sage: forget()  # needs sage.symbolic
++            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 'n').an_element()  # indirect doctest  # needs sage.symbolic
+             (pi*e)^n
+@@ -4525,4 +4525,4 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: ExponentialGrowthGroup(SR, 'n')._an_element_base_()
++            sage: ExponentialGrowthGroup(SR, 'n')._an_element_base_()  # needs sage.symbolic
+             abs(some_variable)
+-            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 'n')._an_element_base_()
++            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 'n')._an_element_base_()  # needs sage.symbolic
+             pi*e
