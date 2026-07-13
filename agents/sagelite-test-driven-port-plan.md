@@ -48669,6 +48669,42 @@ default replay gives the same 102/0/69 result in
 The next pass should continue with another bounded native semantic row while
 leaving the reproduced generic-polynomial output cluster guarded.
 
+Native generic-matrix and keyword-warning promotion pass on 2026-07-13 UTC:
+
+Nine more WASI-added `# known bug` annotations are stale. For both generic
+dense and generic sparse matrices over `GF(9)`, transpose, row selection,
+column selection, and combined row/column selection reproduce the documented
+matrices exactly. The deprecated-keyword decorator example also captures and
+normalizes the expected warning before returning the renamed option. All nine
+rows pass in normal whole-file order with deferred rows enabled, so their
+browser-profile annotations are removed.
+
+The corrected four-file deferred audit is
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next5/four-file-known-bug.sqlite3`.
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The three reconstructed files match the shared patched source byte
+for byte, and their default replay records:
+
+```text
+matrix_generic_dense.pyx:   68 passed, 0 failed,  4 skipped
+matrix_generic_sparse.pyx:  97 passed, 0 failed,  1 skipped
+decorators.py:              121 passed, 0 failed, 12 skipped
+combined:                   286 passed, 0 failed, 17 skipped
+```
+
+The shared-source and reconstructed-source default databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next5/shared-default.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next5/pristine-default.sqlite3`.
+The same bounded audit retains direct evidence for the neighboring boundaries:
+`q_binomial` still returns a Sage integer where the upstream row expects a
+Python `int`, and `sage_getfile(I.interreduced_basis)` still resolves through
+the QQbar decorator module instead of the documented polynomial-ideal source.
+The next pass should continue with another native semantic row that has
+complete whole-file setup, avoiding those confirmed type-identity and source-
+lookup clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
