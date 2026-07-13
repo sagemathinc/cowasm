@@ -48799,6 +48799,38 @@ and
 The next pass should continue with another native semantic row whose complete
 whole-file setup is runnable in the browser profile.
 
+Native infinite-polynomial pushout promotion pass on 2026-07-13 UTC:
+
+One browser-profile `# known bug` annotation in
+`sage/categories/pushout.py` is stale. In normal whole-file order, multiplying
+the infinite-polynomial construction functor by a multivariate polynomial
+construction with a different term order raises the documented
+`CoercionException: Incompatible term orders lex, degrevlex`. Its annotation
+is removed.
+
+The deferred audit is
+`.tmp/current-run/scheduled-2026-07-13-drinfeld-native-promotion/pushout-deferred.sqlite3`.
+It records the promoted row as passing while the seven neighboring common-base,
+overlapping-variable, and ambiguous-extension exceptions still differ through
+expanded CPython 3.14 traceback presentation; those annotations remain.
+Removing only the stale guard and replaying the shared patched file in the
+default browser profile records:
+
+```text
+pushout.py: 477 passed, 0 failed, 476 skipped
+```
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed file matches the shared patched source byte for
+byte and gives the same default result in
+`.tmp/current-run/scheduled-2026-07-13-drinfeld-native-promotion/pristine-default.sqlite3`.
+The same bounded pass reconfirmed the guarded Drinfeld-module display and
+diagnostic rows, pickle diagnostics, invariant coefficients, Steenrod matrix
+conversions, finite-dimensional matrix-list displays, matrix-group iteration,
+and complex-root backend cluster. The next pass should continue with a
+different native semantic row rather than those reproduced boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

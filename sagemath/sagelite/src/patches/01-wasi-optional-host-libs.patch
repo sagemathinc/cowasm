@@ -14856,9 +14856,6 @@ diff -urN a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
 @@ -762 +762 @@
 -            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest
 +            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
-@@ -1199 +1199 @@
--        sage: A.construction()[0] * R.construction()[0]
-+        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
 @@ -1208 +1208 @@
 -        sage: A.construction()[0] * R.construction()[0]
 +        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
