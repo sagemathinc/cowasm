@@ -23562,3 +23562,22 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
              x^(-333)
 -            sage: P(log(x)^2)  # indirect doctest
 +            sage: P(log(x)^2)  # indirect doctest  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3536,5 +3536,5 @@ class MonomialGrowthGroup(GenericGrowthGroup):
+-            sage: from sage.rings.asymptotic.growth_group import GrowthGroup
++            sage: from sage.rings.asymptotic.growth_group import GrowthGroup, MonomialGrowthGroup, Variable
+             sage: GrowthGroup('x^ZZ').gens_monomial()
+             (x,)
+-            sage: GrowthGroup('log(x)^QQ').gens_monomial()
++            sage: MonomialGrowthGroup(QQ, Variable('x', repr='log(x)', latex_name=r'\log(x)')).gens_monomial()
+             ()
+@@ -3564,5 +3564,5 @@ class MonomialGrowthGroup(GenericGrowthGroup):
+-            sage: from sage.rings.asymptotic.growth_group import GrowthGroup
++            sage: from sage.rings.asymptotic.growth_group import GrowthGroup, MonomialGrowthGroup, Variable
+             sage: GrowthGroup('x^ZZ').gens_logarithmic()
+             ()
+-            sage: GrowthGroup('log(x)^QQ').gens_logarithmic()
++            sage: MonomialGrowthGroup(QQ, Variable('x', repr='log(x)', latex_name=r'\log(x)')).gens_logarithmic()
+             (log(x),)

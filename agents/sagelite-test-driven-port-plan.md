@@ -47262,6 +47262,33 @@ The next focused pass should classify the logarithmic generator examples near
 patched lines 3564 and 3592, keeping the ordinary monomial and exponential
 generator coverage active.
 
+Direct logarithmic generator-accessor pass on 2026-07-13 UTC:
+
+The logarithmic `gens_monomial()` and `gens_logarithmic()` examples now build
+their parents from an identifier-backed `Variable` with an explicit `log(x)`
+representation. This avoids parsing the displayed logarithmic variable through
+the unavailable symbolic ring while preserving both accessor behaviors: the
+group has no monomial generator and does expose `(log(x),)` as its logarithmic
+generator. The neighboring ordinary `x^ZZ` accessor examples remain active
+and passing.
+
+Focused reruns of patched lines 3564 and 3592 pass. A full direct-file rerun
+against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 748 passed, 74 failed, 130 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-generators/full.sqlite3`.
+Compared by block index with the preceding conversion dashboard, exactly the
+two logarithmic accessor failures become passes; all other block statuses and
+all unchanged non-random passing outputs remain identical. The next focused
+pass should examine the exponential element construction and representation
+failures beginning around patched line 3830, replacing only their reliance on
+the unavailable startup symbol `x` where direct raw-element construction keeps
+the intended base, representation, and LaTeX behavior active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
