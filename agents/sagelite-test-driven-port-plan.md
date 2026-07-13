@@ -48705,6 +48705,34 @@ The next pass should continue with another native semantic row that has
 complete whole-file setup, avoiding those confirmed type-identity and source-
 lookup clusters.
 
+Native product-projective coercion promotion pass on 2026-07-13 UTC:
+
+The six browser-profile `# known bug` annotations around product-projective
+base change in `sage/schemes/generic/homset.py` are stale. The three product
+space constructors run in normal file order, and their coercion checks return
+the documented `True`, `False`, and `False` results for matching dimensions,
+different dimensions, and different coordinate names. All six rows pass in a
+whole-file deferred replay, so their annotations are removed.
+
+The initial deferred audit is
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next6/homset-known-bug.sqlite3`.
+Removing the guards and replaying the shared patched file in the default
+browser profile records:
+
+```text
+homset.py: 89 passed, 0 failed, 49 skipped
+```
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed file matches the shared patched source byte for
+byte and gives the same default result in
+`.tmp/current-run/scheduled-2026-07-13-native-semantic-next6/pristine-default.sqlite3`.
+The remaining skips in the file continue to identify explicit Singular,
+plural-polynomial, number-field, p-adic, and elliptic-curve dependency
+boundaries. The next pass should continue with another native semantic row
+whose complete setup is runnable in the browser profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

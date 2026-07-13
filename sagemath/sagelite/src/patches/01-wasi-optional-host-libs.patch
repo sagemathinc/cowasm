@@ -11831,21 +11831,6 @@ diff -urN -U0 a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/ho
 @@ -475 +475 @@
 -            sage: H(CC)._coerce_map_from_(L(RR))                                        # needs sage.libs.singular sage.rings.real_mpfr
 +            sage: H(CC)._coerce_map_from_(L(RR))                                      # needs sage.libs.singular sage.rings.real_mpfr sage.rings.polynomial.plural
-@@ -509,8 +509,8 @@
--            sage: PP1 = ProductProjectiveSpaces(ZZ, [2,1], 'x')
--            sage: PP1(QQ)._coerce_map_from_(PP1(ZZ))
-+            sage: PP1 = ProductProjectiveSpaces(ZZ, [2,1], 'x')                       # known bug
-+            sage: PP1(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
-             True
--            sage: PP2 = ProductProjectiveSpaces(QQ, [1,2], 'x')
--            sage: PP2(QQ)._coerce_map_from_(PP1(ZZ))
-+            sage: PP2 = ProductProjectiveSpaces(QQ, [1,2], 'x')                       # known bug
-+            sage: PP2(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
-             False
--            sage: PP3 = ProductProjectiveSpaces(QQ, [2,1], 'y')
--            sage: PP3(QQ)._coerce_map_from_(PP1(ZZ))
-+            sage: PP3 = ProductProjectiveSpaces(QQ, [2,1], 'y')                       # known bug
-+            sage: PP3(QQ)._coerce_map_from_(PP1(ZZ))                                  # known bug
 @@ -531,2 +531,2 @@
 -            sage: X = P.subscheme([x - y])
 -            sage: P(1,1) == X(1,1)
