@@ -48187,6 +48187,32 @@ native setup rather than the explicitly unavailable symbolic Airy rows; the
 remaining real/complex MPFR known-bug audits in this plan have already
 reproduced their documented backend or constructor gaps.
 
+Native NTL small-prime context promotion pass on 2026-07-13 UTC:
+
+The two `# known bug` rows in `sage/libs/ntl/ntl_lzz_pContext.pyx` are stale.
+Focused deferred reruns confirm that `ntl.zz_p(2,3)+ntl.zz_p(1,3)` returns
+`0`, while restoring the saved modulus context before `n*n` returns `4`.
+After removing both WASI-added annotations, the complete file passes in its
+normal order:
+
+```text
+ntl_lzz_pContext.pyx: 21 passed, 0 failed, 0 skipped
+```
+
+The focused databases and the full default run are under
+`.tmp/current-run/scheduled-2026-07-13-ntl-lzz-context/`; a separately
+regenerated pristine source tree, produced by applying the complete Sagelite
+patch to commit `f575cf6224f749763d7c875229cbd684e5939e58`, records the same
+21-block result in `pristine-full-default.sqlite3`.
+
+The neighboring GF2E conversion annotation is not stale. Its isolated
+`--line 464 --deferred=known-bug` rerun passes, but enabling it in normal
+full-file order traps while cloning a cypari2/PARI integer after the earlier
+GF2E examples. That state-sensitive tag therefore remains explicit. The next
+NTL/PARI pass should reduce the preceding GF2E prompt sequence to the smallest
+ordered reproducer for the later `e._sage_()` cloning trap rather than relying
+on the isolated line result.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -12345,15 +12345,6 @@ diff -urN -U0 a/src/sage/interfaces/tachyon.py b/src/sage/interfaces/tachyon.py
 @@ -877 +881 @@
 -            sage: tachyon_rt.version() >= '0.98.9'
 +            sage: tachyon_rt.version() >= '0.98.9'  # needs subprocess
-diff -urN -U0 a/src/sage/libs/ntl/ntl_lzz_pContext.pyx b/src/sage/libs/ntl/ntl_lzz_pContext.pyx
---- a/src/sage/libs/ntl/ntl_lzz_pContext.pyx
-+++ b/src/sage/libs/ntl/ntl_lzz_pContext.pyx
-@@ -41 +41 @@
--            sage: ntl.zz_p(2,3)+ntl.zz_p(1,3)
-+            sage: ntl.zz_p(2,3)+ntl.zz_p(1,3)  # known bug
-@@ -103 +103 @@
--            sage: n*n ## indirect doctest
-+            sage: n*n ## indirect doctest  # known bug
 diff -urN -U0 a/src/sage/libs/ntl/ntl_lzz_p.pyx b/src/sage/libs/ntl/ntl_lzz_p.pyx
 --- a/src/sage/libs/ntl/ntl_lzz_p.pyx
 +++ b/src/sage/libs/ntl/ntl_lzz_p.pyx
