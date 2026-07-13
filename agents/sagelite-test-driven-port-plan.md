@@ -48423,6 +48423,37 @@ zero-failure corpus, the next coverage pass should again choose an explicit
 deferred dependency boundary rather than repeat the broad corpus without a
 runtime or skip-policy change.
 
+Native nilpotent Lie algebra test-suite promotion pass on 2026-07-13 UTC:
+
+The single WASI-added `# known bug` row in
+`sage/algebras/lie_algebras/nilpotent_lie_algebra.py` is stale. Its focused
+deferred rerun confirms that `TestSuite(L).run()` completes without output for
+the two-generator, step-two integral Lie algebra. Enabling the row in normal
+whole-file order also passes, so the browser-profile annotation is removed.
+
+After applying the complete accumulated patch without rejects to a fresh
+archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the reconstructed source matches
+the shared patched file byte for byte and its default whole-file run records:
+
+```text
+nilpotent_lie_algebra.py: 114 passed, 0 failed, 1 skipped
+```
+
+The focused deferred, shared-source full deferred, and pristine default
+databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-nilpotent-testsuite/focused-deferred.sqlite3`,
+`.tmp/current-run/scheduled-2026-07-13-nilpotent-testsuite/full-deferred.sqlite3`,
+and
+`.tmp/current-run/scheduled-2026-07-13-nilpotent-testsuite/pristine-full-default.sqlite3`.
+The same audit retains three nearby browser-profile annotations: Dyck-word
+LaTeX options still use a one-line insertion-ordered dictionary display, the
+signed-tensor super-category result still reverses the expected category
+order, and the generic dense matrix backend still lacks the ternary
+quadratic-form `gcd()` method. The next deferred pass should continue with
+another native invariant row rather than one of those confirmed display or
+backend boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

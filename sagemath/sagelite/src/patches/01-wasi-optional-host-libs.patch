@@ -14463,12 +14463,6 @@ diff -urN -U0 a/src/sage/rings/polynomial/hilbert.pyx b/src/sage/rings/polynomia
 @@ -580 +580 @@
 -        sage: hilbert_poincare_series(J).denominator().factor()
 +        sage: hilbert_poincare_series(J).denominator().factor()                        # needs sage.libs.flint sage.rings.polynomial.plural
-diff -urN -U0 a/src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py b/src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
---- a/src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
-+++ b/src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
-@@ -360 +360 @@
--            sage: TestSuite(L).run()
-+            sage: TestSuite(L).run()                                                   # known bug
 diff -urN -U0 a/src/sage/algebras/group_algebra.py b/src/sage/algebras/group_algebra.py
 --- a/src/sage/algebras/group_algebra.py
 +++ b/src/sage/algebras/group_algebra.py
