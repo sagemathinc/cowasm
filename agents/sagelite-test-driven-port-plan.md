@@ -47769,6 +47769,34 @@ trees pass `git diff --check`. The next focused pass should examine the final
 the invalid-factory-input semantics while separating traceback-format drift
 from substantive exception-chain differences.
 
+Growth-group invalid-specification diagnostic pass on 2026-07-13 UTC:
+
+The `GrowthGroup('as^df')` invalid-factory example now accepts either a
+numbered or unnumbered `SyntaxError` source line. This is the only unstable
+traceback field: the outer `ValueError`, invalid substrings, both parent
+construction failures, and their complete nested exception chains remain
+asserted.
+
+A setup-complete focused reproducer records two passes. A full direct-file
+rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 766 passed, 0 failed, 186 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-final/full-minimal.sqlite3`.
+Compared by block index with the preceding exponent-accessor dashboard,
+exactly the targeted line-5211 output mismatch becomes a pass; all other 951
+statuses are unchanged. The only changed outputs among unchanged statuses are
+five `# random` rows, so every unchanged non-random passing output is
+identical. The minimal patch applies to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the accumulated module compiles
+with `py_compile`, and CoWasm passes `git diff --check`. The next pass should
+promote the now-clean `growth_group.py` into the curated corpus and refresh the
+corpus dashboard, retaining its 186 explicit dependency skips as coverage
+metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -23875,3 +23875,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -2763 +2763 @@ class MonomialGrowthElement(GenericGrowthElement):
 -            sage: P(x^42).exponent
 +            sage: P(raw_element=42).exponent
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -5193 +5193 @@ class GrowthGroupFactory(UniqueFactory):
+-            >> *and* SyntaxError: ... (<string>, line 1)
++            >> *and* SyntaxError: ... (<string>, line ...)
