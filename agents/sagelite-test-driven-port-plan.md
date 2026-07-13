@@ -46773,6 +46773,46 @@ invalidated the generated Ninja file, so no Electron-resource or doctest count
 is claimed.  The next isolated run should start with the canonicalized script
 and refresh the combined Cartesian/monomial `growth_group.py` dashboard.
 
+Isolated Cartesian and monomial dashboard refresh on 2026-07-13 UTC:
+
+The canonicalized standalone script completed from a clean isolated build and
+dist pair.  It generated all Cython sources through the new persistent wrapper,
+compiled and linked all 1,006 WASI targets, installed into the absolute prefix,
+and passed the side-module audit, Node and direct WASI Python imports, staged
+and relocated Electron-resource probes, and the complete doctest-runner smoke
+suite.  Its final status is:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The resulting focused line-1030 rerun confirms that plain string construction
+for `GrowthGroup('(QQ_+)^n * n^QQ')('n')` now passes.  The provenance-correct
+full one-file dashboard records:
+
+```text
+growth_group.py: 715 passed, 192 failed, 45 skipped
+```
+
+The databases are
+`.tmp/current-run/scheduled-2026-07-13-growth-cartesian-isolated/line-1030.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-growth-cartesian-isolated/full.sqlite3`.
+The full database records 952 blocks under runner version 108 and the node
+profile, with CoWasm commit `fb888b471ff89dfedcd4c6fb9eac7d4a5f86bb9c`
+and both Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+Compared by block index with the preceding `675 passed, 232 failed, 45 skipped`
+dashboard, exactly 40 failed rows become passes; all 675 prior passes and all
+45 skips are unchanged.  The remaining failures comprise 110 `NameError`
+rows, 49 direct `ModuleNotFoundError` rows, 24 output mismatches, four
+`AttributeError` rows, three `ValueError` rows, and two `TypeError` rows.
+`growth_group.py` remains outside the quiet corpus; the next focused pass
+should separate direct symbolic setup rows from their missing-name cascades,
+with the logarithm-operation diagnostics near lines 814--954 remaining a
+compact independently reproducible mismatch cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
