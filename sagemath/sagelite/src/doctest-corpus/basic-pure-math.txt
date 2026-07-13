@@ -32,6 +32,7 @@ src/sage/rings/continued_fraction.py
 src/sage/rings/continued_fraction_gosper.py
 src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
+src/sage/rings/asymptotic/growth_group.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
 src/sage/rings/factorint.pyx

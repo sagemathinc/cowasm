@@ -47797,6 +47797,43 @@ promote the now-clean `growth_group.py` into the curated corpus and refresh the
 corpus dashboard, retaining its 186 explicit dependency skips as coverage
 metadata.
 
+Growth-group curated-corpus promotion pass on 2026-07-13 UTC:
+
+The now-clean `src/sage/rings/asymptotic/growth_group.py` is included in the
+checked-in pure-math corpus, which now has 1,139 non-comment entries. Its row in
+the shared four-worker make-target refresh exactly reproduces the focused
+dashboard:
+
+```text
+growth_group.py: 766 passed, 0 failed, 186 skipped
+```
+
+The complete dashboard records:
+
+```text
+sage -t failed: 88888 passed, 82 failed, 27169 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-promotion/corpus.sqlite3`. It
+contains 116,138 blocks under runner version 108 and the node profile, with
+both Sagelite source and package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`. The lifecycle is closed after
+about 2,918 seconds; 1,136 files pass, two have block failures, and one has a
+file-level error.
+
+All failures are outside the promoted file and remain isolated by the
+per-file worker contract. Sixty-nine are one representation cluster in
+`sage/tensor/modules/comp.py`, where historical expected strings contain
+spaces just inside basis-list brackets but the current runtime prints normal
+compact Python lists. Twelve are a `real_double.pyx` symbolic-setup cascade:
+the tagged `RDF(pi)` setup is skipped while its dependent ULP checks continue,
+and `RDF(sin(1))` now crosses the unavailable symbolic boundary. The final
+failure is the existing NTL/libcxx WASM trap in `sage/libs/ntl/ntl_GF2E.pyx`
+at line 337. The saved block- and file-cluster queries reproduce these three
+groups. The next focused pass should address the 69-row tensor component
+representation cluster while preserving the component arithmetic checks.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
