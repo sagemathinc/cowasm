@@ -48370,6 +48370,59 @@ The next shared-runtime pass should refresh the clean corpus because the
 seek-to-zero repair affects all Python and C filesystem consumers, not only
 this Sagelite helper.
 
+Pristine patch reconstruction and seek-to-zero corpus refresh on 2026-07-13
+UTC:
+
+The first refresh attempt exposed a source-patch reproducibility regression
+before it could serve as runtime validation. A freshly archived copy of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, after the
+complete accumulated patch was applied, lacked the five
+`# needs sage.symbolic` annotations on the `ZZ[sqrt(...)]` examples in
+`sage/rings/integer_ring.pyx`. The shared generated source still contained
+those annotations, so the stale build tree hid the omission. The discarded
+dashboard consequently recorded five artificial symbolic startup failures in
+its first 55 files and was interrupted.
+
+The checked-in Sagelite patch now carries all five annotations explicitly.
+Applying the complete patch to a clean `git archive` of the pinned commit exits
+successfully without rejects, and all common source files in that reconstructed
+tree match the shared patched source byte for byte; the only remaining
+directory differences are generated package `__init__.py` files and scratch
+artifacts. A focused run from the reconstructed tree restores the established
+result:
+
+```text
+integer_ring.pyx: 203 passed, 0 failed, 27 skipped
+```
+
+The complete 1,139-file browser-profile corpus is also clean against CoWasm
+commit `c11dfa8d05fc7256f37aaf408fb8c5559df2d724` and Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`:
+
+```text
+sage -t passed: 89062 passed, 0 failed, 27146 skipped
+```
+
+The closed runner-version-109 dashboard is
+`.tmp/current-run/scheduled-2026-07-13-seek-zero-corpus/corpus-fixed-j8-600.sqlite3`.
+It contains 116,208 blocks across 1,139 passing files, has no block failures or
+file errors, passes `PRAGMA integrity_check`, and completed in about 26
+minutes with eight workers and a 600-second per-file timeout. Relative to the
+preceding locale-aware clean baseline, exactly ten formerly deferred rows are
+now runnable: the category warning, binary-tree display, two NTL context rows,
+Sage timeit diagnostic, temporary-file overwrite, derivation and
+rational-field displays, real-MPFI closure identity, and disjoint-union
+warning.
+
+After the database lifecycle closed and the successful summary printed, the
+parent Node process reached the already documented post-summary shutdown
+segmentation fault. The status-139 teardown does not alter the complete
+integrity-checked dashboard; strict make-target exit remains the separate
+runtime cleanup frontier. With the shared filesystem change now covered by a
+zero-failure corpus, the next coverage pass should again choose an explicit
+deferred dependency boundary rather than repeat the broad corpus without a
+runtime or skip-policy change.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
