@@ -14483,12 +14483,37 @@ diff -urN -U0 a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algeb
 @@ -552 +552 @@
 -            sage: elt.factor_differentials()
 +            sage: elt.factor_differentials()                                      # known bug - Sagelite WASI dictionary display order drift
-@@ -596 +596 @@
--            sage: (dx*dy).diff(W(x^3*y^3))
-+            sage: (dx*dy).diff(W(x^3*y^3))                                        # known bug - Sagelite WASI Weyl algebra polynomial coercion gap
-@@ -1132 +1132 @@
--            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)
-+            sage: W.diff_action(dx^3 + dx, x^3*y^3 + x*y)                         # known bug - Sagelite WASI Weyl algebra polynomial coercion gap
+@@ -574,0 +575,30 @@
++
++    def _polynomial_(self, R):
++        """
++        Return ``self`` as an element of ``R``.
++
++        This conversion is defined when ``R`` is the underlying polynomial
++        ring and ``self`` contains no differential generators.
++
++        EXAMPLES::
++
++            sage: R.<x,y> = QQ[]
++            sage: W = R.weyl_algebra()
++            sage: x, y, dx, dy = W.gens()
++            sage: R(W(x^2 - y))
++            x^2 - y
++            sage: R(dx)
++            Traceback (most recent call last):
++            ...
++            TypeError: differential operator is not a polynomial
++        """
++        P = self.parent().polynomial_ring()
++        if R is not P:
++            raise TypeError(f"cannot convert a Weyl algebra element to {R}")
++
++        result = {}
++        for (x, dx), c in self:
++            if any(dx):
++                raise TypeError("differential operator is not a polynomial")
++            result[x] = c
++        return R(result)
 diff -urN -U0 a/src/sage/groups/misc_gps/argument_groups.py b/src/sage/groups/misc_gps/argument_groups.py
 --- a/src/sage/groups/misc_gps/argument_groups.py
 +++ b/src/sage/groups/misc_gps/argument_groups.py

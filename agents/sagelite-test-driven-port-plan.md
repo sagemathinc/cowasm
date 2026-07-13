@@ -48998,6 +48998,40 @@ returns `True` where the upstream known-bug row expects `False`. The next pass
 should continue with another native backend operation or stale semantic row,
 avoiding that confirmed collection-ABC boundary.
 
+Weyl-algebra polynomial conversion pass on 2026-07-13 UTC:
+
+Two browser-profile deferrals in `sage/algebras/weyl_algebra.py` shared one
+generic polynomial-backend gap. A whole-file deferred replay reproduced both:
+the differential action tried to convert a Weyl element containing only
+polynomial generators through the generic multivariate polynomial constructor,
+which fell through to conversion of the whole element into `QQ`.
+
+`DifferentialWeylAlgebraElement` now implements Sage's existing
+`_polynomial_(R)` conversion protocol. It converts monomial data when the
+requested ring is the Weyl algebra's underlying polynomial ring and every
+differential exponent is zero, while explicitly rejecting genuine
+differential operators. A focused temporary fixture validates the direct
+conversion, both affected action paths, and the rejection path with 10 passed
+blocks.
+
+The two WASI-only known-bug annotations are removed. A complete default-profile
+replay now records:
+
+```text
+weyl_algebra.py: 307 passed, 0 failed, 18 skipped
+```
+
+The shared-source and reconstructed-source dashboards are respectively
+`.tmp/current-run/scheduled-2026-07-13-weyl-coercion/full-default.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-13-weyl-coercion/pristine-default.sqlite3`.
+The remaining guarded rows retain the reproduced dictionary-order and
+infinite-polynomial representation boundaries. The complete accumulated patch
+applies without rejects to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; the reconstructed Weyl source is
+byte-identical to the shared patched source and syntax-checks cleanly. The
+reconstructed replay wrote a closed passing SQLite result before the already
+documented post-summary Node teardown segfault.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
