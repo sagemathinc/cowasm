@@ -47478,6 +47478,34 @@ lines 4301--4343, separating symbolic-power inputs from the already-active
 string, rational, zero-error, cross-parent, and signed-string conversion
 coverage.
 
+Exponential symbolic-input conversion boundary pass on 2026-07-13 UTC:
+
+The eight `_convert_` examples that construct symbolic powers now carry
+focused `sage.symbolic` dependency metadata. These cover positive and negative
+rational powers, the `SR^x` parent and its dependent symbolic bases, and the
+signed-product conversion from a symbolic power. The neighboring string
+parsing, rational and zero-error behavior, cross-parent conversion, and
+signed-string conversion remain active.
+
+Focused reruns of the positive rational, `SR^x` setup, and signed-product
+symbolic rows record their intended dependency skips. A full direct-file
+rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 30 failed, 158 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-conversion-symbolic/full.sqlite3`.
+Compared by block index with the preceding constructor dashboard, exactly
+eight failures become `optional:sage.symbolic` skips; the other 944 block
+statuses are unchanged, and all unchanged non-random passing outputs remain
+identical. The accumulated growth-group module compiles with `py_compile`,
+and the CoWasm patch passes `git diff --check`. The next focused pass should
+classify the symbolic `_split_raw_element_` examples around patched lines
+4449--4463 while preserving the broad active exact, real, interval, ball, and
+complex numeric split coverage above them.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
