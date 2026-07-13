@@ -46896,6 +46896,32 @@ and `git diff --check` passes.  The next focused pass should examine the two
 which still obtain their exponential input through the unavailable symbolic
 startup variable `x`.
 
+Direct partial-conversion split pass on 2026-07-13 UTC:
+
+The two `PartialConversionElement.split` examples now pass their extracted
+base through the exponential growth group's `raw_element` constructor path.
+This exercises the same partial-conversion and split behavior without first
+building a symbolic power in the unavailable startup variable `x`.  The
+rational example's outer diagnostic now correctly identifies the directly
+supplied parameter as an element of the Rational Field; its nested conversion
+error chain remains unchanged.
+
+A full direct-file rerun against the same validated isolated Electron
+resources records:
+
+```text
+growth_group.py: 717 passed, 150 failed, 85 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-log-symbolic/split-raw-element-full.sqlite3`.
+Compared by block index with the preceding dashboard, exactly the two split
+failures become passes.  The other status rows are unchanged; differences in
+four passing `# random` hash rows are expected unchecked output.  The next
+focused pass should continue after this compact pre-logarithm cluster and
+classify the remaining direct failures around the generic growth-element
+examples beginning near patched line 1180.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -23327,3 +23327,18 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
          sage: (x^42).is_lt_one()  # indirect doctest
          False
          sage: (x^(-42)).is_lt_one()  # indirect doctest
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -728 +728 @@ class PartialConversionElement(SageObject):
+-            ....:     E((-2)^x)
++            ....:     E(raw_element=-2)
+@@ -736 +736 @@ class PartialConversionElement(SageObject):
+-            ....:     E((2/3)^x)
++            ....:     E(raw_element=2/3)
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -741 +741 @@ class PartialConversionElement(SageObject):
+-            ValueError: cannot split element with parameter 2/3 (Symbolic Ring) in Growth Group ZZ^x
++            ValueError: cannot split element with parameter 2/3 (Rational Field) in Growth Group ZZ^x
