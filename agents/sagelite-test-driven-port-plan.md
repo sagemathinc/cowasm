@@ -47565,6 +47565,33 @@ symbolic `ExponentialNonGrowthGroup._initial_category_(SR)` example around
 patched line 4821 while retaining the adjacent active `ZZ` and `QQ` category
 checks.
 
+Exponential non-growth symbolic category boundary pass on 2026-07-13 UTC:
+
+The `ExponentialNonGrowthGroup._initial_category_(SR)` check now carries
+focused `sage.symbolic` dependency metadata. The adjacent `ZZ` and `QQ`
+category checks remain active; focused reruns of both controls pass and still
+return the category of posets.
+
+The focused symbolic rerun records its intended dependency skip. A full
+direct-file rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 14 failed, 174 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-initial-category/full.sqlite3`.
+Compared by block index with the preceding example-element dashboard, exactly
+the symbolic category failure becomes an `optional:sage.symbolic` skip; the
+other 951 block statuses and all unchanged non-random passing outputs are
+identical. The new patch fragment applies cleanly to the preceding complete
+patch-check source, the resulting module matches the tested source byte for
+byte and compiles with `py_compile`, and CoWasm passes `git diff --check`. The
+next focused pass should classify the symbolic variable-parsing boundary in
+the `GrowthGroup` factory examples beginning around patched line 5052,
+preserving the active identifier-only, rational-base, and Gaussian-exponent
+factory coverage around that cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
