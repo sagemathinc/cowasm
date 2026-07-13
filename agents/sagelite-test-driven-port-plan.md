@@ -47355,6 +47355,35 @@ both source trees pass `git diff --check`. The next focused pass should examine
 the default logarithm dependency in `_log_factor_` around patched line 4069
 while retaining the already-passing explicit `locals={'log': ...}` path.
 
+Default exponential logarithm dependency pass on 2026-07-13 UTC:
+
+The default `ExponentialGrowthElement._log_factor_()` example imports Sage's
+symbolic logarithm implementation and fails at `sage.symbolic.expression` in
+the browser-compatible profile. That one prompt now carries focused
+`sage.symbolic` dependency metadata. Its polynomial-ring setup and the
+following explicit `locals={'log': ...}` override remain active; the override
+continues to return the documented `(('x', log2),)` result.
+
+The focused default-logarithm rerun records one intended symbolic skip. A full
+direct-file rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 761 passed, 52 failed, 139 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-log-factor/full-pristine.sqlite3`.
+Compared by block index with the preceding exponentiation dashboard, exactly
+the default-logarithm failure becomes an `optional:sage.symbolic` skip; the
+other 951 block statuses are unchanged, and the explicit-local override still
+passes with identical output. The complete accumulated patch applies to
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; the patched module
+matches the tested source byte for byte, compiles with `py_compile`, and passes
+`git diff --check`. The next focused pass should classify the exponential
+comparison examples beginning around patched line 4108, separating the
+symbolic `SR` assumption path from the ordinary signed-base comparison that
+can use direct raw-element construction.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

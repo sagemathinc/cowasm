@@ -23678,3 +23678,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4001 +4001 @@ class ExponentialGrowthElement(GenericGrowthElement):
 -             sage: _.parent()
 +             sage: _.parent()  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -4044 +4044 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-            sage: G(raw_element=2)._log_factor_()
++            sage: G(raw_element=2)._log_factor_()  # needs sage.symbolic
