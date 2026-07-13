@@ -48135,6 +48135,35 @@ next shared-runtime validation should refresh the curated corpus, retaining
 the one genuine `float.hex()` deferred row while checking other locale-aware
 numeric modules for newly runnable coverage.
 
+Shared-runtime locale refresh on 2026-07-13 UTC:
+
+The complete 1,139-file browser-profile corpus passes against CoWasm commit
+`80c6c3c8aa8bd81be6d1dc6af05a8af37dadde5b` and Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`:
+
+```text
+sage -t passed: 89052 passed, 0 failed, 27156 skipped
+```
+
+The closed runner-version-109 dashboard is
+`.tmp/current-run/scheduled-2026-07-13-localeconv-corpus/corpus-snapshot-j8-600.sqlite3`.
+All 1,139 files pass, with no block-failure or file-error rows. Compared with
+the preceding 89,039-pass clean baseline, the thirteen newly runnable blocks
+are exactly the three stable real-MPFR parser rows, the native real-double
+square-root row, and the nine locale-dependent real-MPFR rows promoted by the
+`localeconv` repair. The independent `float.hex()` exponent-format row remains
+explicitly deferred.
+
+The refresh ran from an immutable copy-on-write snapshot of the fully patched
+source because a concurrent standalone rebuild briefly replaced the shared
+build tree during an initial discarded attempt. It used the validated
+schema-146 isolated Electron resource bundle, eight workers, and a 600-second
+per-file timeout. The known-long `root_space.py` file completed normally, and
+the full run closed successfully in about 26 minutes. The next coverage pass
+should select another explicit deferred dependency boundary from this clean
+dashboard rather than repeat the broad corpus without a runtime or skip-policy
+change.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
