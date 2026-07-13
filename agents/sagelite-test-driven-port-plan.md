@@ -48928,6 +48928,41 @@ dictionary-order, and bounded regular-sequence clusters. The next pass should
 continue with another native semantic row outside those reproduced
 boundaries.
 
+Standalone doctest directive-composition repair on 2026-07-13 UTC:
+
+The deferred audit of `sage/structure/factorization.py` exposed a runner
+artifact rather than five independent Sage failures. A standalone
+`# needs sage.combinat sage.modules` directive guarded the setup rows, but a
+later standalone `# known bug` directive replaced that active dependency
+metadata. Enabling known-bug rows therefore ran five dependent examples after
+their setup had been skipped and recorded artificial `NameError` failures.
+
+The doctest runner now composes consecutive standalone directive sources, so
+the later examples retain both the optional dependency and deferred tags. Skip
+reason selection also considers whether a deferred tag is enabled before
+choosing it; with `--deferred=known-bug`, an unavailable optional dependency
+is now reported as the effective reason instead of the enabled deferred tag.
+
+A focused three-profile reproducer confirms the combined semantics: the
+default profile skips both examples, `--optional=cowasm_smoke` runs the setup
+and retains the deferred guard, and `--deferred=known-bug` retains the missing
+optional guard on both rows. Replaying the original file with known-bug rows
+enabled now records:
+
+```text
+factorization.py: 151 passed, 0 failed, 116 skipped
+```
+
+The dashboard is
+`.tmp/current-run/scheduled-2026-07-13-composed-directives-finish/factorization-deferred.sqlite3`.
+Its five lines 1073-to-1080 rows all retain `needs:sage.combinat`,
+`needs:sage.modules`, and `deferred:known bug` metadata while reporting the
+optional dependency skip. The standalone smoke fixture now covers this
+composition and the default, optional-feature, and deferred-feature aggregate
+expectations; shell syntax, Node syntax, and `git diff --check` are clean.
+The next deferred audit can return to native semantic candidates without
+counting directive-scope artifacts as Sage backend failures.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

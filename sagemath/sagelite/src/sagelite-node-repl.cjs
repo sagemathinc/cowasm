@@ -1976,7 +1976,7 @@ def __cowasm_should_skip(source):
 
 def __cowasm_skip_reason(source):
     deferred_tags = __cowasm_deferred_tags(source)
-    if deferred_tags:
+    if deferred_tags and not __cowasm_deferred_enabled(source):
         return "deferred:" + ",".join(deferred_tags)
     if not __cowasm_optional_enabled(source):
         features = __cowasm_optional_features_in(source)
@@ -2702,7 +2702,10 @@ def __cowasm_run_file(filename):
                     else None
                 )
                 if mapped_directive_source:
-                    active_directive_source = mapped_directive_source
+                    active_directive_source = __cowasm_merge_directive_source(
+                        active_directive_source,
+                        mapped_directive_source,
+                    )
                 mapped_inline_directive_source = (
                     inline_directives.get(example.lineno + 1)
                     if example.lineno is not None
