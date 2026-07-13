@@ -6334,9 +6334,6 @@ diff -urN a/src/sage/rings/real_mpfi.pyx b/src/sage/rings/real_mpfi.pyx
 +++ b/src/sage/rings/real_mpfi.pyx
 @@ -124,0 +125 @@
 +    sage: # needs sage.symbolic
-@@ -744 +745 @@
--            sage: RIF.algebraic_closure() is CIF
-+            sage: RIF.algebraic_closure() is CIF                                         # known bug
 @@ -805 +806 @@
 -            sage: phi = RIF.coerce_map_from(AA); phi
 +            sage: phi = RIF.coerce_map_from(AA); phi                                     # needs sage.rings.number_field

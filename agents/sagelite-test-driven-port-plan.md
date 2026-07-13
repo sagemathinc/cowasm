@@ -48164,6 +48164,29 @@ should select another explicit deferred dependency boundary from this clean
 dashboard rather than repeat the broad corpus without a runtime or skip-policy
 change.
 
+Real-MPFI deferred promotion pass on 2026-07-13 UTC:
+
+Enabling all three `# known bug` rows in `sage/rings/real_mpfi.pyx` records
+866 passed, two failed, and 93 skipped blocks. The audit database is
+`.tmp/current-run/scheduled-2026-07-13-localeconv-corpus/real-mpfi-deferred.sqlite3`.
+The two failures remain the symbolic Airy boundary: `airy_ai` is unavailable,
+and the following `val.overlaps(ref)` row consequently has no `val`.
+
+The native identity `RIF.algebraic_closure() is CIF` now passes, so its stale
+annotation is removed. After regenerating the complete patched source from the
+pinned Sagelite checkout, a default focused run records:
+
+```text
+real_mpfi.pyx: 866 passed, 0 failed, 95 skipped
+```
+
+That passing database is
+`.tmp/current-run/scheduled-2026-07-13-localeconv-corpus/real-mpfi-final.sqlite3`.
+The next deferred-coverage pass should return to a cluster with runnable
+native setup rather than the explicitly unavailable symbolic Airy rows; the
+remaining real/complex MPFR known-bug audits in this plan have already
+reproduced their documented backend or constructor gaps.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
