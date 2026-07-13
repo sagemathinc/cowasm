@@ -47740,6 +47740,35 @@ classify the symbolic `P(x^42).exponent` example at patched line 2763 while
 retaining the active raw-element exponent construction and accessor coverage
 immediately above it.
 
+Monomial exponent accessor direct-construction pass on 2026-07-13 UTC:
+
+The monomial exponent accessor example now constructs its element with
+`P(raw_element=42)`, removing only its reliance on the unavailable symbolic
+startup name `x`. This keeps the exact monomial element constructor and
+`exponent` property active and continues to return the documented integer
+value `42`.
+
+The focused line rerun records one pass. A full direct-file rerun against the
+validated isolated Electron resources records:
+
+```text
+growth_group.py: 765 passed, 1 failed, 186 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-exponent-accessor/full.sqlite3`.
+Compared by block index with the preceding logarithmic Gaussian-product
+dashboard, exactly the targeted line-2763 `NameError` becomes a pass; all
+other 951 statuses are unchanged. The only changed outputs among unchanged
+statuses are five `# random` rows, so every unchanged non-random passing
+output is identical. The new patch fragment applies cleanly to the preceding
+validated patched source, the accumulated growth-group module matches the
+tested source byte for byte and compiles with `py_compile`, and both source
+trees pass `git diff --check`. The next focused pass should examine the final
+`GrowthGroup('as^df')` diagnostic mismatch at patched line 5211, preserving
+the invalid-factory-input semantics while separating traceback-format drift
+from substantive exception-chain differences.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

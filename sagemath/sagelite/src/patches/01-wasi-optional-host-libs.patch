@@ -23869,3 +23869,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -5108 +5108 @@ class GrowthGroupFactory(UniqueFactory):
 -        sage: GrowthGroup('m^(ZZ[I]) * log(m)^(ZZ[I]) * n^(ZZ[I])')
 +        sage: GrowthGroup('m^(ZZ[I]) * log(m)^(ZZ[I]) * n^(ZZ[I])')  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2763 +2763 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: P(x^42).exponent
++            sage: P(raw_element=42).exponent
