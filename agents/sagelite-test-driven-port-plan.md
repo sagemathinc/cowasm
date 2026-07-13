@@ -46922,6 +46922,35 @@ focused pass should continue after this compact pre-logarithm cluster and
 classify the remaining direct failures around the generic growth-element
 examples beginning near patched line 1180.
 
+Symbolic constants and singularity-analysis boundary pass on 2026-07-13 UTC:
+
+The generic growth-element examples beginning at patched line 1120 are already
+fully runnable through the browser profile.  The five failures immediately
+before that clean region instead came from two explicitly symbolic tests in
+`_rpow_`: construction and use of `SR`'s symbolic-constants subring, and a
+`SingularityAnalysis` result over that subring.  Their dependent `_.parent()`
+prompts were output mismatches only because the failed symbolic expressions
+left stale underscore state.
+
+Those five prompts now carry focused `sage.symbolic` dependency metadata.  A
+full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 717 passed, 145 failed, 90 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-generic-boundary/full.sqlite3`.
+Compared by block index with the preceding dashboard, exactly five failures
+become intended `optional:sage.symbolic` skips; every other block status is
+unchanged.  The complete accumulated patch applies successfully to Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, the patched
+`growth_group.py` matches the focused runtime source byte for byte, and
+`git diff --check` passes.  The next focused pass should move past the clean
+generic-element region and classify the factory and initial-category failures
+around patched lines 1662--1800.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

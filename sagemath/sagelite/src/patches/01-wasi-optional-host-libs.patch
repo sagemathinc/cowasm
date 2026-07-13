@@ -23342,3 +23342,21 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -741 +741 @@ class PartialConversionElement(SageObject):
 -            ValueError: cannot split element with parameter 2/3 (Symbolic Ring) in Growth Group ZZ^x
 +            ValueError: cannot split element with parameter 2/3 (Rational Field) in Growth Group ZZ^x
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -1044 +1044 @@ def _rpow_(self, base):
+-        sage: SCR = SR.subring(no_variables=True)
++        sage: SCR = SR.subring(no_variables=True)  # needs sage.symbolic
+@@ -1047 +1047 @@ def _rpow_(self, base):
+-        sage: x.rpow(SCR(5))
++        sage: x.rpow(SCR(5))  # needs sage.symbolic
+@@ -1049 +1049 @@ def _rpow_(self, base):
+-        sage: _.parent()
++        sage: _.parent()  # needs sage.symbolic
+@@ -1058 +1058 @@ def _rpow_(self, base):
+-        ....:     normalized=False)
++        ....:     normalized=False)  # needs sage.symbolic
+@@ -1061 +1061 @@ def _rpow_(self, base):
+-        sage: _.parent()
++        sage: _.parent()  # needs sage.symbolic
