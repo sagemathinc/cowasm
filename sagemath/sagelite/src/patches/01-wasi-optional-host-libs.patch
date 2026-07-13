@@ -23315,3 +23315,15 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
          2^(x*log(x))
 
      ::
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -781,7 +781,7 @@
+     EXAMPLES::
+
+         sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+-        sage: G = GrowthGroup('x^ZZ'); x = G(x)
++        sage: G = GrowthGroup('x^ZZ'); x = G('x')
+         sage: (x^42).is_lt_one()  # indirect doctest
+         False
+         sage: (x^(-42)).is_lt_one()  # indirect doctest

@@ -46869,6 +46869,33 @@ cluster around patched lines 728--787, especially whether the `_is_lt_one_`
 setup can use direct string construction instead of Sage's unavailable startup
 symbolic `x`.
 
+Direct monomial less-than-one setup pass on 2026-07-13 UTC:
+
+The `_is_lt_one_` examples constructed their monomial with `G(x)`, relying on
+the symbolic startup variable `x` that is intentionally absent from the
+browser profile.  The example now uses the equivalent direct string
+construction `G('x')`, keeping the behavior under test independent of the
+symbolic package.
+
+The focused line rerun passes, and a full direct-file rerun against the same
+validated isolated Electron resources records:
+
+```text
+growth_group.py: 715 passed, 152 failed, 85 skipped
+```
+
+The databases are
+`.tmp/current-run/scheduled-2026-07-13-growth-log-symbolic/is-lt-one-line.sqlite3`
+and `.tmp/current-run/scheduled-2026-07-13-growth-log-symbolic/full.sqlite3`.
+Compared by block index with the preceding logarithm-classified dashboard,
+exactly the three `_is_lt_one_` failures become passes; the other 949 blocks
+are unchanged.  The complete accumulated patch applies to the pinned Sagelite
+source, its patched `growth_group.py` matches the focused validation source,
+and `git diff --check` passes.  The next focused pass should examine the two
+`PartialConversionElement.split` examples near patched lines 728 and 736,
+which still obtain their exponential input through the unavailable symbolic
+startup variable `x`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
