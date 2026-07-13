@@ -47994,6 +47994,44 @@ next deferred-coverage pass should audit the neighboring
 deferred while promoting any native real-field setup or output rows that now
 pass independently.
 
+Native real-MPFR deferred audit on 2026-07-13 UTC:
+
+Enabling all 13 `# known bug` rows in `sage/rings/real_mpfr.pyx` records:
+
+```text
+real_mpfr.pyx: 985 passed, 9 failed, 113 skipped
+```
+
+The audit database is
+`.tmp/current-run/scheduled-2026-07-13-real-mpfr-deferred/full-before.sqlite3`.
+The nine failures reproduce the documented hexadecimal-formatting,
+mixed-case/high-base parsing, and parser-state corruption gaps. Three native
+nondecimal conversions are stale deferrals: both autodetected hexadecimal
+forms `RR("0x123.e1", base=0)` and `RR("0x123.@1", base=0)`, plus the signed
+base-62 form `RR("-1Xx@-10", base=62)`, now produce their documented values.
+Their known-bug annotations are removed.
+
+The nearby `RR('-100').is_real()` row appeared stale in a direct run from the
+repository root, but the strict make-target replay from `sagemath/sagelite`
+reproduced its `TypeError: unable to convert '-100' to a real number`. Its tag
+therefore remains: the result still depends on the accumulated nondecimal
+MPFR parser state and is not safe to promote. After regenerating the complete
+patched source from Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, a strict one-file make-target run
+records:
+
+```text
+real_mpfr.pyx: 984 passed, 0 failed, 123 skipped
+```
+
+That result is in
+`.tmp/current-run/scheduled-2026-07-13-real-mpfr-deferred/strict-final.sqlite3`.
+The complete patch reapplies successfully and `git diff --check` is clean.
+The next focused pass should build a small ordered reproducer for the
+mixed-case/high-base MPFR parsing cluster and its later signed-decimal
+failures, then locate whether the persistent state corruption belongs to the
+MPFR side module or a WASI libc conversion/character-classification fallback.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

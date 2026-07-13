@@ -174,18 +174,9 @@ diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 +    sage: (-1. + 2^-52).hex()  # known bug - hexadecimal mantissa formatting differs in Sagelite WASI profile
 @@ -1326,0 +1327 @@
 +            sage: # needs sage.libs.pari
-@@ -1460 +1461 @@
--            sage: RR("0x123.e1", base=0)  # rel tol 1e-12
-+            sage: RR("0x123.e1", base=0)  # rel tol 1e-12  # known bug - autodetected MPFR base parsing corrupts later signed conversions in Sagelite WASI
-@@ -1462 +1463 @@
--            sage: RR("0x123.@1", base=0)  # rel tol 1e-12
-+            sage: RR("0x123.@1", base=0)  # rel tol 1e-12  # known bug - autodetected MPFR base parsing corrupts later signed conversions in Sagelite WASI
 @@ -1464 +1465 @@
 -            sage: RR("1Xx", base=36)  # rel tol 1e-12
 +            sage: RR("1Xx", base=36)  # rel tol 1e-12  # known bug - mixed-case MPFR base parsing is stateful in Sagelite WASI
-@@ -1466 +1467 @@
--            sage: RR("-1Xx@-10", base=62)  # rel tol 1e-12
-+            sage: RR("-1Xx@-10", base=62)  # rel tol 1e-12  # known bug - base-62 parsing corrupts later MPFR string conversions in Sagelite WASI
 @@ -1711 +1712 @@
 -            sage: for prec in (2, 53, 200):
 +            sage: for prec in (2, 53, 200):  # needs sage.symbolic
