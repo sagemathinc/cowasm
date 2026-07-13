@@ -23425,3 +23425,24 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -2108 +2108 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
 -            sage: G(a)
 +            sage: G(a)  # known bug - Sagelite WASI multiline exception formatting
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2360 +2360 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: cm.common_parent(GrowthGroup('x^ZZ * log(x)^ZZ'), GrowthGroup('exp(x)^ZZ * x^ZZ'))
++            sage: cm.common_parent(GrowthGroup('x^ZZ * log(x)^ZZ'), GrowthGroup('exp(x)^ZZ * x^ZZ'))  # needs sage.symbolic
+@@ -2362 +2362 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: cm.common_parent(GrowthGroup('x^ZZ * log(x)^ZZ'), GrowthGroup('y^ZZ * x^ZZ'))
++            sage: cm.common_parent(GrowthGroup('x^ZZ * log(x)^ZZ'), GrowthGroup('y^ZZ * x^ZZ'))  # needs sage.symbolic
+@@ -2429 +2429 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: GrowthGroup('log(x)^ZZ').gens()
++            sage: GrowthGroup('log(x)^ZZ').gens()  # needs sage.symbolic
+@@ -2473 +2473 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: GrowthGroup('log(x)^ZZ').ngens()
++            sage: GrowthGroup('log(x)^ZZ').ngens()  # needs sage.symbolic
+@@ -2501 +2501 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: GrowthGroup('log(x)^ZZ').variable_names()
++            sage: GrowthGroup('log(x)^ZZ').variable_names()  # needs sage.symbolic
+@@ -2508 +2508 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
+-            sage: GrowthGroup('(QQ_+)^(x*log(x))').variable_names()
++            sage: GrowthGroup('(QQ_+)^(x*log(x))').variable_names()  # needs sage.symbolic

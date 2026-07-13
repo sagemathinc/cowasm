@@ -47038,6 +47038,35 @@ tested source byte for byte, compiles with `py_compile`, and passes
 common-parent and generator-introspection failures around patched lines
 2360--2508, keeping ordinary non-logarithmic product-group coverage active.
 
+Logarithmic common-parent and generator-introspection boundary pass on
+2026-07-13 UTC:
+
+The six remaining failures around patched lines 2360--2508 all construct
+growth groups whose variable strings contain `log(...)`.  Parsing those
+non-identifier variables reaches `sage.symbolic.expression`, which is
+intentionally unavailable in the browser profile.  Those six examples now
+carry focused `sage.symbolic` dependency metadata.  The neighboring ordinary
+monomial, exponential, disjoint-variable common-parent, and generator examples
+remain active and passing.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 722 passed, 117 failed, 113 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-log-introspection/full-accumulated.sqlite3`.
+Compared by block index with the preceding dashboard, exactly six failures
+become `optional:sage.symbolic` skips; the other 946 block statuses are
+unchanged.  The added patch fragment applies cleanly to the preceding complete
+patch-check source, the patched module compiles with `py_compile`, and CoWasm
+passes `git diff --check`.  The next focused pass should examine the monomial
+element construction and representation failures beginning around patched line
+2763, replacing only their reliance on the unavailable startup symbol `x`
+while keeping exponent, multiplication, and LaTeX behavior active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
