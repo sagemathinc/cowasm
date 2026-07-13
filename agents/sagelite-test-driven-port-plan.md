@@ -48032,6 +48032,44 @@ mixed-case/high-base MPFR parsing cluster and its later signed-decimal
 failures, then locate whether the persistent state corruption belongs to the
 MPFR side module or a WASI libc conversion/character-classification fallback.
 
+Standalone MPFR parser-state isolation on 2026-07-13 UTC:
+
+The `sagemath/mpfr` standalone smoke now runs the ordered conversion sequence
+behind the Sagelite cluster directly against MPFR 4.2.2: autodetected
+hexadecimal input, mixed-case base 36, signed base 62, signed decimal strings,
+base 16, and lowercase base 37. It checks exact integer results where
+applicable, the exact hexadecimal fraction, successful signed base-62 parsing,
+and negative zero. A full package rebuild and standalone execution passes with:
+
+```text
+mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz parse-state special-functions nextafter fma rootn hypot trig special-values
+```
+
+This excludes the MPFR parsing algorithm and the standalone WASI libc path as
+the source of the persistent Sagelite state corruption. The same MPFR code is
+linked into `sage.rings.real_mpfr` as a side module, where it imports memory,
+allocation, locale, and `strtol` services from the main Python runtime. The
+remaining boundary is therefore the dynamic side-module import/relocation and
+allocator path, or the thin Cython string-conversion wrapper, rather than the
+standalone library.
+
+Adjacent deferred audits did not find another safe promotion. Enabling the
+five deferred rows in `sage/rings/complex_mpfr.pyx` records 446 passed, four
+failed, and 91 skipped blocks: `ComplexNumber(42, 0)` still raises its
+documented coercion `TypeError`, and three dependent rows fail without `b`.
+The passing row is Sage's upstream `not tested, known bug` verification loop,
+so its upstream annotation remains intact. Enabling the deferred rows in
+`sage/rings/complex_interval.pyx` records 259 passed, four failed, and 14
+skipped blocks; both explicit constructor gaps and the two upstream Airy
+examples still reproduce. The audit databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-complex-mpfr/full-deferred.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-13-complex-interval/full-deferred.sqlite3`.
+
+The next parser-state pass should load a minimal MPFR side module that exposes
+the same ordered C probe without importing Sage. Comparing that result with
+the now-covered standalone path will separate dynamic-loader/libc integration
+from `str_to_bytes` and `RealNumber._set` before changing either runtime layer.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

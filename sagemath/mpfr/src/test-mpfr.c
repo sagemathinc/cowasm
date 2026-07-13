@@ -15,6 +15,19 @@ static int check_string(mpfr_t x, const char *format, const char *expected) {
   return 0;
 }
 
+static int check_parsed_integer(mpfr_t x, const char *input, int base,
+                                long expected) {
+  if (mpfr_set_str(x, input, base, MPFR_RNDN) != 0 ||
+      mpfr_cmp_si(x, expected) != 0) {
+    fprintf(stderr,
+            "unexpected MPFR parse: input %s in base %d did not produce %ld\n",
+            input, base, expected);
+    return 1;
+  }
+
+  return 0;
+}
+
 int main(void) {
   mpfr_t x, y, z;
   mpz_t n;
@@ -83,6 +96,19 @@ int main(void) {
   mpfr_set_ui_2exp(z, 1, -1, MPFR_RNDN);
   mpfr_add(z, z, z, MPFR_RNDN);
   if (mpfr_cmp_ui(z, 1) != 0) {
+    goto cleanup;
+  }
+
+  if (mpfr_set_str(x, "0x123.e1", 0, MPFR_RNDN) != 0 ||
+      mpfr_cmp_d(x, 291.87890625) != 0 ||
+      check_parsed_integer(x, "0x123.@1", 0, 4656) ||
+      check_parsed_integer(x, "1Xx", 36, 2517) ||
+      mpfr_set_str(x, "-1Xx@-10", 62, MPFR_RNDN) != 0 ||
+      mpfr_sgn(x) >= 0 || check_parsed_integer(x, "-1", 10, -1) ||
+      mpfr_set_str(x, "-0", 10, MPFR_RNDN) != 0 || !mpfr_zero_p(x) ||
+      !mpfr_signbit(x) || check_parsed_integer(x, "-100", 10, -100) ||
+      check_parsed_integer(x, "12", 16, 18) ||
+      check_parsed_integer(x, "aaa", 37, 50652)) {
     goto cleanup;
   }
 
@@ -159,7 +185,8 @@ int main(void) {
   }
 
   puts("mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz "
-       "special-functions nextafter fma rootn hypot trig special-values");
+       "parse-state special-functions nextafter fma rootn hypot trig "
+       "special-values");
   status = 0;
 
 cleanup:
