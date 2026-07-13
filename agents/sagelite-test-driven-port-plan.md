@@ -48486,6 +48486,30 @@ continue with another native semantic row that has complete whole-file setup,
 leaving those confirmed representation, formatter, and diagnostic clusters
 explicit.
 
+Native set-from-iterator warning promotion pass on 2026-07-13 UTC:
+
+Both WASI-added `# known bug` rows in `sage/sets/set_from_iterator.py` are
+stale. Whole-file replay with deferred rows enabled confirms that the facade
+parent `TestSuite(E).run()` warning and the `S(1)` element-constructor warning
+are both captured and normalized to their documented output in normal file
+order. Removing the two annotations gives:
+
+```text
+set_from_iterator.py: 135 passed, 0 failed, 77 skipped
+```
+
+The initial deferred audit is
+`.tmp/current-run/scheduled-2026-07-13-set-iterator-warning/full-deferred.sqlite3`.
+The complete accumulated patch applies without rejects to a fresh archive of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and the
+default whole-file replay from that reconstructed source records the same
+result in
+`.tmp/current-run/scheduled-2026-07-13-set-iterator-warning/pristine-default.sqlite3`.
+The remaining packaging-dependent documentation row stays explicitly
+guarded. The next deferred pass should audit another native warning or
+semantic row whose complete setup is available, continuing to require
+whole-file and pristine default replay before promotion.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
