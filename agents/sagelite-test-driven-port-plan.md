@@ -48733,6 +48733,38 @@ plural-polynomial, number-field, p-adic, and elliptic-curve dependency
 boundaries. The next pass should continue with another native semantic row
 whose complete setup is runnable in the browser profile.
 
+Native MPFI parser and stress-test promotion pass on 2026-07-13 UTC:
+
+Three more WASI-added `# known bug` annotations in
+`sage/rings/convert/mpfi.pyx` are stale. Both base-36 `1Xx` conversions now
+produce the documented real and real-interval values, and the randomized
+question-style interval parser stress test completes for all four tested
+precisions. Removing those annotations and replaying the file in the default
+browser profile records:
+
+```text
+mpfi.pyx: 53 passed, 0 failed, 4 skipped
+```
+
+The initial four-file deferred audit and shared-source default replay are
+respectively
+`.tmp/current-run/scheduled-2026-07-13-mpfi-parser-promotion/four-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-mpfi-parser-promotion/shared-default.sqlite3`.
+The huge-exponent `RIF("1.?e999999999999999999999999")` row remains guarded:
+it still returns the finite interval `0.?e-323228496` instead of the documented
+infinite interval.
+
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed `mpfi.pyx` matches the shared patched source byte
+for byte, and its default replay gives the same 53/0/4 result in
+`.tmp/current-run/scheduled-2026-07-13-mpfi-parser-promotion/pristine-default.sqlite3`.
+The same bounded audit retained direct evidence for neighboring display,
+traceback, serialization, HTML, allocation, and constructor-diagnostic
+boundaries. The next pass should continue with another native semantic row,
+avoiding those reproduced clusters.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

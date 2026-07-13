@@ -12286,9 +12286,6 @@ diff -urN -U0 a/src/sage/libs/ntl/ntl_lzz_p.pyx b/src/sage/libs/ntl/ntl_lzz_p.py
 diff -urN -U0 a/src/sage/rings/convert/mpfi.pyx b/src/sage/rings/convert/mpfi.pyx
 --- a/src/sage/rings/convert/mpfi.pyx
 +++ b/src/sage/rings/convert/mpfi.pyx
-@@ -93 +93 @@
--        sage: RR("1Xx", base=36)  # rel tol 1e-12
-+        sage: RR("1Xx", base=36)  # known bug
 @@ -139 +139 @@
 -        sage: x = F(sqrt(2)); x.endpoints()  # rel tol 1e-290
 +        sage: x = F(sqrt(2)); x.endpoints()  # needs sage.symbolic
@@ -12298,15 +12295,9 @@ diff -urN -U0 a/src/sage/rings/convert/mpfi.pyx b/src/sage/rings/convert/mpfi.py
 @@ -144 +144 @@
 -        sage: x in F(x.str(style="question", error_digits=0))
 +        sage: x in F(x.str(style="question", error_digits=0))  # needs sage.symbolic
-@@ -152 +152 @@
--        sage: for F in [RealIntervalField(15), RIF, RealIntervalField(100), RealIntervalField(1000)]:
-+        sage: for F in [RealIntervalField(15), RIF, RealIntervalField(100), RealIntervalField(1000)]:  # known bug
 @@ -204 +204 @@
 -        sage: RIF("1.?e999999999999999999999999")
 +        sage: RIF("1.?e999999999999999999999999")  # known bug
-@@ -326 +326 @@
--        sage: RIF("1Xx", base=36)  # rel tol 1e-12
-+        sage: RIF("1Xx", base=36)  # known bug
 diff -urN -U0 a/src/sage/interfaces/genus2reduction.py b/src/sage/interfaces/genus2reduction.py
 --- a/src/sage/interfaces/genus2reduction.py
 +++ b/src/sage/interfaces/genus2reduction.py
