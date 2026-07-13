@@ -46951,6 +46951,35 @@ commit `f575cf6224f749763d7c875229cbd684e5939e58`, the patched
 generic-element region and classify the factory and initial-category failures
 around patched lines 1662--1800.
 
+Factory and initial-category symbolic boundary pass on 2026-07-13 UTC:
+
+The failing factory examples around patched lines 1662--1800 all cross an
+explicit symbolic boundary: they construct variables or bases from `SR`, use
+symbolic `log(x)`, parse logarithmic variable strings through
+`sage.symbolic.expression`, or manage symbolic assumptions.  Those direct
+examples and their dependent identity/cleanup prompts now carry focused
+`sage.symbolic` dependency metadata.  Ordinary integer and rational factory,
+category, and constructor examples in the same region remain runnable.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 717 passed, 134 failed, 101 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-factory-boundary/full.sqlite3`.
+Compared by block index with the preceding dashboard, exactly 11 failures
+become intended `optional:sage.symbolic` skips; every other block status is
+unchanged.  The complete accumulated patch applies successfully to Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, its patched
+`growth_group.py` matches the tested runtime source byte for byte, the module
+compiles with `py_compile`, and `git diff --check` passes.  The next focused
+pass should classify the logarithmic factory representation and `an_element`
+examples around patched lines 1881--1935, keeping non-symbolic monomial and
+exponential coverage active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

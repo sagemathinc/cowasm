@@ -23360,3 +23360,35 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -1061 +1061 @@ def _rpow_(self, base):
 -        sage: _.parent()
 +        sage: _.parent()  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -1649,2 +1649,2 @@ def __classcall__(cls, base, var=None, category=None, ignore_variables=None):
+-            sage: P3 = MonomialGrowthGroup(ZZ, SR.var('x'))
+-            sage: P1 is P2 and P2 is P3
++            sage: P3 = MonomialGrowthGroup(ZZ, SR.var('x'))  # needs sage.symbolic
++            sage: P1 is P2 and P2 is P3  # needs sage.symbolic
+@@ -1657,3 +1657,3 @@ def __classcall__(cls, base, var=None, category=None, ignore_variables=None):
+-            sage: L1 = MonomialGrowthGroup(QQ, log(x))
+-            sage: L2 = MonomialGrowthGroup(QQ, 'log(x)')
+-            sage: L1 is L2
++            sage: L1 = MonomialGrowthGroup(QQ, log(x))  # needs sage.symbolic
++            sage: L2 = MonomialGrowthGroup(QQ, 'log(x)')  # needs sage.symbolic
++            sage: L1 is L2  # needs sage.symbolic
+@@ -1741 +1741 @@ def _initial_category_(base):
+-            sage: GenericGrowthGroup._initial_category_(SR) is None
++            sage: GenericGrowthGroup._initial_category_(SR) is None  # needs sage.symbolic
+@@ -1770 +1770 @@ def __init__(self, base, var, category):
+-            sage: MonomialGrowthGroup(QQ, SR.var('n'))
++            sage: MonomialGrowthGroup(QQ, SR.var('n'))  # needs sage.symbolic
+@@ -1774 +1774 @@ def __init__(self, base, var, category):
+-            sage: MonomialGrowthGroup(QQ, 'log(x)')
++            sage: MonomialGrowthGroup(QQ, 'log(x)')  # needs sage.symbolic
+@@ -1782,4 +1782,4 @@ def __init__(self, base, var, category):
+-            sage: assume(SR.an_element() > 0)
+-            sage: ExponentialGrowthGroup(SR, ZZ['y'].gen())
++            sage: assume(SR.an_element() > 0)  # needs sage.symbolic
++            sage: ExponentialGrowthGroup(SR, ZZ['y'].gen())  # needs sage.symbolic
+             Growth Group SR^y
+-            sage: forget()
++            sage: forget()  # needs sage.symbolic
