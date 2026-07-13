@@ -47125,6 +47125,32 @@ examine the monomial substitution examples beginning around patched line 3132,
 separating their unavailable symbolic substitutions from raw-element cases
 that can remain active in the browser profile.
 
+Direct monomial substitution pass on 2026-07-13 UTC:
+
+The symbolic-ring substitution and its dependent parent check now carry
+focused `sage.symbolic` dependency metadata. The integer substitution and
+zero-division examples instead construct their monomial growth elements
+through `raw_element`, removing only the unavailable startup symbol `x` while
+keeping substitution, result-parent, and nested-exception behavior active.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 738 passed, 96 failed, 118 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-substitution/full.sqlite3`.
+Compared by block index with the preceding logarithm-factor dashboard, exactly
+five failures change status: two become `optional:sage.symbolic` skips and
+three become passes; all other 947 block statuses are unchanged. The focused
+symbolic rerun also records its intended dependency skip. The complete patch
+passes `git diff --check`, and the patched module compiles with `py_compile`.
+The next focused pass should examine the singularity-analysis examples around
+patched lines 3179--3197, separating the non-symbolic rational-power path from
+the logarithmic and symbolic-asymptotics dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
