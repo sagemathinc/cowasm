@@ -47506,6 +47506,35 @@ classify the symbolic `_split_raw_element_` examples around patched lines
 4449--4463 while preserving the broad active exact, real, interval, ball, and
 complex numeric split coverage above them.
 
+Exponential symbolic raw-element splitting boundary pass on 2026-07-13 UTC:
+
+The symbolic rational, unknown-sign variable, and positive/negative assumption
+lifecycle examples in `_split_raw_element_` now carry focused
+`sage.symbolic` dependency metadata. The broad neighboring exact, real,
+interval, ball, and complex numeric split coverage remains active; a focused
+integer split with its contiguous parent setup passes.
+
+Focused reruns of the symbolic rational, unknown-sign variable, and positive
+assumption rows record their intended dependency skips. A full direct-file
+rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 22 failed, 166 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-split-symbolic/full-validated.sqlite3`.
+Compared by block index with the preceding symbolic-conversion dashboard,
+exactly eight failures become `optional:sage.symbolic` skips; the other 944
+block statuses and all unchanged non-random passing outputs are identical.
+The complete patch applies to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, the accumulated growth-group
+module matches the tested source byte for byte and compiles with `py_compile`,
+and both patched source and CoWasm pass `git diff --check`. The next focused
+pass should classify the symbolic `_an_element_` and `_an_element_base_`
+examples around patched lines 4504--4527 while preserving the ordinary
+positive-rational `some_elements()` coverage immediately below them.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -23763,3 +23763,27 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4341 +4341 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 -            sage: E((-333)^x)  # indirect doctest
 +            sage: E((-333)^x)  # indirect doctest  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -4448 +4448 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: G._split_raw_element_(SR(-2/3))
++            sage: G._split_raw_element_(SR(-2/3))  # needs sage.symbolic
+@@ -4451 +4451 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: G._split_raw_element_(x)
++            sage: G._split_raw_element_(x)  # needs sage.symbolic
+@@ -4455,2 +4455,2 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: assume(x > 0)
+-            sage: G._split_raw_element_(x)
++            sage: assume(x > 0)  # needs sage.symbolic
++            sage: G._split_raw_element_(x)  # needs sage.symbolic
+@@ -4458,3 +4458,3 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: forget()
+-            sage: assume(x < 0)
+-            sage: G._split_raw_element_(x)
++            sage: forget()  # needs sage.symbolic
++            sage: assume(x < 0)  # needs sage.symbolic
++            sage: G._split_raw_element_(x)  # needs sage.symbolic
+@@ -4462 +4462 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: forget()
++            sage: forget()  # needs sage.symbolic
