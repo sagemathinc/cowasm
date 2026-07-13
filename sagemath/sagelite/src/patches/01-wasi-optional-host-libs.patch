@@ -23506,3 +23506,26 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
              Integer Ring
 -            sage: G(1 / x)._substitute_({'x': 0})
 +            sage: G(raw_element=-1)._substitute_({'x': 0})
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3167 +3167 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G(x^(1/2))._singularity_analysis_('n', 2, precision=2)
++            sage: G(x^(1/2))._singularity_analysis_('n', 2, precision=2)  # needs sage.symbolic
+@@ -3170 +3170 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G = GrowthGroup('log(x)^QQ')
++            sage: G = GrowthGroup('log(x)^QQ')  # needs sage.symbolic
+@@ -3171 +3171 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G(log(x))._singularity_analysis_('n', 1, precision=5)
++            sage: G(log(x))._singularity_analysis_('n', 1, precision=5)  # needs sage.symbolic
+@@ -3173 +3173 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G(log(x)^2)._singularity_analysis_('n', 2, precision=3)
++            sage: G(log(x)^2)._singularity_analysis_('n', 2, precision=3)  # needs sage.symbolic
+@@ -3179 +3179 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G(log(x)^(1/2))._singularity_analysis_('n', 2, precision=3)
++            sage: G(log(x)^(1/2))._singularity_analysis_('n', 2, precision=3)  # needs sage.symbolic
+@@ -3184,2 +3184,2 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: G = GrowthGroup('log(log(x))^QQ')
+-            sage: G(log(log(x))^(1/2))._singularity_analysis_('n', 2, precision=3)
++            sage: G = GrowthGroup('log(log(x))^QQ')  # needs sage.symbolic
++            sage: G(log(log(x))^(1/2))._singularity_analysis_('n', 2, precision=3)  # needs sage.symbolic

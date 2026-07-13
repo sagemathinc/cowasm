@@ -47151,6 +47151,36 @@ The next focused pass should examine the singularity-analysis examples around
 patched lines 3179--3197, separating the non-symbolic rational-power path from
 the logarithmic and symbolic-asymptotics dependency boundary.
 
+Singularity-analysis symbolic boundary pass on 2026-07-13 UTC:
+
+All seven remaining examples in `MonomialGrowthElement._singularity_analysis_`
+cross the unavailable symbolic backend. This includes the apparently
+non-symbolic rational-power case: replacing its symbolic `x^(1/2)` input with
+`raw_element=1/2` still enters `SingularityAnalysis`, which imports Sage's
+calculus stack and then fails at `sage.symbolic.expression`. The logarithmic
+constructors, results, and error-path examples use the same unavailable
+dependency directly or through their stateful setup. Those seven prompts now
+carry focused `sage.symbolic` dependency metadata.
+
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 738 passed, 89 failed, 125 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-singularity/full.sqlite3`.
+Compared by block index with the preceding substitution dashboard, exactly
+seven failures become `optional:sage.symbolic` skips; the other 945 block
+statuses are unchanged. The complete accumulated patch applies to Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, the patched module compiles
+with `py_compile`, and both the patched source tree and CoWasm pass
+`git diff --check`. The next focused pass should examine the logarithmic
+`_find_minimum_` examples around patched lines 3253--3261, separating their
+symbolic group construction from any raw-element minimum logic that can remain
+active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
