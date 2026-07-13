@@ -47932,6 +47932,36 @@ and the rebuilt patched GF2E source reproduces the direct validation. The next
 pass should refresh the complete 1,139-file corpus to establish a zero-failure
 dashboard and then choose the next corpus-growth or deferred-coverage cluster.
 
+Zero-failure curated-corpus refresh on 2026-07-13 UTC:
+
+The complete 1,139-file browser-profile corpus is clean after the tensor,
+real-double, and GF2E passes:
+
+```text
+sage -t passed: 89039 passed, 0 failed, 27169 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-clean-corpus/corpus-600.sqlite3`. It
+contains 116,208 blocks under runner version 109 and the node profile, with
+CoWasm commit `8da06caf659e99bfc9186612a5a20a5d0581ef3f` and both Sagelite
+source and package commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+All 1,139 files pass, the lifecycle is closed after about 3,005 seconds, and
+the saved block-failure and file-error cluster queries are empty.
+
+The refresh uses a 600-second per-file limit because
+`sage/combinat/root_system/root_space.py` legitimately needs about 384 seconds
+for its broad root-lattice and root-space `TestSuite` loop in this runtime; a
+discarded 180-second probe classified that healthy file as a timeout. After
+writing the closed passing dashboard and printing the successful summary, the
+Node parent reached the already documented post-summary shutdown segfault.
+That teardown issue does not alter the complete SQLite result, but strict
+make-target exit validation remains a separate runtime cleanup frontier.
+
+The quiet curated corpus now provides a zero-failure baseline. The next pass
+should use it to select a high-value explicit deferred skip or dependency
+boundary for focused coverage growth, rather than repeat a broad source scan.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
