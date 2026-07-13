@@ -23701,3 +23701,15 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -4093 +4093 @@ class ExponentialGrowthElement(GenericGrowthElement):
 -            sage: P_ZZ_UU((-2)^x) <= P_ZZ_UU(2^x) or P_ZZ_UU(2^x) <= P_ZZ_UU((-2)^x)
 +            sage: P_ZZ_UU('(-2)^x') <= P_ZZ_UU('2^x') or P_ZZ_UU('2^x') <= P_ZZ_UU('(-2)^x')
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -4113,5 +4113,5 @@ class ExponentialGrowthElement(GenericGrowthElement):
+-            sage: G((1/2)^x)._substitute_({'x': SR.var('z')})
++            sage: G(raw_element=1/2)._substitute_({'x': SR.var('z')})  # needs sage.symbolic
+             (1/2)^z
+-            sage: _.parent()
++            sage: _.parent()  # needs sage.symbolic
+             Symbolic Ring
+-            sage: G((1/2)^x)._substitute_({'x': 2})
++            sage: G(raw_element=1/2)._substitute_({'x': 2})

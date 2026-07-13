@@ -47418,6 +47418,37 @@ exponential substitution examples beginning around patched line 4138,
 classifying the symbolic target while keeping the integer substitution and
 its result-parent check active through raw-element construction.
 
+Exponential substitution dependency and direct-construction pass on
+2026-07-13 UTC:
+
+The symbolic substitution and its dependent parent check now carry focused
+`sage.symbolic` dependency metadata. Both the symbolic and integer examples
+construct their exponential element from `raw_element=1/2`, removing only
+their reliance on the unavailable startup symbol `x`. The integer
+substitution, its `1/4` result, and its Rational Field parent check remain
+active.
+
+The focused symbolic rerun records its intended dependency skip. A focused
+integer rerun with the parent setup passes both selected prompts. A full
+direct-file rerun against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 43 failed, 145 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-substitution-exponential/full-validated.sqlite3`.
+Compared by block index with the preceding comparison dashboard, exactly two
+failures become `optional:sage.symbolic` skips and two failures become passes;
+the other 948 block statuses are unchanged. All unchanged non-random passing
+outputs remain identical. The accumulated patch applies sequentially to
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, the resulting
+growth-group module matches the tested source byte for byte and compiles with
+`py_compile`, and the patched tree passes `git diff --check`. The next focused
+pass should classify the symbolic `ExponentialGrowthGroup` constructor and
+assumption-lifecycle examples around patched lines 4225--4238 while keeping
+the ordinary `QQ` constructor example active.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
