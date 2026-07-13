@@ -6340,7 +6340,10 @@ diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 +            sage: RDF.coerce(pi)                                                        # needs sage.symbolic
 @@ -774 +774 @@
 -            sage: a = RDF(pi)
-+            sage: a = RDF(pi)                                                           # needs sage.symbolic
++            sage: a = RDF.pi()
+@@ -961 +961 @@
+-            sage: s1 = RDF(sin(1)); s1
++            sage: s1 = RDF(1).sin(); s1
 @@ -965 +965 @@
 -            sage: s1 == RDF(gp(s1))
 +            sage: s1 == RDF(gp(s1))                                                     # needs sage.libs.pari

@@ -47865,6 +47865,33 @@ the multiline escaped result of `str(...)`. The remaining complete-dashboard
 frontiers are the twelve-row `real_double.pyx` symbolic-setup cascade and the
 existing `ntl_GF2E.pyx` WASM trap.
 
+Real-double native setup pass on 2026-07-13 UTC:
+
+The `sage/rings/real_double.pyx` dashboard is clean again without deferring its
+ULP or interface-string coverage. The ULP examples now use `RDF.pi()`, which
+constructs the same machine double through the native real-double field rather
+than converting the unavailable symbolic `pi`. The interface example similarly
+uses `RDF(1).sin()`, retaining the documented value while avoiding symbolic
+`sin(1)`.
+
+Both focused setup reruns pass. A full direct-file rerun against the validated
+isolated Electron resources records:
+
+```text
+real_double.pyx: 281 passed, 0 failed, 32 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-real-double-native/full.sqlite3`.
+Compared by block index with the growth-group promotion dashboard, exactly the
+previous symbolic setup skip and its twelve setup-dependent failures become
+passes. Every other block status and every unchanged non-random passing output
+are identical. The accumulated patch applies sequentially to Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the patched real-double source
+matches the tested source byte for byte. CoWasm also passes `git diff --check`.
+The remaining complete-dashboard failure frontier is the existing
+`sage/libs/ntl/ntl_GF2E.pyx` WASM trap at line 337.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
