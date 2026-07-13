@@ -48641,6 +48641,34 @@ modular-cusp representation, matrix diagnostic, persistence, polynomial test
 suite, and finite-field book-example boundaries. The next pass should continue
 with another native semantic row that has complete whole-file setup.
 
+Native real-interval polynomial test-suite promotion pass on 2026-07-13 UTC:
+
+The two browser-profile `# known bug` annotations on the multivariate
+polynomial rings over `RIF` are stale. A whole-file deferred replay confirms
+that both ring constructions and their `TestSuite` calls pass in normal file
+order. Removing the annotations and replaying the file in the default profile
+records:
+
+```text
+polynomial_ring_constructor.py: 102 passed, 0 failed, 69 skipped
+```
+
+The initial deferred audit and shared-source default replay are respectively
+`.tmp/current-run/scheduled-2026-07-13-rif-polynomial-testsuite/full-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-rif-polynomial-testsuite/shared-default.sqlite3`.
+The six failures in the deferred audit are the retained generic-polynomial
+`TestSuite` output clusters at lines 452, 636, 638, 640, 647, and 655; neither
+promoted `RIF` block is among them.
+
+Applying the complete accumulated patch to a fresh archive of pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and
+the reconstructed file matches the shared patched source byte for byte. Its
+default replay gives the same 102/0/69 result in
+`.tmp/current-run/scheduled-2026-07-13-rif-polynomial-testsuite/pristine-default.sqlite3`.
+The next pass should continue with another bounded native semantic row while
+leaving the reproduced generic-polynomial output cluster guarded.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

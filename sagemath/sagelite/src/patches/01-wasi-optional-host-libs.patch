@@ -4698,17 +4698,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
          polynomial ring, over a field, global ordering
          // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
          // number of vars : 1
-@@ -564,8 +564,8 @@
-         sage: C = (y-x)^3
-         sage: C(y/2)
-         1.?*y^3
--        sage: R.<x,y> = PolynomialRing(RIF,2)
--        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
-+        sage: R.<x,y> = PolynomialRing(RIF,2)                                          # known bug
-+        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
-         sage: RIF(-2,1)*x
-         0.?e1*x
-
 @@ -629,22 +629,22 @@
          Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
          sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL                                         # needs sage.libs.ntl
@@ -4746,17 +4735,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
          <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
          sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
          <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
-@@ -666,8 +666,8 @@
-         sage: Q.<x> = PolynomialRing(P)
-         sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity',
-         ....:                        '_test_distributivity', '_test_prod'])
--        sage: R.<x,y> = PolynomialRing(RIF,2)
--        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
-+        sage: R.<x,y> = PolynomialRing(RIF,2)                                          # known bug
-+        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
-
-     We verify that multivariate polynomial rings over ``InfinityRing`` from
-     :issue:`34675` are fixed::
 @@ -995,11 +995,11 @@
              and Category of commutative algebras over fields
              and Category of infinite sets
