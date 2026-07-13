@@ -2405,12 +2405,6 @@ diff -urN -U0 a/src/sage/rings/function_field/constructor.py b/src/sage/rings/fu
 +++ b/src/sage/rings/function_field/constructor.py
 @@ -161,0 +162 @@
 +            sage: # needs sage.libs.pari
-diff -urN -U0 a/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py b/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
---- a/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
-+++ b/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py
-@@ -67 +67 @@
--        sage: CarlitzModule(A, F)
-+        sage: CarlitzModule(A, F)  # known bug - Sagelite finite-field extension generator display drifts
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
@@ -7542,9 +7536,6 @@ diff -urN a/src/sage/rings/polynomial/flatten.py b/src/sage/rings/polynomial/fla
 @@ -563 +563 @@
 -            new = [t for t in old if t not in D]
 +            new = [t for t in old if phi(t) not in D]
-@@ -673 +673 @@
--            sage: phi
-+            sage: phi                                                                # known bug - morphism repr differs in the WASI runtime
 @@ -696,3 +696,3 @@
 -            sage: phi = FractionSpecializationMorphism(Frac(S), {a:3, b:2, c:-2})
 -            sage: spec = phi((a*x + b*y) / (c*z))

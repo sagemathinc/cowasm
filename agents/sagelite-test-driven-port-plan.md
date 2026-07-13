@@ -48454,6 +48454,38 @@ quadratic-form `gcd()` method. The next deferred pass should continue with
 another native invariant row rather than one of those confirmed display or
 backend boundaries.
 
+Native Carlitz-module and polynomial-morphism deferred promotion pass on
+2026-07-13 UTC:
+
+A six-file whole-file audit with `# known bug` rows enabled found two more
+stale browser-profile annotations. The Carlitz module over the quadratic
+finite-field extension displays its generator as `a`, and the fraction
+specialization morphism uses the documented multiline representation. Both
+examples pass in normal file order, so their WASI-added annotations are
+removed.
+
+The complete accumulated patch applies without rejects to a fresh archive of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`. A default
+two-file replay from that reconstructed source records:
+
+```text
+carlitz_module.py: 41 passed, 0 failed, 0 skipped
+flatten.py:       133 passed, 0 failed, 17 skipped
+```
+
+The initial whole-file audit and final pristine default run are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-invariant-next/six-file-deferred.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-invariant-next/pristine-default.sqlite3`.
+The same audit retains four nearby annotations with direct evidence: free
+algebra and modular cusp tuples still use the compact Python tuple display,
+MPFR-to-host float hex conversion still loses exponent digits, and the
+finite-field book example still raises `TypeError: no coercion defined`
+instead of the expected upstream diagnostic. The next deferred pass should
+continue with another native semantic row that has complete whole-file setup,
+leaving those confirmed representation, formatter, and diagnostic clusters
+explicit.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
