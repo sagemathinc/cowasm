@@ -47449,6 +47449,35 @@ pass should classify the symbolic `ExponentialGrowthGroup` constructor and
 assumption-lifecycle examples around patched lines 4225--4238 while keeping
 the ordinary `QQ` constructor example active.
 
+Exponential growth-group constructor dependency pass on 2026-07-13 UTC:
+
+The symbolic-constants subring constructor, symbolic-ring warning example,
+and its assumption/constructor/forget lifecycle now carry focused
+`sage.symbolic` dependency metadata. The adjacent ordinary
+`ExponentialGrowthGroup(QQ, 'a')` constructor remains active and continues to
+return the documented `Growth Group QQ^a` representation.
+
+The focused symbolic-constructor rerun records its intended dependency skip,
+while a focused ordinary-constructor rerun passes. A full direct-file rerun
+against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 764 passed, 38 failed, 150 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-constructor-symbolic/full.sqlite3`.
+Compared by block index with the preceding exponential-substitution dashboard,
+exactly five failures become `optional:sage.symbolic` skips; the other 947
+block statuses are unchanged, and all unchanged non-random passing outputs
+remain identical. The complete accumulated patch applies sequentially to
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, and the resulting
+growth-group module compiles with `py_compile` and passes `git diff --check`.
+The next focused pass should examine the conversion examples around patched
+lines 4301--4343, separating symbolic-power inputs from the already-active
+string, rational, zero-error, cross-parent, and signed-string conversion
+coverage.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

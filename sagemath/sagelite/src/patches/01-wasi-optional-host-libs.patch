@@ -23713,3 +23713,27 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
              Symbolic Ring
 -            sage: G((1/2)^x)._substitute_({'x': 2})
 +            sage: G(raw_element=1/2)._substitute_({'x': 2})
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -4225,14 +4225,14 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
+-            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 't')  # indirect doctest
++            sage: ExponentialGrowthGroup(SR.subring(no_variables=True), 't')  # indirect doctest  # needs sage.symbolic
+             Growth Group (Symbolic Constants Subring)^t
+-            sage: ExponentialGrowthGroup(SR, 't')  # indirect doctest
++            sage: ExponentialGrowthGroup(SR, 't')  # indirect doctest  # needs sage.symbolic
+             doctest:warning
+             ...
+             RuntimeWarning: When using the Exponential Growth Group SR^t,
+             make assumptions on the used symbolic elements.
+             In particular, use something like 'assume(SR.an_element() > 0)'
+             to make coercions work properly.
+             Growth Group SR^t
+-            sage: assume(SR.an_element() > 0)
+-            sage: ExponentialGrowthGroup(SR, 't')  # indirect doctest
++            sage: assume(SR.an_element() > 0)  # needs sage.symbolic
++            sage: ExponentialGrowthGroup(SR, 't')  # indirect doctest  # needs sage.symbolic
+             Growth Group SR^t
+-            sage: forget()
++            sage: forget()  # needs sage.symbolic
+         """
