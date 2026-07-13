@@ -47552,8 +47552,8 @@ records:
 growth_group.py: 764 passed, 15 failed, 173 skipped
 ```
 
-The database is
-`.tmp/current-run/scheduled-2026-07-13-growth-an-element/full-validated.sqlite3`.
+The isolated single-run database is
+`.tmp/current-run/scheduled-2026-07-13-growth-an-element/full-root-validated-0518.sqlite3`.
 Compared by block index with the preceding symbolic-splitting dashboard,
 exactly seven failures become `optional:sage.symbolic` skips; the other 945
 block statuses and all unchanged non-random passing outputs are identical. The
