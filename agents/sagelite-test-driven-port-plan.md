@@ -46837,6 +46837,38 @@ remaining logarithm-operation group around patched lines 810--1025, separating
 symbolic construction and coefficient evaluation from lightweight
 growth-group error paths.
 
+Focused growth logarithm dependency pass on 2026-07-13 UTC:
+
+The logarithm and reverse-power examples around patched lines 810--1025 now
+mark only the operations that require unavailable symbolic construction or
+coefficient evaluation.  Lightweight neighboring behavior remains runnable:
+base-2 logarithm evaluation, the abstract growth-element diagnostic, ordinary
+positive-base reverse powers, and the zero-base error path continue to pass.
+Dependent prompts are tagged with their setup so failed compound-variable
+construction cannot leave misleading results from an older `G` or `x` in the
+shared file namespace.
+
+The complete accumulated patch applies to a fresh worktree at Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and `git diff --check` passes in
+both that tree and CoWasm.  A direct full-file rerun against the validated
+isolated Electron resources records:
+
+```text
+growth_group.py: 712 passed, 155 failed, 85 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-cartesian-isolated/growth-log-classified-accumulated.sqlite3`.
+Compared by block index with the preceding symbolic-tagged dashboard, exactly
+28 failures and three stale-state passes become intended
+`optional:sage.symbolic` skips; the other 921 blocks are unchanged.  The
+remaining failures comprise 96 `NameError`, 35 `ModuleNotFoundError`, 16
+output-mismatch, four `AttributeError`, and two each of `ValueError` and
+`TypeError`.  The next focused pass should examine the compact pre-logarithm
+cluster around patched lines 728--787, especially whether the `_is_lt_one_`
+setup can use direct string construction instead of Sage's unavailable startup
+symbolic `x`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
