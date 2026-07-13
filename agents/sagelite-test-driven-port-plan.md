@@ -47618,6 +47618,36 @@ focused pass should classify the logarithmic Cartesian-product factory examples
 at patched lines 5060 and 5062, retaining the active positive-rational-base and
 Gaussian-exponent product controls around that cluster.
 
+Growth-group logarithmic Cartesian-product boundary pass on 2026-07-13 UTC:
+
+The `GrowthGroup('x^ZZ * log(x)^ZZ')` and
+`GrowthGroup('x^ZZ * log(x)^ZZ * y^QQ')` factory examples now carry focused
+`sage.symbolic` dependency metadata. Focused controls for the
+positive-rational-base Cartesian product and Gaussian-integer exponent product
+remain active and pass.
+
+The focused logarithmic-product rerun records both intended dependency skips.
+A full direct-file rerun against the validated isolated Electron resources
+records:
+
+```text
+growth_group.py: 764 passed, 11 failed, 177 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-factory-cartesian/full.sqlite3`.
+Compared by block index with the preceding logarithmic-factory dashboard,
+exactly the two logarithmic Cartesian-product failures become
+`optional:sage.symbolic` skips; the other 950 block statuses and all unchanged
+non-random passing outputs are identical. The accumulated patch applies cleanly
+to Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`, the resulting
+growth-group module matches the tested source byte for byte and compiles with
+`py_compile`, and CoWasm passes `git diff --check`. The next focused pass should
+classify the exponential `GrowthGroup('exp(x)^ZZ * x^ZZ')` and
+`GrowthGroup('(e^x)^ZZ * x^ZZ')` factory examples at patched lines 5068 and
+5070, retaining the active positive-rational-base and Gaussian-exponent product
+controls around that cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
