@@ -48244,6 +48244,33 @@ The next deferred-coverage pass should continue with another small native
 single-row cluster from the clean dashboard, requiring whole-file replay before
 promotion so state-sensitive candidates like `ImageSubobject` are retained.
 
+Native Sage timeit deferred promotion pass on 2026-07-13 UTC:
+
+The single `# known bug` row in `sage/misc/sage_timeit.py` is stale. A focused
+deferred rerun confirms that constructing `SageTimeitResult((1, 2, 3, 4,
+'s'))` produces Sage's expected failed-repr diagnostic. Enabling the row in
+normal whole-file order also passes, and removing the WASI-added annotation
+gives the default focused result:
+
+```text
+sage_timeit.py: 18 passed, 0 failed, 26 skipped
+```
+
+The isolated and final whole-file databases are respectively
+`.tmp/current-run/scheduled-2026-07-13-native-single-row-next/sage-timeit-line.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-13-native-single-row-next/pristine-full-default.sqlite3`.
+The latter run uses a freshly archived source tree after applying the complete
+accumulated Sagelite patch. The patch also dry-runs against pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and `git diff --check` is clean.
+
+Adjacent one-row probes did not justify another promotion in this change-set.
+The finite-field Jordan-algebra element ordering still mismatches, while the
+category, joined-feature, and temporary-file line reruns need earlier
+non-contiguous setup and therefore are not independent promotion evidence.
+The next deferred-coverage pass should give one of those stateful files a
+whole-file audit or select another native row whose focused setup is complete.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

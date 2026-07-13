@@ -7287,9 +7287,6 @@ diff -urN a/src/sage/misc/sage_timeit.py b/src/sage/misc/sage_timeit.py
 @@ -11 +11 @@
 -    sage: timeit('1+1')    # random output
 +    sage: timeit('1+1')    # random output                                             # needs IPython
-@@ -57 +57 @@
--        sage: SageTimeitResult( (1, 2, 3, 4, 's') )
-+        sage: SageTimeitResult( (1, 2, 3, 4, 's') )                                    # known bug
 @@ -133 +133 @@
 -        sage: sage_timeit('3^100000', globals(), preparse=True, number=50)      # random output
 +        sage: sage_timeit('3^100000', globals(), preparse=True, number=50)      # random output  # needs IPython
