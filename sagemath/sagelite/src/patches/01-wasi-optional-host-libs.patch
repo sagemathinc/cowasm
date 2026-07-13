@@ -23863,3 +23863,9 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 -        sage: G, tuple(F._var_ for F in G.cartesian_factors())
 +        sage: G = GrowthGroup('(e^(n*log(n)))^ZZ * (e^n)^ZZ * n^ZZ * log(n)^ZZ')  # needs sage.symbolic
 +        sage: G, tuple(F._var_ for F in G.cartesian_factors())  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -5108 +5108 @@ class GrowthGroupFactory(UniqueFactory):
+-        sage: GrowthGroup('m^(ZZ[I]) * log(m)^(ZZ[I]) * n^(ZZ[I])')
++        sage: GrowthGroup('m^(ZZ[I]) * log(m)^(ZZ[I]) * n^(ZZ[I])')  # needs sage.symbolic

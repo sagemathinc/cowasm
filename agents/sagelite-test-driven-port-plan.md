@@ -47709,6 +47709,37 @@ classify the logarithmic Gaussian-exponent product at patched line 5108 while
 retaining the active plain Gaussian-exponent factory controls immediately
 above it.
 
+Logarithmic Gaussian-exponent product boundary pass on 2026-07-13 UTC:
+
+The Cartesian product combining `m^(ZZ[I])`, `log(m)^(ZZ[I])`, and
+`n^(ZZ[I])` now carries focused `sage.symbolic` dependency metadata because
+normalizing the logarithmic variable requires the unavailable symbolic
+backend. The neighboring plain `n^(ZZ[I])`, `n^(I*ZZ)`, and `n^(ZZ*I)`
+factory examples remain active; focused controls for the first and last forms
+pass.
+
+The focused rerun records two passing Gaussian controls and the intended
+symbolic skip. A full direct-file rerun against the validated isolated
+Electron resources records:
+
+```text
+growth_group.py: 764 passed, 2 failed, 186 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-gaussian-log/full.sqlite3`.
+Compared by block index with the preceding symbolic-variable dashboard,
+exactly the targeted line-5108 failure becomes an `optional:sage.symbolic`
+skip; all other 951 statuses are unchanged. The only changed outputs among
+unchanged statuses are five `# random` rows, so every unchanged non-random
+passing output is identical. The new patch fragment applies cleanly to the
+preceding validated complete-patch source, the resulting growth-group module
+matches the tested source byte for byte and compiles with `py_compile`, and
+both source trees pass `git diff --check`. The next focused pass should
+classify the symbolic `P(x^42).exponent` example at patched line 2763 while
+retaining the active raw-element exponent construction and accessor coverage
+immediately above it.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
