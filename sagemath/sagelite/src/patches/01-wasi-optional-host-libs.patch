@@ -23529,3 +23529,15 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 -            sage: G(log(log(x))^(1/2))._singularity_analysis_('n', 2, precision=3)
 +            sage: G = GrowthGroup('log(log(x))^QQ')  # needs sage.symbolic
 +            sage: G(log(log(x))^(1/2))._singularity_analysis_('n', 2, precision=3)  # needs sage.symbolic
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -3228 +3228 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup, GrowthGroup
++            sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup, GrowthGroup, Variable
+@@ -3241 +3241 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: H = GrowthGroup('log(x)^ZZ')
++            sage: H = MonomialGrowthGroup(ZZ, Variable('x', repr='log(x)', latex_name=r'\log(x)'))
+@@ -3247 +3247 @@ class MonomialGrowthElement(GenericGrowthElement):
+-            sage: I = GrowthGroup('log(log(x))^ZZ')
++            sage: I = MonomialGrowthGroup(ZZ, Variable('x', repr='log(log(x))', latex_name=r'\log(\log(x))'))

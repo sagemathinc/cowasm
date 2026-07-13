@@ -47181,6 +47181,31 @@ with `py_compile`, and both the patched source tree and CoWasm pass
 symbolic group construction from any raw-element minimum logic that can remain
 active.
 
+Direct logarithmic minimum-construction pass on 2026-07-13 UTC:
+
+The two logarithmic `_find_minimum_` examples now construct their monomial
+parents from a lightweight identifier-backed `Variable` with an explicit
+`log(x)` or `log(log(x))` representation and LaTeX name. This avoids parsing
+the displayed variable through the unavailable symbolic ring while preserving
+the exact growth elements, nested variable names, non-monomial classification,
+and expected `NotImplementedError` diagnostics under test.
+
+Focused reruns of patched lines 3255 and 3261 pass. A full direct-file rerun
+against the validated isolated Electron resources records:
+
+```text
+growth_group.py: 744 passed, 83 failed, 125 skipped
+```
+
+The database is
+`.tmp/current-run/scheduled-2026-07-13-growth-minimum/full-exact.sqlite3`.
+Compared by block index with the preceding singularity-analysis dashboard,
+exactly the six logarithmic setup, construction, and diagnostic failures become
+passes; all other block statuses and all non-random outputs are unchanged. The
+next focused pass should classify the symbolic monomial-group construction and
+identity examples around patched lines 3307--3318, while retaining ordinary
+string-variable construction coverage.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
