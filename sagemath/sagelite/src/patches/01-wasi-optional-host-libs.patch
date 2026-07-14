@@ -23931,3 +23931,67 @@ diff --git a/src/sage/categories/unique_factorization_domains.py b/src/sage/cate
 @@ -311 +311 @@
 -                sage: squarefree_part(pol)                                         # known bug
 +                sage: squarefree_part(pol)
+diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
+--- a/src/sage/rings/polynomial/polynomial_element.pyx
++++ b/src/sage/rings/polynomial/polynomial_element.pyx
+@@ -1541,4 +1541,13 @@
+             sage: t.inverse_mod(S.ideal((t + 1)^7)) == f
+             True
+-
++
++        Generic polynomials fall back to their extended Euclidean algorithm
++        when the optional Singular implementation is unavailable::
++
++            sage: G.<x> = PolynomialRing(QQ, implementation='generic')
++            sage: m = G.cyclotomic_polynomial(15)
++            sage: h = (x - 1).inverse_mod(m)
++            sage: ((x - 1) * h) % m
++            1
++
+         This also works over inexact rings, but note that due to rounding
+@@ -1615,6 +1624,6 @@
+             try:
+                 R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+-            except NotImplementedError:
++            except (ImportError, NotImplementedError):
+                 # singular(PolynomialRing(Frac(ZZ["u", "v", "w"]), "x")) works, but
+                 # PolynomialRing(Frac(ZZ["u", "v", "w"]), "x", implementation="singular") fails
+                 pass
+diff --git a/src/sage/rings/polynomial/cyclotomic.pyx b/src/sage/rings/polynomial/cyclotomic.pyx
+--- a/src/sage/rings/polynomial/cyclotomic.pyx
++++ b/src/sage/rings/polynomial/cyclotomic.pyx
+@@ -275,10 +275,10 @@
+-        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                          # known bug
+-        sage: cyclotomic_value(15, t)                                                   # known bug
++        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
++        sage: cyclotomic_value(15, t)
+         0
+-        sage: cyclotomic_value(30, t)                                                   # known bug
++        sage: cyclotomic_value(30, t)
+         2*t^7 - 2*t^5 - 2*t^3 + 2*t
+-        sage: S.<t> = R.quotient(x^10)                                                  # known bug
+-        sage: cyclotomic_value(2^128 - 1, t)                                            # known bug
++        sage: S.<t> = R.quotient(x^10)
++        sage: cyclotomic_value(2^128 - 1, t)
+         -t^7 - t^6 - t^5 + t^2 + t + 1
+         sage: cyclotomic_value(10, mod(3,4))
+         1
+diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
+--- a/src/sage/rings/polynomial/polynomial_element.pyx
++++ b/src/sage/rings/polynomial/polynomial_element.pyx
+@@ -12483,5 +12483,8 @@
+             sage: (5*z + 7).quo_rem(3)
+             (z + 2, 2*z + 1)
++            sage: S.<z> = PolynomialRing(ZZ, implementation='generic'); q, r = (2*z^2 + 2).quo_rem(2*z^2 + 2)
++            sage: (q, r, r.is_zero(), (2*z^2 + 2).divides(2*z^2 + 2))
++            (1, 0, True, True)
+         """
+         if other.is_zero():
+             raise ZeroDivisionError("division by zero polynomial")
+@@ -12523,3 +12526,5 @@
+                 while quo and not quo[-1]:
+                     quo.pop()
+-                return self._new_c(quo, self._parent), self._new_c(x, self._parent)
++                while x and not x[-1]:
++                    x.pop()
++                return self._new_c(quo, self._parent), self._new_c(x, self._parent)

@@ -49546,6 +49546,56 @@ error recovery.  No CPython source changes are part of this pass.  The next
 pass should continue with another bounded native arithmetic/backend row while
 treating that toolchain-memory mismatch as a separate build-state issue.
 
+Generic polynomial quotient-ring inversion pass on 2026-07-14 UTC:
+
+Five guarded rows in ``sage/rings/polynomial/cyclotomic.pyx`` shared one
+backend failure.  ``Polynomial.inverse_mod`` unconditionally attempted to
+construct a Singular-backed polynomial ring before reaching its existing
+extended-Euclidean fallback.  In the browser profile the missing optional
+``multi_polynomial_libsingular`` module raised ``ImportError``, so quotient-ring
+``cyclotomic_value`` computations failed before generic arithmetic was tried.
+The constructor attempt now treats an unavailable Singular implementation like
+an unsupported one and continues through the generic ``xgcd`` path.  A focused
+generic-polynomial inverse regression is included, and all five cyclotomic
+``# known bug`` annotations are removed.
+
+The shared-method corpus also exposed a representation bug in the recently
+added generic integer-polynomial ``quo_rem`` path: exact zero remainders could
+retain a nonempty list of zero coefficients, so they printed as zero while
+``is_zero()`` and ``divides()`` returned false.  The result now removes only
+trailing zero coefficients before constructing the remainder.  This
+canonicalizes exact zeros without discarding the valid high-degree terms that
+FLINT-compatible nonexact integer division deliberately leaves in its
+remainder.  The regression checks both the canonical zero/divisibility case
+and the existing high-degree reconstruction identity.
+
+Focused and whole-file default-profile replays record:
+
+```text
+quotient-ring reproducer:          3 passed, 0 failed,   0 skipped
+polynomial inverse_mod regression: 1 passed, 0 failed,   0 skipped
+polynomial_ring_constructor.py:  102 passed, 0 failed,  69 skipped
+structure/element.pyx:           398 passed, 0 failed, 340 skipped
+cyclotomic.pyx:                    26 passed, 0 failed,  11 skipped
+```
+
+The final eight-worker, 1,139-file corpus is recorded in
+``.tmp/current-run/scheduled-2026-07-14-cyclotomic-quotient/corpus-clean.sqlite3``
+and reports 89,190 passed blocks, 0 failed, and 27,036 skipped.  The database
+contains one completed ``passed`` run, 1,139 file rows, no failed file or block
+rows, and passes ``PRAGMA integrity_check``.
+
+Applying the complete accumulated Sagelite patch once to a clean worktree at
+pinned commit ``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without
+rejects.  The reconstructed ``polynomial_element.pyx`` and ``cyclotomic.pyx``
+are byte-identical to the tested shared sources; reconstructed-source checks
+repeat the inverse and quotient regressions and report the same 26/0/11
+cyclotomic and 398/0/340 element results.  Rebuilding the Cython side module
+used the established 640-page bundled runtime preload because the unrelated
+in-progress CPython main module still advertises 160 pages.  No CPython changes
+are included.  The next pass should continue with another bounded native
+arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
