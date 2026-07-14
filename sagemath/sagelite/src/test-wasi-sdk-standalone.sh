@@ -1449,6 +1449,7 @@ assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 assert str(objtogen([1, 2, 3])) == '[1, 2, 3]'
 pari = Pari()
 assert str(pari('2+3')) == '5'
+assert pari(5).__hash__() == pari(5).__hash__()
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'
 assert str(pari('znorder(Mod(2,101))')) == '100'

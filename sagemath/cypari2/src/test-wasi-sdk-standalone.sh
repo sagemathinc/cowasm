@@ -176,6 +176,7 @@ Unsupported paths still fail explicitly.
 """
 
 from .types cimport (
+    CLONEBIT,
     GEN,
     set_gel,
     t_COL,
@@ -187,7 +188,7 @@ from .types cimport (
     t_VEC,
     typ,
 )
-from .paridecl cimport GENtostr, cgetg, gel, glength, gclone, gunclone_deep, itos, pari_free
+from .paridecl cimport GENtostr, cgetg, gel, glength, gclone, gunclone_deep, hash_GEN, itos, pari_free
 
 
 def _missing_runtime(*_args, **_kwargs):
@@ -861,6 +862,28 @@ cdef class Gen(Gen_base):
 
     def __str__(self):
         return self.__repr__()
+
+    def __hash__(self):
+        """Return PARI's value hash, independent of wrapper identity."""
+        cdef unsigned long *words
+        cdef unsigned long header
+        cdef unsigned long clean_header
+        cdef unsigned long result
+
+        if self.g == NULL:
+            raise TypeError("empty PARI object is not hashable")
+
+        # PARI's hash has historically included the allocation-only clone bit.
+        # Match upstream cypari2 by clearing it only for the hash operation.
+        words = <unsigned long *>self.g
+        header = words[0]
+        clean_header = header & ~<unsigned long>CLONEBIT
+        if header != clean_header:
+            words[0] = clean_header
+        result = hash_GEN(self.g)
+        if header != clean_header:
+            words[0] = header
+        return result
 
     def __len__(self):
         cdef long kind
@@ -1707,6 +1730,11 @@ assert str(objtogen([1, 2, 3])) == "[1, 2, 3]"
 assert isinstance(Gen(1), Gen_base)
 assert int(Gen(360)) == 360
 assert int(Gen(-8)) == -8
+five_a = Gen(5)
+five_b = Gen(5)
+assert five_a.__hash__() == five_b.__hash__()
+assert hash(five_a) == hash(five_b)
+assert Gen([42, 2, 3]).__hash__() == Gen([42, 2, 3]).__hash__()
 assert Pari(1, 2).default("debugmem", 0) is None
 assert pari_probe.eval_long("2+3") == 5
 assert pari_probe.eval_long("primepi(10000)") == 1229

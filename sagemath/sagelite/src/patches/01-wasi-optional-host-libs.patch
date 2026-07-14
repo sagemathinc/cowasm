@@ -4275,9 +4275,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
  cdef Gen new_gen_from_mpz_t(mpz_srcptr value):
      """
      Create a new PARI Gen of type ``t_INT`` from a given
-@@ -49 +53 @@
--        sage: a5.__hash__() == b5.__hash__()
-+        sage: a5.__hash__() == b5.__hash__()                                          # known bug
 @@ -83 +87 @@
 -        sage: pari(-2/3)
 +        sage: pari(-2/3)                                                              # needs sage.libs.pari

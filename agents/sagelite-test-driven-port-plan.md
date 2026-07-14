@@ -49502,6 +49502,50 @@ should continue with another bounded native arithmetic/backend row outside the
 already confirmed performance, dynamic-link, and specialized-backend
 boundaries.
 
+Focused cypari2 PARI value-hash pass on 2026-07-14 UTC:
+
+The remaining browser-profile guard in
+``sage/libs/pari/convert_gmp.pyx`` exposed a missing method in CoWasm's focused
+cypari2 object model.  ``Gen`` did not implement ``__hash__``, so Python used
+the wrapper object's identity hash.  Two independently wrapped PARI integers
+therefore had different hashes even though their ``GEN`` values were equal;
+dirtying the source module's PARI stack was incidental to that failure.
+
+The focused ``cypari2.gen.Gen`` now uses PARI's ``hash_GEN`` value hash.  As in
+upstream cypari2, it temporarily clears PARI's allocation-only ``CLONEBIT`` so
+cloned and borrowed wrappers have the same hash, then restores the original
+header.  Package smoke assertions cover distinct integer wrappers, Python's
+``hash(...)`` slot, and structured PARI vectors.  The Sagelite PARI smoke also
+checks two independently constructed integer wrappers.  The WASI-only
+``# known bug`` annotation is removed.
+
+The rebuilt side module passes direct integer and vector value-hash checks
+against the known-good bundled Python runtime, including equal direct
+``__hash__`` and ``hash(...)`` results.  Focused and whole-file default-profile
+replays record:
+
+```text
+convert_gmp.pyx --line 53: 1 passed, 0 failed, 0 skipped
+convert_gmp.pyx:           8 passed, 0 failed, 8 skipped
+```
+
+The dashboards are under
+``.tmp/current-run/scheduled-2026-07-14-pari-hash/``.  Applying the complete
+accumulated Sagelite patch once to a clean worktree at pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without rejects.  The
+reconstructed converter is byte-identical to the tested shared source and
+independently records the same 8/0/8 result, with the integer hash row passing
+and the separate rational row retaining its explicit PARI dependency.
+
+The standard package make wrapper cannot use the concurrently rebuilt CPython
+main module because it advertises 160 memory pages while the established PARI
+side modules require 640.  Running the complete cypari2 standalone build and
+smoke through the unchanged bundled ``python.wasm`` baseline passes, including
+generated declarations, Cython cimports, the focused Gen runtime, and PARI
+error recovery.  No CPython source changes are part of this pass.  The next
+pass should continue with another bounded native arithmetic/backend row while
+treating that toolchain-memory mismatch as a separate build-state issue.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
