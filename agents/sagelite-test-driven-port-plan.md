@@ -49167,6 +49167,34 @@ returns the two documented parents in the opposite order.  The next pass
 should continue with another native arithmetic/backend row outside those
 dependency and presentation boundaries.
 
+Tall-list deferred-row follow-up on 2026-07-14 UTC:
+
+The earlier doctest displayhook repair made four additional browser-profile
+guards stale.  The formatter's own `[F, F]` example and all three
+`SixVertexModel` configuration-list examples now flow through `TallListRepr`
+and reproduce Sage's horizontal ASCII-art layout.  Focused deferred reruns of
+each line pass, so the accumulated WASI patch no longer adds `# known bug` to
+those rows.  The two direct lightweight `SomeIPythonRepr.format_string(...)`
+differences remain deferred because they bypass the repaired displayhook.
+
+A complete default-profile replay records:
+
+```text
+fancy_repr.py:       23 passed, 0 failed, 10 skipped
+six_vertex_model.py: 40 passed, 0 failed, 11 skipped
+combined:            63 passed, 0 failed, 21 skipped
+```
+
+The shared-source and reconstructed-source dashboards are respectively
+`.tmp/current-run/scheduled-2026-07-14-tall-list-audit/default.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-14-tall-list-audit/pristine-default.sqlite3`.
+Applying the complete accumulated patch once to a fresh worktree at pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects.  Both reconstructed files match the shared patched source byte for
+byte and compile with `py_compile`.  The next pass should return to a native
+arithmetic/backend row outside the already reproduced dependency,
+presentation, and ordering boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -5710,18 +5710,6 @@ diff -urN a/src/sage/combinat/skew_partition.py b/src/sage/combinat/skew_partiti
 -            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()
 +            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()       # needs pexpect
              (q^5*t^6 - q^5*t^5 + q^4*t^6 - q^4*t^5 - q^4*t^3 + q^4*t^2 - q^3*t^3 - q^2*t^4 + q^3*t^2 + q^2*t^3 - q*t^4 + q*t^3 + q*t - q + t - 1)/(q^5*t^6 - q^4*t^5 - q^3*t^4 - q^3*t^3 + q^2*t^3 + q^2*t^2 + q*t - 1)
-diff -urN a/src/sage/combinat/six_vertex_model.py b/src/sage/combinat/six_vertex_model.py
---- a/src/sage/combinat/six_vertex_model.py
-+++ b/src/sage/combinat/six_vertex_model.py
-@@ -377 +377 @@
--        sage: list(M)
-+        sage: list(M)                                                                  # known bug
-@@ -403 +403 @@
--        sage: list(M)
-+        sage: list(M)                                                                  # known bug
-@@ -545 +545 @@
--            sage: list(M)
-+            sage: list(M)                                                              # known bug
 diff -urN a/src/sage/combinat/baxter_permutations.py b/src/sage/combinat/baxter_permutations.py
 --- a/src/sage/combinat/baxter_permutations.py
 +++ b/src/sage/combinat/baxter_permutations.py
@@ -8722,9 +8710,6 @@ diff -urN a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_re
 @@ -163 +180 @@
 -            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
 +            sage: pp.format_string(Sequence([[1]*20, [2]*20]))                      # known bug - lightweight Sagelite pretty-printer fallback formatting
-@@ -352 +369 @@
--            sage: [F, F]
-+            sage: [F, F]                                                            # known bug - lightweight Sagelite pretty-printer fallback formatting
 diff -urN a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty_print.py
 --- a/src/sage/repl/display/pretty_print.py
 +++ b/src/sage/repl/display/pretty_print.py
