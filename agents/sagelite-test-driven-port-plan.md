@@ -49229,6 +49229,47 @@ performance boundary: its focused replay reaches the explicit 90-second
 worker timeout.  The next pass should continue with another bounded native
 arithmetic/backend row outside that confirmed timeout cluster.
 
+Generic integer-polynomial quotient/remainder parity pass on 2026-07-14 UTC:
+
+The four browser-profile guards on the nonexact integer-polynomial `divmod`
+example in `sage/structure/element.pyx` exposed a semantic difference between
+the stripped runtime's generic univariate polynomial and Sage's usual
+FLINT-backed implementation.  The generic method inverted a nonunit leading
+coefficient in the fraction field and then required each quotient coefficient
+to coerce exactly back to `ZZ`; FLINT instead uses floor quotient coefficients
+when the current leading remainder has at least the divisor lead's magnitude,
+and can therefore retain high-degree terms in the remainder.
+
+The `ZZ` branch of generic `quo_rem` now follows FLINT's basecase contract:
+compare absolute leading coefficients, use integer floor division, and subtract
+the full shifted divisor.  Method-level doctests cover the original nonexact
+case, a dividend whose leading term is too small, a constant divisor, and the
+reconstruction identity.  The four WASI-only known-bug annotations are
+removed.
+
+A focused coefficient-list regression covers six positive- and
+negative-leading-coefficient cases and records 5 passed blocks.  The exact
+method output rerun records 1 pass, while whole-file default-profile replay of
+the shared element API records:
+
+```text
+structure/element.pyx: 398 passed, 0 failed, 340 skipped
+```
+
+The dashboards are under
+`.tmp/current-run/scheduled-2026-07-14-integer-polynomial-divrem/`, with the
+coefficient regression in
+`.tmp/current-run/integer-polynomial-divrem-differential.sqlite3`.  A broad
+`polynomial_element.pyx` replay reaches the pre-existing inverse-modulus
+performance boundary at line 1539 and times out after 300 seconds, before the
+changed method; the focused method and regression runs therefore provide the
+relevant validation.  The rebuilt polynomial side module exercises the new
+branch, the reconstructed pinned-source polynomial and element files are
+byte-identical to the tested source, the accumulated patch has no rejects, and
+CoWasm passes `git diff --check`.  The next pass should continue with another
+bounded native arithmetic/backend row outside that confirmed performance
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
