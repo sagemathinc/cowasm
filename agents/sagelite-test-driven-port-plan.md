@@ -49195,6 +49195,40 @@ byte and compile with `py_compile`.  The next pass should return to a native
 arithmetic/backend row outside the already reproduced dependency,
 presentation, and ordering boundaries.
 
+Generic multivariate-polynomial gcd algorithm compatibility pass on
+2026-07-14 UTC:
+
+The four browser-profile guards on the `coerce_binop` gcd examples in
+`sage/structure/element.pyx` exposed a narrow fallback-backend API gap.  In a
+full Sage build, `QQ['x,y']` uses the Singular-backed multivariate polynomial
+class, whose `gcd` accepts `algorithm='modular'`.  The stripped browser profile
+uses generic `MPolynomial` instead; its existing gcd implementation computes
+the same results but rejected the documented algorithm argument at its Python
+signature before either direct or coerced calls could run.
+
+Generic `MPolynomial.gcd` now accepts `None` and the Singular-compatible
+`'modular'` spelling while retaining the expected `TypeError` for unsupported
+values.  Method-level doctests cover the accepted alias and diagnostic, and
+the four WASI-only known-bug annotations are removed.  A focused reproducer
+covering same-parent, both cross-parent coercion directions, and the invalid
+argument reports 9 passed blocks.  Whole-file default-profile replay records:
+
+```text
+multi_polynomial.pyx: 471 passed, 0 failed, 190 skipped
+structure/element.pyx: 394 passed, 0 failed, 344 skipped
+combined:              865 passed, 0 failed, 534 skipped
+```
+
+The focused and whole-file dashboards are under
+`.tmp/current-run/scheduled-2026-07-14-native-arithmetic-next/`.  Applying the
+complete accumulated patch once to a fresh worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and both
+reconstructed affected sources match the tested patched sources byte for
+byte.  The neighboring integer-polynomial `LCM_list` row remains a live
+performance boundary: its focused replay reaches the explicit 90-second
+worker timeout.  The next pass should continue with another bounded native
+arithmetic/backend row outside that confirmed timeout cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

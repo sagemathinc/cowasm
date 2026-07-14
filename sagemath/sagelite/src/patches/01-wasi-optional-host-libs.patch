@@ -20967,18 +20967,6 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -4503 +4503 @@
 -        sage: f.gcd(g)  #indirect doctest
 +        sage: f.gcd(g)  #indirect doctest                                              # needs sage.libs.flint
-@@ -4521 +4521 @@
--        sage: f.gcd(g, algorithm='modular')
-+        sage: f.gcd(g, algorithm='modular')                                            # known bug - coerced method argument drift
-@@ -4525 +4525 @@
--        sage: f.gcd(h, algorithm='modular')
-+        sage: f.gcd(h, algorithm='modular')                                            # known bug - coerced method argument drift
-@@ -4529 +4529 @@
--        sage: h.gcd(f, 'modular')
-+        sage: h.gcd(f, 'modular')                                                      # known bug - coerced method argument drift
-@@ -4568 +4568 @@
--        sage: f.gcd(g, 1)
-+        sage: f.gcd(g, 1)                                                              # known bug - coerced method argument drift
 diff --git a/src/sage/algebras/lie_algebras/morphism.py b/src/sage/algebras/lie_algebras/morphism.py
 --- a/src/sage/algebras/lie_algebras/morphism.py
 +++ b/src/sage/algebras/lie_algebras/morphism.py
@@ -23575,3 +23563,29 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -5193 +5193 @@ class GrowthGroupFactory(UniqueFactory):
 -            >> *and* SyntaxError: ... (<string>, line 1)
 +            >> *and* SyntaxError: ... (<string>, line ...)
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -2124 +2124 @@
+-    def gcd(self, other):
++    def gcd(self, other, algorithm=None):
+@@ -2130,0 +2131,2 @@
++        - ``algorithm`` -- either ``None`` or ``'modular'``; the latter is
++          accepted for compatibility with the Singular-backed implementation
+@@ -2172,2 +2174,8 @@
+-
++            sage: Pol.one().gcd(1, algorithm='modular')
++            1
++            sage: Pol.one().gcd(1, algorithm='invalid')
++            Traceback (most recent call last):
++            ...
++            TypeError: algorithm invalid not supported
++
+             sage: P = PolynomialRing(QQ, 'x', 0)
+@@ -2176,3 +2184,6 @@
+         """
++        if algorithm not in (None, 'modular'):
++            raise TypeError("algorithm %s not supported" % algorithm)
++
+         if self.is_unit():
+             return self
