@@ -49387,6 +49387,45 @@ The next pass should continue with another bounded native arithmetic/backend
 row outside the confirmed polynomial-LCM and inverse-modulus performance
 boundaries.
 
+Generic rational-polynomial class-selection pass on 2026-07-14 UTC:
+
+The browser profile skipped the unavailable FLINT implementation for dense
+polynomials over `QQ`, but then incorrectly fell through to Sage's absolute
+number-field polynomial class because `RationalField` is itself a degree-one
+`NumberField`.  That specialized class implements its degree-one gcd by
+changing coefficients back to `QQ` and calling gcd again, so `QQ['x']` entered
+unbounded recursion.  This blocked the principal-ideal-domain gcd/xgcd
+compatibility test and made the generic radical and square-free examples reach
+the worker timeout.
+
+The polynomial-ring constructor now explicitly excludes `RationalField` from
+the number-field branch after the FLINT path is unavailable, selecting the
+existing generic dense field implementation instead.  A constructor-level
+doctest verifies both the WASI class choice and a representative gcd.  The two
+gcd/xgcd and six radical/square-free browser-profile guards are removed.
+
+Whole-file default-profile replay records:
+
+```text
+principal_ideal_domains.py:        26 passed, 0 failed, 19 skipped
+unique_factorization_domains.py:   38 passed, 0 failed,  8 skipped
+combined:                          64 passed, 0 failed, 27 skipped
+```
+
+The focused constructor doctest passes, and a separate eight-block regression
+checks generic class selection, gcd, the xgcd reconstruction identity, radical,
+and square-free part.  The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-14-polynomial-radical/`.  A broad
+`polynomial_ring.py` replay reaches the pre-existing NTL dynamic-link boundary
+at line 1052 before the changed constructor; the focused constructor and
+category replays provide the relevant validation.  Applying the complete
+accumulated patch once to a clean worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, the three
+reconstructed sources are byte-identical to the tested sources, all compile
+with `py_compile`, and CoWasm passes `git diff --check`.  The next pass should
+continue with another bounded native arithmetic/backend row outside the
+confirmed polynomial-LCM, inverse-modulus, and NTL dynamic-link boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
