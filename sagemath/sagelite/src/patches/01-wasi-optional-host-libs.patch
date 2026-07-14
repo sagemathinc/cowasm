@@ -8572,10 +8572,10 @@ diff -urN -U0 a/src/sage/libs/flint/nmod_poly_linkage.pxi b/src/sage/libs/flint/
 +++ b/src/sage/libs/flint/nmod_poly_linkage.pxi
 @@ -81 +81 @@
 -        sage: y is x
-+        sage: y is x                                                               # known bug - Sagelite nmod polynomial copy aliases the generator
++        sage: y is x                                                               # needs sage.libs.flint
 @@ -88 +88 @@
 -        sage: y is x
-+        sage: y is x                                                               # known bug - Sagelite nmod polynomial copy aliases the generator
++        sage: y is x                                                               # needs sage.libs.flint
 @@ -414 +414 @@
 -        sage: f % 3
 +        sage: f % 3                                                                # known bug - fallback polynomial division reports a lower-level nonunit diagnostic

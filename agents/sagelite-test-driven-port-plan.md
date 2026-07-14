@@ -49270,6 +49270,38 @@ CoWasm passes `git diff --check`.  The next pass should continue with another
 bounded native arithmetic/backend row outside that confirmed performance
 boundary.
 
+FLINT modular-polynomial copy dependency classification pass on 2026-07-14
+UTC:
+
+The two browser-profile `# known bug` guards on `copy(x) is x` in
+`sage/libs/flint/nmod_poly_linkage.pxi` were misclassified as an active
+semantic defect. Focused deferred reruns reproduce `True` for both `GF(32003)`
+and `GF(7)`, but runtime inspection shows that the stripped profile constructs
+`Polynomial_generic_dense`, not the FLINT-backed `Polynomial_zmod_flint` class
+whose linkage doctest is being exercised. Sage's generic immutable polynomial
+class explicitly documents that `__copy__` returns `self`, so changing that
+behavior merely to imitate an unavailable backend would violate its own
+contract.
+
+Both rows now use `# needs sage.libs.flint`. Focused default reruns persist
+`optional,needs:sage.libs.flint` tags and
+`optional:sage.libs.flint` skip reasons. A complete file replay records:
+
+```text
+nmod_poly_linkage.pxi: 196 passed, 0 failed, 10 skipped
+```
+
+The dashboard is
+`.tmp/current-run/scheduled-2026-07-14-nmod-copy/reclassified-full.sqlite3`.
+Applying the complete accumulated patch once to a fresh archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects; the reconstructed linkage source is byte-identical to the shared
+patched source and gives the same 196/0/10 default result in
+`.tmp/current-run/scheduled-2026-07-14-nmod-copy/pristine-full.sqlite3`.
+The next pass should continue with a bounded native arithmetic/backend row,
+while treating specialized class-identity contracts as dependency metadata
+when the browser profile intentionally selects Sage's generic implementation.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
