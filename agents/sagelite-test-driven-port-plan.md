@@ -49459,6 +49459,49 @@ The next pass should return to a bounded native arithmetic/backend row outside
 the confirmed polynomial-LCM, inverse-modulus, NTL dynamic-link, and
 specialized-FLINT linkage boundaries.
 
+Generic rational random-matrix bound preservation pass on 2026-07-14 UTC:
+
+The two browser-profile guards on rational matrices constructed with a missing
+``num_bound`` or ``den_bound`` exposed a backend-dependent default rather than
+random output drift.  The usual ``Matrix_rational_dense.randomize`` method
+supplies a default value of 2 for each missing bound.  The stripped profile
+uses ``Matrix_generic_dense`` instead, whose generic randomizer forwarded only
+the explicitly supplied keywords to ``QQ.random_element``.  An omitted
+``num_bound`` therefore selected unbounded rational generation, while an
+omitted ``den_bound`` reused the explicit numerator bound instead of the
+documented matrix default.
+
+``random_matrix`` now fills in the two rational defaults before dispatching to
+the selected matrix backend, except for the separate ``distribution`` path.
+This preserves the constructor's documented behavior without changing the
+unbounded default contract of direct ``QQ.random_element()`` calls.  The two
+WASI-only ``# known bug`` annotations are removed.
+
+A deterministic regression constructs 100 matrices in each of the
+``den_bound=10``, ``num_bound=7``, and all-default profiles and checks every
+reduced numerator and denominator.  It records 10 passed blocks in
+``.tmp/current-run/scheduled-2026-07-14-native-next/random-bounds-fixed3.sqlite3``.
+Whole-file default-profile replay records:
+
+```text
+special.py: 441 passed, 0 failed, 146 skipped
+```
+
+The shared-source and reconstructed-source dashboards are respectively
+``.tmp/current-run/scheduled-2026-07-14-native-next/matrix-special-fixed.sqlite3``
+and
+``.tmp/current-run/scheduled-2026-07-14-native-next/pristine-matrix-special.sqlite3``.
+Applying the complete accumulated patch once to a clean worktree at pinned
+Sagelite commit ``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without
+rejects.  The reconstructed source is byte-identical to the tested patched
+source, both compile with ``py_compile``, and both full-file replays report the
+same 441/0/146 result.  The neighboring PARI integer-hash row remains a live
+semantic failure, and the Laurent-localization row needs nonlocal setup for a
+valid focused audit; neither guard is changed by this pass.  The next pass
+should continue with another bounded native arithmetic/backend row outside the
+already confirmed performance, dynamic-link, and specialized-backend
+boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

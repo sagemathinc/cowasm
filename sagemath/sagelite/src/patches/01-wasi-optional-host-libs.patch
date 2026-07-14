@@ -7674,10 +7674,10 @@ diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
 +        sage: type(A)                                                         # needs sage.matrix.matrix_rational_sparse
 @@ -448 +448 @@
 -        sage: all(a.numerator() in range(-2, 3) and
-+        sage: all(a.numerator() in range(-2, 3) and                           # known bug - rational random bounds drift in WASI runtime
++        sage: all(a.numerator() in range(-2, 3) and
 @@ -454 +454 @@
 -        sage: all(a.numerator() in range(-2, 3) and
-+        sage: all(a.numerator() in range(-2, 3) and                           # known bug - rational random bounds drift in WASI runtime
++        sage: all(a.numerator() in range(-2, 3) and
 @@ -594 +594 @@
 -        sage: B.right_kernel() == C.right_kernel()
 +        sage: B.right_kernel() == C.right_kernel()                            # needs sage.libs.pari
@@ -7687,6 +7687,14 @@ diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
 @@ -600 +600 @@
 -        sage: B.left_kernel() == L.row_space()
 +        sage: B.left_kernel() == L.row_space()                                 # needs sage.libs.pari
+@@ -651,2 +651,7 @@
+     if algorithm == 'randomize':
++        if ring is QQ and kwds.get('distribution') is None:
++            # Matrix_rational_dense supplies these defaults in its randomize
++            # signature.  Preserve them when QQ uses a generic matrix backend.
++            kwds.setdefault('num_bound', 2)
++            kwds.setdefault('den_bound', 2)
+         density = kwds.pop('density', None)
 @@ -1021 +1021 @@
 -        sage: G = CyclicPermutationGroup(7)
 +        sage: G = CyclicPermutationGroup(7)                                    # needs sage.groups
