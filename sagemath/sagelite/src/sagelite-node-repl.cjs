@@ -1619,6 +1619,15 @@ def __cowasm_directive_only_source(source):
 def __cowasm_merge_directive_source(directive_source, source):
     if not directive_source:
         return source
+    if (
+        __cowasm_directive_only_source(directive_source)
+        and __cowasm_directive_only_source(source)
+    ):
+        lines = directive_source.rstrip().splitlines()
+        for line in source.rstrip().splitlines():
+            if line not in lines:
+                lines.append(line)
+        return "\\n".join(lines)
     return directive_source.rstrip() + "\\n" + source
 
 

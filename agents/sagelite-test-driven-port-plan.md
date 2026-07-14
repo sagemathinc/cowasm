@@ -49046,8 +49046,18 @@ The custom doctest hook now applies `TallListRepr` to list and tuple values and
 falls back to the existing CPython delegate when the representer declines the
 object.  Sequence handling and the existing failed-`repr` diagnostic remain
 unchanged.  The standalone doctest smoke now covers a tuple of two integer
-matrices and expects 53 total blocks, 41 passes, no failures, and 12 classified
-skips.
+matrices.  A subsequent standard resource rebuild showed that the complete
+current fixture contains 54 total blocks, 42 passes, no failures, and 12
+classified skips; the earlier 53/41 aggregate omitted one pre-existing
+passing block.  The matching stable relative block-key assertion covers all
+54 persisted rows.
+
+The standard rebuild also exposed that directive composition could merge the
+same standalone `# needs` source at both prompt-conversion and execution time,
+duplicating its SQLite tag metadata and splitting the saved skip-reason
+cluster.  Directive-only merges now preserve order while deduplicating exact
+lines, so the composed fixture retains one optional requirement alongside its
+deferred tag.
 
 The shared formatter repair makes 15 WASI-only `# known bug` annotations stale
 across six files: the Hamilton quaternion matrix-action tuple, the Gamma0 cusp
@@ -49078,6 +49088,46 @@ documentation warning, and asymptotic multiline-exception rows are separate
 live boundaries.  The next shared-runner pass should finish a standard
 standalone resource rebuild and refresh the full clean corpus before using the
 new formatter to audit other presentation guards.
+
+Standard resource and clean-corpus refresh on 2026-07-14 UTC:
+
+Two standard standalone invocations completed fresh serial Cython generation
+and WASM side-module compilation.  The rebuilt default smoke records 54 total
+blocks, 42 passes, no failures, 12 skips, and 54 stable relative block keys.
+The post-build assertion chain exposed the stale aggregate expectations fixed
+above and then revealed duplicate composed-directive metadata: the same
+standalone `# needs` source was merged during prompt conversion and again while
+running the parsed example.  Deduplicating exact directive-only lines restores
+the intended saved skip clusters.
+
+A focused three-profile replay under
+`.tmp/current-run/scheduled-2026-07-14-directive-dedupe/` records default
+`0/0/2`, optional-feature `1/0/1`, and deferred-feature `0/0/2`
+pass/fail/skip totals.  Each persisted row contains exactly one
+`needs:cowasm_smoke` tag; the optional profile runs the setup while retaining
+the known-bug guard, and the deferred profile reports the still-disabled
+optional requirement for both rows.  The next standard standalone invocation
+should confirm the remaining assertion tail after this runner-only repair; it
+does not need another source-policy change.
+
+The complete 1,139-file browser-profile corpus is clean against the freshly
+rebuilt resources:
+
+```text
+sage -t passed: 89145 passed, 0 failed, 27071 skipped
+```
+
+The closed runner-version-109 dashboard is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`.  It contains
+116,216 blocks across 1,139 passing files, records CoWasm commit
+`c6b3c2b6fd99998b8f3d4b5b03e24492a7ca320b` and Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, passes
+`PRAGMA integrity_check`, and has empty saved block-failure and file-error
+cluster queries.  The four-worker make-target run completed in about 3,018
+seconds with the known-long `root_space.py` TestSuite completing normally.
+The next semantic pass can return to a bounded native backend or stale
+deferred row outside the already reproduced presentation and dependency
+clusters.
 
 ## Phase 6: TypeScript/NPM Direction
 
