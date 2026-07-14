@@ -49129,6 +49129,44 @@ The next semantic pass can return to a bounded native backend or stale
 deferred row outside the already reproduced presentation and dependency
 clusters.
 
+Python-integer q-binomial parent preservation pass on 2026-07-14 UTC:
+
+The browser-profile `# known bug` annotation on the Python-integer
+`q_binomial(3r, 2r, 1r)` type check in `sage/combinat/q_analogues.py` exposed
+a narrow return-parent bug.  At the root of unity `q = 1`, the naive
+algorithm falls back to the cyclotomic path.  That path used Sage's generic
+`prod(...)` result directly, leaking a `sage.rings.integer.Integer` even
+though the function had already recorded `R = parent(q) = int` and documents
+that its result remains in the parent of `q`.
+
+The cyclotomic return now passes the product through `R`, matching the zero,
+one, and other return paths for non-Sage inputs while remaining a no-op
+coercion for Sage parents.  The WASI-only annotation is removed.  A complete
+default-profile replay records:
+
+```text
+q_analogues.py: 112 passed, 0 failed, 23 skipped
+```
+
+The shared-source and reconstructed-source dashboards are respectively
+`.tmp/current-run/scheduled-2026-07-14-permutation-conversion/q-analogues-fixed.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-14-permutation-conversion/q-analogues-pristine.sqlite3`.
+The complete accumulated patch applies without rejects to an isolated
+worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; its reconstructed
+`q_analogues.py` is byte-identical to the tested patched source and compiles
+with `py_compile`.
+
+The same bounded audit retained three separate guards rather than promoting
+them.  The permutation-group constructor row cannot build its setup without
+the unavailable libGAP backend, the Judson finite-field logarithm row reaches
+the PARI FFELT backend's documented `ArithmeticError` contract instead of the
+Givaro-style `ValueError`, and the signed-tensor super-category row still
+returns the two documented parents in the opposite order.  The next pass
+should continue with another native arithmetic/backend row outside those
+dependency and presentation boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

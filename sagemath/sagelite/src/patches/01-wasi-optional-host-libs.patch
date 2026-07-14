@@ -6432,14 +6432,18 @@ diff -urN a/src/sage/combinat/q_analogues.py b/src/sage/combinat/q_analogues.py
 +        sage: Sym = SymmetricFunctions(QQ)                                             # needs sage.libs.symmetrica
 +        sage: s = Sym.schur()                                                          # needs sage.libs.symmetrica
 +        sage: q_binomial(4,1, s[2]+s[1])                                               # needs sage.libs.symmetrica
-@@ -288 +288 @@
--        sage: type(r)
-+        sage: type(r)                                                                  # known bug
 @@ -301,2 +301,2 @@
 -        sage: R.<q> = CyclotomicField(3)
 -        sage: for algo in ["naive", "cyclotomic"]:
 +        sage: R.<q> = CyclotomicField(3)                                               # needs sage.rings.number_field
 +        sage: for algo in ["naive", "cyclotomic"]:                                    # needs sage.rings.number_field
+@@ -386,3 +386,3 @@
+-        return prod(cyclotomic_value(d, q)
+-                    for d in range(2, n + 1)
+-                    if (n//d) != (k//d) + ((n-k)//d))
++        return R(prod(cyclotomic_value(d, q)
++                      for d in range(2, n + 1)
++                      if (n//d) != (k//d) + ((n-k)//d)))
 @@ -594 +594 @@
 -        sage: q_pochhammer(-3, a, q)
 +        sage: q_pochhammer(-3, a, q)                                                   # needs sage.libs.singular
