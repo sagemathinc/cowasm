@@ -49344,6 +49344,49 @@ patched sources, and CoWasm passes `git diff --check`.  The next pass should
 continue with another bounded native arithmetic/backend row outside the
 confirmed polynomial-LCM timeout and specialized-backend identity boundaries.
 
+Generic sparse-polynomial exact-coefficient quotient pass on 2026-07-14 UTC:
+
+The browser-profile `# known bug` guard on the nested sparse-polynomial
+`quo_rem` example in
+`sage/rings/polynomial/polynomial_element_generic.py` exposed a distinct
+fallback arithmetic gap.  Dividing a polynomial over `ZZ['x']` by one whose
+leading coefficient is `x` formed the fraction-field element `-x/x`; the
+generic fraction-field representation did not cancel it before coercion back
+to `ZZ['x']`, so the method raised `ArithmeticError` even though the leading
+coefficient division was exact.
+
+The sparse generic algorithm now falls back to the coefficient ring's
+quotient operation when fraction-field coercion fails, and accepts the result
+only after verifying `q * divisor == dividend`.  This admits exact nonunit
+coefficient quotients while preserving the documented error for inexact floor
+quotients.  Method-level doctests now cover the original multi-step example,
+an exact monomial quotient, and deterministic rejection of an inexact
+coefficient quotient; the WASI-only known-bug annotation is removed.
+
+A self-contained seven-block regression records:
+
+```text
+repro.sage: 7 passed, 0 failed, 0 skipped
+```
+
+Whole-file default-profile replay records:
+
+```text
+polynomial_element_generic.py: 226 passed, 0 failed, 60 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-14-generic-polynomial-quorem/`.  Applying
+the complete accumulated patch to a clean worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.  The
+reconstructed source and independently staged runtime source are byte-identical,
+and CoWasm passes `git diff --check`.  The default `/home/user/sagelite`
+checkout was not modified; it contains a pre-existing `integer_ring.pyx`
+change, so clean reconstruction used an isolated detached worktree instead.
+The next pass should continue with another bounded native arithmetic/backend
+row outside the confirmed polynomial-LCM and inverse-modulus performance
+boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

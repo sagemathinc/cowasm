@@ -23835,3 +23835,37 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/li
 +  sage: ok, V = Similar(2*A, B); ok
    False
  """
+diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
+--- a/src/sage/rings/polynomial/polynomial_element_generic.py
++++ b/src/sage/rings/polynomial/polynomial_element_generic.py
+@@ -837,5 +837,11 @@
+-            sage: # known bug - integer polynomial nonexact division drift
+             sage: f = -x*y^10 + 2*x*y^7 + y^3 - 2*x^2*y^2 - y
+             sage: g = x*y^5
+             sage: f.quo_rem(g)
+             (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
++            sage: (x^2*y).quo_rem(x*y)
++            (x, 0)
++            sage: (5*y).quo_rem(2*x*y)
++            Traceback (most recent call last):
++            ...
++            ArithmeticError: Division non exact
++            (consider coercing to polynomials over the fraction field)
+@@ -900,9 +906,17 @@
+         while rem.degree() >= d:
+             try:
+                 c = R(rem.leading_coefficient() * ~other.leading_coefficient())
+             except TypeError:
+-                raise ArithmeticError("Division non exact (consider coercing to polynomials over the fraction field)")
++                try:
++                    a = rem.leading_coefficient()
++                    b = other.leading_coefficient()
++                    c = a // b
++                    if c * b != a:
++                        raise ArithmeticError
++                    c = R(c)
++                except (ArithmeticError, NotImplementedError, TypeError, ValueError):
++                    raise ArithmeticError("Division non exact (consider coercing to polynomials over the fraction field)")
+             e = rem.degree() - d
+             quo += c*R.one().shift(e)
+             # we know that the leading coefficient of rem vanishes
