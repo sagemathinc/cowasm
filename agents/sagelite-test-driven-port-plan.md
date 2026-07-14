@@ -49426,6 +49426,39 @@ with `py_compile`, and CoWasm passes `git diff --check`.  The next pass should
 continue with another bounded native arithmetic/backend row outside the
 confirmed polynomial-LCM, inverse-modulus, and NTL dynamic-link boundaries.
 
+FLINT modular-polynomial arithmetic dependency classification pass on
+2026-07-14 UTC:
+
+The six remaining browser-profile `# known bug` guards in
+`sage/libs/flint/nmod_poly_linkage.pxi` cover low-level FLINT error contracts
+for division by nonunits and zero, failed gcd, and failed xgcd.  The stripped
+profile instead constructs Sage's generic modular-polynomial implementation;
+its arithmetic either raises the generic base-ring `NotImplementedError` or a
+more specific generic division diagnostic.  These rows therefore test the
+unavailable FLINT linkage implementation rather than a semantic contract that
+the selected generic class should imitate.
+
+All six rows now use `# needs sage.libs.flint`, matching the two copy-contract
+rows already reclassified in this file.  The complete default-profile replay
+records:
+
+```text
+nmod_poly_linkage.pxi: 196 passed, 0 failed, 10 skipped
+```
+
+SQLite confirms that lines 414, 419, 450, 455, 587, and 647 all persist
+`optional,needs:sage.libs.flint` tags and the
+`optional:sage.libs.flint` skip reason.  The shared-source dashboard is
+`.tmp/current-run/scheduled-2026-07-14-nmod-arithmetic/reclassified-full.sqlite3`.
+Applying the complete accumulated patch once to a clean archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects; the reconstructed linkage source is byte-identical to the tested
+patched source and independently records the same 196/0/10 result in
+`.tmp/current-run/scheduled-2026-07-14-nmod-arithmetic/pristine-full.sqlite3`.
+The next pass should return to a bounded native arithmetic/backend row outside
+the confirmed polynomial-LCM, inverse-modulus, NTL dynamic-link, and
+specialized-FLINT linkage boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

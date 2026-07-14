@@ -8578,16 +8578,16 @@ diff -urN -U0 a/src/sage/libs/flint/nmod_poly_linkage.pxi b/src/sage/libs/flint/
 +        sage: y is x                                                               # needs sage.libs.flint
 @@ -414 +414 @@
 -        sage: f % 3
-+        sage: f % 3                                                                # known bug - fallback polynomial division reports a lower-level nonunit diagnostic
++        sage: f % 3                                                                # needs sage.libs.flint
 @@ -419 +419 @@
 -        sage: f % 0
-+        sage: f % 0                                                                # known bug - fallback polynomial division reports a more specific zero-polynomial diagnostic
++        sage: f % 0                                                                # needs sage.libs.flint
 @@ -450 +450 @@
 -        sage: x.quo_rem(5*x)
-+        sage: x.quo_rem(5*x)                                                       # known bug - fallback polynomial division reports a lower-level nonunit diagnostic
++        sage: x.quo_rem(5*x)                                                       # needs sage.libs.flint
 @@ -455 +455 @@
 -        sage: x.quo_rem(0)
-+        sage: x.quo_rem(0)                                                         # known bug - fallback polynomial division reports a more specific zero-polynomial diagnostic
++        sage: x.quo_rem(0)                                                         # needs sage.libs.flint
 @@ -527 +527 @@
 -        sage: pow(f, -2, g)
 +        sage: pow(f, -2, g)                                                        # random - inverse representative is non-canonical in the WASI fallback path
@@ -8598,10 +8598,10 @@ diff -urN -U0 a/src/sage/libs/flint/nmod_poly_linkage.pxi b/src/sage/libs/flint/
 +        sage: with ensure_interruptible_after(0.2): (x^n).degree()                 # needs cysignals.alarm
 @@ -587 +587 @@
 -        sage: gcd(f, f.derivative())
-+        sage: gcd(f, f.derivative())                                               # known bug - fallback polynomial gcd reports missing base-ring implementation before FLINT failure
++        sage: gcd(f, f.derivative())                                               # needs sage.libs.flint
 @@ -647 +647 @@
 -        sage: u.xgcd(v)
-+        sage: u.xgcd(v)                                                            # known bug - fallback polynomial xgcd reports missing base-ring implementation before FLINT failure
++        sage: u.xgcd(v)                                                            # needs sage.libs.flint
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx
