@@ -23629,3 +23629,209 @@ diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/p
              for k from m-n >= k >= 0:
                  q = x[n+k-1] * inv
                  try:
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -25,0 +26 @@
++    cgeti,
+@@ -26,0 +28,2 @@
++    evalsigne,
++    evallgefint,
+@@ -27,0 +31 @@
++    gel,
+@@ -28,0 +33 @@
++    int_LSW,
+@@ -29,0 +35 @@
++    matfrobenius,
+@@ -30,0 +37 @@
++    pari_init,
+@@ -37,0 +45,3 @@
++    set_gcoeff,
++    stoi,
++    zeromatcopy,
+@@ -43 +53,10 @@
+-from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
++from sage.libs.gmp.mpz cimport (
++    mpz_export,
++    mpz_fits_slong_p,
++    mpz_get_ui,
++    mpz_set,
++    mpz_set_si,
++    mpz_set_ui,
++    mpz_sgn,
++    mpz_size,
++)
+@@ -46 +65 @@
+-from sage.rings.integer cimport smallInteger
++from sage.rings.integer cimport Integer, smallInteger
+@@ -48,0 +68,4 @@
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
+@@ -416,0 +439,82 @@
++
++
++cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols,
++                                      long flag=0):
++    """
++    Return the PARI Frobenius data for a row-major Sage integer matrix.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_frobenius
++        sage: integer_matrix_frobenius([ZZ(0), ZZ(1), ZZ(0), ZZ(0)], 2, 2)
++        [0, 0, 1, 0]
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++    if flag not in (0, 2):
++        raise ValueError("direct integer-matrix Frobenius conversion supports flags 0 and 2")
++
++    cdef GEN result
++    sig_on()
++    try:
++        result = matfrobenius(
++            _new_GEN_from_integer_matrix(entries, nrows, ncols), flag, -1
++        )
++        if flag == 0:
++            return _sage_matrix_entries(result)
++        return (_sage_matrix_entries(gel(result, 1)),
++                _sage_matrix_entries(gel(result, 2)))
++    finally:
++        sig_off()
++
++
++cdef void _validate_integer_matrix_entries(list entries, long nrows,
++                                           long ncols) except *:
++    if nrows < 0 or ncols < 0 or len(entries) != nrows * ncols:
++        raise ValueError("matrix dimensions do not match the number of entries")
++    if not all(isinstance(entry, Integer) for entry in entries):
++        raise TypeError("matrix entries must be Sage integers")
++
++
++cdef GEN _new_GEN_from_integer_matrix(list entries, long nrows,
++                                      long ncols) noexcept:
++    cdef GEN matrix = zeromatcopy(nrows, ncols)
++    cdef long i, j
++    for i in range(nrows):
++        for j in range(ncols):
++            set_gcoeff(matrix, i + 1, j + 1,
++                       _new_local_GEN_from_integer(<Integer>entries[i * ncols + j]))
++    return matrix
++
++
++cdef inline GEN _new_local_GEN_from_integer(Integer value) noexcept:
++    if mpz_sgn(value.value) == 0:
++        return stoi(0)
++
++    cdef unsigned long limbs = mpz_size(value.value)
++    cdef GEN result = cgeti(limbs + 2)
++    result[1] = evalsigne(mpz_sgn(value.value)) + evallgefint(limbs + 2)
++    mpz_export(int_LSW(result), NULL, -1, sizeof(long), 0, 0, value.value)
++    return result
++
++
++cdef list _sage_matrix_entries(GEN matrix):
++    cdef long ncols = lg(matrix) - 1
++    cdef long nrows = 0 if ncols == 0 else lg(gel(matrix, 1)) - 1
++    cdef long i, j
++    return [_sage_integer_or_rational(gel(gel(matrix, j + 1), i + 1))
++            for i in range(nrows) for j in range(ncols)]
++
++
++cdef object _sage_integer_or_rational(GEN value):
++    cdef long value_type = typ(value)
++    cdef Integer integer_value
++    cdef Rational rational_value
++    if value_type == t_INT:
++        integer_value = <Integer>PY_NEW(Integer)
++        INT_to_mpz(integer_value.value, value)
++        return integer_value
++    if value_type == t_FRAC:
++        rational_value = <Rational>PY_NEW(Rational)
++        INTFRAC_to_mpq(rational_value.value, value)
++        return rational_value
++    raise TypeError("Frobenius matrix entry is not an integer or rational")
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -8,0 +9 @@
++cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
+diff --git a/src/sage/matrix/matrix_generic_dense.pyx b/src/sage/matrix/matrix_generic_dense.pyx
+--- a/src/sage/matrix/matrix_generic_dense.pyx
++++ b/src/sage/matrix/matrix_generic_dense.pyx
+@@ -193,6 +193,53 @@
+         from sage.arith.misc import gcd
+         return gcd(self._entries)
+
++    def frobenius_form(self, flag=0, var='x'):
++        """
++        Return the Frobenius form of an integer matrix.
++
++        This provides the same PARI-backed operation as integer dense matrices
++        when the generic dense implementation is used as a fallback.
++
++        EXAMPLES::
++
++            sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
++            sage: A = Matrix_generic_dense(MatrixSpace(ZZ, 3), range(9))
++            sage: A.frobenius_form()
++            [ 0  0  0]
++            [ 1  0 18]
++            [ 0  1 12]
++            sage: A.frobenius_form(1)
++            [x^3 - 12*x^2 - 18*x]
++            sage: F, B = A.frobenius_form(2)
++            sage: A == B^(-1) * F * B
++            True
++        """
++        if not self.is_square():
++            raise ArithmeticError("frobenius matrix of non-square matrix not defined.")
++
++        from sage.rings.integer_ring import ZZ
++        if self.base_ring() is not ZZ:
++            raise NotImplementedError("generic Frobenius form is implemented only for integer matrices")
++
++        if flag == 1:
++            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
++            r = PolynomialRing(self.base_ring(), names=var)
++            rational_self = self.change_ring(self.base_ring().fraction_field())
++            return [r(f) for f in rational_self.rational_form(format='invariants')]
++
++        from sage.libs.pari.convert_sage import integer_matrix_frobenius
++        v = integer_matrix_frobenius(
++            self._entries, self._nrows, self._ncols, flag
++        )
++        if flag == 0:
++            return self.matrix_space()(v)
++        elif flag == 2:
++            from sage.matrix.matrix_space import MatrixSpace
++            from sage.rings.rational_field import QQ
++            F = MatrixSpace(QQ, self.nrows())(v[0])
++            B = MatrixSpace(QQ, self.nrows())(v[1])
++            return F, B
++
+     ########################################################################
+     # LEVEL 2 functionality
+     # X  * cdef _add_
+diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
+--- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
++++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py
+@@ -42,14 +42,14 @@
+   sage: U = matrix(ZZ, [[3,3,-9,-14,40],[-1,-2,4,2,1],[2,4,-7,-1,-13],
+   ....:                 [-1,0,1,4,-15],[-4,-13,26,8,30]])
+   sage: A = (U^-1 * B * U).change_ring(ZZ)
+-  sage: ok, V = Similar(A, B); ok                                              # known bug - matrix frobenius form hits generic-dense attribute gap
++  sage: ok, V = Similar(A, B); ok
+   True
+-  sage: V                                                                       # known bug - depends on the previous matrix frobenius form setup
++  sage: V
+   [                 1    2824643/1601680   -6818729/1601680 -43439399/11211760  73108601/11211760]
+   [                 0      342591/320336     -695773/320336  -2360063/11211760  -10291875/2242352]
+   [                 0     -367393/640672      673091/640672    -888723/4484704   15889341/4484704]
+   [                 0     661457/3203360    -565971/3203360  13485411/22423520 -69159661/22423520]
+   [                 0   -4846439/3203360    7915157/3203360 -32420037/22423520 285914347/22423520]
+-  sage: ok, V = Similar(2*A, B); ok                                            # known bug - matrix frobenius form hits generic-dense attribute gap
++  sage: ok, V = Similar(2*A, B); ok
+   False
+ """

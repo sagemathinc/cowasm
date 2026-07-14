@@ -49302,6 +49302,48 @@ The next pass should continue with a bounded native arithmetic/backend row,
 while treating specialized class-identity contracts as dependency metadata
 when the browser profile intentionally selects Sage's generic implementation.
 
+Generic integer-matrix Frobenius backend pass on 2026-07-14 UTC:
+
+The three browser-profile guards around the similarity witness in
+`sage/tests/books/computational_mathematics_with_sagemath/sol/linalg_doctest.py`
+exposed a native fallback gap.  The stripped runtime constructs integer
+matrices as `Matrix_generic_dense`, while Sage's PARI-backed
+`frobenius_form()` was available only on the absent specialized
+`Matrix_integer_dense` class.  The generic matrix already had the surrounding
+matrix arithmetic needed by the example, but its inherited `pari.matrix(...)`
+and generated `Gen.matfrobenius()` object-model paths are intentionally outside
+CoWasm's focused cypari2 subset.
+
+The generic integer matrix now provides all three established Frobenius flags.
+Flags 0 and 2 use a focused `convert_sage` bridge that builds the PARI integer
+matrix, calls `matfrobenius`, and converts integer/rational result entries on
+one module-local PARI stack.  Keeping allocation and conversion in the same
+side module avoids the split-module global-zero corruption seen when PARI GEN
+pointers crossed between `convert_gmp`, `convert_sage`, and
+`convert_sage_matrix`.  Flag 1 uses Sage's existing field-only rational-form
+algorithm after changing the integer matrix to its fraction field.
+
+The three WASI-only known-bug annotations are removed.  Final default-profile
+replays record:
+
+```text
+matrix_generic_dense.pyx: 77 passed, 0 failed, 4 skipped
+sol/linalg_doctest.py:     15 passed, 0 failed, 0 skipped
+```
+
+A separate 12-block regression checks two similar 5-by-5 integer matrices,
+equality of their canonical forms, and both reconstructed conjugacy
+identities; it passes in
+`.tmp/current-run/scheduled-2026-07-14-next-native/frobenius-regression-final2.sqlite3`.
+The whole-file dashboards are in the same directory.  Applying the complete
+accumulated patch once to a fresh worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.  The
+reconstructed `convert_sage.pyx`, `convert_sage.pxd`,
+`matrix_generic_dense.pyx`, and book doctest are byte-identical to the tested
+patched sources, and CoWasm passes `git diff --check`.  The next pass should
+continue with another bounded native arithmetic/backend row outside the
+confirmed polynomial-LCM timeout and specialized-backend identity boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
