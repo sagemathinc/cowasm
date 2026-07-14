@@ -208,6 +208,18 @@ class RuntimeContractTests(unittest.TestCase):
             self.assertTrue(link.is_symlink())
             self.assertEqual(link.read_text(), "symlink-target")
 
+    def test_float_hex_exponents(self):
+        self.assertEqual(
+            [float(value).hex() for value in (-0.5, 0.5, 1, 2, 16)],
+            [
+                "-0x1.0000000000000p-1",
+                "0x1.0000000000000p-1",
+                "0x1.0000000000000p+0",
+                "0x1.0000000000000p+1",
+                "0x1.0000000000000p+4",
+            ],
+        )
+
     def test_unicode_fromformat_integer_fields(self):
         def keyword_only(*, value=None):
             return value

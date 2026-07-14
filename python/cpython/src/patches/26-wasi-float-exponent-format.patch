@@ -55,3 +55,21 @@
      }
    exit:
      if (buf) {
+--- a/Objects/floatobject.c
++++ b/Objects/floatobject.c
+@@ -1211,4 +1211,12 @@
++    char exponent[16];
++    char *p = exponent + sizeof(exponent);
++
++    *--p = '\0';
++    do {
++        *--p = (char)('0' + (e % 10));
++        e /= 10;
++    } while (e != 0);
++
+     if (x < 0.0)
+-        return PyUnicode_FromFormat("-0x%sp%c%d", s, esign, e);
++        return PyUnicode_FromFormat("-0x%sp%c%s", s, esign, p);
+     else
+-        return PyUnicode_FromFormat("0x%sp%c%d", s, esign, e);
++        return PyUnicode_FromFormat("0x%sp%c%s", s, esign, p);

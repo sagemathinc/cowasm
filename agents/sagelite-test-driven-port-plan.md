@@ -49596,6 +49596,41 @@ in-progress CPython main module still advertises 160 pages.  No CPython changes
 are included.  The next pass should continue with another bounded native
 arithmetic/backend cluster.
 
+Focused CPython hexadecimal-float exponent pass on 2026-07-14 UTC:
+
+The remaining browser-profile guard in ``sage/rings/real_mpfr.pyx`` at line
+2178 exposed a CPython runtime formatting defect rather than an MPFR defect.
+``RealNumber.hex()`` returned the expected values, but the pinned-Zig Python
+runtime dropped the decimal digit from every built-in ``float.hex()`` exponent,
+producing suffixes such as ``p-`` and ``p+``.  The focused deferred replay
+therefore recorded 0 passed, 1 failed, and 0 skipped in
+``.tmp/current-run/scheduled-2026-07-14-real-mpfr-hex/deferred.sqlite3``.
+
+The existing WASI float-format patch now makes ``float_hex_impl`` write the
+nonnegative exponent digits into a small local buffer and passes that string to
+``PyUnicode_FromFormat``.  This avoids the pinned backend's broken integer
+interpolation path while retaining CPython's sign and mantissa formatting.
+Runtime-contract coverage checks both signs and positive, zero, and negative
+binary exponents.
+
+The patch applies cleanly to the pristine CPython source, the changed float
+object compiles with the pinned Zig toolchain, and a test runtime made from the
+known-good Python archive plus only the rebuilt ``floatobject.o`` reports:
+
+```text
+['0x1.0000000000000p-1', '0x1.0000000000000p+0',
+ '0x1.0000000000000p+1', '0x1.0000000000000p+4']
+```
+
+The corresponding Sagelite guard is intentionally retained in this pass.  The
+unrelated in-progress CPython rebuild has a different main-module memory and
+build contract, while a surgically mixed archive is sufficient for the
+focused Python check but traps during full Sage startup.  A coherent Python and
+Sagelite resource rebuild is required before promoting the doctest row.  The
+next pass can either finish that rebuild and remove the guard or continue with
+another bounded native cluster that does not depend on the shared Python main
+module.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
