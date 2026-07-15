@@ -50347,6 +50347,34 @@ exactly once to a clean archive of pinned commit
 `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The next
 pass should continue with another bounded native arithmetic/backend cluster.
 
+Quadratic-form traceback-placeholder promotion pass on 2026-07-15 UTC:
+
+A six-file whole-file deferred audit found that the browser-profile guard on
+`QuadraticForm(1)` in `sage/quadratic_forms/quadratic_form.py` is stale. Runner
+version 113 accepts the documented four-dot traceback placeholder while still
+checking the terminal `TypeError` class and detail. The other audited pickle,
+persistence, character-art, documentation-lookup, and source-inspection rows
+continue to reproduce their documented output differences and remain guarded.
+
+After removing only the stale annotation, focused and whole-file
+default-profile replays record:
+
+```text
+quadratic_form.py --line 541:   1 passed, 0 failed,  0 skipped
+quadratic_form.py:            172 passed, 0 failed, 30 skipped
+```
+
+The deferred audit and final SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-diagnostic-next/`; every database passes
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `quadratic_form.py` is byte-identical to the tested shared
+source and independently reports the same 172/0/30 result. Because this pass
+only removes source doctest metadata, the coherent browser resource bundle
+does not require a rebuild. The next pass should continue with another bounded
+native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
