@@ -49731,6 +49731,33 @@ and the reconstructed ``real_mpfr.pyx`` is byte-identical to the tested clean
 build source. The next pass can return to another bounded native arithmetic
 or backend row with coherent browser resources restored.
 
+CPython positional-argument diagnostic promotion pass on 2026-07-15 UTC:
+
+The coherent Python rebuild also made two browser-profile guards in
+``sage/misc/explain_pickle.py`` stale. The deliberately broken
+``TestAppendList.append`` and ``extend`` examples now preserve the positional
+argument count in their CPython ``TypeError`` diagnostics, reporting that one
+argument was expected and two were given. Focused deferred reruns of both rows
+pass, so the accumulated WASI patch no longer adds ``# known bug`` to them.
+
+The complete default-profile file replay records:
+
+```text
+explain_pickle.py: 346 passed, 0 failed, 54 skipped
+```
+
+The shared-source dashboard is
+``.tmp/current-run/scheduled-2026-07-15-integer-format-audit/full.sqlite3``;
+SQLite records both promoted rows as untagged passes and passes
+``PRAGMA integrity_check``. A reconstructed-source replay reports the same
+346/0/54 result. Applying the complete accumulated Sagelite patch once to a
+fresh worktree at pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without rejects, the
+reconstructed ``explain_pickle.py`` is byte-identical to the tested shared
+source, and both trees pass their diff checks. The next pass should continue
+with another bounded native arithmetic/backend row now that the coherent
+CPython runtime has cleared this diagnostic-only cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

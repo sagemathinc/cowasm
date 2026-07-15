@@ -13709,12 +13709,6 @@ diff -urN -U0 a/src/sage/misc/explain_pickle.py b/src/sage/misc/explain_pickle.p
 @@ -41 +41 @@
 -    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)
 +    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)                # known bug - stripped WASI profile emits generic polynomial pickle helper
-@@ -2816 +2816 @@
--            sage: v.append(7)
-+            sage: v.append(7)                                                     # known bug - WASI TypeError integer formatting drift
-@@ -2837 +2837 @@
--            sage: v.extend([3,1,4,1,5,9])
-+            sage: v.extend([3,1,4,1,5,9])                                         # known bug - WASI TypeError integer formatting drift
 diff -urN -U0 a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/invariants/invariant_theory.py
 --- a/src/sage/rings/invariants/invariant_theory.py
 +++ b/src/sage/rings/invariants/invariant_theory.py
