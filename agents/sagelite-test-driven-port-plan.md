@@ -49818,6 +49818,50 @@ their diff checks. The next pass should continue with another bounded native
 arithmetic/backend row while classifying diagnostics that belong only to an
 unavailable specialized implementation as dependency metadata.
 
+Generic integer-polynomial LCM content pass on 2026-07-15 UTC:
+
+The two browser-profile `# known bug` guards in `sage/arith/functions.pyx`
+no longer timed out after the recent generic polynomial arithmetic work. Their
+focused default-profile replays instead exposed a semantic mismatch: the
+generic `Polynomial.lcm` implementation normalized every result to monic,
+including polynomials over `ZZ`. Multiplication by the inverse leading
+coefficient silently moved the integer result into `QQ`, so the documented
+`2*X^3 + 4*X^2` result became `X^3 + 2*X^2`.
+
+The generic implementation now preserves content when the base ring is not a
+field, matching Sage's specialized FLINT and NTL integer-polynomial backends,
+while retaining monic normalization over fields. The parallel internal `_lcm`
+path follows the same rule. Direct regressions cover public `lcm`, internal
+`_lcm`, and `LCM_list` over generic `ZZ[]` and `QQ[]`; they record 13 passed
+blocks and no failures in
+`.tmp/current-run/scheduled-2026-07-15-polynomial-lcm/lcm-regression.sqlite3`.
+Both formerly guarded source rows pass focused 1/0/0 replays, and their
+`# known bug` annotations are removed. The complete arithmetic wrapper replay
+records:
+
+```text
+arith/functions.pyx: 36 passed, 0 failed, 6 skipped
+```
+
+The coherent four-worker Sagelite rebuild completed all 498 Cython generation
+targets and 1,006 WASM compile/link targets on the first attempt. Its full
+standalone validation reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+A broad `polynomial_element.pyx` replay still reaches the pre-existing NTL
+dynamic-import boundary at line 2094 before the changed method, where
+`ZZ_pContext::restore()` is not callable. The bounded method regression and
+the complete standalone suite therefore provide the validation for this
+change without misclassifying that unrelated backend boundary. Every focused
+SQLite database passes `PRAGMA integrity_check`. Applying the complete
+accumulated patch once to a fresh pinned source copy succeeds without rejects,
+and the reconstructed arithmetic and polynomial sources are byte-identical to
+the coherently built sources. The next pass should continue with another
+bounded native arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -23991,3 +23991,43 @@ diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/p
 +                while x and not x[-1]:
 +                    x.pop()
 +                return self._new_c(quo, self._parent), self._new_c(x, self._parent)
+diff --git a/src/sage/arith/functions.pyx b/src/sage/arith/functions.pyx
+--- a/src/sage/arith/functions.pyx
++++ b/src/sage/arith/functions.pyx
+@@ -183,4 +183,4 @@
+-        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))  # known bug - polynomial LCM times out in the Sagelite WASI profile
++        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
+         2*X^3 + 4*X^2
+         sage: R.<X> = QQ[]
+-        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))  # known bug - polynomial LCM times out in the Sagelite WASI profile
++        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
+diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
+--- a/src/sage/rings/polynomial/polynomial_element.pyx
++++ b/src/sage/rings/polynomial/polynomial_element.pyx
+@@ -5468,2 +5468,2 @@
+-        Let `f` and `g` be two polynomials. Then this function returns the
+-        monic least common multiple of `f` and `g`.
++        Let `f` and `g` be two polynomials. Then this function returns a least
++        common multiple of `f` and `g`, normalized to be monic over a field.
+@@ -5483,0 +5484,10 @@
++
++        Preserve integer content in the generic implementation, matching the
++        specialized FLINT implementation, while keeping field results monic::
++
++            sage: S.<z> = PolynomialRing(ZZ, implementation='generic')
++            sage: (2*z + 4).lcm(2*z^2)
++            2*z^3 + 4*z^2
++            sage: T.<z> = PolynomialRing(QQ, implementation='generic')
++            sage: (2*z + 4).lcm(2*z^2)
++            z^3 + 2*z^2
+@@ -5490,0 +5501,2 @@
++        if not self._parent.base_ring().is_field():
++            return q
+@@ -5495,2 +5507,2 @@
+-        Let `f` and `g` be two polynomials. Then this function returns the
+-        monic least common multiple of `f` and `g`.
++        Let `f` and `g` be two polynomials. Then this function returns a least
++        common multiple of `f` and `g`, normalized to be monic over a field.
+@@ -5503,0 +5516,2 @@
++        if not self._parent.base_ring().is_field():
++            return q
