@@ -49920,6 +49920,35 @@ this pass only reclassifies source doctest metadata, the coherent browser
 resource bundle does not require a rebuild. The next pass should continue with
 another bounded arithmetic/backend row.
 
+Cyclotomic-value consistency-loop promotion pass on 2026-07-15 UTC:
+
+The browser-profile `# known bug` guard on the nested consistency loop in
+`sage/rings/polynomial/cyclotomic.pyx:257` is stale. Enabling the row now checks
+`cyclotomic_value(n, y)` against direct cyclotomic-polynomial evaluation for
+every `n` from 1 through 60 and for all integer, rational, modular, and generic
+polynomial values available in the default profile. It completes without
+printing either a value or parent mismatch.
+
+Focused default-profile replay records 1 passed block, 0 failed, and the 3
+explicitly optional number-field, finite-field, and p-adic setup rows skipped.
+The accumulated WASI patch no longer marks the loop as deferred. Shared and
+reconstructed whole-file replays record:
+
+```text
+cyclotomic.pyx: 27 passed, 0 failed, 10 skipped
+```
+
+The focused and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-cyclotomic-loop/`; each database passes
+`PRAGMA integrity_check`, and the focused database records line 257 as an
+untagged pass. Applying the complete accumulated Sagelite patch once to a fresh
+worktree at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed `cyclotomic.pyx` is
+byte-identical to the tested shared source. Because this pass only promotes a
+source doctest annotation, the coherent browser resource bundle does not
+require a rebuild. The next pass should continue with another bounded native
+arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

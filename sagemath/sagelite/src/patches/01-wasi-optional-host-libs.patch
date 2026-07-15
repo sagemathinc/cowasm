@@ -11004,15 +11004,6 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/non
 diff -urN a/src/sage/rings/polynomial/cyclotomic.pyx b/src/sage/rings/polynomial/cyclotomic.pyx
 --- a/src/sage/rings/polynomial/cyclotomic.pyx
 +++ b/src/sage/rings/polynomial/cyclotomic.pyx
-@@ -254,7 +254,7 @@
-         sage: K.<i> = NumberField(x^2 + 1); elements += [i]                             # needs sage.rings.number_fields
-         sage: elements += [GF(9,'a').gen()]                                             # needs sage.rings.finite_rings
-         sage: elements += [Zp(3)(54)]                                                   # needs sage.rings.padics
--        sage: for y in elements:
-+        sage: for y in elements:                                                       # known bug
-         ....:     for n in [1..60]:
-         ....:         val1 = cyclotomic_value(n, y)
-         ....:         val2 = cyclotomic_polynomial(n)(y)
 @@ -275,10 +275,10 @@
 -        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
 -        sage: cyclotomic_value(15, t)
