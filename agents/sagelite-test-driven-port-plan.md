@@ -50578,6 +50578,41 @@ byte-identical to the staged resource copy and independently reports the same
 WASM rebuild. The next pass should continue with another bounded native
 arithmetic/backend cluster.
 
+Transvectant zero-division diagnostic normalization pass on 2026-07-15 UTC:
+
+The last browser-profile guard in
+`sage/rings/invariants/invariant_theory.py` covered a backend diagnostic drift,
+not a failed transvectant calculation. In characteristic five, the documented
+default scaling factor is not invertible and is specified to raise a bare
+`ZeroDivisionError`. The generic modular-polynomial backend raised the same
+class but leaked its internal `inverse of Mod(0, 5) does not exist` detail, so
+the class-only Sage doctest failed exact exception comparison.
+
+`transvectant` now catches `ZeroDivisionError` only while constructing its
+default scaling factor and reraises a detail-free `ZeroDivisionError` from the
+public operation boundary. The successful `scale='none'` path and all later
+transvectant arithmetic remain unchanged. The stale WASI annotation is
+removed.
+
+The focused failure-before-fix and final default-profile replays record:
+
+```text
+invariant_theory.py --line 218 before:   0 passed, 1 failed,  0 skipped
+invariant_theory.py --line 218 after:    1 passed, 0 failed,  0 skipped
+invariant_theory.py after:             874 passed, 0 failed, 14 skipped
+```
+
+The SQLite dashboards and copied coherent resource bundle are under
+`.tmp/current-run/scheduled-2026-07-15-next-cluster/`; every retained database
+passes `PRAGMA integrity_check`, and the copied resource manifest validates.
+Applying the complete accumulated Sagelite patch exactly once to a detached
+worktree at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects. The reconstructed invariant-theory source is
+byte-identical to the tested source and staged resource copy and independently
+reports the same 874/0/14 whole-file result. This pure-Python boundary fix
+requires no native WASM rebuild. The next pass should continue with another
+bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

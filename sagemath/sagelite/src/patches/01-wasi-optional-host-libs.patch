@@ -24115,3 +24115,20 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage
 @@ -647 +647 @@
 -        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1 # known bug
 +        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1
+diff --git a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/invariants/invariant_theory.py
+--- a/src/sage/rings/invariants/invariant_theory.py
++++ b/src/sage/rings/invariants/invariant_theory.py
+@@ -218 +218 @@
+-        sage: transvectant(f, f, 4)                                                   # known bug - WASI zero-division diagnostic text
++        sage: transvectant(f, f, 4)
+@@ -273,3 +273,8 @@
+         if scale == 'default':
+-            scalar = factorial(f._d-h) * factorial(g._d-h) \
+-                * R(factorial(f._d)*factorial(g._d))**(-1)
++            try:
++                scalar = factorial(f._d-h) * factorial(g._d-h) \
++                    * R(factorial(f._d)*factorial(g._d))**(-1)
++            except ZeroDivisionError:
++                # Keep this public error independent of the coefficient
++                # backend's modular-inverse diagnostic.
++                raise ZeroDivisionError from None
