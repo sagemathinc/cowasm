@@ -50139,6 +50139,50 @@ should continue with another bounded native arithmetic/backend cluster; a
 separate generic polynomial-content implementation would need its own
 contract and tests rather than using this FLINT-specific row as its oracle.
 
+Finite-field lazy-series display promotion pass on 2026-07-15 UTC:
+
+The remaining browser-profile `# known bug` guard on
+`sage/rings/lazy_series_ring.py:3355` exposed a generic representation defect,
+not a finite-field arithmetic failure. Multivariate lazy series pass each
+already assembled homogeneous polynomial to `repr_lincomb` as a support with
+coefficient one. A homogeneous monomial whose finite-field coefficient is
+`-1` was consequently rendered as a parenthesized additive term such as
+`+ (-q^3)` instead of the canonical subtraction `- q^3`.
+
+`LazyPowerSeries._format_series(repr)` now recognizes a single-term
+multivariate monomial with coefficient `-1`, moves that sign into the linear
+combination coefficient, and leaves every other term unchanged. The
+characteristic-two guard avoids manufacturing a negative sign when `1 == -1`.
+The method doctest covers the original `GF(3)` behavior, and a focused fixture
+also verifies characteristic two, ordinary rational coefficients, and the
+univariate finite-field-polynomial representation. The stale deferred guard
+is removed from `LazyPowerSeriesRing.some_elements()`.
+
+After a clean resumed standalone rebuild, the package reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The final rebuilt regression records:
+
+```text
+formatter-regression.py: 12 passed, 0 failed, 0 skipped
+lazy_series.py:6285: 1 passed, 0 failed, 0 skipped
+lazy_series_ring.py: 602 passed, 0 failed, 442 skipped
+```
+
+The final SQLite dashboards are
+`.tmp/current-run/scheduled-2026-07-15-lazy-finite-display/recheck-final.sqlite3`
+and
+`.tmp/current-run/scheduled-2026-07-15-lazy-finite-display/source-regression-final.sqlite3`;
+both pass `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once to a fresh worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed lazy-series source files are byte-identical to the tested shared
+source. The next pass should continue with another bounded native
+arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

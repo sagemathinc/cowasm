@@ -22370,16 +22370,6 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 @@ -2739 +2739 @@
 -            sage: TestSuite(L).run(skip='_test_fraction_field')
 +            sage: TestSuite(L).run(skip='_test_fraction_field')         # needs sage.libs.flint
-diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
---- a/src/sage/rings/lazy_series_ring.py
-+++ b/src/sage/rings/lazy_series_ring.py
-@@ -3318,4 +3318,4 @@
-             sage: L = LazyPowerSeriesRing(GF(3), 'q, t')
--            sage: L.some_elements()[:6]
-+            sage: L.some_elements()[:6]                    # known bug - Sagelite finite-field negative monomial display drift
-             [0, 1, q,
-              q + q^2 + q^3,
-
 diff --git a/src/sage/geometry/toric_lattice.py b/src/sage/geometry/toric_lattice.py
 --- a/src/sage/geometry/toric_lattice.py
 +++ b/src/sage/geometry/toric_lattice.py
@@ -24079,3 +24069,42 @@ diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/
 +++ b/src/sage/rings/polynomial/polynomial_element_generic.py
 @@ -566 +566,0 @@
 -            sage: # known bug - QQbar sparse polynomial coercion cache drift
+diff --git a/src/sage/rings/lazy_series.py b/src/sage/rings/lazy_series.py
+--- a/src/sage/rings/lazy_series.py
++++ b/src/sage/rings/lazy_series.py
+@@ -6276,6 +6276,14 @@ class LazyPowerSeries(LazyCauchyProductSeries):
+             sage: f = (2 - x^2 + y)
+             sage: f._format_series(repr)
+             '2 + y - x^2'
++
++        Negative monomials over finite fields use subtraction notation::
++
++            sage: L = LazyPowerSeriesRing(GF(3), 'q, t')
++            sage: P = L._laurent_poly_ring
++            sage: q, t = P.gens()
++            sage: L(lambda n: -q^n, valuation=1)
++            -q - q^2 - q^3 - q^4 - q^5 - q^6 - q^7 + O(q,t)^8
+         """
+         P = self.parent()
+         cs = self._coeff_stream
+@@ -6305,7 +6313,19 @@ class LazyPowerSeries(LazyCauchyProductSeries):
+         from sage.typeset.symbols import ascii_left_parenthesis, ascii_right_parenthesis
+         from sage.typeset.symbols import unicode_left_parenthesis, unicode_right_parenthesis
+         if formatter == repr:
+-            poly = repr_lincomb([(1, m) for m in mons + bigO], strip_one=True)
++            terms = []
++            one = P.base_ring().one()
++            negative_one = -one
++            for monomial in mons:
++                coefficients = monomial.dict().values() if P._arity > 1 else ()
++                if (one != negative_one
++                        and len(coefficients) == 1
++                        and next(iter(coefficients)) == negative_one):
++                    terms.append((-monomial, -1))
++                else:
++                    terms.append((1, monomial))
++            terms.extend((1, term) for term in bigO)
++            poly = repr_lincomb(terms, strip_one=True)
+         elif formatter == latex:
+             poly = repr_lincomb([(1, m) for m in mons + bigO], is_latex=True, strip_one=True)
+         elif formatter == ascii_art:
