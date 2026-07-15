@@ -50613,6 +50613,41 @@ reports the same 874/0/14 whole-file result. This pure-Python boundary fix
 requires no native WASM rebuild. The next pass should continue with another
 bounded native arithmetic/backend cluster.
 
+Real-double algebraic-dependency fallback pass on 2026-07-15 UTC:
+
+The sole failure in a forced complete `real_double.pyx` audit was the guarded
+`sqrt(RDF(2)).algebraic_dependency(5)` example. The public operation still
+routed fixed-precision real doubles through `pari(z).algdep(...)`, but the
+browser profile's focused cypari2 runtime does not provide the required
+general object-conversion path.
+
+The arithmetic helper now catches that unavailable object-model path only for
+`RealDoubleField` inputs and uses mpmath's PSLQ implementation at the input's
+53-bit precision, with the exact polynomial `x` handled directly for zero.
+The fallback retains the existing tolerance convention, coefficient bound,
+irreducible-factor selection, and original exception when PSLQ finds no
+relation. MPFR, complex, and p-adic inputs retain their existing LLL or PARI
+paths. The stale real-double browser guard is removed.
+
+Focused and complete reconstructed-source replays record:
+
+```text
+real_double.pyx forced before:          282 passed, 1 failed, 30 skipped
+RDF algebraic-dependency fixture:         4 passed, 0 failed,  0 skipped
+real_double.pyx default after:           283 passed, 0 failed, 30 skipped
+```
+
+The SQLite dashboards and copied coherent resource bundle are under
+`.tmp/current-run/scheduled-2026-07-15-native-audit/`; every retained database
+passes `PRAGMA integrity_check`, and the copied resource manifest validates.
+Applying the complete accumulated Sagelite patch exactly once to a clean clone
+at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed arithmetic helper and real-double source are
+byte-identical to the tested source copies and independently report the same
+focused and whole-file results. This pure-Python fallback requires no native
+WASM rebuild. The next pass should continue with another bounded native
+arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

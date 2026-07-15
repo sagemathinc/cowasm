@@ -24132,3 +24132,39 @@ diff --git a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/inva
 +                # Keep this public error independent of the coefficient
 +                # backend's modular-inverse diagnostic.
 +                raise ZeroDivisionError from None
+diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
+--- a/src/sage/arith/misc.py
++++ b/src/sage/arith/misc.py
+@@ -31 +31 @@
+-from sage.rings.abc import RealField, ComplexField
++from sage.rings.abc import RealField, RealDoubleField, ComplexField
+@@ -269 +269,22 @@
+-        f = pari(z).algdep(degree)
++        try:
++            f = pari(z).algdep(degree)
++        except NotImplementedError:
++            if not isinstance(z.parent(), RealDoubleField):
++                raise
++            if not z:
++                f = [0, 1]
++            else:
++                # The browser profile exposes PARI without its full cypari2
++                # conversion layer.  PSLQ is sufficient for real doubles.
++                import mpmath
++                prec = z.prec() - 6
++                with mpmath.workprec(z.prec()):
++                    value = mpmath.mpf(float(z))
++                    f = mpmath.pslq(
++                        [value**k for k in range(degree + 1)],
++                        tol=mpmath.mpf(2)**-prec,
++                        maxcoeff=1 << prec,
++                        maxsteps=1000,
++                    )
++                if f is None:
++                    raise
+diff --git a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
+--- a/src/sage/rings/real_double.pyx
++++ b/src/sage/rings/real_double.pyx
+@@ -1954 +1954 @@
+-            sage: r.algebraic_dependency(5)                                              # known bug
++            sage: r.algebraic_dependency(5)
