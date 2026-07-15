@@ -3094,17 +3094,6 @@ diff -urN a/src/sage/structure/sequence.py b/src/sage/structure/sequence.py
 diff -urN a/src/sage/rings/polynomial/laurent_polynomial_ring.py b/src/sage/rings/polynomial/laurent_polynomial_ring.py
 --- a/src/sage/rings/polynomial/laurent_polynomial_ring.py
 +++ b/src/sage/rings/polynomial/laurent_polynomial_ring.py
-@@ -270,8 +270,8 @@
--        sage: _split_dict_(D, [0,1])
-+        sage: _split_dict_(D, [0,1])  # known bug - Sagelite WASI traceback includes nested local exception qualname
-         Traceback (most recent call last):
-         ...
-         SplitDictError: split not possible
--        sage: _split_dict_(D, [0], [1])
-+        sage: _split_dict_(D, [0], [1])  # known bug - Sagelite WASI traceback includes nested local exception qualname
-         Traceback (most recent call last):
-         ...
-         SplitDictError: split not possible
 @@ -386,6 +386,6 @@
          sage: from sage.rings.polynomial.laurent_polynomial_ring import from_fraction_field
          sage: L.<x, y> = LaurentPolynomialRing(ZZ)

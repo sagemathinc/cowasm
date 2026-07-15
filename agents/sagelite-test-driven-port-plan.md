@@ -49996,6 +49996,44 @@ The two remaining guarded rows in the same source file are unrelated nested
 local-class traceback presentation differences. The next pass should continue
 with another bounded native arithmetic/backend row.
 
+Nested local-exception traceback normalization pass on 2026-07-15 UTC:
+
+The final two browser-profile `# known bug` guards in
+`sage/rings/polynomial/laurent_polynomial_ring.py` did not cover a Laurent
+arithmetic failure. Python 3.14 reports the locally defined `SplitDictError`
+with its fully qualified name,
+`_split_dict_.<locals>.SplitDictError`, while the documented traceback uses
+the terminal class name. The doctest output checker already compares terminal
+exception class names, but its exception-line parser rejected the special
+`<locals>` qualifier before that comparison could run.
+
+Runner version 110 accepts `<locals>` as a qualified exception-name segment
+while retaining the existing identifier and terminal-uppercase checks. The
+standalone doctest fixture now covers a locally defined exception directly,
+and both `_split_dict_` rows are enabled in the accumulated WASI patch. The
+focused synthetic replay records 2 passed blocks, and the complete clean-source
+file replay records:
+
+```text
+laurent_polynomial_ring.py: 117 passed, 0 failed, 38 skipped
+```
+
+The final SQLite dashboards are
+`.tmp/current-run/scheduled-2026-07-15-split-dict/final-local.sqlite3` and
+`.tmp/current-run/scheduled-2026-07-15-split-dict/final-full.sqlite3`; both
+pass `PRAGMA integrity_check`, and the file dashboard records lines 270 and
+274 as untagged passes. Applying the accumulated patch exactly once to a clean
+detached worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. A clean
+four-worker rebuild completes all standalone checks and reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The next pass should return to another bounded native arithmetic/backend
+cluster now that this traceback-only guard cluster is exhausted.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

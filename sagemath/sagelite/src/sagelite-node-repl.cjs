@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 109;
+const doctestRunnerVersion = 110;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2530,7 +2530,10 @@ class __CowasmOutputChecker(doctest.OutputChecker):
     def __split_exception_line(self, line):
         head, separator, detail = line.partition(":")
         head = head.strip()
-        if not re.match(r"^[A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*$", head):
+        if not re.match(
+            r"^[A-Za-z_]\\w*(?:\\.(?:[A-Za-z_]\\w*|<locals>))*$",
+            head,
+        ):
             return None, None
         if not separator:
             return head, ""
