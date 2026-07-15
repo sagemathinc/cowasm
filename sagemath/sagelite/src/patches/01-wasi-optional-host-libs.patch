@@ -4602,15 +4602,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
          True
 
          sage: R = PolynomialRing(ZZ, 'p', sparse=True, implementation='generic')
-@@ -449,7 +449,7 @@
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
-         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
-
--        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
-+        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R) # known bug
-         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
-         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
-         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 @@ -497,39 +497,39 @@
      Polynomial rings over double-precision real and complex fields are supported
      by the ``'singular'`` implementation::
@@ -4688,15 +4679,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
          Multivariate Polynomial Ring in x over Rational Field
          sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
          Multivariate Polynomial Ring in no variables over Rational Field
-@@ -652,7 +652,7 @@
-         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
-         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
--        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
-+        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R) # known bug
-         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
-         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
-         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 @@ -995,11 +995,11 @@
              and Category of commutative algebras over fields
              and Category of infinite sets
@@ -23949,7 +23931,7 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_sequence.py b/src/sage/r
 diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
 --- a/src/sage/rings/polynomial/multi_polynomial_element.py
 +++ b/src/sage/rings/polynomial/multi_polynomial_element.py
-@@ -2244,0 +2245,11 @@
+@@ -2244,0 +2245,20 @@
 +
 +        The generic implementation falls back to multivariate long division
 +        when Singular is unavailable::
@@ -23961,17 +23943,25 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 +            sage: q, r = f.quo_rem(x + 1)
 +            sage: q * (x + 1) + r == f
 +            True
-@@ -2249 +2261 @@
++
++        Over a non-field coefficient ring, exact leading-coefficient
++        divisions are used and nondivisible terms remain in the remainder::
++
++            sage: Z.<x,y> = PolynomialRing(ZZ, implementation='generic')
++            sage: ((2*x + 2) * (x + y)).quo_rem(2*x + 2)
++            (x + y, 0)
++            sage: x.quo_rem(2*x)
++            (0, x)
+@@ -2249 +2270 @@
 -        except TypeError:
 +        except (ImportError, TypeError):
-@@ -2255 +2267,22 @@
+@@ -2255 +2276,31 @@
 -            raise
-+            if not R.base_ring().is_field():
-+                raise
-+
 +            if not right:
 +                raise ZeroDivisionError("polynomial division by zero")
 +
++            base_ring = R.base_ring()
++            coefficients_are_field = base_ring.is_field()
 +            quotient = R.zero()
 +            remainder = R.zero()
 +            dividend = self
@@ -23979,7 +23969,17 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 +            while dividend:
 +                dividend_lm = dividend.lm()
 +                if R.monomial_divides(divisor_lm, dividend_lm):
-+                    term = (dividend.lc() / right.lc()
++                    if coefficients_are_field:
++                        coefficient = dividend.lc() / right.lc()
++                    else:
++                        try:
++                            coefficient = base_ring(dividend.lc() / right.lc())
++                        except (ArithmeticError, TypeError, ValueError):
++                            term = dividend.lt()
++                            remainder += term
++                            dividend -= term
++                            continue
++                    term = (coefficient
 +                            * R.monomial_quotient(dividend_lm, divisor_lm))
 +                    quotient += term
 +                    dividend -= term * right

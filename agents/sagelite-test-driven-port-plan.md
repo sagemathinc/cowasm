@@ -50424,6 +50424,47 @@ a copied manifest-validated browser resource bundle for validation; no native
 WASM rebuild is required. The next pass should continue with another bounded
 native arithmetic/backend cluster.
 
+Generic integer multivariate exact-division pass on 2026-07-15 UTC:
+
+An audit of the guarded generic polynomial-constructor `TestSuite` rows found
+that the two integer-ring cases still failed `_test_divides` after the earlier
+cross-parent equality repair. The pure-Python multivariate `quo_rem` fallback
+handled coefficient fields but deliberately re-raised the unavailable Singular
+import for non-field bases, so even exact divisibility checks over `ZZ` reached
+the stripped profile's missing `pexpect` dependency.
+
+The generic long-division backend now coerces an exact leading-coefficient
+quotient back into the base ring. If that coercion is impossible, it moves the
+leading term into the remainder and continues, preserving the quotient/remainder
+identity for nonexact cases instead of requiring fraction-field coefficients.
+A focused regression covers exact division by a nonunit leading coefficient,
+nondivisible leading terms, and reconstruction of a mixed quotient/remainder.
+The two corresponding `polynomial_ring_constructor.py` browser guards are now
+removed. The rational constructor guards remain live because their separate
+`None == 0` equality-transitivity failure still reproduces.
+
+Focused and complete shared-source replays record:
+
+```text
+generic ZZ division fixture:          5 passed, 0 failed,  0 skipped
+polynomial_ring_constructor.py:     104 passed, 0 failed, 67 skipped
+```
+
+The initial NTL audit in the same pass also showed why focused promotion needs
+a whole-file check: `ntl_GF2E._sage_()` passes alone but reaches the existing
+PARI memory trap after the module's earlier examples, so its guard remains in
+place. Final SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-ntl-gf2x/`; the retained regression and
+whole-file databases pass `PRAGMA integrity_check`. Applying the complete
+accumulated patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed polynomial backend and constructor sources are byte-identical to
+the tested shared source, and the reconstructed whole-file replay reports the
+same 104/0/67 result. The pure-Python backend was staged into a copied,
+manifest-validated browser resource bundle; no native WASM rebuild is required.
+The next pass should continue with the generic equality-transitivity cluster or
+another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
