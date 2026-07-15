@@ -17368,36 +17368,6 @@ diff --git a/src/sage/rings/power_series_poly.pyx b/src/sage/rings/power_series_
 @@ -1035 +1035 @@
 -            sage: (x - x^2).reverse(precision=3)
 +            sage: (x - x^2).reverse(precision=3)                                    # needs sage.libs.pari
-@@ -1144 +1144 @@
--            sage: exp(z).pade(4, 0)
-+            sage: exp(z).pade(4, 0)                                                   # known bug
-@@ -1146 +1146 @@
--            sage: exp(z).pade(1, 1)
-+            sage: exp(z).pade(1, 1)                                                   # known bug
-@@ -1148 +1148 @@
--            sage: exp(z).pade(3, 3)
-+            sage: exp(z).pade(3, 3)                                                   # known bug
-@@ -1150 +1150 @@
--            sage: log(1-z).pade(4, 4)
-+            sage: log(1-z).pade(4, 4)                                                 # known bug
-@@ -1153 +1153 @@
--            sage: sqrt(1+z).pade(3, 2)
-+            sage: sqrt(1+z).pade(3, 2)                                                # known bug
-@@ -1155 +1155 @@
--            sage: exp(2*z).pade(3, 3)
-+            sage: exp(2*z).pade(3, 3)                                                 # known bug
-@@ -1164 +1164 @@
--            sage: f.pade(3, 3) # abs tol 1e-10
-+            sage: f.pade(3, 3)                                                        # known bug
-@@ -1170 +1170 @@
--            sage: f.pade(4, 4)
-+            sage: f.pade(4, 4)                                                        # known bug
-@@ -1178 +1178 @@
--            sage: (1 + x + O(x^100)).pade(2,2)
-+            sage: (1 + x + O(x^100)).pade(2,2)                                       # known bug
-@@ -1184 +1184 @@
--            sage: (1 + x + O(x^2)).pade(0,1)
-+            sage: (1 + x + O(x^2)).pade(0,1)                                         # known bug
 @@ -1204 +1204 @@
 -            sage: SR(s)
 +            sage: SR(s)                                                             # needs sage.symbolic

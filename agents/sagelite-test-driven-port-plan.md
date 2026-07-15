@@ -50034,6 +50034,37 @@ sagelite-ok meson configure compile install node import electron resources smoke
 The next pass should return to another bounded native arithmetic/backend
 cluster now that this traceback-only guard cluster is exhausted.
 
+Power-series Padé promotion pass on 2026-07-15 UTC:
+
+The ten browser-profile `# known bug` guards on
+`sage/rings/power_series_poly.pyx:1144-1184` are stale. Enabling the complete
+cluster exercises Padé reconstruction over exact rational series, real
+series, insufficient-precision errors, and precision-boundary cases. Nine
+rows pass exactly. The real-coefficient row differs only in harmless floating
+roundoff (for example `6.00000000000002` instead of `6.0`) and already carries
+upstream Sage's `# abs tol 1e-10` annotation, which the browser patch had
+temporarily replaced with the deferred guard. Restoring the upstream row makes
+the runner accept that result through its normal numeric-tolerance path.
+
+The accumulated WASI patch no longer modifies any of the ten Padé rows. The
+complete shared-source replay records:
+
+```text
+power_series_poly.pyx: 215 passed, 0 failed, 65 skipped
+```
+
+The focused and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-pade/`; every retained database passes
+`PRAGMA integrity_check`. The final dashboard records nine untagged passes and
+one tolerance-tagged pass across the promoted cluster. Applying the complete
+accumulated patch once to a fresh worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, the
+reconstructed `power_series_poly.pyx` is byte-identical to the tested shared
+source, and its whole-file replay reports the same 215/0/65 result. Because
+this pass only restores upstream doctest metadata, the coherent browser
+resource bundle does not require a rebuild. The next pass should continue with
+another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
