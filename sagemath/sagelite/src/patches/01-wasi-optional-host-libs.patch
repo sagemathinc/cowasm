@@ -20191,7 +20191,7 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py b/src/sag
 +++ b/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
 @@ -94,1 +94,1 @@
 -    sage: B.inverse()
-+    sage: B.inverse()  # known bug - Sagelite WASI singular-matrix diagnostic text
++    sage: B.inverse()  # needs sage.matrix.matrix_integer_dense
 diff --git a/src/sage/tests/books/judson_abstract_algebra/domains-sage.py b/src/sage/tests/books/judson_abstract_algebra/domains-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/domains-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/domains-sage.py

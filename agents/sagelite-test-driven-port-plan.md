@@ -50247,6 +50247,39 @@ Because this pass only reclassifies source doctest metadata, the coherent
 browser resource bundle does not require a rebuild. The next pass should
 continue with another bounded native arithmetic/backend cluster.
 
+Integer-matrix singular-diagnostic backend classification pass on 2026-07-15
+UTC:
+
+The browser-profile `# known bug` guard on `B.inverse()` in
+`sage/tests/books/judson_abstract_algebra/sets-sage.py` is specialized integer
+matrix coverage rather than a generic inversion regression. A forced deferred
+replay confirms that the stripped profile correctly detects the singular
+matrix and raises `ZeroDivisionError`, but its selected
+`Matrix_generic_dense` implementation reports `input matrix must be
+nonsingular`. The documented `matrix must be nonsingular` diagnostic is
+implemented by `Matrix_integer_dense`.
+
+The row now uses `# needs sage.matrix.matrix_integer_dense`, matching the
+existing feature boundary for the unavailable specialized integer-matrix
+implementation. Its focused default-profile replay records one skip with tags
+`optional,needs:sage.matrix.matrix_integer_dense` and skip reason
+`optional:sage.matrix.matrix_integer_dense`. Shared and reconstructed
+whole-file replays record:
+
+```text
+sets-sage.py: 27 passed, 0 failed, 4 skipped
+```
+
+The focused, backend-selection, and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-singular-matrix/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed source is byte-identical to the tested shared source. Because
+this pass only reclassifies source doctest metadata, the coherent browser
+resource bundle does not require a rebuild. The next pass should continue with
+another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
