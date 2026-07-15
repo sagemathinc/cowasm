@@ -24028,3 +24028,90 @@ diff --git a/src/sage/categories/euclidean_domains.py b/src/sage/categories/eucl
 @@ -93 +93 @@
 -                sage: sorted(Pol.gcd_free_basis([                                      # known bug - polynomial gcd-free basis times out in Sagelite WASI profile
 +                sage: sorted(Pol.gcd_free_basis([
+diff --git a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+--- a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
++++ b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+@@ -880 +880,21 @@
+     dict = monomial_coefficients
++
++    def _polynomial_(self, R):
++        r"""
++        Convert ``self`` to the polynomial ring ``R``.
++
++        This is possible exactly when ``self`` has no negative exponents::
++
++            sage: L.<x, y> = LaurentPolynomialRing(QQ)
++            sage: P = L.polynomial_ring()
++            sage: P(x^2 + x*y + 1)
++            x^2 + x*y + 1
++            sage: P(x^-1 + y)
++            Traceback (most recent call last):
++            ...
++            ValueError: Laurent polynomial with negative exponent cannot be converted to polynomial
++        """
++        numerator, denominator = self._fraction_pair()
++        if not denominator.is_one():
++            raise ValueError("Laurent polynomial with negative exponent cannot be converted to polynomial")
++        return R(numerator)
++
+diff --git a/src/sage/rings/polynomial/multi_polynomial_sequence.py b/src/sage/rings/polynomial/multi_polynomial_sequence.py
+--- a/src/sage/rings/polynomial/multi_polynomial_sequence.py
++++ b/src/sage/rings/polynomial/multi_polynomial_sequence.py
+@@ -174 +174,4 @@
+-from sage.rings.polynomial.plural import NCPolynomialRing_plural
++try:
++    from sage.rings.polynomial.plural import NCPolynomialRing_plural
++except ImportError:
++    NCPolynomialRing_plural = ()
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -2244,0 +2245,11 @@
++
++        The generic implementation falls back to multivariate long division
++        when Singular is unavailable::
++
++            sage: P.<x,y> = PolynomialRing(QQ, implementation='generic')
++            sage: f = (x + 1) * (x + y) + y
++            sage: f.quo_rem(x + 1)
++            (x + y, y)
++            sage: q, r = f.quo_rem(x + 1)
++            sage: q * (x + 1) + r == f
++            True
+@@ -2249 +2261 @@
+-        except TypeError:
++        except (ImportError, TypeError):
+@@ -2255 +2267,22 @@
+-            raise
++            if not R.base_ring().is_field():
++                raise
++
++            if not right:
++                raise ZeroDivisionError("polynomial division by zero")
++
++            quotient = R.zero()
++            remainder = R.zero()
++            dividend = self
++            divisor_lm = right.lm()
++            while dividend:
++                dividend_lm = dividend.lm()
++                if R.monomial_divides(divisor_lm, dividend_lm):
++                    term = (dividend.lc() / right.lc()
++                            * R.monomial_quotient(dividend_lm, divisor_lm))
++                    quotient += term
++                    dividend -= term * right
++                else:
++                    term = dividend.lt()
++                    remainder += term
++                    dividend -= term
++            return quotient, remainder
+diff --git a/src/sage/rings/polynomial/laurent_polynomial_ring.py b/src/sage/rings/polynomial/laurent_polynomial_ring.py
+--- a/src/sage/rings/polynomial/laurent_polynomial_ring.py
++++ b/src/sage/rings/polynomial/laurent_polynomial_ring.py
+@@ -726,3 +726,3 @@
+-            sage: RL = R.localization(x + 1)                                       # known bug - Sagelite WASI localization rejects this nonconstant denominator
+-            sage: xi = RL(~x)                                                      # known bug - Sagelite WASI localization rejects this nonconstant denominator
+-            sage: R(xi) == ~x     # indirect doctests                              # known bug - Sagelite WASI localization rejects this nonconstant denominator
++            sage: RL = R.localization(x + 1)
++            sage: xi = RL(~x)
++            sage: R(xi) == ~x     # indirect doctests

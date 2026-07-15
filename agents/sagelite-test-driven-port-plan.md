@@ -49949,6 +49949,53 @@ source doctest annotation, the coherent browser resource bundle does not
 require a rebuild. The next pass should continue with another bounded native
 arithmetic/backend row.
 
+Generic Laurent-polynomial localization pass on 2026-07-15 UTC:
+
+The three browser-profile `# known bug` guards on the nonconstant localization
+example in `sage/rings/polynomial/laurent_polynomial_ring.py` exposed two
+generic arithmetic gaps rather than an unavailable localization backend.
+Multivariate Laurent polynomials had no conversion protocol for an ordinary
+polynomial ring, and multivariate polynomial `quo_rem` unconditionally entered
+the optional Singular path. The optional `plural` decorator import also made
+the generic polynomial sequence module unavailable when that backend was
+absent.
+
+Multivariate Laurent polynomials now implement `_polynomial_` through their
+fraction pair, accepting exactly the elements with denominator one and thus no
+negative exponents. Commutative polynomial sequences remain importable without
+the optional `plural` module, and multivariate `quo_rem` falls back to ordinary
+leading-term long division over fields when Singular cannot be loaded. The
+three localization rows are now enabled and verify construction at `x + 1`,
+conversion of `~x` into the localization, and the round trip back to the
+Laurent ring.
+
+The focused rebuilt regression records:
+
+```text
+regression.py: 13 passed, 0 failed, 0 skipped
+```
+
+The complete Laurent-polynomial-ring replay records:
+
+```text
+laurent_polynomial_ring.py: 115 passed, 0 failed, 40 skipped
+```
+
+The final SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-laurent-localization/`; both pass
+`PRAGMA integrity_check`. Applying the complete accumulated patch to a fresh
+worktree at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects. A clean rebuild from that worktree completes all
+standalone checks and reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The two remaining guarded rows in the same source file are unrelated nested
+local-class traceback presentation differences. The next pass should continue
+with another bounded native arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
