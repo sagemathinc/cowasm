@@ -4383,7 +4383,7 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 @@ -2259,5 +2259,5 @@
              sage: R.<t> = QQ[]
 -            sage: 2^t
-+            sage: 2^t                                                               # known bug
++            sage: 2^t                                                              # needs sage.libs.flint
              Traceback (most recent call last):
              ...
              TypeError: no canonical coercion from Univariate Polynomial

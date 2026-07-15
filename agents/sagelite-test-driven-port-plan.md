@@ -49786,6 +49786,38 @@ next pass should continue with another bounded native arithmetic/backend row;
 the separate generic-polynomial power diagnostic at ``integer.pyx:2259``
 remains a candidate for a focused audit.
 
+Generic rational-polynomial power dependency classification pass on 2026-07-15
+UTC:
+
+The remaining browser-profile ``# known bug`` guard at
+``sage/rings/integer.pyx:2259`` covered a diagnostic emitted by Sage's
+FLINT-backed rational-polynomial class, not a broken generic power operation.
+Full Sage selects ``Polynomial_rational_flint`` for ``QQ[]``; that class
+coerces a nonintegral exponent through ``QQ`` and reports the documented
+canonical-coercion error. The stripped profile intentionally selects
+``Polynomial_generic_dense``, whose generic exponent contract instead reports
+that nonintegral exponents are unsupported. Changing that generic diagnostic
+would regress its existing ``x^x`` and fractional-exponent behavior merely to
+imitate an unavailable specialized backend.
+
+The row now uses ``# needs sage.libs.flint``. Its focused default-profile
+replay records one skip with tags ``optional,needs:sage.libs.flint`` and skip
+reason ``optional:sage.libs.flint``. Applying the complete accumulated patch
+once to a clean worktree at pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without rejects, and
+the reconstructed whole-file replay records:
+
+```text
+integer.pyx: 1021 passed, 0 failed, 192 skipped
+```
+
+The focused and whole-file SQLite dashboards are under
+``.tmp/current-run/scheduled-2026-07-15-integer-power-diagnostic/``; both pass
+``PRAGMA integrity_check``, and the reconstructed tree and CoWasm both pass
+their diff checks. The next pass should continue with another bounded native
+arithmetic/backend row while classifying diagnostics that belong only to an
+unavailable specialized implementation as dependency metadata.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
