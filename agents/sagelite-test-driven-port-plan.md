@@ -50183,6 +50183,40 @@ reconstructed lazy-series source files are byte-identical to the tested shared
 source. The next pass should continue with another bounded native
 arithmetic/backend cluster.
 
+Complex-ball argument-group namespace promotion pass on 2026-07-15 UTC:
+
+The remaining browser-profile `# known bug` guard on `ArgumentGroup(CBF)` in
+`sage/groups/misc_gps/argument_groups.py` exposed a doctest namespace identity
+bug rather than an argument-group factory defect. Both `CBF` and `RBF`
+entered the per-file namespace as unresolved `LazyImport` proxies. The
+factory therefore could not recognize the complex ball parent through
+`sage.rings.abc.ComplexBallField` and incorrectly selected the argument-of-
+elements group instead of the unit-circle group over the real ball field.
+
+Runner version 112 resolves the real and complex ball-field singleton parents
+alongside the existing core numeric and algebraic-field lazy imports. The
+standalone doctest fixture now checks the exact `ArgumentGroup(CBF)` contract
+inside an existing algebraic-parent block, so its aggregate block counts and
+stable keys do not change. The accumulated WASI patch removes the stale
+guard. Focused and whole-file default-profile replays record:
+
+```text
+argument_groups.py --line 1784:   1 passed, 0 failed,  0 skipped
+argument_groups.py:             257 passed, 0 failed, 78 skipped
+```
+
+The final runner-version-112 dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-argument-cbf/`; the standalone namespace
+regression and complete module databases pass `PRAGMA integrity_check`.
+Applying the complete accumulated patch exactly once to a clean worktree at
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects. The reconstructed `argument_groups.py` is byte-identical to the
+tested shared source and independently reports the same 257/0/78 result. Node
+and shell syntax checks and `git diff --check` also pass. Because the repair
+is in the host doctest runner and source metadata, the coherent browser WASM
+resource bundle does not require a rebuild. The next pass should continue
+with another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

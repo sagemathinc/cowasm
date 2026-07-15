@@ -14494,9 +14494,6 @@ diff -urN -U0 a/src/sage/groups/misc_gps/argument_groups.py b/src/sage/groups/mi
 +            sage: # needs sage.symbolic
 @@ -1532,0 +1532 @@
 +            sage: # needs sage.symbolic
-@@ -1777 +1777 @@
--        sage: ArgumentGroup(CBF)
-+        sage: ArgumentGroup(CBF)                                                        # known bug - complex ball argument group drift
 diff -urN a/src/sage/rings/semirings/tropical_mpolynomial.py b/src/sage/rings/semirings/tropical_mpolynomial.py
 --- a/src/sage/rings/semirings/tropical_mpolynomial.py
 +++ b/src/sage/rings/semirings/tropical_mpolynomial.py

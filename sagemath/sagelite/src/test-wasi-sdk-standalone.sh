@@ -2022,7 +2022,7 @@ EXAMPLES::
     True
     sage: R.<x> = PolynomialRing(ZZ, sparse=True); ZZ._roots_univariate_polynomial((x + 1)^2 * (x - 3))
     [(3, 1), (-1, 2)]
-    sage: R.<x> = PolynomialRing(QQbar, sparse=True); (1 + 2*x)^3 + 3*x
+    sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup; assert CBF._real_field() is RBF and "Exponents in Real ball field" in repr(ArgumentGroup(CBF)); R.<x> = PolynomialRing(QQbar, sparse=True); (1 + 2*x)^3 + 3*x
     8*x^3 + 12*x^2 + 9*x + 1
     sage: S.<y> = PolynomialRing(AA, sparse=True); (1 + 2*y)^3 + 3*y
     8*y^3 + 12*y^2 + 9*y + 1
