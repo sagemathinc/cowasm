@@ -50313,6 +50313,40 @@ this pass only reclassifies source doctest metadata, the coherent browser
 resource bundle does not require a rebuild. The next pass should continue
 with another bounded native arithmetic/backend cluster.
 
+Multiline exception-detail normalization pass on 2026-07-15 UTC:
+
+Eight remaining browser-profile `# known bug` guards in
+`sage/categories/pushout.py` and
+`sage/rings/asymptotic/growth_group.py` covered one runner presentation gap,
+not distinct coercion or growth-group defects. Sage's documented exceptions
+wrap long messages across physical lines, while Python 3.14 can emit the same
+message on one line. The doctest checker previously selected only one physical
+exception line, so normal ellipsis comparison could not see the complete
+logical detail.
+
+Runner version 113 extracts the terminal exception record, folds its detail
+continuation lines with spaces, and then applies the existing exception-class,
+local-class, and ellipsis rules. The standalone fixture now deliberately wraps
+a local exception detail, and a focused growth-group fixture covers the
+four-line `PartialConversionValueError` message. The accumulated WASI patch
+removes seven traceback-format guards from `pushout.py` and the remaining
+multiline-exception guard from `growth_group.py`.
+
+Focused and complete shared-source replays record:
+
+```text
+multiline-exception fixture: 4 passed, 0 failed,   0 skipped
+growth_group.py:           767 passed, 0 failed, 185 skipped
+pushout.py:                484 passed, 0 failed, 469 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-growth-multiline/`; the final databases
+pass `PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The next
+pass should continue with another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

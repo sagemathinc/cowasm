@@ -14799,27 +14799,12 @@ diff -urN a/src/sage/algebras/lie_algebras/quotient.py b/src/sage/algebras/lie_a
 diff -urN a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
 --- a/src/sage/categories/pushout.py
 +++ b/src/sage/categories/pushout.py
-@@ -366 +366 @@
--            sage: pushout(QQ, cartesian_product([ZZ]))  # indirect doctest
-+            sage: pushout(QQ, cartesian_product([ZZ]))  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
-@@ -395 +395 @@
--            sage: pushout(QQ, cartesian_product([QQ]))  # indirect doctest
-+            sage: pushout(QQ, cartesian_product([QQ]))  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
 @@ -474 +474 @@
 -            sage: F(f)           # indirect doctest
 +            sage: F(f)           # indirect doctest                                    # needs pexpect
 @@ -498 +498 @@
 -            sage: F(R)       # indirect doctest
 +            sage: F(R)       # indirect doctest                                        # needs pexpect
-@@ -762 +762 @@
--            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest
-+            sage: pushout(cartesian_product([ZZ]), QQ)  # indirect doctest              # known bug - traceback line wrapping differs in the WASI runtime
-@@ -1208 +1208 @@
--        sage: A.construction()[0] * R.construction()[0]
-+        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
-@@ -1219 +1219 @@
--        sage: A.construction()[0] * R.construction()[0]
-+        sage: A.construction()[0] * R.construction()[0]                                # known bug - traceback line wrapping differs in the WASI runtime
 @@ -2385 +2385 @@
 -        sage: F(f)
 +        sage: F(f)                                                                      # needs pexpect
@@ -14862,12 +14847,6 @@ diff -urN a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
 -            sage: FG = BlackBoxConstructionFunctor(gap)
 +            sage: from sage.interfaces.maxima_lib import maxima                         # needs sage.symbolic
 +            sage: FG = BlackBoxConstructionFunctor(gap)                                # needs sage.libs.gap
-@@ -4052 +4052 @@
--        sage: pushout(ZZ['x,y,z'], QQ['w,z,t'])
-+        sage: pushout(ZZ['x,y,z'], QQ['w,z,t'])                                        # known bug - traceback line wrapping differs in the WASI runtime
-@@ -4361 +4361 @@
--        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)
-+        sage: pushout(CartesianProductPoly((ZZ['x'],)), ZZ)                            # known bug - traceback line wrapping differs in the WASI runtime
 diff -urN a/src/sage/numerical/interactive_simplex_method.py b/src/sage/numerical/interactive_simplex_method.py
 --- a/src/sage/numerical/interactive_simplex_method.py
 +++ b/src/sage/numerical/interactive_simplex_method.py
@@ -23028,12 +23007,6 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 @@ -1935 +1935 @@ def _an_element_(self):
 -            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest
 +            sage: GrowthGroup('QQ^(x*log(x))').an_element()  # indirect doctest  # needs sage.symbolic
-diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
---- a/src/sage/rings/asymptotic/growth_group.py
-+++ b/src/sage/rings/asymptotic/growth_group.py
-@@ -2108 +2108 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
--            sage: G(a)
-+            sage: G(a)  # known bug - Sagelite WASI multiline exception formatting
 diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
 --- a/src/sage/rings/asymptotic/growth_group.py
 +++ b/src/sage/rings/asymptotic/growth_group.py

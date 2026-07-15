@@ -1979,7 +1979,8 @@ EXAMPLES::
     sage: cowasm_raise_local_exception()
     Traceback (most recent call last):
     ...
-    CowasmLocalError: local exception smoke
+    CowasmLocalError: local exception
+    smoke
     sage: Subsets(3, 2).cardinality()
     3
     sage: list(IntegerVectors(2, 3))

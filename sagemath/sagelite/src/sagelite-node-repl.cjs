@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 112;
+const doctestRunnerVersion = 113;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2494,28 +2494,46 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         return want == got
 
     def __check_exception_line_output(self, want, got, optionflags):
-        want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]
-        got_lines = [line.strip() for line in got.strip().splitlines() if line.strip()]
-        if len(want_lines) != 1 or len(got_lines) != 1:
-            return False
-        return self.__exception_lines_match(want_lines[0], got_lines[0], optionflags)
-
-    def __check_traceback_output(self, want, got, optionflags):
-        want_error = self.__traceback_exception_line(want)
-        got_error = self.__traceback_exception_line(got)
+        want_error = self.__exception_output(want)
+        got_error = self.__exception_output(got)
         if want_error is None or got_error is None:
             return False
         return self.__exception_lines_match(want_error, got_error, optionflags)
 
-    def __traceback_exception_line(self, text):
+    def __check_traceback_output(self, want, got, optionflags):
+        want_error = self.__traceback_exception(want)
+        got_error = self.__traceback_exception(got)
+        if want_error is None or got_error is None:
+            return False
+        return self.__exception_lines_match(want_error, got_error, optionflags)
+
+    def __traceback_exception(self, text):
         lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
         if not lines or lines[0] != "Traceback (most recent call last):":
             return None
-        for line in reversed(lines[1:]):
-            if line == "...":
+        return self.__exception_from_lines(lines[1:])
+
+    def __exception_output(self, text):
+        lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+        if not lines or lines[0] == "Traceback (most recent call last):":
+            return None
+        return self.__exception_from_lines(lines)
+
+    def __exception_from_lines(self, lines):
+        candidates = []
+        for index, line in enumerate(lines):
+            exception_class, detail = self.__split_exception_line(line)
+            if exception_class is None or not self.__looks_like_exception_class(exception_class):
                 continue
-            return line
-        return None
+            candidates.append((index, exception_class, detail))
+        if not candidates:
+            return None
+        index, exception_class, detail = candidates[-1]
+        continuation = [line for line in lines[index + 1:] if line != "..."]
+        normalized_detail = " ".join([detail] + continuation).strip()
+        if normalized_detail:
+            return exception_class + ": " + normalized_detail
+        return exception_class
 
     def __exception_lines_match(self, want, got, optionflags):
         want_class, want_detail = self.__split_exception_line(want)
@@ -2526,7 +2544,9 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             return False
         if want_class.rsplit(".", 1)[-1] != got_class.rsplit(".", 1)[-1]:
             return False
-        return super().check_output(want_detail, got_detail, optionflags)
+        return want_detail == got_detail or super().check_output(
+            want_detail, got_detail, optionflags
+        )
 
     def __looks_like_exception_class(self, name):
         return name.rsplit(".", 1)[-1][:1].isupper()
