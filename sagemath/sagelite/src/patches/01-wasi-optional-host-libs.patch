@@ -24082,3 +24082,51 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/s
 @@ -102 +102 @@
 -    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
 +    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # needs sage.libs.linbox
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -230,6 +230,13 @@
+             False
+             sage: f == g + z
+             False
++
++        A generic polynomial zero is not equal to ``None``::
++
++            sage: zero = R.zero()
++            sage: (None == zero, zero == None, None != zero, zero != None)
++            (False, False, True, True)
++            sage: R._test_elements_eq_transitive(elements=[zero])
+         """
+         if self.parent() is not right.parent() and op in (op_EQ, op_NE):
+             try:
+@@ -1818,5 +1825,7 @@
+     def __eq__(self, right):
+         if not isinstance(right, MPolynomial_polydict):
++            if right is None:
++                return False
+             # we want comparison with zero to be fast
+             if not right:
+                 return not self._MPolynomial_element__element.dict()
+@@ -1826,5 +1835,7 @@
+     def __ne__(self, right):
+         if not isinstance(right, MPolynomial_polydict):
++            if right is None:
++                return True
+             # we want comparison with zero to be fast
+             if not right:
+                 return not not self._MPolynomial_element__element.dict()
+diff --git a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+--- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
++++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+@@ -636 +636 @@
+-        sage: R = PolynomialRing(QQ, 'a,b,c'); TestSuite(R).run(skip='_test_elements'); R # known bug
++        sage: R = PolynomialRing(QQ, 'a,b,c'); TestSuite(R).run(skip='_test_elements'); R
+@@ -638 +638 @@
+-        sage: R = PolynomialRing(QQ, 'x,y,z', order='degrevlex'); TestSuite(R).run(skip='_test_elements'); R # known bug
++        sage: R = PolynomialRing(QQ, 'x,y,z', order='degrevlex'); TestSuite(R).run(skip='_test_elements'); R
+@@ -640 +640 @@
+-        sage: S = PolynomialRing(QQ, 'x,y,z', order='invlex'); TestSuite(S).run(skip=['_test_construction', '_test_elements']); S # known bug
++        sage: S = PolynomialRing(QQ, 'x,y,z', order='invlex'); TestSuite(S).run(skip=['_test_construction', '_test_elements']); S
+@@ -647 +647 @@
+-        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1 # known bug
++        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1

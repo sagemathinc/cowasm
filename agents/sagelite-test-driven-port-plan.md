@@ -50465,6 +50465,43 @@ manifest-validated browser resource bundle; no native WASM rebuild is required.
 The next pass should continue with the generic equality-transitivity cluster or
 another bounded native arithmetic/backend cluster.
 
+Generic multivariate-polynomial equality-transitivity pass on 2026-07-15 UTC:
+
+The four remaining browser-profile `# known bug` guards on rational generic
+polynomial-constructor `TestSuite` rows all reproduced the same correctness
+defect.  `MPolynomial_polydict.__eq__` and `__ne__` treated every falsy
+non-polynomial operand as scalar zero, so a generic polynomial zero compared
+equal to `None`.  Sage's generic equality test therefore observed
+`None == R.zero()` and `R.zero() == 0` while `None != 0`.
+
+The pure-Python generic backend now handles `None` explicitly before its fast
+scalar-zero path, returning false for equality and true for inequality.  A
+focused browser fixture covers both operand directions, equality and
+inequality, scalar-zero compatibility, and Sage's own
+`_test_elements_eq_transitive`.  The four stale constructor guards are removed,
+while the zero-variable and interval-polynomial equality-transitivity skips
+remain unchanged.
+
+Focused, forced-deferred, and default whole-file replays record:
+
+```text
+generic equality-transitivity fixture:   8 passed, 0 failed,  0 skipped
+polynomial_ring_constructor.py forced: 108 passed, 0 failed, 63 skipped
+polynomial_ring_constructor.py default: 108 passed, 0 failed, 63 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-generic-eq-transitive/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.  The
+reconstructed generic-polynomial backend and constructor sources are
+byte-identical to the tested shared source, and the reconstructed whole-file
+replay reports the same 108/0/63 result.  The pure-Python backend was staged
+into a copied, manifest-validated browser resource bundle for validation; no
+native WASM rebuild is required.  The next pass should continue with another
+bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
