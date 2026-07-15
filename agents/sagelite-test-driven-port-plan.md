@@ -50106,6 +50106,39 @@ sagelite-ok meson configure compile install node import electron resources smoke
 The next pass should continue with another bounded native arithmetic/backend
 cluster.
 
+Integer-polynomial factorization backend classification pass on 2026-07-15
+UTC:
+
+The browser-profile `# known bug` guard on the factorization-content example
+in `sage/structure/factorization.py` is specialized FLINT coverage rather than
+a generic factorization regression. A faithful focused replay reaches
+`f.content()` on the stripped profile's `Polynomial_generic_dense`, which has
+no generic `content()` method. More importantly, the example's final contract
+explicitly requires both factors to have the
+`Polynomial_integer_dense_flint` class selected by full Sage's FLINT-backed
+`ZZ[]` implementation. Pretending that a generic class should satisfy that
+backend-identity assertion would misclassify the dependency boundary.
+
+The row now uses `# needs sage.libs.flint`. Its focused default-profile replay
+records one skip with `needs:sage.libs.flint` metadata, and shared and
+reconstructed whole-file replays record:
+
+```text
+factorization.py: 151 passed, 0 failed, 116 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-factorization-content/`; every retained
+focused and whole-file database passes `PRAGMA integrity_check`. Applying the
+complete accumulated Sagelite patch once to a clean worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `factorization.py` is byte-identical to the tested shared
+source. Because this pass only reclassifies source doctest metadata, the
+coherent browser resource bundle does not require a rebuild. The next pass
+should continue with another bounded native arithmetic/backend cluster; a
+separate generic polynomial-content implementation would need its own
+contract and tests rather than using this FLINT-specific row as its oracle.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

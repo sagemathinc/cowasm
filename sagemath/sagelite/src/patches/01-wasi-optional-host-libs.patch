@@ -8151,7 +8151,7 @@ diff -urN a/src/sage/structure/factorization.py b/src/sage/structure/factorizati
 +++ b/src/sage/structure/factorization.py
 @@ -1071,2 +1071,3 @@
              sage: f = 2*x + 2
-+            sage: # known bug
++            sage: # needs sage.libs.flint
              sage: c = f.content(); g = f//c
 diff -urN a/src/sage/categories/filtered_modules_with_basis.py b/src/sage/categories/filtered_modules_with_basis.py
 --- a/src/sage/categories/filtered_modules_with_basis.py
