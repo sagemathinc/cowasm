@@ -50648,6 +50648,38 @@ focused and whole-file results. This pure-Python fallback requires no native
 WASM rebuild. The next pass should continue with another bounded native
 arithmetic/backend cluster.
 
+Dense matrix allocation preflight pass on 2026-07-15 UTC:
+
+The browser-specific guard on `Matrix(ZZ, sys.maxsize, sys.maxsize)` still
+hid a live runtime failure: forcing the row left the worker in the dense FLINT
+allocation path until the 30-second per-file timeout killed it.  The expected
+Sage contract is a catchable `RuntimeError`, not a host-level hang.
+
+`MatrixSpace` now rejects a dense shape whose flat element count cannot fit in
+`sys.maxsize` before selecting or entering a native matrix backend.  Sparse
+spaces retain their previous dimension behavior, and ordinary dense spaces
+are unchanged.  The stale constructor guard is removed.
+
+Focused, boundary, and complete reconstructed-source replays record:
+
+```text
+constructor.pyx --line 609 before:       0 passed, 1 timeout,  0 skipped
+constructor.pyx --line 609 after:        1 passed, 0 failed,   0 skipped
+dense allocation boundary fixture:      4 passed, 0 failed,   0 skipped
+constructor.pyx default after:         108 passed, 0 failed,  47 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-matrix-allocation/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to a clean worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.  The
+reconstructed matrix-space and constructor sources are byte-identical to the
+staged resource copies, whose manifest validates, and the reconstructed
+whole-file replay reports the same 108/0/47 result.  This pure-Python preflight
+requires no native WASM rebuild.  The next pass should continue with another
+bounded arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

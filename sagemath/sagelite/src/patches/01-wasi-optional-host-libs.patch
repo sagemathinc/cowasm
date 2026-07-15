@@ -19727,6 +19727,11 @@ diff --git a/src/sage/matrix/matrix_space.py b/src/sage/matrix/matrix_space.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix2 sage.matrix.matrix_integer_dense sage.matrix.matrix_mod2_dense sage.matrix.matrix_gap sage.modules.free_module sage.libs.pari sage.groups
  r"""
+@@ -769 +770,3 @@
+-            raise OverflowError("number of rows and columns may be at most %s" % sys.maxsize)
++            raise OverflowError("number of rows and columns may be at most %s" % sys.maxsize)
++        if not sparse and nrows and ncols > sys.maxsize // nrows:
++            raise RuntimeError("matrix dimensions are too large")
 diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
 --- a/src/sage/matrix/matrix_mod2_dense.pyx
 +++ b/src/sage/matrix/matrix_mod2_dense.pyx
@@ -24168,3 +24173,9 @@ diff --git a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 @@ -1954 +1954 @@
 -            sage: r.algebraic_dependency(5)                                              # known bug
 +            sage: r.algebraic_dependency(5)
+diff --git a/src/sage/matrix/constructor.pyx b/src/sage/matrix/constructor.pyx
+--- a/src/sage/matrix/constructor.pyx
++++ b/src/sage/matrix/constructor.pyx
+@@ -609 +609 @@
+-        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)                                     # known bug
++        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
