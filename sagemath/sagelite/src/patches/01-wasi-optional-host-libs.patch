@@ -24105,3 +24105,9 @@ diff --git a/src/sage/rings/lazy_series.py b/src/sage/rings/lazy_series.py
          elif formatter == latex:
              poly = repr_lincomb([(1, m) for m in mons + bigO], is_latex=True, strip_one=True)
          elif formatter == ascii_art:
+diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
+@@ -102 +102 @@
+-    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # known bug
++    sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)  # needs sage.libs.linbox

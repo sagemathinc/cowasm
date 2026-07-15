@@ -50280,6 +50280,39 @@ this pass only reclassifies source doctest metadata, the coherent browser
 resource bundle does not require a rebuild. The next pass should continue with
 another bounded native arithmetic/backend cluster.
 
+Finite-field discrete-log diagnostic backend classification pass on 2026-07-15
+UTC:
+
+The remaining browser-profile `# known bug` guard in
+`sage/tests/books/judson_abstract_algebra/finite-sage.py` is Givaro-specific
+coverage rather than a generic discrete-logarithm regression. A forced
+whole-file replay confirms that the stripped profile's PARI finite-field
+implementation correctly rejects the nonexistent logarithm, but raises its
+documented `ArithmeticError` identifying the element and base. The expected
+`ValueError: no logarithm exists` diagnostic is implemented by
+`FiniteField_givaroElement.log`.
+
+The row now uses `# needs sage.libs.linbox`, matching the existing feature
+boundary for the unavailable Givaro finite-field implementation. Its focused
+default-profile replay records one skip with tags
+`optional,needs:sage.libs.linbox` and skip reason
+`optional:sage.libs.linbox`. Shared and reconstructed whole-file replays
+record:
+
+```text
+finite-sage.py: 15 passed, 0 failed, 1 skipped
+```
+
+The forced, focused, and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-finite-log/`; every retained database
+passes `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed source is byte-identical to the tested shared source. Because
+this pass only reclassifies source doctest metadata, the coherent browser
+resource bundle does not require a rebuild. The next pass should continue
+with another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
