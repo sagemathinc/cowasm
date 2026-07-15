@@ -50065,6 +50065,47 @@ this pass only restores upstream doctest metadata, the coherent browser
 resource bundle does not require a rebuild. The next pass should continue with
 another bounded native arithmetic/backend cluster.
 
+Algebraic-field singleton namespace promotion pass on 2026-07-15 UTC:
+
+The browser-profile `# known bug` guard on the sparse `QQbar` division example
+in `sage/rings/polynomial/polynomial_element_generic.py` exposed a runner
+namespace identity bug rather than a polynomial arithmetic defect. Under WASI,
+`sage.rings.all` exports `AA` and `QQbar` through lazy-import proxies. The
+doctest namespace passed the unresolved proxy into `PolynomialRing`, while
+scalar multiplication later resolved the real singleton parent. Sage's
+coercion model correctly rejected the two different objects as apparently
+duplicated algebraic-field cache entries.
+
+Runner version 111 resolves both algebraic-field parents in every per-file
+doctest namespace, alongside the existing core lazy imports. The standalone
+smoke fixture now exercises sparse polynomial arithmetic over both `QQbar` and
+`AA`, and the accumulated WASI patch removes the stale guard. Before the fix,
+the complete file with the guarded row enabled recorded 227 passed, 4 failed,
+and 55 skipped blocks; the first identity assertion caused the three following
+name-resolution failures. The focused algebraic-parent fixture and final
+whole-file replay now record:
+
+```text
+algebraic-parent-smoke.py: 2 passed, 0 failed, 0 skipped
+polynomial_element_generic.py: 231 passed, 0 failed, 55 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-qqbar-sparse/`; every retained final
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `polynomial_element_generic.py` is byte-identical to the tested
+shared source and its whole-file replay reports the same 231/0/55 result. A
+clean-source standalone rebuild completes all package checks and reports:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The next pass should continue with another bounded native arithmetic/backend
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

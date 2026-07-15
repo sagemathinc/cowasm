@@ -24074,3 +24074,8 @@ diff --git a/src/sage/rings/polynomial/laurent_polynomial_ring.py b/src/sage/rin
 +            sage: RL = R.localization(x + 1)
 +            sage: xi = RL(~x)
 +            sage: R(xi) == ~x     # indirect doctests
+diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
+--- a/src/sage/rings/polynomial/polynomial_element_generic.py
++++ b/src/sage/rings/polynomial/polynomial_element_generic.py
+@@ -566 +566,0 @@
+-            sage: # known bug - QQbar sparse polynomial coercion cache drift
