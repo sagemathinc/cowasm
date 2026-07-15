@@ -13707,33 +13707,6 @@ diff -urN -U0 a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/i
 @@ -2354 +2354 @@
 -            sage: quintic.arithmetic_invariants()
 +            sage: quintic.arithmetic_invariants()                                           # random - dict display order
-@@ -3350 +3350 @@
--            sage: q.Delta_invariant() == coeffs[3]
-+            sage: q.Delta_invariant() == coeffs[3]                                          # known bug - WASI invariant coefficient drift
-@@ -3366 +3366 @@
--            sage: q.Delta_prime_invariant() == coeffs[0]
-+            sage: q.Delta_prime_invariant() == coeffs[0]                                    # known bug - WASI invariant coefficient drift
-@@ -3400 +3400 @@
--            sage: q.Theta_invariant() == coeffs[2]
-+            sage: q.Theta_invariant() == coeffs[2]                                          # known bug - WASI invariant coefficient drift
-@@ -3416 +3416 @@
--            sage: q.Theta_prime_invariant() == coeffs[1]
-+            sage: q.Theta_prime_invariant() == coeffs[1]                                    # known bug - WASI invariant coefficient drift
-@@ -3567 +3567 @@
--            sage: q.Delta_invariant() == coeffs[4]
-+            sage: q.Delta_invariant() == coeffs[4]                                          # known bug - WASI invariant coefficient drift
-@@ -3585 +3585 @@
--            sage: q.Delta_prime_invariant() == coeffs[0]
-+            sage: q.Delta_prime_invariant() == coeffs[0]                                    # known bug - WASI invariant coefficient drift
-@@ -3631 +3631 @@
--            sage: q.Theta_invariant() == coeffs[3]
-+            sage: q.Theta_invariant() == coeffs[3]                                          # known bug - WASI invariant coefficient drift
-@@ -3649 +3649 @@
--            sage: q.Theta_prime_invariant() == coeffs[1]
-+            sage: q.Theta_prime_invariant() == coeffs[1]                                    # known bug - WASI invariant coefficient drift
-@@ -3667 +3667 @@
--            sage: q.Phi_invariant() == coeffs[2]
-+            sage: q.Phi_invariant() == coeffs[2]                                            # known bug - WASI invariant coefficient drift
 @@ -3830 +3830 @@
 -            sage: q.J_covariant().factor()
 +            sage: q.J_covariant().factor()                                                # needs sage.libs.singular
@@ -24015,6 +23988,40 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 +                    remainder += term
 +                    dividend -= term
 +            return quotient, remainder
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -79,0 +80 @@
++from sage.structure.richcmp import op_EQ, op_NE
+@@ -217,0 +219,14 @@
++
++        Equality coerces polynomials whose parents have compatible variable
++        sets before comparing their internal exponent tuples::
++
++            sage: R.<x,y> = PolynomialRing(QQ, implementation='generic')
++            sage: S.<x,y,z> = PolynomialRing(QQ, implementation='generic')
++            sage: f = R.gen(0) + R.gen(1)
++            sage: g = S.gen(0) + S.gen(1)
++            sage: f == g and g == f
++            True
++            sage: f != g or g != f
++            False
++            sage: f == g + z
++            False
+@@ -218,0 +234,7 @@
++        if self.parent() is not right.parent() and op in (op_EQ, op_NE):
++            try:
++                left, right = get_coercion_model().canonical_coercion(self, right)
++            except TypeError:
++                return op == op_NE
++            return left.__element.rich_compare(right.__element, op,
++                                                left.parent().term_order().sortkey)
+@@ -1802 +1824 @@
+-        return self._MPolynomial_element__element == right._MPolynomial_element__element
++        return self._richcmp_(right, op_EQ)
+@@ -1810 +1832 @@
+-        return self._MPolynomial_element__element != right._MPolynomial_element__element
++        return self._richcmp_(right, op_NE)
 diff --git a/src/sage/rings/polynomial/laurent_polynomial_ring.py b/src/sage/rings/polynomial/laurent_polynomial_ring.py
 --- a/src/sage/rings/polynomial/laurent_polynomial_ring.py
 +++ b/src/sage/rings/polynomial/laurent_polynomial_ring.py

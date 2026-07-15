@@ -50375,6 +50375,55 @@ only removes source doctest metadata, the coherent browser resource bundle
 does not require a rebuild. The next pass should continue with another bounded
 native arithmetic/backend cluster.
 
+Generic multivariate-polynomial cross-parent equality pass on 2026-07-15 UTC:
+
+Nine browser-profile `# known bug` guards on the ternary and quaternary
+biquadratic coefficient identities in
+`sage/rings/invariants/invariant_theory.py` exposed one correctness defect in
+the pure-Python `MPolynomial_polydict` backend. The invariant and determinant
+coefficient had identical representations and subtracted to zero, but their
+parents differed by the unused determinant variable `t`. The generic backend's
+direct `PolyDict` comparison therefore compared exponent tuples of different
+length and returned false even though Sage's canonical coercion placed both
+values in the larger parent and made them equal.
+
+The generic polynomial comparison now canonically coerces parent-mismatched
+equality and inequality operands before comparing their internal dictionaries.
+`MPolynomial_polydict.__eq__` and `__ne__` delegate polynomial comparisons to
+that path while retaining the existing fast scalar-zero handling and hash
+implementation. A source regression covers equality in both directions,
+inequality, and a genuinely different polynomial. The focused source row and
+an eight-block browser fixture pass.
+
+A complete forced deferred audit records:
+
+```text
+invariant_theory.py --deferred=known-bug: 874 passed, 1 failed, 13 skipped
+```
+
+All nine coefficient rows pass. The sole failure is the separate
+positive-characteristic `transvectant(f, f, 4)` diagnostic at line 218, whose
+actual exception still includes the modular-inverse detail; that guard remains
+live. The upstream randomized `h_covariant` known-bug row also remains guarded
+despite passing this particular replay. After removing only the nine stale
+WASI annotations, shared and reconstructed default-profile runs record:
+
+```text
+invariant_theory.py: 873 passed, 0 failed, 15 skipped
+```
+
+The focused, forced, fixture, and final SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-transvectant/`; every retained database
+passes `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed generic-polynomial and invariant-theory sources are byte-identical
+to the tested shared source, and the reconstructed focused and whole-file
+replays report the same results. The pure-Python runtime module was staged into
+a copied manifest-validated browser resource bundle for validation; no native
+WASM rebuild is required. The next pass should continue with another bounded
+native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
