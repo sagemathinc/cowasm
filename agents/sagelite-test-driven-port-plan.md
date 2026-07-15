@@ -50217,6 +50217,36 @@ is in the host doctest runner and source metadata, the coherent browser WASM
 resource bundle does not require a rebuild. The next pass should continue
 with another bounded native arithmetic/backend cluster.
 
+Finite-field coercion backend classification pass on 2026-07-15 UTC:
+
+The browser-profile `# known bug` guard on the coercion-error example in
+`sage/tests/books/computational_mathematics_with_sagemath/numbertheory_doctest.py`
+is Givaro-specific coverage rather than a generic finite-field regression. A
+forced deferred replay constructs `GF(9)` with the stripped profile's PARI
+finite-field implementation and correctly rejects conversion from a different
+extension field, but reports that backend's `TypeError: no coercion defined`
+diagnostic. The documented `unable to coerce from a finite field other than the
+prime subfield` text is implemented in `element_givaro.pyx`, and this project
+already classifies Givaro coverage under the `sage.libs.linbox` feature.
+
+The row now uses `# needs sage.libs.linbox`. Its focused default-profile replay
+records one skip with tags `optional,needs:sage.libs.linbox` and skip reason
+`optional:sage.libs.linbox`. Shared and reconstructed whole-file replays record:
+
+```text
+numbertheory_doctest.py: 27 passed, 0 failed, 4 skipped
+```
+
+The focused and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-finite-field-coercion/`; every completed
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once to a clean worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed source file is byte-identical to the tested shared source.
+Because this pass only reclassifies source doctest metadata, the coherent
+browser resource bundle does not require a rebuild. The next pass should
+continue with another bounded native arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

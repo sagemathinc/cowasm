@@ -9249,7 +9249,7 @@ diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/numbert
 +  sage: Set([r for r in R])  # random - finite-field set display order differs in Sagelite
 @@ -77 +77 @@
 -  sage: p = R(x+1); R2(p)
-+  sage: p = R(x+1); R2(p)  # known bug - finite-field coercion diagnostic differs in Sagelite
++  sage: p = R(x+1); R2(p)  # needs sage.libs.linbox
 @@ -128 +128 @@
 -  sage: harmonic(100) == harmonic3(100)
 +  sage: harmonic(100) == harmonic3(100)  # needs sage.symbolic
