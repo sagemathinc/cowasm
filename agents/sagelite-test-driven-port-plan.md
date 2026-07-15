@@ -49631,6 +49631,50 @@ next pass can either finish that rebuild and remove the guard or continue with
 another bounded native cluster that does not depend on the shared Python main
 module.
 
+MPFI oversized-exponent saturation pass on 2026-07-14 UTC:
+
+The remaining browser-profile guard in ``sage/rings/convert/mpfi.pyx`` exposed
+a 32-bit parser overflow rather than an MPFI arithmetic difference. Passing
+the decimal exponent ``999999999999999999999999`` through the WASI MPFR string
+path wrapped it into a negative ``long``, so the documented entire interval
+was rendered as the finite value ``0.?e-323228496``.
+
+The question-style parser now compares positive exponent text with
+``mpfr_get_emax()`` before handing it to MPFR. Values beyond the active MPFR
+range are replaced with the first overflowing exponent, preserving MPFR's
+normal saturation behavior without losing large valid exponents such as
+``e100000000``. The comparison operates on normalized decimal bytes instead
+of converting the exponent to a Python integer, so even inputs longer than
+Python's integer-string digit limit remain well-defined. The WASI-only
+``# known bug`` annotation is removed.
+
+A six-block regression covers oversized ``e``, ``p``, and ``@`` exponents, a
+5,000-digit exponent, and the existing valid large-exponent representation.
+It records 6 passed blocks in
+``.tmp/current-run/scheduled-2026-07-14-mpfi-huge-exponent/exponent-regression.sqlite3``.
+Whole-file default-profile replay records:
+
+```text
+convert/mpfi.pyx: 54 passed, 0 failed, 3 skipped
+```
+
+The shared-source dashboard is
+``.tmp/current-run/scheduled-2026-07-14-mpfi-huge-exponent/full.sqlite3``.
+The focused row persists the expected and actual value as
+``[-infinity .. +infinity]``, and the SQLite database passes
+``PRAGMA integrity_check``. Applying the complete accumulated Sagelite patch
+once to a detached worktree at pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without rejects, and
+the reconstructed converter is byte-identical to the tested source.
+
+The converter side module was rebuilt incrementally against the established
+standalone WASI build and staged into a copied validated resource bundle. The
+primary resource directory remains absent while the unrelated CPython rebuild
+is in progress; no CPython source or build-state changes are part of this
+pass. The next pass should continue with another bounded native
+arithmetic/backend row outside the documented performance, dynamic-link, and
+specialized-backend boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
