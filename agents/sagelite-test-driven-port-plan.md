@@ -50538,6 +50538,46 @@ source doctest metadata, the coherent browser resource bundle does not require
 a native rebuild.  The next pass should continue with another bounded native
 arithmetic/backend cluster.
 
+Generic complex-root isolation fallback pass on 2026-07-15 UTC:
+
+The guarded exact-polynomial examples in
+`sage/rings/polynomial/complex_roots.py` exposed two consecutive stripped
+backend gaps. Generic integer polynomials provide GCD and derivative support
+but no full square-free decomposition, and arbitrary-precision complex
+polynomial roots default to the unavailable cypari2 object-model path.
+
+`complex_roots` now accepts the generic square-free case when a constant GCD
+with the derivative certifies that no multiplicities need recovery. Repeated
+generic polynomials still raise the original `NotImplementedError` instead of
+silently discarding multiplicities. When the default approximate-root path is
+unavailable, NumPy supplies only the initial approximations; the existing
+interval-refinement path still certifies every returned root.
+
+Seven stale browser-profile guards are removed: the two neighboring
+`pexpect` dependency tags, the two root-computation setup guards, the random
+display guard, and the two imaginary-bound guards. The sorted real-interval
+display row remains guarded because the NumPy seed changes its last displayed
+digit. The seven genuinely PARI-backed rows remain dependency skips.
+
+Focused, forced-deferred, and reconstructed whole-file replays record:
+
+```text
+generic complex-root regression:       4 passed, 0 failed, 0 skipped
+complex_roots.py forced known-bug:     34 passed, 1 failed, 7 skipped
+complex_roots.py default:              34 passed, 0 failed, 8 skipped
+```
+
+The SQLite dashboards and copied coherent resource bundle are under
+`.tmp/current-run/scheduled-2026-07-15-complex-roots/`; every retained database
+passes `PRAGMA integrity_check`, and the copied resource manifest validates.
+Applying the complete accumulated Sagelite patch exactly once to a detached
+worktree at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects. The reconstructed `complex_roots.py` is
+byte-identical to the staged resource copy and independently reports the same
+34/0/8 whole-file result. This pure-Python backend change requires no native
+WASM rebuild. The next pass should continue with another bounded native
+arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
