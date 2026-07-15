@@ -49890,6 +49890,36 @@ should continue with another bounded arithmetic/backend row; the negative
 factorial diagnostic at `sage/functions/other.py:1427` is a separate symbolic
 surface classification candidate, not part of this generic-polynomial pass.
 
+Negative factorial symbolic dependency classification pass on 2026-07-15 UTC:
+
+The browser-profile `# known bug` guard on
+`sage/functions/other.py:1427` belongs to the symbolic factorial documentation,
+not to the stripped profile's integer-factorial contract. Forcing the deferred
+row runs the `factorial` exported by the browser startup surface from
+`sage.arith.misc`; it correctly rejects `-32`, but reports that implementation's
+`factorial -- must be nonnegative` diagnostic instead of the symbolic function's
+documented `factorial only defined for nonnegative integers` text. Changing the
+working arithmetic implementation merely to imitate an unavailable symbolic
+binding would misclassify the dependency boundary.
+
+The row now uses `# needs sage.symbolic`. Its focused default-profile replay
+records one skip with tags `optional,needs:sage.symbolic` and skip reason
+`optional:sage.symbolic`. Shared and reconstructed whole-file replays record:
+
+```text
+other.py: 46 passed, 0 failed, 430 skipped
+```
+
+The focused and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-negative-factorial/`; each completed
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch once to a fresh worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `other.py` is byte-identical to the tested shared source. Because
+this pass only reclassifies source doctest metadata, the coherent browser
+resource bundle does not require a rebuild. The next pass should continue with
+another bounded arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

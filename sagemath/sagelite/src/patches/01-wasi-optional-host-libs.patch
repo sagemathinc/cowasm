@@ -10924,7 +10924,7 @@ diff -urN a/src/sage/functions/other.py b/src/sage/functions/other.py
 +            sage: real_nth_root(RIF(2), 3)                                               # needs sage.symbolic
 @@ -1427 +1427 @@
 -            sage: factorial(-32)
-+            sage: factorial(-32)                                                        # known bug
++            sage: factorial(-32)                                                        # needs sage.symbolic
 @@ -1477 +1477 @@
 -            sage: latex(factorial)
 +            sage: latex(factorial)                                                      # needs sage.symbolic
