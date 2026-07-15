@@ -49862,6 +49862,34 @@ and the reconstructed arithmetic and polynomial sources are byte-identical to
 the coherently built sources. The next pass should continue with another
 bounded native arithmetic/backend row.
 
+Generic polynomial GCD-free basis promotion pass on 2026-07-15 UTC:
+
+The browser-profile `# known bug` guard on the polynomial example in
+`sage/categories/euclidean_domains.py` is stale after the recent generic
+polynomial arithmetic repairs. Enabling the guarded row now computes the
+documented pairwise-coprime basis over `QQ[]` without the former timeout and
+records a focused 1/0/0 result. The accumulated WASI patch no longer marks the
+row as deferred.
+
+The complete category file replay records:
+
+```text
+euclidean_domains.py: 22 passed, 0 failed, 0 skipped
+```
+
+The focused enabled, default, reconstructed, and whole-file SQLite dashboards
+are under
+`.tmp/current-run/scheduled-2026-07-15-gcd-free-basis/`; every completed
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+patch once to a fresh worktree at pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `euclidean_domains.py` is byte-identical to the tested source.
+Because this pass only promotes a source doctest annotation, the already
+coherent browser resource bundle does not require a rebuild. The next pass
+should continue with another bounded arithmetic/backend row; the negative
+factorial diagnostic at `sage/functions/other.py:1427` is a separate symbolic
+surface classification candidate, not part of this generic-polynomial pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

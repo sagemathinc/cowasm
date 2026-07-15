@@ -24031,3 +24031,9 @@ diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/p
 @@ -5503,0 +5516,2 @@
 +        if not self._parent.base_ring().is_field():
 +            return q
+diff --git a/src/sage/categories/euclidean_domains.py b/src/sage/categories/euclidean_domains.py
+--- a/src/sage/categories/euclidean_domains.py
++++ b/src/sage/categories/euclidean_domains.py
+@@ -93 +93 @@
+-                sage: sorted(Pol.gcd_free_basis([                                      # known bug - polynomial gcd-free basis times out in Sagelite WASI profile
++                sage: sorted(Pol.gcd_free_basis([
