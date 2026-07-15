@@ -50502,6 +50502,42 @@ into a copied, manifest-validated browser resource bundle for validation; no
 native WASM rebuild is required.  The next pass should continue with another
 bounded native arithmetic/backend cluster.
 
+Native complex constructor guard promotion pass on 2026-07-15 UTC:
+
+Five browser-profile `# known bug` guards around native complex constructors
+are stale.  In `sage/rings/complex_mpfr.pyx`, the full-stream
+`ComplexNumber(42,0)` setup, `abs`, direct `__abs__`, and representation rows
+all produce their documented results in whole-file order.  In
+`sage/rings/complex_interval.pyx`, the argument-free
+`ComplexIntervalFieldElement.__new__` row now raises the documented Cython
+`__cinit__` positional-argument diagnostic.  The accumulated WASI patch no
+longer marks those five prompts as deferred.
+
+Focused and complete shared-source default-profile replays record:
+
+```text
+complex_mpfr.pyx --line 1845:       1 passed, 0 failed,  0 skipped
+complex_mpfr.pyx:                  449 passed, 0 failed, 92 skipped
+complex_interval.pyx --line 92:      1 passed, 0 failed,  0 skipped
+complex_interval.pyx:              261 passed, 0 failed, 16 skipped
+```
+
+A forced whole-file interval audit retains the separate Airy conversion and
+overlap guards, which still fail from the unavailable `airy_ai` startup
+binding.  The neighboring real-double constructor boundary also remains live.
+The focused, forced, shared-source, and final reconstructed SQLite dashboards
+are under `.tmp/current-run/scheduled-2026-07-15-native-next/`; every database
+passes `PRAGMA integrity_check`.
+
+Applying the complete accumulated Sagelite patch exactly once to a detached
+worktree at pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects.  The reconstructed complex MPFR and interval sources
+are byte-identical to the tested shared sources and independently report the
+same 449/0/92 and 261/0/16 whole-file results.  Because this pass only removes
+source doctest metadata, the coherent browser resource bundle does not require
+a native rebuild.  The next pass should continue with another bounded native
+arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

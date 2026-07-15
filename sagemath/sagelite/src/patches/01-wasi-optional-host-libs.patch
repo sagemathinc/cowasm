@@ -21451,17 +21451,6 @@ diff --git a/src/sage/rings/complex_mpfr.pyx b/src/sage/rings/complex_mpfr.pyx
 @@ -1390 +1390 @@
 -            sage: pari(a)
 +            sage: pari(a)                                                               # needs sage.libs.pari
-@@ -1845,2 +1845,2 @@
--            sage: b = ComplexNumber(42,0)
--            sage: abs(b)
-+            sage: b = ComplexNumber(42,0)                                               # known bug - full-stream Cython constructor drift in Sagelite WASI
-+            sage: abs(b)                                                                # known bug - depends on b
-@@ -1848 +1848 @@
--            sage: b.__abs__()
-+            sage: b.__abs__()                                                           # known bug - depends on b
-@@ -1850 +1850 @@
--            sage: b
-+            sage: b                                                                      # known bug - depends on b
 @@ -2239 +2239 @@
 -            sage: cot(1 + I).n()
 +            sage: cot(1 + I).n()                                                        # needs sage.symbolic
@@ -21733,9 +21722,6 @@ diff --git a/src/sage/algebras/down_up_algebra.py b/src/sage/algebras/down_up_al
 diff --git a/src/sage/rings/complex_interval.pyx b/src/sage/rings/complex_interval.pyx
 --- a/src/sage/rings/complex_interval.pyx
 +++ b/src/sage/rings/complex_interval.pyx
-@@ -89 +89 @@
--            sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)
-+            sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)  # known bug
 @@ -278 +278 @@
 -            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
 +            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))  # needs sage.plot
