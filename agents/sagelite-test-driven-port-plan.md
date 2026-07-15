@@ -49758,6 +49758,34 @@ source, and both trees pass their diff checks. The next pass should continue
 with another bounded native arithmetic/backend row now that the coherent
 CPython runtime has cleared this diagnostic-only cluster.
 
+Rational gamma positional-argument diagnostic promotion pass on 2026-07-15
+UTC:
+
+The coherent CPython rebuild also clears the related browser-profile guard in
+``sage/rings/rational.pyx``. The deliberately invalid ``(1/2).gamma(5)`` call
+now preserves the positional argument count in its ``TypeError`` diagnostic,
+so its focused deferred replay passes and the accumulated WASI patch no longer
+adds ``# known bug`` to that row.
+
+Focused default-profile replay records 1 passed block, and the complete file
+records:
+
+```text
+rational.pyx: 473 passed, 0 failed, 112 skipped
+```
+
+The shared-source dashboard is
+``.tmp/current-run/scheduled-2026-07-15-rational-gamma/full.sqlite3``; it
+contains one completed passing file, records the promoted row as an untagged
+pass, and passes ``PRAGMA integrity_check``. Applying the complete accumulated
+Sagelite patch once to a fresh worktree at pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` succeeds without rejects, the
+reconstructed ``rational.pyx`` is byte-identical to the tested shared source,
+and reconstructed focused and whole-file replays report the same results. The
+next pass should continue with another bounded native arithmetic/backend row;
+the separate generic-polynomial power diagnostic at ``integer.pyx:2259``
+remains a candidate for a focused audit.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
