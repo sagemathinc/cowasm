@@ -49675,6 +49675,62 @@ pass. The next pass should continue with another bounded native
 arithmetic/backend row outside the documented performance, dynamic-link, and
 specialized-backend boundaries.
 
+Coherent CPython/Sagelite hexadecimal-float promotion pass on 2026-07-15 UTC:
+
+The CPython formatting repair from the preceding pass now survives a complete
+runtime rebuild. The legacy pinned-Zig build keeps its compatibility contract
+explicit: it omits wasi-libc emulation archives and CPython's standalone WASI
+memory layout, supplies the missing public ``sched_param`` shape, disables the
+unavailable scheduling wrappers, and applies the WASI reftracer no-op patch.
+These accommodations are scoped to the legacy backend; the wasi-sdk build
+retains the upstream emulation-library and memory settings.
+
+Clean default-allocator builds pass all 14 runtime contract tests under both
+the legacy Zig and wasi-sdk runtimes, including signed hexadecimal float
+exponents. The rebuilt wasi-sdk extension surface also passes all 26 import
+and round-trip checks. The browser packaging layer now declares its copied
+CPython archive, export bridge, and standard-library ZIP inputs as Make
+prerequisites, so future CPython rebuilds automatically relink
+``python-wasm`` and refresh its bundles instead of silently retaining an old
+main module. The rebuilt browser runtime reports:
+
+```text
+['-0x1.0000000000000p-1', '0x1.0000000000000p-1',
+ '0x1.0000000000000p+0', '0x1.0000000000000p+1',
+ '0x1.0000000000000p+4']
+```
+
+A clean four-worker Sagelite rebuild from pinned commit
+``f575cf6224f749763d7c875229cbd684e5939e58`` completes all 498 Cython
+generation targets and 1,006 WASM compile/link targets without a retry. The
+full standalone validation finishes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The assertion tail now reflects the 54-block fixture added by the preceding
+runner work: its optional profile records 47/0/7 and one explicitly optional
+row, while its deliberately failing known-bug profile records 42/1/11. Both
+profiles retain their independent composed ``needs``/deferred metadata checks.
+
+Against the rebuilt Electron resource bundle, the formerly deferred
+``real_mpfr.pyx:2178`` hexadecimal conversion row passes with 1/0/0 in the
+default profile, and the complete file records:
+
+```text
+real_mpfr.pyx: 994 passed, 0 failed, 113 skipped
+```
+
+The WASI-only guard is removed. The focused final-patch dashboard is
+``.tmp/current-run/scheduled-2026-07-15-cpython-coherent/real-mpfr-final-patch-default.sqlite3``;
+the whole-file dashboard is the adjacent
+``real-mpfr-full-default.sqlite3``. Applying the complete accumulated
+Sagelite patch once to another fresh pinned checkout succeeds without rejects,
+and the reconstructed ``real_mpfr.pyx`` is byte-identical to the tested clean
+build source. The next pass can return to another bounded native arithmetic
+or backend row with coherent browser resources restored.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

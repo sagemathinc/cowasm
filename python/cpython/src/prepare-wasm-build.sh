@@ -49,6 +49,7 @@ patches=(
   12-timemodule-clang15.patch
   13-socket-unmodified-headers.patch
   19-noninteractive-script-files.patch
+  20-disable-wasi-reftracer.patch
   20-noninteractive-stdin-main.patch
   21-ssl-purpose-txt2obj.patch
   22-regrtest-stty-enotty.patch
@@ -62,3 +63,13 @@ patches=(
 for patch_name in "${patches[@]}"; do
   patch -d "$build_dir" -p1 <"$src_dir/patches/$patch_name"
 done
+
+# CPython's WASI configure adds wasi-libc emulation archives automatically.
+# The pinned Zig backend predates those archives; its host/runtime imports
+# provide the corresponding process and signal behavior instead.  Keep this
+# compatibility patch scoped to the legacy backend so wasi-sdk retains the
+# upstream archive contract.
+if [ "${COWASM_LEGACY_ZIG:-}" = "1" ]; then
+  patch -d "$build_dir" -p1 <"$src_dir/patches/28-zig-no-wasi-emulated-libs.patch"
+  cp "$src_dir/sched.h" "$build_dir"
+fi

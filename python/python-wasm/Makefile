@@ -16,6 +16,9 @@ PYTHON_MINOR = 14
 PYTHON_LIB = python${PYTHON_MAJOR}.${PYTHON_MINOR}
 PYTHON_ABI = ${PYTHON_MAJOR}${PYTHON_MINOR}
 PYTHON_PLATFORM = cpython-${PYTHON_ABI}-wasm32-wasi
+CPYTHON_ARCHIVE = $(firstword $(wildcard \
+	${CPYTHON_WASM}/lib/lib${PYTHON_LIB}.a \
+	${CPYTHON_WASM}/lib/lib${PYTHON_LIB}.a.xz))
 
 CFLAGS = -I$(shell cowasm-package-path @cowasm/cpython)/include/${PYTHON_LIB} -I$(shell cowasm-package-path @cowasm/posix-wasm)
 LDFLAGS = -L${BUILD} -l${PYTHON_LIB}
@@ -36,12 +39,13 @@ HACL_LIBS = ${CPYTHON_WASM}/lib/libHacl_Hash_MD5.a \
 # since it is 25MB and so rarely needed, except here.
 # It's compressed when uploaded to npmjs.com, but not compressed
 # when used via the workspace.
-${BUILD}/lib${PYTHON_LIB}.a:
-	cp ${CPYTHON_WASM}/lib/lib${PYTHON_LIB}.a* ${BUILD}
+${BUILD}/lib${PYTHON_LIB}.a: ${CPYTHON_ARCHIVE}
+	rm -f ${BUILD}/lib${PYTHON_LIB}.a ${BUILD}/lib${PYTHON_LIB}.a.xz
+	cp ${CPYTHON_ARCHIVE} ${BUILD}
 	@[[ -f ${BUILD}/lib${PYTHON_LIB}.a ]] || xz -d ${BUILD}/lib${PYTHON_LIB}.a.xz
 
 
-${BUILD}/libpython.o:
+${BUILD}/libpython.o: ${CPYTHON_WASM}/lib/libpython.c
 	mkdir -p ${BUILD}
 	cd ../build && make zig
 	${BIN}/cowasm-cc -Oz ${CFLAGS} \
@@ -64,17 +68,17 @@ ${DIST}/python.wasm: src/python.c ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}
 BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-everything.zip
 
 
-${DIST}/python-minimal.zip:
+${DIST}/python-minimal.zip: ${CPYTHON_WASM}/lib/dist/python-minimal.zip
 	mkdir -p ${DIST}
-	cp ${CPYTHON_WASM}/lib/dist/python-minimal.zip ${DIST}
+	cp $< $@
 
-${DIST}/python-readline.zip:
+${DIST}/python-readline.zip: ${CPYTHON_WASM}/lib/dist/python-readline.zip
 	mkdir -p ${DIST}
-	cp ${CPYTHON_WASM}/lib/dist/python-readline.zip ${DIST}
+	cp $< $@
 
-${DIST}/python-stdlib.zip:
+${DIST}/python-stdlib.zip: ${CPYTHON_WASM}/lib/dist/python-stdlib.zip
 	mkdir -p ${DIST}
-	cp ${CPYTHON_WASM}/lib/dist/python-stdlib.zip ${DIST}
+	cp $< $@
 
 PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/networkx.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
 

@@ -1,0 +1,23 @@
+--- a/configure
++++ b/configure
+@@ -9766 +9766,2 @@
+-    LIBS="$LIBS -lwasi-emulated-signal -lwasi-emulated-getpid -lwasi-emulated-process-clocks"
++    # CoWasm's pinned Zig sysroot predates wasi-libc's emulation archives.
++    # The legacy runtime supplies these interfaces through its host imports.
+@@ -9789 +9790,3 @@
+-                as_fn_append LDFLAGS_NODIST " -z stack-size=16777216 -Wl,--stack-first -Wl,--initial-memory=41943040"
++                # CoWasm supplies imported, growable memory.  Encoding CPython's
++                # standalone WASI memory layout here makes every dylink module require
++                # a 640-page host memory before the dynamic loader can instantiate it.
+--- a/configure.ac
++++ b/configure.ac
+@@ -2407 +2407,2 @@
+-    LIBS="$LIBS -lwasi-emulated-signal -lwasi-emulated-getpid -lwasi-emulated-process-clocks"
++    dnl CoWasm's pinned Zig sysroot predates wasi-libc's emulation archives.
++    dnl The legacy runtime supplies these interfaces through its host imports.
+@@ -2429,2 +2430,3 @@
+-    dnl https://github.com/WebAssembly/wasi-libc/issues/233
+-    AS_VAR_APPEND([LDFLAGS_NODIST], [" -z stack-size=16777216 -Wl,--stack-first -Wl,--initial-memory=41943040"])
++    dnl CoWasm instead supplies imported, growable memory.  Encoding the
++    dnl standalone WASI memory layout here makes every dylink module require
++    dnl a 640-page host memory before the dynamic loader can instantiate it.

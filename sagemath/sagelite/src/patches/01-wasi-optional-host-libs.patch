@@ -192,9 +192,6 @@ diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 @@ -1711 +1712 @@
 -            sage: for prec in (2, 53, 200):
 +            sage: for prec in (2, 53, 200):  # needs sage.symbolic
-@@ -2177 +2178 @@
--            sage: [(a.hex(), float(a).hex()) for a in [.5, 1., 2., 16.]]
-+            sage: [(a.hex(), float(a).hex()) for a in [.5, 1., 2., 16.]]  # known bug - hexadecimal exponent formatting differs in Sagelite WASI profile
 @@ -3403,0 +3405 @@
 +            sage: # needs sage.libs.pari
 @@ -3434,0 +3437 @@

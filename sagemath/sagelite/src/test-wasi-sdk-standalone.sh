@@ -5427,7 +5427,7 @@ if [ "$doctest_optional_feature_counts" != "passed|54|47|0|7" ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
 fi
 doctest_optional_feature_pass_count="$(sqlite3 "$doctest_optional_feature_db" "select count(*) from blocks where status = 'passed' and tags like '%optional:cowasm_smoke%';")"
-if [ "$doctest_optional_feature_pass_count" != "2" ]; then
+if [ "$doctest_optional_feature_pass_count" != "1" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke did not run the requested optional feature."
@@ -5465,7 +5465,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|52|40|1|11" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|54|42|1|11" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"

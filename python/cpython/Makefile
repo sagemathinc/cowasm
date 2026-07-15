@@ -160,7 +160,7 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 
 ## WASM
 
-CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${DYLINK_LIBPYTHON_JS} $(wildcard ${SRC}/patches/*.patch)
+CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${SRC}/sched.h ${DYLINK_LIBPYTHON_JS} $(wildcard ${SRC}/patches/*.patch)
 
 ${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
 	cd ${CORE_PACKAGES}/dylink && ./node_modules/.bin/tsc -b
@@ -172,7 +172,7 @@ ${BUILD_WASM}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} ${SRC}/pyconfig.
 	touch ${BUILD_WASM}/.build
 	# Create declarations that make everything extension modules need
 	# accessible from outside our "python.wasm as a shared library".
-	${SRC}/prepare-wasm-build.sh ${BUILD_WASM} ${SRC}/Setup.local
+	COWASM_LEGACY_ZIG=1 ${SRC}/prepare-wasm-build.sh ${BUILD_WASM} ${SRC}/Setup.local
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
