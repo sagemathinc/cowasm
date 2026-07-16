@@ -75,6 +75,25 @@ int side_realloc_preserves_prefix(void) {
 }
 
 EXPORTED_SYMBOL
+int side_allocation_failure_returns_null(void) {
+  volatile size_t impossible = (size_t)-1;
+  unsigned char* original = malloc(8);
+  if (!original) {
+    return 0;
+  }
+  original[0] = 0x5a;
+
+  void* failed_malloc = malloc(impossible);
+  volatile size_t overflowing_count = ((size_t)-1 / 2) + 2;
+  void* failed_calloc = calloc(overflowing_count, 2);
+  void* failed_realloc = realloc(original, impossible);
+  int ok = failed_malloc == NULL && failed_calloc == NULL &&
+           failed_realloc == NULL && original[0] == 0x5a;
+  free(original);
+  return ok;
+}
+
+EXPORTED_SYMBOL
 int sorted_with_qsort(void) {
   int values[] = {5, -1, 8, 0, 3, 3, -4};
   int expected[] = {-4, -1, 0, 3, 3, 5, 8};

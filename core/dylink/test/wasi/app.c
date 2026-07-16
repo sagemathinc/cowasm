@@ -109,6 +109,14 @@ int side_realloc_preserves_prefix() {
 }
 
 EXPORTED_SYMBOL
+int side_allocation_failure_returns_null() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f =
+      (FUN_VOID_PTR)dlsym(handle, "side_allocation_failure_returns_null");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int sorted_with_qsort() {
   void* handle = dlopen("./dynamic-library.so", 2);
   FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "sorted_with_qsort");
@@ -236,6 +244,10 @@ int main() {
 
   printf("side_realloc_preserves_prefix() = %d\n", side_realloc_preserves_prefix());
   assert(side_realloc_preserves_prefix() == 1);
+
+  printf("side_allocation_failure_returns_null() = %d\n",
+         side_allocation_failure_returns_null());
+  assert(side_allocation_failure_returns_null() == 1);
 
   printf("sorted_with_qsort() = %d\n", sorted_with_qsort());
   assert(sorted_with_qsort() == 1);

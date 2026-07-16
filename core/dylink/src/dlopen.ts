@@ -203,7 +203,11 @@ export default class DlopenManger {
     }
   }
 
-  private malloc(bytes: number, purpose: string): number {
+  private malloc(
+    bytes: number,
+    purpose: string,
+    throwOnFailure = true
+  ): number {
     if (this._malloc == null) {
       const f = this.mainGetFunction("malloc");
       if (f == null) {
@@ -215,8 +219,11 @@ export default class DlopenManger {
     if (ptr == 0) {
       const err = `out of memory -- malloc failed allocating ${purpose}`;
       log(err);
-      console.warn(err);
-      throw Error(err);
+      if (throwOnFailure) {
+        console.warn(err);
+        throw Error(err);
+      }
+      return 0;
     }
     this.allocationSizes.set(ptr, bytes);
     return ptr;
@@ -237,16 +244,24 @@ export default class DlopenManger {
     this._free(ptr);
   }
 
-  private realloc(ptr: number, size: number, purpose: string): number {
+  private realloc(
+    ptr: number,
+    size: number,
+    purpose: string,
+    throwOnFailure = true
+  ): number {
     if (!ptr) {
-      return this.malloc(size, purpose);
+      return this.malloc(size, purpose, throwOnFailure);
     }
     if (!size) {
       this.free(ptr);
       return 0;
     }
     const oldSize = this.allocationSizes.get(ptr);
-    const next = this.malloc(size, purpose);
+    const next = this.malloc(size, purpose, throwOnFailure);
+    if (!next) {
+      return 0;
+    }
     if (oldSize != null) {
       new Uint8Array(this.memory.buffer).copyWithin(
         next,
@@ -772,16 +787,26 @@ export default class DlopenManger {
         stack_alloc + STACK_SIZE
       ),
       __c_longjmp: cLongjmpTag,
-      malloc: (bytes: number) => this.malloc(bytes, "dynamic library malloc"),
+      malloc: (bytes: number) =>
+        this.malloc(bytes, "dynamic library malloc", false),
       free: (ptr: number) => this.free(ptr),
       calloc: (nmemb: number, size: number) => {
-        const bytes = nmemb * size;
-        const ptr = this.malloc(bytes, "dynamic library calloc");
+        // WebAssembly passes i32 arguments to JavaScript as signed numbers,
+        // while C's size_t is unsigned.  Normalize both operands and reject
+        // multiplication overflow before calling the main-module allocator.
+        const bytes = (nmemb >>> 0) * (size >>> 0);
+        if (bytes > 0xffffffff) {
+          return 0;
+        }
+        const ptr = this.malloc(bytes, "dynamic library calloc", false);
+        if (!ptr) {
+          return 0;
+        }
         new Uint8Array(this.memory.buffer, ptr, bytes).fill(0);
         return ptr;
       },
       realloc: (ptr: number, size: number) => {
-        return this.realloc(ptr, size, "dynamic library realloc");
+        return this.realloc(ptr, size, "dynamic library realloc", false);
       },
       abort: () => {
         throw Error("abort called from dynamic library");

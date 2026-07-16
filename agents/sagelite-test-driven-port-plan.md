@@ -50680,6 +50680,44 @@ whole-file replay reports the same 108/0/47 result.  This pure-Python preflight
 requires no native WASM rebuild.  The next pass should continue with another
 bounded arithmetic/backend cluster.
 
+Dynamic side-module allocation-failure semantics pass on 2026-07-16 UTC:
+
+The two browser-profile guards in
+`sage/modules/vector_rational_dense.pyx` hid a loader-boundary defect rather
+than an unavailable mathematical backend. The side module correctly asked for
+impossible allocations and cysignals was prepared to turn a null result into
+`MemoryError` or `OverflowError`, but the JavaScript dylink fallback threw an
+uncaught host `Error` when main-module `malloc` returned zero. That killed the
+doctest worker before Sage could handle the allocation failure.
+
+Side-module imports of `malloc`, `calloc`, and `realloc` now preserve the C
+contract and return null on allocation failure. Loader-internal allocations
+retain the existing throwing behavior. The `calloc` fallback normalizes WASM
+`i32` arguments to unsigned `size_t` values and rejects multiplication
+overflow, while failed `realloc` leaves the original allocation intact. The
+WASI dylink smoke covers all three failure paths and original-buffer
+preservation in both direct and archive-linked loader modes. The two stale
+rational-vector guards are removed.
+
+Focused and complete reconstructed-source replays record:
+
+```text
+vector_rational_dense.pyx --line 107 before:  0 passed, 1 error,  0 skipped
+vector_rational_dense.pyx --line 107 after:   1 passed, 0 failed, 0 skipped
+vector_rational_dense.pyx default after:     45 passed, 0 failed, 0 skipped
+```
+
+The direct TypeScript build and `make -C core/dylink test-wasi-sdk-next` pass,
+including the direct, archive-linked, C++ runtime, and Python-extension dylink
+smokes. SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-15-vector-allocation/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed rational-vector source is byte-identical to the tested shared
+source and independently reports the same 45/0/0 result. The next pass should
+continue with another bounded arithmetic/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
