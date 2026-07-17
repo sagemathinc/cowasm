@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 114;
+const doctestRunnerVersion = 115;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2707,45 +2707,57 @@ def __cowasm_run_file(filename):
                 example.want = __cowasm_restore_protected_expected_output(example.want)
             line_setup_examples = set()
             if __cowasm_lines:
+                converted_lines = converted.splitlines()
                 example_locations = []
                 for candidate in test.examples:
                     candidate_start_line = None
-                    candidate_physical_end_line = None
+                    candidate_relative_start = candidate.lineno
+                    candidate_relative_physical_end = None
                     if test.lineno is not None and candidate.lineno is not None:
                         candidate_start_line = test.lineno + candidate.lineno + 1
                         candidate_physical_line_count = (
                             len(candidate.source.splitlines())
                             + len(candidate.want.splitlines())
                         )
-                        candidate_physical_end_line = (
-                            candidate_start_line
+                        candidate_relative_physical_end = (
+                            candidate.lineno
                             + max(candidate_physical_line_count, 1)
-                            - 1
                         )
                     example_locations.append({
                         "example": candidate,
                         "start_line": candidate_start_line,
-                        "physical_end_line": candidate_physical_end_line,
+                        "relative_start": candidate_relative_start,
+                        "relative_physical_end": candidate_relative_physical_end,
                     })
                 for position, location in enumerate(example_locations):
                     current_start_line = location["start_line"]
                     if current_start_line not in __cowasm_lines:
                         continue
+                    current_relative_start = location["relative_start"]
                     for previous_position in range(position - 1, -1, -1):
                         previous = example_locations[previous_position]
                         previous_example = previous["example"]
-                        previous_end_line = previous["physical_end_line"]
-                        if current_start_line is None or previous_end_line is None:
+                        previous_relative_end = previous["relative_physical_end"]
+                        if (
+                            current_start_line is None
+                            or current_relative_start is None
+                            or previous_relative_end is None
+                        ):
                             break
-                        if previous_end_line + 1 != current_start_line:
+                        if any(
+                            line.strip()
+                            for line in converted_lines[
+                                previous_relative_end:current_relative_start
+                            ]
+                        ):
                             break
                         if __cowasm_directive_only_source(previous_example.source):
                             current_start_line = previous["start_line"]
+                            current_relative_start = previous["relative_start"]
                             continue
-                        if previous_example.want.strip():
-                            break
                         line_setup_examples.add(previous_example)
                         current_start_line = previous["start_line"]
+                        current_relative_start = previous["relative_start"]
             active_directive_source = None
             previous_physical_end_line = None
             for example in test.examples:
@@ -2827,7 +2839,11 @@ def __cowasm_run_file(filename):
                 block_key = __cowasm_block_key(filename, start_line, source_hash)
                 example._cowasm_block_key = block_key
                 line_selected = bool(__cowasm_lines and start_line in __cowasm_lines)
-                line_setup = bool(__cowasm_lines and example in line_setup_examples)
+                line_setup = bool(
+                    __cowasm_lines
+                    and not line_selected
+                    and example in line_setup_examples
+                )
                 example._cowasm_record_block = not line_setup
                 if line_setup:
                     example._cowasm_expected_kind = "line_setup"
@@ -2864,7 +2880,9 @@ def __cowasm_run_file(filename):
                     example.options[doctest.SKIP] = True
                     previous_physical_end_line = physical_end_line
                 else:
-                    if __cowasm_is_random(example._cowasm_effective_source):
+                    if line_setup and example.exc_msg is None:
+                        example.want = COWASM_RANDOM_ACCEPT
+                    elif __cowasm_is_random(example._cowasm_effective_source):
                         example._cowasm_random = True
                         example._cowasm_expected_kind = "random"
                         example.want = COWASM_RANDOM_ACCEPT

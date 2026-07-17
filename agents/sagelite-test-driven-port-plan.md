@@ -50926,6 +50926,44 @@ the already-rebuilt CPython runtime fix, the coherent browser resource bundle
 does not require another rebuild. The next pass should continue with another
 bounded native arithmetic/backend or frontend semantic cluster.
 
+Output-producing focused-setup replay pass on 2026-07-17 UTC:
+
+The next deferred audit exposed a runner limitation before it exposed another
+portable Sage failure.  A focused `--line` rerun only replayed physically
+contiguous setup prompts whose expected output was empty.  Consequently,
+stateful rows whose setup displayed an object, or whose related examples were
+separated by a blank line, failed with artificial `NameError` results.  A
+real example was `join_feature.py:112`: ordered whole-file replay passed,
+but the focused rerun could not see the preceding `f = sage__groups()` state.
+
+Runner version 115 walks backward through the same doctest region across
+whitespace-only gaps, executes output-producing setup without comparing or
+recording its display, and still checks expected setup exceptions.  Prose is
+still a hard setup boundary.  Explicitly selected lines are never demoted to
+hidden setup rows when more than one `--line` is requested.
+
+Focused validation records:
+
+```text
+output/blank-gap fixture, two selected lines: 2 passed, 0 failed, 0 skipped
+output/blank-gap fixture, final line only:     1 passed, 0 failed, 0 skipped
+expected-exception setup fixture:              1 passed, 0 failed, 0 skipped
+join_feature.py --line 112:                    1 passed, 0 failed, 0 skipped
+```
+
+The standalone smoke now covers output-producing setup, a whitespace-only
+gap, an unrecorded state mutation, and two selected result rows.  The focused
+SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-upstream-deferred-audit/` and pass
+`PRAGMA integrity_check`.  Node source checking, standalone shell syntax
+checking, and `git diff --check` pass.  The audited upstream matrix-space,
+permutation, and piecewise deferred examples remain unchanged: their faithful
+reproducers still expose TestSuite output, an unavailable GAP binding, and an
+unavailable symbolic startup surface respectively.  This host-runner change
+requires no WASM rebuild.  The next pass should use the more faithful focused
+reruns to continue with another bounded arithmetic/backend or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
