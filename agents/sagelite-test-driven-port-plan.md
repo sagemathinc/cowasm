@@ -51352,6 +51352,45 @@ metadata-only promotion uses the existing coherent browser resource snapshot
 and requires no native WASM rebuild. The next pass should continue with
 another bounded native arithmetic/backend or frontend semantic cluster.
 
+Finite-field Jordan element-order promotion pass on 2026-07-17 UTC:
+
+The browser-profile guard on the finite-field
+`JordanAlgebra(OctonionAlgebra(GF(3))).some_elements()` example became stale.
+The current finite-residue display backend now reproduces the complete
+documented element list in the expected order. Both the focused forced replay
+and the complete module in normal file order pass, so the `# known bug`
+annotation is removed from the accumulated WASI source patch.
+
+Forced, default-profile, and cleanly reconstructed replays under runner
+version 118 record:
+
+```text
+jordan_algebra.py --line 1478 forced:   1 passed, 0 failed, 0 skipped
+jordan_algebra.py forced whole file:  383 passed, 0 failed, 5 skipped
+jordan_algebra.py default:            383 passed, 0 failed, 5 skipped
+reconstructed jordan_algebra.py:      383 passed, 0 failed, 5 skipped
+```
+
+The same bounded audit preserves the neighboring NTL GF(2) guards. Focused
+replays still reproduce the split-module hex-state mismatch, two empty
+GF2X-conversion results, and generic-polynomial comparison drift. The focused
+`ntl_GF2E._sage_()` example prints the documented generator name, but a
+whole-file forced replay traps at that row in `cypari2.gen.Mod` after the
+module's earlier NTL/PARI activity. It therefore remains guarded as a
+state-sensitive backend failure rather than being promoted from focused-only
+evidence.
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-ntl-gf2-audit/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed Jordan module is byte-identical to the tested source and
+independently reports the same 383/0/5 result. This metadata-only promotion
+uses the existing coherent browser resource snapshot and requires no native
+WASM rebuild. The next pass should continue with the NTL/PARI shared-state
+cluster or another bounded native arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

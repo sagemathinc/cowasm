@@ -24693,3 +24693,9 @@ diff --git a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_o
 @@ -575 +575 @@
 -            sage: dm._call_rich_repr(Foo(), {})                                      # not tested - Sagelite runner does not capture warning stream yet
 +            sage: dm._call_rich_repr(Foo(), {})
+diff --git a/src/sage/algebras/jordan_algebra.py b/src/sage/algebras/jordan_algebra.py
+--- a/src/sage/algebras/jordan_algebra.py
++++ b/src/sage/algebras/jordan_algebra.py
+@@ -1478 +1478 @@
+-            sage: J.some_elements()  # known bug - Sagelite finite-field octonion element ordering differs
++            sage: J.some_elements()
