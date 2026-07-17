@@ -51081,6 +51081,51 @@ pass.  This host-runner correction requires no native WASM rebuild.  The next
 pass should continue with another bounded native arithmetic/backend or
 frontend semantic cluster.
 
+Sorted dictionary display parity pass on 2026-07-17 UTC:
+
+Four browser-profile guards in
+`sage/schemes/hyperelliptic_curves/invariants.py` and
+`sage/algebras/weyl_algebra.py` hid one frontend ordering mismatch. The
+mathematical dictionaries already contained the documented keys and values,
+but Sagelite's IPython-free display path delegated dictionaries to CPython's
+insertion-order representation. Sage's plain-text frontend sorts comparable
+dictionary keys.
+
+The lightweight `SomeIPythonRepr` fallback now sorts dictionary keys with the
+same deterministic helper used for sets, and runner version 118 routes
+top-level dictionaries through that representer in both interactive and
+doctest display hooks. A source regression covers an intentionally unsorted
+string-key dictionary. The two rational hyperelliptic-invariant guards and the
+two tuple-key Weyl-algebra guards are removed.
+
+The neighboring finite-field invariant remains guarded. Its forced replay
+still exposes a separate backend representation difference: field residues
+print as nonnegative representatives rather than the documented balanced
+representatives. Focused replay after the display correction records two
+rational invariant passes and that one retained finite-field failure. Complete
+shared-source and cleanly reconstructed default-profile replays record:
+
+```text
+fancy_repr.py: 26 passed, 0 failed,  8 skipped
+invariants.py:  74 passed, 0 failed,  5 skipped
+weyl_algebra.py:309 passed, 0 failed, 16 skipped
+three-file total:409 passed, 0 failed, 29 skipped
+```
+
+The SQLite dashboards are under
+`/tmp/cowasm-sagelite-scheduled-2026-07-17-ordering/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects; all
+three reconstructed source files are byte-identical to the tested patched
+sources and independently report the same 409/0/29 result. A direct
+interactive probe prints the dictionary in sorted order. Node source checking,
+Python source compilation, standalone shell syntax checking, and
+`git diff --check` pass. This host/frontend correction requires no native WASM
+rebuild. The next pass should continue with the finite-field residue display
+cluster or another bounded native arithmetic/backend or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 117;
+const doctestRunnerVersion = 118;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -108,13 +108,17 @@ warnings.filterwarnings(
 )
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
-from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.repl.display.fancy_repr import (
+    LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr,
+    SomeIPythonRepr as __CowasmSomeIPythonRepr,
+)
 from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
 __cowasm_sagelite_displayhook_delegate = sys.displayhook
 __cowasm_sagelite_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
+__cowasm_sagelite_ipython_repr = __CowasmSomeIPythonRepr()
 
 def __cowasm_sagelite_displayhook(value):
     if isinstance(value, __CowasmSequence):
@@ -126,6 +130,11 @@ def __cowasm_sagelite_displayhook(value):
         if value is not None:
             builtins._ = value
             print(str(value))
+        return
+    if isinstance(value, dict):
+        if value is not None:
+            builtins._ = value
+            print(__cowasm_sagelite_ipython_repr.format_string(value))
         return
     if isinstance(value, __CowasmMatrix):
         formatted = __cowasm_sagelite_large_matrix_repr.format_string(value)
@@ -1033,7 +1042,10 @@ warnings.filterwarnings(
 
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
-from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.repl.display.fancy_repr import (
+    LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr,
+    SomeIPythonRepr as __CowasmSomeIPythonRepr,
+)
 from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
@@ -1092,6 +1104,7 @@ def __cowasm_doctest_showwarning(message, category, filename, lineno, file=None,
 __cowasm_active_displayhook_globals = None
 __cowasm_displayhook_delegate = None
 __cowasm_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
+__cowasm_ipython_repr = __CowasmSomeIPythonRepr()
 
 
 def __cowasm_doctest_display_large_matrix(value):
@@ -1110,6 +1123,8 @@ def __cowasm_doctest_displayhook(value):
             sys.stdout.write(repr(list(value)) + "\\n")
         elif isinstance(value, __CowasmHtmlFragment):
             sys.stdout.write(str(value) + "\\n")
+        elif isinstance(value, dict):
+            sys.stdout.write(__cowasm_ipython_repr.format_string(value) + "\\n")
         elif isinstance(value, (list, tuple)):
             from sage.repl.display.fancy_repr import TallListRepr
             formatted = TallListRepr().format_string(value)

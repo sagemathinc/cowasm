@@ -24546,3 +24546,32 @@ diff --git a/src/sage/misc/banner.py b/src/sage/misc/banner.py
 @@ -24 +24 @@
 -       sage: version()                                                                  # known bug
 +       sage: version()
+diff --git a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_repr.py
+--- a/src/sage/repl/display/fancy_repr.py
++++ b/src/sage/repl/display/fancy_repr.py
+@@ -88,2 +88,3 @@
+         p.begin_group(1, '{')
+-        for index, key in p._enumerate(obj):
++        keys = _sorted_for_pretty_print(obj)
++        for index, key in p._enumerate(keys):
+@@ -233,0 +235,2 @@
++            sage: pp.format_string(dict(zzz=123, aaa=99, xab=10))
++            "{'aaa': 99, 'xab': 10, 'zzz': 123}"
+diff --git a/src/sage/schemes/hyperelliptic_curves/invariants.py b/src/sage/schemes/hyperelliptic_curves/invariants.py
+--- a/src/sage/schemes/hyperelliptic_curves/invariants.py
++++ b/src/sage/schemes/hyperelliptic_curves/invariants.py
+@@ -170 +170 @@
+-        sage: ubs(x^6 + 1)                                                            # known bug - Sagelite WASI dictionary display order drift
++        sage: ubs(x^6 + 1)
+@@ -183 +183 @@
+-        sage: ubs(u^6 + v^6)                                                          # known bug - Sagelite WASI dictionary display order drift
++        sage: ubs(u^6 + v^6)
+diff --git a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.py
+--- a/src/sage/algebras/weyl_algebra.py
++++ b/src/sage/algebras/weyl_algebra.py
+@@ -540 +540 @@
+-            sage: x.factor_differentials()                                        # known bug - Sagelite WASI dictionary display order drift
++            sage: x.factor_differentials()
+@@ -552 +552 @@
+-            sage: elt.factor_differentials()                                      # known bug - Sagelite WASI dictionary display order drift
++            sage: elt.factor_differentials()
