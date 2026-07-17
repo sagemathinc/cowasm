@@ -24259,3 +24259,284 @@ diff --git a/src/sage/misc/html.py b/src/sage/misc/html.py
 @@ -490 +490 @@
 -            sage: html.eval('<sage>a</sage>', locals={'a': 456})                   # known bug
 +            sage: html.eval('<sage>a</sage>', locals={'a': 456})
+diff --git a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty_print.py
+--- a/src/sage/repl/display/pretty_print.py
++++ b/src/sage/repl/display/pretty_print.py
+@@ -28,0 +29,71 @@
++    from collections import deque
++    from contextlib import contextmanager
++
++    class _Text:
++        def __init__(self):
++            self.parts = []
++            self.width = 0
++
++        def add(self, text):
++            self.parts.append(text)
++            self.width += len(text)
++
++        def output(self, stream, output_width):
++            stream.write(''.join(self.parts))
++            return output_width + self.width
++
++    class _Breakable:
++        def __init__(self, separator, pretty):
++            self.separator = separator
++            self.width = len(separator)
++            self.pretty = pretty
++            self.indentation = pretty.indentation
++            self.group = pretty.group_stack[-1]
++            self.group.breakables.append(self)
++
++        def output(self, stream, output_width):
++            self.group.breakables.popleft()
++            if self.group.want_break:
++                stream.write(self.pretty.newline)
++                stream.write(' ' * self.indentation)
++                return self.indentation
++            if not self.group.breakables:
++                self.pretty.group_queue.remove(self.group)
++            stream.write(self.separator)
++            return output_width + self.width
++
++    class _Group:
++        def __init__(self, depth):
++            self.depth = depth
++            self.breakables = deque()
++            self.want_break = False
++
++    class _GroupQueue:
++        def __init__(self, *groups):
++            self.queue = []
++            for group in groups:
++                self.enq(group)
++
++        def enq(self, group):
++            while group.depth >= len(self.queue):
++                self.queue.append([])
++            self.queue[group.depth].append(group)
++
++        def deq(self):
++            for stack in self.queue:
++                for group in reversed(stack):
++                    if group.breakables:
++                        stack.remove(group)
++                        group.want_break = True
++                        return group
++                for group in stack:
++                    group.want_break = True
++                stack.clear()
++            return None
++
++        def remove(self, group):
++            try:
++                self.queue[group.depth].remove(group)
++            except ValueError:
++                pass
++
+@@ -35,9 +106,82 @@
+-
+-        def begin_group(self, *args, **kwds):
+-            pass
+-
+-        def end_group(self, *args, **kwds):
+-            pass
+-
+-        def text(self, obj):
+-            self.output.write(str(obj))
++            self.output_width = 0
++            self.buffer_width = 0
++            self.buffer = deque()
++            root_group = _Group(0)
++            self.group_stack = [root_group]
++            self.group_queue = _GroupQueue(root_group)
++            self.indentation = 0
++
++        @contextmanager
++        def indent(self, indentation):
++            self.indentation += indentation
++            try:
++                yield
++            finally:
++                self.indentation -= indentation
++
++        @contextmanager
++        def group(self, indent=0, open='', close=''):
++            self.begin_group(indent, open)
++            try:
++                yield
++            finally:
++                self.end_group(indent, close)
++
++        def _break_one_group(self, group):
++            while group.breakables:
++                item = self.buffer.popleft()
++                self.output_width = item.output(self.output, self.output_width)
++                self.buffer_width -= item.width
++            while self.buffer and isinstance(self.buffer[0], _Text):
++                item = self.buffer.popleft()
++                self.output_width = item.output(self.output, self.output_width)
++                self.buffer_width -= item.width
++
++        def _break_outer_groups(self):
++            while self.max_width < self.output_width + self.buffer_width:
++                group = self.group_queue.deq()
++                if group is None:
++                    return
++                self._break_one_group(group)
++
++        def begin_group(self, indent=0, open=''):
++            if open:
++                self.text(open)
++            group = _Group(self.group_stack[-1].depth + 1)
++            self.group_stack.append(group)
++            self.group_queue.enq(group)
++            self.indentation += indent
++
++        def end_group(self, dedent=0, close=''):
++            self.indentation -= dedent
++            group = self.group_stack.pop()
++            if not group.breakables:
++                self.group_queue.remove(group)
++            if close:
++                self.text(close)
++
++        def text(self, text):
++            if self.buffer:
++                item = self.buffer[-1]
++                if not isinstance(item, _Text):
++                    item = _Text()
++                    self.buffer.append(item)
++                item.add(text)
++                self.buffer_width += len(text)
++                self._break_outer_groups()
++            else:
++                self.output.write(text)
++                self.output_width += len(text)
++
++        def breakable(self, separator=' '):
++            group = self.group_stack[-1]
++            if group.want_break:
++                self.flush()
++                self.output.write(self.newline)
++                self.output.write(' ' * self.indentation)
++                self.output_width = self.indentation
++            else:
++                item = _Breakable(separator, self)
++                self.buffer.append(item)
++                self.buffer_width += item.width
++                self._break_outer_groups()
+@@ -45,0 +190,4 @@
++            group = self.group_queue.deq()
++            if group is not None:
++                self._break_one_group(group)
++            self.flush()
+@@ -46,0 +195,11 @@
++            self.output.write(' ' * self.indentation)
++            self.output_width = self.indentation
++
++        def _enumerate(self, values):
++            for index, value in enumerate(values):
++                if self.max_seq_length and index >= self.max_seq_length:
++                    self.text(',')
++                    self.breakable()
++                    self.text('...')
++                    return
++                yield index, value
+@@ -48,0 +208,4 @@
++            for item in self.buffer:
++                self.output_width = item.output(self.output, self.output_width)
++            self.buffer.clear()
++            self.buffer_width = 0
+@@ -154 +317 @@
+-            sage: stream.getvalue()                                                 # known bug - lightweight Sagelite pretty-printer fallback formatting
++            sage: stream.getvalue()
+diff --git a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_repr.py
+--- a/src/sage/repl/display/fancy_repr.py
++++ b/src/sage/repl/display/fancy_repr.py
+@@ -30,0 +31,68 @@
++    def _repr_printer(obj, p, cycle):
++        lines = repr(obj).split('\n')
++        with p.group():
++            for index, line in enumerate(lines):
++                if index:
++                    p.break_()
++                p.text(line)
++
++    def _sequence_printer(opening, closing):
++        def print_sequence(obj, p, cycle):
++            if cycle:
++                p.text(opening + '...' + closing)
++                return
++            indent = len(opening)
++            p.begin_group(indent, opening)
++            for index, value in p._enumerate(obj):
++                if index:
++                    p.text(',')
++                    p.breakable()
++                p.pretty(value)
++            if len(obj) == 1 and isinstance(obj, tuple):
++                p.text(',')
++            p.end_group(indent, closing)
++        return print_sequence
++
++    def _sorted_for_pretty_print(values):
++        try:
++            return sorted(values)
++        except Exception:
++            try:
++                return sorted(values, key=str)
++            except Exception:
++                return values
++
++    def _set_printer(opening, closing):
++        def print_set(obj, p, cycle):
++            if cycle:
++                p.text(opening + '...' + closing)
++            elif not obj:
++                p.text(type(obj).__name__ + '()')
++            else:
++                indent = len(opening)
++                p.begin_group(indent, opening)
++                values = obj
++                if not (p.max_seq_length and len(obj) >= p.max_seq_length):
++                    values = _sorted_for_pretty_print(obj)
++                for index, value in p._enumerate(values):
++                    if index:
++                        p.text(',')
++                        p.breakable()
++                    p.pretty(value)
++                p.end_group(indent, closing)
++        return print_set
++
++    def _dict_printer(obj, p, cycle):
++        if cycle:
++            p.text('{...}')
++            return
++        p.begin_group(1, '{')
++        for index, key in p._enumerate(obj):
++            if index:
++                p.text(',')
++                p.breakable()
++            p.pretty(key)
++            p.text(': ')
++            p.pretty(obj[key])
++        p.end_group(1, '}')
++
+@@ -31,0 +100,7 @@
++        int: _repr_printer,
++        float: _repr_printer,
++        tuple: _sequence_printer('(', ')'),
++        list: _sequence_printer('[', ']'),
++        dict: _dict_printer,
++        set: _set_printer('{', '}'),
++        frozenset: _set_printer('frozenset({', '})'),
+@@ -35 +110 @@
+-        str: _plain_type_printer,
++        str: _repr_printer,
+@@ -158 +233 @@
+-            sage: pp.format_string(set([1, 2, 3]))                                  # known bug - lightweight Sagelite pretty-printer fallback formatting
++            sage: pp.format_string(set([1, 2, 3]))
+@@ -163 +238 @@
+-            sage: pp.format_string(Sequence([[1]*20, [2]*20]))                      # known bug - lightweight Sagelite pretty-printer fallback formatting
++            sage: pp.format_string(Sequence([[1]*20, [2]*20]))

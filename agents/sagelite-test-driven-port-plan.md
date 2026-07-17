@@ -51005,6 +51005,47 @@ requires no native WASM rebuild.  The next pass should continue with the
 remaining lightweight pretty-printer output cluster or another bounded native
 arithmetic/backend or frontend semantic cluster.
 
+Lightweight pretty-printer fallback parity pass on 2026-07-17 UTC:
+
+The three remaining browser-profile guards in
+`sage/repl/display/pretty_print.py` and `sage/repl/display/fancy_repr.py` hid
+limitations in the intentionally IPython-free fallback.  Its placeholder
+printer wrote every value immediately, did not implement breakable groups, and
+only registered scalar representers.  Consequently, the partial-buffer
+contract returned the complete list, sets were unhandled, and a long
+`Sequence` stayed on one line.
+
+The lightweight fallback now implements width-aware groups and buffered
+breakable separators, indentation, explicit line breaks, bounded enumeration,
+recursive sequence/dictionary/set formatting, stable set ordering, and cycle
+markers.  This preserves IPython as an optional host dependency while matching
+the subset of its pretty-printer protocol used by Sage's browser-compatible
+plain-text frontend.  All three stale `# known bug` annotations are removed.
+
+Focused forced replay changes the guarded rows from 0/3 to 3/0, and complete
+shared-source and cleanly reconstructed default-profile replays record:
+
+```text
+pretty_print.py: 21 passed, 0 failed, 0 skipped
+fancy_repr.py:   25 passed, 0 failed, 8 skipped
+two-file total:  46 passed, 0 failed, 8 skipped
+```
+
+The SQLite dashboards and staged resource fixture are under
+`.tmp/current-run/scheduled-2026-07-17-pretty-printer/`; the forced, shared
+default, and reconstructed default databases pass `PRAGMA integrity_check`.
+Because the previous standalone attempt removed the checkout's staged resource
+bundle before hitting the known Meson/Cython configure blocker, validation
+copied the 2026-07-14 coherent resource snapshot and overlaid only these two
+pure-Python modules.  Applying the complete accumulated patch exactly once to
+a clean clone of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects; both reconstructed modules are byte-identical to the
+tested shared source and independently report the same 46/0/8 result.  Python
+source compilation and `git diff --check` pass.  No native WASM rebuild is
+required for this source-only frontend correction.  The next pass should
+continue with another bounded native arithmetic/backend or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
