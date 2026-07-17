@@ -50828,6 +50828,37 @@ coherent browser resource bundle does not require a rebuild. The next pass
 should continue with another bounded native arithmetic/backend or frontend
 semantic cluster.
 
+Join-feature diagnostic guard promotion pass on 2026-07-17 UTC:
+
+The browser-profile `# known bug` annotation on `JoinFeature.require()` in
+`sage/features/join_feature.py` is stale. Ordered forced replay preserves the
+preceding `sage__groups()` construction and hidden-feature state, and the
+current runner accepts the documented traceback placeholder while checking the
+complete multiline `FeatureNotPresentError` detail.
+
+An isolated `--line 112` replay is not authoritative for this row: the nearest
+required setup is separated from the target by an output-producing prompt, so
+the focused setup window correctly does not replay it and reports an undefined
+`f`. The ordered whole-file replay executes the real doctest state and records
+the formerly guarded row as a pass with its deferred audit metadata. After
+removing only the stale annotation, the default-profile replay records:
+
+```text
+join_feature.py forced before: 20 passed, 0 failed, 3 skipped
+join_feature.py default after: 20 passed, 0 failed, 3 skipped
+```
+
+Both SQLite dashboards under `/tmp/cowasm-sagelite-audit-ROgTvD/` pass
+`PRAGMA integrity_check`; the corrected row is an ordinary untagged pass in
+the final database. Applying the complete accumulated Sagelite patch exactly
+once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `join_feature.py` is byte-identical to the pinned upstream
+source. Because this pass only removes source doctest metadata, the coherent
+browser resource bundle does not require a rebuild. The next pass should
+continue with another bounded native arithmetic/backend or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

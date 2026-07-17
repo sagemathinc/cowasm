@@ -24211,3 +24211,9 @@ diff --git a/src/sage/combinat/integer_matrices.py b/src/sage/combinat/integer_m
 @@ -271 +271 @@
 -            sage: IM.list()                                                           # known bug
 +            sage: IM.list()
+diff --git a/src/sage/features/join_feature.py b/src/sage/features/join_feature.py
+--- a/src/sage/features/join_feature.py
++++ b/src/sage/features/join_feature.py
+@@ -112 +112 @@
+-            sage: f.require()                                                     # known bug - Sagelite traceback matcher keeps explicit stack frames
++            sage: f.require()
