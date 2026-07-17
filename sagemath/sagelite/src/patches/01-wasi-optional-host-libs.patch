@@ -24629,3 +24629,12 @@ diff --git a/src/sage/schemes/hyperelliptic_curves/invariants.py b/src/sage/sche
 @@ -196 +196 @@
 -        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                       # known bug - Sagelite WASI finite-field residue display drift
 +        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
+diff --git a/src/sage/misc/persist.pyx b/src/sage/misc/persist.pyx
+--- a/src/sage/misc/persist.pyx
++++ b/src/sage/misc/persist.pyx
+@@ -818 +818 @@
+-        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
++        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
+@@ -1002 +1002 @@
+-        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
++        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')

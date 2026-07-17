@@ -51164,6 +51164,38 @@ compilation and `git diff --check` pass. This pure-Python backend correction
 requires no native WASM rebuild. The next pass should continue with another
 bounded native arithmetic/backend or frontend semantic cluster.
 
+Persist UnicodeDecodeError guard promotion pass on 2026-07-17 UTC:
+
+The two browser-profile guards on the Python-2 pickle compatibility examples
+in `sage/misc/persist.pyx` are stale. An ordered forced-deferred replay keeps
+the `Foo` class setup alive across the intervening explanatory prose and
+records both documented `UnicodeDecodeError` diagnostics as exact passes,
+including the expected decode position. The two annotations are removed.
+
+The same audit preserves the neighboring WASI permission-semantics guard.
+Making a directory mode `000` still permits the subsequent pickle write in
+the current runtime, so that row remains an explicit deferred failure rather
+than being promoted with the unrelated Unicode rows.
+
+Forced before promotion and complete default-profile replays record:
+
+```text
+persist.pyx forced before:         124 passed, 1 failed, 26 skipped
+persist.pyx default after:         124 passed, 0 failed, 27 skipped
+reconstructed persist.pyx after:  124 passed, 0 failed, 27 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-persist/`; every retained database
+passes `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `persist.pyx` is byte-identical to the tested patched source and
+independently reports the same 124/0/27 whole-file result. Because this pass
+only removes source doctest metadata, the coherent browser resource bundle
+does not require a rebuild. The next pass should continue with another bounded
+native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
