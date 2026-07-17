@@ -24540,3 +24540,9 @@ diff --git a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_r
 @@ -163 +238 @@
 -            sage: pp.format_string(Sequence([[1]*20, [2]*20]))                      # known bug - lightweight Sagelite pretty-printer fallback formatting
 +            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
+diff --git a/src/sage/misc/banner.py b/src/sage/misc/banner.py
+--- a/src/sage/misc/banner.py
++++ b/src/sage/misc/banner.py
+@@ -24 +24 @@
+-       sage: version()                                                                  # known bug
++       sage: version()

@@ -51046,6 +51046,41 @@ required for this source-only frontend correction.  The next pass should
 continue with another bounded native arithmetic/backend or frontend semantic
 cluster.
 
+Sage warning-expectation parity pass on 2026-07-17 UTC:
+
+The browser-profile guard on `sage.misc.banner.version()` hid a doctest-runner
+comparison gap rather than incorrect runtime behavior.  Sagelite emitted the
+expected deprecation warning and version string, but the warning normalizer
+only handled Sage's multiline `doctest:warning` form when the warning message
+started on the following line.  The banner doctest uses the equally standard
+form with `DeprecationWarning: ...` and its message on the same line.
+
+Runner version 117 preserves that inline message while translating the Sage
+warning marker to CPython doctest's concrete warning header.  The standalone
+smoke fixture covers this form alongside the existing multiline and compact
+warning syntaxes, and the stale `# known bug` annotation is removed from the
+accumulated WASI source patch.
+
+Focused, fixture, complete-module, and cleanly reconstructed replays record:
+
+```text
+banner.py --line 27:       1 passed, 0 failed, 0 skipped
+warning syntax fixture:    3 passed, 0 failed, 0 skipped
+banner.py default:        17 passed, 0 failed, 0 skipped
+reconstructed banner.py: 17 passed, 0 failed, 0 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-next-cluster/` and pass
+`PRAGMA integrity_check`.  Applying the complete accumulated Sagelite patch
+exactly once to a clean clone of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects; the
+reconstructed banner module independently reports the same 17/0/0 result.
+Node source checking, standalone shell syntax checking, and `git diff --check`
+pass.  This host-runner correction requires no native WASM rebuild.  The next
+pass should continue with another bounded native arithmetic/backend or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

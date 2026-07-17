@@ -2041,6 +2041,10 @@ EXAMPLES::
     ...
     DeprecationWarning:
     smoke warning
+    sage: warnings.warn("inline warning", DeprecationWarning)
+    doctest:warning
+    ...
+    DeprecationWarning: inline warning
     sage: def cowasm_repeated_warning():
     ....:     warnings.warn("repeat smoke", DeprecationWarning)
     sage: cowasm_repeated_warning()
@@ -2132,7 +2136,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|59|47|0|12" ]; then
+if [ "$doctest_smoke_counts" != "passed|60|48|0|12" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"

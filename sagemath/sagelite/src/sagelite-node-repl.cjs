@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 116;
+const doctestRunnerVersion = 117;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2316,8 +2316,8 @@ class __CowasmOutputChecker(doctest.OutputChecker):
 
     def __normalize_expected_warning_output(self, text):
         text = re.sub(
-            r"(?m)^([ \\t]*)doctest:warning\\r?\\n[ \\t]*\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning):\\r?\\n",
-            r"\\1doctest:...: \\2: \\n",
+            r"(?m)^([ \\t]*)doctest:warning\\r?\\n[ \\t]*\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning):([^\\r\\n]*)\\r?\\n",
+            r"\\1doctest:...: \\2:\\3\\n",
             text,
         )
         text = re.sub(
