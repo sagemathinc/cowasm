@@ -24177,3 +24177,19 @@ diff --git a/src/sage/matrix/special.py b/src/sage/matrix/special.py
 @@ -403 +403 @@
 -        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A  # known bug - dense matrix summary repr differs in WASI runtime
 +        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
+diff --git a/src/sage/matrix/special.py b/src/sage/matrix/special.py
+--- a/src/sage/matrix/special.py
++++ b/src/sage/matrix/special.py
+@@ -3184 +3183,0 @@
+-        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
+@@ -3193 +3191,0 @@
+-        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
+@@ -3222 +3220 @@
+-        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
++        sage: # needs scipy
+@@ -3349 +3346,0 @@
+-        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+@@ -3358 +3354,0 @@
+-        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+@@ -3383 +3378,0 @@
+-        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI

@@ -50752,6 +50752,49 @@ also pass. This frontend-only correction requires no native WASM rebuild. The
 next pass should continue with another bounded arithmetic/backend or frontend
 semantic cluster.
 
+Random unitary and bistochastic matrix guard promotion pass on 2026-07-17 UTC:
+
+The six browser-profile guard directives around `random_unitary_matrix` and
+`random_bistochastic_matrix` in `sage/matrix/special.py` no longer describe one
+runtime failure cluster. Ordered forced replay shows that rational and
+quadratic-field unitary construction now completes, and that the rational and
+real bistochastic examples also produce their documented results. Those five
+stale directives are removed, promoting all of their contiguous setup and
+result rows.
+
+The double-precision unitary block reaches a different, explicit dependency
+boundary. Both RDF and CDF inversion enter
+`Matrix_double_dense.__invert__`, which imports SciPy; the stripped browser
+profile does not provide that package. Its former table-index-trap guard is
+therefore replaced with `# needs scipy`, matching the existing feature tag used
+by other double-matrix operations.
+
+The initial forced whole-file audit records:
+
+```text
+special.py forced before: 469 passed, 4 failed, 114 skipped
+```
+
+The four failures are exactly the RDF/CDF constructor rows and their dependent
+unitarity checks. Shared and cleanly reconstructed default-profile replays
+after the metadata correction both record:
+
+```text
+special.py default after: 466 passed, 0 failed, 121 skipped
+```
+
+The promoted rows are untagged passes, while the seven double-precision setup
+and result prompts are persisted with `needs:scipy` tags and
+`optional:scipy` skip reasons. The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-random-matrix/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `special.py` is byte-identical to the tested patched source.
+Because this pass only corrects source doctest metadata, the coherent browser
+resource bundle does not require a rebuild. The next pass should continue with
+another bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
