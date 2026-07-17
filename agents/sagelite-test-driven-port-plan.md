@@ -51126,6 +51126,44 @@ rebuild. The next pass should continue with the finite-field residue display
 cluster or another bounded native arithmetic/backend or frontend semantic
 cluster.
 
+Generic prime-field polynomial display parity pass on 2026-07-17 UTC:
+
+The remaining browser-profile guard in
+`sage/schemes/hyperelliptic_curves/invariants.py` exposed the representation
+boundary between Sage's Singular multivariate backend and Sagelite's
+pure-Python fallback. The invariant values were mathematically identical, but
+the generic backend printed prime-field coefficients as nonnegative residues:
+for example, the documented `-12` and `-15` appeared as `19` and `16` in
+characteristic 31.
+
+`MPolynomial_polydict` now uses centered integer lifts only while rendering
+generic multivariate polynomials over prime fields. Scalar field elements keep
+their native representation, extension-field polynomials remain unchanged,
+and arithmetic data is not rewritten. The same centered representation is
+used by `_repr_with_changed_varnames`. A source regression and an eight-block
+browser fixture cover those boundaries. The stale invariant guard is removed.
+
+Focused and complete shared-source replays record:
+
+```text
+generic prime-field fixture:        8 passed, 0 failed, 0 skipped
+invariants.py --line 196:           1 passed, 0 failed, 0 skipped
+invariants.py default:             75 passed, 0 failed, 4 skipped
+```
+
+The SQLite dashboards and copied coherent resource bundle are under
+`.tmp/current-run/scheduled-2026-07-17-finite-residue/`; every retained
+database passes `PRAGMA integrity_check`, and loading the bundle validates its
+updated resource manifest. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed polynomial backend is byte-identical to the tested resource
+module, its embedded focused regression passes, and the reconstructed complete
+invariant replay independently reports the same 75/0/4 result. Python source
+compilation and `git diff --check` pass. This pure-Python backend correction
+requires no native WASM rebuild. The next pass should continue with another
+bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

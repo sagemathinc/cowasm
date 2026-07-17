@@ -24575,3 +24575,57 @@ diff --git a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.
 @@ -552 +552 @@
 -            sage: elt.factor_differentials()                                      # known bug - Sagelite WASI dictionary display order drift
 +            sage: elt.factor_differentials()
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -496,0 +497,10 @@
++
++        Match Singular's centered coefficient representation over prime
++        finite fields while leaving scalar field elements unchanged::
++
++            sage: F = GF(31)
++            sage: F(19)
++            19
++            sage: R.<x,y> = PolynomialRing(F, implementation='generic')
++            sage: 19*x^2 + 16*x*y + 15
++            -12*x^2 - 15*x*y + 15
+@@ -505,3 +515,21 @@
+-        return self.element().poly_repr(self.parent().variable_names(),
+-                                        atomic_coefficients=atomic,
+-                                        sortkey=key)
++        element, centered = self._display_polydict()
++        return element.poly_repr(
++            self.parent().variable_names(),
++            atomic_coefficients=atomic or centered,
++            sortkey=key,
++        )
++
++    def _display_polydict(self):
++        """Return the coefficient representation used for text display."""
++        element = self.element()
++        base_ring = self.parent().base_ring()
++        try:
++            if not base_ring.is_prime_field():
++                return element, False
++            coefficients = {
++                exponent: coefficient.lift_centered()
++                for exponent, coefficient in element.dict().items()
++            }
++        except (AttributeError, NotImplementedError):
++            return element, False
++        return polydict.PolyDict(coefficients), True
+@@ -543,2 +571,6 @@
+-        return self.element().poly_repr(varnames,
+-                                        atomic_coefficients=atomic, sortkey=key)
++        element, centered = self._display_polydict()
++        return element.poly_repr(
++            varnames,
++            atomic_coefficients=atomic or centered,
++            sortkey=key,
++        )
+diff --git a/src/sage/schemes/hyperelliptic_curves/invariants.py b/src/sage/schemes/hyperelliptic_curves/invariants.py
+--- a/src/sage/schemes/hyperelliptic_curves/invariants.py
++++ b/src/sage/schemes/hyperelliptic_curves/invariants.py
+@@ -196 +196 @@
+-        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                       # known bug - Sagelite WASI finite-field residue display drift
++        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
