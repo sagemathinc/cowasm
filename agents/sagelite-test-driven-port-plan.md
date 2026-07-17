@@ -51288,6 +51288,40 @@ pretty-printer snapshot. This metadata-only promotion requires no native WASM
 rebuild. The next pass should continue with the Sigma0 matrix-class cluster or
 another bounded native arithmetic/backend or frontend semantic cluster.
 
+Sigma0 integer-matrix feature-boundary pass on 2026-07-17 UTC:
+
+The remaining browser-profile guard in
+`sage/modular/pollack_stevens/sigma0.py` is specialized integer-matrix
+coverage rather than a generic backend defect. The stripped profile constructs
+the correct matrix value, but it intentionally selects
+`Matrix_generic_dense`; the documented class identity is provided by the
+unavailable `Matrix_integer_dense` implementation.
+
+The row now uses `# needs sage.matrix.matrix_integer_dense`, matching the
+existing feature boundary used by algebraic-dependency, matrix-space, and
+specialized integer-matrix doctests. Its focused default-profile replay
+records one skip with tags
+`optional,needs:sage.matrix.matrix_integer_dense` and skip reason
+`optional:sage.matrix.matrix_integer_dense`. Forcing that feature reproduces
+the expected boundary as one output mismatch, with
+`Matrix_generic_dense` in place of the documented `Matrix_integer_dense`.
+Shared and cleanly reconstructed whole-file replays record:
+
+```text
+sigma0.py: 102 passed, 0 failed, 1 skipped
+```
+
+The focused, forced-feature, and whole-file SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-sigma0-boundary/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `sigma0.py` is byte-identical to the tested shared source and
+independently reports the same 102/0/1 result. This metadata-only
+reclassification requires no native WASM rebuild. The next pass should
+continue with another bounded native arithmetic/backend or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

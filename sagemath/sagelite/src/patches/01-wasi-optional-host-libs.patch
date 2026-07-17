@@ -14281,7 +14281,7 @@ diff -urN -U0 a/src/sage/modular/pollack_stevens/sigma0.py b/src/sage/modular/po
 +++ b/src/sage/modular/pollack_stevens/sigma0.py
 @@ -293 +293 @@
 -            sage: type(sm)
-+            sage: type(sm)                                                        # known bug - Sagelite WASI matrix backend class identity drift
++            sage: type(sm)                                                        # needs sage.matrix.matrix_integer_dense
 diff -urN -U0 a/src/sage/crypto/boolean_function.pyx b/src/sage/crypto/boolean_function.pyx
 --- a/src/sage/crypto/boolean_function.pyx
 +++ b/src/sage/crypto/boolean_function.pyx
