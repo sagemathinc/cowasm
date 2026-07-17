@@ -50896,6 +50896,36 @@ shared source and independently records the same 33/0/25 result. The stale
 guard is removed. The next pass should continue with another bounded native
 arithmetic/backend or frontend semantic cluster.
 
+High-byte `sage_input` guard promotion pass on 2026-07-17 UTC:
+
+The CPython Unicode-escape compiler correction also clears the adjacent
+browser-profile guard on the high-byte
+`sage_input(..., verify=True)` string-literal example. The octal escapes
+produce non-ASCII code points in the compiler's decoded intermediate string,
+so the same unsafe WASM varargs formatter had corrupted the value before
+`sage_input` could verify and reproduce its escaped form.
+
+Forced-deferred and unguarded focused replays now both record the row as a
+pass. Removing only the stale annotation promotes it into the default profile;
+the complete file replay records:
+
+```text
+sage_input.py --line 425:       1 passed, 0 failed,  0 skipped
+sage_input.py default after:  721 passed, 0 failed, 16 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-unicode-followup/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `sage_input.py` is byte-identical to the tested patched source,
+compiles with `py_compile`, and independently records the same 721/0/16
+whole-file result. Because this pass only removes source doctest metadata after
+the already-rebuilt CPython runtime fix, the coherent browser resource bundle
+does not require another rebuild. The next pass should continue with another
+bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
