@@ -247,6 +247,12 @@ class RuntimeContractTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertIn(expected, result.stdout)
 
+    def test_unicode_literal_before_escape(self):
+        source = "value = 'à" + chr(92) + "nbb'"
+        namespace = {}
+        exec(source, namespace)
+        self.assertEqual(namespace["value"], "à" + chr(10) + "bb")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

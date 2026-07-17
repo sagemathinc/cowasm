@@ -58,6 +58,7 @@ patches=(
   25-tuple-resize-same-size-noop.patch
   26-wasi-float-exponent-format.patch
   27-wasi-unicode-fromformat-integers.patch
+  29-wasi-string-literal-unicode-escapes.patch
 )
 
 for patch_name in "${patches[@]}"; do

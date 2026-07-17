@@ -1,0 +1,28 @@
+--- a/Parser/string_parser.c
++++ b/Parser/string_parser.c
+@@ -133,0 +134,13 @@
++static void
++cowasm_write_unicode_escape(char *p, Py_UCS4 ch)
++{
++    static const char hex[] = "0123456789abcdef";
++
++    p[0] = '\\';
++    p[1] = 'U';
++    for (int i = 9; i >= 2; i--) {
++        p[i] = hex[ch & 0xf];
++        ch >>= 4;
++    }
++}
++
+ static PyObject *
+ decode_unicode_with_escapes(Parser *parser, const char *s, size_t len, Token *t)
+ {
+@@ -178,7 +191,7 @@
+             w_len = PyUnicode_GET_LENGTH(w);
+             for (i = 0; i < w_len; i++) {
+                 Py_UCS4 chr = PyUnicode_READ(kind, data, i);
+-                sprintf(p, "\\U%08x", chr);
++                cowasm_write_unicode_escape(p, chr);
+                 p += 10;
+             }
+             /* Should be impossible to overflow */

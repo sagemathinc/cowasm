@@ -93,3 +93,8 @@ test("float repr keeps signed exponent digits", async () => {
   );
   expect(repr("1e-20")).toBe("1e-20");
 });
+
+test("unicode before a string escape compiles correctly", async () => {
+  const { repr } = await syncPython();
+  expect(repr("ord('à\\nbb'[0])")).toBe("224");
+});

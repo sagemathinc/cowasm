@@ -24217,3 +24217,9 @@ diff --git a/src/sage/features/join_feature.py b/src/sage/features/join_feature.
 @@ -112 +112 @@
 -            sage: f.require()                                                     # known bug - Sagelite traceback matcher keeps explicit stack frames
 +            sage: f.require()
+diff --git a/src/sage/typeset/character_art_factory.py b/src/sage/typeset/character_art_factory.py
+--- a/src/sage/typeset/character_art_factory.py
++++ b/src/sage/typeset/character_art_factory.py
+@@ -191 +191 @@
+-            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode        # known bug - Sagelite source conversion mangles this non-ASCII literal
++            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode

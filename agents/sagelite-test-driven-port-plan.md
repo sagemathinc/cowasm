@@ -50859,6 +50859,43 @@ browser resource bundle does not require a rebuild. The next pass should
 continue with another bounded native arithmetic/backend or frontend semantic
 cluster.
 
+Unicode string-literal escape compilation pass on 2026-07-17 UTC:
+
+The browser-profile guard on the non-ASCII `character_art_factory.py` example
+exposed a CPython parser defect rather than a character-art limitation. A
+correctly extracted source literal such as `'à\nbb'` was corrupted while
+being compiled, so the first character varied across fresh workers and the
+documented three-line art became output such as `d` followed by `bb` and
+`ccc`.
+
+CPython's `decode_unicode_with_escapes` converted non-ASCII code points to
+fixed-width `\UXXXXXXXX` escapes with `sprintf("\\U%08x", chr)`. CoWasm's
+imported WASM varargs formatting path is not safe for this parser-internal
+operation. The shared CPython WASM patch now emits those eight hexadecimal
+digits directly, covering both the pinned Zig baseline used by `python-wasm`
+and the incremental wasi-sdk backend. The wasi-sdk runtime contracts include a
+dynamic compilation reproducer, and the `python-wasm` Jest suite checks the
+same non-ASCII-before-escape boundary through the JavaScript API.
+
+Focused and complete default-profile replays record:
+
+```text
+character_art_factory.py --line 191 before:  0 passed, 1 failed,  0 skipped
+character_art_factory.py --line 191 after:   1 passed, 0 failed,  0 skipped
+character_art_factory.py default after:     33 passed, 0 failed, 25 skipped
+```
+
+The rebuilt wasi-sdk runtime passes all 15 runtime contracts, while the rebuilt
+legacy `python-wasm` bundle passes all 11 focused Node tests. SQLite dashboards
+are under `.tmp/current-run/scheduled-2026-07-17-character-art/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `character_art_factory.py` is byte-identical to the tested
+shared source and independently records the same 33/0/25 result. The stale
+guard is removed. The next pass should continue with another bounded native
+arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
