@@ -50795,6 +50795,39 @@ Because this pass only corrects source doctest metadata, the coherent browser
 resource bundle does not require a rebuild. The next pass should continue with
 another bounded native arithmetic/backend or frontend semantic cluster.
 
+Integer-matrix list-display guard promotion pass on 2026-07-17 UTC:
+
+The five browser-profile `# known bug` annotations in
+`sage/combinat/integer_matrices.py` are stale. With the module's declared
+`sage.combinat` and `sage.modules` features enabled, ordered whole-file replay
+confirms that each guarded `IntegerMatrices(...).list()` example now produces
+the documented matrix-list display. This includes the six-element introductory
+example, the three iterator examples (including the all-zero matrix), and the
+repeated list display used by `to_composition`.
+
+Forced-deferred, unguarded shared-source, and cleanly reconstructed replays all
+record:
+
+```text
+integer_matrices.py: 51 passed, 0 failed, 0 skipped
+```
+
+The forced SQLite audit persists all five formerly guarded blocks as passes
+with their `deferred:known bug` metadata. The accumulated WASI patch removes
+only those annotations; the file-level feature declaration and Symmetrica
+dependency tags remain unchanged. The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-integer-matrices/` and pass
+`PRAGMA integrity_check`.
+
+Applying the complete accumulated Sagelite patch exactly once to a fresh
+archive of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects. The reconstructed `integer_matrices.py` is
+byte-identical to the tested patched source and independently reports the same
+51/0/0 result. Because this pass only removes source doctest metadata, the
+coherent browser resource bundle does not require a rebuild. The next pass
+should continue with another bounded native arithmetic/backend or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

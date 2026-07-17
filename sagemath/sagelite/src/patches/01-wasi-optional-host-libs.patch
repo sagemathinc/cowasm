@@ -24193,3 +24193,21 @@ diff --git a/src/sage/matrix/special.py b/src/sage/matrix/special.py
 -        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
 @@ -3383 +3378,0 @@
 -        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+diff --git a/src/sage/combinat/integer_matrices.py b/src/sage/combinat/integer_matrices.py
+--- a/src/sage/combinat/integer_matrices.py
++++ b/src/sage/combinat/integer_matrices.py
+@@ -46 +46 @@
+-        sage: IM.list()                                                               # known bug
++        sage: IM.list()
+@@ -120 +120 @@
+-            sage: IntegerMatrices([2,2], [1,2,1]).list()                              # known bug
++            sage: IntegerMatrices([2,2], [1,2,1]).list()
+@@ -125 +125 @@
+-            sage: IntegerMatrices([0,0],[0,0,0]).list()                               # known bug
++            sage: IntegerMatrices([0,0],[0,0,0]).list()
+@@ -130 +130 @@
+-            sage: IntegerMatrices([1,1],[1,1]).list()                                 # known bug
++            sage: IntegerMatrices([1,1],[1,1]).list()
+@@ -271 +271 @@
+-            sage: IM.list()                                                           # known bug
++            sage: IM.list()
