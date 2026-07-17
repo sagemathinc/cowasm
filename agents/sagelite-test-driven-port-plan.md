@@ -50964,6 +50964,47 @@ requires no WASM rebuild.  The next pass should use the more faithful focused
 reruns to continue with another bounded arithmetic/backend or frontend
 semantic cluster.
 
+HTML-fragment displayhook parity pass on 2026-07-17 UTC:
+
+The nine browser-profile guards in `sage/misc/html.py` hid one frontend
+display mismatch rather than unavailable HTML or MathJax functionality.
+Sagelite's top-level hooks delegated `HtmlFragment` values to CPython's plain
+display hook, so the string subclass was shown with quotes and escaped
+backslashes.  The underlying fragments were already correct.
+
+Runner version 116 recognizes `HtmlFragment` in both the interactive Node REPL
+and doctest display hooks and writes its text form, matching Sage's plain-text
+rich-output fallback.  The standalone doctest fixture covers the same
+top-level contract, and all nine stale `# known bug` annotations are removed
+from the accumulated WASI source patch.
+
+Complete shared-source and cleanly reconstructed replays record:
+
+```text
+html.py before: 55 passed, 9 failed, 0 skipped
+html.py after:  64 passed, 0 failed, 0 skipped
+```
+
+The fixed shared-source and reconstructed SQLite dashboards under
+`.tmp/current-run/scheduled-2026-07-17-frontend-next/` pass
+`PRAGMA integrity_check` and record runner version 116.  Applying the complete
+accumulated patch exactly once to a clean clone of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects; its
+reconstructed `html.py` is byte-identical to the tested shared source and
+independently reports the same 64/0/0 result.  A direct interactive REPL probe
+also prints an HTML fragment without quotes.  Node source checking, standalone
+shell syntax checking, and `git diff --check` pass.
+
+The full standalone make target could not reach its runtime smoke because a
+fresh Meson configure reports that the configured Cython compiler cannot
+transpile programs.  The initial attempt also confirmed why scheduled audits
+must use a clean source clone: the developer checkout contains pre-existing
+`integer_ring.pyx` edits to which the accumulated patch cannot be applied a
+second time.  Those source edits remain untouched.  This host-runner correction
+requires no native WASM rebuild.  The next pass should continue with the
+remaining lightweight pretty-printer output cluster or another bounded native
+arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

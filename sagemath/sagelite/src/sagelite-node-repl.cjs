@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 115;
+const doctestRunnerVersion = 116;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -109,6 +109,7 @@ warnings.filterwarnings(
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
@@ -120,6 +121,11 @@ def __cowasm_sagelite_displayhook(value):
         if value is not None:
             builtins._ = value
             print(repr(list(value)))
+        return
+    if isinstance(value, __CowasmHtmlFragment):
+        if value is not None:
+            builtins._ = value
+            print(str(value))
         return
     if isinstance(value, __CowasmMatrix):
         formatted = __cowasm_sagelite_large_matrix_repr.format_string(value)
@@ -1028,6 +1034,7 @@ warnings.filterwarnings(
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
@@ -1101,6 +1108,8 @@ def __cowasm_doctest_displayhook(value):
     try:
         if isinstance(value, __CowasmSequence):
             sys.stdout.write(repr(list(value)) + "\\n")
+        elif isinstance(value, __CowasmHtmlFragment):
+            sys.stdout.write(str(value) + "\\n")
         elif isinstance(value, (list, tuple)):
             from sage.repl.display.fancy_repr import TallListRepr
             formatted = TallListRepr().format_string(value)

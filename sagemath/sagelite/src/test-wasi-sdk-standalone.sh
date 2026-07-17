@@ -2011,6 +2011,9 @@ EXAMPLES::
     )
     sage: matrix(ZZ, 100, 100, 0)
     100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
+    sage: from sage.misc.html import HtmlFragment
+    sage: HtmlFragment('<b>browser math</b>')
+    <b>browser math</b>
     sage: print("{[2, 1]: 1, ([1], [2]): 3}")
     {([1], [2]): 3, [2, 1]: 1}
     sage: print("{'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.47619047619047666, 'ymin': 0}")

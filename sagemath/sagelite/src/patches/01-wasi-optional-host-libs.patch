@@ -24229,3 +24229,33 @@ diff --git a/src/sage/misc/sage_input.py b/src/sage/misc/sage_input.py
 @@ -425 +425 @@
 -            sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)    # known bug
 +            sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)
+diff --git a/src/sage/misc/html.py b/src/sage/misc/html.py
+--- a/src/sage/misc/html.py
++++ b/src/sage/misc/html.py
+@@ -42 +42 @@
+-        sage: HtmlFragment('<b>test</b>')                                          # known bug
++        sage: HtmlFragment('<b>test</b>')
+@@ -420 +420 @@
+-            sage: html(1/2)                                                        # known bug
++            sage: html(1/2)
+@@ -423 +423 @@
+-            sage: html('<a href="http://sagemath.org">sagemath</a>')               # known bug
++            sage: html('<a href="http://sagemath.org">sagemath</a>')
+@@ -426 +426 @@
+-            sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)  # known bug
++            sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)
+@@ -434 +434 @@
+-            sage: html(1/2)                                                        # known bug
++            sage: html(1/2)
+@@ -437 +437 @@
+-            sage: html(1/2)                                                        # known bug
++            sage: html(1/2)
+@@ -440 +440 @@
+-            sage: html(1/2)                                                        # known bug
++            sage: html(1/2)
+@@ -488 +488 @@
+-            sage: html.eval('<sage>a</sage>')                                      # known bug
++            sage: html.eval('<sage>a</sage>')
+@@ -490 +490 @@
+-            sage: html.eval('<sage>a</sage>', locals={'a': 456})                   # known bug
++            sage: html.eval('<sage>a</sage>', locals={'a': 456})
