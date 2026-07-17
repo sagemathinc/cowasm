@@ -51196,6 +51196,39 @@ only removes source doctest metadata, the coherent browser resource bundle
 does not require a rebuild. The next pass should continue with another bounded
 native arithmetic/backend or frontend semantic cluster.
 
+Words element-class dictionary promotion pass on 2026-07-17 UTC:
+
+The browser-profile guard on `Words('ab')._element_classes` became stale after
+the lightweight display hook started routing dictionaries through Sage's
+sorted fallback representer. A forced focused replay now prints the two class
+keys in Sage's documented order, so the `# known bug` annotation is removed
+from the accumulated WASI source patch.
+
+Focused, complete-module, and cleanly reconstructed replays record:
+
+```text
+words.py --line 1722 forced:  1 passed, 0 failed,  0 skipped
+words.py default:           391 passed, 0 failed, 22 skipped
+reconstructed words.py:     391 passed, 0 failed, 22 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-lazy-series-audit/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean clone of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects; the
+reconstructed `words.py` is byte-identical to the tested patched source and
+independently reports the same 391/0/22 whole-file result.
+
+The same bounded audit confirmed that the sampled lazy-series guards remain
+valid. Rational-function conversion at line 360, the multivariate
+`TestSuite` at line 2781, and pseudo-differential monomial normalization at
+line 4569 each still exceed a 120-second focused timeout (the whole-file
+forced pass also reaches the line-360 timeout). Those guards remain unchanged
+as a separate arithmetic/backend cluster. This promotion only removes source
+doctest metadata and requires no WASM rebuild. The next pass should continue
+with another bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

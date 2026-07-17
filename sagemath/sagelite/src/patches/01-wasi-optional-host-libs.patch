@@ -3321,17 +3321,6 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          {'a': 1, 'b': 3, 'c': 1, 'd': 2}
          sage: evaluation_dict([])
          {}
---- a/src/sage/combinat/words/words.py
-+++ b/src/sage/combinat/words/words.py
-@@ -1719,7 +1719,7 @@
-
-         EXAMPLES::
-
--            sage: Words('ab')._element_classes
-+            sage: Words('ab')._element_classes                                       # known bug
-             {'iter': <class 'sage.combinat.words.word.Word_iter'>,
-              'iter_with_caching': <class 'sage.combinat.words.word.Word_iter_with_caching'>}
-         """
 --- a/src/sage/combinat/words/suffix_trees.py
 +++ b/src/sage/combinat/words/suffix_trees.py
 @@ -1657,7 +1657,7 @@
