@@ -51229,6 +51229,35 @@ as a separate arithmetic/backend cluster. This promotion only removes source
 doctest metadata and requires no WASM rebuild. The next pass should continue
 with another bounded native arithmetic/backend or frontend semantic cluster.
 
+Interactive simplex frontend promotion pass on 2026-07-17 UTC:
+
+The 17 browser-profile guards in
+`sage/numerical/interactive_simplex_method.py` became stale after the
+HTML-fragment display hook and lightweight pretty-printer corrections. The
+previously deferred rows cover HTML/LaTeX simplex transcripts, tuple and
+matrix display, pre-update messages, and the two dependent `is_optimal()`
+checks. A forced replay now passes every one of them, so their `# known bug`
+annotations are removed from the accumulated WASI source patch. The separate
+PPL-backed solver rows remain explicit `# needs pplpy` skips.
+
+Forced and cleanly reconstructed complete-module replays record:
+
+```text
+interactive_simplex_method.py forced:  1014 passed, 0 failed, 40 skipped
+interactive_simplex_method.py default: 1014 passed, 0 failed, 40 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-interactive-simplex/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean checkout of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and
+the reconstructed default-profile replay independently reports the same
+1014/0/40 result under runner version 118. This metadata-only promotion uses
+the existing coherent browser resource snapshot and requires no WASM rebuild.
+The next pass should continue with another bounded native arithmetic/backend
+or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

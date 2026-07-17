@@ -24627,3 +24627,57 @@ diff --git a/src/sage/misc/persist.pyx b/src/sage/misc/persist.pyx
 @@ -1002 +1002 @@
 -        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
 +        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
+diff --git a/src/sage/numerical/interactive_simplex_method.py b/src/sage/numerical/interactive_simplex_method.py
+--- a/src/sage/numerical/interactive_simplex_method.py
++++ b/src/sage/numerical/interactive_simplex_method.py
+@@ -87 +87 @@
+-    sage: P.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++    sage: P.run_simplex_method()
+@@ -911 +911 @@
+-            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
++            sage: P.Abcx()
+@@ -941 +941 @@
+-            sage: P1.Abcx()  # known bug - Sagelite WASI doctest display output differs
++            sage: P1.Abcx()
+@@ -949 +949 @@
+-            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
++            sage: P.Abcx()
+@@ -2033 +2033 @@
+-            sage: P.Abcx()  # known bug - Sagelite WASI doctest display output differs
++            sage: P.Abcx()
+@@ -2041 +2041 @@
+-            sage: P1.Abcx()  # known bug - Sagelite WASI doctest display output differs
++            sage: P1.Abcx()
+@@ -2512 +2512 @@
+-            sage: P.run_revised_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: P.run_revised_simplex_method()
+@@ -2574 +2574 @@
+-            sage: P.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: P.run_simplex_method()
+@@ -2716 +2716 @@
+-            sage: D._preupdate_output("primal")  # known bug - Sagelite WASI doctest display output differs
++            sage: D._preupdate_output("primal")
+@@ -2718 +2718 @@
+-            sage: D._preupdate_output("dual")  # known bug - Sagelite WASI doctest display output differs
++            sage: D._preupdate_output("dual")
+@@ -3564 +3564 @@
+-            sage: D.run_dual_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: D.run_dual_simplex_method()
+@@ -3572 +3572 @@
+-            sage: D.is_optimal()  # known bug - depends on skipped Sagelite WASI display-output example
++            sage: D.is_optimal()
+@@ -3582 +3582 @@
+-            sage: D.run_dual_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: D.run_dual_simplex_method()
+@@ -3640 +3640 @@
+-            sage: D.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: D.run_simplex_method()
+@@ -3652 +3652 @@
+-            sage: D.is_optimal()  # known bug - depends on skipped Sagelite WASI display-output example
++            sage: D.is_optimal()
+@@ -3662 +3662 @@
+-            sage: D.run_simplex_method()  # known bug - Sagelite WASI doctest display output differs
++            sage: D.run_simplex_method()
+@@ -4589 +4589 @@
+-            sage: D._preupdate_output("primal")  # known bug - Sagelite WASI doctest display output differs
++            sage: D._preupdate_output("primal")
