@@ -24687,3 +24687,9 @@ diff --git a/src/sage/combinat/dyck_word.py b/src/sage/combinat/dyck_word.py
 @@ -434 +434 @@
 -            sage: D.latex_options()                                                    # known bug
 +            sage: D.latex_options()
+diff --git a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_output/display_manager.py
+--- a/src/sage/repl/rich_output/display_manager.py
++++ b/src/sage/repl/rich_output/display_manager.py
+@@ -575 +575 @@
+-            sage: dm._call_rich_repr(Foo(), {})                                      # not tested - Sagelite runner does not capture warning stream yet
++            sage: dm._call_rich_repr(Foo(), {})

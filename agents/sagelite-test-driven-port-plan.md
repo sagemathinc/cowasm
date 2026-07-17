@@ -51322,6 +51322,36 @@ reclassification requires no native WASM rebuild. The next pass should
 continue with another bounded native arithmetic/backend or frontend semantic
 cluster.
 
+Rich-output warning-capture promotion pass on 2026-07-17 UTC:
+
+The remaining browser-profile `# not tested` guard in
+`sage/repl/rich_output/display_manager.py` became stale after the doctest
+runner's warning-normalization work. Forcing the focused row now captures the
+`RichReprWarning` raised when a test object's `_rich_repr_` method fails and
+matches its documented message exactly, so the annotation is removed from the
+accumulated WASI source patch.
+
+Focused, shared-source, and cleanly reconstructed replays under runner version
+118 record:
+
+```text
+display_manager.py --line 575 forced:  1 passed, 0 failed, 0 skipped
+display_manager.py default:           84 passed, 0 failed, 9 skipped
+reconstructed display_manager.py:     84 passed, 0 failed, 9 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-pretty-printer-audit/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed module is byte-identical to the tested shared source and
+independently reports the same 84/0/9 whole-file result. Node source checking,
+standalone shell syntax checking, and `git diff --check` pass. This
+metadata-only promotion uses the existing coherent browser resource snapshot
+and requires no native WASM rebuild. The next pass should continue with
+another bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
