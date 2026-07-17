@@ -51258,6 +51258,36 @@ the existing coherent browser resource snapshot and requires no WASM rebuild.
 The next pass should continue with another bounded native arithmetic/backend
 or frontend semantic cluster.
 
+Dyck-word LaTeX-options display promotion pass on 2026-07-17 UTC:
+
+The browser-profile guard on `DyckWord(...).latex_options()` became stale
+after the lightweight pretty-printer and sorted-dictionary display passes.
+With the current frontend resource snapshot, the dictionary now preserves
+Sage's sorted keys, multiline layout, and the nested `black` color
+representation. The `# known bug` annotation is removed from the accumulated
+WASI source patch.
+
+A clean reconstruction applies the complete accumulated patch exactly once to
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`; its reconstructed
+`dyck_word.py` is byte-identical to the tested shared source. Focused and
+complete reconstructed-source replays under runner version 118 record:
+
+```text
+dyck_word.py --line 434:   1 passed, 0 failed,  0 skipped
+dyck_word.py default:    556 passed, 0 failed, 41 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-sigma0/` and pass
+`PRAGMA integrity_check`. The same audit confirms that the neighboring
+`sigma0.py:293` matrix-class guard remains valid: its matrix value is still a
+`Matrix_generic_dense` rather than the documented `Matrix_integer_dense`.
+An older resource snapshot initially reproduced the pre-pretty-printer
+placeholder output, so the authoritative replay uses the current coherent
+pretty-printer snapshot. This metadata-only promotion requires no native WASM
+rebuild. The next pass should continue with the Sigma0 matrix-class cluster or
+another bounded native arithmetic/backend or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

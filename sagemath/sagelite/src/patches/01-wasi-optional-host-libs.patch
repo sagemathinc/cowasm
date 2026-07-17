@@ -24681,3 +24681,9 @@ diff --git a/src/sage/numerical/interactive_simplex_method.py b/src/sage/numeric
 @@ -4589 +4589 @@
 -            sage: D._preupdate_output("primal")  # known bug - Sagelite WASI doctest display output differs
 +            sage: D._preupdate_output("primal")
+diff --git a/src/sage/combinat/dyck_word.py b/src/sage/combinat/dyck_word.py
+--- a/src/sage/combinat/dyck_word.py
++++ b/src/sage/combinat/dyck_word.py
+@@ -434 +434 @@
+-            sage: D.latex_options()                                                    # known bug
++            sage: D.latex_options()
