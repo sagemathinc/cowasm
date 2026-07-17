@@ -50718,6 +50718,40 @@ reconstructed rational-vector source is byte-identical to the tested shared
 source and independently reports the same 45/0/0 result. The next pass should
 continue with another bounded arithmetic/backend cluster.
 
+Large-matrix displayhook parity pass on 2026-07-17 UTC:
+
+The remaining browser-profile guard on the 100-by-100 integer-matrix example
+in `sage/matrix/special.py` exposed a frontend display mismatch rather than a
+matrix backend defect. The matrix's `repr` correctly returned Sage's compact
+size-and-ring summary, but Sagelite delegated top-level values to CPython's
+plain display hook and therefore omitted Sage's interactive hint for viewing
+the entries.
+
+The interactive REPL and doctest display hooks now reuse Sage's existing
+`LargeMatrixHelpRepr`, while retaining ordinary nested-container matrix
+representations. The stale matrix-summary guard is removed, the standalone
+doctest smoke covers the top-level hint, and doctest runner metadata advances
+to version 114.
+
+Focused and complete default-profile replays record:
+
+```text
+special.py --line 403 before:   0 passed, 1 failed,   0 skipped
+special.py --line 403 after:    1 passed, 0 failed,   0 skipped
+special.py default after:     442 passed, 0 failed, 145 skipped
+```
+
+The SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-17-next-cluster/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `special.py` is byte-identical to the tested patched source.
+The Node source check, standalone shell syntax check, and `git diff --check`
+also pass. This frontend-only correction requires no native WASM rebuild. The
+next pass should continue with another bounded arithmetic/backend or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -2009,6 +2009,8 @@ EXAMPLES::
     [1 2]  [1 2]
     [3 4], [3 4]
     )
+    sage: matrix(ZZ, 100, 100, 0)
+    100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
     sage: print("{[2, 1]: 1, ([1], [2]): 3}")
     {([1], [2]): 3, [2, 1]: 1}
     sage: print("{'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.47619047619047666, 'ymin': 0}")
@@ -2127,7 +2129,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|58|46|0|12" ]; then
+if [ "$doctest_smoke_counts" != "passed|59|47|0|12" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"

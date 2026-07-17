@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 113;
+const doctestRunnerVersion = 114;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -108,9 +108,12 @@ warnings.filterwarnings(
 )
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
+from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
 __cowasm_sagelite_displayhook_delegate = sys.displayhook
+__cowasm_sagelite_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
 
 def __cowasm_sagelite_displayhook(value):
     if isinstance(value, __CowasmSequence):
@@ -118,6 +121,13 @@ def __cowasm_sagelite_displayhook(value):
             builtins._ = value
             print(repr(list(value)))
         return
+    if isinstance(value, __CowasmMatrix):
+        formatted = __cowasm_sagelite_large_matrix_repr.format_string(value)
+        if formatted != "--- object not handled by representer ---":
+            if value is not None:
+                builtins._ = value
+                print(formatted)
+            return
     __cowasm_sagelite_displayhook_delegate(value)
 
 sys.displayhook = __cowasm_sagelite_displayhook
@@ -1017,6 +1027,8 @@ warnings.filterwarnings(
 
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
+from sage.repl.display.fancy_repr import LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr
+from sage.structure.element import Matrix as __CowasmMatrix
 from sage.structure.sequence import Sequence_generic as __CowasmSequence
 
 __cowasm_files = ${JSON.stringify(JSON.stringify(files))}
@@ -1072,6 +1084,17 @@ def __cowasm_doctest_showwarning(message, category, filename, lineno, file=None,
 
 __cowasm_active_displayhook_globals = None
 __cowasm_displayhook_delegate = None
+__cowasm_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
+
+
+def __cowasm_doctest_display_large_matrix(value):
+    if not isinstance(value, __CowasmMatrix):
+        return False
+    formatted = __cowasm_large_matrix_repr.format_string(value)
+    if formatted == "--- object not handled by representer ---":
+        return False
+    sys.stdout.write(formatted + "\\n")
+    return True
 
 
 def __cowasm_doctest_displayhook(value):
@@ -1087,6 +1110,8 @@ def __cowasm_doctest_displayhook(value):
                 __cowasm_displayhook_delegate(value)
             else:
                 sys.__displayhook__(value)
+        elif __cowasm_doctest_display_large_matrix(value):
+            pass
         elif __cowasm_displayhook_delegate is not None:
             __cowasm_displayhook_delegate(value)
         else:
