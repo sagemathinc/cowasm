@@ -52323,6 +52323,34 @@ promotion requires no native WASM or resource-bundle rebuild. The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Cases missing-argument diagnostic promotion pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard on `cases()` in
+`sage/functions/other.py` is stale after the shared callable-diagnostic and
+traceback-matching repairs. The no-argument call now raises the documented
+`TypeError`, including the missing `l` positional argument, so the accumulated
+WASI patch no longer marks the example as `# known bug`.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+forced cases() row before removal:      1 passed, 0 failed,   0 skipped
+shared complete module final:          47 passed, 0 failed, 429 skipped
+reconstructed complete module final:   47 passed, 0 failed, 429 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-next-deferred/`; every retained database
+passes `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to an archive of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and the reconstructed `functions/other.py` is byte-identical to the tested
+shared source. Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass. This stale-
+metadata promotion requires no native WASM or resource-bundle rebuild. The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

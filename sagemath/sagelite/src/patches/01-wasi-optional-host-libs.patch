@@ -10772,9 +10772,6 @@ diff -urN a/src/sage/functions/other.py b/src/sage/functions/other.py
 @@ -1775 +1775 @@
 -            sage: binomial._evalf_(10^20 + 1/1, 10^20)
 +            sage: binomial._evalf_(10^20 + 1/1, 10^20)                                  # needs sage.symbolic
-@@ -2072 +2072 @@
--            sage: cases()
-+            sage: cases()                                                               # known bug
 diff -urN a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
 --- a/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
 +++ b/src/sage/tests/books/computational_mathematics_with_sagemath/sol/nonlinear_doctest.py
