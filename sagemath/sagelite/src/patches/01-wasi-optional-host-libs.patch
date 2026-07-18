@@ -25368,6 +25368,13 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 -            sage: dir(1)         # todo: not implemented
 +            sage: dir(1)
 
+diff --git a/src/sage/structure/parent.pyx b/src/sage/structure/parent.pyx
+--- a/src/sage/structure/parent.pyx
++++ b/src/sage/structure/parent.pyx
+@@ -878 +878 @@
+-            sage: x = my_parent(3)   # todo: not implemented  why does this one fail???
++            sage: x = my_parent(3)
+
 diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
 --- a/src/sage/sets/recursively_enumerated_set.pyx
 +++ b/src/sage/sets/recursively_enumerated_set.pyx
