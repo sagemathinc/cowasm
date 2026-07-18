@@ -53,6 +53,13 @@ SAGELITE_DOCTEST_GUARDED_SOURCE_FLAGS = \
 all: test-wasi-sdk-standalone
 
 CPYTHON_WASM = ${CWD}/../../python/cpython/dist/wasi-sdk
+CPYTHON_WASI_SDK_ZLIB = ${CPYTHON_WASM}/lib/python3.14/lib-dynload/zlib.cpython-314-wasm32-wasi.so
+CPYTHON_WASI_SDK_BZ2 = ${CPYTHON_WASM}/lib/python3.14/lib-dynload/_bz2.cpython-314-wasm32-wasi.so
+CPYTHON_WASI_SDK_UNICODEDATA = ${CPYTHON_WASM}/lib/python3.14/lib-dynload/unicodedata.cpython-314-wasm32-wasi.so
+CPYTHON_WASI_SDK_SAGELITE_IMPORT_DEPS = \
+	${CPYTHON_WASI_SDK_ZLIB} \
+	${CPYTHON_WASI_SDK_BZ2} \
+	${CPYTHON_WASI_SDK_UNICODEDATA}
 PY_CYTHON = ${CWD}/../../python/py-cython/dist/wasm
 PY_NUMPY = ${CWD}/../../python/py-numpy/dist/wasm
 PY_GMPY2 = ${CWD}/../../python/py-gmpy2/dist/wasm
@@ -87,6 +94,11 @@ LIBPNG_WASI_SDK = ${CWD}/../../core/libpng/dist/wasi-sdk
 
 ${CPYTHON_WASM}/include/python3.14/Python.h:
 	$(MAKE) -C ${CWD}/../../python/cpython wasi-sdk-cpython
+
+.PHONY: cpython-wasi-sdk-sagelite-imports
+cpython-wasi-sdk-sagelite-imports:
+	$(MAKE) -C ${CWD}/../../python/cpython \
+		$(foreach dep,${CPYTHON_WASI_SDK_SAGELITE_IMPORT_DEPS},$(abspath ${dep}))
 
 ${PY_CYTHON}/Cython/Compiler/Main.pyc:
 	$(MAKE) -C ${CWD}/../../python/py-cython wasm
@@ -208,7 +220,7 @@ ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build ${SRC}/patches/01-wasi-opti
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_MPMATH}/mpmath/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PACKAGING}/packaging/__init__.pyc ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${CONWAY_POLYNOMIALS_WASI_SDK}/conway_polynomials/__init__.py ${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so ${LRCALC_PYTHON_WASI_SDK}/lrcalc.cpython-314-wasm32-wasi.so ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${LIBBRAIDING_WASI_SDK}/lib/libbraiding.a ${RW_WASI_SDK}/lib/librw.a ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${GF2X_WASI_SDK}/lib/libgf2x.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.cowasm-sagelite-source-revision ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h cpython-wasi-sdk-sagelite-imports ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_MPMATH}/mpmath/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PACKAGING}/packaging/__init__.pyc ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${CONWAY_POLYNOMIALS_WASI_SDK}/conway_polynomials/__init__.py ${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so ${LRCALC_PYTHON_WASI_SDK}/lrcalc.cpython-314-wasm32-wasi.so ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${LIBBRAIDING_WASI_SDK}/lib/libbraiding.a ${RW_WASI_SDK}/lib/librw.a ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${GF2X_WASI_SDK}/lib/libgf2x.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.cowasm-sagelite-source-revision ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_MPMATH} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${PY_PACKAGING} ${PY_PLATFORMDIRS} ${PYTHON_WASM} ${CONWAY_POLYNOMIALS_WASI_SDK} ${PRIMECOUNTPY_WASI_SDK} ${LRCALC_PYTHON_WASI_SDK} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${LIBCXX_WASI_SDK} ${CYPARI2_WASI_SDK} ${LIBBRAIDING_WASI_SDK} ${RW_WASI_SDK} || status=$$?; \

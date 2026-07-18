@@ -51513,6 +51513,51 @@ checking, standalone shell syntax checking, and `git diff --check` pass. The
 next pass should audit the remaining PARI finite-field-to-GF2X conversion row
 or another bounded native backend cluster.
 
+PARI finite-field to NTL GF2X conversion pass on 2026-07-18 UTC:
+
+The last deferred row in `sage/libs/ntl/ntl_GF2X.pyx` was a missing wrapper
+coercion rather than lost PARI state. The current PARI finite-field element
+retains the expected polynomial, and its coefficient list is exactly the NTL
+GF2X representation needed by the constructor:
+
+```text
+GF(2**8, 'a').gen()**20                    a^7 + a^5 + a^4 + a^2
+value.polynomial().list()                  [0, 0, 1, 0, 1, 1, 0, 1]
+ntl.GF2X(value)                            [0 0 1 0 1 1 0 1]
+```
+
+`ntl_GF2X.__init__` now recognizes
+`FiniteFieldElement_pari_ffelt` and passes `x.polynomial().list()` to NTL's
+existing coefficient-list parser. The stale `# known bug` annotation is
+removed. Focused, shared-source, and cleanly reconstructed replays under
+runner version 118 record:
+
+```text
+ntl_GF2X.pyx --line 120:          1 passed, 0 failed, 0 skipped
+ntl_GF2X.pyx shared source:     112 passed, 0 failed, 0 skipped
+ntl_GF2X.pyx reconstructed:     112 passed, 0 failed, 0 skipped
+```
+
+The standalone build dependency contract is also tightened for clean rebuilds.
+Sagelite's `python-wasi-sdk` import probe requires the CPython zlib, bz2, and
+unicodedata side modules. They are now built in one recursive CPython make
+invocation, which prevents separate recursive calls from reinstalling the base
+distribution and deleting one another's extension outputs. A fresh canonical
+standalone attempt generated and compiled the complete Sagelite extension set,
+then exposed the missing `_bz2` prerequisite at `import sage.all`; the grouped
+dependency target subsequently built and retained all three imports together.
+
+The authoritative SQLite dashboards, coherent manifest-backed resource bundle,
+and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-gf2x-pari-conversion/`. Applying the
+complete accumulated patch exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed GF2X source is byte-identical to the tested staged source. The
+focused Cython/WASM module build, manifest validation, SQLite integrity checks,
+Node source checking, standalone shell syntax checking, and `git diff --check`
+pass. The next pass should continue with another bounded native backend or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

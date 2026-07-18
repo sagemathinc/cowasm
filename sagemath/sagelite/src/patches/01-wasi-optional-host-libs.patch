@@ -24732,3 +24732,17 @@ diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
 @@ -72 +72 @@
 -        sage: x                                                                     # known bug - split NTL side modules do not share GF2X hex-output flag with GF2E repr
 +        sage: x
+diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
+--- a/src/sage/libs/ntl/ntl_GF2X.pyx
++++ b/src/sage/libs/ntl/ntl_GF2X.pyx
+@@ -120 +120 @@
+-            sage: ntl.GF2X(GF(2**8,'a').gen()**20)                                  # known bug - Sagelite PARI finite-field element conversion loses GF(2) polynomial state
++            sage: ntl.GF2X(GF(2**8,'a').gen()**20)
+@@ -135,0 +136 @@
++        from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+@@ -169,2 +171,4 @@
+-        elif isinstance(x, FiniteField_givaroElement):
++        elif isinstance(x, FiniteFieldElement_pari_ffelt):
++            x = x.polynomial().list()
++        elif isinstance(x, FiniteField_givaroElement):
+             x = "0x" + hex(x.to_integer())[2:][::-1]
