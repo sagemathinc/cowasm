@@ -25360,3 +25360,10 @@ diff --git a/src/sage/categories/algebra_modules.py b/src/sage/categories/algebr
 -            sage: AlgebraModules(QQ['a,b']) # todo: not implemented (QQ['a,b'] should be in Algebras(QQ))
 +            sage: AlgebraModules(QQ['a,b'])
 +            Category of algebra modules over Multivariate Polynomial Ring in a, b over Rational Field
+
+diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
+--- a/src/sage/structure/element.pyx
++++ b/src/sage/structure/element.pyx
+@@ -526 +526 @@
+-            sage: dir(1)         # todo: not implemented
++            sage: dir(1)

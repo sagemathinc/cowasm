@@ -53339,6 +53339,39 @@ category-semantic promotion requires no native WASM or resource-bundle
 rebuild.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Integer directory-protocol promotion pass on 2026-07-18 UTC:
+
+The deferred `dir(1)` row in `sage/structure/element.pyx` was stale.  The
+ordinary Python directory protocol now honors the integer extension type's
+`__dir__` implementation and includes dynamically attached category methods,
+including `is_idempotent`, `is_integer`, and `is_integral`, exactly as the
+adjacent explicit `1.__dir__()` example documents.  A forced focused replay
+therefore passed without any source or expectation correction.  The
+accumulated WASI patch now removes the obsolete `# todo: not implemented`
+marker and promotes the assertion to default coverage.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced deferred row before:        1 passed, 0 failed,   0 skipped
+shared default focused final:      1 passed, 0 failed,   0 skipped
+shared complete module final:    399 passed, 0 failed, 339 skipped
+reconstructed complete final:    399 passed, 0 failed, 339 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-element-dir/`; every retained database
+passes `PRAGMA integrity_check`, and the final saved block-failure and
+file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Focused and complete shared/reconstructed replays, SQLite integrity
+checks, and `git diff --check` pass.  This stale extension-type metadata
+promotion requires no native WASM or resource-bundle rebuild.  The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
