@@ -52231,6 +52231,36 @@ promotion requires no native WASM or resource-bundle rebuild. The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Regular-sequence matrix-list display promotion pass on 2026-07-18 UTC:
+
+The five remaining browser-profile guards in
+`sage/combinat/regular_sequence_bounded.py` are stale after the shared
+matrix-list display repairs. The three `construct_phi()` examples and two
+`make_positive()` examples all return ordinary lists of matrices. They now
+use Sage's compact side-by-side matrix layout consistently, including the
+long multi-row expectations that failed the earlier 2026-07-08 audit.
+
+The accumulated WASI patch no longer marks those five rows as `# known bug`.
+Focused and complete replays under runner version 123 record:
+
+```text
+five guarded rows forced before removal: 5 passed, 0 failed, 0 skipped
+shared complete module final:            68 passed, 0 failed, 18 skipped
+reconstructed complete module final:     68 passed, 0 failed, 18 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-regular-sequence-promotion/`; every
+retained database passes `PRAGMA integrity_check`. Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+an archive of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed module is byte-identical to
+the tested staged source. Python compilation, focused and complete
+shared/reconstructed replays, SQLite integrity checks, and `git diff --check`
+pass. This stale-metadata promotion requires no native WASM or resource-bundle
+rebuild. The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
