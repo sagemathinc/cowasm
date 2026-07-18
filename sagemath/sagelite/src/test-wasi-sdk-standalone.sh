@@ -2080,6 +2080,10 @@ EXAMPLES::
     ....:         return "<cowasm object at 0x>"
     sage: {"b": 2, "a": CowasmDictRepr()}
     {'a': <cowasm object at ...>, 'b': 2}
+    sage: {}
+    {}
+    sage: {((), ()): 4}
+    {((), ()): 4}
     sage: class CowasmBrokenRepr:
     ....:     def __repr__(self):
     ....:         raise ValueError("doctest repr smoke")

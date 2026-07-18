@@ -24842,3 +24842,28 @@ diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recurs
 @@ -2016 +2016 @@
 -            sage: (37,11) in S                                                         # known bug
 +            sage: (37,11) in S
+diff --git a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
+--- a/src/sage/misc/sageinspect.py
++++ b/src/sage/misc/sageinspect.py
+@@ -2248,3 +2248,12 @@
+-    if f and os.path.exists(f) and sys.platform != "wasi":
+-        from sage.doctest.control import skipfile
+-        skip = skipfile(f)
++    if f and os.path.exists(f):
++        if sys.platform == "wasi":
++            from sage.doctest.parsing import (
++                parse_file_optional_tags,
++                unparse_optional_tags,
++            )
++            with open(f) as source:
++                tags = parse_file_optional_tags(enumerate(source))
++            skip = unparse_optional_tags(tags, prefix='') if tags else False
++        else:
++            from sage.doctest.control import skipfile
++            skip = skipfile(f)
+diff --git a/src/sage/misc/cachefunc.pyx b/src/sage/misc/cachefunc.pyx
+--- a/src/sage/misc/cachefunc.pyx
++++ b/src/sage/misc/cachefunc.pyx
+@@ -907 +907 @@
+-            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest          # known bug - WASI doc lookup raises an invalid-argument OSError
++            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest

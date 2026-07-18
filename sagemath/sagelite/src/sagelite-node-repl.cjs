@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 121;
+const doctestRunnerVersion = 122;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -139,7 +139,10 @@ def __cowasm_sagelite_displayhook(value):
     if isinstance(value, dict):
         if value is not None:
             builtins._ = value
-            print(__cowasm_sagelite_ipython_repr.format_string(value))
+            formatted = __cowasm_sagelite_ipython_repr.format_string(value)
+            if formatted == "--- object not handled by representer ---":
+                formatted = repr(value)
+            print(formatted)
         return
     if isinstance(value, __CowasmMatrix):
         formatted = __cowasm_sagelite_large_matrix_repr.format_string(value)
@@ -1134,7 +1137,10 @@ def __cowasm_doctest_displayhook(value):
         elif isinstance(value, __CowasmHtmlFragment):
             sys.stdout.write(str(value) + "\\n")
         elif isinstance(value, dict):
-            sys.stdout.write(__cowasm_ipython_repr.format_string(value) + "\\n")
+            formatted = __cowasm_ipython_repr.format_string(value)
+            if formatted == "--- object not handled by representer ---":
+                formatted = repr(value)
+            sys.stdout.write(formatted + "\\n")
         elif isinstance(value, (list, tuple)):
             from sage.repl.display.fancy_repr import TallListRepr
             formatted = TallListRepr().format_string(value)

@@ -52026,6 +52026,56 @@ complete shared/reconstructed replays, SQLite integrity checks, and
 WASM rebuild.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+WASI documentation-warning and dictionary fallback pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard on
+`sage/misc/cachefunc.pyx:907` no longer represented its original invalid-
+argument filesystem failure. Documentation lookup now succeeded, but the
+WASI-specific `sage_getdoc()` path deliberately suppressed Sage's leading
+file-level optional-feature warning because importing
+`sage.doctest.control.skipfile` pulls in unavailable IPython and
+multiprocessing-backed doctest machinery.
+
+The lightweight `sage.doctest.parsing` module is browser-compatible, so
+`sage_getdoc()` now reads and formats only the source file's first-line
+doctest tags on WASI while native builds retain the complete `skipfile()`
+path. The documented warning is restored without broadening the browser
+runtime dependency boundary, and the stale cachefunc guard is removed.
+
+Complete-module validation exposed an independent regression in the recently
+added sorted-dictionary display hook. `SomeIPythonRepr` intentionally
+declines dictionaries it cannot format, including empty dictionaries and
+cache dictionaries with tuple keys, but the Node hooks printed its
+`--- object not handled by representer ---` sentinel directly. Both the
+interactive and doctest hooks now fall back to ordinary Python `repr` in that
+case while retaining deterministic Sage formatting where it applies. Runner
+version 122 records this contract, and the standalone smoke covers both `{}`
+and a tuple-keyed cache-shaped dictionary.
+
+Focused, complete shared-source, and cleanly reconstructed replays record:
+
+```text
+cachefunc.pyx --line 907 before:       0 passed, 1 failed,   0 skipped
+cachefunc.pyx --line 907 after:        1 passed, 0 failed,   0 skipped
+cachefunc.pyx before dict fallback:  622 passed, 14 failed, 222 skipped
+cachefunc.pyx shared final:          636 passed, 0 failed, 222 skipped
+cachefunc.pyx + sageinspect.py
+  reconstructed final:              939 passed, 0 failed, 326 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-cachefunc-doc/`; retained final
+databases pass `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and
+the reconstructed cachefunc and sageinspect sources are byte-identical to the
+tested staged sources. The interactive dictionary probe, Node source check,
+standalone shell syntax check, focused and complete shared/reconstructed
+replays, and `git diff --check` pass. This Python/JavaScript frontend repair
+requires no native WASM rebuild. The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
