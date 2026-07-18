@@ -53498,6 +53498,48 @@ promotion requires no native WASM or resource-bundle rebuild.  The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Word-path area implementation pass on 2026-07-18 UTC:
+
+The deferred `FiniteWordPath_2d.area()` row in
+`sage/combinat/words/paths.py` exposed a real pure-Python implementation gap.
+The method checked that its path was closed but then returned
+`NotImplemented`; a forced focused replay reproduced that value against the
+documented area `2`.  The accumulated WASI patch now computes the exact
+shoelace sum over consecutive path points and returns its absolute half.  The
+promoted doctests cover both orientations, the empty path, a larger rectangle,
+an exact half-integral triangle, and the existing rejection of open paths.
+
+Focused replays under runner version 124 record:
+
+```text
+forced deferred row before:              0 passed, 1 failed, 0 skipped
+shared area contracts final:             6 passed, 0 failed, 0 skipped
+reconstructed area contracts final:      6 passed, 0 failed, 0 skipped
+reconstructed area plus height control:  7 passed, 0 failed, 0 skipped
+```
+
+A complete-module replay is not a useful assertion for this bounded change:
+it remained CPU-active for more than ten minutes in the unrelated early
+`WordPaths('abcdef', steps='triangle_grid')` setup at source line 112, before
+recording any block, and was checkpointed as interrupted.  The focused rows
+exercise the complete area method and preserve the neighboring height control.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-word-path-area/`; every retained
+authoritative database passes `PRAGMA integrity_check`, and the final saved
+block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Python
+compilation, focused shared/reconstructed replays, the neighboring height
+control, SQLite integrity checks, and `git diff --check` pass.  Testing the
+pure-Python implementation required refreshing `sage/combinat/words/paths.py`
+in the ignored local Electron resource tree, but no native WASM rebuild or
+tracked resource-bundle change.  The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

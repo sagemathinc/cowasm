@@ -25467,3 +25467,39 @@ diff --git a/src/sage/categories/homset.py b/src/sage/categories/homset.py
 
              sage: H = Hom(ZZ, QQ, Sets())
              sage: f = H( ConstantFunction(2/3) )
+
+diff --git a/src/sage/combinat/words/paths.py b/src/sage/combinat/words/paths.py
+--- a/src/sage/combinat/words/paths.py
++++ b/src/sage/combinat/words/paths.py
+@@ -1735,8 +1735,29 @@
+             sage: P = WordPaths('abcd',steps=[(1,1),(-1,1),(-1,-1),(1,-1)])
+             sage: p = P('abcd')
+-            sage: p.area()          #todo: not implemented
++            sage: p.area()
+             2
++            sage: P('dcba').area()
++            2
++            sage: P('').area()
++            0
++
++        The area is computed exactly, and an open path is rejected::
++
++            sage: WordPaths('abAB')('aabbAABB').area()
++            4
++            sage: WordPaths('abc', steps=[(1,0),(0,1),(-1,-1)])('abc').area()
++            1/2
++            sage: P('abc').area()
++            Traceback (most recent call last):
++            ...
++            TypeError: the path must be closed to compute its area
+         """
+         if not self.is_closed():
+             raise TypeError("the path must be closed to compute its area")
+-        return NotImplemented
++        points = iter(self.points())
++        previous = next(points)
++        double_area = ZZ.zero()
++        for point in points:
++            double_area += previous[0] * point[1] - previous[1] * point[0]
++            previous = point
++        return abs(double_area) / 2
