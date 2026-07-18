@@ -51602,6 +51602,42 @@ SQLite integrity checks, and `git diff --check` pass. The next pass should
 audit another bounded serialization, native backend, or frontend semantic
 cluster.
 
+Generic rational-polynomial pickle classification pass on 2026-07-18 UTC:
+
+The two remaining browser-profile guards in `sage/misc/explain_pickle.py`
+describe an intentional implementation boundary rather than broken pickle
+serialization. On WASI, rational polynomial rings use the generic polynomial
+element because the specialized `polynomial_rational_flint` side module is a
+placeholder that raises `ImportError` until its initializer can run without
+terminating the Node.js worker. Consequently, `explain_pickle()` correctly
+emits `make_generic_polynomial` instead of the native Sage
+`Polynomial_rational_flint` constructor.
+
+The misleading `# known bug` annotations are replaced with explicit
+`# needs sage.rings.polynomial.polynomial_rational_flint` metadata. The
+neighboring round-trip check confirms that the generic explanation still
+evaluates to the original polynomial. Before and after dashboards under
+runner version 118 record:
+
+```text
+explain_pickle.py --line 19 forced:       0 passed, 1 failed, 0 skipped
+explain_pickle.py --line 41 forced:       0 passed, 1 failed, 0 skipped
+generic pickle round trip:                1 passed, 0 failed, 1 skipped
+explain_pickle.py shared source:        346 passed, 0 failed, 54 skipped
+explain_pickle.py reconstructed source: 346 passed, 0 failed, 54 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-18-explain-pickle/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a clean checkout of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source. This
+metadata-only dependency classification uses the existing coherent browser
+resource snapshot and requires no native WASM rebuild. The next pass should
+continue with another bounded serialization, native backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

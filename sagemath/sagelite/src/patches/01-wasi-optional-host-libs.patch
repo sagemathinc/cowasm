@@ -13623,10 +13623,10 @@ diff -urN -U0 a/src/sage/misc/explain_pickle.py b/src/sage/misc/explain_pickle.p
 +++ b/src/sage/misc/explain_pickle.py
 @@ -19 +19 @@
 -    sage: explain_pickle(dumps(polygen(QQ)))
-+    sage: explain_pickle(dumps(polygen(QQ)))                                      # known bug - stripped WASI profile emits generic polynomial pickle helper
++    sage: explain_pickle(dumps(polygen(QQ)))                                      # needs sage.rings.polynomial.polynomial_rational_flint
 @@ -41 +41 @@
 -    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)
-+    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)                # known bug - stripped WASI profile emits generic polynomial pickle helper
++    sage: explain_pickle(dumps(polygen(QQ)), in_current_sage=True)                # needs sage.rings.polynomial.polynomial_rational_flint
 diff -urN -U0 a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/invariants/invariant_theory.py
 --- a/src/sage/rings/invariants/invariant_theory.py
 +++ b/src/sage/rings/invariants/invariant_theory.py
