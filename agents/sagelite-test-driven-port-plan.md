@@ -53265,6 +53265,45 @@ promotion requires no native WASM or resource-bundle rebuild.  The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Maximal pairwise-compatible subset implementation pass on 2026-07-18 UTC:
+
+The two deferred `maximal=True` rows in
+`sage/combinat/subsets_pairwise.py` exposed a real pure-Python implementation
+gap rather than stale metadata.  The constructor stored its `maximal` argument
+but never used it, so `list()` returned all 14 pairwise-compatible subsets and
+`cardinality()` also remained 14.  A complete forced replay preserved the
+shared setup and reproduced the list mismatch while confirming that the stale
+cardinality expectation merely documented the unimplemented behavior.
+
+The accumulated WASI patch now filters forest nodes whose compatible subset
+can still be extended by any ambient element.  The same maximality predicate
+also governs membership, and equality now includes the `maximal` mode so a
+maximal-subset parent is not equal to the parent that enumerates every
+compatible subset.  The promoted doctests document the three maximal subsets,
+cardinality 3, positive and negative membership, and parent inequality.
+
+Complete-module replays under runner version 124 record:
+
+```text
+forced complete module before:     33 passed, 1 failed, 0 skipped
+shared complete module final:      37 passed, 0 failed, 0 skipped
+reconstructed complete final:      37 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-pairwise-maximal/`; every retained
+authoritative database passes `PRAGMA integrity_check`, and the final saved
+block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Python
+compilation, complete shared/reconstructed replays, SQLite integrity checks,
+and `git diff --check` pass.  Testing the implementation required refreshing
+the packaged pure-Python module in the local Electron resource tree, but no
+native WASM rebuild.  The next pass should continue with another bounded
+filesystem, serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -25292,3 +25292,63 @@ diff --git a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.
 -                Category of H-trivial semigroups
 +                sage: C
 +                Category of h trivial semigroups
+
+diff --git a/src/sage/combinat/subsets_pairwise.py b/src/sage/combinat/subsets_pairwise.py
+--- a/src/sage/combinat/subsets_pairwise.py
++++ b/src/sage/combinat/subsets_pairwise.py
+@@ -53 +53 @@
+-    inclusion (not yet implemented)::
++    inclusion::
+@@ -57 +57 @@
+-        sage: P.list()                   # todo: not implemented
++        sage: P.list()
+@@ -59,2 +59,8 @@
+-        sage: P.cardinality()            # todo: not implemented
+-        14
++        sage: P.cardinality()
++        3
++        sage: Set([4, 5]) in P
++        False
++        sage: Set([4, 5, 9]) in P
++        True
++        sage: P == PairwiseCompatibleSubsets([4,5,6,8,9], predicate)
++        False
+@@ -122 +128,6 @@
+-        return self.__class__ is other.__class__ and self._ambient == other._ambient and self._predicate.__str__() == other._predicate.__str__()
++        return (
++            self.__class__ is other.__class__
++            and self._ambient == other._ambient
++            and self._predicate.__str__() == other._predicate.__str__()
++            and self._maximal == other._maximal
++        )
+@@ -128,2 +139,3 @@
+-        Returns whether subset is a subset of ``self._ambient``, and
+-        ``predicate(x,y)`` holds for every ``x,y`` in ``self``.
++        Return whether ``subset`` is a subset of ``self._ambient`` and
++        ``predicate(x,y)`` holds for every ``x,y`` in ``subset``.  If this
++        set only enumerates maximal subsets, also check maximality.
+@@ -144,3 +156,15 @@
+-        return isinstance(subset, self._element_class ) and \
+-            set(subset).issubset(self._ambient) and \
+-            all( self._predicate(x,y) for x,y in Subsets(subset,2) )
++        return (
++            isinstance(subset, self._element_class)
++            and set(subset).issubset(self._ambient)
++            and all(self._predicate(x, y) for x, y in Subsets(subset, 2))
++            and (not self._maximal or self._is_maximal(subset))
++        )
++
++    def _is_maximal(self, subset):
++        """
++        Return whether ``subset`` is maximal among the compatible subsets.
++        """
++        return not any(
++            all(self._predicate(x, y) for y in subset)
++            for x in self._ambient.difference(subset)
++        )
+@@ -161 +185,4 @@
+-        return self._element_class(subset_rest[0])
++        subset = subset_rest[0]
++        if self._maximal and not self._is_maximal(subset):
++            return None
++        return self._element_class(subset)
