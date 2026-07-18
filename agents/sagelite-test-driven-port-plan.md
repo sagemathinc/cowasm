@@ -53304,6 +53304,41 @@ the packaged pure-Python module in the local Electron resource tree, but no
 native WASM rebuild.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Algebra-module category promotion pass on 2026-07-18 UTC:
+
+The deferred `AlgebraModules(QQ['a,b'])` row in
+`sage/categories/algebra_modules.py` was stale.  Multivariate polynomial rings
+over `QQ` now satisfy the algebra-category contract, and the constructor
+returns the stable category representation that the old comment said was not
+yet implemented.  A forced replay therefore failed only because the deferred
+example had no expected output.  The accumulated WASI patch now records that
+representation and promotes the assertion to default coverage.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+pinned default module before:     8 passed, 0 failed, 2 skipped
+forced deferred row before:       0 passed, 1 failed, 0 skipped
+shared default row final:         1 passed, 0 failed, 0 skipped
+shared complete module final:     9 passed, 0 failed, 1 skipped
+reconstructed complete final:     9 passed, 0 failed, 1 skipped
+```
+
+The remaining skip is the independent free-algebra example guarded by
+`sage.combinat` and `sage.modules`.  The authoritative SQLite dashboards and
+clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-algebra-modules/`; every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure and
+file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass.  This doctest
+category-semantic promotion requires no native WASM or resource-bundle
+rebuild.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

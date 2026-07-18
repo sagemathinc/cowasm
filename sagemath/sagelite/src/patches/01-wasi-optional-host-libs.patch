@@ -25352,3 +25352,11 @@ diff --git a/src/sage/combinat/subsets_pairwise.py b/src/sage/combinat/subsets_p
 +        if self._maximal and not self._is_maximal(subset):
 +            return None
 +        return self._element_class(subset)
+
+diff --git a/src/sage/categories/algebra_modules.py b/src/sage/categories/algebra_modules.py
+--- a/src/sage/categories/algebra_modules.py
++++ b/src/sage/categories/algebra_modules.py
+@@ -41 +41,2 @@
+-            sage: AlgebraModules(QQ['a,b']) # todo: not implemented (QQ['a,b'] should be in Algebras(QQ))
++            sage: AlgebraModules(QQ['a,b'])
++            Category of algebra modules over Multivariate Polynomial Ring in a, b over Rational Field
