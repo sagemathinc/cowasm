@@ -53724,6 +53724,54 @@ from the disposable generated build tree after the Make wrapper detected
 them.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Integer-list envelope equality implementation pass on 2026-07-18 UTC:
+
+The deferred `Envelope([3,2,2]) == Envelope([3,2,2])` row in
+`sage/combinat/integer_lists/base.pyx` exposed a real native comparison gap.
+Finite list and tuple inputs were converted to fresh anonymous functions, so
+the existing `Envelope.__richcmp__` implementation compared function identity
+instead of the finite prefix values.  A first value-only implementation made
+the positive row pass but correctly triggered the neighboring negative
+`min_part` controls during the complete replay.
+
+The accumulated WASI patch now wraps finite prefixes in a small picklable
+callable that compares both the normalized prefix and the constructor
+constraints.  Equivalent list and tuple inputs therefore compare equal while
+different prefixes or constraints remain distinct.  The stale implementation
+marker is removed, and explicit tuple-equivalence and distinct-prefix controls
+are default coverage.  The independent backend pickle-identity row remains
+deferred.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced deferred equality before:       0 passed, 1 failed, 0 skipped
+focused equality final:                1 passed, 0 failed, 0 skipped
+first complete constraint audit:     118 passed, 2 failed, 2 skipped
+shared complete final:               120 passed, 0 failed, 2 skipped
+reconstructed complete final:        120 passed, 0 failed, 2 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-envelope-equality/`; every retained
+database passes `PRAGMA integrity_check`, and the saved final block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested source.
+
+The exact Meson `integer_lists/base` Cython/C/WASM target compiles
+successfully.  The rebuilt side module was validated in an isolated Electron
+resource bundle whose 691 manifest hashes pass, and default resource discovery
+was restored after the broad standalone prerequisite attempted to copy
+pre-existing `/home/user/sagelite` edits.  The dirty upstream checkout was
+left untouched; its failed disposable build copy is retained with the run
+artifacts.  Focused and complete shared/reconstructed replays, SQLite
+integrity checks, clean source reconstruction, resource-manifest validation,
+and `git diff --check` pass.  The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
