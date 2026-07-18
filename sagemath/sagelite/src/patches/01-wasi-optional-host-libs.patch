@@ -25631,3 +25631,95 @@ diff --git a/src/sage/combinat/root_system/root_system.py b/src/sage/combinat/ro
 @@ -273 +273 @@
 -        sage: s = L.simple_projections() # todo: not implemented
 +        sage: s = L.simple_projections()
+diff -urN -U0 a/src/sage/structure/coerce_maps.pyx b/src/sage/structure/coerce_maps.pyx
+--- a/src/sage/structure/coerce_maps.pyx
++++ b/src/sage/structure/coerce_maps.pyx
+@@ -7,0 +8 @@
++from sage.structure.richcmp cimport richcmp
+@@ -152,0 +154,20 @@
++    def __richcmp__(self, other, int op):
++        """
++        Compare named conversion maps by their defining data.
++
++        TESTS::
++
++            sage: from sage.structure.coerce_maps import NamedConvertMap
++            sage: f = NamedConvertMap(ZZ, QQ, '_rational_')
++            sage: f == copy(f)
++            True
++            sage: f == NamedConvertMap(ZZ, QQ, '_integer_')
++            False
++        """
++        if type(self) is not type(other):
++            return NotImplemented
++        left = (self.parent(), self.method_name)
++        right = ((<NamedConvertMap>other).parent(),
++                 (<NamedConvertMap>other).method_name)
++        return richcmp(left, right, op)
++
+@@ -169 +190 @@
+-            sage: phi == psi                    # not implemented
++            sage: phi == psi
+@@ -196 +217 @@
+-            sage: phi == psi                    # not implemented
++            sage: phi == psi
+@@ -306,0 +328,22 @@
++    def __richcmp__(self, other, int op):
++        """
++        Compare callable conversion maps by their defining data.
++
++        TESTS::
++
++            sage: from sage.structure.coerce_maps import CallableConvertMap
++            sage: def f(P, x): return x
++            sage: m = CallableConvertMap(ZZ, ZZ, f)
++            sage: m == copy(m)
++            True
++            sage: m == CallableConvertMap(ZZ, QQ, f)
++            False
++        """
++        if type(self) is not type(other):
++            return NotImplemented
++        left = (self.parent(), self._func, self._parent_as_first_arg)
++        right = ((<CallableConvertMap>other).parent(),
++                 (<CallableConvertMap>other)._func,
++                 (<CallableConvertMap>other)._parent_as_first_arg)
++        return richcmp(left, right, op)
++
+@@ -317 +360 @@
+-            sage: f == g          # not implemented (todo: implement comparison)
++            sage: f == g
+@@ -337 +380 @@
+-            sage: f == g          # not implemented (todo: implement comparison)
++            sage: f == g
+@@ -577,0 +621,24 @@
++    def __richcmp__(self, other, int op):
++        """
++        Compare fallback maps by their defining data.
++
++        TESTS::
++
++            sage: from sage.structure.coerce_maps import CallableConvertMap, TryMap
++            sage: f = CallableConvertMap(ZZ, QQ, lambda P, x: 1/x)
++            sage: g = QQ.coerce_map_from(ZZ)
++            sage: m = TryMap(f, g, error_types=(ZeroDivisionError,))
++            sage: m == copy(m)
++            True
++            sage: m == TryMap(f, g, error_types=(TypeError,))
++            False
++        """
++        if type(self) is not type(other):
++            return NotImplemented
++        left = (self.parent(), self._map_p, self._map_b, self._error_types)
++        right = ((<TryMap>other).parent(),
++                 (<TryMap>other)._map_p,
++                 (<TryMap>other)._map_b,
++                 (<TryMap>other)._error_types)
++        return richcmp(left, right, op)
++
+@@ -588 +655 @@
+-            sage: cmap == map          # not implemented (todo: implement comparison)
++            sage: cmap == map
+@@ -611 +678 @@
+-            sage: cmap == map          # not implemented (todo: implement comparison)
++            sage: cmap == map

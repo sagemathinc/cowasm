@@ -53677,6 +53677,53 @@ native WASM rebuild or tracked resource-bundle change.  The next pass should
 continue with another bounded filesystem, serialization, native-backend, or
 frontend semantic cluster.
 
+Coercion-map copy equality implementation pass on 2026-07-18 UTC:
+
+The deferred copy comparisons in `sage/structure/coerce_maps.pyx` exposed a
+real native map-protocol gap.  `Map.__copy__()` correctly restored every Cython
+slot, and the copied callable or fallback map behaved identically to its
+source, but the subclasses inherited identity comparison from `Element`.
+Consequently `f == copy(f)` returned `False` for `CallableConvertMap`, and the
+same defect affected `NamedConvertMap` and `TryMap`.
+
+The accumulated WASI patch now gives all three map classes structural rich
+comparison over their hom-space and defining data: the named conversion
+method, callable plus parent-argument convention, or preferred/backup maps
+plus handled exception types.  New positive copy and negative distinct-map
+contracts cover each class, and the four executable callable/fallback
+`# not implemented` markers are removed.  The two symbolic named-map copy
+rows also lose their stale implementation markers while retaining their
+independent `sage.symbolic` dependency metadata.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced callable copy before:       0 passed, 1 failed,  0 skipped
+focused final equality controls:   9 passed, 0 failed,  0 skipped
+shared complete module final:     99 passed, 0 failed, 33 skipped
+reconstructed complete final:     99 passed, 0 failed, 33 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-coerce-map-copy-equality/`; every
+retained final database passes `PRAGMA integrity_check`, and the saved final
+block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the staged source.
+
+The exact Meson `coerce_maps` Cython/C/WASM target compiles successfully from
+that clean reconstruction.  Focused and complete shared/reconstructed
+replays, the resource-manifest hash check, SQLite integrity checks, clean
+source reconstruction, and `git diff --check` pass.  The ignored local
+Electron resource module and hash were refreshed for testing; no tracked
+resource-bundle change is required.  The pre-existing changes in
+`/home/user/sagelite` were left untouched, and its copied edits were removed
+from the disposable generated build tree after the Make wrapper detected
+them.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
