@@ -52746,6 +52746,37 @@ requires no native WASM or resource-bundle rebuild.  The next pass should
 continue with another bounded filesystem, serialization, native-backend, or
 frontend semantic cluster.
 
+Signed-tensor supercategory ordering promotion pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard in
+`sage/categories/super_algebras_with_basis.py` covered an ordering-only
+difference.  The runtime returns the same two immediate supercategories as
+Sage, but in the reverse list order.  Sage's category API explicitly documents
+that the order returned by `super_categories()` is irrelevant, so the doctest
+now sorts the result by its string representation before comparing it.  This
+keeps the documented native ordering while testing the actual category
+semantics and removes the stale `# known bug` guard.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+guarded row forced before:        0 passed, 1 failed,  0 skipped
+focused row after:                1 passed, 0 failed,  0 skipped
+shared complete module final:     6 passed, 0 failed, 17 skipped
+reconstructed complete final:     6 passed, 0 failed, 17 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-super-category-order/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to the pinned source succeeds without rejects, and
+the reconstructed module is byte-identical to the tested staged source.  Python
+compilation, focused and complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This order-insensitive category
+doctest correction requires no native WASM or resource-bundle rebuild.  The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
