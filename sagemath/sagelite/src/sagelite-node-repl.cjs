@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 122;
+const doctestRunnerVersion = 123;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1078,9 +1078,12 @@ __cowasm_deferred_re = re.compile(
     r"#.*\\b(not implemented|not tested|known bug|py2)\\b",
     re.IGNORECASE,
 )
-__cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
+__cowasm_optional_re = re.compile(
+    r"(?:#|[,;])\\s*(optional|needs)\\b",
+    re.IGNORECASE,
+)
 __cowasm_optional_tag_re = re.compile(
-    r"#.*?\\b(optional|needs)\\b(?P<features>[^\\n]*)",
+    r"(?:#|[,;])\\s*(optional|needs)\\b(?P<features>[^\\n]*)",
     re.IGNORECASE,
 )
 __cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)

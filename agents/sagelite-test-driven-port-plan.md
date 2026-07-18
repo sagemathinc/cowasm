@@ -52116,6 +52116,53 @@ expectation correction requires no native WASM or resource-bundle rebuild.
 The next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Deferred-tag boundary and miscellaneous stale-guard pass on 2026-07-18 UTC:
+
+The last two browser-profile guards in `sage.misc` were both stale.  The
+`random.Random` representation in `sage/misc/prandom.py` no longer traps, and
+the missing-module diagnostic in `sage/misc/lazy_import.pyx` now completes
+without subprocess support.  Both annotations are removed from the
+accumulated WASI patch.
+
+Forcing the lazy-import example also exposed a doctest-runner metadata bug.
+The word `optional-feature` in the explanatory tail of its `# known bug`
+annotation was parsed as an `# optional` directive.  Consequently, the saved
+`--deferred=known-bug` rerun command skipped the very example it was meant to
+audit unless `--optional` was also supplied.  Runner version 123 recognizes
+`optional` and `needs` only at comment/directive boundaries (`#`, `,`, or
+`;`).  The standalone fixture now proves that a deferred explanation may use
+the word `optional-feature` without creating an optional dependency, while a
+real neighboring `# optional - cowasm_smoke` directive remains classified.
+
+Focused and complete shared/reconstructed replays record:
+
+```text
+prandom.py forced before:                   1 passed, 0 failed,  0 skipped
+lazy_import.pyx deferred-only before:       0 passed, 0 failed,  7 skipped
+directive boundary fixture after:           1 passed, 0 failed,  1 skipped
+prandom.py shared/reconstructed complete:   68 passed, 0 failed,  6 skipped
+lazy_import.pyx shared/reconstructed:      271 passed, 0 failed, 25 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-prandom-repr/`; retained final
+databases pass `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and both
+reconstructed modules are byte-identical to the staged sources.  Node source
+checking, Bash syntax checking, the focused directive contract, complete
+shared/reconstructed module replays, SQLite integrity checks, Python source
+compilation, and `git diff --check` pass.
+
+A resumed complete standalone target was not used as validation because its
+source-copy rule ingested pre-existing edits in the external
+`/home/user/sagelite` checkout and correctly refused to apply duplicate patch
+hunks.  The generated WASI source tree was restored from the validated pinned
+reconstruction without modifying that external checkout.  This JavaScript
+runner and doctest-metadata repair requires no native WASM rebuild.  The next
+pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

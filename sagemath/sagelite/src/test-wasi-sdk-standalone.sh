@@ -2099,6 +2099,8 @@ EXAMPLES::
     long-running failure
     sage: 1 / 0  # known bug
     deferred failure
+    sage: 40 + 2  # known bug - optional-feature diagnostics use subprocess support
+    42
     sage: 1 / 0  # not implemented
     deferred failure
     sage: 1 / 0  # not tested
@@ -2149,7 +2151,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|62|50|0|12" ]; then
+if [ "$doctest_smoke_counts" != "passed|63|50|0|13" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -2911,7 +2913,7 @@ if [ "$doctest_composed_directive_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not compose consecutive standalone directives."
 fi
 doctest_deferred_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason in ('deferred:known bug', 'deferred:not implemented', 'deferred:not tested', 'deferred:py2') and tags like '%' || skip_reason || '%';")"
-if [ "$doctest_deferred_count" != "5" ]; then
+if [ "$doctest_deferred_count" != "6" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record deferred skip metadata."
@@ -2922,7 +2924,7 @@ for expected_skip_reason in \
   'optional:cowasm_smoke|skip|optional,optional:cowasm_smoke|1' \
   'optional:magma|skip|optional,optional:magma|1' \
   'long time|skip|long time|1' \
-  'deferred:known bug|skip|deferred,deferred:known bug|1' \
+  'deferred:known bug|skip|deferred,deferred:known bug|2' \
   'deferred:known bug|skip|optional,deferred,deferred:known bug,needs:cowasm_smoke|1' \
   'deferred:not implemented|skip|deferred,deferred:not implemented|1' \
   'deferred:not tested|skip|deferred,deferred:not tested|1' \
@@ -5525,7 +5527,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|58|51|0|7" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|59|51|0|8" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -5569,7 +5571,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|58|46|1|11" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|59|47|1|11" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"
@@ -5579,6 +5581,12 @@ if [ "$doctest_deferred_feature_failed_count" != "1" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke did not run the requested known-bug deferred block."
+fi
+doctest_deferred_optional_word_count="$(sqlite3 "$doctest_deferred_feature_db" "select count(*) from blocks where status = 'passed' and source = '40 + 2' || char(10) and tags = 'deferred,deferred:known bug';")"
+if [ "$doctest_deferred_optional_word_count" != "1" ]; then
+  cat "$doctest_deferred_feature_log" >&2
+  sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: deferred tag explanation text created a false optional-feature requirement."
 fi
 doctest_deferred_composed_optional_count="$(sqlite3 "$doctest_deferred_feature_db" "select count(*) from blocks where status = 'skipped' and source = 'cowasm_composed_directive_setup + 2' || char(10) and skip_reason = 'optional:cowasm_smoke' and tags like '%needs:cowasm_smoke%' and tags like '%deferred:known bug%';")"
 if [ "$doctest_deferred_composed_optional_count" != "1" ]; then
