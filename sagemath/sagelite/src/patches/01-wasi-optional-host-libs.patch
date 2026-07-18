@@ -25067,3 +25067,27 @@ diff --git a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx b/src/sage/mat
 @@ -112 +112 @@
 -        J = A._fitting_ideal(i)
 +        J = A.fitting_ideal(i)
+diff --git a/src/sage/categories/manifolds.py b/src/sage/categories/manifolds.py
+--- a/src/sage/categories/manifolds.py
++++ b/src/sage/categories/manifolds.py
+@@ -48 +48 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
++            sage: TestSuite(C).run(skip='_test_category_over_bases')
+@@ -152 +152 @@
+-                sage: TestSuite(Manifolds(RR).Differentiable()).run()                   # known bug
++                sage: TestSuite(Manifolds(RR).Differentiable()).run()
+@@ -172 +172 @@
+-                sage: TestSuite(Manifolds(RR).Smooth()).run()                           # known bug
++                sage: TestSuite(Manifolds(RR).Smooth()).run()
+@@ -192 +192 @@
+-                sage: TestSuite(Manifolds(RR).Analytic()).run()                         # known bug
++                sage: TestSuite(Manifolds(RR).Analytic()).run()
+@@ -213 +213 @@
+-                sage: TestSuite(Manifolds(RR).AlmostComplex()).run()                    # known bug
++                sage: TestSuite(Manifolds(RR).AlmostComplex()).run()
+@@ -320 +320 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
++            sage: TestSuite(C).run(skip='_test_category_over_bases')
+@@ -331 +331 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
++            sage: TestSuite(C).run(skip='_test_category_over_bases')
