@@ -24699,3 +24699,19 @@ diff --git a/src/sage/algebras/jordan_algebra.py b/src/sage/algebras/jordan_alge
 @@ -1478 +1478 @@
 -            sage: J.some_elements()  # known bug - Sagelite finite-field octonion element ordering differs
 +            sage: J.some_elements()
+diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
+--- a/src/sage/libs/ntl/ntl_GF2X.pyx
++++ b/src/sage/libs/ntl/ntl_GF2X.pyx
+@@ -131 +131 @@
+-            sage: ntl.GF2X(f)                                                       # known bug - generic GF(2) polynomial coercion fallback string-parses to zero in WASI NTL wrapper
++            sage: ntl.GF2X(f)
+@@ -136,0 +137 @@
++        from sage.rings.polynomial.polynomial_element import Polynomial
+@@ -159,0 +161,4 @@
++        elif isinstance(x, Polynomial) and x.base_ring().order() == 2:
++            # The stripped WASI profile does not provide Polynomial_GF2X, so
++            # accept its generic univariate GF(2) fallback directly.
++            x = x.list()
+@@ -355 +360 @@
+-            sage: g != polygen(GF(2))                                               # known bug - generic GF(2) polynomial coercion fallback mismatch
++            sage: g != polygen(GF(2))

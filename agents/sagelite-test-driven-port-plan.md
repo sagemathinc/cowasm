@@ -51391,6 +51391,42 @@ uses the existing coherent browser resource snapshot and requires no native
 WASM rebuild. The next pass should continue with the NTL/PARI shared-state
 cluster or another bounded native arithmetic/backend row.
 
+NTL generic GF(2) polynomial coercion pass on 2026-07-18 UTC:
+
+The stripped browser profile does not provide the specialized
+`Polynomial_GF2X` implementation, so `GF(2)[]` constructs the generic
+univariate polynomial fallback. `ntl_GF2X.__init__` previously missed that
+type and passed its algebraic string representation to NTL's coefficient-list
+parser, which silently produced the zero polynomial. The same conversion path
+also made comparison with `polygen(GF(2))` report inequality.
+
+The NTL wrapper now recognizes a generic `Polynomial` whose base ring has
+order two and converts its coefficient list directly. The two corresponding
+browser-profile guards are removed. Focused before-fix dashboards recorded
+`ntl.GF2X(f)` as `[]` instead of `[1 0 1 0 0 1]` and the comparison as `True`
+instead of `False`; focused post-rebuild replays pass both rows exactly.
+
+Shared-source and cleanly reconstructed complete-module replays under runner
+version 118 record:
+
+```text
+ntl_GF2X.pyx shared source:         110 passed, 0 failed, 2 skipped
+ntl_GF2X.pyx reconstructed source:  110 passed, 0 failed, 2 skipped
+```
+
+The two remaining deferred rows cover the separate split-module hex-output
+state and PARI extension-field conversion boundaries. The authoritative
+SQLite dashboards and rebuilt coherent resource bundle are under
+`.tmp/current-run/scheduled-2026-07-17-ntl-gf2-coercion/`; every retained
+database passes `PRAGMA integrity_check`, and loading the updated resource
+manifest validates its hashes and pinned Sagelite revision. Applying the
+complete accumulated patch exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed NTL source is byte-identical to the shared staged source. Cython
+generation, the focused WASM module rebuild, and `git diff --check` pass. The
+next pass should continue with the NTL/PARI extension-field shared-state
+cluster or another bounded native arithmetic/backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
