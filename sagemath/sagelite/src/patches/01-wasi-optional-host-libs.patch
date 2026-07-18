@@ -25246,3 +25246,12 @@ diff --git a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
 +++ b/src/sage/doctest/fixtures.py
 @@ -93 +92,0 @@
 -        sage: # not tested (test fails because of deprecation warning)
+
+diff --git a/src/sage/categories/cartesian_product.py b/src/sage/categories/cartesian_product.py
+--- a/src/sage/categories/cartesian_product.py
++++ b/src/sage/categories/cartesian_product.py
+@@ -45,2 +45,2 @@
+-        sage: C.list()         # todo: not implemented
+-        [['a', 1], ['a', 2], ['b', 1], ['b', 2], ['c', 1], ['c', 2]]
++        sage: C.list()
++        [('a', 1), ('a', 2), ('b', 1), ('b', 2), ('c', 1), ('c', 2)]
