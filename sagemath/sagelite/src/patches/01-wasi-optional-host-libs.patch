@@ -25181,3 +25181,10 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +            True
 +            sage: # needs sage.symbolic
              sage: g(w, z) = (1 + w) / (1 + z)
+
+diff --git a/src/sage/rings/complex_mpfr.pyx b/src/sage/rings/complex_mpfr.pyx
+--- a/src/sage/rings/complex_mpfr.pyx
++++ b/src/sage/rings/complex_mpfr.pyx
+@@ -1039 +1039 @@
+-            sage: for prec in (2, 53, 200):  # not tested, known bug (see :issue:`32129`)
++            sage: for prec in (2, 53, 200):
