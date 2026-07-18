@@ -13508,9 +13508,6 @@ diff -urN -U0 a/src/sage/misc/persist.pyx b/src/sage/misc/persist.pyx
 @@ -1002 +1002 @@
 -        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
 +        sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')  # known bug - UnicodeDecodeError position drift
-@@ -1070 +1070 @@
--        sage: if uid == 0:
-+        sage: if uid == 0:                                                              # known bug - WASI chmod no-access check still permits writes
 diff -urN -U0 a/src/sage/rings/finite_rings/conway_polynomials.py b/src/sage/rings/finite_rings/conway_polynomials.py
 --- a/src/sage/rings/finite_rings/conway_polynomials.py
 +++ b/src/sage/rings/finite_rings/conway_polynomials.py

@@ -122,19 +122,30 @@ export default function posix(context: Context): PosixEnv {
       nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
     }
   }
-  function setErrnoFromNative(nativeErrno: number, name: string, args): void {
-    if (nativeErrno == 0 || isNaN(nativeErrno)) {
+  function setErrnoFromNative(
+    nativeError: number | string,
+    name: string,
+    args
+  ): void {
+    if (
+      typeof nativeError == "number" &&
+      (nativeError == 0 || isNaN(nativeError))
+    ) {
       // TODO: could put a log or something in that name raised error with no code.
-      context.callFunction("setErrno", nativeErrno);
+      context.callFunction("setErrno", nativeError);
       return;
     }
-    // The error code comes from native posix, so we translate it to WASI first
-    const symbol = nativeErrnoToSymbol[nativeErrno];
+    // Node filesystem errors already use symbols such as ENOENT, while native
+    // posix bindings report platform-specific numeric errno values.
+    const symbol =
+      typeof nativeError == "string"
+        ? nativeError
+        : nativeErrnoToSymbol[nativeError];
     if (symbol != null) {
       const wasiErrno = constants[symbol];
       if (wasiErrno != null) {
         if (logError.enabled) {
-          logError({ name, nativeErrno, wasiErrno, symbol, args });
+          logError({ name, nativeError, wasiErrno, symbol, args });
         }
         context.callFunction("setErrno", wasiErrno);
         return;
@@ -143,8 +154,8 @@ export default function posix(context: Context): PosixEnv {
 
     const mesg =
       symbol != null
-        ? `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add ${symbol} to WASM posix constants in @cowasm/kernel`
-        : `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add native symbol corresponding to errno=${nativeErrno} to the posix-node package`;
+        ? `WARNING in posix '${name}': Unable to map native error ${nativeError}: add ${symbol} to WASM posix constants in @cowasm/kernel`
+        : `WARNING in posix '${name}': Unable to map native error ${nativeError}: add its symbol to the posix-node package`;
     console.warn(mesg);
     logNotImplemented(mesg);
   }
@@ -183,7 +194,7 @@ export default function posix(context: Context): PosixEnv {
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {
-          setErrnoFromNative(parseInt(err.code), name, args);
+          setErrnoFromNative(err.code, name, args);
         } else {
           // err.code not yet set (TODO), so we log and try heuristic.
           // On error, for now -1 is returned, and errno should get set to some sort of error indicator

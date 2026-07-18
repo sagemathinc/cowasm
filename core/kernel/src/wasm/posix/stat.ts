@@ -9,7 +9,7 @@ export default function stats({ fs, process, recv, wasi }) {
     path: string,
     allowEmpty: boolean = false
   ) {
-    if (isAbsolute("path")) {
+    if (isAbsolute(path)) {
       return path;
     }
 
@@ -33,36 +33,21 @@ export default function stats({ fs, process, recv, wasi }) {
     return join(dir, path);
   }
 
-  // because wasi's structs don't have sufficient info to deal with permissions, we make ALL of these
-  // chmods into stubs, below, despite having implemented them!
-  // This in particular totally broke libgit2 working at all.
-  // TODO: an alternative may be to always set the mode to 0777.  I'm not sure how bad that would be.
+  // WASI preview 1 filestat structs do not expose permission bits, so stat(2)
+  // reports the libc defaults (0600 for files and 0700 for directories).
+  // Those defaults are nevertheless safe to pass back to chmod, and applying
+  // explicit modes is essential for permission checks to have real semantics.
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
-      return 0; // stubbed due to wasi shortcomings
-      if (!mode) {
-        // It is impossible for stat calls by wasi to return anything except 0 at present due to this bug:
-        // See https://github.com/WebAssembly/wasi-filesystem/issues/34
-        // Thus they will often then set the mode to 0, e.g., shutil.copy in python does this to all files.
-        // In such cases, we silently make this a successful no-op instead of breaking everything horribly.
-        // This comes up a lot with using Python as part of a build process.
-        return 0;
-      }
       const path = recv.string(pathPtr);
       fs.chmodSync(path, mode);
       return 0;
     },
 
     _fchmod: (fd: number, mode: number): number => {
-      return 0; // stubbed due to wasi shortcomings
-      if (!mode) {
-        // see above.
-        return 0;
-      }
       const entry = wasi.FD_MAP.get(fd);
       if (!entry) {
-        console.warn("bad file descriptor, fchmod");
-        return -1;
+        throw Errno("EBADF");
       }
       fs.fchmodSync(entry.real, mode);
       return 0;
@@ -73,21 +58,11 @@ export default function stats({ fs, process, recv, wasi }) {
       dirfd: number,
       pathPtr: number,
       mode: number,
-      _flags: number
+      flags: number
     ): number => {
-      return 0; // stubbed due to wasi shortcomings
-      if (!mode) {
-        // see above.
-        return 0;
+      if (flags != 0) {
+        throw Errno("ENOTSUP");
       }
-      /* "The fchmodat() system call operates in exactly the same way as chmod(2), except... If the
-      pathname given in pathname is relative, then it is interpreted relative to the directory referred
-      to by the file descriptor dirfd (rather than relative to the current working directory of the
-      calling process, as is done by chmod(2) for a relative pathname).  If pathname is relative and
-      dirfd is the special value AT_FDCWD, then pathname is interpreted relative to the current
-      working directory of the calling process (like chmod(2)). If pathname is absolute, then dirfd
-      is ignored.  This flag is not currently implemented."
-     */
       const path = recv.string(pathPtr);
       const pathAt = calculateAt(dirfd, path);
       fs.chmodSync(pathAt, mode);
@@ -95,12 +70,10 @@ export default function stats({ fs, process, recv, wasi }) {
     },
 
     lchmod: (pathPtr: number, mode: number): -1 | 0 => {
-      return 0; // stubbed due to wasi shortcomings
-      if (!mode) {
-        // see above.
-        return 0;
-      }
       const path = recv.string(pathPtr);
+      if (fs.lchmodSync == null) {
+        throw Errno("ENOTSUP");
+      }
       fs.lchmodSync(path, mode);
       return 0;
     },

@@ -51698,6 +51698,48 @@ smokes pass, TypeScript compilation succeeds, and `git diff --check` passes.
 The next pass should continue with another bounded serialization, native
 backend, or frontend semantic cluster.
 
+WASI chmod permission-semantics pass on 2026-07-18 UTC:
+
+The final browser-profile guard in `sage/misc/persist.pyx` exposed a real
+filesystem contract gap. The legacy POSIX bridge returned success from
+`chmod`, `fchmod`, `fchmodat`, and `lchmod` without changing the backing
+filesystem. A directory changed to mode `000` therefore still accepted the
+pickle-jar write that Sage expects to raise `PermissionError`.
+
+The POSIX bridge now applies `chmod`, `fchmod`, and flag-free `fchmodat` to the
+configured filesystem. Unsupported flagged `fchmodat` and host `lchmod`
+operations report `ENOTSUP` instead of silently succeeding, invalid
+descriptors report `EBADF`, and absolute `fchmodat` paths are resolved
+correctly. Node filesystem exceptions now map their symbolic error codes into
+the kernel errno namespace. The dynamic loader clears and synchronizes the
+main-module errno slot around direct imports, so a failing `os.chmod` reaches
+CPython as the correct `FileNotFoundError` instead of reusing stale errno from
+an earlier permission failure.
+
+The kernel smoke covers mode-`000` enforcement through `chmod`, `fchmod`, and
+`fchmodat`, restoration, and the missing-path errno. A focused CPython runtime
+contract passes under both the pinned Zig worker and the WASI-SDK worker. The
+stale `# known bug` annotation is removed. Before and final replays under
+runner version 118 record:
+
+```text
+persist.pyx --line 1070 forced before: 0 passed, 1 failed, 0 skipped
+persist.pyx --line 1070 final:         1 passed, 0 failed, 0 skipped
+persist.pyx shared source final:     125 passed, 0 failed, 26 skipped
+persist.pyx reconstructed final:     125 passed, 0 failed, 26 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-chmod-permissions/`; retained databases
+pass `PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed `persist.pyx` is byte-identical
+to the tested staged source. TypeScript compilation, native and WASM kernel
+smokes, direct and archive-linked dylink smokes, focused CPython contracts for
+both runtime backends, and `git diff --check` pass. The next pass should
+continue with another bounded filesystem, serialization, native-backend, or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

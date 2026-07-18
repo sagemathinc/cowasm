@@ -188,6 +188,7 @@ export function readDlopenVarArgs(
 export default class DlopenManger {
   private dlerrorPtr: number = 0;
   private errnoPtr: number = 0;
+  private mainErrnoPtr: number = 0;
   private _malloc?: (number) => number;
   private _free?: (number) => void;
   private allocationSizes: Map<number, number> = new Map();
@@ -369,6 +370,44 @@ export default class DlopenManger {
     return this.getenvPtrs[name];
   }
 
+  private mainErrnoLocation(): number {
+    if (!this.errnoPtr) {
+      return 0;
+    }
+    if (!this.mainErrnoPtr) {
+      let errnoLocation: Function | null | undefined;
+      try {
+        errnoLocation = this.mainGetFunction("__errno_location");
+      } catch (_) {
+        return 0;
+      }
+      if (typeof errnoLocation != "function") {
+        return 0;
+      }
+      this.mainErrnoPtr = errnoLocation() as number;
+    }
+    return this.mainErrnoPtr;
+  }
+
+  private clearMainErrno(): void {
+    const ptr = this.mainErrnoLocation();
+    if (ptr) {
+      new DataView(this.memory.buffer).setInt32(ptr, 0, true);
+    }
+  }
+
+  private syncErrnoFromMain(): void {
+    const ptr = this.mainErrnoLocation();
+    if (ptr) {
+      const view = new DataView(this.memory.buffer);
+      const errno = view.getInt32(ptr, true);
+      if (!errno) {
+        return;
+      }
+      view.setInt32(this.errnoPtr, errno, true);
+    }
+  }
+
   private writeCString(
     ptr: number,
     size: number | undefined,
@@ -516,6 +555,9 @@ export default class DlopenManger {
       return null;
     }
     const sym = (f as Function)();
+    if (name == "errno" && typeof sym == "number") {
+      this.errnoPtr = sym;
+    }
     log("symbolViaPointer", name, "-->", sym);
     return sym;
   }
@@ -1256,7 +1298,10 @@ export default class DlopenManger {
       if (typeof f == "function") {
         return (...args: any[]) => {
           try {
-            return (f as CallableFunction)(...args);
+            this.clearMainErrno();
+            const result = (f as CallableFunction)(...args);
+            this.syncErrnoFromMain();
+            return result;
           } catch (err) {
             log("direct import failed", key, args, err);
             throw err;

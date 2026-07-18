@@ -193,6 +193,22 @@ class RuntimeContractTests(unittest.TestCase):
             shutil.rmtree(dest)
             self.assertFalse(dest.exists())
 
+    def test_filesystem_chmod_enforces_permissions_and_errno(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            protected = root / "protected"
+            protected.mkdir()
+
+            os.chmod(protected, 0o000)
+            try:
+                with self.assertRaises(PermissionError):
+                    (protected / "child").mkdir()
+            finally:
+                os.chmod(protected, 0o700)
+
+            with self.assertRaises(FileNotFoundError):
+                os.chmod(root / "missing", 0o700)
+
     def test_filesystem_symlink_if_supported(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

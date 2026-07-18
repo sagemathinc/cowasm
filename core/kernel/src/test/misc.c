@@ -12,6 +12,8 @@ To build and run natively:
 
 */
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,6 +43,13 @@ long long time0() {
 extern char* user_from_uid(uid_t uid, int nouser);
 
 #include <limits.h>
+#include <errno.h>
+
+#ifdef __cowasm__
+int chmod(const char* path, mode_t mode);
+int fchmod(int fd, mode_t mode);
+int fchmodat(int fd, const char* path, mode_t mode, int flag);
+#endif
 
 static void test_seek_to_zero_overwrite(void) {
   const char* path = "/tmp/seek-to-zero-overwrite";
@@ -63,6 +72,62 @@ static void test_seek_to_zero_overwrite(void) {
     exit(1);
   }
   printf("seek-to-zero overwrite: %s\n", contents);
+}
+
+static void fail_permission_test(const char* operation) {
+  fprintf(stderr, "%s failed: errno=%d (%s)\n", operation, errno,
+          strerror(errno));
+  fflush(stderr);
+  exit(1);
+}
+
+static void expect_directory_write_denied(const char* path) {
+  char child[PATH_MAX];
+  if (snprintf(child, sizeof(child), "%s/child", path) >= sizeof(child)) {
+    errno = ENAMETOOLONG;
+    fail_permission_test("construct chmod child path");
+  }
+  errno = 0;
+  if (mkdir(child, 0700) != -1 || (errno != EACCES && errno != EPERM)) {
+    if (errno == 0) errno = EACCES;
+    fail_permission_test("write in mode-000 directory");
+  }
+}
+
+static void test_chmod_permissions(void) {
+  char path[PATH_MAX];
+  if (snprintf(path, sizeof(path), "/tmp/cowasm-chmod-%ld", (long)getpid()) >=
+      sizeof(path)) {
+    errno = ENAMETOOLONG;
+    fail_permission_test("construct chmod test path");
+  }
+  if (mkdir(path, 0700) != 0) fail_permission_test("mkdir chmod test");
+
+  if (chmod(path, 0000) != 0) fail_permission_test("chmod 0000");
+  expect_directory_write_denied(path);
+  if (chmod(path, 0700) != 0) fail_permission_test("chmod 0700");
+
+  int fd = open(path, O_RDONLY);
+  if (fd == -1) fail_permission_test("open directory for fchmod");
+  if (fchmod(fd, 0000) != 0) fail_permission_test("fchmod 0000");
+  if (close(fd) != 0) fail_permission_test("close fchmod directory");
+  expect_directory_write_denied(path);
+  if (chmod(path, 0700) != 0) fail_permission_test("restore after fchmod");
+
+  if (fchmodat(AT_FDCWD, path, 0000, 0) != 0)
+    fail_permission_test("fchmodat 0000");
+  expect_directory_write_denied(path);
+  if (chmod(path, 0700) != 0) fail_permission_test("restore after fchmodat");
+
+  errno = 0;
+  int missing_result = chmod("/tmp/cowasm-chmod-missing", 0700);
+  if (missing_result != -1 || errno != ENOENT) {
+    printf("chmod missing returned %d with errno=%d, expected errno=%d\n",
+           missing_result, errno, ENOENT);
+    fail_permission_test("chmod missing path errno");
+  }
+  if (rmdir(path) != 0) fail_permission_test("rmdir chmod test");
+  printf("chmod permission enforcement: OK\n");
 }
 
 int main(int argc, char** argv) {
@@ -89,6 +154,7 @@ int main(int argc, char** argv) {
   unlink(path);
 
   test_seek_to_zero_overwrite();
+  test_chmod_permissions();
 
   int n = 10000000;
   if (argc > 1) {
