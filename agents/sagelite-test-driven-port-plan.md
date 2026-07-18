@@ -52163,6 +52163,42 @@ runner and doctest-metadata repair requires no native WASM rebuild.  The next
 pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Ordered-multiset constraint dictionary promotion pass on 2026-07-18 UTC:
+
+A final-source deferred-tag audit first confirmed that the two namespace
+guards in `sage/misc/dev_tools.py` remain genuine.  The tested-module global
+seeding policy makes `find_objects_from_name` and `import_statement_string`
+visible in the doctest namespace, so forcing those rows records 41 passed, 2
+failed, and 19 skipped.  The annotations remain in place rather than changing
+the shared namespace contract in this bounded pass.
+
+The four constraint-dictionary guards in
+`sage/combinat/multiset_partition_into_sets_ordered.py` are now stale.  They
+were introduced for keyword insertion-order drift, but the deterministic
+dictionary display path now produces the documented Sage order for all four
+rows.  The accumulated WASI patch no longer marks them as `# known bug`.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+dev_tools.py forced audit:                 41 passed, 2 failed, 19 skipped
+multiset constraints forced before:       508 passed, 0 failed, 63 skipped
+multiset module shared final:             508 passed, 0 failed, 63 skipped
+multiset module reconstructed final:      508 passed, 0 failed, 63 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-dev-tools-namespace/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed multiset source is byte-identical to the
+tested staged source.  Python compilation, complete shared/reconstructed
+module replays, SQLite integrity checks, and `git diff --check` pass.  This
+doctest promotion requires no native WASM or resource-bundle rebuild.  The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
