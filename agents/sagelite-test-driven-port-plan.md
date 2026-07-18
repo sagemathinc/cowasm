@@ -53416,6 +53416,55 @@ no native WASM or resource-bundle rebuild.  The next pass should continue with
 another bounded filesystem, serialization, native-backend, or frontend
 semantic cluster.
 
+Finite-set element-construction and generic-homset promotion pass on 2026-07-18
+UTC:
+
+The remaining `# todo: not implemented` row in
+`sage/categories/homset.py` exposed a real facade-parent protocol gap.  A
+generic map with domain `Set([1,2,3])` could not evaluate at `1`, `2`, or `3`:
+`Map.__call__()` attempted to convert each argument through the domain, but
+`Set_object` had no `_element_constructor_` and raised `NotImplementedError`.
+The accumulated WASI patch now gives set parents a membership-checked element
+constructor, returning existing members unchanged and raising a precise
+`ValueError` for nonmembers.  The homset doctest is promoted with the resulting
+`(3, 2, 1)` output.
+
+Complete `set.py` validation also exposed two independent loose
+`AttributeError...` expectations for an intentionally unsupported
+`ConditionSet` protocol.  The runtime raised the documented exceptions, but
+the abbreviated Python 2-era spellings did not match their concrete Python 3
+messages.  Those two expectations now record the exact missing `is_empty` and
+`is_finite` attributes without changing the intentional limitation.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced homset row before:            0 passed, 1 failed,   1 skipped
+default homset row final:            1 passed, 0 failed,   1 skipped
+set member constructor:              1 passed, 0 failed,   0 skipped
+set nonmember rejection:             1 passed, 0 failed,   0 skipped
+shared complete homset final:       140 passed, 0 failed, 121 skipped
+shared complete set before cleanup: 301 passed, 2 failed, 116 skipped
+shared complete set final:          303 passed, 0 failed, 116 skipped
+reconstructed complete homset:      140 passed, 0 failed, 121 skipped
+reconstructed complete set:         303 passed, 0 failed, 116 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstructions are under
+`.tmp/current-run/scheduled-2026-07-18-homset/`; every retained final database
+passes `PRAGMA integrity_check`, and the saved block-failure and file-error
+cluster queries are empty.  Applying the complete accumulated Sagelite patch
+exactly once with `patch --batch --forward -p1` to a `git archive` of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and both reconstructed modules are byte-identical to the tested staged
+sources.  Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass.  Testing the
+pure-Python implementation required refreshing `sage/sets/set.py` and its hash
+in the ignored local Electron resource tree, but no native WASM rebuild or
+tracked resource-bundle change.  The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

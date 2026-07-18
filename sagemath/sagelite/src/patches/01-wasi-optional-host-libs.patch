@@ -25403,3 +25403,60 @@ diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recurs
 -            PicklingError Caught
 +            sage: loads(dumps(S))
 +            An enumerated set with a forest structure
+
+diff --git a/src/sage/sets/set.py b/src/sage/sets/set.py
+--- a/src/sage/sets/set.py
++++ b/src/sage/sets/set.py
+@@ -823,6 +823,24 @@
+         # Lattice poset, defined by hasse diagram D
+         L = FiniteLatticePoset(hasse_diagram=D)
+         return L
++
++    def _element_constructor_(self, x):
++        """
++        Return ``x`` as an element of this set.
++
++        EXAMPLES::
++
++            sage: S = Set([1, 2, 3])
++            sage: S(2)
++            2
++            sage: S(4)
++            Traceback (most recent call last):
++            ...
++            ValueError: 4 not in {1, 2, 3}
++        """
++        if x in self:
++            return x
++        raise ValueError(f"{x} not in {self}")
+
+     @cached_method
+     def _sympy_(self):
+@@ -1588,10 +1606,10 @@
+             sage: C.is_empty()
+             Traceback (most recent call last):
+             ...
+-            AttributeError...
++            AttributeError: 'ConditionSet_with_category' object has no attribute 'is_empty'
+             sage: C.is_finite()
+             Traceback (most recent call last):
+             ...
+-            AttributeError...
++            AttributeError: 'ConditionSet_with_category' object has no attribute 'is_finite'
+             sage: bool(Set([1]) + C)
+             True
+
+diff --git a/src/sage/categories/homset.py b/src/sage/categories/homset.py
+--- a/src/sage/categories/homset.py
++++ b/src/sage/categories/homset.py
+@@ -873,8 +873,9 @@
+             sage: H = Hom(Set([1,2,3]), Set([1,2,3]))
+             sage: f = H(lambda x: 4 - x)
+             sage: f.parent()
+             Set of Morphisms from {1, 2, 3} to {1, 2, 3} in Category of finite enumerated sets
+-            sage: f(1), f(2), f(3) # todo: not implemented
++            sage: f(1), f(2), f(3)
++            (3, 2, 1)
+
+             sage: H = Hom(ZZ, QQ, Sets())
+             sage: f = H( ConstantFunction(2/3) )
