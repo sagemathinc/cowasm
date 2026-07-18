@@ -52490,6 +52490,46 @@ metadata promotion requires no native WASM or resource-bundle rebuild. The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Decorated source-file introspection parity pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard on
+`sage_getfile(I.interreduced_basis)` in `sage/misc/decorators.py` exposed a
+real nested-decorator introspection gap. `sage_getsourcelines()` already
+followed Sage's source protocol to the original implementation in
+`multi_polynomial_ideal.py`, but `sage_getfile()` stopped first at the outer
+`sage_wraps` function and then at the legacy `MethodDecorator` used by the
+Singular option context. It consequently reported `qqbar_decorators.py` or
+`method_decorator.py` instead of the file containing the decorated method.
+
+`sage_getfile()` now follows standard `__wrapped__` chains and Sage's older
+source-aware `.f` wrapper protocol before falling back to class-instance or
+`inspect` lookup. The `sageinspect` regression now expects decorated
+`groebner_basis` to resolve to `multi_polynomial_ideal.py`, and the accumulated
+WASI patch removes the stale `interreduced_basis` guard.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+decorators.py forced before:              121 passed, 1 failed,  11 skipped
+sageinspect.py focused final:               1 passed, 0 failed,   0 skipped
+shared complete modules final:            425 passed, 0 failed, 115 skipped
+reconstructed complete modules final:     425 passed, 0 failed, 115 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-decorators-getfile/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and both reconstructed modules are byte-identical to the tested
+staged sources. Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass. This pure-Python
+source correction requires no native WASM rebuild. The bounded control probes
+retain the additive-wrapper startup namespace, infinite-polynomial parent
+coercion, and keyed-matrix homspace guards for future passes. The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

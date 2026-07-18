@@ -24819,3 +24819,39 @@ diff --git a/src/sage/misc/package_dir.py b/src/sage/misc/package_dir.py
 @@ -50 +50 @@
 -        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
 +        sage: is_package_or_sage_namespace_package_dir(directory)
+diff --git a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
+--- a/src/sage/misc/sageinspect.py
++++ b/src/sage/misc/sageinspect.py
+@@ -1307 +1307,2 @@
+-    Another bug with editable meson install::
++    Decorated functions resolve to the file containing their original
++    implementation::
+@@ -1312,2 +1313,2 @@
+-        '.../sage/rings/qqbar_decorators.py'
+-        sage: path == sage_getfile(sage.rings.qqbar_decorators)
++        '.../sage/rings/polynomial/multi_polynomial_ideal.py'
++        sage: path == sage_getfile(sage.rings.polynomial.multi_polynomial_ideal)
+@@ -1341,0 +1343,17 @@
++    # ``sage_wraps`` preserves source-line introspection through
++    # ``__wrapped__``.  Keep file introspection on the same original object
++    # instead of reporting the module containing the outermost decorator.
++    try:
++        unwrapped = inspect.unwrap(obj)
++    except ValueError:
++        # Match inspect's behavior for a malformed wrapper cycle by falling
++        # back to the object that can still be inspected directly.
++        unwrapped = obj
++    if unwrapped is not obj:
++        return sage_getfile(unwrapped)
++
++    # Older Sage method decorators predate ``__wrapped__`` but expose the
++    # original callable through ``f`` and the source-introspection protocol.
++    if hasattr(obj, '_sage_src_') and hasattr(obj, 'f'):
++        return sage_getfile(obj.f)
++
+diff --git a/src/sage/misc/decorators.py b/src/sage/misc/decorators.py
+--- a/src/sage/misc/decorators.py
++++ b/src/sage/misc/decorators.py
+@@ -108 +108 @@
+-        sage: sage_getfile(I.interreduced_basis)       # known bug
++        sage: sage_getfile(I.interreduced_basis)
