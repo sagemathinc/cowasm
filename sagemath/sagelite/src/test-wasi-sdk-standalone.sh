@@ -1284,6 +1284,18 @@ S5 = PolynomialRing(GF(5), 'u')
 u = S5.gen()
 assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
 assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
+S2 = PolynomialRing(GF(2), 'v')
+v = S2.gen()
+assert type(v).__module__ == 'sage.rings.polynomial.polynomial_gf2x'
+assert (v**4 + v + 1) * (v**2 + 1) == v**6 + v**4 + v**3 + v**2 + v + 1
+from sage.matrix.constructor import matrix
+from sage.misc.persist import dumps, loads
+A2 = matrix(GF(2), [[1, 0, 1], [0, 1, 1]])
+assert type(A2).__module__ == 'sage.matrix.matrix_mod2_dense'
+assert loads(dumps(A2)) == A2
+A2.set_immutable()
+A2_copy = loads(dumps(A2))
+assert A2_copy == A2 and A2_copy.is_immutable()
 print('sagelite-node-ok finite-field polynomial smoke')"
 run_node_import "finite-field matrix smoke" "from sage.all import GF
 from sage.matrix.constructor import identity_matrix, matrix
@@ -2151,7 +2163,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|63|50|0|13" ]; then
+if [ "$doctest_smoke_counts" != "passed|67|54|0|13" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -2245,7 +2257,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "59" ]; then
+if [ "$doctest_block_key_count" != "67" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -2852,7 +2864,7 @@ EXAMPLES::
     sage: session_state_smoke = 42
     sage: show_identifiers()
     ['session_state_smoke']
-    sage: print("session-state preface\\nsession-state suffix")
+    sage: print("session-state preface\nsession-state suffix")
     ...
     session-state suffix
 """
@@ -5527,7 +5539,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|59|51|0|8" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|67|59|0|8" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -5571,7 +5583,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|59|47|1|11" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|67|55|1|11" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"

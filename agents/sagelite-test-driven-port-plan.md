@@ -52530,6 +52530,48 @@ coercion, and keyed-matrix homspace guards for future passes. The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+GF(2) polynomial and matrix backend promotion pass on 2026-07-18 UTC:
+
+The WASI matrix extension build previously attached GD, IML, and Singular to
+every C++ matrix side module.  That kept the otherwise available
+`polynomial_gf2x` and `matrix_mod2_dense` paths behind missing host-library
+boundaries.  Matrix dependencies are now scoped to the extensions that use
+them: IML is retained for integer/rational dense and sparse matrices, Singular
+for dense multivariate-polynomial matrices, and ordinary GF(2) matrices no
+longer require GD.
+
+`Matrix_mod2_dense.__reduce__()` now serializes row-major raw bits with zlib
+and reconstructs them with a new WASI-safe unpickler.  This preserves mutable
+and immutable matrices without the historical PNG/GD encoding.  Legacy PNG
+pickles and the explicit PNG import/export helpers fail closed with
+`NotImplementedError` in the browser profile, and their GD-dependent doctests
+are explicit `# needs gdlib` skips.
+
+A clean detached checkout of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` accepts the complete accumulated
+patch exactly once without rejects.  The full standalone build and smoke pass
+records:
+
+```text
+Meson targets configured:                  504
+Cython generated-source targets:           503
+native compile targets:                    1016
+side modules audited:                       498
+default doctest smoke:       54 passed, 0 failed, 13 skipped
+optional-feature smoke:      59 passed, 0 failed,  8 skipped
+deferred-feature audit:      55 passed, 1 failed, 11 skipped
+```
+
+The new Node runtime probe confirms GF(2) polynomial multiplication through
+`sage.rings.polynomial.polynomial_gf2x`, matrix construction through
+`sage.matrix.matrix_mod2_dense`, and mutable plus immutable pickle
+round-trips.  Configure, compile, install, side-module audits, Node and
+`python-wasi-sdk` import ladders, doctest SQLite regressions, Electron resource
+packaging, relocation, and follow-up checks all pass.  This native-backend and
+serialization cluster is complete; the next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

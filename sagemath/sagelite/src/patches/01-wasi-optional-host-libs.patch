@@ -24855,3 +24855,143 @@ diff --git a/src/sage/misc/decorators.py b/src/sage/misc/decorators.py
 @@ -108 +108 @@
 -        sage: sage_getfile(I.interreduced_basis)       # known bug
 +        sage: sage_getfile(I.interreduced_basis)
+diff --git a/src/sage/matrix/meson.build b/src/sage/matrix/meson.build
+--- a/src/sage/matrix/meson.build
++++ b/src/sage/matrix/meson.build
+@@ -206,11 +206,9 @@
+     cysignals,
+     fflas,
+     flint,
+-    gd,
+     givaro,
+     gmp,
+     gmpxx,
+-    iml,
+     linbox,
+     m,
+     m4ri,
+@@ -219,9 +217,18 @@
+     ntl,
+     numpy,
+     png,
+-    singular,
+     zlib,
+   ]
++  if name in [
++    'matrix_integer_dense',
++    'matrix_integer_sparse',
++    'matrix_rational_dense',
++    'matrix_rational_sparse',
++  ]
++    deps += [iml]
++  elif name == 'matrix_mpolynomial_dense'
++    deps += [singular]
++  endif
+
+   py.extension_module(
+     name,
+diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
+--- a/src/sage/matrix/matrix_mod2_dense.pyx
++++ b/src/sage/matrix/matrix_mod2_dense.pyx
+@@ -125 +125,17 @@
+-cdef extern from "gd.h":
++cdef extern from *:
++    """
++    typedef void *gdImagePtr;
++    static inline gdImagePtr gdImageCreateFromPng(FILE *f) { return NULL; }
++    static inline gdImagePtr gdImageCreateFromPngPtr(int size, void *s) { return NULL; }
++    static inline gdImagePtr gdImageCreate(int x, int y) { return NULL; }
++    static inline void gdImagePng(gdImagePtr im, FILE *out) {}
++    static inline void *gdImagePngPtr(gdImagePtr im, int *size) { return NULL; }
++    static inline void gdImageDestroy(gdImagePtr im) {}
++    static inline int gdImageSX(gdImagePtr im) { return 0; }
++    static inline int gdImageSY(gdImagePtr im) { return 0; }
++    static inline int gdImageGetPixel(gdImagePtr im, int x, int y) { return 0; }
++    static inline void gdImageSetPixel(gdImagePtr im, int x, int y, int value) {}
++    static inline int gdImageColorAllocate(gdImagePtr im, int r, int g, int b) { return 0; }
++    static inline void gdImageFilledRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color) {}
++    static inline void gdFree(void *m) {}
++    """
+@@ -1883,2 +1899 @@
+-        cdef Py_ssize_t i,j, r,c
+-        cdef int size
++        cdef Py_ssize_t i, j, k, r, c
+@@ -1887,9 +1902 @@
+-        if r == 0 or c == 0:
+-            return unpickle_matrix_mod2_dense_v2, (r, c, None, 0, self._is_immutable)
+-
+-        sig_on()
+-        cdef gdImagePtr im = gdImageCreate(c, r)
+-        sig_off()
+-        cdef int black = gdImageColorAllocate(im, 0, 0, 0)
+-        cdef int white = gdImageColorAllocate(im, 255, 255, 255)
+-        gdImageFilledRectangle(im, 0, 0, c-1, r-1, white)
++        data = bytearray((r * c + 7) // 8)
+@@ -1899,7 +1906,2 @@
+-                    gdImageSetPixel(im, j, i, black )
+-
+-        cdef char *buf
+-        try:
+-            buf = <char*>gdImagePngPtr(im, &size)
+-        finally:
+-            gdImageDestroy(im)
++                    k = i * c + j
++                    data[k >> 3] = data[k >> 3] | (1 << (k & 7))
+@@ -1907,6 +1909,2 @@
+-        cdef bytes data
+-        try:
+-            data = buf[:size]
+-        finally:  # recommended by https://cython.readthedocs.io/en/latest/src/tutorial/strings.html
+-            gdFree(buf)
+-        return unpickle_matrix_mod2_dense_v2, (r,c, data, size, self._is_immutable)
++        import zlib
++        return unpickle_matrix_mod2_dense_v3, (r, c, zlib.compress(data), self._is_immutable)
+@@ -2506,0 +2505,23 @@
++def unpickle_matrix_mod2_dense_v3(r, c, data, immutable=False):
++    """Deserialize the compressed raw-bit WASI matrix format."""
++    from sage.matrix.constructor import Matrix
++    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
++    import zlib
++
++    raw = zlib.decompress(data)
++    if len(raw) != (r * c + 7) // 8:
++        raise ValueError("invalid compressed GF(2) matrix data length")
++
++    cdef Py_ssize_t i, j, k
++    cdef Matrix_mod2_dense A = <Matrix_mod2_dense>Matrix(GF(2), r, c)
++    for i from 0 <= i < r:
++        for j from 0 <= j < c:
++            k = i * c + j
++            if raw[k >> 3] & (1 << (k & 7)):
++                mzd_write_bit(A._entries, i, j, 1)
++
++    if immutable:
++        A.set_immutable()
++    return A
++
++
+@@ -2523,3 +2544,2 @@
+-        sage: _, (r,c,s,s2,i) = A.__reduce__()
+-        sage: from sage.matrix.matrix_mod2_dense import unpickle_matrix_mod2_dense_v2
+-        sage: unpickle_matrix_mod2_dense_v2(r,c,s,s2,i) == A
++        sage: f, args = A.__reduce__()
++        sage: f(*args) == A
+@@ -2545 +2565 @@
+-        sage: loads(s)
++        sage: loads(s)  # needs gdlib
+@@ -2551 +2571 @@
+-        sage: loads(bytes.fromhex(  # hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
++        sage: loads(bytes.fromhex(  # needs gdlib; hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
+@@ -2570,0 +2591,2 @@
++    raise NotImplementedError("legacy PNG-compressed GF(2) matrix pickles require gdlib")
++
+@@ -2628,0 +2651 @@
++        sage: # needs gdlib
+@@ -2636,0 +2660,2 @@
++    raise NotImplementedError("GF(2) matrix PNG input requires gdlib")
++
+@@ -2676,0 +2702 @@
++        sage: # needs gdlib
+@@ -2684,0 +2711,2 @@
++    raise NotImplementedError("GF(2) matrix PNG output requires gdlib")
++
