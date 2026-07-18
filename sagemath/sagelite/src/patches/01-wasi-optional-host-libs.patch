@@ -24867,3 +24867,18 @@ diff --git a/src/sage/misc/cachefunc.pyx b/src/sage/misc/cachefunc.pyx
 @@ -907 +907 @@
 -            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest          # known bug - WASI doc lookup raises an invalid-argument OSError
 +            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest
+diff --git a/src/sage/data_structures/stream.py b/src/sage/data_structures/stream.py
+--- a/src/sage/data_structures/stream.py
++++ b/src/sage/data_structures/stream.py
+@@ -2030 +2030 @@
+-            sage: C._collect_equations(0)  # known bug - dummy variable numbering differs in Sagelite WASI profile
++            sage: C._collect_equations(0)
+@@ -2095,4 +2095,4 @@
+-            sage: C._cache  # known bug - dummy variable numbering differs in Sagelite WASI profile
+-            [FESDUMMY_1]
+-            sage: lin_coeffs  # known bug - dummy variable numbering differs in Sagelite WASI profile
+-            [FESDUMMY_1 - 1]
++            sage: C._cache
++            [FESDUMMY_...]
++            sage: lin_coeffs
++            [FESDUMMY_... - 1]

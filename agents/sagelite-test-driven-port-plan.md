@@ -52076,6 +52076,46 @@ requires no native WASM rebuild. The next pass should continue with another
 bounded filesystem, serialization, native-backend, or frontend semantic
 cluster.
 
+Stream dummy-variable expectation reconciliation pass on 2026-07-18 UTC:
+
+The three remaining browser-profile guards in
+`sage/data_structures/stream.py` covered only the internal suffix assigned to
+temporary `FESDUMMY` variables. The first equation example consistently used
+`FESDUMMY_0`, while the later cache example used either `FESDUMMY_0` or
+`FESDUMMY_1` depending on whether the earlier stream remained live in the
+shared doctest namespace. The underlying equations and coefficients were
+identical, and `VariablePool` explicitly documents that its generated names
+must not be relied on.
+
+The first stale guard is removed without changing its exact expectation. The
+two state-sensitive expectations now use doctest ellipses only for the dummy
+suffix, preserving comparison of the list and affine-polynomial structure
+while accepting either valid allocator history. This makes isolated focused
+reruns, combined stateful reruns, and complete source-order execution agree.
+
+Before and final replays under runner version 122 record:
+
+```text
+three guarded rows forced together before: 3 passed, 0 failed, 0 skipped
+complete module before:                 1191 passed, 2 failed, 216 skipped
+two state-sensitive rows isolated after:   2 passed, 0 failed,   0 skipped
+three rows statefully combined after:      3 passed, 0 failed,   0 skipped
+shared complete module after:           1193 passed, 0 failed, 216 skipped
+reconstructed complete module:          1193 passed, 0 failed, 216 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-stream-dummy/`; every final retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed stream source is byte-identical to the tested
+staged source. Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass. This doctest
+expectation correction requires no native WASM or resource-bundle rebuild.
+The next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
