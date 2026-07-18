@@ -6673,9 +6673,31 @@ diff -urN a/src/sage/categories/category_with_axiom.py b/src/sage/categories/cat
 @@ -1626 +1626 @@
 -    sage: Rings().axioms()
 +    sage: Rings().axioms()  # random
-@@ -2487 +2487 @@
+@@ -1774 +1774,2 @@
+-            ...
++            Please specify it explicitly using the attribute _base_category_class_and_axiom.
++            See CategoryWithAxiom for details.
+@@ -2487 +2488 @@
 -            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()
 +            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()           # random
+@@ -2527,0 +2529,14 @@
++
++    def __contains__(self, x) -> bool:
++        r"""
++        Return whether ``x`` is an object of this category.
++
++        Category-with-axiom classes must retain the base-ring-aware
++        membership rules of :class:`Category_over_base_ring`::
++
++            sage: QQ['x'] in Algebras(Fields())
++            True
++            sage: ZZ['x'] in Algebras(Fields())
++            False
++        """
++        return Category_over_base_ring.__contains__(self, x)
+@@ -2544 +2559 @@
+-    sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
++    sage: isinstance(C, Category_over_base_ring)
 diff -urN a/src/sage/categories/coxeter_groups.py b/src/sage/categories/coxeter_groups.py
 --- a/src/sage/categories/coxeter_groups.py
 +++ b/src/sage/categories/coxeter_groups.py
@@ -6703,6 +6725,16 @@ diff -urN a/src/sage/categories/coxeter_groups.py b/src/sage/categories/coxeter_
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
+@@ -515 +515 @@
+-            sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
++            sage: QQ['x'] in Algebras(Fields())
+@@ -518,0 +519,6 @@
++            if isinstance(self.base(), Category):
++                base_ring = x.base_ring()
++                if base_ring not in self.base():
++                    return False
++                concrete_category = self.__class__.__base__(base_ring)
++                return x in concrete_category
 @@ -627 +627 @@
 -            sage: C(Ig)
 +            sage: C(Ig)                                                                # needs sage.rings.polynomial.plural

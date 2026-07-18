@@ -53620,6 +53620,63 @@ for a dedicated rebuild-backed pass.  The next pass should continue with
 another bounded filesystem, serialization, native-backend, or frontend
 semantic cluster.
 
+Category-with-axiom base-ring membership implementation pass on 2026-07-18
+UTC:
+
+The deferred `QQ['x'] in Algebras(Fields())` row in
+`sage/categories/category_types.py` exposed a real category-parameter
+membership gap.  A category whose base is itself a category compared the
+polynomial parent against a parameter-specific generated parent class before
+checking that its concrete base ring belonged to the requested base category.
+In addition, `CategoryWithAxiom_over_base_ring` inherited the generic
+`Category.__contains__` method earlier in its MRO than the base-ring-aware
+implementation.
+
+The accumulated WASI patch now first verifies membership of the object's
+concrete base ring, reconstructs the same category over that concrete base,
+and delegates the structural membership check to it.  Axiom categories
+explicitly retain that base-ring-aware path.  The promoted contracts cover
+the positive rational-polynomial case and a negative integer-polynomial
+control.  The adjacent rational dummy-category `isinstance` row was also
+stale and is now default coverage; the independent modular connected
+`JoinCategory` row remains deferred because it still is not a
+`Category_over_base_ring`.
+
+Complete validation also exposed an independent exception-text mismatch in
+`category_with_axiom.py`.  Its loose trailing ellipsis did not match the
+stable two-line guidance emitted by `base_category_class_and_axiom`; the
+expectation now records that guidance exactly without changing runtime
+behavior.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced polynomial membership before:       0 passed, 1 failed,  0 skipped
+shared polynomial membership final:         1 passed, 0 failed,  0 skipped
+forced rational dummy type before:          1 passed, 0 failed,  0 skipped
+shared category-types complete final:      69 passed, 0 failed, 27 skipped
+shared category-with-axiom first complete: 330 passed, 1 failed,  5 skipped
+shared category-with-axiom complete final: 331 passed, 0 failed,  5 skipped
+reconstructed category-types complete:     69 passed, 0 failed, 27 skipped
+reconstructed category-with-axiom complete:331 passed, 0 failed,  5 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-axiom-base-ring/`; every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a full `git archive`
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and both reconstructed modules are byte-identical to the tested
+staged sources.  Python compilation, focused and complete
+shared/reconstructed replays, SQLite integrity checks, and `git diff --check`
+pass.  Testing the pure-Python implementation required refreshing the two
+category modules and the tracked hash for the bundled
+`category_with_axiom.py` in the ignored local Electron resource tree, but no
+native WASM rebuild or tracked resource-bundle change.  The next pass should
+continue with another bounded filesystem, serialization, native-backend, or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
