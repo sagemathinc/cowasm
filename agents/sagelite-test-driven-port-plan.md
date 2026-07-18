@@ -51427,6 +51427,55 @@ generation, the focused WASM module rebuild, and `git diff --check` pass. The
 next pass should continue with the NTL/PARI extension-field shared-state
 cluster or another bounded native arithmetic/backend row.
 
+PARI finite-field clone-list isolation pass on 2026-07-18 UTC:
+
+The remaining `ntl_GF2E._sage_()` guard hid a shared-state failure rather than
+an NTL conversion defect. In a fresh worker, the conversion passed after
+NTL-only setup, but constructing `GF(2^8)` first made the same conversion trap
+inside cypari2's later `gclone` call. The ordered complete-module replay
+reproduced that failure at `ntl_GF2E.pyx:464` after the module's earlier
+finite-field setup.
+
+The PARI finite-field element wrapper used `gcloneref` to retain every FFELT,
+which registers the allocation in PARI's global clone-block bookkeeping. That
+bookkeeping is not safe across Sagelite's split WASM side modules: later clone
+allocation descended through corrupted block metadata and trapped in
+`blockinsert`/`fix_height`. On WASI, the wrapper now retains FFELTs with the
+unregistered deep-copy operation `gclone`; the existing `gunclone_deep`
+destructor continues to release the value. Native builds keep the upstream
+`gcloneref` path.
+
+The state reproducer now passes with the prior PARI finite-field construction,
+and the stale `# known bug` guard is removed. Before and after dashboards
+record:
+
+```text
+ntl_GF2E.pyx forced before:       trap at line 464 in PARI clone bookkeeping
+PARI-then-NTL reproducer before:  trap at conversion
+NTL-only reproducer before:       5 passed, 0 failed, 0 skipped
+PARI-then-NTL reproducer after:   4 passed, 0 failed, 0 skipped
+FFELT construction/arithmetic:    7 passed, 0 failed, 0 skipped
+ntl_GF2E.pyx forced after:       70 passed, 0 failed, 0 skipped
+shared + reconstructed default: 140 passed, 0 failed, 0 skipped
+```
+
+The broader forced-feature `element_pari_ffelt.pyx` replay still stops before
+the modified clone path at its pre-existing `NTL::ZZ_pContext::restore`
+dynamic-import boundary. The focused FFELT smoke therefore covers repeated
+construction, zero creation, subtraction, equality, `TestSuite`, and worker
+cleanup without conflating that separate loader cluster with this fix.
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-18-ntl-pari-state/` and pass
+`PRAGMA integrity_check`. Applying the complete accumulated Sagelite patch
+exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed `element_pari_ffelt.pyx` and `ntl_GF2E.pyx` are byte-identical to
+the tested staged sources, and the reconstructed module independently reports
+the same 70/0/0 result under runner version 118. The focused WASM module
+rebuild and `git diff --check` pass. The next pass should audit the remaining
+split-module GF2X hex-state boundary or another bounded native backend row.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

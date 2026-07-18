@@ -4310,6 +4310,12 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
  from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
  from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
+@@ -363,1 +367,4 @@
+-        self.val = gcloneref(g)
++        if sys.platform == "wasi":
++            self.val = gclone(g)
++        else:
++            self.val = gcloneref(g)
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -727,6 +727,8 @@
@@ -13018,9 +13024,6 @@ diff -urN -U0 a/src/sage/libs/ntl/ntl_GF2E.pyx b/src/sage/libs/ntl/ntl_GF2E.pyx
 @@ -424 +427 @@
 -             sage: e=ntl.GF2E('0xff',GF(2^8,'a'))
 +             sage: e=ntl.GF2E('0xff', ntl.GF2EContext([1,1,0,1,1,0,0,0,1]))
-@@ -461 +464 @@
--            sage: a = e._sage_(); a
-+            sage: a = e._sage_(); a                                                 # known bug - Sagelite WASI finite-field generator name drifts after NTL conversion
 @@ -467 +470 @@
 -        self.c.restore_c()
 +        restore_GF2E_context(self.c)
