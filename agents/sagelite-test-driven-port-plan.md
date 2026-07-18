@@ -52961,6 +52961,58 @@ promotion requires no native WASM or resource-bundle rebuild.  The next pass
 should continue with another bounded filesystem, serialization, native-backend,
 or frontend semantic cluster.
 
+Lazy-list doctest namespace serialization pass on 2026-07-18 UTC:
+
+The two upstream-deferred pickle groups in `sage/misc/lazy_list.pyx` failed in
+the Sagelite doctest runner even though they worked in an interactive console.
+Functions defined by a doctest correctly had `__module__ == "__main__"`, but
+the runner executed them in a separate globals dictionary without publishing
+them in the real `__main__` module.  Python's pickler therefore could not find
+`my_update_function` or `say_hey` and raised `PicklingError`.
+
+Runner version 124 now publishes successfully defined top-level functions and
+classes whose module is `__main__` into the real main-module namespace.  It
+does so after each successful example, including unrecorded setup examples,
+while avoiding lazy-import attribute resolution.  The standalone smoke now
+round-trips a doctest-defined function through `dumps` and `loads` as a direct
+regression.  Enabling the lazy-list examples also exposed an upstream fixture
+typo: `_info()` appeared twice with expected output only after the second
+call.  The accumulated WASI patch removes the output-producing duplicate and
+promotes the four real serialization and state checks.
+
+Complete-module replays record:
+
+```text
+deferred complete module before:   207 passed, 0 failed, 34 skipped
+shared complete module final:      211 passed, 0 failed, 29 skipped
+reconstructed complete final:      211 passed, 0 failed, 29 skipped
+main-namespace pickle smoke:         3 passed, 0 failed,  0 skipped
+```
+
+The authoritative SQLite dashboards and pinned clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-lazy-list-pickle/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed lazy-list source is byte-identical to the tested generated
+source.
+
+The exhaustive standalone target rebuilt all 501 Cython sources and 1,016
+WASM targets successfully, then reached its main doctest fixture with
+`56 passed, 0 failed, 13 skipped`; the new function-pickle regression passed.
+Its only subsequent blocker was the fixture's stale hard-coded count of 67
+relative block keys after adding two blocks.  That expectation is now 69,
+along with the normal, optional-feature, and deferred-feature aggregate
+counts.  A second complete target invocation was stopped when the standalone
+script unconditionally began the same 501-source regeneration again; the
+corrected shell syntax, Node syntax, exact three-block namespace smoke, SQLite
+integrity checks, reconstructed complete replay, and `git diff --check` all
+pass.  The interrupted redundant rebuild cleared the default generated
+Electron bundle, which was restored copy-on-write from the latest retained
+validated resource bundle.  No native runtime or resource content changes are
+part of this commit.  The next pass should continue with another bounded
+filesystem, serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

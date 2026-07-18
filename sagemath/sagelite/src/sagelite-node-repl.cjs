@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 123;
+const doctestRunnerVersion = 124;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1040,6 +1040,7 @@ import re
 import sys
 import time
 import traceback
+import types
 import warnings
 
 warnings.filterwarnings(
@@ -2168,6 +2169,19 @@ def __cowasm_restore_protected_namespace(namespace, protected_namespace):
             namespace[name] = value
 
 
+def __cowasm_register_main_globals(namespace):
+    main_module = sys.modules.get("__main__")
+    if main_module is None:
+        return
+    main_namespace = vars(main_module)
+    for name, value in namespace.items():
+        if (
+            isinstance(value, (types.FunctionType, type))
+            and getattr(value, "__module__", None) == "__main__"
+        ):
+            main_namespace[name] = value
+
+
 class __CowasmRecordingRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -2211,6 +2225,7 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
         super().report_start(out, test, example)
 
     def report_success(self, out, test, example, got):
+        globals()["__cowasm_register_main_globals"](test.globs)
         if getattr(example, "_cowasm_record_block", True) is False:
             return
         row = self.__base(test, example)

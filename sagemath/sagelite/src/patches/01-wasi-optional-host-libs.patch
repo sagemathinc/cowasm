@@ -25188,3 +25188,19 @@ diff --git a/src/sage/rings/complex_mpfr.pyx b/src/sage/rings/complex_mpfr.pyx
 @@ -1039 +1039 @@
 -            sage: for prec in (2, 53, 200):  # not tested, known bug (see :issue:`32129`)
 +            sage: for prec in (2, 53, 200):
+
+diff --git a/src/sage/misc/lazy_list.pyx b/src/sage/misc/lazy_list.pyx
+--- a/src/sage/misc/lazy_list.pyx
++++ b/src/sage/misc/lazy_list.pyx
+@@ -1156 +1156 @@
+-            sage: loads(dumps(l))   # not tested (works in console though)
++            sage: loads(dumps(l))
+@@ -1169,3 +1169,2 @@
+-            sage: l2 = loads(dumps(l))   # not tested
+-            sage: l2._info()             # not tested
+-            sage: l2._info()             # not tested
++            sage: l2 = loads(dumps(l))
++            sage: l2._info()
+@@ -1177 +1177 @@
+-            sage: l.list() == l2.list()  # not tested
++            sage: l.list() == l2.list()
