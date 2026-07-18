@@ -51740,6 +51740,42 @@ both runtime backends, and `git diff --check` pass. The next pass should
 continue with another bounded filesystem, serialization, native-backend, or
 frontend semantic cluster.
 
+Generic finite linear-group iteration pass on 2026-07-18 UTC:
+
+The two remaining browser-profile guards in
+`sage/groups/matrix_gps/linear.py` exposed a genuine generic-backend gap.
+Without GAP, `list(GL(2, Integers(6)))` and its special-linear counterpart
+fell through `Parent.__getitem__`, which expected a nonexistent group
+`list()` method. The generic named linear group now enumerates its finite
+ambient matrix space and yields exactly the invertible matrices, or the
+determinant-one matrices for a special linear group.
+
+The same audit found that the generic GL constructor accepted matrices whose
+determinant was merely nonzero over a composite base ring. A diagonal matrix
+with determinant `2` modulo `6` is not invertible, so `_check_matrix()` now
+uses the matrix invertibility predicate and reports an explicit `TypeError`.
+A focused regression records that boundary. The two stale iteration guards
+are removed. Before and final replays under runner version 118 record:
+
+```text
+linear.py lines 334/338 forced before:  0 passed, 2 failed, 0 skipped
+linear.py lines 349/353 focused after:  2 passed, 0 failed, 0 skipped
+finite/composite-ring contract probe:  11 passed, 0 failed, 0 skipped
+linear.py reconstructed full source:   39 passed, 0 failed, 36 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-matrix-group-iteration/`; retained
+databases pass `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `linear.py` is byte-identical to the runtime resource copy.
+Python compilation, resource-manifest validation, focused and full-module
+replays, and `git diff --check` pass. This pure-Python generic-backend fix
+requires no native WASM rebuild. The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

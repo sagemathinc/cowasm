@@ -24740,3 +24740,49 @@ diff --git a/src/sage/structure/factory.pyx b/src/sage/structure/factory.pyx
 +    if type(value) is LazyImport:
 +        value = value._get_object()
 +    return value
+diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/linear.py
+--- a/src/sage/groups/matrix_gps/linear.py
++++ b/src/sage/groups/matrix_gps/linear.py
+@@ -302,3 +302,3 @@
+         else:
+-            if x.determinant() == 0:
+-                raise TypeError('matrix must nonzero determinant')
++            if not x.is_invertible():
++                raise TypeError('matrix must be invertible')
+@@ -305,0 +306,18 @@
++    def __iter__(self):
++        r"""
++        Iterate over the elements of this finite linear group.
++
++        Generic linear groups do not have a backend enumerator, so inspect
++        the finite ambient matrix space directly.
++        """
++        if not self.is_finite():
++            raise NotImplementedError("group must be finite")
++
++        for matrix in self.matrix_space():
++            if self._special:
++                include = matrix.determinant() == 1
++            else:
++                include = matrix.is_invertible()
++            if include:
++                yield self(matrix, check=False)
++
+@@ -334 +352 @@
+-            sage: G.order() == len(list(G))                                        # known bug - finite matrix group iteration uses missing WASI list fallback
++            sage: G.order() == len(list(G))
+@@ -338 +356 @@
+-            sage: H.order() == len(list(H))                                        # known bug - finite matrix group iteration uses missing WASI list fallback
++            sage: H.order() == len(list(H))
+diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/linear.py
+--- a/src/sage/groups/matrix_gps/linear.py
++++ b/src/sage/groups/matrix_gps/linear.py
+@@ -307 +307,7 @@
+-        """
++
++            sage: G = GL(2, Integers(6))
++            sage: G(G.matrix_space().diagonal_matrix([2, 1]))
++            Traceback (most recent call last):
++            ...
++            TypeError: matrix must be invertible
++        """
