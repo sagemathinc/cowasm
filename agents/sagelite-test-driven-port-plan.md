@@ -52291,6 +52291,38 @@ metadata promotion requires no native WASM or resource-bundle rebuild. The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Steenrod large-matrix summary promotion pass on 2026-07-18 UTC:
+
+The two remaining browser-profile guards in
+`sage/algebras/steenrod/steenrod_algebra_bases.py` are stale. Both large
+change-of-basis matrices now use Sage's historical summary representation,
+including the documented dimensions, finite field, and `.str()` hint. The
+accumulated WASI patch no longer marks `convert_to_milnor_matrix(45,
+'milnor')` or `convert_from_milnor_matrix(38, 'serre_cartan')` as
+`# known bug`.
+
+Forced and complete replays under runner version 123 record:
+
+```text
+forced complete module before removal: 83 passed, 0 failed, 5 skipped
+shared complete module final:          83 passed, 0 failed, 5 skipped
+reconstructed complete module final:   83 passed, 0 failed, 5 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-18-steenrod-matrix-summary/`, and the clean
+reconstruction is under
+`.tmp/current-run/scheduled-2026-07-18-next-guard/pristine/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source. Python compilation, forced and complete shared/reconstructed replays,
+SQLite integrity checks, and `git diff --check` pass. This stale-metadata
+promotion requires no native WASM or resource-bundle rebuild. The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
