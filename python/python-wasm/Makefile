@@ -120,9 +120,15 @@ ${DIST}/networkx.tar.xz:
 
 ${DIST}/python-everything.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES} ${DIST}/python.wasm
 	cd ${DIST} \
-		&&	cp python-stdlib.zip .python-everything.zip \
-		&&  zip .python-everything.zip *.tar.xz python.wasm \
-		&&  mv .python-everything.zip python-everything.zip
+		&& rm -rf .python-everything .python-everything.zip \
+		&& mkdir .python-everything \
+		&& ${BIN}/python-native -m zipfile -e python-stdlib.zip .python-everything \
+		&& cp *.tar.xz python.wasm .python-everything/ \
+		&& cd .python-everything \
+		&& ${BIN}/python-native ${CWD}/../cpython/src/create-zip.py ../.python-everything.zip * \
+		&& cd .. \
+		&& rm -rf .python-everything \
+		&& mv .python-everything.zip python-everything.zip
 
 
 

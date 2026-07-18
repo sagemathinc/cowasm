@@ -12,6 +12,9 @@ const STACK_ALIGN = 16; // copied from emscripten
 // a runtime parameter.
 const STACK_SIZE = 1048576; // 1MB;  to use 64KB it would be 65536.
 
+const PRINTF_FORMAT_RE =
+  /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d+))?(hh|h|ll|l|j|z|t|L)?([diuoxXfFeEgGscp%])/g;
+
 export function formatDlopenCString(
   format: string,
   args: any[],
@@ -19,8 +22,8 @@ export function formatDlopenCString(
 ): string {
   let argIndex = 0;
   return format.replace(
-    /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d+))?(?:hh|h|ll|l|j|z|t|L)?([diuoxXfFeEgGscp%])/g,
-    (_match, flags, widthText, precisionText, specifier) => {
+    PRINTF_FORMAT_RE,
+    (_match, flags, widthText, precisionText, _length, specifier) => {
       if (specifier == "%") {
         return "%";
       }
@@ -114,6 +117,72 @@ export function formatDlopenCString(
       return text;
     }
   );
+}
+
+export function readDlopenVarArgs(
+  format: string,
+  vaListPtr: number,
+  memory: WebAssembly.Memory
+): any[] {
+  const args: any[] = [];
+  const view = new DataView(memory.buffer);
+  let ptr = vaListPtr;
+  const align = (alignment: number) => {
+    ptr = Math.ceil(ptr / alignment) * alignment;
+  };
+  const readI32 = () => {
+    align(4);
+    const value = view.getInt32(ptr, true);
+    ptr += 4;
+    return value;
+  };
+  const readU32 = () => {
+    align(4);
+    const value = view.getUint32(ptr, true);
+    ptr += 4;
+    return value;
+  };
+  const readI64 = () => {
+    align(8);
+    const value = view.getBigInt64(ptr, true);
+    ptr += 8;
+    return value;
+  };
+  const readU64 = () => {
+    align(8);
+    const value = view.getBigUint64(ptr, true);
+    ptr += 8;
+    return value;
+  };
+  const readF64 = () => {
+    align(8);
+    const value = view.getFloat64(ptr, true);
+    ptr += 8;
+    return value;
+  };
+
+  for (const match of format.matchAll(PRINTF_FORMAT_RE)) {
+    const [, , widthText, precisionText, length = "", specifier] = match;
+    if (specifier == "%") {
+      continue;
+    }
+    if (widthText == "*") {
+      args.push(readI32());
+    }
+    if (precisionText == "*") {
+      args.push(readI32());
+    }
+    if (/[fFeEgG]/.test(specifier)) {
+      args.push(readF64());
+    } else if (specifier == "s" || specifier == "p") {
+      args.push(readU32());
+    } else if (length == "ll" || length == "j") {
+      args.push(/[uoxX]/.test(specifier) ? readU64() : readI64());
+    } else {
+      args.push(/[uoxXc]/.test(specifier) ? readU32() : readI32());
+    }
+  }
+  return args;
 }
 
 export default class DlopenManger {
@@ -318,13 +387,17 @@ export default class DlopenManger {
     return bytes.length;
   }
 
-  private formatCString(formatPtr: number, args: any[]): string {
+  private formatCStringFromVarArgs(
+    formatPtr: number,
+    vaListPtr: number
+  ): string {
     if (!formatPtr) {
       return "";
     }
+    const format = recvString(formatPtr, this.memory);
     return formatDlopenCString(
-      recvString(formatPtr, this.memory),
-      args,
+      format,
+      readDlopenVarArgs(format, vaListPtr, this.memory),
       (ptr: number) => recvString(ptr, this.memory)
     );
   }
@@ -965,34 +1038,41 @@ export default class DlopenManger {
         str: number,
         size: number,
         formatPtr: number,
-        ...args: any[]
+        vaListPtr: number
       ) => {
         return this.writeCString(
           str,
           size,
-          this.formatCString(formatPtr, args)
+          this.formatCStringFromVarArgs(formatPtr, vaListPtr)
         );
       },
-      sprintf: (str: number, formatPtr: number, ...args: any[]) => {
+      sprintf: (str: number, formatPtr: number, vaListPtr: number) => {
         return this.writeCString(
           str,
           undefined,
-          this.formatCString(formatPtr, args)
+          this.formatCStringFromVarArgs(formatPtr, vaListPtr)
         );
       },
       vfprintf: () => 0,
       vprintf: () => 0,
-      vsnprintf: (str: number, size: number) => {
-        if (str && size > 0) {
-          new Uint8Array(this.memory.buffer)[str] = 0;
-        }
-        return 0;
+      vsnprintf: (
+        str: number,
+        size: number,
+        formatPtr: number,
+        vaListPtr: number
+      ) => {
+        return this.writeCString(
+          str,
+          size,
+          this.formatCStringFromVarArgs(formatPtr, vaListPtr)
+        );
       },
-      vsprintf: (str: number) => {
-        if (str) {
-          new Uint8Array(this.memory.buffer)[str] = 0;
-        }
-        return 0;
+      vsprintf: (str: number, formatPtr: number, vaListPtr: number) => {
+        return this.writeCString(
+          str,
+          undefined,
+          this.formatCStringFromVarArgs(formatPtr, vaListPtr)
+        );
       },
       time: (ptr: number) => {
         const seconds = BigInt(Math.floor(Date.now() / 1000));
@@ -1126,12 +1206,8 @@ export default class DlopenManger {
       "fwrite",
       "printf",
       "realloc",
-      "snprintf",
-      "sprintf",
       "vfprintf",
       "vprintf",
-      "vsnprintf",
-      "vsprintf",
     ]) {
       const f = this.mainFunction(name, path);
       if (f != null) {

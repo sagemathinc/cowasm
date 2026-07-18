@@ -742,7 +742,7 @@ wasm-cpython: ${DIST_WASM}/.install-cpython
 
 # These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
 MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
-MINIMAL_READLINE = termcap lib-dynload/readline.${PYTHON_PLATFORM}.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc collections/abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
+MINIMAL_READLINE = termcap lib-dynload/readline.${PYTHON_PLATFORM}.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc _collections_abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
 
 # Below we create two zip files:
 #
@@ -764,7 +764,7 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 		&& rm -rf ${DIST_WASM}/lib/dist \
 		&& mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
-	cp ${SRC}/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python${PYTHON_ABI}.zip termcap
+	cp ${SRC}/termcap ${DIST_WASM}/lib/dist/termcap
 	# **TODO:** It is very silly for these to be in the same zip file, obviously, because that means they have to be downloaded,
 	# so we should just put them in the main binary.  We'll change that when things are working.
 	mkdir -p ${DIST_WASM}/lib/dist/lib-dynload/
@@ -777,20 +777,29 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 	# Unfortunately, wasm-strip removes the critical custom section that makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820
 	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
-	# Instead, we use the -s option to wasm-ld above.
-	# Also mv zip to a more meaningful name.
+	# Instead, we use the -s option to wasm-ld above. Repack with Python's
+	# standard-library zip tool so clean builds do not require a host zip binary.
 	cd ${DIST_WASM}/lib/dist/ \
-		&& zip -u python${PYTHON_ABI}.zip lib-dynload/* \
-		&& mv python${PYTHON_ABI}.zip python-stdlib.zip
+		&& rm -rf tmp \
+		&& mkdir tmp \
+		&& cd tmp \
+		&& ${BIN}/python-native -m zipfile -e ../python${PYTHON_ABI}.zip . \
+		&& cp ../termcap . \
+		&& cp -r ../lib-dynload . \
+		&& ${BIN}/python-native ${SRC}/create-zip.py ../python-stdlib.zip * \
+		&& cd .. \
+		&& rm -rf tmp
 
 	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a
 	# jupyter kernel or to back
 	# computations, but not a REPL). We also make a version with the readline so, so you
 	# can start a terminal, before more data needs to be loaded.
 	cd ${DIST_WASM}/lib/dist/ \
-		&& mkdir tmp && cd tmp && unzip ../python-stdlib.zip && cp ../termcap .\
-		&& zip ../python-minimal.zip ${MINIMAL_FILES} \
-		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
+		&& mkdir tmp && cd tmp \
+		&& ${BIN}/python-native -m zipfile -e ../python-stdlib.zip . \
+		&& cp ../termcap . \
+		&& ${BIN}/python-native ${SRC}/create-zip.py ../python-minimal.zip ${MINIMAL_FILES} \
+		&& ${BIN}/python-native ${SRC}/create-zip.py ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
 		&& cd .. && rm -rf tmp
 
 	# Add some code at the end of the _sysconfigdata so that it is sufficiently relocatable so that

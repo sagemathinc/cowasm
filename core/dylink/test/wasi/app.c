@@ -138,6 +138,14 @@ int found_with_strchr() {
 }
 
 EXPORTED_SYMBOL
+int formatted_varargs_are_stable() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f =
+      (FUN_VOID_PTR)dlsym(handle, "formatted_varargs_are_stable");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int divided_complex_double() {
   void* handle = dlopen("./dynamic-library.so", 2);
   FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "divided_complex_double");
@@ -257,6 +265,10 @@ int main() {
 
   printf("found_with_strchr() = %d\n", found_with_strchr());
   assert(found_with_strchr() == 1);
+
+  printf("formatted_varargs_are_stable() = %d\n",
+         formatted_varargs_are_stable());
+  assert(formatted_varargs_are_stable() == 1);
 
   printf("divided_complex_double() = %d\n", divided_complex_double());
   assert(divided_complex_double() == 1);

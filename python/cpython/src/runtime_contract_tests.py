@@ -247,6 +247,14 @@ class RuntimeContractTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertIn(expected, result.stdout)
 
+    def test_unicode_fromformat_pointer_fields(self):
+        def pointer_target():
+            pass
+
+        first = repr(pointer_target)
+        self.assertEqual(first, repr(pointer_target))
+        self.assertRegex(first, r"^<function .* at 0x[0-9a-f]+>$")
+
     def test_unicode_literal_before_escape(self):
         source = "value = 'à" + chr(92) + "nbb'"
         namespace = {}

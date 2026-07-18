@@ -5433,15 +5433,6 @@ diff -urN a/src/sage/sets/image_set.py b/src/sage/sets/image_set.py
              True
          """
          if not isinstance(domain_subset, Parent):
-@@ -202,7 +202,7 @@
-             sage: def f(x):
-             ....:     return 2 * x
-             sage: I = ImageSubobject(f, ZZ)
--            sage: hash(I) == hash(ImageSubobject(f, ZZ))
-+            sage: hash(I) == hash(ImageSubobject(f, ZZ))                                # known bug
-             True
-         """
-         return hash((self._map, self._domain_subset))
 diff -urN a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
 --- a/src/sage/combinat/combinat.py
 +++ b/src/sage/combinat/combinat.py

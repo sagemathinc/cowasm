@@ -51638,6 +51638,66 @@ resource snapshot and requires no native WASM rebuild. The next pass should
 continue with another bounded serialization, native backend, or frontend
 semantic cluster.
 
+Image-subobject hash and CPython pointer-formatting pass on 2026-07-18 UTC:
+
+The final browser-profile guard in `sage/sets/image_set.py` was caused by
+unstable CPython `%p` formatting rather than `ImageSubobject` hashing itself.
+`ImageSubobject` derives a `PoorManMap` name from the callable representation.
+The legacy Zig worker alternated the same function's representation between
+`<function f at 0x>` and `<function f at >`; the two maps then had unequal
+names and hashes despite wrapping the identical function and domain.
+
+CPython's `PyUnicode_FromFormat` pointer branch called variadic `sprintf`
+across the WASM runtime boundary. It now formats the `uintptr_t` directly with
+the same internal unsigned-integer helper used by the neighboring integer
+formats. The runtime contract suite records that repeated function reprs are
+identical and contain a nonempty lowercase hexadecimal address. The dynamic
+loader's `snprintf`/`sprintf`/`vsnprintf`/`vsprintf` fallbacks now also decode
+the wasm32 `va_list` with its 4-byte and 8-byte alignment rules instead of
+treating WebAssembly variadic calls as JavaScript rest arguments; direct and
+archive-linked dylink smokes cover repeated `%p` plus mixed integer, floating,
+string, character, and pointer fields.
+
+The stale `# known bug` guard is removed. A focused forced replay initially
+passed because it constructed only one comparison in a fresh worker, while the
+full module exposed the alternating representation state. The decisive before
+and after results under runner version 118 are:
+
+```text
+image_set.py full before:              50 passed, 1 failed, 48 skipped
+repeated repr/hash diagnostic before:  26 passed, 11 failed, 0 skipped
+pointer contract, Zig worker after:     1 passed, 0 failed, 0 skipped
+pointer contract, WASI-SDK suite:      16 passed, 0 failed, 0 skipped
+image_set.py --line 205 after:          1 passed, 0 failed, 0 skipped
+image_set.py shared source after:      51 passed, 0 failed, 48 skipped
+image_set.py reconstructed after:      51 passed, 0 failed, 48 skipped
+```
+
+The broader legacy Zig runtime-contract suite reaches a separate pre-existing
+Unicode literal-before-escape failure after the new pointer contract passes;
+the WASI-SDK suite passes all 16 contracts. That unrelated literal parser row
+remains outside this pointer-formatting cluster.
+
+Clean baseline reconstruction also exposed host `zip` assumptions in the
+classic CPython and `python-wasm` bundle recipes. Both now use a small
+repo-controlled Python zip helper that preserves relative archive paths, and
+the Python 3.14 readline bundle names the current top-level
+`_collections_abc.pyc`. The rebuilt minimal, readline, stdlib, and everything
+archives pass zip integrity checks, and the everything bundle contains the
+newly linked legacy interpreter used by Sagelite doctests.
+
+The authoritative SQLite dashboards, coherent resource snapshot, and clean
+Sagelite reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-image-set-hash/`; retained databases
+pass `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `image_set.py` is byte-identical to the tested staged source.
+Both CPython backends rebuild from the accumulated patch, both WASI dylink
+smokes pass, TypeScript compilation succeeds, and `git diff --check` passes.
+The next pass should continue with another bounded serialization, native
+backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

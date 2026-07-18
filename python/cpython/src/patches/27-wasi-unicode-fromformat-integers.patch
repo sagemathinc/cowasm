@@ -129,3 +129,21 @@
 @@ -2963,2 +3022,0 @@
 -        #undef SPRINT
 -        #undef DO_SPRINTS
+@@ -3015,13 +3072,4 @@
+-        len = sprintf(number, "%p", va_arg(*vargs, void*));
+-        assert(len >= 0);
+-
+-        /* %p is ill-defined:  ensure leading 0x. */
+-        if (number[1] == 'X')
+-            number[1] = 'x';
+-        else if (number[1] != 'x') {
+-            memmove(number + 2, number,
+-                    strlen(number) + 1);
+-            number[0] = '0';
+-            number[1] = 'x';
+-            len += 2;
+-        }
++        number[0] = '0';
++        number[1] = 'x';
++        len = 2 + cowasm_format_uintmax(number + 2,
++                                        (uintptr_t)va_arg(*vargs, void*), 16, 0);

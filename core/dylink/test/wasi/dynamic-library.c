@@ -127,6 +127,21 @@ int found_with_strchr(void) {
 }
 
 EXPORTED_SYMBOL
+int formatted_varargs_are_stable(void) {
+  int value = 17;
+  char first[128];
+  char second[128];
+  char mixed[128];
+  int first_length = snprintf(first, sizeof(first), "%p", &value);
+  int second_length = snprintf(second, sizeof(second), "%p", &value);
+  int mixed_length = snprintf(mixed, sizeof(mixed), "%d %.2f %s %c %p",
+                              -7, 3.5, "ok", 'Z', &value);
+  return first_length > 2 && first_length == second_length &&
+         strcmp(first, second) == 0 && first[0] == '0' && first[1] == 'x' &&
+         mixed_length > 15 && strncmp(mixed, "-7 3.50 ok Z 0x", 15) == 0;
+}
+
+EXPORTED_SYMBOL
 int divided_complex_double(void) {
   volatile double a = 5.0;
   volatile double b = 7.0;
