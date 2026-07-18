@@ -24802,3 +24802,14 @@ diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfe
 +            if hasattr(a, 'parent') and a.parent() == self._base_ring:
 +                raise ValueError("a must be an integral element")
              raise TypeError("unable to convert a to an element in Fq[T]")
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -356 +355,0 @@
+-            sage: # known bug
+@@ -786 +784,0 @@
+-            sage: # known bug
+@@ -2779 +2776,0 @@
+-            sage: # known bug
+@@ -4568 +4564,0 @@
+-            sage: # known bug

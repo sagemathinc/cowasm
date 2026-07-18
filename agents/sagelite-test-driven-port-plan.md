@@ -52421,6 +52421,45 @@ checks, and `git diff --check` pass.  This pure-Python source correction needs
 no native WASM rebuild.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Lazy-series deferred-metadata promotion pass on 2026-07-18 UTC:
+
+Four of the five browser-profile directive guards in
+`sage/rings/lazy_series_ring.py` are stale.  Rational-function conversion to a
+lazy Laurent series, the second implicit-equation example, the multivariate
+lazy-power-series test-suite group, and pseudo-differential monomial
+normalization all complete with their documented results.  The accumulated
+WASI patch now removes those four `# known bug` directives after preserving
+the historical hunk ordering required by later source changes.
+
+The independent multivariate `taylor()` directive remains.  Its forced group
+records two setup passes and six failures: the pure-Python callable has an
+equivalent but differently normalized alternating-sign display, while the
+symbolic-function examples also lack `var` and `SR` in the browser profile.
+The forced complete-module audit under runner version 123 records 38 passed,
+6 failed, and 2 long-time skipped blocks across all five guarded groups.
+The four promoted groups account for 36 of those passes and both long-time
+skips.
+
+Complete default replays record:
+
+```text
+shared complete module final:          638 passed, 0 failed, 406 skipped
+reconstructed complete module final:   638 passed, 0 failed, 406 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-18-lazy-series-guards/` and
+`.tmp/current-run/scheduled-2026-07-18-lazy-series-promotion/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This stale-metadata promotion
+requires no native WASM or resource-bundle rebuild.  The next pass should
+continue with another bounded filesystem, serialization, native-backend, or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
