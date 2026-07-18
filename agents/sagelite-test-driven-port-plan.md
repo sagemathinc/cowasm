@@ -53540,6 +53540,49 @@ tracked resource-bundle change.  The next pass should continue with another
 bounded filesystem, serialization, native-backend, or frontend semantic
 cluster.
 
+Nonnegative-integer non-facade parent implementation pass on 2026-07-18 UTC:
+
+The three deferred `NonNegativeIntegers(facade=False)` rows in
+`sage/sets/non_negative_integers.py` exposed a real parent/element protocol
+gap.  A forced focused replay failed because the constructor rejected the
+`facade` keyword.  The accumulated WASI patch now accepts the option and uses
+an `IntegerWrapper` element when the parent is not a facade, while preserving
+plain `Integer` elements for the default facade parent.  The non-facade parent
+also registers its embedding into `ZZ`, so wrapped elements retain their own
+parent but ordinary arithmetic returns an integer in `Integer Ring`.
+
+The promoted documentation covers the new element type and arithmetic-parent
+contract, and the existing generic `TestSuite(NN)` now runs against the
+non-facade instance.  Focused and complete replays under runner version 124
+record:
+
+```text
+forced deferred constructor before:  0 passed, 1 failed, 0 skipped
+shared parent identity final:         1 passed, 0 failed, 0 skipped
+shared wrapped element type final:    1 passed, 0 failed, 0 skipped
+shared arithmetic parent final:       1 passed, 0 failed, 0 skipped
+shared from_integer parent final:     1 passed, 0 failed, 0 skipped
+shared complete module final:        51 passed, 0 failed, 5 skipped
+reconstructed complete module final: 51 passed, 0 failed, 5 skipped
+inherited semiring complete final:    12 passed, 0 failed, 4 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-nonnegative-parent/`; every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure
+and file-error cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to a `git
+archive` of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed module is byte-identical to
+the tested staged source.  Python compilation, focused and complete
+shared/reconstructed replays, the inherited semiring replay, SQLite integrity
+checks, and `git diff --check` pass.  Testing the pure-Python implementation
+required refreshing `sage/sets/non_negative_integers.py` and its hash in the
+ignored local Electron resource tree, but no native WASM rebuild or tracked
+resource-bundle change.  The pre-existing changes in `/home/user/sagelite`
+were left untouched.  The next pass should continue with another bounded
+filesystem, serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

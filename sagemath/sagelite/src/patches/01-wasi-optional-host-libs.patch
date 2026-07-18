@@ -25503,3 +25503,92 @@ diff --git a/src/sage/combinat/words/paths.py b/src/sage/combinat/words/paths.py
 +            double_area += previous[0] * point[1] - previous[1] * point[0]
 +            previous = point
 +        return abs(double_area) / 2
+
+diff --git a/src/sage/sets/non_negative_integers.py b/src/sage/sets/non_negative_integers.py
+--- a/src/sage/sets/non_negative_integers.py
++++ b/src/sage/sets/non_negative_integers.py
+@@ -9,7 +9,7 @@
+ # ****************************************************************************
+
+ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+-from sage.rings.integer import Integer
++from sage.rings.integer import Integer, IntegerWrapper
+ from sage.structure.parent import Parent
+ from sage.structure.unique_representation import UniqueRepresentation
+
+@@ -52,14 +52,19 @@
+         sage: x+3
+         18
+
+-    In a later version, there will be an option to specify whether the
+-    elements should have ``Integer Ring`` or ``Non negative integers``
+-    as parent::
++    The ``facade`` option specifies whether the elements have ``Integer
++    Ring`` or ``Non negative integers`` as parent::
+
+-        sage: NN = NonNegativeIntegers(facade = False) # todo: not implemented
+-        sage: x = NN(5)                                # todo: not implemented
+-        sage: x.parent()                               # todo: not implemented
++        sage: NN = NonNegativeIntegers(facade=False)
++        sage: x = NN(5)
++        sage: x.parent()
+         Non negative integers
++        sage: type(x)
++        <class 'sage.sets.non_negative_integers.NonNegativeIntegers_with_category.element_class'>
++        sage: x + 3
++        8
++        sage: (x + 3).parent()
++        Integer Ring
+
+     This runs generic sanity checks on ``NN``::
+
+@@ -69,7 +74,7 @@
+     ``NonNegativeIntegers``.
+     """
+
+-    def __init__(self, category=None):
++    def __init__(self, facade=True, category=None):
+         """
+         TESTS::
+
+@@ -81,8 +86,13 @@
+             sage: TestSuite(NN).run()
+         """
+         from sage.rings.integer_ring import ZZ
+-        Parent.__init__(self, facade=ZZ,
++        self._facade = facade
++        Parent.__init__(self, facade=ZZ if facade else None,
+                         category=InfiniteEnumeratedSets().or_subcategory(category))
++        if facade:
++            self.element_class = Integer
++        else:
++            self._populate_coercion_lists_(embedding=ZZ)
+
+     def _repr_(self):
+         """
+@@ -165,9 +175,23 @@
+             return self.from_integer(i)
+         raise ValueError("Value %s in not in %s." % (i, self))
+
+-    from_integer = Integer
++    def from_integer(self, i):
++        """
++        Construct an element from ``i`` without checking nonnegativity.
++
++        EXAMPLES::
++
++            sage: NonNegativeIntegers().from_integer(5).parent()
++            Integer Ring
++            sage: NonNegativeIntegers(facade=False).from_integer(5).parent()
++            Non negative integers
++        """
++        if self._facade:
++            return Integer(i)
++        return self.element_class(self, i)
+
+-    Element = Integer
++    class Element(IntegerWrapper):
++        pass
+
+     def __iter__(self):
+         """
