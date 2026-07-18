@@ -25001,3 +25001,25 @@ diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfe
 @@ -367 +367 @@
 -            sage: M._repr_()  # known bug
 +            sage: M._repr_()
+diff --git a/src/sage/rings/polynomial/ideal.py b/src/sage/rings/polynomial/ideal.py
+--- a/src/sage/rings/polynomial/ideal.py
++++ b/src/sage/rings/polynomial/ideal.py
+@@ -77,7 +77,7 @@
+-            sage: I = R.ideal([x^2 - 1, x^3 - 1])                         # known bug - Sagelite WASI polynomial_number_field trap
+-            sage: G = I.groebner_basis(); G                                # known bug - depends on I
++            sage: I = R.ideal([x^2 - 1, x^3 - 1])
++            sage: G = I.groebner_basis(); G
+             [x - 1]
+-            sage: type(G)                                                   # known bug - depends on G
++            sage: type(G)
+             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
+-            sage: list(G)                                                   # known bug - depends on G
++            sage: list(G)
+             [x - 1]
+@@ -96,4 +96,4 @@
+-            sage: I = R.ideal([q^2 + q - 1])                                # known bug - Sagelite WASI polynomial_number_field trap
+-            sage: I.change_ring(RR['q'])                                     # known bug - depends on I
++            sage: I = R.ideal([q^2 + q - 1])
++            sage: I.change_ring(RR['q'])
+             Principal ideal (q^2 + q - 1.00000000000000) of
+              Univariate Polynomial Ring in q over Real Field with 53 bits of precision
