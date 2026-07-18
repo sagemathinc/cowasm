@@ -24783,3 +24783,22 @@ diff --git a/src/sage/data_structures/stream.py b/src/sage/data_structures/strea
 +            [FESDUMMY_...]
 +            sage: lin_coeffs
 +            [FESDUMMY_... - 1]
+diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfeld_modform/ring.py
+--- a/src/sage/modular/drinfeld_modform/ring.py
++++ b/src/sage/modular/drinfeld_modform/ring.py
+@@ -507 +507 @@
+-            sage: M.coefficient_form(1, 1/(T+1))  # known bug
++            sage: M.coefficient_form(1, 1/(T+1))
+@@ -524,2 +524,4 @@
+         except TypeError:
++            if hasattr(a, 'parent') and a.parent() == self._base_ring:
++                raise ValueError("a must be an integral element")
+             raise TypeError("unable to convert a to an element in Fq[T]")
+@@ -575 +577 @@
+-            sage: M.coefficient_forms(1/T)  # known bug
++            sage: M.coefficient_forms(1/T)
+@@ -590,2 +592,4 @@
+         except TypeError:
++            if hasattr(a, 'parent') and a.parent() == self._base_ring:
++                raise ValueError("a must be an integral element")
+             raise TypeError("unable to convert a to an element in Fq[T]")

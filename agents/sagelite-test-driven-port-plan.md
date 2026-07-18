@@ -52385,6 +52385,42 @@ pass. This stale-metadata promotion requires no native WASM or resource-bundle
 rebuild. The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Drinfeld integral-element diagnostic parity pass on 2026-07-18 UTC:
+
+Two of the three browser-profile guards in
+`sage/modular/drinfeld_modform/ring.py` exposed one backend exception-class
+boundary.  Coercing a defining fraction-field element with a non-unit
+denominator into its polynomial base ring raises `TypeError` in the Sagelite
+WASI generic fraction-field path, while `DrinfeldModularForms` documents this
+case as `ValueError: a must be an integral element`.  The public methods now
+recognize failed coercions of elements whose parent is the defining fraction
+field and preserve that documented `ValueError`.  Unrelated conversion
+failures, including the neighboring string-input checks, remain `TypeError`.
+
+The accumulated WASI patch removes the stale guards from
+`coefficient_form(1, 1/(T+1))` and `coefficient_forms(1/T)`.  The independent
+`M._repr_()` guard remains: the node profile still reports the finite-field
+polynomial backend as `NTL`, while that row expects `GF2X`.
+
+Ordered replays under runner version 123 record:
+
+```text
+forced complete module before:       144 passed, 3 failed, 8 skipped
+shared complete module after:        146 passed, 0 failed, 9 skipped
+reconstructed complete module after: 146 passed, 0 failed, 9 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-drinfeld-ring/`; every retained database
+passes `PRAGMA integrity_check`.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to an archive of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and the reconstructed module is byte-identical to the tested staged source.
+Python compilation, complete shared/reconstructed replays, SQLite integrity
+checks, and `git diff --check` pass.  This pure-Python source correction needs
+no native WASM rebuild.  The next pass should continue with another bounded
+filesystem, serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
