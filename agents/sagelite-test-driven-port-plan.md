@@ -51944,6 +51944,46 @@ pass.  This pure-Python frontend fix requires no native WASM rebuild.  The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Session-snapshot and standalone-ellipsis runner pass on 2026-07-18 UTC:
+
+The two browser-profile guards on verbose `save_session()` examples in
+`sage/misc/session.pyx` exposed two shared doctest-runner gaps.  Sage's session
+helpers keep a snapshot of the initial globals, but the Node runner only
+registered its namespace with `sage.repl.user_globals`; `state_at_init`
+therefore remained `None`, and `show_identifiers()` raised a `TypeError`.
+Runner version 120 now initializes the session snapshot from the completed
+per-file doctest namespace.
+
+Once the session helper ran, its verbose prefix exposed the second gap.  A
+standalone expected-output line containing only `...` was converted after
+Sage's `....:` continuation prompts and was consequently consumed as another
+prompt.  Prompt conversion now protects leading expected-output ellipses
+first while excluding actual `....:` prompts.  The standalone smoke covers
+the session snapshot and leading-ellipsis contract, and a focused fixture
+also covers a multiline continuation prompt.  Both stale session guards are
+removed.  Before and final replays record:
+
+```text
+session.pyx --line 297 before:          0 passed, 4 failed, 1 skipped
+session.pyx --line 312 before:          0 passed, 4 failed, 4 skipped
+two promoted verbose rows after:        2 passed, 0 failed, 2 skipped
+continuation/ellipsis contract fixture: 3 passed, 0 failed, 0 skipped
+shared complete module:                32 passed, 0 failed, 29 skipped
+reconstructed complete module:         32 passed, 0 failed, 29 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-session-verbose/`; every final retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `session.pyx` is byte-identical to the tested staged source.
+Node source checking, standalone shell syntax checking, complete shared and
+reconstructed module replays, the focused prompt contract, and
+`git diff --check` pass.  This shared JavaScript runner fix requires no native
+WASM rebuild.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

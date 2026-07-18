@@ -2822,6 +2822,56 @@ if [ "$doctest_user_globals_count" != "1" ]; then
   sqlite3 "$doctest_user_globals_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t user-globals doctest smoke did not expose doctest globals through sage.repl.user_globals."
 fi
+doctest_session_state_db="$probe_dir/sagelite-doctest-session-state.sqlite3"
+doctest_session_state_log="$dist_dir/doctest-session-state.log"
+doctest_session_state_file="$probe_dir/sagelite-doctest-session-state.py"
+cat >"$doctest_session_state_file" <<'PY'
+"""
+Check that helpers using Sage's session snapshot see doctest globals.
+
+EXAMPLES::
+
+    sage: show_identifiers()
+    []
+    sage: session_state_smoke = 42
+    sage: show_identifiers()
+    ['session_state_smoke']
+    sage: print("session-state preface\\nsession-state suffix")
+    ...
+    session-state suffix
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_session_state_db" "$doctest_session_state_file" \
+      >"$doctest_session_state_log" 2>&1
+doctest_session_state_status=$?
+set -e
+if [ "$doctest_session_state_status" -eq 124 ]; then
+  tail -120 "$doctest_session_state_log" >&2
+  record_blocker "sagelite-blocked: sage -t session-state doctest smoke timed out after $node_import_timeout; see $doctest_session_state_log for the first runtime blocker."
+fi
+if [ "$doctest_session_state_status" -ne 0 ]; then
+  tail -120 "$doctest_session_state_log" >&2
+  sqlite3 "$doctest_session_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t session-state doctest smoke failed; see $doctest_session_state_log for the first runtime blocker."
+fi
+doctest_session_state_count="$(sqlite3 "$doctest_session_state_db" "select count(*) from blocks where status = 'passed' and source like 'show_identifiers()%';")"
+if [ "$doctest_session_state_count" != "2" ]; then
+  cat "$doctest_session_state_log" >&2
+  sqlite3 "$doctest_session_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t session-state doctest smoke did not initialize Sage's session snapshot from the doctest namespace."
+fi
+doctest_session_ellipsis_count="$(sqlite3 "$doctest_session_state_db" "select count(*) from blocks where status = 'passed' and expected = '...' || char(10) || 'session-state suffix' || char(10) and source like 'print(\"session-state preface%';")"
+if [ "$doctest_session_ellipsis_count" != "1" ]; then
+  cat "$doctest_session_state_log" >&2
+  sqlite3 "$doctest_session_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t session-state doctest smoke did not preserve standalone ellipsis output."
+fi
 doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
 if [ "$doctest_optional_magma_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2

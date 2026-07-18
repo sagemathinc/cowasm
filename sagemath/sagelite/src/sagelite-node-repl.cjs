@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 119;
+const doctestRunnerVersion = 120;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1842,13 +1842,13 @@ def __cowasm_convert_prompts(text):
                 if active_directive_source:
                     standalone_directives[lineno] = active_directive_source
                     active_directive_source = None
-        line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
-        line = re.sub(r"(?m)^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         line = re.sub(
-            r"(?m)^(\\s*)\\.\\.\\.(?=\\S)",
+            r"(?m)^(\\s*)\\.\\.\\.(?!\\.:)",
             lambda match: match.group(1) + COWASM_LEADING_ELLIPSIS_SENTINEL,
             line,
         )
+        line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
+        line = re.sub(r"(?m)^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         out.append(line)
     return "".join(out), standalone_directives, inline_directives, inline_sources
 
@@ -2143,6 +2143,8 @@ def __cowasm_namespace(filename):
         set_globals(namespace)
     except BaseException:
         pass
+    from sage.misc.session import init as __cowasm_session_init
+    __cowasm_session_init(namespace)
     return namespace
 
 

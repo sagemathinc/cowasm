@@ -1693,15 +1693,7 @@ diff -urN a/src/sage/misc/session.pyx b/src/sage/misc/session.pyx
          sage: reset()
          sage: show_identifiers()
          []
-@@ -284,14 +294,14 @@
-
-         sage: f = lambda x : x^2
-         sage: save_session(tmp_f)
--        sage: save_session(tmp_f, verbose=True)
-+        sage: save_session(tmp_f, verbose=True)                                      # known bug
-         ...
-         Not saving f: f is a function or method
-
+@@ -291,7 +301,7 @@
      Something similar happens for cython-defined functions::
 
 -        sage: g = cython_lambda('double x', 'x*x + 1.5')
@@ -1711,15 +1703,6 @@ diff -urN a/src/sage/misc/session.pyx b/src/sage/misc/session.pyx
          ...
          Not saving g: g is a cython function or method
 
-@@ -299,7 +309,7 @@
-
-         sage: from sage.misc.lazy_import import LazyImport
-         sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
--        sage: save_session(tmp_f, verbose=True)
-+        sage: save_session(tmp_f, verbose=True)                                      # known bug
-         ...
-         Not saving lazy_ZZ: lazy_ZZ is a lazy import
-     """
 diff -urN a/src/sage/repl/ipython_kernel/install.py b/src/sage/repl/ipython_kernel/install.py
 --- a/src/sage/repl/ipython_kernel/install.py
 +++ b/src/sage/repl/ipython_kernel/install.py
