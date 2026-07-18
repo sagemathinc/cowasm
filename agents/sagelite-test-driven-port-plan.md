@@ -52261,6 +52261,36 @@ pass. This stale-metadata promotion requires no native WASM or resource-bundle
 rebuild. The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Abelian Lie-algebra catalog promotion pass on 2026-07-18 UTC:
+
+The three remaining browser-profile directive guards in
+`sage/algebras/lie_algebras/abelian.py` are stale. The `lie_algebras.abelian`
+catalog constructor now completes in the node profile, and its dimension,
+abelian predicate, basis access, and zero bracket all produce the documented
+results. The accumulated WASI patch no longer marks the three contiguous
+example groups as `# known bug`.
+
+The forced audit covers nine deferred blocks across the three groups. Focused
+and complete replays under runner version 123 record:
+
+```text
+forced complete module before removal: 25 passed, 0 failed, 0 skipped
+shared complete module final:          25 passed, 0 failed, 0 skipped
+reconstructed complete module final:   25 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-lie-abelian-catalog/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source. Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass. This stale-
+metadata promotion requires no native WASM or resource-bundle rebuild. The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
