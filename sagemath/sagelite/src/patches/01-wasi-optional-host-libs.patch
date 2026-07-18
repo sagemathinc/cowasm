@@ -25213,3 +25213,18 @@ diff --git a/src/sage/structure/unique_representation.py b/src/sage/structure/un
 -        sage: y.value            # todo: not implemented
 +        sage: y = loads(pickle)
 +        sage: y.value
+
+diff --git a/src/sage/misc/nested_class.pyx b/src/sage/misc/nested_class.pyx
+--- a/src/sage/misc/nested_class.pyx
++++ b/src/sage/misc/nested_class.pyx
+@@ -240 +240 @@
+-        sage: @nested_pickle    # todo: not implemented
++        sage: @nested_pickle
+@@ -244 +244 @@
+-        sage: A2.B.__name__    # todo: not implemented
++        sage: A2.B.__name__
+@@ -246,2 +246,2 @@
+-        sage: getattr(module, 'A2.B', 'Not found')    # todo: not implemented
+-        <class __main__.A2.B at ...>
++        sage: getattr(module, 'A2.B', 'Not found')
++        <class '__main__.A2.B'>

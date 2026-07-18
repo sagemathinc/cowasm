@@ -53046,6 +53046,40 @@ metadata promotion requires no native WASM or resource-bundle rebuild. The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Nested-class decorator serialization promotion pass on 2026-07-18 UTC:
+
+The three `# todo: not implemented` rows in `sage/misc/nested_class.pyx`
+describe using `nested_pickle` as a class decorator and observing the renamed
+nested class through both the decorated class and the real `__main__` module.
+That behavior is implemented in the pinned Python 3 runtime.  Forced focused
+replays confirmed the decorator and renamed-class checks; the only initial
+failure was the final row's obsolete Python 2 class representation,
+`<class __main__.A2.B at ...>`, against Python 3's
+`<class '__main__.A2.B'>`.
+
+The accumulated WASI patch removes all three stale deferred markers and updates
+the representation expectation.  Default focused and complete replays under
+runner version 124 record:
+
+```text
+decorator focused before:             1 passed, 0 failed, 0 skipped
+class-name focused before:            1 passed, 0 failed, 0 skipped
+module lookup focused after:          1 passed, 0 failed, 0 skipped
+shared complete module final:        69 passed, 0 failed, 6 skipped
+reconstructed complete final:        69 passed, 0 failed, 6 skipped
+```
+
+The authoritative SQLite dashboards and pinned clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-nested-class/`; every retained database
+passes `PRAGMA integrity_check`.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to an archive of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and the reconstructed module is byte-identical to the tested staged source.
+Complete shared/reconstructed replays and `git diff --check` pass.  This stale
+Python 2 serialization metadata promotion requires no native WASM or resource-
+bundle rebuild.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
