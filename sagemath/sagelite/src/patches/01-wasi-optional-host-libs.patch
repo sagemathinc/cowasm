@@ -24995,3 +24995,9 @@ diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2
 @@ -2684,0 +2711,2 @@
 +    raise NotImplementedError("GF(2) matrix PNG output requires gdlib")
 +
+diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfeld_modform/ring.py
+--- a/src/sage/modular/drinfeld_modform/ring.py
++++ b/src/sage/modular/drinfeld_modform/ring.py
+@@ -367 +367 @@
+-            sage: M._repr_()  # known bug
++            sage: M._repr_()
