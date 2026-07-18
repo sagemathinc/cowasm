@@ -9142,9 +9142,6 @@ diff -urN a/src/sage/plot/graphics.py b/src/sage/plot/graphics.py
 @@ -961 +961 @@
 -            sage: g._rich_repr_(dm)
 +            sage: g._rich_repr_(dm)                                                 # needs matplotlib
-@@ -1242 +1242 @@
--            sage: S.plot(1)
-+            sage: S.plot(1)                                                         # known bug
 @@ -1281 +1281 @@
 -            sage: kwds  # Note how this action modifies the passed dictionary
 +            sage: kwds  # Note how this action modifies the passed dictionary        # random

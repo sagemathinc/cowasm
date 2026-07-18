@@ -52351,6 +52351,40 @@ metadata promotion requires no native WASM or resource-bundle rebuild. The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Graphics positional-argument diagnostic promotion pass on 2026-07-18 UTC:
+
+The browser-profile guard on `Graphics.plot(1)` in `sage/plot/graphics.py`
+is stale after the shared callable-diagnostic and traceback-matching repairs.
+In complete module state, the call now raises the documented `TypeError`,
+including the positional-argument count.  The accumulated WASI patch no
+longer marks that row as `# known bug`.
+
+The paired forced audit keeps the neighboring logarithmic-axis warning row
+guarded: `list_plot_loglog(..., ticks=[[1], [1]])` still returns the graphics
+object without emitting either documented warning.  Other bounded controls
+in the same audit retained their guards for super-category ordering, integral
+Clifford homology display, NumPy-seeded complex-root intervals, and matching-
+covered graph edge validation.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+graphics.py forced before removal:       167 passed, 1 failed, 240 skipped
+Graphics.plot argument fixture final:      3 passed, 0 failed,   0 skipped
+graphics.py reconstructed default final: 167 passed, 0 failed, 241 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-join-feature/`; every retained database
+passes `PRAGMA integrity_check`. Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to an archive of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects.
+Python compilation, the state-complete focused fixture, the complete
+reconstructed module replay, SQLite integrity checks, and `git diff --check`
+pass. This stale-metadata promotion requires no native WASM or resource-bundle
+rebuild. The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
