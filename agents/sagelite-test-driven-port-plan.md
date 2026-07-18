@@ -53372,6 +53372,50 @@ promotion requires no native WASM or resource-bundle rebuild.  The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Recursive-set exception and named-function serialization promotion pass on
+2026-07-18 UTC:
+
+The remaining `# todo: not implemented` row in
+`sage/sets/recursively_enumerated_set.pyx` invoked
+`graded_component_iterator()` on the generic structure without documenting
+the method's intentional limitation.  A forced focused replay reproduced the
+declared `NotImplementedError`; the accumulated WASI patch now records that
+traceback and promotes it to default coverage without claiming that the
+generic iterator itself is implemented.
+
+Complete-module validation then exposed two stale serialization expectations
+left by the recent doctest-global pickling support.  Named functions defined
+in doctests now receive stable synthetic module bindings, so both a symmetric
+recursively enumerated set and a forest using a named child function round-trip
+successfully instead of raising `PicklingError`.  Their documentation and
+expected output now describe that contract.  The adjacent assigned-lambda
+example still raises `PicklingError` and remains unchanged, preserving the
+real serialization boundary.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced deferred iterator row before:   0 passed, 1 failed,  0 skipped
+default focused iterator row final:    1 passed, 0 failed,  0 skipped
+first complete serialization audit:  337 passed, 2 failed, 39 skipped
+shared complete module final:         339 passed, 0 failed, 39 skipped
+reconstructed complete module final:  339 passed, 0 failed, 39 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-recursive-graded-component/`; every
+retained authoritative database passes `PRAGMA integrity_check`, and the final
+saved block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Focused
+and complete shared/reconstructed replays, SQLite integrity checks, and `git
+diff --check` pass.  This doctest exception/serialization promotion requires
+no native WASM or resource-bundle rebuild.  The next pass should continue with
+another bounded filesystem, serialization, native-backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

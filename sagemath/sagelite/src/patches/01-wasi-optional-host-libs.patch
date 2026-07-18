@@ -25367,3 +25367,39 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -526 +526 @@
 -            sage: dir(1)         # todo: not implemented
 +            sage: dir(1)
+
+diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
+--- a/src/sage/sets/recursively_enumerated_set.pyx
++++ b/src/sage/sets/recursively_enumerated_set.pyx
+@@ -716 +716,4 @@
+-            sage: it = C.graded_component_iterator()    # todo: not implemented
++            sage: it = C.graded_component_iterator()
++            Traceback (most recent call last):
++            ...
++            NotImplementedError: graded_component_iterator method currently implemented only for graded or symmetric structure
+@@ -994 +997 @@
+-    This works in the command line but apparently not as a doctest::
++    Named functions defined in doctests receive stable module bindings::
+@@ -998,6 +1001,2 @@
+-        sage: try:
+-        ....:     loads(dumps(C))
+-        ....: except Exception as e:
+-        ....:     if 'PicklingError' in str(type(e).__name__):
+-        ....:         print('PicklingError Caught')
+-        PicklingError Caught
++        sage: loads(dumps(C))
++        A recursively enumerated set with a symmetric structure (breadth first search)
+@@ -1725,2 +1724,2 @@
+-        the input functions are themselves picklable. This excludes
+-        anonymous or interactively defined functions::
++        the input functions are themselves picklable. The doctest runner gives
++        functions defined in examples a stable module binding::
+@@ -1731,6 +1730,2 @@
+-            sage: try:
+-            ....:     dumps(S)
+-            ....: except Exception as e:
+-            ....:     if 'PicklingError' in str(type(e).__name__):
+-            ....:         print('PicklingError Caught')
+-            PicklingError Caught
++            sage: loads(dumps(S))
++            An enumerated set with a forest structure
