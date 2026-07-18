@@ -25228,3 +25228,15 @@ diff --git a/src/sage/misc/nested_class.pyx b/src/sage/misc/nested_class.pyx
 -        <class __main__.A2.B at ...>
 +        sage: getattr(module, 'A2.B', 'Not found')
 +        <class '__main__.A2.B'>
+
+diff --git a/src/sage/combinat/free_module.py b/src/sage/combinat/free_module.py
+--- a/src/sage/combinat/free_module.py
++++ b/src/sage/combinat/free_module.py
+@@ -1284,2 +1284,2 @@
+-        sage: T.construction() # todo: not implemented
+-        [tensor, ]
++        sage: T.construction()
++        (The tensor functorial construction, (F, G))
+@@ -1777 +1777 @@
+-        sage: S = cartesian_product([cartesian_product([F, G]), H])  # todo: not implemented
++        sage: S = cartesian_product([cartesian_product([F, G]), H]); S

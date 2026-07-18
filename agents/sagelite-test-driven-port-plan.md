@@ -53080,6 +53080,45 @@ Python 2 serialization metadata promotion requires no native WASM or resource-
 bundle rebuild.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Combinatorial-free-module construction promotion pass on 2026-07-18 UTC:
+
+The two pure-Python `# todo: not implemented` rows in
+`sage/combinat/free_module.py` were documentation defects rather than missing
+browser-runtime behavior.  `T.construction()` already returns the modern
+tensor construction pair, `(TensorProductFunctor(), (F, G))`; the obsolete
+expected value `[tensor, ]` is now replaced by that implemented contract.  The
+nested Cartesian-product example already flattens to `F (+) G (+) H`, but its
+source was an assignment with expected output.  Appending `; S` makes the
+intended associativity assertion explicit and runnable.
+
+A complete forced-deferred replay before the correction and default complete
+replays after it record:
+
+```text
+forced complete module before:       358 passed, 2 failed, 77 skipped
+shared complete module final:         360 passed, 0 failed, 77 skipped
+reconstructed complete final:         360 passed, 0 failed, 77 skipped
+```
+
+The optional p-adic group-algebra row remains skipped under its independent
+`sage.groups` and `sage.rings.padics` dependency metadata.  A focused
+`--line` replay cannot reconstruct the nested Cartesian example's
+noncontiguous `F`, `G`, and `H` setup, so the authoritative assertion is the
+complete-module replay; the tensor row also passes independently in a focused
+default replay.
+
+The authoritative SQLite dashboards and pinned clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-free-module-deferred/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This doctest promotion requires
+no native WASM or resource-bundle rebuild.  The next pass should continue with
+another bounded filesystem, serialization, native-backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
