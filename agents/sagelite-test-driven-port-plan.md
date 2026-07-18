@@ -53119,6 +53119,42 @@ no native WASM or resource-bundle rebuild.  The next pass should continue with
 another bounded filesystem, serialization, native-backend, or frontend
 semantic cluster.
 
+Deterministic-representation deprecation-warning promotion pass on 2026-07-18
+UTC:
+
+The standalone `# not tested` directive above the introductory
+`reproducible_repr(...)` examples in `sage/doctest/fixtures.py` was stale.
+It deferred five deterministic set, frozenset, nested-container, and string
+representation checks because the helper emits a deprecation warning.  Runner
+version 124 already handles Sage warning expectations without treating an
+otherwise successful example as a failure, and a forced complete-module replay
+confirmed that all five checks pass in the stripped browser profile.
+
+The accumulated WASI patch removes the stale directive while preserving the
+independent real-MPFR dictionary example under its existing
+`sage.rings.real_mpfr` dependency metadata.  Clean before/after and forced
+replays record:
+
+```text
+pinned default module before:       55 passed, 0 failed, 6 skipped
+forced not-tested module before:    60 passed, 0 failed, 1 skipped
+shared default module final:        60 passed, 0 failed, 1 skipped
+reconstructed default final:        60 passed, 0 failed, 1 skipped
+```
+
+The authoritative SQLite dashboards and pinned clean reconstructions are under
+`.tmp/current-run/scheduled-2026-07-18-reproducible-repr/`; every retained
+database passes `PRAGMA integrity_check`, and the saved block-failure and
+file-error cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed fixture module is byte-identical to the tested
+generated source.  Complete shared/reconstructed replays and `git diff
+--check` pass.  This stale warning-related metadata promotion requires no
+native WASM or resource-bundle rebuild.  The next pass should continue with
+another bounded filesystem, serialization, native-backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

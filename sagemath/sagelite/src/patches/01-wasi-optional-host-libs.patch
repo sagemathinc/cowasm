@@ -25240,3 +25240,9 @@ diff --git a/src/sage/combinat/free_module.py b/src/sage/combinat/free_module.py
 @@ -1777 +1777 @@
 -        sage: S = cartesian_product([cartesian_product([F, G]), H])  # todo: not implemented
 +        sage: S = cartesian_product([cartesian_product([F, G]), H]); S
+
+diff --git a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
+--- a/src/sage/doctest/fixtures.py
++++ b/src/sage/doctest/fixtures.py
+@@ -93 +92,0 @@
+-        sage: # not tested (test fails because of deprecation warning)
