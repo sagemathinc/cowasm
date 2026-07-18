@@ -7275,23 +7275,6 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot   # needs sage.symbolic
          sage: signature(fast_mandelbrot_plot)  # random                                 # needs sage.symbolic
          <IPython.utils._signatures.Signature object at 0x7f3ec8274e10>
-@@ -849,6 +849,7 @@
-     EXAMPLES::
-
-         sage: from sage.misc.sageinspect import _split_syntactical_unit
-+        sage: # known bug - Sagelite source conversion cannot preserve this quote literal yet
-         sage: s = "(Hel) lo_1=[)\"!\" ] '''? {world} '''?"
-         sage: while s:
-         ....:     u, s = _split_syntactical_unit(s)
-@@ -1326,7 +1327,7 @@
-     EXAMPLES::
-
-         sage: from sage.misc.sageinspect import sage_getfile_relative
--        sage: sage_getfile_relative(sage.rings.rational)
-+        sage: sage_getfile_relative(sage.rings.rational)                             # known bug - Sagelite source-root paths remain absolute
-         'sage/rings/rational.pyx'
-         sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
-         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
 @@ -1547,6 +1548,7 @@
 
      Test that :issue:`28524` is fixed::
@@ -7300,23 +7283,6 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          sage: from sage.repl.interpreter import get_test_shell
          sage: shell = get_test_shell()
          sage: shell.run_cell(
-@@ -2116,7 +2118,7 @@
-         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
-         '...the n x n identity matrix...'
-         sage: def f(a, b, c, d=1): return a+b+c+d
--        sage: sage_getdoc(f)
-+        sage: sage_getdoc(f)                                                         # known bug - CPython 3.14 empty docstring formatting drift
-         ''
-         sage: import functools
-         sage: f1 = functools.partial(f, 1,c=2)
-@@ -2129,6 +2131,7 @@
-
-     TESTS::
-
-+        sage: # known bug - CPython 3.14 docstring indentation drift on WASI
-         sage: class C:
-         ....:     '''
-         ....:     docs
 @@ -2139,6 +2142,7 @@
          ....: else:
          ....:     assert sage_getdoc(C) == '   docs\n', sage_getdoc(C)
@@ -24832,3 +24798,13 @@ diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/
 @@ -402 +402 @@
 -            sage: G.gens()  # known bug
 +            sage: G.gens()
+diff --git a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
+--- a/src/sage/misc/sagedoc.py
++++ b/src/sage/misc/sagedoc.py
+@@ -244 +244,5 @@
+-            s = s.replace('``', '"').replace('`', '') + '\n'
++            import inspect
++            s = inspect.cleandoc(s)
++            s = s.replace('``', '"').replace('`', '')
++            if s:
++                s += '\n'

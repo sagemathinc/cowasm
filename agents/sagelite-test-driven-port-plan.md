@@ -51906,6 +51906,44 @@ or resource-bundle rebuild.  The next pass should continue with another
 bounded filesystem, serialization, native-backend, or frontend semantic
 cluster.
 
+IPython-free documentation formatting pass on 2026-07-18 UTC:
+
+The four browser-profile guards in `sage/misc/sageinspect.py` combined two
+stale annotations with two failures in the lightweight documentation
+formatter.  The syntactical-unit quote fixture and relative Sage source path
+already passed when forced.  The remaining empty-function and indented-class
+docstring rows failed because `sage.misc.sagedoc.detex()` used a minimal
+IPython-free fallback that appended a newline to every input without first
+normalizing docstring indentation.  It therefore returned `"\n"` for an
+empty docstring and `"docs\n\n"` for the class fixture.
+
+The fallback now applies the standard-library `inspect.cleandoc()` contract,
+performs the existing inline-markup substitutions, and appends a trailing
+newline only for nonempty documentation.  All four stale `# known bug`
+annotations are removed.  Focused before and final replays under runner
+version 119 record:
+
+```text
+quote-literal output before:            1 passed, 0 failed, 0 skipped
+relative Sage path before:              1 passed, 0 failed, 0 skipped
+empty and indented docs before:          0 passed, 2 failed, 0 skipped
+four promoted rows after:               4 passed, 0 failed, 1 setup skip
+sagedoc.py + sageinspect.py shared:    379 passed, 0 failed, 154 skipped
+sagedoc.py + sageinspect.py rebuilt:   379 passed, 0 failed, 154 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-sageinspect-literals/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed formatter and inspection modules are byte-identical to the
+tested staged sources.  Python compilation, resource-manifest validation,
+complete shared and reconstructed module replays, and `git diff --check`
+pass.  This pure-Python frontend fix requires no native WASM rebuild.  The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
