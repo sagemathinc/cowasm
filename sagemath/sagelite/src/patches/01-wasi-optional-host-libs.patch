@@ -24821,6 +24821,12 @@ diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/l
 diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/matrix_gps/finitely_generated.py
 --- a/src/sage/groups/matrix_gps/finitely_generated.py
 +++ b/src/sage/groups/matrix_gps/finitely_generated.py
+@@ -95 +95 @@
+-        sage: normalize_square_matrices([m1, m2, m3, m4])  # known bug
++        sage: normalize_square_matrices([m1, m2, m3, m4])
+diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/matrix_gps/finitely_generated.py
+--- a/src/sage/groups/matrix_gps/finitely_generated.py
++++ b/src/sage/groups/matrix_gps/finitely_generated.py
 @@ -22,2 +22,2 @@
 -    sage: S, T = SL2Z.gens()  # known bug
 -    sage: SL2Z.subgroup([T^2])  # known bug

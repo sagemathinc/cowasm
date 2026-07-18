@@ -51821,6 +51821,53 @@ fix requires no native WASM rebuild. The next pass should audit the remaining
 matrix-list display row or another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Sequence-backed matrix-list display pass on 2026-07-18 UTC:
+
+The final browser-profile guard in
+`sage/groups/matrix_gps/finitely_generated.py` was a doctest/REPL display-hook
+gap rather than a matrix-group semantic defect. Sagelite's bundled
+`TallListRepr` already formats a `Sequence` of matrices in Sage's compact
+side-by-side layout, but both Node display hooks special-cased `Sequence` by
+converting it directly to a plain-list `repr`. The runner now tries the tall
+list representer first and retains the previous plain-list fallback for
+ordinary sequences. Runner version 119 records the display-hook contract.
+
+The stale `normalize_square_matrices` guard is removed. Before and after
+replays record:
+
+```text
+finitely_generated.py --line 95 forced before: 0 passed, 1 failed, 0 skipped
+finitely_generated.py --line 95 after:         1 passed, 0 failed, 0 skipped
+scalar/tall Sequence contract probe:           5 passed, 0 failed, 0 skipped
+shared complete module:                       38 passed, 0 failed, 53 skipped
+reconstructed complete module:                38 passed, 0 failed, 53 skipped
+```
+
+The standalone smoke now covers a matrix-valued `Sequence` beside the
+existing scalar `Sequence` and tuple-of-matrices contracts. A clean-source
+corpus run was attempted because this changes the shared display hook. It
+checkpointed 98 files and 18,249 blocks before being stopped after exposing
+one unrelated pre-existing source/runtime mismatch:
+`multi_polynomial.pyx:360` expects `+ 3*x^2*y^5`, while the generic finite-field
+polynomial backend prints the equivalent `- 2*x^2*y^5`. The interrupted
+dashboard records 14,657 passed, one failed, and 3,591 skipped blocks; no
+failure belongs to the Sequence display cluster.
+
+The first make-target attempt also confirmed that the configured
+`/home/user/sagelite` checkout is dirty and cannot be used as a clean patch
+input: it encountered an already-applied integer-ring hunk. The generated
+build tree was restored from a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, and the complete accumulated
+patch then applied without rejects. The restored build, independent
+reconstruction, and tested resource source are byte-identical for the affected
+module. The authoritative dashboards and preserved failed dirty-source build
+are under `.tmp/current-run/scheduled-2026-07-18-matrix-list-display/`; every
+retained SQLite database passes `PRAGMA integrity_check`. Node source
+checking, standalone shell syntax checking, and `git diff --check` pass. The
+next pass should audit the finite-field polynomial coefficient-display
+mismatch or another bounded filesystem, serialization, native-backend, or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

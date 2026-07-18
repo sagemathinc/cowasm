@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 118;
+const doctestRunnerVersion = 119;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -111,6 +111,7 @@ from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 from sage.repl.display.fancy_repr import (
     LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr,
     SomeIPythonRepr as __CowasmSomeIPythonRepr,
+    TallListRepr as __CowasmTallListRepr,
 )
 from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
@@ -119,12 +120,16 @@ from sage.structure.sequence import Sequence_generic as __CowasmSequence
 __cowasm_sagelite_displayhook_delegate = sys.displayhook
 __cowasm_sagelite_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
 __cowasm_sagelite_ipython_repr = __CowasmSomeIPythonRepr()
+__cowasm_sagelite_tall_list_repr = __CowasmTallListRepr()
 
 def __cowasm_sagelite_displayhook(value):
     if isinstance(value, __CowasmSequence):
         if value is not None:
             builtins._ = value
-            print(repr(list(value)))
+            formatted = __cowasm_sagelite_tall_list_repr.format_string(value)
+            if formatted == "--- object not handled by representer ---":
+                formatted = repr(list(value))
+            print(formatted)
         return
     if isinstance(value, __CowasmHtmlFragment):
         if value is not None:
@@ -1045,6 +1050,7 @@ from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 from sage.repl.display.fancy_repr import (
     LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr,
     SomeIPythonRepr as __CowasmSomeIPythonRepr,
+    TallListRepr as __CowasmTallListRepr,
 )
 from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
@@ -1105,6 +1111,7 @@ __cowasm_active_displayhook_globals = None
 __cowasm_displayhook_delegate = None
 __cowasm_large_matrix_repr = __CowasmLargeMatrixHelpRepr()
 __cowasm_ipython_repr = __CowasmSomeIPythonRepr()
+__cowasm_tall_list_repr = __CowasmTallListRepr()
 
 
 def __cowasm_doctest_display_large_matrix(value):
@@ -1120,7 +1127,10 @@ def __cowasm_doctest_display_large_matrix(value):
 def __cowasm_doctest_displayhook(value):
     try:
         if isinstance(value, __CowasmSequence):
-            sys.stdout.write(repr(list(value)) + "\\n")
+            formatted = __cowasm_tall_list_repr.format_string(value)
+            if formatted == "--- object not handled by representer ---":
+                formatted = repr(list(value))
+            sys.stdout.write(formatted + "\\n")
         elif isinstance(value, __CowasmHtmlFragment):
             sys.stdout.write(str(value) + "\\n")
         elif isinstance(value, dict):
