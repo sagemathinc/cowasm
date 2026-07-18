@@ -25091,3 +25091,11 @@ diff --git a/src/sage/categories/manifolds.py b/src/sage/categories/manifolds.py
 @@ -331 +331 @@
 -            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
 +            sage: TestSuite(C).run(skip='_test_category_over_bases')
+diff --git a/src/sage/rings/polynomial/complex_roots.py b/src/sage/rings/polynomial/complex_roots.py
+--- a/src/sage/rings/polynomial/complex_roots.py
++++ b/src/sage/rings/polynomial/complex_roots.py
+@@ -194,2 +194,2 @@
+-        sage: sorted((v[0][0].real(),v[1][0].real()))  # known bug - NumPy root seed changes the last displayed interval digit
+-        [-14.61803398874989?, -12.3819660112501...?]
++        sage: sorted((v[0][0].real(),v[1][0].real()))  # tol 1e-14
++        [-14.61803398874989?, -12.38196601125010?]

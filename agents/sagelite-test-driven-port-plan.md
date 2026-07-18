@@ -52714,6 +52714,38 @@ metadata promotion requires no native WASM or resource-bundle rebuild.  The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Complex-root interval tolerance promotion pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard in
+`sage/rings/polynomial/complex_roots.py` reflected harmless numerical seed
+variation rather than a root-isolation defect.  NumPy's initial approximation
+changes the final displayed digit of the two certified real intervals, while
+both intervals retain the documented roots and the following imaginary-part
+checks pass.  The accumulated WASI patch replaces the `# known bug` directive
+with a `# tol 1e-14` comparison.  Its expected question-mark interval shape is
+made structurally explicit so the runner compares the numeric tokens with the
+tolerance instead of asking ellipsis matching to span a numeric token.
+
+The before and final complete-module replays under runner version 123 record:
+
+```text
+forced complete module before:       34 passed, 1 failed, 7 skipped
+shared complete module final:         35 passed, 0 failed, 7 skipped
+reconstructed complete module final:  35 passed, 0 failed, 7 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-complex-roots-tolerance/`; both final
+databases pass `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This numeric-doctest promotion
+requires no native WASM or resource-bundle rebuild.  The next pass should
+continue with another bounded filesystem, serialization, native-backend, or
+frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
