@@ -53849,6 +53849,46 @@ fix requires no native WASM rebuild.  The next pass should continue with
 another bounded filesystem, serialization, native-backend, or frontend
 semantic cluster.
 
+Tested-module namespace exclusion promotion pass on 2026-07-18 UTC:
+
+The final two CoWasm-added `# known bug` rows in
+`sage/misc/dev_tools.py` shared one doctest-frontend cause.  Sagelite normally
+seeds a tested module's globals so internal helper doctests can run, but the
+developer-tool examples explicitly verify that `find_objects_from_name` and
+`import_statement_string` are absent from Sage's startup namespace.  The
+module-global seed therefore made the former assertion return `True` and made
+the latter expression resolve instead of raising its documented `NameError`.
+
+Runner version 125 retains tested-module seeding generally while excluding
+those two `dev_tools` helpers.  Both stale markers are removed, promoting the
+startup-namespace contracts to default coverage.  The standalone smoke now
+finds the source lines from the patched module and checks the two focused rows,
+so future namespace changes cannot silently reintroduce this drift.
+
+Focused and complete replays record:
+
+```text
+forced first deferred row before: 0 passed, 1 failed,  0 skipped
+shared focused final:             2 passed, 0 failed,  0 skipped
+shared complete module final:    43 passed, 0 failed, 19 skipped
+reconstructed complete final:    43 passed, 0 failed, 19 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-dev-tools-globals/`; every retained
+final database passes `PRAGMA integrity_check`, and the saved block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Complete shared/reconstructed replays, Node and shell syntax checks,
+SQLite integrity checks, clean source reconstruction, and `git diff --check`
+pass.  No native WASM or resource-bundle rebuild is required.  A final-source
+comparison against the pinned commit confirms that the accumulated patch no
+longer adds any deferred `known bug`, `not tested`, or `not implemented`
+metadata; the next pass should choose an upstream-deferred semantic contract
+or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

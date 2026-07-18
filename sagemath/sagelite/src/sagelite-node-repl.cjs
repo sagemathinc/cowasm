@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 124;
+const doctestRunnerVersion = 125;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2125,6 +2125,17 @@ def __cowasm_module_name_from_path(filename):
     return ".".join(parts[i:])
 
 
+# Tested-module globals cover internal helper doctests that Sage normally
+# reaches through its broader startup surface.  Keep explicit absence checks
+# out of that compatibility seed.
+__cowasm_tested_module_global_exclusions = {
+    "sage.misc.dev_tools": frozenset((
+        "find_objects_from_name",
+        "import_statement_string",
+    )),
+}
+
+
 def __cowasm_namespace(filename):
     namespace = {}
     exec("from sage.all import *", namespace)
@@ -2144,8 +2155,12 @@ def __cowasm_namespace(filename):
         except BaseException:
             pass
         else:
+            excluded_names = __cowasm_tested_module_global_exclusions.get(
+                module_name, ()
+            )
             for name, value in vars(module).items():
-                namespace.setdefault(name, value)
+                if name not in excluded_names:
+                    namespace.setdefault(name, value)
             __cowasm_resolve_core_lazy_namespace(namespace)
     namespace["__name__"] = "__main__"
     try:

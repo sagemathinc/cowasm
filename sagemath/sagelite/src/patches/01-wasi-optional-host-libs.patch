@@ -25794,3 +25794,12 @@ diff -urN -U0 a/src/sage/combinat/sf/sfa.py b/src/sage/combinat/sf/sfa.py
 +                    degree_one = R.gens()
 +                except (NotImplementedError, AttributeError):
 +                    degree_one = []
+diff -urN -U0 a/src/sage/misc/dev_tools.py b/src/sage/misc/dev_tools.py
+--- a/src/sage/misc/dev_tools.py
++++ b/src/sage/misc/dev_tools.py
+@@ -252 +252 @@
+-        sage: 'find_objects_from_name' in globals()                                    # known bug
++        sage: 'find_objects_from_name' in globals()
+@@ -377 +377 @@
+-        sage: import_statement_string                                                  # known bug
++        sage: import_statement_string

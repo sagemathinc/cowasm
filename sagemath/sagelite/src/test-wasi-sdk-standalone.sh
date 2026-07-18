@@ -2726,6 +2726,39 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_module_global_exclusion_db="$probe_dir/sagelite-doctest-module-global-exclusion.sqlite3"
+doctest_module_global_exclusion_log="$dist_dir/doctest-module-global-exclusion.log"
+doctest_module_global_exclusion_file="$build_dir/src/sage/misc/dev_tools.py"
+doctest_module_global_exclusion_find_line="$(grep -nF "sage: 'find_objects_from_name' in globals()" "$doctest_module_global_exclusion_file" | head -n 1 | cut -d: -f1)"
+doctest_module_global_exclusion_import_line="$(grep -nF 'sage: import_statement_string' "$doctest_module_global_exclusion_file" | tail -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_module_global_exclusion_find_line" \
+      --line "$doctest_module_global_exclusion_import_line" \
+      --sqlite "$doctest_module_global_exclusion_db" \
+      "$doctest_module_global_exclusion_file" \
+      >"$doctest_module_global_exclusion_log" 2>&1
+doctest_module_global_exclusion_status=$?
+set -e
+if [ "$doctest_module_global_exclusion_status" -eq 124 ]; then
+  tail -120 "$doctest_module_global_exclusion_log" >&2
+  record_blocker "sagelite-blocked: sage -t tested-module global exclusion smoke timed out after $node_import_timeout; see $doctest_module_global_exclusion_log for the first runtime blocker."
+fi
+if [ "$doctest_module_global_exclusion_status" -ne 0 ]; then
+  tail -120 "$doctest_module_global_exclusion_log" >&2
+  sqlite3 "$doctest_module_global_exclusion_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tested-module global exclusion smoke failed; see $doctest_module_global_exclusion_log for the first runtime blocker."
+fi
+doctest_module_global_exclusion_counts="$(sqlite3 "$doctest_module_global_exclusion_db" "select passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_module_global_exclusion_counts" != "2|0|0" ]; then
+  cat "$doctest_module_global_exclusion_log" >&2
+  sqlite3 "$doctest_module_global_exclusion_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tested-module global exclusion smoke wrote unexpected SQLite counts: $doctest_module_global_exclusion_counts"
+fi
 doctest_namespace_leak_db="$probe_dir/sagelite-doctest-namespace-leak.sqlite3"
 doctest_namespace_leak_log="$dist_dir/doctest-namespace-leak.log"
 doctest_namespace_leak_file="$probe_dir/rational.pyx"
