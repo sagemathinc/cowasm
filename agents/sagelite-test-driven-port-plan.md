@@ -53013,6 +53013,39 @@ validated resource bundle.  No native runtime or resource content changes are
 part of this commit.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Unique-representation legacy-class serialization promotion pass on 2026-07-18
+UTC:
+
+The two remaining deferred rows in
+`sage/structure/unique_representation.py` describe unpickling an instance after
+its class changes from a plain Python class to a `UniqueRepresentation` and
+`SageObject` subclass. Their `# todo: not implemented` metadata is stale in
+the pinned Python 3 runtime: plain class syntax already creates a new-style
+class, and the compatibility unpickler restores the saved value through the
+replacement class. The accumulated WASI patch now promotes both the unpickle
+operation and its value assertion to default coverage.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+deferred focused rows before:       2 passed, 0 failed,  0 skipped
+shared complete module final:     243 passed, 0 failed, 23 skipped
+reconstructed complete final:     243 passed, 0 failed, 23 skipped
+```
+
+The authoritative SQLite dashboards and pinned clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-unique-representation/`; every retained
+database passes `PRAGMA integrity_check`, and the saved block-failure and
+file-error cluster queries are empty. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source. Python compilation, complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass. This stale serialization
+metadata promotion requires no native WASM or resource-bundle rebuild. The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

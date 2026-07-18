@@ -25204,3 +25204,12 @@ diff --git a/src/sage/misc/lazy_list.pyx b/src/sage/misc/lazy_list.pyx
 @@ -1177 +1177 @@
 -            sage: l.list() == l2.list()  # not tested
 +            sage: l.list() == l2.list()
+
+diff --git a/src/sage/structure/unique_representation.py b/src/sage/structure/unique_representation.py
+--- a/src/sage/structure/unique_representation.py
++++ b/src/sage/structure/unique_representation.py
+@@ -1139,2 +1139,2 @@
+-        sage: y = loads(pickle)  # todo: not implemented
+-        sage: y.value            # todo: not implemented
++        sage: y = loads(pickle)
++        sage: y.value
