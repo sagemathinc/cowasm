@@ -52814,6 +52814,46 @@ Python backend correction requires no native WASM or resource-bundle rebuild.
 The next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Matching-covered certificate ordering and dependency-classification pass on
+2026-07-18 UTC:
+
+The two remaining browser-profile guards in
+`sage/graphs/matching_covered_graph.py` had separate frontend causes.  The
+brick coNP certificate contained the documented components and cut, but the
+WASM runtime displayed one Python set as `{16, 14, 15}` instead of
+`{14, 15, 16}`.  The doctest now sorts the component and barrier sets before
+display while preserving the certificate's boolean, edge lists, and
+diagnostic text.
+
+The later nonexistent-edge subdivision example reuses a graph created by
+`graphs.TricornGraph()`.  That constructor is intentionally unavailable in
+the browser profile because its embedded positions require
+`sage.symbolic`; the dependent example is now explicit
+`# needs sage.symbolic` metadata instead of a generic known-bug deferral.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+guarded certificate row forced before: 0 passed, 1 failed,  0 skipped
+normalized certificate fixture final:  1 passed, 0 failed,  0 skipped
+dependent subdivision final:            0 passed, 0 failed,  1 skipped
+shared complete module final:          748 passed, 0 failed, 87 skipped
+reconstructed complete module final:   748 passed, 0 failed, 87 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-matching-covered/`; every retained final
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass.  This frontend
+doctest normalization and dependency-classification correction requires no
+native WASM or resource-bundle rebuild.  The only net CoWasm-added
+`# known bug` directive now remaining against the pinned source is the
+independent multivariate lazy-series `taylor()` group.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

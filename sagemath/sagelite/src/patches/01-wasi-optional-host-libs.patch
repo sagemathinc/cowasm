@@ -25144,3 +25144,26 @@ diff --git a/src/sage/algebras/clifford_algebra.py b/src/sage/algebras/clifford_
 @@ -2531 +2531 @@
 -        sage: C.homology()  # known bug
 +        sage: C.homology()
+diff --git a/src/sage/graphs/matching_covered_graph.py b/src/sage/graphs/matching_covered_graph.py
+--- a/src/sage/graphs/matching_covered_graph.py
++++ b/src/sage/graphs/matching_covered_graph.py
+@@ -3047,12 +3047,12 @@
+             ....: ])
+             sage: G = MatchingCoveredGraph(H)
+-            sage: # known bug
+-            sage: G.is_brick(coNP_certificate=True)
++            sage: cert = G.is_brick(coNP_certificate=True)
++            sage: cert[0], cert[1], [sorted(part) for part in cert[2]], cert[3], sorted(cert[4])
+             (False,
+              [[(12, 0, None), (4, 1, None), (4, 2, None), (9, 3, None)],
+               [(19, 1, None), (17, 2, None), (21, 3, None)],
+               [(15, 0, None), (14, 1, None), (14, 2, None), (16, 3, None)]],
+-             [{4, 5, 6, 7, 8, 9, 10, 11, 12}, {17, 18, 19, 20, 21}, {14, 15, 16}],
+-             'nontrivial barrier cut', {0, 1, 2, 3})
++             [[4, 5, 6, 7, 8, 9, 10, 11, 12], [17, 18, 19, 20, 21], [14, 15, 16]],
++             'nontrivial barrier cut', [0, 1, 2, 3])
+             sage: J = Graph([
+             ....:     (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+@@ -3928 +3928 @@
+-            sage: # known bug
++            sage: # needs sage.symbolic
