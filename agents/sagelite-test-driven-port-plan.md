@@ -52777,6 +52777,43 @@ doctest correction requires no native WASM or resource-bundle rebuild.  The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Integral homology invariant-factor normalization pass on 2026-07-18 UTC:
+
+The two remaining browser-profile guards on the integer homology examples in
+`sage/algebras/clifford_algebra.py` exposed a generic integer-matrix backend
+defect.  The generic Smith form is canonical only up to units and returned a
+factor of `-2`; `ChainComplex.homology()` passed that sign through to the
+homology group, producing `C-2 x C2` instead of the canonical `C2 x C2`.
+Negative unit factors would likewise have survived the trivial-factor filter.
+
+Integer Smith factors are now normalized with `abs()` before trivial-factor
+filtering, and the generator-returning path normalizes its nonunit factors as
+well.  A focused `chain_complex.py` regression covers both ordinary homology
+and homology with generators for a one-by-one `[-2]` differential.  The two
+Clifford homology guards are removed; the independent upstream coboundary
+pickling guard remains deferred.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+Clifford forced before:                562 passed, 3 failed, 61 skipped
+negative-factor regression final:        2 passed, 0 failed,  0 skipped
+shared complete Clifford final:         564 passed, 0 failed, 62 skipped
+reconstructed complete Clifford final: 564 passed, 0 failed, 62 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-next-cluster/`; every retained database
+passes `PRAGMA integrity_check`.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to an archive of pinned
+commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects,
+and both reconstructed modules are byte-identical to the tested staged
+sources.  Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity checks, and `git diff --check` pass.  This pure-
+Python backend correction requires no native WASM or resource-bundle rebuild.
+The next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

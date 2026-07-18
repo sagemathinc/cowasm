@@ -25105,3 +25105,42 @@ diff --git a/src/sage/categories/super_algebras_with_basis.py b/src/sage/categor
 @@ -137 +137 @@
 -                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()    # known bug
 +                sage: sorted(Algebras(QQ).Super().SignedTensorProducts().super_categories(), key=str)
+diff --git a/src/sage/homology/chain_complex.py b/src/sage/homology/chain_complex.py
+--- a/src/sage/homology/chain_complex.py
++++ b/src/sage/homology/chain_complex.py
+@@ -1211,3 +1211,11 @@
++        Smith factors over the integers are normalized up to units::
++
++            sage: C_negative = ChainComplex({0: matrix(ZZ, [[-2]])})
++            sage: C_negative.homology()
++            {0: 0, 1: C2}
++            sage: C_negative.homology(1, generators=True)
++            [(C2, Chain(1:(1)))]
++
+         Generators: generators are given as a list of cycles, each of
+         which is an element in the appropriate free module, and hence
+         is represented as a vector. Each summand of the homology is
+@@ -1340,6 +1348,6 @@
+                 else:
+                     raise ValueError('unsupported algorithm')
+-            all_divs = all_divs[:d_out_nullity]
++            all_divs = [abs(x) for x in all_divs[:d_out_nullity]]
+             # divisors equal to 1 produce trivial
+             # summands, so filter them out
+             divisors = [x for x in all_divs if x != 1]
+@@ -1387,5 +1395,5 @@
+             if N[i][i].is_unit():
+                 non_triv = non_triv + 1
+-        divisors = [x for x in all_divs if not x.is_unit()]
++        divisors = [abs(x) for x in all_divs if not x.is_unit()]
+         gens = (K * P.inverse().submatrix(col=non_triv)).columns()
+         return divisors, gens
+diff --git a/src/sage/algebras/clifford_algebra.py b/src/sage/algebras/clifford_algebra.py
+--- a/src/sage/algebras/clifford_algebra.py
++++ b/src/sage/algebras/clifford_algebra.py
+@@ -2288 +2288 @@
+-        sage: C.homology()  # known bug
++        sage: C.homology()
+@@ -2531 +2531 @@
+-        sage: C.homology()  # known bug
++        sage: C.homology()
