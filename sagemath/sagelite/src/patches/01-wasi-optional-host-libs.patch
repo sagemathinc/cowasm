@@ -25023,3 +25023,47 @@ diff --git a/src/sage/rings/polynomial/ideal.py b/src/sage/rings/polynomial/idea
 +            sage: I.change_ring(RR['q'])
              Principal ideal (q^2 + q - 1.00000000000000) of
               Univariate Polynomial Ring in q over Real Field with 53 bits of precision
+diff --git a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+--- a/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
++++ b/src/sage/rings/polynomial/laurent_polynomial_mpair.pyx
+@@ -895,4 +895,15 @@
+             ValueError: Laurent polynomial with negative exponent cannot be converted to polynomial
++
++        TESTS:
++
++        Normalize a product whose internal monomial denominator cancels before
++        deciding whether it is a polynomial::
++
++            sage: f = x^-2 * (x^2 + x^3*y)
++            sage: P(f)
++            x*y + 1
++
+         """
++        self._normalize()
+         numerator, denominator = self._fraction_pair()
+         if not denominator.is_one():
+diff --git a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx b/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
+--- a/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
++++ b/src/sage/matrix/matrix_laurent_mpolynomial_dense.pyx
+@@ -41,11 +41,11 @@
+-            sage: lf, P, rg = A.laurent_matrix_reduction()                           # known bug - Laurent matrix reduction raises in Sagelite WASI profile
+-            sage: lf                                                                 # known bug
++            sage: lf, P, rg = A.laurent_matrix_reduction()
++            sage: lf
+             [     x^-2         0]
+             [        0 x^-1*y^-2]
+-            sage: P                                                                  # known bug
++            sage: P
+             [            1/3*x - 6*y - 1/2 1/5*x^3 + 1/2*x^2*y + 1/6*x^2]
+             [        1/2*x*y - 5*y^2 - 2*y             -1/3*x - 4*y + 11]
+-            sage: rg                                                                 # known bug
++            sage: rg
+             [y 0]
+             [0 1]
+         """
+@@ -106 +106 @@
+-            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)] # known bug - Laurent fitting ideal comparison raises in Sagelite WASI profile
++            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)] # needs sage.rings.polynomial.plural
+@@ -112 +112 @@
+-        J = A._fitting_ideal(i)
++        J = A.fitting_ideal(i)

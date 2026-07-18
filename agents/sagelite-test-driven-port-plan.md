@@ -52634,6 +52634,56 @@ metadata promotion reuses the current native build and requires no WASM or
 resource-bundle rebuild.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Laurent-polynomial normalization and matrix-reduction pass on 2026-07-18 UTC:
+
+The five remaining Sagelite-specific guards in
+`sage/matrix/matrix_laurent_mpolynomial_dense.pyx` shared two backend
+boundaries.  Laurent elements produced by monomial rescaling had nonnegative
+displayed exponents and exponent dictionaries, but `_polynomial_()` inspected
+an unreduced internal denominator and rejected them as non-polynomials.
+`LaurentPolynomial_mpair._polynomial_()` now normalizes its internal monomial
+factor before the existing denominator check, with a focused cancellation
+regression.  This promotes the reduction setup and all three resulting matrix
+displays.
+
+The Laurent Fitting-ideal wrapper now calls the public polynomial-matrix
+`fitting_ideal()` API instead of assuming the Singular-specific private
+`_fitting_ideal()` method exists.  The public method computes the browser-safe
+minor fallback correctly.  Comparing the resulting Laurent ideals still
+canonicalizes through the unshipped Singular interface, so that independent
+assertion is now classified as `# needs sage.rings.polynomial.plural` instead
+of a generic known bug.
+
+A clean clone of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` accepts the complete accumulated
+patch exactly once without rejects, and reconstructs both changed modules
+byte-for-byte.  The clean standalone build and final incremental package
+refresh pass Cython generation, all 1,016 native compile/link targets, the
+498-side-module audit, Node and `python-wasi-sdk` import ladders, doctest-runner
+regressions, Electron resource packaging, relocation, and follow-up checks.
+The standalone doctest smokes retain their expected results:
+
+```text
+default profile:          54 passed, 0 failed, 13 skipped
+optional-feature profile: 59 passed, 0 failed,  8 skipped
+deferred audit:           55 passed, 1 failed, 11 skipped
+```
+
+Final runner-version-123 SQLite replays record:
+
+```text
+focused Laurent conversion:  1 passed, 0 failed, 0 skipped
+complete Laurent matrix:     12 passed, 0 failed, 6 skipped
+```
+
+The authoritative dashboards, patch-application logs, and pinned clean-source
+reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-laurent-matrix-audit/`; every final
+database passes `PRAGMA integrity_check`.  The unrelated dirty state in the
+developer checkout `/home/user/sagelite` was left untouched.  The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
