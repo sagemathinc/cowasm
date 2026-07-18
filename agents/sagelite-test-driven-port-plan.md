@@ -53227,6 +53227,44 @@ promotion requires no native WASM or resource-bundle rebuild.  The next pass
 should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Trivial-semigroup representation promotion pass on 2026-07-18 UTC:
+
+The four deferred category-representation rows in
+`sage/categories/semigroups.py` preserved obsolete display capitalization for
+the L-, R-, J-, and H-trivial axioms.  The implemented category renderer uses
+the same lowercase space-separated labels already documented by each method's
+enabled introductory example: `l trivial`, `r trivial`, `j trivial`, and
+`h trivial`.  A complete forced replay reproduced exactly those four output
+mismatches.  The accumulated WASI patch now updates the expectations and
+promotes all four assertions to default coverage.
+
+Complete-module replays under runner version 124 record:
+
+```text
+forced complete module before:     65 passed, 5 failed, 80 skipped
+shared complete module final:      69 passed, 0 failed, 81 skipped
+reconstructed complete final:      69 passed, 0 failed, 81 skipped
+```
+
+The fifth forced failure was the independent
+`FiniteSemigroups().Quotients().example()` row, whose example factory still
+returns `NotImplemented`; it remains explicitly deferred in the final default
+run.  Thus this pass changes only stale representation expectations and does
+not mask the genuine quotient-example gap.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-semigroup-trivial-repr/`; every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure and
+file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This doctest representation
+promotion requires no native WASM or resource-bundle rebuild.  The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

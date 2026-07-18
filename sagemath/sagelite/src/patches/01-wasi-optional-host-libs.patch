@@ -25268,3 +25268,27 @@ diff --git a/src/sage/matrix/matrix0.pyx b/src/sage/matrix/matrix0.pyx
 -            sage: m._pickle() # todo: not implemented
 +            sage: m._pickle()
 +            ([0, 1, 2, 3], 0)
+
+diff --git a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.py
+--- a/src/sage/categories/semigroups.py
++++ b/src/sage/categories/semigroups.py
+@@ -585,2 +585,2 @@
+-                sage: C                 # todo: not implemented
+-                Category of L-trivial semigroups
++                sage: C
++                Category of l trivial semigroups
+@@ -630,2 +630,2 @@
+-                sage: C                 # todo: not implemented
+-                Category of R-trivial semigroups
++                sage: C
++                Category of r trivial semigroups
+@@ -686,2 +686,2 @@
+-                sage: C                 # todo: not implemented
+-                Category of J-trivial semigroups
++                sage: C
++                Category of j trivial semigroups
+@@ -723,2 +723,2 @@
+-                sage: C                 # todo: not implemented
+-                Category of H-trivial semigroups
++                sage: C
++                Category of h trivial semigroups
