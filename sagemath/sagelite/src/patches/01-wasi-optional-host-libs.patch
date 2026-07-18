@@ -25769,3 +25769,10 @@ diff -urN -U0 a/src/sage/combinat/integer_lists/base.pyx b/src/sage/combinat/int
 +            True
 +            sage: f == Envelope([3,2,1])
 +            False
+diff -urN -U0 a/src/sage/misc/classcall_metaclass.pyx b/src/sage/misc/classcall_metaclass.pyx
+--- a/src/sage/misc/classcall_metaclass.pyx
++++ b/src/sage/misc/classcall_metaclass.pyx
+@@ -275 +275,2 @@
+-            sage: isinstance(x, Partition)      # not implemented                       # needs sage.combinat
++            sage: isinstance(x, Partition)                                              # needs sage.combinat
++            True

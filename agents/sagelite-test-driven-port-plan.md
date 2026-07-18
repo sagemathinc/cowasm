@@ -53772,6 +53772,40 @@ and `git diff --check` pass.  The next pass should continue with another
 bounded filesystem, serialization, native-backend, or frontend semantic
 cluster.
 
+Classcall factory-instance contract promotion pass on 2026-07-18 UTC:
+
+The deferred `isinstance(Partition([3,2,2]), Partition)` row in
+`sage/misc/classcall_metaclass.pyx` was stale.  With the focused
+`sage.combinat` feature enabled, the factory already returned an instance of
+the public `Partition` class; the forced row failed only because the deferred
+example omitted its `True` expectation.  The accumulated WASI patch now
+records that result and removes the obsolete implementation marker while
+retaining the independent `sage.combinat` feature metadata.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced optional deferred row before: 0 passed, 1 failed,  0 skipped
+focused optional row final:          1 passed, 0 failed,  0 skipped
+shared complete module final:       75 passed, 0 failed, 15 skipped
+reconstructed focused final:         1 passed, 0 failed,  0 skipped
+reconstructed complete final:       75 passed, 0 failed, 15 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-classcall-partition/`; every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure
+and file-error cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to a
+`git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Focused
+feature-enabled and complete shared/reconstructed replays and
+`git diff --check` pass.  This source-contract promotion requires no native
+WASM or resource-bundle rebuild.  The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
