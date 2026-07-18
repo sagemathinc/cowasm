@@ -25592,3 +25592,10 @@ diff --git a/src/sage/sets/non_negative_integers.py b/src/sage/sets/non_negative
 
      def __iter__(self):
          """
+
+diff --git a/src/sage/combinat/root_system/root_system.py b/src/sage/combinat/root_system/root_system.py
+--- a/src/sage/combinat/root_system/root_system.py
++++ b/src/sage/combinat/root_system/root_system.py
+@@ -273 +273 @@
+-        sage: s = L.simple_projections() # todo: not implemented
++        sage: s = L.simple_projections()

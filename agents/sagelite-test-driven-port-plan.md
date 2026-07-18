@@ -53583,6 +53583,43 @@ resource-bundle change.  The pre-existing changes in `/home/user/sagelite`
 were left untouched.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Root-system simple-projection metadata promotion pass on 2026-07-18 UTC:
+
+The deferred `L.simple_projections()` row in
+`sage/combinat/root_system/root_system.py` was stale.  Constructing the
+ambient-space simple projections succeeds and preserves the neighboring
+picklability regression setup exactly as documented.  A forced focused replay
+therefore passed without any runtime or expectation correction.  The
+accumulated WASI patch now removes the obsolete `# todo: not implemented`
+marker and promotes the setup assertion to default coverage; the adjacent
+graph-backed `TestSuite` remains explicitly skipped.
+
+Focused and complete replays under runner version 124 record:
+
+```text
+forced deferred row before:      1 passed, 0 failed,  1 skipped
+default focused row final:       1 passed, 0 failed,  1 skipped
+shared complete module final:  101 passed, 0 failed, 37 skipped
+reconstructed complete final:  101 passed, 0 failed, 37 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-root-simple-projections/`; every
+retained database passes `PRAGMA integrity_check`, and the final saved
+block-failure and file-error cluster queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Python
+compilation, focused and complete shared/reconstructed replays, SQLite
+integrity checks, and `git diff --check` pass.  This stale root-system metadata
+promotion requires no native WASM or resource-bundle rebuild.  Focused probes
+of the two deferred `integer_lists/base.pyx` identity/equality rows confirmed
+that they remain real native Cython design gaps, so they were left unchanged
+for a dedicated rebuild-backed pass.  The next pass should continue with
+another bounded filesystem, serialization, native-backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
