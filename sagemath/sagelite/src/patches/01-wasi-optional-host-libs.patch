@@ -9173,7 +9173,7 @@ diff -urN a/src/sage/plot/graphics.py b/src/sage/plot/graphics.py
 +            sage: matrix_plot(M).show(gridlines=True)                               # needs matplotlib
 @@ -2075 +2075 @@
 -            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])
-+            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])  # known bug
++            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])  # needs matplotlib
 @@ -2246 +2246 @@
 -            sage: l.get_minmax_data()
 +            sage: l.get_minmax_data()                                               # random

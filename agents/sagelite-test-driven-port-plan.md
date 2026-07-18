@@ -52896,6 +52896,39 @@ dependency-classification change requires no native WASM or resource-bundle
 rebuild.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Logarithmic plot warning dependency-classification pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard on
+`list_plot_loglog(..., ticks=[[1], [1]])` in `sage/plot/graphics.py` is a
+rendering-backend boundary rather than a generic runtime defect.  Sage emits
+the documented too-few-ticks warnings while building the Matplotlib axes.
+The stripped browser profile intentionally stops at the lightweight graphics
+object representation, so it returns the correct object without entering the
+code that emits either warning.  The accumulated WASI patch now classifies
+the row as `# needs matplotlib` instead of `# known bug`.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+default focused row:             0 passed, 0 failed,   1 skipped
+forced Matplotlib boundary:      0 passed, 1 failed,   0 skipped
+shared complete module final:  167 passed, 0 failed, 241 skipped
+reconstructed complete final:  167 passed, 0 failed, 241 skipped
+```
+
+The forced replay confirms the precise boundary by reproducing the expected-
+warning mismatch.  The authoritative SQLite dashboards and pinned clean
+reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-graphics-warning-classification/`;
+every database passes `PRAGMA integrity_check`.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+an archive of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed module is byte-identical to
+the tested generated source.  Python compilation and `git diff --check` pass.
+This dependency-metadata correction requires no native WASM or resource-
+bundle rebuild.  The next pass should continue with another bounded
+filesystem, serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
