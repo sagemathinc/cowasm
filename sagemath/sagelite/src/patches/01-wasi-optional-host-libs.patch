@@ -25255,3 +25255,16 @@ diff --git a/src/sage/categories/cartesian_product.py b/src/sage/categories/cart
 -        [['a', 1], ['a', 2], ['b', 1], ['b', 2], ['c', 1], ['c', 2]]
 +        sage: C.list()
 +        [('a', 1), ('a', 2), ('b', 1), ('b', 2), ('c', 1), ('c', 2)]
+
+diff --git a/src/sage/matrix/matrix0.pyx b/src/sage/matrix/matrix0.pyx
+--- a/src/sage/matrix/matrix0.pyx
++++ b/src/sage/matrix/matrix0.pyx
+@@ -1628 +1628,3 @@
+-        Not yet implemented!
++        Return implementation-specific pickling data.
++
++        This base method must be implemented by subclasses.
+@@ -1633 +1633,2 @@
+-            sage: m._pickle() # todo: not implemented
++            sage: m._pickle()
++            ([0, 1, 2, 3], 0)

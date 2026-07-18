@@ -53189,6 +53189,44 @@ pass.  This doctest representation correction requires no native WASM or
 resource-bundle rebuild.  The next pass should continue with another bounded
 filesystem, serialization, native-backend, or frontend semantic cluster.
 
+Dense-matrix pickle-payload promotion pass on 2026-07-18 UTC:
+
+The deferred `_pickle()` example in `sage/matrix/matrix0.pyx` was stale for
+the concrete rational dense matrix constructed by the doctest.  Its subclass
+implementation returns the stable payload `([0, 1, 2, 3], 0)`; the old
+`# todo: not implemented` row therefore failed only because the doctest had
+no expected output.  The accumulated WASI patch now documents that payload,
+promotes the row to default coverage, and clarifies that the base method must
+still be implemented by subclasses.
+
+Focused replays under runner version 124 record:
+
+```text
+forced deferred row before:       0 passed, 1 failed, 0 skipped
+shared default row final:         1 passed, 0 failed, 0 skipped
+reconstructed default row final:  1 passed, 0 failed, 0 skipped
+adjacent _test_reduce control:    1 passed, 0 failed, 0 skipped
+```
+
+A complete `matrix0.pyx` replay remains unsuitable as the assertion for this
+bounded promotion: tested-module namespace seeding reaches the existing
+`rest_index_of_methods` lazy coding-theory imports and traps before recording
+any block.  The focused row includes its contiguous matrix construction setup,
+and the neighboring `_test_reduce()` control independently reconstructs the
+matrix through its `__reduce__` payload.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-matrix-pickle/`; every retained database
+passes `PRAGMA integrity_check`.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Focused shared/reconstructed replays, the reduce control, SQLite
+integrity checks, and `git diff --check` pass.  This serialization-doctest
+promotion requires no native WASM or resource-bundle rebuild.  The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
