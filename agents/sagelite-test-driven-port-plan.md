@@ -52460,6 +52460,36 @@ requires no native WASM or resource-bundle rebuild.  The next pass should
 continue with another bounded filesystem, serialization, native-backend, or
 frontend semantic cluster.
 
+Filesystem package-directory deferred-metadata promotion pass on 2026-07-18 UTC:
+
+The remaining browser-profile guard in `sage/misc/package_dir.py` is stale.
+With the non-Meson optional profile enabled, the installed `sage.libs.mpfr`
+directory is present and its `__init__.pxd` marker is recognized as a package
+directory, so `is_package_or_sage_namespace_package_dir(directory)` returns
+the documented `True`. The accumulated WASI patch no longer marks that row as
+`# known bug (seen in build.yml)`.
+
+The focused forced audit and complete optional-profile replays under runner
+version 123 record:
+
+```text
+guarded row forced before removal:       1 passed, 0 failed, 0 skipped
+shared complete module final:           10 passed, 0 failed, 8 skipped
+reconstructed complete module final:    10 passed, 0 failed, 8 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-package-dir-audit/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source. Python compilation, focused and complete shared/reconstructed replays,
+SQLite integrity checks, and `git diff --check` pass. This stale filesystem
+metadata promotion requires no native WASM or resource-bundle rebuild. The
+next pass should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
