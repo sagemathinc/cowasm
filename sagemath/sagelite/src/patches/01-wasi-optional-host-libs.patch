@@ -22390,9 +22390,6 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 @@ -356 +356 @@ cdef class MPolynomial(CommutativePolynomial):
 -            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 +            <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
-@@ -358 +358 @@ cdef class MPolynomial(CommutativePolynomial):
--            2*x^6*y - 2*x^2*y^5
-+            2*x^6*y + 3*x^2*y^5
 diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
 --- a/src/sage/rings/polynomial/multi_polynomial.pyx
 +++ b/src/sage/rings/polynomial/multi_polynomial.pyx

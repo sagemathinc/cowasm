@@ -51868,6 +51868,44 @@ next pass should audit the finite-field polynomial coefficient-display
 mismatch or another bounded filesystem, serialization, native-backend, or
 frontend semantic cluster.
 
+Generic prime-field derivative expectation reconciliation pass on 2026-07-18
+UTC:
+
+The sole failure in the preceding interrupted clean-source corpus was not a
+new arithmetic defect.  The older browser patch rewrote the documented
+characteristic-five derivative coefficient from the Singular-style centered
+representative `-2` to the generic backend's former nonnegative representative
+`3`.  The later generic prime-field display repair intentionally made
+`MPolynomial_polydict` use centered lifts, but this earlier doctest rewrite
+remained in the accumulated patch and became stale.
+
+A focused seven-block fixture confirms the intended boundary: the scalar
+field element `GF(5)(3)` still displays as `3`, the generic polynomial
+derivative displays as `2*x^6*y - 2*x^2*y^5`, and extracting that monomial's
+coefficient still returns `3`.  The accumulated WASI patch now leaves the
+upstream derivative expectation intact while retaining the separate generic
+backend class expectation.  Before and final dashboards record:
+
+```text
+interrupted corpus before: 18249 blocks, 1 failed at multi_polynomial.pyx:360
+centered-display fixture:       7 passed, 0 failed,   0 skipped
+shared complete module:       471 passed, 0 failed, 190 skipped
+reconstructed module:         471 passed, 0 failed, 190 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-centered-derivative/`; every retained
+database passes `PRAGMA integrity_check`.  Applying the complete accumulated
+Sagelite patch exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `multi_polynomial.pyx` is byte-identical to the tested staged
+source.  Runner version 119 records the complete-module results, and
+`git diff --check` passes.  This is doctest expectation cleanup for the
+already-validated pure-Python display backend, so it requires no native WASM
+or resource-bundle rebuild.  The next pass should continue with another
+bounded filesystem, serialization, native-backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
