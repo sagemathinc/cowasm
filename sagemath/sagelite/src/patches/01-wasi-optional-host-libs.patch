@@ -24786,3 +24786,46 @@ diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/l
 +            ...
 +            TypeError: matrix must be invertible
 +        """
+diff --git a/src/sage/groups/matrix_gps/linear.py b/src/sage/groups/matrix_gps/linear.py
+--- a/src/sage/groups/matrix_gps/linear.py
++++ b/src/sage/groups/matrix_gps/linear.py
+@@ -338,0 +339,28 @@
++    def gens(self) -> tuple:
++        r"""
++        Return generators when a generic construction is available.
++
++        The modular group has its standard two-generator presentation even
++        when the optional GAP backend is unavailable.
++
++        EXAMPLES::
++
++            sage: S, T = SL(2, ZZ).gens()
++            sage: S.matrix(), T.matrix()
++            (
++            [ 0  1]  [1 1]
++            [-1  0], [0 1]
++            )
++        """
++        if self._special and self.degree() == 2 and self.base_ring() is ZZ:
++            matrix_space = self.matrix_space()
++            matrices = (
++                matrix_space([0, 1, -1, 0]),
++                matrix_space([1, 1, 0, 1]),
++            )
++            return tuple(self(matrix, check=False) for matrix in matrices)
++
++        raise AttributeError(
++            f"'{type(self).__name__}' object has no attribute 'gens'"
++        )
++
+diff --git a/src/sage/groups/matrix_gps/finitely_generated.py b/src/sage/groups/matrix_gps/finitely_generated.py
+--- a/src/sage/groups/matrix_gps/finitely_generated.py
++++ b/src/sage/groups/matrix_gps/finitely_generated.py
+@@ -22,2 +22,2 @@
+-    sage: S, T = SL2Z.gens()  # known bug
+-    sage: SL2Z.subgroup([T^2])  # known bug
++    sage: S, T = SL2Z.gens()
++    sage: SL2Z.subgroup([T^2])
+@@ -402 +402 @@
+-            sage: G.gens()  # known bug
++            sage: G.gens()
