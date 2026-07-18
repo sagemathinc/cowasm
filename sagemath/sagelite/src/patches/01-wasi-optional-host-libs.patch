@@ -5428,15 +5428,6 @@ diff -urN a/src/sage/combinat/subsets_hereditary.py b/src/sage/combinat/subsets_
 @@ -67 +67 @@
 -        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))
 +        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))       # needs cysignals.alarm
-diff -urN a/src/sage/combinat/subsets_pairwise.py b/src/sage/combinat/subsets_pairwise.py
---- a/src/sage/combinat/subsets_pairwise.py
-+++ b/src/sage/combinat/subsets_pairwise.py
-@@ -98 +98 @@
--            sage: TestSuite(P).run()
-+            sage: TestSuite(P).run()                                                   # known bug
-@@ -119 +119 @@
--            sage: P == P
-+            sage: P == P                                                               # known bug
 diff -urN a/src/sage/combinat/hall_polynomial.py b/src/sage/combinat/hall_polynomial.py
 --- a/src/sage/combinat/hall_polynomial.py
 +++ b/src/sage/combinat/hall_polynomial.py

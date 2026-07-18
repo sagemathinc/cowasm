@@ -52199,6 +52199,38 @@ doctest promotion requires no native WASM or resource-bundle rebuild.  The
 next pass should continue with another bounded filesystem, serialization,
 native-backend, or frontend semantic cluster.
 
+Pairwise-compatible subset equality promotion pass on 2026-07-18 UTC:
+
+The two remaining browser-profile guards in
+`sage/combinat/subsets_pairwise.py` are stale after the shared CPython pointer-
+formatting repair. `PairwiseCompatibleSubsets.__eq__()` compares the string
+representations of its predicate callables. The legacy worker previously
+alternated the same function representation between an empty and malformed
+pointer field, so even `P == P` could be false and the parent test suite
+failed. Repeated callable representations are now stable, and both rows pass
+without changing the subset implementation.
+
+The two `# known bug` annotations are removed from the accumulated WASI patch.
+Focused and complete replays under runner version 123 record:
+
+```text
+two guarded rows forced before:        2 passed, 0 failed, 0 skipped
+shared complete module final:         32 passed, 0 failed, 2 skipped
+reconstructed complete module final:  32 passed, 0 failed, 2 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-pairwise-subsets/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to an archive
+of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source. Python compilation, complete shared/reconstructed module replays,
+SQLite integrity checks, and `git diff --check` pass. This stale-metadata
+promotion requires no native WASM or resource-bundle rebuild. The next pass
+should continue with another bounded filesystem, serialization,
+native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
