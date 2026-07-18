@@ -51558,6 +51558,50 @@ Node source checking, standalone shell syntax checking, and `git diff --check`
 pass. The next pass should continue with another bounded native backend or
 frontend semantic cluster.
 
+P-adic factory lazy-global pickle pass on 2026-07-18 UTC:
+
+The four browser-profile guards in
+`sage/rings/padics/padic_lattice_element.py` did not reflect a lattice
+precision serialization defect. The element reducer correctly serialized its
+parent, value, and absolute precision, but reconstructing the parent looked up
+the short factory name `Zp` in `sage.all`. Sagelite's reduced startup namespace
+keeps that name as a `LazyImport`. `generic_factory_unpickle` requires the
+concrete `UniqueFactory` extension type, so it treated the proxy as a removed
+factory and called it with the canonical cache-key tuple as ordinary
+constructor arguments. This shifted the cached name and print options and
+raised:
+
+```text
+ValueError: If both names (5) and print_ram_name (True) are specified, they must agree
+```
+
+`lookup_global()` now resolves a lazy-imported global before returning it to
+the generic factory unpickler. A focused identity doctest records that the
+short `Zp` lookup returns the concrete factory. The four stale lattice p-adic
+pickle guards are removed from the accumulated WASI patch. Before and after
+replays under runner version 118 record:
+
+```text
+padic_lattice_element.py --line 167 before: 0 passed, 1 failed, 0 skipped
+padic_lattice_element.py --line 167 after:  1 passed, 0 failed, 0 skipped
+padic_lattice_element.py shared source:   265 passed, 0 failed, 1 skipped
+padic_lattice_element.py reconstructed:   265 passed, 0 failed, 1 skipped
+factory.pyx shared source:                 76 passed, 0 failed, 68 skipped
+QpLC/ZpLF factory-alias probe:              8 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and rebuilt coherent resource bundle are
+under `.tmp/current-run/scheduled-2026-07-18-padic-lattice-pickle/`. Applying
+the complete accumulated patch exactly once to a clean clone of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed factory and lattice-element sources are byte-identical to the
+tested staged sources. Focused Cython generation, the WASM factory-module
+build, resource-manifest hash validation, complete shared and reconstructed
+module replays, fresh-worker `QpLC`/`ZpLF` parent and element pickle probes,
+SQLite integrity checks, and `git diff --check` pass. The next pass should
+audit another bounded serialization, native backend, or frontend semantic
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

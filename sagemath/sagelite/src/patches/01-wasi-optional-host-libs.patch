@@ -13103,19 +13103,6 @@ diff -urN -U0 a/src/sage/rings/padics/padic_base_generic.py b/src/sage/rings/pad
 @@ -378 +378 @@
 -            sage: R.zeta(12)
 +            sage: R.zeta(12)                                                       # needs sage.libs.pari
-diff -urN -U0 a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/padics/padic_lattice_element.py
---- a/src/sage/rings/padics/padic_lattice_element.py
-+++ b/src/sage/rings/padics/padic_lattice_element.py
-@@ -167 +167 @@
--            sage: loads(dumps(a)) == a
-+            sage: loads(dumps(a)) == a  # known bug - lattice p-adic pickle option drift
-@@ -177,3 +177,3 @@
--            sage: up = loads(dumps(u))
--            sage: vp = loads(dumps(v))
--            sage: up + vp
-+            sage: up = loads(dumps(u))  # known bug - lattice p-adic pickle option drift
-+            sage: vp = loads(dumps(v))  # known bug - lattice p-adic pickle option drift
-+            sage: up + vp               # known bug - lattice p-adic pickle option drift
 diff -urN -U0 a/src/sage/rings/padics/padic_generic_element.pyx b/src/sage/rings/padics/padic_generic_element.pyx
 --- a/src/sage/rings/padics/padic_generic_element.pyx
 +++ b/src/sage/rings/padics/padic_generic_element.pyx
@@ -24746,3 +24733,22 @@ diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
 +            x = x.polynomial().list()
 +        elif isinstance(x, FiniteField_givaroElement):
              x = "0x" + hex(x.to_integer())[2:][::-1]
+diff --git a/src/sage/structure/factory.pyx b/src/sage/structure/factory.pyx
+--- a/src/sage/structure/factory.pyx
++++ b/src/sage/structure/factory.pyx
+@@ -835,0 +836,3 @@
++        sage: from sage.rings.padics.factory import Zp                              # needs sage.rings.padics
++        sage: lookup_global('Zp') is Zp                                             # needs sage.rings.padics
++        True
+@@ -848 +851,10 @@
+-    return getattr(all, name)
++    value = getattr(all, name)
++
++    # The reduced Sagelite startup namespace keeps some factory globals as
++    # lazy imports.  A UniqueFactory pickle must receive the factory itself,
++    # not the callable proxy around it, because generic_factory_unpickle uses
++    # an exact extension-type check before calling get_object().
++    from sage.misc.lazy_import import LazyImport
++    if type(value) is LazyImport:
++        value = value._get_object()
++    return value
