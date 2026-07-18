@@ -51476,6 +51476,43 @@ the same 70/0/0 result under runner version 118. The focused WASM module
 rebuild and `git diff --check` pass. The next pass should audit the remaining
 split-module GF2X hex-state boundary or another bounded native backend row.
 
+NTL GF2E hexadecimal-output state synchronization pass on 2026-07-18 UTC:
+
+The final display guard in `sage/libs/ntl/ntl_GF2X.pyx` was a split-side-module
+state defect. `ntl.GF2XHexOutput(True)` updated the `GF2X::HexOutput` static
+linked into the GF2X wrapper, while `ntl_GF2E.__repr__()` formatted with the
+separate NTL static linked into the GF2E wrapper. The Python-visible setting
+therefore reported `True`, but the extension-field element still printed
+`[1 0 1 0 1]` instead of `0x51`.
+
+The GF2E representation path now copies the public `GF2XHexOutput()` value into
+its local NTL static immediately before formatting. The stale `# known bug`
+guard is removed. Focused before and after replays under runner version 118
+record:
+
+```text
+ntl_GF2X.pyx --line 72 forced before: 0 passed, 1 failed, 0 skipped
+ntl_GF2X.pyx --line 72 after:         1 passed, 0 failed, 0 skipped
+ntl_GF2X.pyx shared source:         111 passed, 0 failed, 1 skipped
+ntl_GF2X.pyx reconstructed source:  111 passed, 0 failed, 1 skipped
+```
+
+The sole remaining deferred row is independently reproduced and still needs
+its guard: converting `GF(2**8, 'a').gen()**20` through `ntl.GF2X` produces
+`[]` instead of `[0 0 1 0 1 1 0 1]`. It remains a separate PARI finite-field
+polynomial-state boundary rather than part of the hexadecimal formatting fix.
+
+The authoritative SQLite dashboards and rebuilt coherent resource bundle are
+under `.tmp/current-run/scheduled-2026-07-18-gf2x-hex/`; every retained
+database passes `PRAGMA integrity_check`. Applying the complete accumulated
+patch exactly once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects. The
+reconstructed GF2E and GF2X sources are byte-identical to the tested staged
+sources. Cython generation, the focused WASM module rebuild, Node source
+checking, standalone shell syntax checking, and `git diff --check` pass. The
+next pass should audit the remaining PARI finite-field-to-GF2X conversion row
+or another bounded native backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

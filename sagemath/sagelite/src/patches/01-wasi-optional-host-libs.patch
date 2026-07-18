@@ -24718,3 +24718,17 @@ diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
 @@ -355 +360 @@
 -            sage: g != polygen(GF(2))                                               # known bug - generic GF(2) polynomial coercion fallback mismatch
 +            sage: g != polygen(GF(2))
+diff --git a/src/sage/libs/ntl/ntl_GF2E.pyx b/src/sage/libs/ntl/ntl_GF2E.pyx
+--- a/src/sage/libs/ntl/ntl_GF2E.pyx
++++ b/src/sage/libs/ntl/ntl_GF2E.pyx
+@@ -202,2 +202,4 @@
+         restore_GF2E_context(self.c)
++        from sage.libs.ntl.ntl_GF2X import GF2XHexOutput
++        GF2XHexOutput_c[0] = GF2XHexOutput()
+         return ccrepr(self.x)
+diff --git a/src/sage/libs/ntl/ntl_GF2X.pyx b/src/sage/libs/ntl/ntl_GF2X.pyx
+--- a/src/sage/libs/ntl/ntl_GF2X.pyx
++++ b/src/sage/libs/ntl/ntl_GF2X.pyx
+@@ -72 +72 @@
+-        sage: x                                                                     # known bug - split NTL side modules do not share GF2X hex-output flag with GF2E repr
++        sage: x
