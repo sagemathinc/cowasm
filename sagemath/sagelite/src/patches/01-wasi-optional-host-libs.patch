@@ -25167,3 +25167,17 @@ diff --git a/src/sage/graphs/matching_covered_graph.py b/src/sage/graphs/matchin
 @@ -3928 +3928 @@
 -            sage: # known bug
 +            sage: # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -3412,6 +3412,7 @@
+-            sage: # known bug
+             sage: L.<a,b> = LazyPowerSeriesRing(QQ)
+             sage: def f(x, y): return (1 + x) / (1 + y)
+-            sage: L.taylor(f)
+-            1 + (a-b) - (a*b-b^2) + (a*b^2-b^3) - (a*b^3-b^4) + (a*b^4-b^5) - (a*b^5-b^6) + O(a,b)^7
++            sage: L.taylor(f)[:7] == [1, a-b, -a*b+b^2, a*b^2-b^3,
++            ....:                       -a*b^3+b^4, a*b^4-b^5, -a*b^5+b^6]
++            True
++            sage: # needs sage.symbolic
+             sage: g(w, z) = (1 + w) / (1 + z)

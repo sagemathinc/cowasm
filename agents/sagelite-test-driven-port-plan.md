@@ -52854,6 +52854,48 @@ native WASM or resource-bundle rebuild.  The only net CoWasm-added
 `# known bug` directive now remaining against the pinned source is the
 independent multivariate lazy-series `taylor()` group.
 
+Multivariate lazy-series Taylor promotion pass on 2026-07-18 UTC:
+
+The final net CoWasm-added bare `# known bug` directive did not cover a
+Taylor-series semantic failure.  The pure-Python callable returns the seven
+documented homogeneous components, but the generic polynomial backend prints
+three negative components in expanded form, such as `(-a*b+b^2)`, instead of
+factoring the sign as `-(a*b-b^2)`.  The doctest now compares the first seven
+homogeneous components by polynomial equality, preserving the mathematical
+coverage without depending on that representation choice.
+
+The following two input forms are genuinely symbolic.  Function-definition
+syntax requires `var`, and the expression form requires `SR`; both belong to
+the intentionally unshipped `sage.symbolic` surface.  A standalone
+`# needs sage.symbolic` directive now starts at the first symbolic function
+and propagates through both examples.  This removes the generic deferral while
+retaining precise browser-profile metadata.
+
+Focused and complete replays under runner version 123 record:
+
+```text
+callable coefficient comparison:      1 passed, 0 failed,   0 skipped
+first symbolic-function row:          0 passed, 0 failed,   1 skipped
+shared complete module final:       641 passed, 0 failed, 403 skipped
+reconstructed complete final:       641 passed, 0 failed, 403 skipped
+```
+
+The complete result promotes three blocks and reduces skips by three relative
+to the preceding `638 passed, 0 failed, 406 skipped` dashboard.  The saved
+block-failure and file-error cluster queries are empty.  The authoritative
+SQLite dashboards and pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-lazy-taylor-final/`; every retained
+database passes `PRAGMA integrity_check`.
+
+Applying the complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested generated source.  Python
+compilation and `git diff --check` pass.  This doctest normalization and
+dependency-classification change requires no native WASM or resource-bundle
+rebuild.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
