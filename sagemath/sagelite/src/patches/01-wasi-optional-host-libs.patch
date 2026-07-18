@@ -25776,3 +25776,21 @@ diff -urN -U0 a/src/sage/misc/classcall_metaclass.pyx b/src/sage/misc/classcall_
 -            sage: isinstance(x, Partition)      # not implemented                       # needs sage.combinat
 +            sage: isinstance(x, Partition)                                              # needs sage.combinat
 +            True
+diff -urN -U0 a/src/sage/combinat/sf/sfa.py b/src/sage/combinat/sf/sfa.py
+--- a/src/sage/combinat/sf/sfa.py
++++ b/src/sage/combinat/sf/sfa.py
+@@ -6836 +6836 @@
+-        sage: _variables_recursive(S.fraction_field(), exclude=[b]) # known bug
++        sage: _variables_recursive(S.fraction_field(), exclude=[b])
+@@ -6837,0 +6838,2 @@
++        sage: _variables_recursive(S.fraction_field(), exclude=[a, b])
++        [t]
+@@ -6849 +6851 @@
+-                degree_one = R.gens()
++                degree_one = [R(g) for g in R.ring().variable_names_recursive()]
+@@ -6851 +6853,4 @@
+-                degree_one = []
++                try:
++                    degree_one = R.gens()
++                except (NotImplementedError, AttributeError):
++                    degree_one = []

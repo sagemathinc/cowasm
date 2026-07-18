@@ -53806,6 +53806,49 @@ WASM or resource-bundle rebuild.  The next pass should continue with another
 bounded filesystem, serialization, native-backend, or frontend semantic
 cluster.
 
+Nested fraction-field variable discovery pass on 2026-07-18 UTC:
+
+The persisted known-bug row in `sage/combinat/sf/sfa.py` exposed a real
+frontend gap in `_variables_recursive`.  A fraction field over the nested
+polynomial ring `QQ['a,b']['t']` does not implement
+`variable_names_recursive()`, so the old fallback used its top-level
+`gens()` and returned only `[t]`; it silently lost the coefficient-ring
+variables `a` and `b`.  Consequently excluding `b` produced `[t]` instead of
+the documented `[a, t]`.
+
+The accumulated WASI patch now asks a fraction field's defining polynomial
+ring for recursive variable names before falling back to top-level
+generators.  The stale marker is removed, and a second contract excludes both
+coefficient variables to verify the precise `[t]` result.  A focused fixture
+also covers the flat fraction-field baseline, explicit inclusion, and the
+existing include/exclude conflict.  Runner version 124 records:
+
+```text
+forced focused row before:       4 passed, 1 failed, 0 skipped
+shared focused final:            9 passed, 0 failed, 0 skipped
+reconstructed focused final:     9 passed, 0 failed, 0 skipped
+default complete file boundary:  0 passed, 0 failed, 1 skipped
+```
+
+The exact-feature whole-file replay was also attempted with a 600-second
+worker limit.  It timed out in the independent
+`SymmetricFunctionAlgebra_generic_Element.itensor` example at source line
+4068 while constructing `CyclotomicField(12)`, well before the changed helper
+at line 6836; the SQLite file-error row preserves that state breadcrumb.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-sfa-recursive-variables/`.  Applying
+the complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Python
+compilation, focused shared/reconstructed replays, all retained SQLite
+integrity checks, final failure-cluster queries, the isolated resource
+manifest's 691 hashes, and `git diff --check` pass.  This pure-Python frontend
+fix requires no native WASM rebuild.  The next pass should continue with
+another bounded filesystem, serialization, native-backend, or frontend
+semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
