@@ -24791,3 +24791,54 @@ diff --git a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 +            s = s.replace('``', '"').replace('`', '')
 +            if s:
 +                s += '\n'
+diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
+--- a/src/sage/sets/recursively_enumerated_set.pyx
++++ b/src/sage/sets/recursively_enumerated_set.pyx
+@@ -1132 +1132 @@
+-            sage: next(it)                                                             # known bug
++            sage: next(it)
+@@ -1136 +1136 @@
+-            sage: next(it)                                                             # known bug
++            sage: next(it)
+@@ -1955 +1955 @@
+-            sage: [4] in S                                                             # known bug
++            sage: [4] in S
+@@ -1957 +1957 @@
+-            sage: [1] in S                                                             # known bug
++            sage: [1] in S
+@@ -1959 +1959 @@
+-            sage: [1,1,1,1] in S                                                       # known bug
++            sage: [1,1,1,1] in S
+@@ -1961 +1961 @@
+-            sage: all(S.__contains__(i) for i in iter(S))                              # known bug
++            sage: all(S.__contains__(i) for i in iter(S))
+@@ -1964 +1964 @@
+-            sage: 1 in S                                                               # known bug
++            sage: 1 in S
+@@ -1966 +1966 @@
+-            sage: 732 in S                                                             # known bug
++            sage: 732 in S
+@@ -1987 +1987 @@
+-            sage: (0,0) in S                                                           # known bug
++            sage: (0,0) in S
+@@ -1989 +1989 @@
+-            sage: (1,1) in S                                                           # known bug
++            sage: (1,1) in S
+@@ -1991 +1991 @@
+-            sage: (10,10) in S                                                         # known bug
++            sage: (10,10) in S
+@@ -1993 +1993 @@
+-            sage: (42,18) in S                                                         # known bug
++            sage: (42,18) in S
+@@ -2010 +2010 @@
+-            sage: (0,0) in S                                                           # known bug
++            sage: (0,0) in S
+@@ -2012 +2012 @@
+-            sage: (1,1) in S                                                           # known bug
++            sage: (1,1) in S
+@@ -2014 +2014 @@
+-            sage: (10,10) in S                                                         # known bug
++            sage: (10,10) in S
+@@ -2016 +2016 @@
+-            sage: (37,11) in S                                                         # known bug
++            sage: (37,11) in S

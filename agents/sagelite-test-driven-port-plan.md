@@ -51984,6 +51984,48 @@ reconstructed module replays, the focused prompt contract, and
 WASM rebuild.  The next pass should continue with another bounded filesystem,
 serialization, native-backend, or frontend semantic cluster.
 
+Expected-KeyboardInterrupt and recursive-set promotion pass on 2026-07-18 UTC:
+
+The 16 remaining browser-profile guards in
+`sage/sets/recursively_enumerated_set.pyx` combined one shared runner gap with
+15 stale membership/iterator annotations.  Python's stock doctest runner
+deliberately re-raises `KeyboardInterrupt` before comparing expected exception
+output.  The recursive-set interrupt test therefore became a file-level error
+instead of matching its documented traceback, even though the iterator itself
+correctly became exhausted afterward.
+
+Runner version 121 temporarily substitutes doctest's interrupt sentinel only
+for a parsed test whose expected traceback explicitly names
+`KeyboardInterrupt`.  The real built-in interrupt then follows doctest's
+ordinary `BaseException` comparison path.  Tests without that expectation keep
+the existing file-error behavior, so scheduler interrupts and unexpected
+runtime interrupts are still surfaced.  The standalone smoke covers the
+expected case beside the existing unexpected-interrupt state diagnostic.
+
+The two iterator guards and all 14 finite/infinite forest membership guards
+are removed.  Focused and complete replays record:
+
+```text
+line 1132 forced before:              0 passed, 1 failed,  0 skipped
+line 1955 forced before:              1 passed, 0 failed,  0 skipped
+expected interrupt fixture after:     1 passed, 0 failed,  0 skipped
+unexpected interrupt fixture after:   file error, KeyboardInterrupt
+shared complete module after:       338 passed, 0 failed, 40 skipped
+reconstructed complete module:      338 passed, 0 failed, 40 skipped
+```
+
+The authoritative SQLite dashboards and clean reconstruction are under
+`.tmp/current-run/scheduled-2026-07-18-recursive-set-audit/`; every final
+retained database passes `PRAGMA integrity_check`.  Applying the complete
+accumulated Sagelite patch exactly once to an archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed recursive-set source is byte-identical to the tested staged
+source.  Node source checking, standalone shell syntax checking, focused and
+complete shared/reconstructed replays, SQLite integrity checks, and
+`git diff --check` pass.  This shared JavaScript runner fix requires no native
+WASM rebuild.  The next pass should continue with another bounded filesystem,
+serialization, native-backend, or frontend semantic cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

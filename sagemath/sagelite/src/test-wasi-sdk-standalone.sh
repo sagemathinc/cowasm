@@ -1972,6 +1972,10 @@ EXAMPLES::
     Traceback (most recent call last):
     ...
     EmptySetError
+    sage: raise KeyboardInterrupt("expected interrupt smoke")
+    Traceback (most recent call last):
+    ...
+    KeyboardInterrupt: expected interrupt smoke
     sage: def cowasm_raise_local_exception():
     ....:     class CowasmLocalError(ValueError):
     ....:         pass
@@ -2141,7 +2145,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|61|49|0|12" ]; then
+if [ "$doctest_smoke_counts" != "passed|62|50|0|12" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -2235,7 +2239,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "58" ]; then
+if [ "$doctest_block_key_count" != "59" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -2251,6 +2255,12 @@ if [ "$doctest_e_constant_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not seed the numeric e constant."
+fi
+doctest_expected_keyboard_interrupt_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and source = 'raise KeyboardInterrupt(\"expected interrupt smoke\")' || char(10) and expected like '%KeyboardInterrupt: expected interrupt smoke%';")"
+if [ "$doctest_expected_keyboard_interrupt_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not compare an expected KeyboardInterrupt."
 fi
 doctest_inline_random_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and expected_kind = 'random' and tags like '%random%' and failure_class = 'random_unchecked' and source like 'ZZ.random_element()%';")"
 if [ "$doctest_inline_random_count" != "1" ]; then

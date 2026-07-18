@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 120;
+const doctestRunnerVersion = 121;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2230,6 +2230,24 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
         self.blocks.append(row)
 
 
+class __CowasmExpectedKeyboardInterrupt(Exception):
+    pass
+
+
+__CowasmExpectedKeyboardInterrupt.__name__ = "KeyboardInterrupt"
+__CowasmExpectedKeyboardInterrupt.__qualname__ = "KeyboardInterrupt"
+__CowasmExpectedKeyboardInterrupt.__module__ = "builtins"
+
+
+def __cowasm_expects_keyboard_interrupt(test):
+    return any(
+        example.want.lstrip().startswith("Traceback (most recent call last):")
+        and re.search(r"(?m)^KeyboardInterrupt(?::|$)", example.want)
+        and not example.options.get(doctest.SKIP, False)
+        for example in test.examples
+    )
+
+
 class __CowasmOutputChecker(doctest.OutputChecker):
     def __init__(self):
         super().__init__()
@@ -2973,9 +2991,22 @@ def __cowasm_run_file(filename):
             __cowasm_active_displayhook_globals = test.globs
             __cowasm_displayhook_delegate = old_dunder_displayhook
             sys.__displayhook__ = __cowasm_doctest_displayhook
+            expected_keyboard_interrupt = __cowasm_expects_keyboard_interrupt(test)
+            previous_doctest_keyboard_interrupt = getattr(
+                doctest,
+                "KeyboardInterrupt",
+                __cowasm_state_unset,
+            )
+            if expected_keyboard_interrupt:
+                doctest.KeyboardInterrupt = __CowasmExpectedKeyboardInterrupt
             try:
                 result = runner.run(test, clear_globs=False)
             finally:
+                if expected_keyboard_interrupt:
+                    if previous_doctest_keyboard_interrupt is __cowasm_state_unset:
+                        del doctest.KeyboardInterrupt
+                    else:
+                        doctest.KeyboardInterrupt = previous_doctest_keyboard_interrupt
                 sys.displayhook = old_displayhook
                 sys.__displayhook__ = old_dunder_displayhook
                 __cowasm_displayhook_delegate = None
