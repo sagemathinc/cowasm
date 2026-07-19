@@ -26771,9 +26771,20 @@ diff --git a/src/sage/rings/polynomial/infinite_polynomial_element.py b/src/sage
 diff --git a/src/sage/categories/drinfeld_modules.py b/src/sage/categories/drinfeld_modules.py
 --- a/src/sage/categories/drinfeld_modules.py
 +++ b/src/sage/categories/drinfeld_modules.py
-@@ -28,0 +29 @@
+@@ -22,4 +22,6 @@
+ from sage.categories.objects import Objects
+ from sage.categories.category_types import Category_over_base_ring
+ from sage.categories.homsets import Homsets
++from sage.categories.map import Map
++from sage.categories.rings import Rings
+ from sage.misc.functional import log
+@@ -26,4 +28,5 @@
+ from sage.misc.latex import latex
+ from sage.misc.lazy_import import lazy_import
+ from sage.rings.integer import Integer
 +from sage.rings.morphism import RingHomomorphism
-@@ -167,5 +168,2 @@
+
+@@ -167,5 +170,5 @@
 -        sage: C = DrinfeldModules(base)  # known bug (blankline)
 -        <BLANKLINE>
 -        Traceback (most recent call last):
@@ -26781,23 +26792,33 @@ diff --git a/src/sage/categories/drinfeld_modules.py b/src/sage/categories/drinf
 -        TypeError: base field must be a ring extension
 +        sage: C = DrinfeldModules(base); C
 +        Category of Drinfeld modules over Finite Field in z of size 11^4
-@@ -176,2 +174 @@
++        sage: natural = A.fraction_field().coerce_map_from(A)
++        sage: DrinfeldModules(natural).base_morphism() is natural
++        True
+@@ -176,2 +179 @@
 -        sage: C = DrinfeldModules(base)  # known bug (blankline)
 -        <BLANKLINE>
 +        sage: C = DrinfeldModules(base)
-@@ -180 +177 @@
+@@ -180 +182 @@
 -        TypeError: base field must be a ring extension
 +        TypeError: input must be a field
-@@ -185,2 +182 @@
+@@ -185,2 +187 @@
 -        sage: C = DrinfeldModules(base)  # known bug (blankline)
 -        <BLANKLINE>
 +        sage: C = DrinfeldModules(base)
-@@ -195,2 +191 @@
+@@ -195,2 +196 @@
 -        sage: C = DrinfeldModules(base)  # known bug (blankline)
 -        <BLANKLINE>
 +        sage: C = DrinfeldModules(base)
-@@ -231,0 +227,2 @@
-+        if not isinstance(base_morphism, RingHomomorphism):
+@@ -231,0 +231,9 @@
++        is_ring_morphism = isinstance(base_morphism, RingHomomorphism)
++        if not is_ring_morphism and isinstance(base_morphism, Map):
++            try:
++                category = base_morphism.parent().category().base_category()
++                is_ring_morphism = category.is_subcategory(Rings())
++            except AttributeError:
++                pass
++        if not is_ring_morphism:
 +            raise TypeError('input must be a ring morphism')
 
 diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py

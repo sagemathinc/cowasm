@@ -55754,6 +55754,52 @@ and shell syntax checks, and `git diff --check` pass.  The next pass can
 continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Drinfeld natural-coercion regression pass on 2026-07-19 UTC:
+
+The interrupted corpus refresh exposed a 19-row cascade in
+`sage/rings/function_field/drinfeld_modules/carlitz_module.py`: 15
+`TypeError` rows, two dependent output mismatches, and two dependent symbolic
+name failures.  The first row showed that the earlier Drinfeld input-validation
+fix rejected the natural coercion from `A` into its fraction field.  Sage
+represents that coercion as a `FractionFieldEmbedding` map rather than a
+`RingHomomorphism` subclass, even though its Homset base category is a ring
+category.
+
+The accumulated WASI patch now accepts concrete `RingHomomorphism` instances
+directly and accepts other Sage `Map` instances only when their Homset base
+category is a subcategory of `Rings()`.  This preserves the stable string-input
+diagnostic, rejects a generic set map between the same rings, and permits the
+natural fraction-field embedding used by `CarlitzModule(A)`.  A direct
+natural-coercion regression is included with the existing constructor
+contracts.
+
+Replays under runner version 127 record:
+
+```text
+interrupted corpus Carlitz before: 22 passed, 19 failed, 0 skipped
+focused constructor controls final: 16 passed, 0 failed, 0 skipped
+natural-coercion source row final:    1 passed, 0 failed, 0 skipped
+complete Carlitz module final:       41 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and staged sources are under
+`.tmp/current-run/scheduled-2026-07-19-drinfeld-coercion/`.  Every retained
+final database passes `PRAGMA integrity_check` and has empty block-failure and
+file-error cluster queries.  Applying the complete Drinfeld patch section once
+to pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds, a second forward application is rejected, and the reconstructed
+source is byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The copy-on-write Electron resource manifest still validates with
+545 side modules and 691 required-resource hashes.  Focused and complete
+replays, explicit ring-homomorphism and set-map controls, Python compilation,
+SQLite integrity and empty-cluster checks, clean source reconstruction and
+comparison, targeted patch idempotence, manifest validation, JavaScript and
+shell syntax checks, and `git diff --check` pass.  The next pass can continue
+with the isolated MPFI exponent-range output mismatch, the explicit cypari2
+object-model boundary, or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
