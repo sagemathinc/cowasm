@@ -55626,6 +55626,54 @@ validation, and `git diff --check` pass.  The next pass can continue with
 another bounded upstream-deferred semantic contract or persisted
 backend/runtime cluster.
 
+Finite-dimensional module scalar-extension category pass on 2026-07-19 UTC:
+
+The scalar-extension inference added for ordinary module morphisms exposed a
+stronger adjacent contract in
+`sage/categories/finite_dimensional_modules_with_basis.py`.  A map from a
+finite-dimensional free module over `ZZ` into one over `QQ` evaluated
+correctly, but its inferred Homset was only `Modules(ZZ)`.  That discarded the
+finite-dimensional-with-basis morphism methods, so the historical deferred
+`phi.matrix()` row raised `AttributeError` instead of returning its rational
+matrix.
+
+The accumulated WASI patch now compares the domain and codomain against their
+respective scalar-ring categories when a compatible scalar extension is
+inferred.  It preserves the strongest common structure—finite-dimensional
+with basis, with basis, or an ordinary module—while retaining the narrow
+unchecked Homset construction required because formal cross-ring membership
+is still incomplete.  Ring codomains continue to use the ordinary module
+category.  The promoted `RR`-to-`CC` free-module example now records the more
+precise finite-dimensional vector-spaces-with-basis category.
+
+Replays under runner version 127 record:
+
+```text
+focused contract before:                3 passed, 2 failed,  0 skipped
+focused controls final:                 14 passed, 0 failed,  0 skipped
+finite-dimensional category final:     126 passed, 0 failed, 69 skipped
+shared morphism implementation final:  353 passed, 0 failed,  5 skipped
+RR-to-CC category line final:             1 passed, 0 failed,  1 skipped
+```
+
+The authoritative SQLite dashboards and fresh pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-fd-module-morphism/`.  Every retained
+final database passes `PRAGMA integrity_check` and has zero block failures and
+zero file errors.  Applying the complete accumulated patch exactly once to
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds,
+a second forward application is rejected, and the reconstructed executable
+morphism source and finite-dimensional category source are byte-identical to
+the tested resource copies.
+
+This is a pure-Python source change and requires no Cython or native WASM
+rebuild.  The preserved Electron manifest validates during all final replays
+with 545 side modules and 691 required-resource hashes.  Focused and complete
+reconstructed replays, prior scalar-extension controls, Python compilation,
+SQLite integrity and empty-cluster checks, clean source reconstruction and
+comparison, patch idempotence, manifest loading, and `git diff --check` pass.
+The next pass can continue with another bounded upstream-deferred semantic
+contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

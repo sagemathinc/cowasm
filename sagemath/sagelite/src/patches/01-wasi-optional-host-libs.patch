@@ -27038,7 +27038,7 @@ diff --git a/src/sage/modules/with_basis/morphism.py b/src/sage/modules/with_bas
          if category is None:
              if domain not in ModulesWithBasis:
                  raise ValueError("domain(=%s) should be a module with basis" % codomain)
-@@ -204,16 +205,22 @@
+@@ -204,16 +205,32 @@
                  C = Modules(base_ring)
                  for D in [C.WithBasis().FiniteDimensional(),
                            C.WithBasis(),
@@ -27051,7 +27051,17 @@ diff --git a/src/sage/modules/with_basis/morphism.py b/src/sage/modules/with_bas
                          break
 +                if (category is None
 +                        and codomain.base_ring().has_coerce_map_from(base_ring)):
-+                    category = C
++                    codomain_modules = Modules(codomain.base_ring())
++                    for domain_category, codomain_category in [
++                            (C.WithBasis().FiniteDimensional(),
++                             codomain_modules.WithBasis().FiniteDimensional()),
++                            (C.WithBasis(), codomain_modules.WithBasis())]:
++                        if (domain in domain_category
++                                and codomain in codomain_category):
++                            category = domain_category
++                            break
++                    if category is None:
++                        category = C
 +                    check_category = False
 +                if (category is None
 +                        and codomain in CommutativeAdditiveSemigroups()
@@ -27092,6 +27102,16 @@ diff --git a/src/sage/categories/modules_with_basis.py b/src/sage/categories/mod
                  sage: phi.category_for()
 -                Category of commutative additive semigroups
 -                sage: phi.category_for()        # not implemented
-                 Category of vector spaces over Real Field with 53 bits of precision
+-                Category of vector spaces over Real Field with 53 bits of precision
++                Category of finite dimensional vector spaces with basis over Real Field with 53 bits of precision
 
                  sage: # needs sage.modules
+diff --git a/src/sage/categories/finite_dimensional_modules_with_basis.py b/src/sage/categories/finite_dimensional_modules_with_basis.py
+--- a/src/sage/categories/finite_dimensional_modules_with_basis.py
++++ b/src/sage/categories/finite_dimensional_modules_with_basis.py
+@@ -634 +634 @@
+-                    sage: phi.matrix().parent()         # not implemented               # needs sage.modules
++                    sage: phi.matrix().parent()                                         # needs sage.modules
+@@ -643,2 +643,0 @@
+-                    Category of commutative additive semigroups
+-                    sage: phi.parent().homset_category()        # not implemented, needs sage.modules
