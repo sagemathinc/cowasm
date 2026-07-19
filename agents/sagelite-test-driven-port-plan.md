@@ -56508,6 +56508,51 @@ clean-frontier measurement rather than a behavior change, validation requires
 no native rebuild or Electron smoke rerun.  The next pass can continue with
 corpus entries 158--167 or select another persisted backend/runtime cluster.
 
+CPython static-type lookup delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 158--167 initially recorded 314 passed,
+one failed, and 124 skipped blocks.  Nine files were clean; the only failure
+was `sage/cpython/debug.pyx:78`, where `getattr_debug(list, "reverse")`
+raised `AttributeError` instead of finding the method descriptor in the
+static builtin type's public dictionary.
+
+The Python 3.12+ correction was already present in the complete accumulated
+source patch: static builtin types use a materialized `obj.__dict__` mapping
+because `_PyObject_GetDictPtr()` no longer exposes their interpreter-state
+dictionary.  The retained Electron bundle had regressed to an older compiled
+`sage.cpython.debug` side module.  Rebuilding exactly that module from the
+byte-identical accumulated source closes the failure without a new Sagelite
+source change.
+
+The standalone and Electron-shaped smokes now require
+`getattr_debug(list, "reverse")` to return `list.reverse`.  The Electron
+manifest schema advances to version 158 and its smoke contract to
+`cpython-static-type-getattr-v118`, so a future packaged bundle cannot retain
+the stale binary even though its path was already manifest-required.
+
+The retained results record:
+
+```text
+entries 158--167 before:           314 passed, 1 failed, 124 skipped
+focused debug.pyx line 78 final:     1 passed, 0 failed,   0 skipped
+entries 158--167 final:            315 passed, 0 failed, 124 skipped
+Electron-shaped packaged smoke:   passed, including static-type lookup
+```
+
+The authoritative SQLite dashboards, rebuilt side module, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-cpython-crypto-window/`.  Both final
+databases pass `PRAGMA integrity_check`; the repaired bounded database has
+empty block- and file-failure cluster queries.  The resource manifest
+validates 545 side modules and 702 required-resource hashes.
+
+The exact Cython generation and native module build, focused and repaired
+bounded replays, complete Electron-shaped smoke, manifest parity/runtime
+tests, accumulated-patch syntax check, exact source comparison, shell and
+JavaScript syntax checks, SQLite integrity and empty-cluster checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+168--177 or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

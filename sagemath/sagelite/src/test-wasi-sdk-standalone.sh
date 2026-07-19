@@ -1341,6 +1341,13 @@ a_copy = loads(dumps(a))
 assert a_copy == a
 assert a_copy.parent() is R
 print('sagelite-node-ok p-adic lattice pickle smoke')"
+run_node_import "CPython static-type getattr smoke" "from contextlib import redirect_stdout
+from io import StringIO
+from sage.cpython.debug import getattr_debug
+with redirect_stdout(StringIO()):
+    reverse = getattr_debug(list, 'reverse')
+assert reverse is list.reverse
+print('sagelite-node-ok CPython static-type getattr smoke')"
 run_node_import "exterior differential delivery smoke" "from sage.all import QQ, ZZ, ExteriorAlgebra
 from sage.misc.persist import dumps, loads
 E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
@@ -1647,7 +1654,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=157
+electron_manifest_schema_version=158
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1657,6 +1664,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-latt
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-integer-lcm-content-v115"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-exterior-differential-delivery-v116"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weyl-display-and-nested-generators-v117"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython-static-type-getattr-v118"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

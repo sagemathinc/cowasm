@@ -912,6 +912,17 @@ assert a_copy == a
 assert a_copy.parent() is R
 `);
     console.log("sagelite-electron-ok p-adic lattice pickle smoke");
+    console.log("sagelite-electron-start CPython static-type getattr smoke");
+    await python.exec(String.raw`
+from contextlib import redirect_stdout
+from io import StringIO
+from sage.cpython.debug import getattr_debug
+
+with redirect_stdout(StringIO()):
+    reverse = getattr_debug(list, 'reverse')
+assert reverse is list.reverse
+`);
+    console.log("sagelite-electron-ok CPython static-type getattr smoke");
     console.log("sagelite-electron-start exterior differential delivery smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ, ExteriorAlgebra
