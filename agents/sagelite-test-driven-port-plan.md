@@ -56378,6 +56378,53 @@ SQLite integrity and empty-cluster checks, and `git diff --check` pass.  The
 next pass can continue with corpus entries 108--117 or another persisted
 backend/runtime cluster.
 
+Exterior-differential delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 108--117 initially recorded 1,913
+passed, five failed, and 176 skipped blocks.  Nine files were clean; all five
+failures were in `sage/algebras/clifford_algebra.py`.  Three canonical
+boundary/coboundary pickle rows returned distinct objects, while two integral
+homology rows displayed the negative Smith factor `C-2 x C2` instead of the
+canonical `C2 x C2`.
+
+Both runtime corrections were already present in the complete accumulated
+source patch.  The retained Electron bundle had regressed to older copies of
+`sage/algebras/clifford_algebra.py` and
+`sage/homology/chain_complex.py`; replacing exactly those two pure-Python
+resources with their byte-identical accumulated-source versions closes the
+entire cluster without a native rebuild.
+
+The standalone and Electron-shaped smokes now require canonical pickle
+identity for both exterior-algebra boundary and coboundary morphisms, plus
+positive two-torsion invariant factors for the integral `sl2` boundary and
+coboundary complexes.  Both source files are newly mandatory hashed resources.
+The Electron manifest schema advances to version 156 and its smoke contract to
+`exterior-differential-delivery-v116`, so a future bundle cannot silently
+retain either stale half of the coupled contract.
+
+The retained results record:
+
+```text
+entries 108--117 before:            1913 passed, 5 failed, 176 skipped
+complete Clifford module final:      571 passed, 0 failed,  61 skipped
+entries 108--117 final:             1918 passed, 0 failed, 176 skipped
+Electron-shaped packaged smoke:     passed, including pickle and homology delivery
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-algebra-window/`.  Both final databases
+pass `PRAGMA integrity_check` and have empty block- and file-failure cluster
+queries.  The resource manifest validates 545 side modules and 699 required-
+resource hashes.
+
+The repaired bounded replay, complete Clifford replay, complete
+Electron-shaped smoke, manifest parity/runtime tests, manifest hash validation,
+accumulated-patch syntax check, Python compilation, exact staged-source
+comparison, shell and JavaScript syntax checks, SQLite integrity and empty-
+cluster checks, and `git diff --check` pass.  The next pass can continue with
+corpus entries 118--127 or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

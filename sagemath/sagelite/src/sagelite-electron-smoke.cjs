@@ -912,6 +912,23 @@ assert a_copy == a
 assert a_copy.parent() is R
 `);
     console.log("sagelite-electron-ok p-adic lattice pickle smoke");
+    console.log("sagelite-electron-start exterior differential delivery smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, ZZ, ExteriorAlgebra
+from sage.misc.persist import dumps, loads
+
+E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
+x, y, z = E.gens()
+s_coeff = {(0, 1): z, (1, 2): x, (2, 0): y}
+boundary = E.boundary(s_coeff)
+coboundary = E.coboundary(s_coeff)
+assert loads(dumps(boundary)) is boundary
+assert loads(dumps(coboundary)) is coboundary
+sl2_coeff = {(0, 1): z, (2, 1): -2*y, (2, 0): 2*x}
+assert str(E.boundary(sl2_coeff).chain_complex(R=ZZ).homology()[1]) == 'C2 x C2'
+assert str(E.coboundary(sl2_coeff).chain_complex(R=ZZ).homology()[2]) == 'C2 x C2'
+`);
+    console.log("sagelite-electron-ok exterior differential delivery smoke");
     console.log("sagelite-electron-start real-double algebraic dependency smoke");
     await python.exec(String.raw`
 from sage.all import RDF, sqrt

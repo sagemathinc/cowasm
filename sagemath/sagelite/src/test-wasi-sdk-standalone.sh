@@ -1341,6 +1341,19 @@ a_copy = loads(dumps(a))
 assert a_copy == a
 assert a_copy.parent() is R
 print('sagelite-node-ok p-adic lattice pickle smoke')"
+run_node_import "exterior differential delivery smoke" "from sage.all import QQ, ZZ, ExteriorAlgebra
+from sage.misc.persist import dumps, loads
+E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
+x, y, z = E.gens()
+s_coeff = {(0, 1): z, (1, 2): x, (2, 0): y}
+boundary = E.boundary(s_coeff)
+coboundary = E.coboundary(s_coeff)
+assert loads(dumps(boundary)) is boundary
+assert loads(dumps(coboundary)) is coboundary
+sl2_coeff = {(0, 1): z, (2, 1): -2*y, (2, 0): 2*x}
+assert str(E.boundary(sl2_coeff).chain_complex(R=ZZ).homology()[1]) == 'C2 x C2'
+assert str(E.coboundary(sl2_coeff).chain_complex(R=ZZ).homology()[2]) == 'C2 x C2'
+print('sagelite-node-ok exterior differential delivery smoke')"
 run_node_import "finite-field matrix smoke" "from sage.all import GF
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -1615,7 +1628,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=155
+electron_manifest_schema_version=156
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1623,6 +1636,7 @@ electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-lattice-pickle-v114"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-integer-lcm-content-v115"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-exterior-differential-delivery-v116"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1826,6 +1840,8 @@ electron_required_paths=(
   "site-packages/sage/modules/free_module.py"
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/algebras/clifford_algebra.py"
+  "site-packages/sage/homology/chain_complex.py"
   "site-packages/sage/groups/__init__.py"
   "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so"
   "site-packages/sage/groups/abelian_gps/__init__.py"

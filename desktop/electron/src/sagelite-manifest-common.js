@@ -166,6 +166,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/modules/free_module.py",
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/algebras/clifford_algebra.py",
+  "site-packages/sage/homology/chain_complex.py",
   "site-packages/sage/groups/__init__.py",
   "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so",
   "site-packages/sage/groups/abelian_gps/__init__.py",
@@ -275,7 +277,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 155,
+  schemaVersion: 156,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -283,7 +285,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
