@@ -56778,6 +56778,55 @@ measurement rather than a behavior change, validation requires no native
 rebuild or Electron smoke rerun.  The next pass can continue with corpus
 entries 358--367 or select another persisted backend/runtime cluster.
 
+Combinatorial-design and q-binomial delivery-contract pass on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+387.  Entries 358--367 covered block-design databases and constructors;
+entries 368--377 covered diagrams, exact-cover helpers, Dyck paths, path
+tableaux, exponential numbers, and combinatorial free modules; and entries
+378--387 covered tree classes, combinatorial output, q-analogues, and the first
+species module.
+
+Twenty-nine files were clean against the schema-160 packaged resource
+snapshot.  The only failure was the Python-integer parent check in
+`sage/combinat/q_analogues.py`: the tested accumulated source already coerces
+the cyclotomic product through the recorded Python `int` parent, but the
+packaged Python module predated that correction and returned a Sage `Integer`.
+
+Staging the byte-identical accumulated-source `q_analogues.py` closes the
+cluster without a native rebuild.  The standalone and Electron-shaped smokes
+now require `q_binomial(3, 2, 1)` to return exactly Python `int`, and the module
+is newly mandatory and hashed in the Electron resource manifest.  The manifest
+schema advances to version 161 and its smoke contract to
+`q-binomial-python-parent-delivery-v121`.
+
+The retained results record:
+
+```text
+entries 358--367:                  662 passed, 0 failed, 484 skipped
+entries 368--377:                 1474 passed, 0 failed, 185 skipped
+entries 378--387 before:           976 passed, 1 failed, 105 skipped
+focused q_analogues.py:288 final:    1 passed, 0 failed,   0 skipped
+complete q_analogues.py final:      112 passed, 0 failed,  23 skipped
+entries 378--387 final:             977 passed, 0 failed, 105 skipped
+combined repaired windows:         3113 passed, 0 failed, 774 skipped
+Electron-shaped packaged smoke:    passed, including q-binomial parent delivery
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-designs-window/`.  All five retained
+final databases pass `PRAGMA integrity_check` and have no failed file or block
+rows.  The resource manifest validates 545 side modules and 704 required-
+resource hashes.
+
+The focused line replay, complete affected-module replay, repaired bounded
+replay, complete Electron-shaped smoke, manifest parity/runtime/forge-resource
+tests, manifest hash validation, exact staged-source comparison, shell and
+JavaScript syntax checks, SQLite integrity and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+388--397 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

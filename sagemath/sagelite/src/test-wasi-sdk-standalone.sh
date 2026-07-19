@@ -1380,6 +1380,11 @@ assert G.order() == len(list(G))
 H = SL(2, Integers(6))
 assert H.order() == len(list(H))
 print('sagelite-node-ok generic linear group delivery smoke')"
+run_node_import "q-binomial Python parent delivery smoke" "from sage.combinat.q_analogues import q_binomial
+r = q_binomial(3, 2, 1)
+assert r == 3
+assert type(r) is int
+print('sagelite-node-ok q-binomial Python parent delivery smoke')"
 run_node_import "exterior differential delivery smoke" "from sage.all import QQ, ZZ, ExteriorAlgebra
 from sage.misc.persist import dumps, loads
 E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
@@ -1686,7 +1691,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=160
+electron_manifest_schema_version=161
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1699,6 +1704,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weyl-displ
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython-static-type-getattr-v118"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2x-delivery-v119"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-linear-group-delivery-v120"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-q-binomial-python-parent-delivery-v121"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1950,6 +1956,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/perfect_matching.py"
   "site-packages/sage/combinat/permutation.py"
   "site-packages/sage/combinat/permutation_cython.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/q_analogues.py"
   "site-packages/sage/combinat/set_partition.py"
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/set_partition_ordered.py"

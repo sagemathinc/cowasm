@@ -963,6 +963,19 @@ H = SL(2, Integers(6))
 assert H.order() == len(list(H))
 `);
     console.log("sagelite-electron-ok generic linear group delivery smoke");
+    console.log(
+      "sagelite-electron-start q-binomial Python parent delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.combinat.q_analogues import q_binomial
+
+r = q_binomial(3, 2, 1)
+assert r == 3
+assert type(r) is int
+`);
+    console.log(
+      "sagelite-electron-ok q-binomial Python parent delivery smoke",
+    );
     console.log("sagelite-electron-start exterior differential delivery smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ, ExteriorAlgebra
