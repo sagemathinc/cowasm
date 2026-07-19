@@ -26004,3 +26004,92 @@ diff --git a/src/sage/combinat/shifted_primed_tableau.py b/src/sage/combinat/shi
 +            True
 +        """
 +        return self([])
+diff --git a/src/sage/combinat/hillman_grassl.py b/src/sage/combinat/hillman_grassl.py
+--- a/src/sage/combinat/hillman_grassl.py
++++ b/src/sage/combinat/hillman_grassl.py
+@@ -420,2 +419,0 @@
+-        The ``shape`` parameter is currently not implemented.
+-
+@@ -429,3 +427,3 @@
+-            sage: S1 = WeakReversePlanePartitions([4, 2, 2, 1])  # not tested (not implemented)
+-            sage: S2 = WeakReversePlanePartitions((4, 2, 2, 1))  # not tested (not implemented)
+-            sage: S1 is S2  # not tested (not implemented)
++            sage: S1 = WeakReversePlanePartitions([4, 2, 2, 1])
++            sage: S2 = WeakReversePlanePartitions((4, 2, 2, 1))
++            sage: S1 is S2
+@@ -435,3 +433,2 @@
+-            raise NotImplementedError("shape cannot be specified")
+-            # from sage.combinat.partition import Partition
+-            # return RibbonShapedTableaux_shape(Partition(shape))
++            from sage.combinat.partition import Partition
++            return WeakReversePlanePartitions_shape(Partition(shape))
+@@ -473,0 +471,69 @@
++
++
++class WeakReversePlanePartitions_shape(WeakReversePlanePartitions):
++    r"""
++    Weak reverse plane partitions of a fixed shape.
++    """
++    @staticmethod
++    def __classcall_private__(cls, shape):
++        """
++        Normalize ``shape`` to ensure a unique representation.
++
++        TESTS::
++
++            sage: S1 = WeakReversePlanePartitions([3, 1])
++            sage: S2 = WeakReversePlanePartitions((3, 1))
++            sage: S1 is S2
++            True
++        """
++        return super(WeakReversePlanePartitions, cls).__classcall__(cls, tuple(shape))
++
++    def __init__(self, shape):
++        """
++        Initialize ``self``.
++
++        TESTS::
++
++            sage: S = WeakReversePlanePartitions([3, 1])
++            sage: TestSuite(S).run()
++        """
++        from sage.combinat.partition import Partition
++        self.shape = Partition(shape)
++        WeakReversePlanePartitions.__init__(self)
++
++    def _repr_(self):
++        """
++        Return the string representation of ``self``.
++
++        EXAMPLES::
++
++            sage: WeakReversePlanePartitions([3, 1])
++            Weak Reverse Plane Partitions of shape [3, 1]
++        """
++        return "Weak Reverse Plane Partitions of shape {}".format(self.shape)
++
++    def __contains__(self, x):
++        """
++        Return whether ``x`` is a tableau of the prescribed shape.
++
++        EXAMPLES::
++
++            sage: S = WeakReversePlanePartitions([3, 1])
++            sage: [[0, 1, 2], [1]] in S
++            True
++            sage: [[0, 1], [1]] in S
++            False
++        """
++        return (WeakReversePlanePartitions.__contains__(self, x)
++                and [len(row) for row in x] == list(self.shape))
++
++    def _an_element_(self):
++        """
++        Return a weak reverse plane partition of the prescribed shape.
++
++        EXAMPLES::
++
++            sage: WeakReversePlanePartitions([3, 1]).an_element()
++            [[0, 0, 0], [0]]
++        """
++        return self.element_class(self, [[0] * length for length in self.shape])

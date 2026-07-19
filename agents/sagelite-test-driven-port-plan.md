@@ -54246,6 +54246,48 @@ resource module but no native WASM rebuild or tracked resource-bundle change.
 The next pass should continue with another bounded upstream-deferred semantic
 contract or a persisted backend/runtime cluster.
 
+Fixed-shape weak reverse plane partition implementation pass on 2026-07-19
+UTC:
+
+The three upstream-deferred rows for
+`WeakReversePlanePartitions([4, 2, 2, 1])` in
+`sage/combinat/hillman_grassl.py` exposed one explicit constructor gap.  The
+parent rejected every non-`None` shape with `NotImplementedError`, despite the
+documented list/tuple normalization and unique-representation contract.
+
+The accumulated WASI patch now dispatches a normalized partition to a new
+fixed-shape parent.  The parent preserves list/tuple identity, reports its
+shape, restricts membership and construction to tableaux of that shape, and
+provides the all-zero weak reverse plane partition as a canonical element.
+The obsolete `# not tested (not implemented)` markers are removed, and new
+default doctests cover parent identity, representation, membership,
+`an_element()`, and the generic parent test suite.
+
+The initial forced audit recorded two `NotImplementedError` rows followed by
+the expected identity result.  Replays under runner version 125 record:
+
+```text
+promoted source line final:       1 passed, 0 failed, 0 skipped
+shared complete module final:   111 passed, 0 failed, 0 skipped
+reconstructed complete module: 111 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-hillman-shape/`.  Every retained
+database passes `PRAGMA integrity_check`, and the saved final block-failure and
+file-error cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to a
+`git archive` of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed, staged, and ignored Electron
+resource modules are byte-identical.  Python compilation, focused and complete
+shared/reconstructed replays, SQLite integrity and cluster checks, clean
+source reconstruction, and `git diff --check` pass.  Testing the pure-Python
+implementation required refreshing the ignored local Electron resource module
+but no native WASM rebuild or tracked resource-bundle change.  The pre-existing
+changes in `/home/user/sagelite` were left untouched.  The next pass should
+continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
