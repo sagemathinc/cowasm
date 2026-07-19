@@ -55226,6 +55226,59 @@ requires no Cython or native WASM rebuild.  The next pass can continue with
 another bounded upstream-deferred semantic contract or persisted
 backend/runtime cluster.
 
+Drinfeld base-morphism validation pass on 2026-07-19 UTC:
+
+The four historical `# known bug (blankline)` guards in
+`sage/categories/drinfeld_modules.py` covered two different stale contracts.
+Constructing `DrinfeldModules` from the zero morphism `Fq[T] -> K` now
+correctly succeeds because the finite field `K` can represent its extension
+over the constants through that morphism; the old doctest still expected a
+removed `RingExtension` rejection.  The adjacent nonfield and nonfinite-base
+maps already raised their current stable `TypeError` diagnostics once the
+obsolete blank-line expectations were removed.
+
+The remaining string-input check exposed a real validation gap.  Although the
+constructor documents a ring-morphism input and its doctest expected
+`TypeError: input must be a ring morphism`, initialization immediately called
+`.domain()` and leaked an `AttributeError`.  The accumulated WASI patch now
+requires a `RingHomomorphism` before reading its domain or codomain.  All four
+obsolete guards are removed, the valid construction is positive coverage, and
+the three invalid inputs exercise stable user-facing diagnostics.
+
+Replays under runner version 127 record:
+
+```text
+forced valid row before:              0 passed, 1 failed, 0 skipped (unexpected success)
+focused constructor controls before: 11 passed, 1 failed, 0 skipped (string AttributeError)
+focused constructor controls final:  12 passed, 0 failed, 0 skipped
+shared promoted row final:             1 passed, 0 failed, 0 skipped
+reconstructed promoted row final:      1 passed, 0 failed, 0 skipped
+```
+
+The SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-permutation-group-conversion/`; the
+directory name reflects the optional GAP-backed candidate that was discarded
+before this dependency-light cluster was selected.  Every final database
+passes `PRAGMA integrity_check` and has empty block-failure and file-error
+cluster queries.  Applying the complete accumulated patch exactly once to
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds,
+a second forward application is rejected, and the reconstructed Drinfeld
+source is byte-identical to the tested staged source.
+
+A complete-module replay reaches the established independent NTL dynamic-link
+boundary at `DrinfeldModules.A_field:363`, where
+`ZZ_pContext::restore()` is unavailable, before doctest discovery runs the
+changed class-level rows.  The retained SQLite file error is classified as
+`wasm_link_error`; the focused fixture exercises all setup, accepted, and
+rejected constructor paths without crossing that backend boundary.  This is a
+pure-Python resource change and requires no Cython or native WASM rebuild.
+Focused shared/reconstructed replays, Python compilation, SQLite integrity and
+empty-cluster checks, clean source reconstruction and comparison, patch
+idempotence, preserved-manifest validation (545 side modules and 691 required
+resources), JavaScript and shell syntax checks, and `git diff --check` pass.
+The next pass can continue with another bounded upstream-deferred semantic
+contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
