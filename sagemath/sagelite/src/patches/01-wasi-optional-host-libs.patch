@@ -26653,3 +26653,17 @@ diff --git a/src/sage/combinat/tableau.py b/src/sage/combinat/tableau.py
 @@ -7355 +7355 @@
 -        sage: RowStandardTableaux(40).cardinality()  # not tested, too long
 +        sage: RowStandardTableaux(40).cardinality()
+
+diff --git a/src/sage/rings/padics/padic_base_leaves.py b/src/sage/rings/padics/padic_base_leaves.py
+--- a/src/sage/rings/padics/padic_base_leaves.py
++++ b/src/sage/rings/padics/padic_base_leaves.py
+@@ -1118 +1118 @@
+-            sage: K.random_element()   # not tested, known bug (see :issue:`32126`)
++            sage: K.random_element()   # random
+
+diff --git a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/padics/padic_lattice_element.py
+--- a/src/sage/rings/padics/padic_lattice_element.py
++++ b/src/sage/rings/padics/padic_lattice_element.py
+@@ -197 +197 @@
+-            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :issue:`32126`)
++            sage: K.random_element()._is_base_elt(7)

@@ -55039,6 +55039,52 @@ checks, clean source reconstruction and comparison, clean build-tree restore,
 and `git diff --check` pass.  The next pass can continue with another bounded
 upstream-deferred semantic contract or persisted backend/runtime cluster.
 
+P-adic lattice random-element promotion pass on 2026-07-19 UTC:
+
+The two historical issue-32126 guards around lattice-precision random elements
+were stale.  `QpLC(2).random_element()` now constructs a valid element; its
+forced replay failed only because the random expansion was compared with the
+single sample printed in the documentation.  The accumulated WASI patch now
+uses Sage's ordinary `# random` contract so the constructor runs while its
+nondeterministic output is accepted.  The adjacent deterministic
+`K.random_element()._is_base_elt(7)` assertion passes outright, so its obsolete
+combined `# not tested, known bug` marker is removed.
+
+Replays under runner version 127 record:
+
+```text
+forced default random row before:       0 passed, 1 failed,  0 skipped (sample-output mismatch)
+default random row final, 3 processes:  1 passed, 0 failed,  0 skipped each
+forced base-element row before:         1 passed, 0 failed,  0 skipped
+base-element row final, 3 processes:    1 passed, 0 failed,  0 skipped each
+shared base-leaves module final:      208 passed, 0 failed, 56 skipped
+reconstructed base-leaves final:      208 passed, 0 failed, 56 skipped
+reconstructed base-element row final:   1 passed, 0 failed,  0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-padic-random/`.  Every retained database
+passes `PRAGMA integrity_check`; the promoted focused rows and both complete
+base-leaves databases have zero block failures and zero file errors.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and both reconstructed p-adic sources are
+byte-identical to the tested staged sources.
+
+The current `dist/wasi-sdk` resource directory was left incomplete by the
+earlier interrupted standalone regeneration, so validation used the preserved
+July 13 Electron bundle (545 side modules and 691 required-resource hashes).
+That bundle validates and exercises both changed rows, but predates a separate
+p-adic factory fix: a combined complete-module replay reaches the already-known
+`loads(dumps(a))` name/print-name mismatch in `padic_lattice_element.py:167`.
+The focused reconstructed lattice row is clean, and the complete base-leaves
+module is unaffected.  This is doctest-metadata-only work and requires no
+Cython or native WASM rebuild.  Repeated isolated and reconstructed replays,
+Python compilation, SQLite integrity and empty-cluster checks, clean source
+reconstruction and comparison, preserved-manifest validation, and
+`git diff --check` pass.  The next pass can continue with another bounded
+upstream-deferred semantic contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
