@@ -180,6 +180,7 @@ from .types cimport (
     GEN,
     set_gel,
     t_COL,
+    t_FRAC,
     t_INT,
     t_MAT,
     t_POL,
@@ -796,6 +797,22 @@ def _raise_polmod_integer_error(str text):
     raise TypeError(f"Unable to coerce PARI {value} to an Integer")
 
 
+def _exact_rational_parts(value):
+    """Return integer numerator/denominator parts for rational-like values."""
+    numerator = getattr(value, "numerator", None)
+    denominator = getattr(value, "denominator", None)
+    if numerator is None or denominator is None:
+        return None
+    if callable(numerator):
+        numerator = numerator()
+    if callable(denominator):
+        denominator = denominator()
+    try:
+        return int(numerator), int(denominator)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
 cpdef str eval_string(str expression):
     cdef bytes encoded = expression.encode("ascii")
     cdef char *output = NULL
@@ -846,6 +863,12 @@ cdef class Gen(Gen_base):
             self.g = NULL
 
     def __getattr__(self, _name):
+        if _name == "_rational_":
+            # Sage checks for this optional conversion hook before its
+            # dedicated cypari2 Gen converter.  Do not claim a hook that this
+            # focused runtime does not implement; allowing AttributeError here
+            # lets Sage use set_rational_from_gen as intended.
+            raise AttributeError(_name)
         return _missing_runtime
 
     def __repr__(self):
@@ -984,6 +1007,11 @@ cdef class Gen(Gen_base):
         if self.g == NULL:
             raise TypeError("empty PARI object has no type")
         return cowasm_cypari2_gen_type_name(self.g).decode("ascii")
+
+    def simplify(self):
+        if self.g != NULL and typ(self.g) in (t_INT, t_FRAC):
+            return self
+        return _missing_runtime()
 
     def lift(self):
         cdef GEN result = NULL
@@ -1155,6 +1183,7 @@ cpdef Gen objtogen(s):
     cdef long errnum = 0
     cdef str text
     cdef list converted
+    cdef object rational_parts
 
     if isinstance(s, Gen):
         return <Gen>s
@@ -1162,6 +1191,16 @@ cpdef Gen objtogen(s):
     if isinstance(s, (list, tuple)):
         converted = [objtogen(x) for x in s]
         return list_of_Gens_to_Gen(converted)
+
+    rational_parts = _exact_rational_parts(s)
+    if rational_parts is not None:
+        text = f"{rational_parts[0]}/{rational_parts[1]}"
+        encoded = text.encode("ascii")
+        if not cowasm_cypari2_gen_clone_expression(
+            <const char *>encoded, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
 
     text = str(s)
     encoded = text.encode("ascii")
@@ -1712,6 +1751,7 @@ PYTHONPATH="$py_cython:$cysignals_wasi_sdk" python3 -m cython -3 \
 
 PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import cypari2
+from fractions import Fraction
 from cypari2 import _pari_cython_probe as pari_cython_probe
 from cypari2 import _pari_runtime_probe as pari_probe
 from cypari2.gen import Gen, Gen_base, objtogen
@@ -1758,6 +1798,11 @@ assert pari.default("debug") == 0
 pari.default("debug", old_debug)
 assert pari.get_debug_level() == old_debug
 assert str(pari("2+3")) == "5"
+rational = pari(Fraction(-2, 3))
+assert str(rational) == "-2/3"
+assert rational.type() == "t_FRAC"
+assert rational.simplify() is rational
+assert not hasattr(rational, "_rational_")
 assert int(pari("-3.0")) == -3
 try:
     int(pari("-3.5"))

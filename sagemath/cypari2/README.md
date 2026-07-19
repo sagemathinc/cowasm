@@ -18,6 +18,9 @@ runtime slice backed by the private Cython PARI probe. The focused `Gen`
 runtime also exposes the PARI integer operations needed by Sagelite's current
 pure-integer doctest slice, including factorization, `nextprime`, `znorder`,
 `ispseudoprime`, `isprimepower`, and `ispseudoprimepower`.
+Exact rational-like Python and Sage values can also cross the focused
+`objtogen` boundary, and Sage's dedicated PARI-to-rational converter remains
+discoverable when converting a `Gen` back to `QQ`.
 
 The standalone target now also builds private
 `cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules

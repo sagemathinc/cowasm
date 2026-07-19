@@ -1497,10 +1497,13 @@ assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]
 print('sagelite-node-ok Sage PARI factorization boundary')"
 
 run_node_import "Sage PARI rational converter boundary" "from sage.all import QQ
+from sage.libs.pari import pari
 from sage.libs.pari.convert_sage import new_gen_from_rational
 q = QQ(1) / QQ(7)
 g = new_gen_from_rational(q)
 assert str(g) == '1/7'
+assert str(pari(q)) == '1/7'
+assert QQ(pari(q)) == q
 print('sagelite-node-ok Sage PARI rational converter boundary')"
 
 : >"$followups_file"

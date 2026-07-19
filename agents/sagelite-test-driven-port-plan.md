@@ -55846,6 +55846,55 @@ manifest validation, and `git diff --check` pass.  The next pass can continue
 with the explicit cypari2 object-model boundary or another persisted
 backend/runtime cluster.
 
+Focused cypari2 exact-rational boundary pass on 2026-07-19 UTC:
+
+The remaining rational rows in `sage/libs/pari/convert_gmp.pyx` exposed two
+related gaps in CoWasm's focused cypari2 object model.  `objtogen` accepted
+integers and strings but rejected Sage and Python exact-rational values, so
+four direct rational construction rows failed and their equality-of-hashes
+check cascaded through missing state.  In the reverse direction,
+`Gen.__getattr__` claimed that the unimplemented Sage `_rational_` conversion
+hook existed.  That diverted `QQ(Gen)` away from Sage's already available
+`set_rational_from_gen` converter; once that false hook was removed, the
+converter exposed the narrower missing identity operation `Gen.simplify()`.
+
+The focused runtime now recognizes rational-like objects through integral
+numerator and denominator parts and constructs an owned PARI fraction.
+`Gen.__getattr__` raises `AttributeError` for the absent `_rational_` hook so
+Sage selects its dedicated PARI converter, and `Gen.simplify()` returns the
+same object only for exact PARI integers and fractions.  Other unsupported
+conversion and method paths continue to fail closed.  The stale
+`sage.libs.pari` tags are removed from the now-supported rational converter
+rows, and both package and Sagelite smokes cover Python `Fraction`, Sage `QQ`,
+PARI type selection, and the round trip back to `QQ`.
+
+Replays under runner version 127 record:
+
+```text
+convert_gmp.pyx before:       10 passed, 5 failed, 1 skipped
+convert_gmp.pyx final:        15 passed, 0 failed, 1 skipped
+QQ(PARI rational) before:      0 passed, 1 failed, 0 skipped
+QQ(PARI rational) final:       1 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and rebuilt resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-cypari2-rational/`.  Both final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+clusters.  The copy-on-write Electron manifest validates with 545 side
+modules and 691 required-resource hashes.
+
+This changes the generated Cython/native cypari2 side module but does not
+require a Sagelite Cython rebuild.  The complete cypari2 standalone build and
+smoke pass against the established bundled Python runtime.  Applying the
+complete accumulated Sagelite patch once to a fresh archive of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, a second forward
+application is rejected, and the reconstructed `convert_gmp.pyx` is
+byte-identical to the tested source.  Package smoke, focused and complete
+converter replays, reverse conversion, SQLite integrity and empty-cluster
+checks, clean source reconstruction and comparison, manifest validation,
+shell syntax checks, and `git diff --check` pass.  The next pass can continue
+with another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
