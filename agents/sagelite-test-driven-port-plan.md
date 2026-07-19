@@ -54689,6 +54689,48 @@ source comparison, and `git diff --check` pass.  The next pass can continue
 with another bounded upstream-deferred semantic contract or a persisted
 backend/runtime cluster.
 
+CPython static-type dictionary diagnostic pass on 2026-07-19 UTC:
+
+The deferred `getattr_debug(list, "reverse")` row in
+`sage/cpython/debug.pyx` exposed a Python 3.12+ compatibility bug in the
+diagnostic helper.  `_PyObject_GetDictPtr()` no longer exposes a dictionary for
+static builtin type objects, and their public attributes consequently appeared
+to be missing even though ordinary instance and descriptor lookup remained
+healthy.  The forced row failed with `AttributeError: 'type' object has no
+attribute 'reverse'` before reaching its documented result.
+
+The accumulated WASI patch now materializes the public `__dict__` mapping for
+type objects while retaining `_PyObject_GetDictPtr()` for ordinary instances.
+This also avoids reading `PyTypeObject.tp_dict`, which is intentionally null
+for static builtin types on current CPython.  The stale `# not tested` marker
+is removed.  Replays under runner version 126 record:
+
+```text
+forced focused row before:        0 passed, 1 failed, 0 skipped
+promoted focused row final:       1 passed, 0 failed, 0 skipped
+previous curated module:         10 passed, 0 failed, 4 skipped
+shared complete module final:    11 passed, 0 failed, 3 skipped
+reconstructed complete final:    11 passed, 0 failed, 3 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-cpython-type-dict/`.  All four retained
+before/final dashboards pass `PRAGMA integrity_check`, and both complete final
+databases have empty block-failure and file-error cluster queries.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed Cython source is byte-identical to the tested staged source.
+
+The exact Meson `sage.cpython.debug` Cython/C/WASM target compiles
+successfully.  The rebuilt side module was installed in the ignored local
+Electron resource tree for testing, whose manifest validates all 550 side
+modules and 696 required-resource hashes.  Focused and complete
+shared/reconstructed replays, SQLite integrity and cluster checks, clean
+source reconstruction, resource-manifest validation, and `git diff --check`
+pass.  No tracked resource-bundle change is required.  The next pass can
+continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

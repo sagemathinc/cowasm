@@ -7997,11 +7997,40 @@ diff -urN a/src/sage/doctest/__main__.py b/src/sage/doctest/__main__.py
 diff -urN a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
 --- a/src/sage/cpython/debug.pyx
 +++ b/src/sage/cpython/debug.pyx
+@@ -78 +78 @@
+-        sage: _ = getattr_debug(list, "reverse")  # not tested - broken in python 3.12
++        sage: _ = getattr_debug(list, "reverse")
 @@ -109,2 +109,2 @@
 -        sage: from ipywidgets import IntSlider
 -        sage: _ = getattr_debug(IntSlider(), "value")
 +        sage: from ipywidgets import IntSlider                                        # needs ipywidgets
 +        sage: _ = getattr_debug(IntSlider(), "value")                                 # needs ipywidgets
+@@ -147,9 +147,17 @@
+-    cdef PyObject** dictptr = _PyObject_GetDictPtr(obj)
+-    if dictptr is not NULL:
+-        if dictptr[0] is not NULL:
+-            dct = <object>(dictptr[0])
+-            print(f"  object has __dict__ slot ({type(dct)})")
+-        else:
+-            print("  object has uninitialized __dict__ slot")
++    cdef PyObject** dictptr = NULL
++    if isinstance(obj, type):
++        # Static builtin types keep their dictionary in interpreter state on
++        # Python 3.12+, where ``tp_dict`` and ``_PyObject_GetDictPtr()`` do not
++        # expose it.  Materialize the public mapping proxy for diagnostics.
++        dct = dict(obj.__dict__)
++        print(f"  object has __dict__ slot ({type(dct)})")
+     else:
+-        print("  object does not have __dict__ slot")
++        dictptr = _PyObject_GetDictPtr(obj)
++        if dictptr is not NULL:
++            if dictptr[0] is not NULL:
++                dct = <object>(dictptr[0])
++                print(f"  object has __dict__ slot ({type(dct)})")
++            else:
++                print("  object has uninitialized __dict__ slot")
++        else:
++            print("  object does not have __dict__ slot")
 diff -urN a/src/sage/logic/logic.py b/src/sage/logic/logic.py
 --- a/src/sage/logic/logic.py
 +++ b/src/sage/logic/logic.py
