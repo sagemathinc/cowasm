@@ -27154,3 +27154,14 @@ diff --git a/src/sage/categories/finite_dimensional_modules_with_basis.py b/src/
 @@ -643,2 +643,0 @@
 -                    Category of commutative additive semigroups
 -                    sage: phi.parent().homset_category()        # not implemented, needs sage.modules
+diff -urN -U0 a/src/sage/combinat/integer_lists/lists.py b/src/sage/combinat/integer_lists/lists.py
+--- a/src/sage/combinat/integer_lists/lists.py
++++ b/src/sage/combinat/integer_lists/lists.py
+@@ -148,3 +148 @@
+-        This is a minimal implementation enabling pickling tests. It
+-        is safe, but one would want the two following objects to be
+-        detected as equal::
++        Equivalent finite ceiling constraints compare by value::
+@@ -155 +153 @@
+-            False
++            True

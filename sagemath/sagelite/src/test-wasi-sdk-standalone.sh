@@ -1136,12 +1136,17 @@ assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
 assert SetPartitions(4).cardinality() == 15
 print('sagelite-node-ok combinatorics cardinality smoke')"
 run_node_import "integer lists smoke" "import sage.all
-from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_lists import Envelope, IntegerListsLex
 L = IntegerListsLex(4, length=3)
 assert L.cardinality() == 15
 assert list(L.first()) == [4, 0, 0]
 assert list(L.last()) == [0, 0, 4]
 assert [list(v) for v in L[:4]] == [[4, 0, 0], [3, 1, 0], [3, 0, 1], [2, 2, 0]]
+f = Envelope([3, 2, 2])
+assert f == Envelope([3, 2, 2])
+assert f == Envelope((3, 2, 2))
+assert f != Envelope([3, 2, 1])
+assert f != Envelope([3, 2, 2], min_part=2)
 print('sagelite-node-ok integer lists smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
@@ -1710,7 +1715,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=163
+electron_manifest_schema_version=164
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1726,6 +1731,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-li
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-q-binomial-python-parent-delivery-v121"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-scalar-extension-map-parent-v122"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-rpp-shape-delivery-v123"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-envelope-delivery-v124"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

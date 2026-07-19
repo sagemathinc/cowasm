@@ -56974,6 +56974,60 @@ SQLite integrity and empty-failure checks, and `git diff --check` pass.  The
 next pass can continue with corpus entries 438--447 or select another persisted
 backend/runtime cluster.
 
+Integer-list envelope delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 438--447 initially recorded 1,270
+passed, two failed, and 58 skipped blocks.  Nine files were clean; both
+failures were the finite-prefix equality rows in
+`sage/combinat/integer_lists/base.pyx`.  The tested accumulated source already
+stored finite envelopes in the value-comparable `_EnvelopeSequence`, but the
+schema-163 package retained an older `base` side module that compared the
+anonymous callables by identity.
+
+Replacing that binary with the byte-identical previously validated coherent
+build closed the direct cluster.  The repaired binary then exposed one coupled
+stale expectation in `sage/combinat/integer_lists/lists.py`: two parents with
+equal finite ceiling constraints now correctly compare equal.  The accumulated
+WASI patch promotes that row from the old desired-but-unimplemented `False`
+result to `True` and describes the value-comparison contract directly.
+
+The standalone and Electron-shaped smokes now require equal list/list and
+list/tuple envelopes while preserving distinct-prefix and distinct-constraint
+controls.  The `base` side module was already mandatory and hashed; the new
+semantic smoke prevents a freshly generated manifest from accepting an older
+binary merely by hashing it.  The manifest schema advances to version 164 and
+its smoke contract to `integer-list-envelope-delivery-v124`.
+
+The retained results record:
+
+```text
+entries 438--447 before:                1270 passed, 2 failed, 58 skipped
+focused base.pyx:510 final:                1 passed, 0 failed,  0 skipped
+complete base.pyx final:                 120 passed, 0 failed,  2 skipped
+intermediate repaired window:           1271 passed, 1 failed, 58 skipped
+focused lists.py:152 final:                1 passed, 0 failed,  0 skipped
+complete lists.py final:                  56 passed, 0 failed,  0 skipped
+entries 438--447 final:                 1272 passed, 0 failed, 58 skipped
+reconstructed affected modules:          176 passed, 0 failed,  2 skipped
+Electron-shaped packaged smoke:         passed, including envelope delivery
+```
+
+The authoritative SQLite dashboards, pinned reconstruction, and manifest-
+validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-integer-list-window/`.  Every retained
+final database passes `PRAGMA integrity_check` and has no failed file or block
+rows.  The resource manifest validates 545 side modules and 705 required-
+resource hashes.
+
+The focused and complete affected-module replays, repaired bounded replay,
+complete Electron-shaped smoke, manifest parity/runtime/forge-resource tests,
+manifest hash validation, exact side-module comparison with the earlier
+validated build, targeted pinned-source reconstruction and idempotence check,
+exact reconstructed-source comparison, accumulated-patch syntax check, shell
+and JavaScript syntax checks, SQLite integrity and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+448--457 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

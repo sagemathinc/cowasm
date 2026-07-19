@@ -994,6 +994,17 @@ assert a.parent() is S
     console.log(
       "sagelite-electron-ok weak reverse plane partition shape smoke",
     );
+    console.log("sagelite-electron-start integer-list envelope delivery smoke");
+    await python.exec(String.raw`
+from sage.combinat.integer_lists import Envelope
+
+f = Envelope([3, 2, 2])
+assert f == Envelope([3, 2, 2])
+assert f == Envelope((3, 2, 2))
+assert f != Envelope([3, 2, 1])
+assert f != Envelope([3, 2, 2], min_part=2)
+`);
+    console.log("sagelite-electron-ok integer-list envelope delivery smoke");
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ
