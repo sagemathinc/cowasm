@@ -54731,6 +54731,47 @@ pass.  No tracked resource-bundle change is required.  The next pass can
 continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+E1-star deterministic TikZ serialization pass on 2026-07-19 UTC:
+
+The historical `# not tested` guards on the exact TikZ output in
+`sage/combinat/e_one_star.py` exposed a deterministic-serialization defect.
+`Patch` stores its faces in a `frozenset`, and `plot_tikz()` emitted that set's
+runtime-dependent iteration order.  A forced replay therefore produced the
+same three colored unit faces as the documentation, but in blue, green, red
+order instead of a stable geometric order.
+
+The accumulated WASI patch now emits faces in their existing canonical
+`Face` order, which sorts first by vector and then by face type.  The three
+complete TikZ output examples use the resulting red, green, blue order and
+run by default instead of being deferred.  Four adjacent `Patch.repaint()`
+setup rows now declare their direct Matplotlib dependency explicitly, keeping
+the feature-enabled module audit honest when Matplotlib is absent from the
+browser bundle.  Replays under runner version 126 record:
+
+```text
+forced basic TikZ row before:       0 passed, 1 failed,  0 skipped
+three promoted TikZ rows final:     3 passed, 0 failed,  0 skipped
+shared complete module final:     356 passed, 0 failed, 17 skipped
+reconstructed complete final:     356 passed, 0 failed, 17 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-e-one-star-tikz/`.  Every retained
+final database passes `PRAGMA integrity_check`, and the complete final
+databases have empty block-failure and file-error cluster queries.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed E1-star source is byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The updated local resource passes the focused and complete
+shared/reconstructed replays, while the Electron manifest still validates all
+550 side modules and 696 required-resource hashes.  Python compilation,
+SQLite integrity and empty-cluster checks, clean source reconstruction,
+source comparison, manifest loading, and `git diff --check` pass.  The next
+pass can continue with another bounded upstream-deferred semantic contract or
+a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

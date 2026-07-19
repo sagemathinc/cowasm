@@ -26338,3 +26338,54 @@ diff --git a/src/sage/combinat/words/word_generators.py b/src/sage/combinat/word
 @@ -337 +337 @@
 -        sage: words.RandomWord(10, 4)    # not tested random
 +        sage: words.RandomWord(10, 4)    # random
+diff --git a/src/sage/combinat/e_one_star.py b/src/sage/combinat/e_one_star.py
+--- a/src/sage/combinat/e_one_star.py
++++ b/src/sage/combinat/e_one_star.py
+@@ -115 +115 @@
+-    sage: P.repaint(cmap='summer')
++    sage: P.repaint(cmap='summer')       # needs matplotlib
+@@ -118 +118 @@
+-    sage: P.repaint(cmap='hsv')
++    sage: P.repaint(cmap='hsv')          # needs matplotlib
+@@ -144 +144 @@
+-    sage: print(s)                    #not tested
++    sage: print(s)
+@@ -147,3 +146,0 @@
+-    \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
+-    \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
+-    (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -152,0 +150,3 @@
++    \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
++    \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
++    (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -1023 +1023 @@
+-            sage: P.repaint()
++            sage: P.repaint()                            # needs matplotlib
+@@ -1167 +1167 @@
+-            sage: P.repaint()
++            sage: P.repaint()                            # needs matplotlib
+@@ -1213 +1213 @@
+-            sage: print(s)       #not tested
++            sage: print(s)
+@@ -1216,3 +1215,0 @@
+-            \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
+-            \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
+-            (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -1221,0 +1219,3 @@
++            \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
++            \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
++            (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -1271 +1271 @@
+-            sage: print(s)   #not tested
++            sage: print(s)
+@@ -1280,3 +1279,0 @@
+-            \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
+-            \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
+-            (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -1285,0 +1283,3 @@
++            \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
++            \fill[fill=facecolor, draw=black, shift={(0,0,0)}]
++            (0, 0, 0) -- (0, 0, 1) -- (1, 0, 1) -- (1, 0, 0) -- cycle;
+@@ -1315 +1315 @@
+-        for f in self:
++        for f in sorted(self):
