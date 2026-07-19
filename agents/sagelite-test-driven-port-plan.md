@@ -56852,7 +56852,7 @@ while `--long` retains the full opt-in coverage.  Replays under runner version
 ```text
 entries 388--397:                 808 passed, 0 failed, 282 skipped
 entries 398--407 before:          698 passed, 1 failed, 783 skipped
-focused aggregate with --long:      1 passed, 0 failed,   0 skipped
+focused aggregate pre-tag:          1 passed, 0 failed,   0 skipped
 focused aggregate default final:    0 passed, 0 failed,   1 skipped
 complete root_space.py final:      52 passed, 0 failed,  36 skipped
 entries 398--407 final:           750 passed, 0 failed, 819 skipped
@@ -56870,7 +56870,7 @@ application is rejected, and the reconstructed source is byte-identical to
 the tested build source.
 
 This is source-level doctest metadata and requires no native rebuild or
-Electron resource change.  Focused default and long-profile replays, complete
+Electron resource change.  Focused pre-tag and default replays, complete
 module and repaired bounded replays, SQLite integrity and empty-failure checks,
 targeted clean-source reconstruction and comparison, patch syntax and
 idempotence checks, and `git diff --check` pass.  The next pass can continue
