@@ -56476,6 +56476,38 @@ comparison, shell and JavaScript syntax checks, SQLite integrity and
 empty-cluster checks, and `git diff --check` pass.  The next pass can continue
 with corpus entries 128--137 or another persisted backend/runtime cluster.
 
+Lie and Lie-conformal clean-frontier checkpoint on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+157.  Entries 128--137 covered finite GCA, group algebra, four Steenrod
+modules, and four ordinary Lie-algebra modules.  Entries 138--147 finished the
+ordinary Lie-algebra group and entered Lie conformal algebras.  Entries
+148--157 completed the current Lie-conformal group and crossed the next
+runtime boundary with `sage/cpython/atexit.pyx`.
+
+All 30 files pass against the latest coherent packaged resource snapshot; no
+runtime, source, or delivery correction is needed for this slice.  In
+particular, the large Steenrod algebra replay records 603 passes with its 104
+dependency/deferred rows classified as skips, and the CPython `atexit` module
+records all 19 runnable examples as passes.
+
+The retained results record:
+
+```text
+entries 128--137: 1261 passed, 0 failed, 195 skipped
+entries 138--147:  304 passed, 0 failed,  55 skipped
+entries 148--157:  100 passed, 0 failed,  55 skipped
+combined:         1665 passed, 0 failed, 305 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-19-lie-window/`.  All three runs finish in
+`passed` state, pass `PRAGMA integrity_check`, have no failed file rows, and
+produce empty block- and file-failure cluster queries.  Because this is a
+clean-frontier measurement rather than a behavior change, validation requires
+no native rebuild or Electron smoke rerun.  The next pass can continue with
+corpus entries 158--167 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
