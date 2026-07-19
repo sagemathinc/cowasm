@@ -56928,6 +56928,52 @@ SQLite integrity and empty-cluster checks, and `git diff --check` pass.  The
 next pass can continue with corpus entries 428--437 or select another persisted
 backend/runtime cluster.
 
+Weak reverse plane partition shape delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 428--437 initially recorded 520 passed,
+12 failed, and 66 skipped blocks.  Nine files were clean; all failures were in
+`sage/combinat/hillman_grassl.py`.  The first fixed-shape constructor raised
+`NotImplementedError: shape cannot be specified`, and the remaining rows were
+the same constructor failure or dependent missing-name failures.
+
+Fixed-shape weak reverse plane partitions were already implemented in the
+complete accumulated WASI source patch, including canonical list/tuple
+parents, representation, membership, and element construction.  The packaged
+resource snapshot still contained the older pure-Python module that rejected
+every shape.  Staging the byte-identical accumulated-source
+`hillman_grassl.py` closes the cluster without a native rebuild.
+
+The standalone and Electron-shaped smokes now require canonical fixed-shape
+parent identity, representation, membership, and element-parent preservation.
+The module is newly mandatory and hashed in the Electron resource manifest.
+The manifest schema advances to version 163 and its smoke contract to
+`weak-rpp-shape-delivery-v123`.
+
+The retained results record:
+
+```text
+entries 428--437 before:             520 passed, 12 failed, 66 skipped
+focused hillman_grassl.py:427 final:   1 passed,  0 failed,  0 skipped
+complete hillman_grassl.py final:     111 passed,  0 failed,  0 skipped
+entries 428--437 final:               532 passed,  0 failed, 66 skipped
+Electron-shaped packaged smoke:      passed, including fixed-shape WRPP delivery
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-next-combinat-window/`.  All three
+retained final databases pass `PRAGMA integrity_check` and have no failed file
+or block rows.  The resource manifest validates 545 side modules and 705
+required-resource hashes.
+
+The focused line replay, complete affected-module replay, repaired bounded
+replay, complete Electron-shaped smoke, manifest parity/runtime/forge-resource
+tests, manifest hash validation, accumulated-patch syntax check, exact staged-
+source comparison, Python compilation, shell and JavaScript syntax checks,
+SQLite integrity and empty-failure checks, and `git diff --check` pass.  The
+next pass can continue with corpus entries 438--447 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

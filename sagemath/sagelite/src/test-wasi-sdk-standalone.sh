@@ -1385,6 +1385,16 @@ r = q_binomial(3, 2, 1)
 assert r == 3
 assert type(r) is int
 print('sagelite-node-ok q-binomial Python parent delivery smoke')"
+run_node_import "weak reverse plane partition shape smoke" "from sage.combinat.hillman_grassl import WeakReversePlanePartitions
+S = WeakReversePlanePartitions([3, 1])
+assert S is WeakReversePlanePartitions((3, 1))
+assert str(S) == 'Weak Reverse Plane Partitions of shape [3, 1]'
+assert [[0, 1, 2], [1]] in S
+assert [[0, 1], [1]] not in S
+a = S.an_element()
+assert repr(a) == '[[0, 0, 0], [0]]'
+assert a.parent() is S
+print('sagelite-node-ok weak reverse plane partition shape smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1700,7 +1710,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=162
+electron_manifest_schema_version=163
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1715,6 +1725,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2x-d
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-linear-group-delivery-v120"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-q-binomial-python-parent-delivery-v121"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-scalar-extension-map-parent-v122"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-rpp-shape-delivery-v123"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1953,6 +1964,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/composition.py"
   "site-packages/sage/combinat/composition_signed.py"
   "site-packages/sage/combinat/derangements.py"
+  "site-packages/sage/combinat/hillman_grassl.py"
   "site-packages/sage/combinat/integer_lists/__init__.py"
   "site-packages/sage/combinat/integer_lists/base.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/integer_lists/invlex.cpython-314-wasm32-wasi.so"

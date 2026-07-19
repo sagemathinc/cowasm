@@ -976,6 +976,24 @@ assert type(r) is int
     console.log(
       "sagelite-electron-ok q-binomial Python parent delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start weak reverse plane partition shape smoke",
+    );
+    await python.exec(String.raw`
+from sage.combinat.hillman_grassl import WeakReversePlanePartitions
+
+S = WeakReversePlanePartitions([3, 1])
+assert S is WeakReversePlanePartitions((3, 1))
+assert str(S) == 'Weak Reverse Plane Partitions of shape [3, 1]'
+assert [[0, 1, 2], [1]] in S
+assert [[0, 1], [1]] not in S
+a = S.an_element()
+assert repr(a) == '[[0, 0, 0], [0]]'
+assert a.parent() is S
+`);
+    console.log(
+      "sagelite-electron-ok weak reverse plane partition shape smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ
