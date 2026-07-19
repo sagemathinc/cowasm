@@ -25948,3 +25948,28 @@ diff --git a/src/sage/combinat/words/morphism.py b/src/sage/combinat/words/morph
 +            image = self(letter)
 +            if not image.is_empty() and self(image) == image:
 +                return image
+diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/finite_word.py
+--- a/src/sage/combinat/words/finite_word.py
++++ b/src/sage/combinat/words/finite_word.py
+@@ -374,9 +374,2 @@
+-        Both words must be defined over the same alphabet::
+-
+-            sage: z = Word('12223', alphabet = '123')
+-            sage: z + y
+-            Traceback (most recent call last):
+-            ...
+-            ValueError: 5 not in alphabet
+-
+-        Eventually, it should work::
++        Words over incompatible alphabets are concatenated in a generic
++        word parent::
+@@ -385 +378 @@
+-            sage: z + y                   #todo: not implemented
++            sage: z + y
+@@ -425 +425,5 @@
+-        return parent(f, length=length, datatype='callable', caching=True)
++        try:
++            return parent(f, length=length, datatype='callable', caching=True)
++        except ValueError:
++            from sage.combinat.words.word import Word
++            return Word(list(self) + list(other))

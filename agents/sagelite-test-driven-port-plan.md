@@ -54116,6 +54116,50 @@ pre-existing changes in `/home/user/sagelite` were left untouched.  The next
 pass should continue with another bounded upstream-deferred semantic contract
 or a persisted backend/runtime cluster.
 
+Cross-alphabet finite-word concatenation implementation pass on 2026-07-19 UTC:
+
+The upstream-deferred `Word('12223', alphabet='123') + Word([5,3,5,8,7])`
+row in `sage/combinat/words/finite_word.py` exposed a narrow parent-selection
+gap.  Finite-word concatenation always reconstructed the result in the left
+word's parent, so a symbol outside that parent's explicit alphabet raised
+`ValueError` even though the documented generic result is well-defined.
+
+The accumulated WASI patch now retains the existing callable fast path and
+parent for compatible alphabets.  If finite reconstruction fails alphabet
+validation, it materializes the two finite inputs and lets the generic `Word`
+factory select a parent for their combined symbols.  The contradictory
+neighboring exception example and obsolete `# todo: not implemented` marker
+are replaced by one positive cross-alphabet contract.
+
+The initial source-line audit recorded a setup `NameError` because the line
+filter cannot recover `y` across the earlier output-producing prompts.  A
+stateful fixture covers the promoted result, its mixed string/integer symbol
+sequence, preservation of the inputs, compatible-parent preservation, and
+the existing empty-word behavior.  Replays under runner version 125 record:
+
+```text
+focused concatenation contracts final: 12 passed,   0 failed,  0 skipped
+shared complete module final:        1265 passed, 0 failed, 50 skipped
+reconstructed complete final:        1265 passed, 0 failed, 50 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-word-cross-alphabet/`.  Every
+retained final database passes `PRAGMA integrity_check`, and the saved final
+block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects; the
+reconstructed, staged, and ignored Electron resource modules are
+byte-identical.  Python compilation, focused and complete shared/reconstructed
+replays, SQLite integrity and cluster checks, clean source reconstruction, and
+`git diff --check` pass.  Testing the pure-Python implementation required
+refreshing the ignored local Electron resource module but no native WASM
+rebuild or tracked resource-bundle change.  The pre-existing changes in
+`/home/user/sagelite` were left untouched.  The next pass should continue with
+another bounded upstream-deferred semantic contract or a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
