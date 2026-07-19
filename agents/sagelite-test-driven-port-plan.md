@@ -56610,6 +56610,35 @@ measurement rather than a behavior change, validation requires no native
 rebuild or Electron smoke rerun.  The next pass can continue with corpus
 entries 228--237 or select another persisted backend/runtime cluster.
 
+Extended feature-detection clean-frontier checkpoint on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+257.  Entries 228--237 covered joined features and optional Kenzo, Khoca,
+LaTeX, LattE, LCalc, LRS, MCQD, MeatAxe, and Meson probes.  Entries 238--247
+covered mixed-integer backends and optional algebra, geometry, document, and
+graph tooling through planarity.  Entries 248--257 covered the remaining
+polymake, package-system, SAT, SageMath-component, Singular, Sirocco, and
+Sloane database probes in that slice.
+
+All 30 files pass against the latest coherent packaged resource snapshot; no
+runtime, source, or delivery correction is needed for this slice.  The
+retained results record:
+
+```text
+entries 228--237:  93 passed, 0 failed, 29 skipped
+entries 238--247:  39 passed, 0 failed, 15 skipped
+entries 248--257: 178 passed, 0 failed, 95 skipped
+combined:         310 passed, 0 failed, 139 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-19-next-features-window/`.  All three runs
+finish in `passed` state, pass `PRAGMA integrity_check`, have no failed file
+rows, and have no failed block rows.  Because this is a clean-frontier
+measurement rather than a behavior change, validation requires no native
+rebuild or Electron smoke rerun.  The next pass can continue with corpus
+entries 258--267 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
