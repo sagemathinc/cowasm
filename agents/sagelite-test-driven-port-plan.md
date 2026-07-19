@@ -53928,6 +53928,50 @@ WASM or resource-bundle rebuild.  The next pass should continue with another
 bounded upstream-deferred semantic contract or a persisted backend/runtime
 cluster.
 
+Cyclic-permutation parent protocol implementation pass on 2026-07-19 UTC:
+
+The upstream deferred `TestSuite(CyclicPermutations([1,2,3,3]))` row in
+`sage/combinat/permutation.py` exposed three related parent-protocol defects.
+Iteration correctly produced the three cyclic classes, but inherited
+multiset-permutation behavior reported cardinality 12, reconstructed raw tuple
+elements as `ClonableArray` objects, and used the twelve-element lexicographic
+rank/unrank implementation.  The forced suite initially reported the
+cardinality and element-construction failures; fixing those exposed the same
+root cause in the inherited rank implementation.
+
+The accumulated WASI patch now preserves the class's public tuple-valued API
+while validating construction through a class-local call path, obtains exact
+cardinality from the existing fixed-content necklace parent, and ranks and
+unranks against the cyclic iterator.  The obsolete `# not tested -- broken`
+marker is removed.  New default contracts cover suite completion,
+cardinality/list agreement, element reconstruction, complete rank/unrank
+agreement, invalid input, repeated values, and the empty parent.
+
+Replays under runner version 125 record:
+
+```text
+forced deferred suite before:      0 passed, 1 failed,   0 skipped
+focused protocol contracts final: 9 passed, 0 failed,   0 skipped
+shared complete module final:   1024 passed, 0 failed, 315 skipped
+reconstructed complete final:   1024 passed, 0 failed, 315 skipped
+```
+
+The authoritative final SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-cyclic-permutations/`.  Every
+retained final database passes `PRAGMA integrity_check`, and the saved final
+block-failure and file-error queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Python
+compilation, focused and complete shared/reconstructed replays, the resource
+manifest's hashes, clean source reconstruction, SQLite integrity checks, and
+`git diff --check` pass.  The pure-Python implementation required refreshing
+the ignored local Electron resource module and hash for testing but no native
+WASM rebuild or tracked resource-bundle change.  The next pass should continue
+with another bounded upstream-deferred semantic contract or a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

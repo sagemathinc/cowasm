@@ -25809,3 +25809,71 @@ diff -urN -U0 a/src/sage/combinat/crystals/letters.pyx b/src/sage/combinat/cryst
 @@ -350 +350 @@
 -        sage: l11 == l21 # not tested
 +        sage: l11 == l21
+diff -urN -U0 a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation.py
+--- a/src/sage/combinat/permutation.py
++++ b/src/sage/combinat/permutation.py
+@@ -9369 +9369,7 @@
+-            sage: TestSuite(CP).run() # not tested -- broken
++            sage: TestSuite(CP).run()
++            sage: CP.cardinality() == len(CP.list())
++            True
++            sage: CP(CP.an_element()) == CP.an_element()
++            True
++            sage: all(CP.rank(CP.unrank(i)) == i for i in range(CP.cardinality()))
++            True
+@@ -9372,0 +9379,22 @@
++    def __call__(self, x):
++        return self._element_constructor_(x)
++
++    def _element_constructor_(self, x):
++        """
++        Construct a cyclic permutation from ``x``.
++
++        EXAMPLES::
++
++            sage: C = CyclicPermutations([1, 2, 2])
++            sage: C((1, 2, 2))
++            (1, 2, 2)
++            sage: C((1, 2))
++            Traceback (most recent call last):
++            ...
++            ValueError: invalid cyclic permutation
++        """
++        x = tuple(x)
++        if x not in self:
++            raise ValueError("invalid cyclic permutation")
++        return x
++
+@@ -9410,0 +9439,32 @@
++
++    def cardinality(self):
++        """
++        Return the number of cyclic permutations of ``self.mset``.
++
++        EXAMPLES::
++
++            sage: CyclicPermutations([1, 2, 3, 3]).cardinality()
++            3
++            sage: CyclicPermutations([1, 1, 1]).cardinality()
++            1
++            sage: CyclicPermutations([]).cardinality()
++            0
++        """
++        content = [0] * len(self.mset)
++        for i in map(self.mset.index, self.mset):
++            content[i] += 1
++
++        from .necklace import Necklaces
++        return Necklaces(content).cardinality()
++
++    def rank(self, x):
++        """
++        Return the rank of ``x`` in the cyclic-permutation enumeration.
++        """
++        return self._rank_from_iterator(tuple(x))
++
++    def unrank(self, r):
++        """
++        Return the cyclic permutation having rank ``r``.
++        """
++        return self._unrank_from_iterator(r)
