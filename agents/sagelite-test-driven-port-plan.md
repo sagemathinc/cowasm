@@ -54611,6 +54611,47 @@ clean source reconstruction, source comparison, shell syntax, and
 were left untouched.  The next pass can return to another bounded
 upstream-deferred semantic contract or persisted backend/runtime cluster.
 
+Exterior-algebra differential canonical-pickling pass on 2026-07-19 UTC:
+
+The upstream-deferred `TestSuite(d)` row in
+`sage/algebras/clifford_algebra.py` exposed a focused serialization gap.
+Exterior-algebra boundaries and coboundaries are unique representations, but
+their inherited morphism pickle reconstructed the Python object directly and
+bypassed the parent algebra's canonical `boundary()` or `coboundary()`
+constructor.  The round trip therefore produced a distinct morphism and the
+generic pickling test failed equality even though its mathematical data and
+representation were unchanged.
+
+The accumulated WASI patch now gives exterior-algebra differentials explicit
+pickling data.  A module-level reconstruction helper routes unpickling through
+the appropriate parent constructor with the stored structure coefficients, so
+both boundary and coboundary objects return to their canonical cached instance.
+The obsolete pickling-test exclusion and coboundary `# known bug` marker are
+removed, and direct identity checks cover both variants.  Replays under runner
+version 126 record:
+
+```text
+forced coboundary TestSuite before:       0 passed, 1 failed,  0 skipped
+shared complete Clifford module final: 571 passed, 0 failed, 61 skipped
+reconstructed complete module final:   571 passed, 0 failed, 61 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-clifford-pickle/`.  Every retained
+database passes `PRAGMA integrity_check`, and both final databases have zero
+block failures and zero file errors.  Applying the complete accumulated patch
+exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed Clifford module is byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The updated local resource module passes the complete shared and
+reconstructed doctest replays, and the Electron manifest still validates all
+550 side modules and 696 required-resource hashes.  Python compilation, SQLite
+integrity, clean source reconstruction, source comparison, and
+`git diff --check` pass.  The next pass can continue with another bounded
+upstream-deferred semantic contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

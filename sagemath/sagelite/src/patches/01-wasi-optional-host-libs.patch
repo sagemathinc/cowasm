@@ -25259,12 +25259,54 @@ diff --git a/src/sage/homology/chain_complex.py b/src/sage/homology/chain_comple
 diff --git a/src/sage/algebras/clifford_algebra.py b/src/sage/algebras/clifford_algebra.py
 --- a/src/sage/algebras/clifford_algebra.py
 +++ b/src/sage/algebras/clifford_algebra.py
+@@ -2054,0 +2055,10 @@
++def _unpickle_exterior_algebra_differential(E, kind, s_coeff):
++    """
++    Reconstruct an exterior-algebra differential through its parent.
++
++    This keeps pickling on the same canonical construction path as
++    :meth:`ExteriorAlgebra.boundary` and :meth:`ExteriorAlgebra.coboundary`.
++    """
++    return getattr(E, kind)(dict(s_coeff))
++
++
+@@ -2133,2 +2143 @@
+-        We skip the pickling test as there is an infinite recursion when
+-        doing equality checks::
++        The differential reconstructs canonically when pickled::
+@@ -2136 +2145,3 @@
+-            sage: TestSuite(par).run(skip='_test_pickling')
++            sage: TestSuite(par).run()
++            sage: loads(dumps(par)) is par
++            True
+@@ -2158,0 +2170,18 @@
++    def __reduce__(self):
++        """
++        Return the canonical pickling data for ``self``.
++
++        EXAMPLES::
++
++            sage: E.<x,y,z> = ExteriorAlgebra(QQ)
++            sage: d = E.coboundary({(0,1): z, (1,2): x, (2,0): y})
++            sage: loads(dumps(d)) is d
++            True
++            sage: b = E.boundary({(0,1): z, (1,2): x, (2,0): y})
++            sage: loads(dumps(b)) is b
++            True
++        """
++        kind = self._repr_type().lower()
++        return (_unpickle_exterior_algebra_differential,
++                (self.domain(), kind, dict(self._s_coeff)))
++
 @@ -2288 +2288 @@
 -        sage: C.homology()  # known bug
 +        sage: C.homology()
 @@ -2531 +2531 @@
 -        sage: C.homology()  # known bug
 +        sage: C.homology()
+@@ -2546 +2575 @@
+-            sage: TestSuite(d).run() # known bug - morphisms are properly in a category
++            sage: TestSuite(d).run()
 diff --git a/src/sage/graphs/matching_covered_graph.py b/src/sage/graphs/matching_covered_graph.py
 --- a/src/sage/graphs/matching_covered_graph.py
 +++ b/src/sage/graphs/matching_covered_graph.py
