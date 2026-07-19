@@ -26093,3 +26093,15 @@ diff --git a/src/sage/combinat/hillman_grassl.py b/src/sage/combinat/hillman_gra
 +            [[0, 0, 0], [0]]
 +        """
 +        return self.element_class(self, [[0] * length for length in self.shape])
+diff --git a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
+--- a/src/sage/misc/lazy_attribute.pyx
++++ b/src/sage/misc/lazy_attribute.pyx
+@@ -433 +433 @@
+-        sage: hasattr(B(), "unimplemented_A") # todo: not implemented
++        sage: hasattr(B(), "unimplemented_A")
+@@ -440 +440 @@
+-            sage: B().unimplemented_A # todo: not implemented
++            sage: B().unimplemented_A
+@@ -474 +474 @@
+-        sage: C().unimplemented_B_implemented_A # todo: not implemented
++        sage: C().unimplemented_B_implemented_A

@@ -54288,6 +54288,45 @@ changes in `/home/user/sagelite` were left untouched.  The next pass should
 continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Lazy-attribute inheritance metadata promotion pass on 2026-07-19 UTC:
+
+Three upstream-deferred rows in `sage/misc/lazy_attribute.pyx` were stale.
+The descriptor's inheritance fallback already makes
+`hasattr(B(), "unimplemented_A")` return `False`, raises the documented
+`AttributeError` for a direct unsupported lookup, and resolves
+`C().unimplemented_B_implemented_A` through the implemented base descriptor.
+The accumulated WASI patch now removes only those three obsolete
+`# todo: not implemented` markers and promotes the assertions to default
+coverage.
+
+A complete forced audit was necessary because earlier source-line probes lost
+the locally defined `A`, `B`, and `C` classes.  It also kept the remaining
+deferred boundary precise: the existence-only `hasattr` examples compute and
+cache their values, changing the output of the following prompts, while the
+two Sage introspection-syntax examples are not accepted by the Node doctest
+frontend.  Those five genuine limitations remain deferred.
+
+Complete-module replays under runner version 125 record:
+
+```text
+forced complete module before:     98 passed, 6 failed, 4 skipped
+shared complete module final:      99 passed, 0 failed, 9 skipped
+reconstructed complete final:      99 passed, 0 failed, 9 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-lazy-attribute/`.  Every retained final
+database passes `PRAGMA integrity_check`, and the saved final block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Complete shared/reconstructed replays, SQLite integrity and cluster
+checks, clean source reconstruction, and `git diff --check` pass.  This
+docstring-only metadata promotion requires no native WASM or resource-bundle
+rebuild.  The next pass should continue with another bounded
+upstream-deferred semantic contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
