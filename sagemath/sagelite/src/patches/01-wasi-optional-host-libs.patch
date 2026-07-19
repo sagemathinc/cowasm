@@ -2897,7 +2897,7 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 
  # Polynomial Rings and Polynomial Quotient Rings
  from sage.rings.polynomial.all import *
-@@ -88,8 +94,15 @@
+@@ -88,8 +94,16 @@
 
  # Algebraic numbers
 -from sage.rings.qqbar import (AlgebraicRealField, AA,
@@ -2951,7 +2951,7 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +lazy_import('sage.rings.complex_arb', ['ComplexBallField', 'CBF'])
 
  lazy_import("sage.rings.imaginary_unit", "I")
-@@ -153,5 +165,10 @@
+@@ -153,6 +165,14 @@
 -from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 +if sys.platform == 'wasi':
 +    lazy_import('sage.rings.bernoulli_mod_p',

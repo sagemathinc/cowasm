@@ -193,7 +193,11 @@ ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h:
 ${LIBPNG_WASI_SDK}/lib/libpng.a:
 	$(MAKE) -C ${CWD}/../../core/libpng test-wasi-sdk-standalone
 
-${BUILD_WASI_SDK}/.build: ${SRC}/patches/01-wasi-optional-host-libs.patch
+.PHONY: test-sagelite-patch-syntax
+test-sagelite-patch-syntax:
+	git apply --numstat ${SRC}/patches/01-wasi-optional-host-libs.patch > /dev/null
+
+${BUILD_WASI_SDK}/.build: ${SRC}/patches/01-wasi-optional-host-libs.patch | test-sagelite-patch-syntax
 	test -d ${SAGELITE_SOURCE}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}

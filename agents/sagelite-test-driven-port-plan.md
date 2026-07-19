@@ -55895,6 +55895,41 @@ checks, clean source reconstruction and comparison, manifest validation,
 shell syntax checks, and `git diff --check` pass.  The next pass can continue
 with another persisted backend/runtime cluster.
 
+Accumulated-patch syntax integrity pass on 2026-07-19 UTC:
+
+A strict clean-source audit found that the accumulated
+`01-wasi-optional-host-libs.patch` stopped parsing in the early
+`sage/rings/all.py` section, before later runtime fixes such as the real-double
+algebraic-dependency fallback.  Two historical hunk headers understated their
+new contents: the algebraic-number lazy-import hunk declared 15 new lines but
+contained 16, while the combined Bernoulli/`CC`/`CIF` lazy-import hunk declared
+5 old and 10 new lines but contained 6 old and 14 new lines.  GNU `patch` can
+treat surplus prefixed lines as inter-hunk text, which made this especially
+easy to miss; Git's strict parser rejected the file at the following hunk.
+
+The hunk counts now match their contents.  A new
+`test-sagelite-patch-syntax` Make target runs `git apply --numstat` over the
+complete accumulated patch, and source staging has it as an order-only
+prerequisite so every fresh WASI source build checks patch structure before
+removing or repopulating its build tree.
+
+The regression and final checks record:
+
+```text
+previous accumulated patch: strict parse rejected at line 2923
+current accumulated patch:  1,499 file sections parsed
+focused rings/all slice:     5 hunks applied, Python compilation passed
+second focused application:  5 hunks rejected as already applied
+```
+
+The focused reconstruction and parser artifacts are under
+`.tmp/current-run/scheduled-2026-07-19-next-cluster/`.  The new Make target,
+strict before/after parse check, isolated once-only application to the pinned
+source, verification of the previously omitted lazy imports, Python
+compilation, and `git diff --check` pass.  This pass restores structural
+delivery of later accumulated fixes without requiring a native WASM rebuild.
+The next pass can return to another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
