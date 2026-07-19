@@ -54068,6 +54068,54 @@ docstring-only promotion requires no native WASM or resource-bundle rebuild.
 The next pass should continue with another bounded upstream-deferred semantic
 contract or a persisted backend/runtime cluster.
 
+Finite fixed-image word-morphism implementation pass on 2026-07-19 UTC:
+
+The upstream-deferred `WordMorphism('a->ba,b->').fixed_point('a')` row in
+`sage/combinat/words/morphism.py` exposed a narrow gap between prolongability
+and finite fixed images.  The image of `a` is the nonempty word `ba`, and
+applying the erasing morphism to `ba` returns `ba` again, but `fixed_point`
+rejected the seed before checking this already-fixed image because the image
+does not begin with `a`.
+
+The accumulated WASI patch now retains the established prolongable finite and
+infinite paths.  For a non-prolongable seed, it accepts the image only when it
+is nonempty and one more application leaves it unchanged; empty images and
+nontrivial cycles retain the existing `TypeError`.  The obsolete
+`# todo: not implemented` marker is removed, and a new default regression
+keeps the two-cycle rejection explicit.
+
+The initial source-line audit recorded the target `TypeError` together with
+four unrelated setup `NameError` rows caused by the line filter stopping at
+earlier output-producing examples whose local `W` setup is outside the
+selected contiguous group.  An isolated semantic fixture and complete module
+replays under runner version 125 record:
+
+```text
+focused finite/cycle controls final: 8 passed,   0 failed,  0 skipped
+shared complete module final:       563 passed, 0 failed, 93 skipped
+reconstructed complete final:       563 passed, 0 failed, 93 skipped
+```
+
+The authoritative final SQLite dashboards and clean pinned reconstruction are
+under
+`.tmp/current-run/scheduled-2026-07-19-word-morphism-fixed-point/`.  Every
+retained final database passes `PRAGMA integrity_check`, and the saved
+block-failure and file-error cluster queries are empty.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  This
+reconstruction also repaired the preceding asymptotic hunk's truncated
+end-of-file context count so the accumulated patch remains valid when another
+file diff follows it.  Python compilation, focused and complete
+shared/reconstructed replays, SQLite integrity and cluster checks, clean
+source reconstruction, and `git diff --check` pass.  Testing the pure-Python
+implementation required refreshing the ignored local Electron resource
+module, but no native WASM rebuild or tracked resource-bundle change.  The
+pre-existing changes in `/home/user/sagelite` were left untouched.  The next
+pass should continue with another bounded upstream-deferred semantic contract
+or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

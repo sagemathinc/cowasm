@@ -25921,7 +25921,7 @@ diff --git a/src/sage/rings/asymptotic/term_monoid.py b/src/sage/rings/asymptoti
 +            sage: x = G.gen()
              sage: BT = TermMonoid('B', G, QQ)
              sage: t1 = BT(x^3, coefficient=4, valid_from={'x': 10}); t2 = BT(x, coefficient=5, valid_from={'x': 20})
-@@ -4604,7 +4605,8 @@ class BTerm(TermWithCoefficient):
+@@ -4604,6 +4605,7 @@ class BTerm(TermWithCoefficient):
              sage: ET = TermMonoid('exact', GrowthGroup('x^ZZ'), QQ)
              sage: t4 = ET(x^3, coefficient=5)
 -            sage: t1.absorb(t4) # not tested, see #32229
@@ -25930,3 +25930,21 @@ diff --git a/src/sage/rings/asymptotic/term_monoid.py b/src/sage/rings/asymptoti
          """
          if not (self.growth >= other.growth):
              raise ArithmeticError(f'{self} cannot absorb {other}')
+diff --git a/src/sage/combinat/words/morphism.py b/src/sage/combinat/words/morphism.py
+--- a/src/sage/combinat/words/morphism.py
++++ b/src/sage/combinat/words/morphism.py
+@@ -1857 +1857 @@ class WordMorphism(SageObject):
+-            sage: m.fixed_point('a') #todo: not implemented
++            sage: m.fixed_point('a')
+@@ -1859,0 +1860,7 @@ class WordMorphism(SageObject):
++        A nontrivial cycle is not a fixed point::
++
++            sage: WordMorphism('a->b,b->a').fixed_point('a')
++            Traceback (most recent call last):
++            ...
++            TypeError: self must be prolongable on a
++
+@@ -1896,0 +1904,3 @@ class WordMorphism(SageObject):
++            image = self(letter)
++            if not image.is_empty() and self(image) == image:
++                return image
