@@ -55127,6 +55127,52 @@ idempotence, and `git diff --check` pass.  The next pass can continue with
 another bounded upstream-deferred semantic contract or persisted
 backend/runtime cluster.
 
+Invariant-theory deterministic covariance-check pass on 2026-07-19 UTC:
+
+The historical issue-32118 guard on the negative
+`h_covariant(..., invariant=True)` check exposed a nondeterministic test
+helper rather than a browser limitation.  Both algebraic-form covariance
+checkers selected a random unimodular matrix when no transform was supplied.
+That matrix could be the identity, in which case a non-invariant covariant
+appeared invariant and the expected `AssertionError` disappeared.
+
+The accumulated WASI patch now uses a deterministic elementary shear: the
+identity matrix with entry `(0, 1)` set to one when the form has at least two
+variables.  This is still an `SL(n)` transform, but it cannot silently reduce
+the normal binary and quaternary checks to the identity.  Both the generic
+algebraic-form and quaternary-biquadratic helpers use the same contract, and
+the obsolete quartic `# not tested, known bug` marker is removed.
+
+Replays under runner version 127 record:
+
+```text
+explicit identity false negative:      5 passed, 1 failed,  0 skipped
+deterministic true/false controls:     15 passed, 0 failed,  0 skipped
+promoted quartic negative row:          1 passed, 0 failed,  0 skipped
+biquadratic negative control:           1 passed, 0 failed,  0 skipped
+shared complete module final:         875 passed, 0 failed, 13 skipped
+reconstructed complete final:         875 passed, 0 failed, 13 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-quartic-covariant/`.  Every retained
+database passes `PRAGMA integrity_check`; both complete final databases have
+empty block-failure and file-error cluster queries.  Applying the complete
+accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and the reconstructed invariant-theory
+source is byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The preserved Electron bundle still validates with 545 side modules
+and 691 required-resource hashes after refreshing the ignored Python module.
+The explicit identity reproducer, deterministic cross-check fixture, focused
+and complete shared/reconstructed replays, Python compilation, SQLite
+integrity and empty-cluster checks, clean source reconstruction and comparison,
+manifest validation, patch idempotence, and `git diff --check` pass.  The next
+pass can continue with another bounded upstream-deferred semantic contract or
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -26676,3 +26676,36 @@ diff --git a/src/sage/combinat/tutorial.py b/src/sage/combinat/tutorial.py
 +        sage: for p in Partitions(3): print(p)
 @@ -1197 +1196,0 @@
 -        ...
+
+diff --git a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/invariants/invariant_theory.py
+--- a/src/sage/rings/invariants/invariant_theory.py
++++ b/src/sage/rings/invariants/invariant_theory.py
+@@ -584,2 +584,2 @@
+-          the homogeneous variables. If ``None``, a random matrix will
+-          be picked.
++          the homogeneous variables. If ``None``, a deterministic
++          elementary matrix will be used.
+@@ -599 +599 @@
+-            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :issue:`32118`)
++            sage: quartic._check_covariant('h_covariant', invariant=True)
+@@ -605 +605 @@
+-        from sage.matrix.constructor import vector, random_matrix
++        from sage.matrix.constructor import identity_matrix, vector
+@@ -608 +608,3 @@
+-            g = random_matrix(F, self._n, algorithm='unimodular')
++            g = identity_matrix(F, self._n)
++            if self._n > 1:
++                g[0, 1] = 1
+@@ -3219,2 +3221,2 @@
+-          the homogeneous variables. If ``None``, a random matrix will
+-          be picked.
++          the homogeneous variables. If ``None``, a deterministic
++          elementary matrix will be used.
+@@ -3237 +3239 @@
+-        from sage.matrix.constructor import vector, random_matrix
++        from sage.matrix.constructor import identity_matrix, vector
+@@ -3240 +3242,3 @@
+-            g = random_matrix(F, self._n, algorithm='unimodular')
++            g = identity_matrix(F, self._n)
++            if self._n > 1:
++                g[0, 1] = 1
