@@ -54562,6 +54562,55 @@ comparisons, and `git diff --check` also pass.  The next pass can select another
 bounded persisted backend/runtime cluster from the now-clean complete S-box
 dashboard or address the independent standalone linear-algebra smoke.
 
+Category base-compatibility guard and standalone recovery pass on 2026-07-19
+UTC:
+
+The standalone linear-algebra smoke failed after a successful integer
+`solve_right()`, when comparing the rational result `A * solution` with the
+original integer column matrix.  Coercion discovery met their matrix categories
+and called the recently promoted category-over-base-ring refinement hook.  That
+hook tried to construct `VectorSpaces(...)` over the candidate's joined
+ring/set category before determining that the candidate base was not a field,
+so the comparison raised `ValueError` instead of returning `False` from the
+subcategory test.
+
+The accumulated WASI patch now checks a candidate parent or category against
+the receiving base category first.  It reconstructs the receiving structural
+category only after that compatibility check succeeds.  Compatible concrete
+and refined field bases retain the positive behavior from the earlier pass;
+incompatible module bases fail closed without invoking an invalid category
+constructor.  A new default doctest covers
+`VectorSpaces(Fields())._subcategory_hook_(Modules(Rings())) is False`.
+
+Replays under runner version 126 record:
+
+```text
+focused incompatible-base guard:       1 passed, 0 failed,  0 skipped
+shared complete category_types:        72 passed, 0 failed, 25 skipped
+reconstructed complete category_types: 72 passed, 0 failed, 25 skipped
+clean Node linear-algebra smoke:         passed through integer solve equality
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-category-base-guard/`.  Both databases
+pass `PRAGMA integrity_check`, and their block-failure and file-error counts are
+zero.  Applying the complete accumulated patch exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed category module is byte-identical to the tested build source.
+
+The complete standalone target was then rebuilt from that clean pinned source.
+All selected Cython generations and the 1,016-step four-job C/WASM compile pass;
+the installed 498-module side-module audit, Node and `python-wasi-sdk` import
+ladders, doctest-runner fixtures, resource assembly, Electron smoke, and
+relocated-resource smoke also pass.  The final manifest validates 550 side
+modules and 696 required-resource hashes, and the target records
+`sagelite-ok meson configure compile install node import electron resources
+smoke relocated followups recorded`.  Python compilation, SQLite integrity,
+clean source reconstruction, source comparison, shell syntax, and
+`git diff --check` pass.  The pre-existing changes in `/home/user/sagelite`
+were left untouched.  The next pass can return to another bounded
+upstream-deferred semantic contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

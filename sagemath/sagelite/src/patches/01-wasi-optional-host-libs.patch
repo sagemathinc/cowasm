@@ -6726,12 +6726,18 @@ diff -urN a/src/sage/categories/coxeter_groups.py b/src/sage/categories/coxeter_
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
-@@ -402,3 +402 @@
+@@ -398,15 +398,15 @@
+             False
+             sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(ZZ))
+             False
++            sage: VectorSpaces(Fields())._subcategory_hook_(Modules(Rings()))
++            False
+
 -        .. WARNING::
 -
 -            This test currently includes some false negatives::
 +        Category-parameter refinements are taken into account::
-@@ -406,4 +404,4 @@
+
 -                sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
 -                False
 -                sage: Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings())))
@@ -6740,13 +6746,30 @@ diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category
 +            True
 +            sage: Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings())))
 +            True
-@@ -429 +429 @@
+
+         The answer is ``Unknown`` if ``C`` is not a category over base ring::
+
+@@ -426,7 +426,7 @@
+
+             sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields()))
+             True
 -            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))  # todo: not implemented
 +            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
-@@ -437 +437 @@
+             True
+             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(Fields()))
+             False
+@@ -434,7 +434,7 @@
+         Case 2: the base of ``self`` is a category; then the base of
+         ``C`` shall be a parent in this category::
+
 -            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                 # todo: not implemented
 +            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))
-@@ -479,8 +479,13 @@
+             True
+             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(QQ))
+             False
+@@ -477,18 +477,26 @@
+             sage: __main__.Cs = Cs # Fake Cs being defined in a python module
+             sage: TestSuite(C).run()
          """
 -        if not issubclass(C.parent_class, self.parent_class):
 -            return False
@@ -6757,24 +6780,53 @@ diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category
          base_ring = self.base_ring()
 +        structural_category = self
 +        if isinstance(base_ring, Category):
-+            structural_category = self.__class__.__base__(C.base())
++            candidate_base = C.base()
++            if isinstance(candidate_base, Category):
++                if not candidate_base.is_subcategory(base_ring):
++                    return False
++            elif candidate_base not in base_ring:
++                return False
++            structural_category = self.__class__.__base__(candidate_base)
 +        if not issubclass(C.parent_class, structural_category.parent_class):
 +            return False
          if C.base_ring() is base_ring:
              return True
-@@ -515 +515 @@
+         if isinstance(base_ring, Category):
+-            if isinstance(C.base(), Category):
+-                return C.base().is_subcategory(base_ring)
+-            # otherwise, C.base() is a parent
+-            return C.base() in base_ring
++            return True
+         return False
+
+     def __contains__(self, x) -> bool:
+@@ -512,10 +520,16 @@
+
+         We also would want the following to hold::
+
 -            sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
 +            sage: QQ['x'] in Algebras(Fields())
-@@ -518,0 +519,6 @@
+             True
+         """
+         try:
 +            if isinstance(self.base(), Category):
 +                base_ring = x.base_ring()
 +                if base_ring not in self.base():
 +                    return False
 +                concrete_category = self.__class__.__base__(base_ring)
 +                return x in concrete_category
-@@ -627 +627 @@
+             # The issubclass test handles extension types or when the
+             # category is not fully initialized
+             if isinstance(x, self.parent_class) or \
+@@ -624,7 +638,7 @@
+             sage: Ig = [x, y]
+             sage: I = R.ideal(Ig)
+             sage: C = Ideals(R)
 -            sage: C(Ig)
 +            sage: C(Ig)                                                                # needs sage.rings.polynomial.plural
+             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Integer Ring
+             sage: I == C(I)
+             True
 diff -urN a/src/sage/categories/map.pyx b/src/sage/categories/map.pyx
 --- a/src/sage/categories/map.pyx
 +++ b/src/sage/categories/map.pyx
