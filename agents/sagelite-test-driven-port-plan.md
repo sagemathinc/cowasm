@@ -55674,6 +55674,48 @@ comparison, patch idempotence, manifest loading, and `git diff --check` pass.
 The next pass can continue with another bounded upstream-deferred semantic
 contract or persisted backend/runtime cluster.
 
+Finite-dimensional Lie algebra solvability-contract pass on 2026-07-19 UTC:
+
+The historical `# not implemented` expectation in
+`sage/categories/finite_dimensional_lie_algebras_with_basis.py` described the
+two-dimensional Lie algebra with bracket `[x,y]=x` as non-solvable.  The
+runtime returned `True`, which is the correct mathematical contract: its
+derived series has dimensions `(2, 1, 0)` and therefore terminates at zero.
+
+The accumulated WASI patch now removes the stale deferral, changes the
+expected result from `False` to `True`, and adds the derived-series dimension
+tuple as an explicit regression.  Replays under runner version 127 record:
+
+```text
+forced deferred solvability row before: 0 passed, 1 failed, 0 skipped
+focused reconstructed contract final:  2 passed, 0 failed, 0 skipped
+default complete module final:          0 passed, 0 failed, 1 skipped
+```
+
+The default complete replay is intentionally skipped by the module-wide
+browser dependency directive.  An exploratory fully enabled replay reached
+the independent positive-characteristic `sl3.solvable_radical_basis()` row at
+line 954 and remained there for about 227 seconds, so it was interrupted; the
+two changed rows were instead validated directly with their complete optional
+feature set.
+
+The authoritative SQLite dashboards and fresh pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-lie-solvability/`.  Every completed
+final database passes `PRAGMA integrity_check` and has zero block failures and
+zero file errors.  Applying the complete accumulated patch exactly once to
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds,
+a second forward application is rejected, and the fresh reconstructed source
+is byte-identical to the focused prototype source.
+
+This is a documentation-only semantic correction and requires no Cython or
+native WASM rebuild.  Focused reconstructed replays, the explicit derived
+series control, Python compilation, SQLite integrity and empty-cluster checks,
+clean source reconstruction and comparison, patch idempotence, preserved
+manifest loading with 545 side modules and 691 required-resource hashes,
+JavaScript and shell syntax checks, and `git diff --check` pass.  The next pass
+can continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

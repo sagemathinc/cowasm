@@ -26979,6 +26979,13 @@ diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b
 +            # system, so treating them as vectors for ``self`` is incorrect.
 +            B = [A(b) for b in self.basis()]
 +            LB = [A(lb) for lb in L.basis()]
+@@ -1546,2 +1544,4 @@
+-                sage: L.is_solvable()           # not implemented
+-                False
++                sage: L.is_solvable()
++                True
++                sage: tuple(A.dimension() for A in L.derived_series())
++                (2, 1, 0)
 diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/with_basis/indexed_element.pyx
 --- a/src/sage/modules/with_basis/indexed_element.pyx
 +++ b/src/sage/modules/with_basis/indexed_element.pyx
