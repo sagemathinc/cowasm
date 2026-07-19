@@ -26063,10 +26063,33 @@ diff --git a/src/sage/rings/asymptotic/term_monoid.py b/src/sage/rings/asymptoti
 diff --git a/src/sage/combinat/words/morphism.py b/src/sage/combinat/words/morphism.py
 --- a/src/sage/combinat/words/morphism.py
 +++ b/src/sage/combinat/words/morphism.py
-@@ -1857 +1857 @@ class WordMorphism(SageObject):
+@@ -489,0 +490,7 @@ class WordMorphism(SageObject):
++
++        Alphabet letters must be hashable::
++
++            sage: wm._build_codomain({'a': [[1, 2]]})
++            Traceback (most recent call last):
++            ...
++            TypeError: the codomain alphabet must contain only hashable letters
+@@ -497 +504,7 @@ class WordMorphism(SageObject):
+-            codom_alphabet.update(it)
++            for letter in it:
++                try:
++                    codom_alphabet.add(letter)
++                except TypeError:
++                    raise TypeError(
++                        "the codomain alphabet must contain only hashable letters"
++                    ) from None
+@@ -1749 +1762 @@ class WordMorphism(SageObject):
+-            sage: WordMorphism(n).is_prolongable(letter='a')    # not implemented, needs sage.modules
++            sage: WordMorphism(n).is_prolongable(letter='a')                            # needs sage.modules
+@@ -1752 +1765 @@ class WordMorphism(SageObject):
+-            TypeError: codomain of self must be an instance of Words
++            TypeError: the codomain alphabet must contain only hashable letters
+@@ -1857 +1870 @@ class WordMorphism(SageObject):
 -            sage: m.fixed_point('a') #todo: not implemented
 +            sage: m.fixed_point('a')
-@@ -1859,0 +1860,7 @@ class WordMorphism(SageObject):
+@@ -1859,0 +1873,7 @@ class WordMorphism(SageObject):
 +        A nontrivial cycle is not a fixed point::
 +
 +            sage: WordMorphism('a->b,b->a').fixed_point('a')
@@ -26074,7 +26097,7 @@ diff --git a/src/sage/combinat/words/morphism.py b/src/sage/combinat/words/morph
 +            ...
 +            TypeError: self must be prolongable on a
 +
-@@ -1896,0 +1904,3 @@ class WordMorphism(SageObject):
+@@ -1896,0 +1917,3 @@ class WordMorphism(SageObject):
 +            image = self(letter)
 +            if not image.is_empty() and self(image) == image:
 +                return image

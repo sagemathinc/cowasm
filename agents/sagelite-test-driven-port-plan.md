@@ -55523,6 +55523,59 @@ resource-bundle change is required.  The next pass can continue with another
 bounded upstream-deferred semantic contract or persisted backend/runtime
 cluster.
 
+Word-morphism unhashable-alphabet diagnostic pass on 2026-07-19 UTC:
+
+The historical `# not implemented` row in
+`sage/combinat/words/morphism.py` exposed a constructor diagnostic defect
+before `is_prolongable()` could examine its intended non-word codomain.
+`WordMorphism._build_codomain()` accumulated the entries of iterable images
+with `set.update()`.  Matrix images iterate over mutable row vectors, so the
+constructor leaked the low-level Python error
+`TypeError: cannot use '...Vector_integer_dense' as a set element` instead of
+reporting the finite-word alphabet requirement.
+
+The accumulated WASI patch now adds prospective alphabet letters explicitly
+and translates an unhashable entry into the stable contract
+`the codomain alphabet must contain only hashable letters`.  It neither
+mutates nor implicitly freezes user objects, so ordinary hashable word
+alphabets retain the existing construction path.  The stale deferral is
+removed from the matrix-image example, and a dependency-free nested-list
+regression exercises the same diagnostic in the default profile.
+
+Replays under runner version 127 record:
+
+```text
+forced matrix-image row before:          0 passed, 1 failed,  0 skipped
+focused shared matrix row final:         1 passed, 0 failed,  0 skipped
+focused reconstructed matrix row final: 1 passed, 0 failed,  0 skipped
+shared complete default module final:  564 passed, 0 failed, 93 skipped
+reconstructed complete module final:   564 passed, 0 failed, 93 skipped
+```
+
+An exploratory complete replay with `--optional=sage.modules` confirms both
+changed rows pass while retaining 29 independent optional-frontier failures:
+13 `NotImplementedError`, seven `NameError`, seven `AttributeError`, and two
+other `TypeError` rows.  Those failures are unrelated word backends and
+startup names rather than cascades from the promoted constructor contract.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-word-morphism-hashability/`.
+Every final database passes `PRAGMA integrity_check` and has empty block- and
+file-failure cluster queries.  Applying the complete accumulated patch exactly
+once to pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, a second forward application is rejected, and the
+reconstructed word-morphism source is byte-identical to the tested staged
+source.
+
+This is a pure-Python source change and requires no Cython or native WASM
+rebuild.  The copy-on-write Electron manifest validates with 545 side modules
+and 691 required-resource hashes.  Focused and complete shared/reconstructed
+replays, Python compilation, SQLite integrity and empty-cluster checks, clean
+source reconstruction and comparison, patch idempotence, manifest validation,
+JavaScript and shell syntax checks, and `git diff --check` pass.  The next pass
+can continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
