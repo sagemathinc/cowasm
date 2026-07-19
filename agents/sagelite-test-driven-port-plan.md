@@ -54824,6 +54824,50 @@ resource-manifest validation (550 side modules and 696 hashes), and
 `git diff --check` pass. The next pass can continue with another bounded
 upstream-deferred semantic contract or persisted backend/runtime cluster.
 
+Keyed `MatrixSpace` Homset parent-protocol pass on 2026-07-19 UTC:
+
+The three upstream-deferred `TestSuite` rows for mixed integer/keyed matrix
+dimensions exposed a shared parent-protocol gap rather than a matrix-arithmetic
+failure.  Vector-space Homsets assumed that every codomain parent implemented
+`coordinates()`, so a combinatorial-free-module codomain could not construct
+even its zero morphism.  Generic module Homsets produced their zero as a plain
+set map and had no canonical representative.  Once those representatives were
+real linear morphisms, the advertised module laws also exposed missing
+pointwise addition and function-identity-based comparison for finite-dimensional
+maps.
+
+The accumulated WASI patch now selects category-aware element classes for free
+and vector-space Homsets, extracts codomain coordinates either from the parent
+or an element's `to_vector()` protocol, and supplies zero as the canonical
+Homset representative.  Module Homsets whose domains have a distinguished
+basis construct zero through `on_basis`, while module morphisms implement
+pointwise addition and finite-dimensional equality on basis images.  The three
+stale `# known bug` markers in `sage/matrix/matrix_space.py` are removed.
+Replays under runner version 126 record:
+
+```text
+forced keyed TestSuites before:       3 passed, 3 failed,  0 skipped
+forced keyed TestSuites final:        6 passed, 0 failed,  0 skipped
+shared five-module complete final:  549 passed, 0 failed, 81 skipped
+reconstructed complete final:       549 passed, 0 failed, 81 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-matrix-keyed-testsuite/`.  The retained
+before/final databases pass `PRAGMA integrity_check`; both complete final
+databases have empty block-failure and file-error cluster queries.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and all
+five reconstructed sources are byte-identical to the tested staged sources.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The focused regression, complete shared/reconstructed replays, Python
+compilation, SQLite integrity and empty-cluster checks, clean source
+reconstruction and comparison, Electron manifest validation (550 side modules
+and 696 required-resource hashes), and `git diff --check` pass.  The next pass
+can continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

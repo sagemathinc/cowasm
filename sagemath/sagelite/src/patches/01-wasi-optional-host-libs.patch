@@ -26454,3 +26454,140 @@ diff --git a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
 @@ -499 +499 @@
 -            sage: s.show3d()                                     # long time (< 1s)
 +            sage: s.show3d()                                     # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf
+diff --git a/src/sage/categories/modules.py b/src/sage/categories/modules.py
+--- a/src/sage/categories/modules.py
++++ b/src/sage/categories/modules.py
+@@ -750,0 +751,13 @@
++            def _an_element_(self):
++                r"""
++                Return a canonical element of this homset.
++
++                TESTS::
++
++                    sage: X = CombinatorialFreeModule(QQ, ['x', 'y'])                  # needs sage.modules
++                    sage: Y = CombinatorialFreeModule(QQ, ['a', 'b'])                  # needs sage.modules
++                    sage: Hom(X, Y).an_element().is_zero()                             # needs sage.modules
++                    True
++                """
++                return self.zero()
++
+@@ -796,0 +810,2 @@
++                    sage: f + f == f
++                    True
+@@ -807,0 +823,3 @@
++                from sage.categories.modules_with_basis import ModulesWithBasis
++                if self.domain() in ModulesWithBasis(self.base_ring()):
++                    return self(on_basis=ConstantFunction(self.codomain().zero()))
+diff --git a/src/sage/modules/free_module_homspace.py b/src/sage/modules/free_module_homspace.py
+--- a/src/sage/modules/free_module_homspace.py
++++ b/src/sage/modules/free_module_homspace.py
+@@ -85,0 +86,16 @@
++    def __init__(self, *args, **kwds):
++        self.Element = self._morphism_class()
++        super().__init__(*args, **kwds)
++
++    def _morphism_class(self):
++        from .free_module_morphism import FreeModuleMorphism
++        return FreeModuleMorphism
++
++    @staticmethod
++    def _codomain_coordinates(codomain, element):
++        element = codomain(element)
++        try:
++            return codomain.coordinates(element)
++        except AttributeError:
++            return element.to_vector()
++
+@@ -156 +171,0 @@
+-        from . import free_module_morphism
+@@ -165 +180,2 @@
+-                    A = matrix([C.coordinates(a) for a in v], ncols=C.rank())
++                    A = matrix([self._codomain_coordinates(C, a) for a in v],
++                               ncols=C.rank())
+@@ -171 +187,2 @@
+-                        A = matrix([C.coordinates(a) for a in v], ncols=C.rank()).transpose()
++                        A = matrix([self._codomain_coordinates(C, a) for a in v],
++                                   ncols=C.rank()).transpose()
+@@ -173 +190,2 @@
+-                        A = matrix([C.coordinates(a) for a in v], ncols=C.rank())
++                        A = matrix([self._codomain_coordinates(C, a) for a in v],
++                                   ncols=C.rank())
+@@ -180 +198,4 @@
+-        return free_module_morphism.FreeModuleMorphism(self, A, side)
++        return self.element_class(self, A, side)
++
++    def _an_element_(self):
++        return self.zero()
+diff --git a/src/sage/modules/vector_space_homspace.py b/src/sage/modules/vector_space_homspace.py
+--- a/src/sage/modules/vector_space_homspace.py
++++ b/src/sage/modules/vector_space_homspace.py
+@@ -206,0 +207,4 @@
++    def _morphism_class(self):
++        from .vector_space_morphism import VectorSpaceMorphism
++        return VectorSpaceMorphism
++
+@@ -347 +351,2 @@
+-                A = matrix(D.dimension(), C.dimension(), [C.coordinates(C(a)) for a in images])
++                A = matrix(D.dimension(), C.dimension(),
++                           [self._codomain_coordinates(C, a) for a in images])
+@@ -359 +364,2 @@
+-                A = matrix(D.dimension(), C.dimension(), [C.coordinates(a) for a in v])
++                A = matrix(D.dimension(), C.dimension(),
++                           [self._codomain_coordinates(C, a) for a in v])
+@@ -368 +374,14 @@
+-        return VectorSpaceMorphism(self, A, side=side)
++        return self.element_class(self, A, side=side)
++
++    def _an_element_(self):
++        r"""
++        Return a canonical element of this homspace.
++
++        TESTS::
++
++            sage: H = MatrixSpace(QQ, ['a', 'b'], 2)
++            sage: H.an_element().is_zero()
++            True
++            sage: TestSuite(H).run()
++        """
++        return self.zero()
+diff --git a/src/sage/modules/with_basis/morphism.py b/src/sage/modules/with_basis/morphism.py
+--- a/src/sage/modules/with_basis/morphism.py
++++ b/src/sage/modules/with_basis/morphism.py
+@@ -229,0 +230,20 @@
++    def _add_(self, other):
++        r"""
++        Return the pointwise sum of two module morphisms.
++
++        EXAMPLES::
++
++            sage: X = CombinatorialFreeModule(QQ, ['x', 'y'])                          # needs sage.modules
++            sage: H = End(X)                                                           # needs sage.modules
++            sage: f = H(on_basis=lambda i: X.monomial(i))                              # needs sage.modules
++            sage: (f + f)(X.monomial('x'))                                             # needs sage.modules
++            2*B['x']
++            sage: (f + f) + f == f + (f + f)                                           # needs sage.modules
++            True
++        """
++        return self.parent()(
++            on_basis=lambda i: self._on_basis(i) + other._on_basis(i)
++        )
++
++    __add__ = _add_
++
+@@ -345,0 +366,4 @@
++            if (isinstance(other, ModuleMorphismByLinearity)
++                    and self.parent() is other.parent()
++                    and self.domain() in Modules(self.domain().base_ring()).FiniteDimensional()):
++                return all(self(b) == other(b) for b in self.domain().basis())
+diff --git a/src/sage/matrix/matrix_space.py b/src/sage/matrix/matrix_space.py
+--- a/src/sage/matrix/matrix_space.py
++++ b/src/sage/matrix/matrix_space.py
+@@ -615 +615 @@
+-        sage: TestSuite(M_ab_4).run()  # known bug
++        sage: TestSuite(M_ab_4).run()
+@@ -622 +622 @@
+-        sage: TestSuite(M_4_ab).run()  # known bug
++        sage: TestSuite(M_4_ab).run()
+@@ -628 +628 @@
+-        sage: TestSuite(M_ab_xy).run()  # known bug
++        sage: TestSuite(M_ab_xy).run()
