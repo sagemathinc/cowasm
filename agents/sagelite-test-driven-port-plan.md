@@ -55085,6 +55085,48 @@ reconstruction and comparison, preserved-manifest validation, and
 `git diff --check` pass.  The next pass can continue with another bounded
 upstream-deferred semantic contract or persisted backend/runtime cluster.
 
+Finite partition tutorial promotion pass on 2026-07-19 UTC:
+
+The deferred finite loop in `sage/combinat/tutorial.py` exposed an upstream
+doctest expectation defect rather than an unavailable browser capability.
+`Partitions(3)` deterministically prints the three partitions of 3 and then
+terminates, while the historical example expected a fourth literal `...`
+line.  A forced replay therefore recorded an output mismatch after producing
+all three correct rows.  The accumulated WASI patch removes the obsolete
+`# not tested` marker and the spurious ellipsis, promoting the exhaustive
+finite enumeration to default coverage.  The adjacent genuinely unbounded
+`Partitions()` and `Primes()` loops remain deferred.
+
+Replays under runner version 127 record:
+
+```text
+forced finite loop before:            0 passed, 1 failed,  0 skipped
+default focused loop final:           1 passed, 0 failed,  0 skipped
+shared complete tutorial final:     161 passed, 0 failed, 96 skipped
+reconstructed complete final:       161 passed, 0 failed, 96 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-tutorial-partitions/`.  Every retained
+authoritative database passes `PRAGMA integrity_check`; both complete final
+databases have empty block-failure and file-error cluster queries.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and the reconstructed tutorial source is
+byte-identical to the tested staged source.
+
+This is a doctest-only correction and requires no Python, Cython, or native
+WASM resource rebuild.  The same bounded audit retained several independent
+deferrals: fast-callable comparisons still raise before the unimplemented
+choice backend, infinite-word equality reaches a host memory-copy range error,
+integer-list pickle identity remains false, and the continued-fraction random
+homography test still requires the excluded symbolic/number-field feature
+set.  Focused and complete shared/reconstructed replays, SQLite integrity and
+empty-cluster checks, clean source reconstruction and comparison, patch
+idempotence, and `git diff --check` pass.  The next pass can continue with
+another bounded upstream-deferred semantic contract or persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

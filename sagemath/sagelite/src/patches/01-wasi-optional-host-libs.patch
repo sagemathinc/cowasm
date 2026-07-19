@@ -26667,3 +26667,12 @@ diff --git a/src/sage/rings/padics/padic_lattice_element.py b/src/sage/rings/pad
 @@ -197 +197 @@
 -            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :issue:`32126`)
 +            sage: K.random_element()._is_base_elt(7)
+
+diff --git a/src/sage/combinat/tutorial.py b/src/sage/combinat/tutorial.py
+--- a/src/sage/combinat/tutorial.py
++++ b/src/sage/combinat/tutorial.py
+@@ -1193 +1193 @@
+-        sage: for p in Partitions(3): print(p)   # not tested
++        sage: for p in Partitions(3): print(p)
+@@ -1197 +1196,0 @@
+-        ...
