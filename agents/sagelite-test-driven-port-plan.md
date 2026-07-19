@@ -55328,6 +55328,61 @@ loading, patch applicability, and `git diff --check` pass.  The next pass can
 continue with another bounded upstream-deferred semantic contract or persisted
 backend/runtime cluster.
 
+MatrixSpace canonical-element construction pass on 2026-07-19 UTC:
+
+A forced recognizable-series audit first exposed an independent shared matrix
+constructor regression before reaching its historical noncommutative-module
+deferral.  `MatrixSpace(ZZ, 2, 2).an_element()` passed a populated
+`MatrixArgs` object directly to `MatrixArgs.matrix()`, whose WASI runtime path
+then performed `isinstance(..., MatrixSpace)` against a non-type and raised
+`TypeError`.  The ordinary public parent construction path already handled the
+same dense matrix data correctly.
+
+The accumulated WASI patch now sends both dense lists and sparse dictionaries
+through `self(...)` in `MatrixSpace._an_element_`.  This preserves the parent,
+implementation, and sparsity contract while avoiding the broken low-level
+`MatrixArgs(..., space=self)` path.  The existing zero-dimensional, rational
+dense, large GF(2), and large sparse integer examples exercise both changed
+branches.
+
+Replays under runner version 127 record:
+
+```text
+focused dense control before:            3 passed,  1 failed,  0 skipped (MatrixArgs TypeError)
+focused dense control final:             4 passed,  0 failed,  0 skipped
+shared source branch controls final:     6 passed,  0 failed,  0 skipped
+reconstructed branch controls final:     6 passed,  0 failed,  0 skipped
+complete reconstructed module audit:   364 passed, 36 failed, 77 skipped
+recognizable-series follow-up:           4 passed,  4 failed,  0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-padic-norm-trace/`; the directory name
+reflects an issue-32085 p-adic candidate that was discarded when its setup hit
+the intentionally disabled FLINT integer-polynomial side module.  Every
+focused final database passes `PRAGMA integrity_check` and has zero block
+failures and zero file errors.  The complete matrix-space audit reaches only
+independent existing browser-profile boundaries: unavailable GAP/FLINT matrix
+implementations, startup names intentionally absent from the stripped
+namespace, resource-version output drift, and the previously recorded keyed
+Homset suite/resource mismatch.  The recognizable-series follow-up gets past
+`MS.an_element()` and retains its documented matrix-coefficient module-action
+failure.
+
+Applying the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and the reconstructed matrix-space source is
+byte-identical to the tested staged source.  This is a pure-Python resource
+change and requires no Cython or native WASM rebuild.  The preserved Electron
+bundle validates while running the final probes after refreshing the ignored
+Python module and its manifest hash; it still records 545 side modules and 691
+required-resource hashes.  Focused shared/reconstructed replays, dense and
+sparse construction controls, SQLite integrity checks, Python compilation,
+clean source reconstruction and comparison, patch applicability, manifest
+hash validation, and `git diff --check` pass.  The next pass can continue with
+the recognizable-series noncommutative action cluster or another bounded
+backend/runtime failure.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

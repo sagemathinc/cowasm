@@ -26597,6 +26597,18 @@ diff --git a/src/sage/matrix/matrix_space.py b/src/sage/matrix/matrix_space.py
 @@ -628 +628 @@
 -        sage: TestSuite(M_ab_xy).run()  # known bug
 +        sage: TestSuite(M_ab_xy).run()
+@@ -2494 +2493,0 @@
+-        from .args import MatrixArgs
+@@ -2506,3 +2504 @@
+-                        ma = MatrixArgs(D, space=self)
+-                        del D
+-                        return ma.matrix()
++                        return self(D)
+@@ -2519,3 +2515 @@
+-                        ma = MatrixArgs(L, space=self)
+-                        del L  # for efficiency: this may avoid a copy of L
+-                        return ma.matrix()
++                        return self(L)
 diff --git a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.py
 --- a/src/sage/algebras/weyl_algebra.py
 +++ b/src/sage/algebras/weyl_algebra.py
