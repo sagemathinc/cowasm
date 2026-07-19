@@ -25913,3 +25913,20 @@ diff -urN -U0 a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation
 +        Return the cyclic permutation having rank ``r``.
 +        """
 +        return self._unrank_from_iterator(r)
+diff --git a/src/sage/rings/asymptotic/term_monoid.py b/src/sage/rings/asymptotic/term_monoid.py
+--- a/src/sage/rings/asymptotic/term_monoid.py
++++ b/src/sage/rings/asymptotic/term_monoid.py
+@@ -4591,3 +4591,4 @@ class BTerm(TermWithCoefficient):
+             sage: G = MonomialGrowthGroup(ZZ, 'x')
++            sage: x = G.gen()
+             sage: BT = TermMonoid('B', G, QQ)
+             sage: t1 = BT(x^3, coefficient=4, valid_from={'x': 10}); t2 = BT(x, coefficient=5, valid_from={'x': 20})
+@@ -4604,7 +4605,8 @@ class BTerm(TermWithCoefficient):
+             sage: ET = TermMonoid('exact', GrowthGroup('x^ZZ'), QQ)
+             sage: t4 = ET(x^3, coefficient=5)
+-            sage: t1.absorb(t4) # not tested, see #32229
++            sage: t1.absorb(t4)
++            B(9*x^3, x >= 10)
+         """
+         if not (self.growth >= other.growth):
+             raise ArithmeticError(f'{self} cannot absorb {other}')

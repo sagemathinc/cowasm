@@ -54020,6 +54020,54 @@ The pre-existing changes in `/home/user/sagelite` were left untouched.  The
 next pass should continue with another bounded upstream-deferred semantic
 contract or a persisted backend/runtime cluster.
 
+Exact-term B-term absorption promotion pass on 2026-07-19 UTC:
+
+The upstream-deferred `t1.absorb(t4)` row in
+`sage/rings/asymptotic/term_monoid.py` was stale.  A B-term with coefficient
+4 and growth `x^3`, valid from `x = 10`, already absorbs an exact term with
+coefficient 5 and the same growth to produce `B(9*x^3, x >= 10)`.  The
+browser profile reaches the same result as the documented arithmetic.
+
+The example group depended implicitly on Sage's symbolic startup variable
+`x`, which Sagelite intentionally does not expose in its stripped namespace.
+The accumulated WASI patch now obtains `x` from the monomial growth group
+itself with `x = G.gen()`, records the exact result, and removes the obsolete
+`# not tested` marker.  This keeps the promoted contract independent of the
+symbolic subsystem while also making the neighboring B-term examples
+self-contained.
+
+A first source-line force audit recorded 6 setup `NameError` failures and one
+deferred skip because selected-line setup cannot cross the output-producing
+prompts earlier in this example group.  A nine-prompt semantic fixture then
+confirmed the exact absorption before the source change.  The expanded local
+group and source replays under runner version 125 record:
+
+```text
+focused complete example group final: 13 passed,   0 failed, 0 skipped
+shared first stateful source output:    1 passed,   0 failed, 0 skipped
+reconstructed source output:           1 passed,   0 failed, 0 skipped
+shared complete module audit:         835 passed, 286 failed, 2 skipped
+reconstructed complete module audit:  835 passed, 286 failed, 2 skipped
+```
+
+All 13 prompts in the changed source group pass in both complete module
+audits, including the promoted exact-term row.  The module's other 286
+failures are its pre-existing broad asymptotic/startup clusters, so this is a
+bounded deferred-test promotion rather than a clean-file corpus promotion.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-term-exact-absorption/`.  Every
+retained final database passes `PRAGMA integrity_check`.  Applying the
+complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Focused
+and complete shared/reconstructed replays, Python compilation, clean source
+reconstruction, SQLite integrity checks, and `git diff --check` pass.  This
+docstring-only promotion requires no native WASM or resource-bundle rebuild.
+The next pass should continue with another bounded upstream-deferred semantic
+contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
