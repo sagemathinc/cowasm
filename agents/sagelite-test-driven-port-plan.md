@@ -54199,6 +54199,53 @@ requires no native WASM or resource-bundle rebuild.  The next pass should
 continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Shifted primed tableau skew-parent representative implementation pass on
+2026-07-19 UTC:
+
+The upstream-deferred `TestSuite(ShiftedPrimedTableaux(skew=[1])).run()` row
+in `sage/combinat/shifted_primed_tableau.py` exposed one shared parent-protocol
+gap.  The skew parent belongs only to `Sets().Infinite()` because its iterator
+is intentionally unavailable, so it could not obtain `an_element()` from the
+enumerated-set category.  Seven generic suite checks consequently failed
+through the same missing `_an_element_` method.
+
+The accumulated WASI patch now implements `_an_element_` on
+`ShiftedPrimedTableaux_all`.  It constructs the empty skew tableau, whose
+outer shape equals its inner shape, through the normal checked element
+constructor.  This gives every unrestricted skew parent a canonical valid
+representative without pretending that general skew iteration is available.
+The obsolete `# known bug` marker is removed, and new default doctests cover
+the representative and parent membership.
+
+Replays under runner version 125 record:
+
+```text
+forced skew-parent suite before:       0 passed,  1 failed, 0 skipped
+promoted source row final:             1 passed,  0 failed, 0 skipped
+focused multi-skew contracts final:    5 passed,  0 failed, 0 skipped
+shared complete module audit:        465 passed, 17 failed, 4 skipped
+reconstructed complete module audit: 465 passed, 17 failed, 4 skipped
+```
+
+All changed prompts pass in both complete module audits.  The remaining 17
+failures are the pre-existing independent browser-profile clusters: missing
+`sage.libs.gap.libgap` in unrestricted iteration and the broad `crystals`
+startup namespace with its dependent state rows.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-shifted-tableau-an-element/`.  Applying
+the complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Focused
+shared/reconstructed replays, multi-skew suite controls, complete
+shared/reconstructed audits, Python compilation, SQLite integrity checks,
+clean source reconstruction, and `git diff --check` pass.  Testing the
+pure-Python implementation required refreshing the ignored local Electron
+resource module but no native WASM rebuild or tracked resource-bundle change.
+The next pass should continue with another bounded upstream-deferred semantic
+contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -25979,3 +25979,28 @@ diff --git a/src/sage/rings/polynomial/q_integer_valued_polynomials.py b/src/sag
 @@ -556 +556 @@
 -                sage: TestSuite(F).run()  # not tested
 +                sage: TestSuite(F).run()
+diff --git a/src/sage/combinat/shifted_primed_tableau.py b/src/sage/combinat/shifted_primed_tableau.py
+--- a/src/sage/combinat/shifted_primed_tableau.py
++++ b/src/sage/combinat/shifted_primed_tableau.py
+@@ -1850 +1850 @@
+-            sage: TestSuite(SPT).run()  # known bug
++            sage: TestSuite(SPT).run()
+@@ -2031,0 +2032,18 @@
++
++    def _an_element_(self):
++        """
++        Return a shifted primed tableau.
++
++        The empty skew tableau has outer shape equal to its inner shape, so it
++        gives a canonical element even when iteration for skew parents is not
++        implemented.
++
++        EXAMPLES::
++
++            sage: SPT = ShiftedPrimedTableaux(skew=[1])
++            sage: SPT.an_element()
++            [(None,)]
++            sage: SPT.an_element() in SPT
++            True
++        """
++        return self([])
