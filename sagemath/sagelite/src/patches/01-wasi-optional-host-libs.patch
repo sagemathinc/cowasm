@@ -25973,3 +25973,9 @@ diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/fi
 +        except ValueError:
 +            from sage.combinat.words.word import Word
 +            return Word(list(self) + list(other))
+diff --git a/src/sage/rings/polynomial/q_integer_valued_polynomials.py b/src/sage/rings/polynomial/q_integer_valued_polynomials.py
+--- a/src/sage/rings/polynomial/q_integer_valued_polynomials.py
++++ b/src/sage/rings/polynomial/q_integer_valued_polynomials.py
+@@ -556 +556 @@
+-                sage: TestSuite(F).run()  # not tested
++                sage: TestSuite(F).run()

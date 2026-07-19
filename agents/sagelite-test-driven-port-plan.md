@@ -54160,6 +54160,45 @@ rebuild or tracked resource-bundle change.  The pre-existing changes in
 another bounded upstream-deferred semantic contract or a persisted
 backend/runtime cluster.
 
+Quantum integer-valued shifted-basis suite promotion pass on 2026-07-19 UTC:
+
+The upstream-deferred `TestSuite(F).run()` row for the shifted basis of
+`QuantumValuedPolynomialRing(QQ)` in
+`sage/rings/polynomial/q_integer_valued_polynomials.py` was stale.  With the
+module's existing file-level long-time policy enabled, the complete parent
+test suite already passes in the browser profile.  The accumulated WASI patch
+therefore removes only the obsolete `# not tested` marker; it retains the
+file-level `# sage.doctest: long time` boundary.
+
+The neighboring binomial-basis suite remains deferred.  Its forced audit used
+a full worker CPU for more than two minutes without completing, unlike the
+shifted-basis suite, so this pass does not conflate the two runtime contracts.
+Likewise, a complete long-time module audit was stopped after nearly two
+minutes without advancing beyond the independent `from_polynomial` example at
+source line 391.  The runner finalized that exploratory database as
+`interrupted`, rather than leaving an ambiguous active run.
+
+Focused replays under runner version 125 record:
+
+```text
+forced shifted-basis suite before: 1 passed, 0 failed, 0 skipped
+shared promoted suite final:       1 passed, 0 failed, 0 skipped
+reconstructed promoted suite:      1 passed, 0 failed, 0 skipped
+```
+
+The authoritative final SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-qint-testsuite/`.  Both retained
+final databases pass `PRAGMA integrity_check` and contain no failed or skipped
+blocks.  Applying the complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.  Focused
+shared/reconstructed replays, SQLite integrity checks, clean source
+reconstruction, and `git diff --check` pass.  This docstring-only promotion
+requires no native WASM or resource-bundle rebuild.  The next pass should
+continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
