@@ -25803,3 +25803,9 @@ diff -urN -U0 a/src/sage/misc/dev_tools.py b/src/sage/misc/dev_tools.py
 @@ -377 +377 @@
 -        sage: import_statement_string                                                  # known bug
 +        sage: import_statement_string
+diff -urN -U0 a/src/sage/combinat/crystals/letters.pyx b/src/sage/combinat/crystals/letters.pyx
+--- a/src/sage/combinat/crystals/letters.pyx
++++ b/src/sage/combinat/crystals/letters.pyx
+@@ -350 +350 @@
+-        sage: l11 == l21 # not tested
++        sage: l11 == l21

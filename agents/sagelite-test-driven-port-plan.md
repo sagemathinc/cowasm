@@ -53889,6 +53889,45 @@ longer adds any deferred `known bug`, `not tested`, or `not implemented`
 metadata; the next pass should choose an upstream-deferred semantic contract
 or a persisted backend/runtime cluster.
 
+Cross-parent crystal-letter equality promotion pass on 2026-07-19 UTC:
+
+The upstream `# not tested` marker on `l11 == l21` in
+`sage/combinat/crystals/letters.pyx` was stale.  With the module's declared
+`sage.combinat` and `sage.modules` features enabled, `Letter` comparison
+already distinguishes both wrapped values and parents: equal letters from the
+same parent compare equal, different values compare unequal, and equal values
+from `ZZ` and `QQ` compare unequal.  The accumulated WASI patch now removes
+the obsolete marker and promotes the cross-parent assertion to normal coverage.
+
+Focused equality-group replays under runner version 125 record:
+
+```text
+shared staged source final:        3 passed, 0 failed, 0 skipped
+clean reconstructed source final: 3 passed, 0 failed, 0 skipped
+```
+
+A feature-enabled whole-file replay is not a useful assertion for this
+bounded metadata change: it records 17 passes and 371 unrelated failures
+because most examples expect Sage's broad `crystals` startup catalog, which
+the stripped browser namespace does not expose.  The focused group includes
+all local comparison setup and both neighboring controls, so it exercises the
+complete contract without crossing that independent frontend boundary.
+
+The authoritative final SQLite dashboards and clean pinned reconstruction are
+under
+`.tmp/current-run/scheduled-2026-07-19-letter-parent-equality/`.  Both final
+databases pass `PRAGMA integrity_check`, and their saved block-failure and
+file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Focused shared/reconstructed replays, SQLite integrity checks, clean
+source reconstruction, and `git diff --check` pass.  This stale upstream
+metadata promotion changes only a Cython docstring and requires no native
+WASM or resource-bundle rebuild.  The next pass should continue with another
+bounded upstream-deferred semantic contract or a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
