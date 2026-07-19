@@ -56077,6 +56077,56 @@ Node and shell syntax, and `git diff --check` pass.  The feature-enabled
 Drinfeld category now has no runnable failures, so the next pass can select
 another persisted backend/runtime cluster.
 
+Real-double algebraic-dependency delivery-contract pass on 2026-07-19 UTC:
+
+The retained full-corpus row at `sage/rings/real_double.pyx:1954` remained
+reproducible in the latest packaged Electron resource snapshot even though the
+source-level mpmath/PSLQ fallback had already been committed. Both the resource
+bundle and the long-lived `build/wasi-sdk` source stage still carried the older
+`sage/arith/misc.py`, so `RDF(sqrt(2)).algebraic_dependency(5)` continued to
+reach the intentionally focused cypari2 conversion boundary and raise
+`NotImplementedError`.
+
+The standalone and Electron-shaped smokes now require the exact documented
+real-double result `x^2 - 2`. The Electron check runs at the end of the existing
+interpreter lifecycle so loading mpmath does not raise the peak memory of the
+earlier monolithic core-resource probe. The resource manifest schema advances
+to version 150 and its smoke contract to
+`real-double-algebraic-dependency-v110`, preventing a future packaged bundle
+from silently retaining the stale pure-Python module.
+
+The audit also found that mpmath was available to the standalone build probes
+but absent from Electron resource staging even though the fallback imports it.
+The packaged runtime now stages `deps/mpmath`, includes it in `PYTHONPATH` and
+the runtime-dependency contract, and hashes both its package initializer and
+PSLQ implementation. A direct `python-wasm` replay using only the manifest's
+paths confirms that the bundle is self-contained for this operation.
+
+Replays under runner version 127 record:
+
+```text
+retained packaged line before:  0 passed, 1 failed, 0 skipped
+focused packaged line final:    1 passed, 0 failed, 0 skipped
+complete real_double.pyx final: 283 passed, 0 failed, 30 skipped
+Electron-shaped packaged smoke: passed, including the real-double dependency contract
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-next-runtime-cluster/`. Both final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+cluster queries. The resource manifest validates 545 side modules and 693
+required-resource hashes.
+
+This pass adds a delivery regression for an existing pure-Python source fix;
+it requires no Cython or native WASM rebuild. The stale bundle fails the new
+smoke at the intended row, while the bundle reconstructed with the accumulated
+patch's `sage/arith/misc.py` passes the focused and complete doctest replays.
+Manifest hash validation, the complete Electron-shaped smoke, SQLite integrity
+and empty-cluster checks, JavaScript and shell syntax checks, and
+`git diff --check` pass. The next pass can select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

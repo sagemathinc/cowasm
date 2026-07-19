@@ -879,6 +879,14 @@ assert 0 not in P
 assert list(P.some_elements())[:5] == [1, 2, 3, 4, 5]
 `);
     console.log("sagelite-electron-ok set family smoke");
+    console.log("sagelite-electron-start real-double algebraic dependency smoke");
+    await python.exec(String.raw`
+from sage.all import RDF, sqrt
+
+r = sqrt(RDF(2))
+assert str(r.algebraic_dependency(5)) == 'x^2 - 2'
+`);
+    console.log("sagelite-electron-ok real-double algebraic dependency smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();
