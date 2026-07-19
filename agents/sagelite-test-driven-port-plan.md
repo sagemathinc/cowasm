@@ -55576,6 +55576,56 @@ JavaScript and shell syntax checks, and `git diff --check` pass.  The next pass
 can continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Module-morphism scalar-extension category pass on 2026-07-19 UTC:
+
+The three upstream `# not implemented` expectations in
+`sage/categories/modules_with_basis.py` exposed a shared category-inference
+gap.  The morphisms already evaluated correctly from a free module over `ZZ`
+into `ZZ` or `RR`, and from a free module over `RR` into a free module over
+`CC`, but Sage's parent-category membership does not formally recognize rings
+as modules over themselves or compatible scalar extensions.  The constructor
+therefore downgraded all three maps to commutative additive semigroup
+morphisms.
+
+The accumulated WASI patch now recognizes a codomain whose base ring accepts
+the domain scalars as a module over the domain base ring.  For that narrowly
+inferred scalar-extension case it constructs the Homset without the formal
+endpoint-membership check that the source already documents as incomplete;
+explicit user-supplied categories retain the ordinary validation, and the
+commutative-additive-semigroup fallback remains available for genuinely
+non-module codomains.  The duplicate current/future output pairs are replaced
+by the implemented module and vector-space category contracts, and their
+obsolete `# not implemented` markers are removed.
+
+Replays under runner version 127 record:
+
+```text
+forced deferred rows before:          0 passed, 3 failed,   1 skipped
+focused reconstructed rows final:     3 passed, 0 failed,   1 skipped
+module-morphism complete final:      353 passed, 0 failed,  5 skipped
+category module default final:       101 passed, 0 failed, 523 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-module-morphism-category/`.  Every
+retained final database passes `PRAGMA integrity_check`; the focused final,
+complete morphism, and default category-module databases have empty block- and
+file-failure cluster queries.  Applying the complete accumulated patch exactly
+once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and both
+reconstructed changed sources are byte-identical to the tested staged sources.
+
+An exploratory complete category-module replay with
+`--optional=sage.modules` gets through all changed rows and retains five
+independent startup-name failures for `DifferentialWeylAlgebra` and their
+cascades.  This is a pure-Python resource change and requires no Cython or
+native WASM rebuild.  Focused and complete reconstructed replays, Python
+compilation, SQLite integrity and empty-cluster checks, clean source
+reconstruction and comparison, patch applicability, preserved-manifest
+validation, and `git diff --check` pass.  The next pass can continue with
+another bounded upstream-deferred semantic contract or persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

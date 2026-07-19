@@ -27027,3 +27027,71 @@ diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/
 -        deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
 -        return x in self.support()
 -
+diff --git a/src/sage/modules/with_basis/morphism.py b/src/sage/modules/with_basis/morphism.py
+--- a/src/sage/modules/with_basis/morphism.py
++++ b/src/sage/modules/with_basis/morphism.py
+@@ -174,6 +174,7 @@
+             sage: phi = ModuleMorphismByLinearity(X, on_basis=Y.monomial * abs)
+             sage: TestSuite(phi).run()
+         """
++        check_category = True
+         if category is None:
+             if domain not in ModulesWithBasis:
+                 raise ValueError("domain(=%s) should be a module with basis" % codomain)
+@@ -204,16 +205,22 @@
+                 C = Modules(base_ring)
+                 for D in [C.WithBasis().FiniteDimensional(),
+                           C.WithBasis(),
+-                          C,
+-                          # QQ is not in Modules(QQ)!
+-                          CommutativeAdditiveSemigroups()]:
++                          C]:
+                     if codomain in D and domain in D:
+                         category = D
+                         break
++                if (category is None
++                        and codomain.base_ring().has_coerce_map_from(base_ring)):
++                    category = C
++                    check_category = False
++                if (category is None
++                        and codomain in CommutativeAdditiveSemigroups()
++                        and domain in CommutativeAdditiveSemigroups()):
++                    category = CommutativeAdditiveSemigroups()
+                 if category is None:
+                     raise ValueError("codomain=(%s) should at least be a commutative additive semigroup")
+
+-        H = Hom(domain, codomain, category=category)
++        H = Hom(domain, codomain, category=category, check=check_category)
+         Morphism.__init__(self, H)
+
+         # If needed, this creates the element class from the concrete
+diff --git a/src/sage/categories/modules_with_basis.py b/src/sage/categories/modules_with_basis.py
+--- a/src/sage/categories/modules_with_basis.py
++++ b/src/sage/categories/modules_with_basis.py
+@@ -344,8 +344,6 @@
+                 sage: phi(2 * X.monomial(1) + 3 * X.monomial(-1))
+                 -1
+                 sage: phi.category_for()
+-                Category of commutative additive semigroups
+-                sage: phi.category_for()        # not implemented
+                 Category of modules over Integer Ring
+
+             Or more generally any ring admitting a coercion map from
+@@ -356,8 +354,6 @@
+                 sage: phi(2 * X.monomial(1) + 3 * X.monomial(-1))
+                 -1.00000000000000
+                 sage: phi.category_for()
+-                Category of commutative additive semigroups
+-                sage: phi.category_for()        # not implemented
+                 Category of modules over Integer Ring
+
+                 sage: phi = X.module_morphism(on_basis=lambda i: i, codomain=Zmod(4))   # needs sage.modules
+@@ -391,8 +387,6 @@
+                 sage: phi(v)                                                            # needs sage.symbolic
+                 (3.00000000000000+2.00000000000000*I)*B['z']
+                 sage: phi.category_for()
+-                Category of commutative additive semigroups
+-                sage: phi.category_for()        # not implemented
+                 Category of vector spaces over Real Field with 53 bits of precision
+
+                 sage: # needs sage.modules
