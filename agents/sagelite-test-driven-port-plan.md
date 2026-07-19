@@ -54366,6 +54366,52 @@ and `git diff --check` pass.  No tracked resource-bundle change is required.
 The next pass should continue with another bounded upstream-deferred semantic
 contract or a persisted backend/runtime cluster.
 
+S-box right-padding helper exposure pass on 2026-07-19 UTC:
+
+The upstream-deferred `SBox._rpad([1,1])` row in `sage/crypto/sbox.pyx`
+exposed another narrow native visibility gap.  The right-padding algorithm was
+already implemented and used by `SBox.from_bits()`, but its `cdef` declaration
+prevented the documented Python call from reaching it.  With the module's
+`sage.modules` and `sage.rings.finite_rings` feature requirements enabled, the
+forced row failed only with `AttributeError` for the missing wrapper.
+
+The accumulated WASI patch now declares `_rpad` as `cpdef`, preserving the
+compiled internal call path while adding the Python wrapper required by its
+docstring.  The obsolete `# not tested` marker is removed.  Replays under
+runner version 125 record:
+
+```text
+forced focused row before:              0 passed, 1 failed, 0 skipped
+promoted focused row shared:            1 passed, 0 failed, 0 skipped
+existing from_bits callers shared:      3 passed, 0 failed, 0 skipped
+promoted focused row reconstructed:     1 passed, 0 failed, 0 skipped
+from_bits control reconstructed:        1 passed, 0 failed, 0 skipped
+```
+
+A complete feature-enabled module audit cannot yet reach the promoted row: in
+both the shared and reconstructed source it stops at the pre-existing
+`PolynomialRing(GF(2**3), 'x')` example on line 149 because the NTL side
+module imports `ZZ_pContext::restore` without a callable dynamic-loader
+binding.  Both complete audit databases classify that independent boundary as
+the same `wasm_link_error`; the focused replays isolate the changed contract
+and its existing internal caller without hiding the earlier backend cluster.
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-sbox-rpad/`.  Applying the complete
+accumulated Sagelite patch exactly once with `patch --batch --forward -p1` to
+a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.
+
+The exact Meson `sage.crypto.sbox` Cython/C/WASM target compiles successfully.
+The rebuilt side module was installed in the ignored local Electron resource
+tree for testing, where all 691 manifest hashes validate.  Focused
+shared/reconstructed replays, existing `from_bits` controls, SQLite integrity
+checks, clean source reconstruction, resource-manifest validation, and `git
+diff --check` pass.  No tracked resource-bundle change is required.  The next
+pass should continue with another bounded upstream-deferred semantic contract
+or the persisted NTL dynamic-link cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

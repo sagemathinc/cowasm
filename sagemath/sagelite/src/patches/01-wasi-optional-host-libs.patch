@@ -26119,3 +26119,12 @@ diff --git a/src/sage/combinat/fast_vector_partitions.pyx b/src/sage/combinat/fa
 @@ -52 +52 @@
 -        sage: vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9])  # not tested
 +        sage: vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9])
+diff --git a/src/sage/crypto/sbox.pyx b/src/sage/crypto/sbox.pyx
+--- a/src/sage/crypto/sbox.pyx
++++ b/src/sage/crypto/sbox.pyx
+@@ -336 +336 @@
+-    cdef list _rpad(self, list x, Py_ssize_t n=-1):
++    cpdef list _rpad(self, list x, Py_ssize_t n=-1):
+@@ -344 +344 @@
+-            sage: S._rpad([1,1])  # not tested
++            sage: S._rpad([1,1])
