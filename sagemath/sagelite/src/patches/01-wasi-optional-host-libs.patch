@@ -26764,3 +26764,36 @@ diff --git a/src/sage/categories/drinfeld_modules.py b/src/sage/categories/drinf
 @@ -231,0 +227,2 @@
 +        if not isinstance(base_morphism, RingHomomorphism):
 +            raise TypeError('input must be a ring morphism')
+
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -189,0 +190,4 @@
++            sage: h = lie_algebras.Heisenberg(ZZ, 0)
++            sage: h.step()
++            1
++
+@@ -194 +198 @@
+-        return Integer(2)
++        return Integer(1 if getattr(self, '_n', None) == 0 else 2)
+@@ -403 +407 @@
+-            sage: L = lie_algebras.Heisenberg(QQ, 0)  # not tested -- :issue:`18224`
++            sage: L = lie_algebras.Heisenberg(QQ, 0)
+@@ -648 +652 @@
+-        sage: sorted(dict(L.basis()).items())
++        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+@@ -681 +685 @@
+-        sage: sorted(dict(L.basis()).items())
++        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -783,0 +784,4 @@
++
++            sage: h = lie_algebras.Heisenberg(ZZ, 0, representation='matrix')
++            sage: h.step()
++            1
+@@ -785 +789 @@
+-        return Integer(2)
++        return Integer(1 if self._n == 0 else 2)

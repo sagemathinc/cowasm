@@ -55279,6 +55279,55 @@ resources), JavaScript and shell syntax checks, and `git diff --check` pass.
 The next pass can continue with another bounded upstream-deferred semantic
 contract or persisted backend/runtime cluster.
 
+Zero-rank Heisenberg nilpotency pass on 2026-07-19 UTC:
+
+The historical issue-18224 guard on the zero-rank basis Heisenberg algebra
+exposed a genuine nilpotency-step defect.  The algebra is one-dimensional and
+abelian, so its lower central series has step one, but the common Heisenberg
+implementation unconditionally reported step two.  The matrix representation
+had the same assumption, while the infinite-rank implementation shares the
+common method without defining a finite rank attribute.
+
+The accumulated WASI patch now reports step one exactly for finite rank zero,
+keeps step two for positive and infinite rank, and applies the same contract to
+the matrix representation.  The rank check is attribute-safe for the shared
+infinite implementation.  Explicit basis and matrix zero-rank examples cover
+the corrected result, and the obsolete `# not tested` marker is removed from
+the zero-rank `TestSuite`.  Complete-module validation also exposed two
+independent list-of-matrices layout mismatches; both preserve the same matrix
+values but use the Sagelite runtime's one-matrix-per-list-slot display, so the
+browser profile now records those rows as explicit `# known bug` skips.
+
+Replays under runner version 127 record:
+
+```text
+forced zero-rank TestSuite before:       1 passed, 1 failed, 0 skipped
+focused rank/representation controls:   14 passed, 0 failed, 0 skipped
+shared complete module final:          130 passed, 0 failed, 2 skipped
+reconstructed complete final:          130 passed, 0 failed, 2 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-lazy-rational-conversion/`; the directory
+name reflects an established lazy-series performance candidate that was
+discarded before selecting the dependency-light Heisenberg cluster.  Every
+authoritative final database passes `PRAGMA integrity_check`, and both complete
+final databases have empty block-failure and file-error cluster queries.
+Applying the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+verified reconstructed Heisenberg source is byte-identical to the tested
+staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The preserved Electron bundle validates with 545 side modules and
+691 required-resource hashes; the changed pure-Python module is outside that
+native-resource hash set.  Focused and complete shared/reconstructed replays,
+positive/zero/infinite-rank controls, Python compilation, SQLite integrity and
+empty-cluster checks, clean source reconstruction and comparison, manifest
+loading, patch applicability, and `git diff --check` pass.  The next pass can
+continue with another bounded upstream-deferred semantic contract or persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
