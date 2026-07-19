@@ -382,6 +382,8 @@ assert SetPartitions(4).cardinality() == 15
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing
+from sage.arith.functions import LCM_list
+from sage.structure.sequence import Sequence
 
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
@@ -396,6 +398,9 @@ assert h.reverse(degree=5) == x**5 - x**4 + 1
 ZZt = PolynomialRing(ZZ, 't')
 t = ZZt.gen()
 assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
+assert (2*t + 4).lcm(2*t**2) == 2*t**3 + 4*t**2
+assert LCM_list(Sequence((2*t + 4, 2*t**2, 2))) == 2*t**3 + 4*t**2
+assert (2*x + 4).lcm(2*x**2) == x**3 + 2*x**2
 g = t**3 + 2*t + 5
 assert g.degree() == 3
 assert g.leading_coefficient() == ZZ(1)

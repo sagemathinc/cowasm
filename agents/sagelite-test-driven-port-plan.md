@@ -56328,6 +56328,56 @@ existing lazy-global factory fix and requires no new Cython source change.  The
 next pass can continue with the next bounded corpus window or another persisted
 backend/runtime cluster.
 
+Generic integer-polynomial LCM delivery-contract pass on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entries
+78--107.  Entries 78--87 recorded 700 passed, 0 failed, and 193 skipped
+blocks, and entries 88--97 recorded 841 passed, 0 failed, and 101 skipped
+blocks.  In entries 98--107, nine files were clean; the only failure was the
+integer-polynomial content example at `sage/arith/functions.pyx:183`, which
+returned the monic `X^3 + 2*X^2` instead of `2*X^3 + 4*X^2`.
+
+This is a delivery regression for the generic polynomial LCM correction
+committed on 2026-07-15.  The complete accumulated source already preserves
+content over `ZZ` while normalizing results over fields, but the latest
+retained Electron resource snapshot still contained an older
+`polynomial_element` side module.  Replacing only that module with the
+coherent binary built from byte-identical accumulated source makes the
+focused row and the complete arithmetic wrapper pass.
+
+The standalone and Electron-shaped polynomial smokes now require direct
+generic LCM and `LCM_list` results over `ZZ`, plus monic normalization over
+`QQ`.  The Electron manifest schema advances to version 155 and its smoke
+contract to `polynomial-integer-lcm-content-v115`, so a future packaged bundle
+cannot silently retain the stale polynomial binary even though its path was
+already manifest-required.
+
+The retained results record:
+
+```text
+entries 78--87:                  700 passed, 0 failed, 193 skipped
+entries 88--97:                  841 passed, 0 failed, 101 skipped
+entries 98--107 before:          388 passed, 1 failed,  83 skipped
+focused functions.pyx line 183:    1 passed, 0 failed,   0 skipped
+complete functions.pyx final:    36 passed, 0 failed,   6 skipped
+entries 98--107 final:           389 passed, 0 failed,  83 skipped
+Electron-shaped packaged smoke: passed, including integer LCM content
+```
+
+The authoritative SQLite dashboards, isolated pinned source reconstruction,
+and manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-padic-next-window/`.  All six retained
+databases pass `PRAGMA integrity_check`; the final database has empty block-
+and file-failure cluster queries.  The resource manifest validates 545 side
+modules and 697 required-resource hashes.
+
+The focused and complete doctest replays, repaired bounded window, complete
+Electron-shaped smoke, manifest parity/runtime tests, manifest hash
+validation, clean source comparison, shell and JavaScript syntax checks,
+SQLite integrity and empty-cluster checks, and `git diff --check` pass.  The
+next pass can continue with corpus entries 108--117 or another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
