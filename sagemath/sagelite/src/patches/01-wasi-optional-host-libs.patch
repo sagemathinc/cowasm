@@ -26907,3 +26907,52 @@ diff --git a/src/sage/combinat/recognizable_series.py b/src/sage/combinat/recogn
 +        from sage.modules.free_module_element import vector
 +        right = vector([entry * other for entry in self.right])
 +        return P.element_class(P, self.mu, self.left, right)
+diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+--- a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
++++ b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+@@ -1214,17 +1214,15 @@
+-                sage: Lp = L.product_space(L)   # not implemented
+-                sage: Lp                        # not implemented
+-                Subalgebra generated of
+-                 Lie algebra on 2 generators (x, y) over Rational Field
+-                 with basis: (x,)
+-                sage: Lp.product_space(L)       # not implemented
+-                Subalgebra generated of
+-                 Lie algebra on 2 generators (x, y) over Rational Field
+-                 with basis: (x,)
+-                sage: L.product_space(Lp)       # not implemented
+-                Subalgebra generated of
+-                 Lie algebra on 2 generators (x, y) over Rational Field
+-                 with basis: (x,)
+-                sage: Lp.product_space(Lp)      # not implemented
+-                Subalgebra generated of
+-                 Lie algebra on 2 generators (x, y) over Rational Field
+-                 with basis: ()
++                sage: Lp = L.product_space(L)
++                sage: Lp.is_ideal(L)
++                True
++                sage: Lp.product_space(L) == Lp
++                True
++                sage: L.product_space(Lp) == Lp
++                True
++                sage: Lp.product_space(Lp).dimension()
++                0
++                sage: X = L.subalgebra([x + y])
++                sage: Y = L.subalgebra([x])
++                sage: L.product_space(X).basis_matrix()
++                [1 0]
++                sage: X.product_space(Y).basis_matrix()
++                [1 0]
+@@ -1242,7 +1240,5 @@
+-            if L not in self.category():
+-                # L might be a submodule of A.module()
+-                LB = [self.from_vector(b) for b in L.basis()]
+-            else:
+-                LB = L.basis()
+-
+-            B = self.basis()
++            # Coerce both bases through the common ambient algebra.  In
++            # particular, elements of a Lie ideal use the ideal's coordinate
++            # system, so treating them as vectors for ``self`` is incorrect.
++            B = [A(b) for b in self.basis()]
++            LB = [A(lb) for lb in L.basis()]

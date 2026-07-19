@@ -55430,6 +55430,57 @@ idempotence, manifest loading, and `git diff --check` pass.  The next pass can
 continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Finite-dimensional Lie product-space coercion pass on 2026-07-19 UTC:
+
+The historical `# not implemented` cluster in
+`sage/categories/finite_dimensional_lie_algebras_with_basis.py` exposed a
+real ambient-coordinate defect after its first row succeeded.  Constructing
+`L.product_space(L)` returned the expected derived ideal, but
+`Lp.product_space(L)` then passed ambient Lie algebra elements to
+`Lp.from_vector()`.  That method interpreted them in the ideal's smaller
+coordinate system and raised `ValueError: tuple.index(x): x not in tuple`.
+The adjacent rows either retained obsolete subalgebra repr expectations or
+cascaded from the same conversion error.
+
+The accumulated WASI patch now coerces both input bases through the common
+ambient Lie algebra before forming brackets.  This works uniformly for
+ambient algebras, ideals, ordinary Lie subalgebras, and vector-space bases
+from the `submodule=True` path.  The obsolete deferred rows are replaced by
+direct ideal, both-argument-order, zero-product, and ordinary-subalgebra
+identities that record the current mathematical contract without depending
+on stale parent repr text.
+
+Replays under runner version 127 record:
+
+```text
+forced deferred rows before:          1 passed, 4 failed, 0 skipped
+focused shared controls final:        9 passed, 0 failed, 0 skipped
+focused reconstructed controls final: 9 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstructions are
+under `.tmp/current-run/scheduled-2026-07-19-additive-abelian-pickle/`; the
+directory name reflects an elliptic-curve-backed additive-wrapper candidate
+that was discarded before this dependency-light Lie cluster was selected.
+Both final databases pass `PRAGMA integrity_check` and have empty block- and
+file-failure cluster queries.  Applying the complete accumulated patch once
+to pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds, a second forward application is rejected, and the reconstructed
+changed source is byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The preserved Electron manifest validates throughout the final
+replays with 545 side modules and 691 required-resource hashes.  The broader
+example-backed module controls retain an independent stripped-profile
+boundary at the unavailable `sage.rings.polynomial.plural` module; the
+focused fixture covers the same subalgebra argument shapes without that
+optional example constructor.  Focused shared/reconstructed replays, Python
+compilation, SQLite integrity and empty-cluster checks, clean source
+reconstruction and comparison, patch applicability, manifest loading,
+JavaScript and shell syntax checks, and `git diff --check` pass.  The next
+pass can continue with another bounded upstream-deferred semantic contract or
+a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
