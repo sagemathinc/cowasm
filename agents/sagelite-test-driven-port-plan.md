@@ -54652,6 +54652,43 @@ integrity, clean source reconstruction, source comparison, and
 `git diff --check` pass.  The next pass can continue with another bounded
 upstream-deferred semantic contract or a persisted backend/runtime cluster.
 
+Random-word deferred promotion pass on 2026-07-19 UTC:
+
+The sole deferred row in `sage/combinat/words/word_generators.py` was stale
+test metadata rather than an implementation gap.  The example constructs a
+random word and documents one possible value, but its historical
+`# not tested random` annotation prevented the constructor from running at
+all.  The Sagelite runner already implements Sage's `# random` contract: run
+the example while accepting its nondeterministic output.  The accumulated WASI
+patch now uses that standard marker.
+
+A forced focused replay under runner version 126 first confirmed that the
+constructor executes successfully.  With the promoted marker, the default
+focused row is recorded as a passing `expected_kind = random` block with the
+`random` tag.  Complete module replays record:
+
+```text
+previous clean-corpus module: 256 passed, 0 failed, 46 skipped
+shared module final:          257 passed, 0 failed, 45 skipped
+reconstructed module final:   257 passed, 0 failed, 45 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-random-word/`.  All four retained
+databases pass `PRAGMA integrity_check`; both complete final databases have
+empty block-failure and file-error cluster queries.  Applying the complete
+accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed word-generator source is byte-identical to the tested staged
+source.
+
+This is a doctest-metadata-only promotion, so it requires no Python, Cython, or
+native WASM resource rebuild.  The focused and complete shared/reconstructed
+replays, SQLite integrity and cluster checks, clean source reconstruction,
+source comparison, and `git diff --check` pass.  The next pass can continue
+with another bounded upstream-deferred semantic contract or a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

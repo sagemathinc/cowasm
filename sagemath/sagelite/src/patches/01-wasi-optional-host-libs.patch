@@ -26303,3 +26303,9 @@ diff --git a/src/sage/crypto/sbox.pyx b/src/sage/crypto/sbox.pyx
 @@ -213 +213 @@
 -    deps += [cypari2]
 +    deps += [cypari2, ntl]
+diff --git a/src/sage/combinat/words/word_generators.py b/src/sage/combinat/words/word_generators.py
+--- a/src/sage/combinat/words/word_generators.py
++++ b/src/sage/combinat/words/word_generators.py
+@@ -337 +337 @@
+-        sage: words.RandomWord(10, 4)    # not tested random
++        sage: words.RandomWord(10, 4)    # random
