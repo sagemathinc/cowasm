@@ -6725,6 +6725,42 @@ diff -urN a/src/sage/categories/coxeter_groups.py b/src/sage/categories/coxeter_
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
+@@ -402,3 +402 @@
+-        .. WARNING::
+-
+-            This test currently includes some false negatives::
++        Category-parameter refinements are taken into account::
+@@ -406,4 +404,4 @@
+-                sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
+-                False
+-                sage: Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings())))
+-                False
++            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
++            True
++            sage: Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings())))
++            True
+@@ -429 +429 @@
+-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))  # todo: not implemented
++            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
+@@ -437 +437 @@
+-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                 # todo: not implemented
++            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))
+@@ -479,8 +479,13 @@
+         """
+-        if not issubclass(C.parent_class, self.parent_class):
+-            return False
+         if not isinstance(C, Category_over_base_ring):
++            if not issubclass(C.parent_class, self.parent_class):
++                return False
+             return Unknown
+         base_ring = self.base_ring()
++        structural_category = self
++        if isinstance(base_ring, Category):
++            structural_category = self.__class__.__base__(C.base())
++        if not issubclass(C.parent_class, structural_category.parent_class):
++            return False
+         if C.base_ring() is base_ring:
+             return True
 @@ -515 +515 @@
 -            sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
 +            sage: QQ['x'] in Algebras(Fields())

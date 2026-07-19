@@ -53972,6 +53972,54 @@ WASM rebuild or tracked resource-bundle change.  The next pass should continue
 with another bounded upstream-deferred semantic contract or a persisted
 backend/runtime cluster.
 
+Category base-refinement subcategory implementation pass on 2026-07-19 UTC:
+
+The two upstream-deferred `_subcategory_hook_` rows in
+`sage/categories/category_types.py` exposed a companion gap to the earlier
+base-ring membership fix.  `Category_over_base_ring._subcategory_hook_`
+compared parameter-specific generated parent classes before checking their
+bases, so it rejected both `Algebras(Fields().Finite())` as a subcategory of
+`VectorSpaces(Fields())` and `Algebras(QQ)` as a subcategory of
+`VectorSpaces(Fields())`.
+
+The accumulated WASI patch now preserves the old structural fast path for
+categories without a base ring.  For a base-ring category whose own base is a
+category, it reconstructs the receiving category over the candidate's base
+before comparing generated parent classes, then applies the existing base
+subcategory or base-membership test.  The obsolete implementation markers are
+removed.  Complete validation showed that the same fix also resolves the two
+documented false negatives for finite-field algebras and modules over group
+algebras, so those expectations are promoted to positive regression coverage.
+
+Focused and complete replays under runner version 125 record:
+
+```text
+forced finite-field refinement before: 0 passed, 1 failed,  0 skipped
+forced concrete-field base before:     0 passed, 1 failed,  0 skipped
+focused positive rows final:           2 passed, 0 failed,  0 skipped
+focused negative controls final:       2 passed, 0 failed,  0 skipped
+first complete expectation audit:     69 passed, 2 failed, 25 skipped
+shared complete module final:         71 passed, 0 failed, 25 skipped
+reconstructed complete final:         71 passed, 0 failed, 25 skipped
+category-with-axiom control:          331 passed, 0 failed,  5 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-category-subcategory/`; every retained
+database passes `PRAGMA integrity_check`, and the saved final block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and the reconstructed module is byte-identical to the tested staged
+source.  Python compilation, focused and complete shared/reconstructed
+replays, the neighboring category-with-axiom replay, clean source
+reconstruction, SQLite integrity checks, and `git diff --check` pass.  Testing
+the pure-Python implementation required refreshing the ignored local Electron
+resource module, but no native WASM rebuild or tracked resource-bundle change.
+The pre-existing changes in `/home/user/sagelite` were left untouched.  The
+next pass should continue with another bounded upstream-deferred semantic
+contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
