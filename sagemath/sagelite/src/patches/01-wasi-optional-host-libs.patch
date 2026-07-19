@@ -4281,6 +4281,11 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +            self.val = gclone(g)
 +        else:
 +            self.val = gcloneref(g)
+@@ -1322,3 +1329,3 @@
+-        if self._parent._need_replace_varname:
++        if self._parent._need_replace_varname and sys.platform != "wasi":
+             raise ValueError("variable name illegal in PARI")
+         return new_gen_noclear(self.val)
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -727,6 +727,8 @@

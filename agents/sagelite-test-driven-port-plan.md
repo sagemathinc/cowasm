@@ -55976,6 +55976,55 @@ empty-cluster checks, Node and shell syntax checks, and `git diff --check`
 pass.  The next pass can address the cypari2 clone-cleanup cluster or another
 persisted backend/runtime boundary.
 
+PARI FFELT renamed-generator conversion pass on 2026-07-19 UTC:
+
+The retained Drinfeld category trap at line 496 was stale after a coherent
+rebuild of the existing PARI clone-isolation fix.  The rebuilt module instead
+exposed the deterministic first failure at line 368: the WASI display
+workaround deliberately marks every non-`x` PARI finite-field generator for
+name replacement, but `FiniteFieldElement_pari_ffelt.__pari__()` interpreted
+that same flag as proof that conversion was invalid.  Constructing a
+Drinfeld module over `GF(25)` therefore raised `ValueError: variable name
+illegal in PARI`, and the setup failure cascaded through 40 rows.
+
+On WASI, `__pari__()` now returns the already-valid internal FFELT even when
+its display name needs replacement.  Native builds preserve the upstream
+exception for genuinely illegal PARI names, while `_repr_()` still translates
+PARI's internal `x` to Sage's requested generator such as `z`.  The standalone
+and Electron-shaped finite-field polynomial smokes now require both contracts:
+the renamed element displays as `z^3 + 7*z^2 + 6*z + 10`, and its direct
+`__pari__()` result has PARI type `t_FFELT`.  The Electron manifest schema
+advances to version 148 so packaged resources cannot silently omit this
+native boundary.
+
+Replays under runner version 127 record:
+
+```text
+coherent rebuilt Drinfeld before: 189 passed, 40 failed, 4 skipped
+focused line 368 final:             1 passed,  0 failed, 0 skipped
+ordered packaged regression final: 13 passed, 0 failed, 0 skipped
+complete Drinfeld category final: 223 passed,  6 failed, 4 skipped
+Electron-shaped packaged smoke:   passed, including renamed FFELT conversion
+```
+
+The six remaining complete-module failures are the independent missing-GAP
+boundary at lines 627, 653, and 700 plus dependent rows; all PARI variable-name
+and renamed-generator display failures are gone.  The authoritative SQLite
+dashboards, clean patch reconstruction, rebuilt side module, and validated
+copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-cypari2-clone-cleanup/`.  The focused
+and ordered-regression databases pass `PRAGMA integrity_check` and have empty
+block- and file-failure clusters.
+
+Applying the complete accumulated patch to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` reconstructs the tested Cython
+source byte-for-byte.  Cython generation and native module linking, focused
+and complete replays, packaged Electron smoke, manifest hash validation,
+patch syntax validation, Python compilation, Node and shell syntax checks,
+SQLite integrity, and `git diff --check` pass.  The next pass can classify or
+implement the isolated GAP-dependent Drinfeld rows, or continue with another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

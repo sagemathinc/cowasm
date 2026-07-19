@@ -496,6 +496,12 @@ S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
 assert type(w).__module__ == 'sage.rings.polynomial.polynomial_zz_pex'
 assert (w + a)**2 == w**2 + 2*a*w + a**2
+F11 = GF(11)
+K = F11.extension(4, 'z')
+z = K.gen()
+p_root = z**3 + 7*z**2 + 6*z + 10
+assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
+assert p_root.__pari__().type() == 't_FFELT'
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");
