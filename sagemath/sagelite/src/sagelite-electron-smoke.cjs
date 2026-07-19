@@ -895,6 +895,18 @@ assert 0 not in P
 assert list(P.some_elements())[:5] == [1, 2, 3, 4, 5]
 `);
     console.log("sagelite-electron-ok set family smoke");
+    console.log("sagelite-electron-start p-adic lattice pickle smoke");
+    await python.exec(String.raw`
+from sage.all import ZpLC
+from sage.misc.persist import dumps, loads
+
+R = ZpLC(5)
+a = R(-3)
+a_copy = loads(dumps(a))
+assert a_copy == a
+assert a_copy.parent() is R
+`);
+    console.log("sagelite-electron-ok p-adic lattice pickle smoke");
     console.log("sagelite-electron-start real-double algebraic dependency smoke");
     await python.exec(String.raw`
 from sage.all import RDF, sqrt

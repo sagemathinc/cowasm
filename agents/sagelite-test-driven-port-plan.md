@@ -56290,6 +56290,44 @@ pure-Python source correction and requires no native WASM rebuild.  The next
 pass can continue with the independent multivariate-polynomial or native
 file-level clusters recorded by the bounded refresh.
 
+P-adic lattice factory delivery-contract pass on 2026-07-19 UTC:
+
+A bounded continuation over corpus entries 68--77 recorded 1,468 passed, one
+failed, and 178 skipped blocks.  Nine of the ten files were completely clean;
+the only failure was the previously fixed lattice-element pickle at
+`sage/rings/padics/padic_lattice_element.py:167`.  The latest retained
+Electron resource snapshot had regressed to an older
+`sage.structure.factory` side module, so unpickling resolved the lazy `Zp`
+factory as an ordinary callable and shifted the cached factory key into
+`names=5, print_ram_name=True`.
+
+Replacing only `factory.cpython-314-wasm32-wasi.so` with the already-correct
+build from the accumulated source makes `loads(dumps(ZpLC(5)(-3)))` preserve
+both the element and its parent identity.  The standalone and Electron-shaped
+smokes now require that exact round trip.  The Electron manifest schema
+advances to version 154 and its smoke contract to
+`padic-lattice-pickle-v114`, so a future packaged bundle cannot retain the
+stale factory binary even though its path was already manifest-required.
+
+The retained results record:
+
+```text
+bounded ten-file refresh:          1468 passed, 1 failed, 178 skipped
+retained packaged line before:        0 passed, 1 failed,   0 skipped
+factory-only replacement final:       1 passed, 0 failed,   0 skipped
+Electron-shaped packaged smoke:      passed, including lattice pickle identity
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-next-bounded/`.  The focused final
+database passes `PRAGMA integrity_check`.  The complete Electron-shaped smoke,
+manifest parity/runtime tests, JavaScript and shell syntax checks, SQLite
+integrity, and `git diff --check` pass.  This is a delivery regression for the
+existing lazy-global factory fix and requires no new Cython source change.  The
+next pass can continue with the next bounded corpus window or another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
