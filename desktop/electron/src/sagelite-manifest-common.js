@@ -148,6 +148,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so",
   "site-packages/sage/libs/braiding.cpython-314-wasm32-wasi.so",
   "site-packages/sage/misc/lazy_import.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/repl/display/fancy_repr.py",
+  "site-packages/sage/repl/display/pretty_print.py",
   "site-packages/sage/matrix/__init__.py",
   "site-packages/sage/matrix/action.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/all.py",
@@ -167,6 +169,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
   "site-packages/sage/algebras/clifford_algebra.py",
+  "site-packages/sage/algebras/weyl_algebra.py",
   "site-packages/sage/homology/chain_complex.py",
   "site-packages/sage/groups/__init__.py",
   "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so",
@@ -277,7 +280,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 156,
+  schemaVersion: 157,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -285,7 +288,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116-weyl-display-and-nested-generators-v117";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

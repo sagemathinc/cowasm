@@ -56425,6 +56425,57 @@ comparison, shell and JavaScript syntax checks, SQLite integrity and empty-
 cluster checks, and `git diff --check` pass.  The next pass can continue with
 corpus entries 118--127 or another persisted backend/runtime cluster.
 
+Weyl display and nested-generator delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 118--127 initially recorded 1,777
+passed, six failed, and 50 skipped blocks.  Nine files were clean; all six
+failures were in `sage/algebras/weyl_algebra.py`.  Two
+`factor_differentials()` rows displayed mathematically correct dictionaries in
+insertion order rather than Sage's sorted frontend order.  The remaining four
+rows formed one nested-infinite-generator cascade: the packaged Weyl factory
+discarded the outer coefficient family, selected `x` instead of `y`, and then
+failed the dependent generator and constructor-identity examples.
+
+All runtime corrections were already present in the complete accumulated
+source patch.  The retained Electron bundle had regressed to old copies of
+`sage/algebras/weyl_algebra.py` and the coupled lightweight frontend resources
+`sage/repl/display/fancy_repr.py` and `sage/repl/display/pretty_print.py`.
+Staging all three byte-identical accumulated-source files closes both clusters
+without a native rebuild.  Staging `fancy_repr.py` alone intentionally exposed
+its dependency on the newer fallback pretty-printer, which prevented an
+incoherent partial delivery from being accepted.
+
+The standalone and Electron-shaped smokes now require sorted display for a
+tuple-key differential dictionary, preservation of the outer infinite
+polynomial coefficient ring, selection of the `y`/`dy` generator family, and
+constructor identity through the explicit infinite-variable path.  All three
+source files are newly mandatory hashed resources.  The Electron manifest
+schema advances to version 157 and its smoke contract to
+`weyl-display-and-nested-generators-v117`.
+
+The retained results record:
+
+```text
+entries 118--127 before:           1777 passed, 6 failed, 50 skipped
+complete Weyl module final:         314 passed, 0 failed, 15 skipped
+entries 118--127 final:            1783 passed, 0 failed, 50 skipped
+Electron-shaped packaged smoke:    passed, including display and nested generators
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-next-algebra-window/`.  Both final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+cluster queries.  The resource manifest validates 545 side modules and 702
+required-resource hashes.
+
+The repaired bounded replay, complete Weyl replay, complete Electron-shaped
+smoke, manifest parity/runtime tests, manifest hash validation,
+accumulated-patch syntax check, Python compilation, exact staged-source
+comparison, shell and JavaScript syntax checks, SQLite integrity and
+empty-cluster checks, and `git diff --check` pass.  The next pass can continue
+with corpus entries 128--137 or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -929,6 +929,29 @@ assert str(E.boundary(sl2_coeff).chain_complex(R=ZZ).homology()[1]) == 'C2 x C2'
 assert str(E.coboundary(sl2_coeff).chain_complex(R=ZZ).homology()[2]) == 'C2 x C2'
 `);
     console.log("sagelite-electron-ok exterior differential delivery smoke");
+    console.log("sagelite-electron-start Weyl display and nested-generator smoke");
+    await python.exec(String.raw`
+from sage.all import QQ
+from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
+from sage.repl.display.fancy_repr import SomeIPythonRepr
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+R = PolynomialRing(QQ, 't')
+t = R.gen()
+D = DifferentialWeylAlgebra(R)
+t, dt = D.gens()
+factors = (dt**3*t**3 + dt**2*t**4).factor_differentials()
+assert SomeIPythonRepr().format_string(factors) == '{(0,): 12*t^2 + 6, (1,): 8*t^3 + 18*t, (2,): t^4 + 9*t^2, (3,): t^3}'
+Rx = InfinitePolynomialRing(QQ, names=('x',))
+Rxy = InfinitePolynomialRing(Rx, names=('y',))
+Wxy = DifferentialWeylAlgebra(Rxy)
+assert Wxy.base_ring() is Rx
+assert Wxy.variable_names() == ('y', 'dy')
+assert DifferentialWeylAlgebra(Rxy, n=infinity) is Wxy
+`);
+    console.log("sagelite-electron-ok Weyl display and nested-generator smoke");
     console.log("sagelite-electron-start real-double algebraic dependency smoke");
     await python.exec(String.raw`
 from sage.all import RDF, sqrt

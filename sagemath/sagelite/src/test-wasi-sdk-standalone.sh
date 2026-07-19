@@ -1354,6 +1354,25 @@ sl2_coeff = {(0, 1): z, (2, 1): -2*y, (2, 0): 2*x}
 assert str(E.boundary(sl2_coeff).chain_complex(R=ZZ).homology()[1]) == 'C2 x C2'
 assert str(E.coboundary(sl2_coeff).chain_complex(R=ZZ).homology()[2]) == 'C2 x C2'
 print('sagelite-node-ok exterior differential delivery smoke')"
+run_node_import "Weyl display and nested-generator smoke" "from sage.all import QQ
+from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
+from sage.repl.display.fancy_repr import SomeIPythonRepr
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+R = PolynomialRing(QQ, 't')
+t = R.gen()
+D = DifferentialWeylAlgebra(R)
+t, dt = D.gens()
+factors = (dt**3*t**3 + dt**2*t**4).factor_differentials()
+assert SomeIPythonRepr().format_string(factors) == '{(0,): 12*t^2 + 6, (1,): 8*t^3 + 18*t, (2,): t^4 + 9*t^2, (3,): t^3}'
+Rx = InfinitePolynomialRing(QQ, names=('x',))
+Rxy = InfinitePolynomialRing(Rx, names=('y',))
+Wxy = DifferentialWeylAlgebra(Rxy)
+assert Wxy.base_ring() is Rx
+assert Wxy.variable_names() == ('y', 'dy')
+assert DifferentialWeylAlgebra(Rxy, n=infinity) is Wxy
+print('sagelite-node-ok Weyl display and nested-generator smoke')"
 run_node_import "finite-field matrix smoke" "from sage.all import GF
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -1628,7 +1647,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=156
+electron_manifest_schema_version=157
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1637,6 +1656,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-doubl
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-lattice-pickle-v114"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-integer-lcm-content-v115"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-exterior-differential-delivery-v116"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weyl-display-and-nested-generators-v117"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1841,7 +1861,10 @@ electron_required_paths=(
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
   "site-packages/sage/algebras/clifford_algebra.py"
+  "site-packages/sage/algebras/weyl_algebra.py"
   "site-packages/sage/homology/chain_complex.py"
+  "site-packages/sage/repl/display/fancy_repr.py"
+  "site-packages/sage/repl/display/pretty_print.py"
   "site-packages/sage/groups/__init__.py"
   "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so"
   "site-packages/sage/groups/abelian_gps/__init__.py"
