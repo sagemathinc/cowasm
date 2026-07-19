@@ -26591,3 +26591,45 @@ diff --git a/src/sage/matrix/matrix_space.py b/src/sage/matrix/matrix_space.py
 @@ -628 +628 @@
 -        sage: TestSuite(M_ab_xy).run()  # known bug
 +        sage: TestSuite(M_ab_xy).run()
+diff --git a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.py
+--- a/src/sage/algebras/weyl_algebra.py
++++ b/src/sage/algebras/weyl_algebra.py
+@@ -34 +34 @@
+-from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_dense
++from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing, InfinitePolynomialRing_dense
+@@ -723 +723,6 @@
+-            return InfGenDifferentialWeylAlgebra(R.base_ring(), R.variable_names())
++            names = R.variable_names()
++            base = R.base_ring()
++            if len(names) > 1:
++                base = InfinitePolynomialRing(base, names[:-1], order=R._order)
++                names = names[-1:]
++            return InfGenDifferentialWeylAlgebra(base, names)
+@@ -1345,5 +1350,3 @@
+-    .. WARNING::
+-
+-        Due to a bug in ``InfinitePolynomialRing`` (:issue:`36788`) trying to define the infinite Weyl
+-        algebra of an infinite polynomial ring with coefficients in another infinite
+-        polynomial ring will result in unexpected behavior::
++    Nested infinite polynomial rings are flattened by their factory.  In that
++    case, the final variable family is used for the Weyl algebra and the
++    preceding families remain in its coefficient ring::
+@@ -1353 +1356 @@
+-            sage: W = DifferentialWeylAlgebra(R2); W # known bug
++            sage: W2 = DifferentialWeylAlgebra(R2); W2
+@@ -1355,0 +1359,7 @@
++            sage: W2.base_ring() is R
++            True
++            sage: W2.inject_variables(verbose=False); R.inject_variables(verbose=False)
++            sage: dy[1] * x[2] * y[1]
++            x_2 + x_2*y[1]*dy[1]
++            sage: DifferentialWeylAlgebra(R2, n=oo) is W2
++            True
+@@ -1403,0 +1414 @@
++            base = R.base_ring()
+@@ -1405,2 +1416,3 @@
+-                raise NotImplementedError("only one set of variables supported")
+-            R = R.base_ring()
++                base = InfinitePolynomialRing(base, names[:-1], order=R._order)
++                names = names[-1:]
++            R = base

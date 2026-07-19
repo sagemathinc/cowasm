@@ -54868,6 +54868,53 @@ and 696 required-resource hashes), and `git diff --check` pass.  The next pass
 can continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Nested infinite-polynomial Weyl algebra pass on 2026-07-19 UTC:
+
+The upstream-known-bug row constructing `DifferentialWeylAlgebra(R2)` from an
+infinite polynomial ring `R2.<y>` over another infinite polynomial ring
+`R.<x>` exposed a parent-normalization error.  The infinite-polynomial factory
+canonically flattens that nested construction to the two-family ring over
+`QQ`, while the Weyl factory passed both family names to an implementation
+that uses only the first.  The resulting parent silently described the `x`
+family over `QQ` instead of the intended `y` family over `R`.
+
+The accumulated WASI patch now interprets the final family of a flattened
+dense infinite polynomial ring as the differential-Weyl variables and
+reconstructs all preceding families as the coefficient ring, preserving the
+original monomial order.  The same normalization is used by both the ordinary
+factory path and the explicit `n=oo` path.  The stale `# known bug` marker is
+removed, and adjacent regression rows verify the coefficient parent,
+differentiation across the reconstructed coefficient ring, and constructor
+identity.  Replays under runner version 126 record:
+
+```text
+forced nested-parent row before:       0 passed, 1 failed,  0 skipped
+forced nested-parent row final:        1 passed, 0 failed,  0 skipped
+focused semantic fixture final:       14 passed, 0 failed,  0 skipped
+previous complete module:            309 passed, 0 failed, 16 skipped
+shared complete module final:        314 passed, 0 failed, 15 skipped
+reconstructed complete final:        314 passed, 0 failed, 15 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-weyl-nested-infinite/`, with the focused
+before database at
+`.tmp/current-run/scheduled-2026-07-19-weyl-r2-before.sqlite3`.  Every retained
+dashboard passes `PRAGMA integrity_check`; both complete final databases have
+empty block-failure and file-error cluster queries.  Applying the complete
+accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and the reconstructed Weyl source is
+byte-identical to the tested staged source.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  Focused and complete shared/reconstructed replays, Python
+compilation, SQLite integrity and empty-cluster checks, clean source
+reconstruction and comparison, Electron manifest validation (550 side modules
+and 696 required-resource hashes), and `git diff --check` pass.  The next pass
+can continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
