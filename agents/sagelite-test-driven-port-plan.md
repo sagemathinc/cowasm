@@ -54464,6 +54464,54 @@ where conversion reaches the separate missing resource
 matrix resource-profile gap or continue with another persisted backend/runtime
 cluster.
 
+S-box binary-matrix resource and exact LAT scaling pass on 2026-07-19 UTC:
+
+The persisted S-box constructor boundary was an install-time resource gap, not
+an M4RI portability failure.  The existing `matrix_mod2_dense` Meson target
+compiles successfully for WASM and loads after installation in the local
+Electron resource tree.  With that module present, the formerly failing
+polynomial-to-S-box conversion and its `differential_uniformity()` check pass.
+
+The newly reachable complete S-box audit also exposed a separate three-row
+cluster in `linear_approximation_table()`.  The default absolute-bias path
+divided a matrix over `ZZ` by a C integer.  For one rectangular LAT this
+entered the stripped runtime's incomplete category/coercion path and rejected
+`ZZ` as a vector-space base.  The accumulated WASI patch now halves the even
+Fourier coefficients entrywise before reconstructing the integer matrix.  This
+preserves the documented absolute-bias values and base ring without requiring
+a field-coercion action.
+
+Replays under runner version 125 record:
+
+```text
+persisted S-box constructor before:    0 passed, 1 ModuleNotFoundError
+constructor and uniformity final:      1 passed, 0 failed
+focused rectangular LAT final:         1 passed, 0 failed
+complete S-box audit before:          274 passed, 10 failed, 2 skipped
+complete S-box audit final:           277 passed,  7 failed, 2 skipped
+reconstructed complete audit:         277 passed,  7 failed, 2 skipped
+```
+
+The remaining seven complete-audit failures are the pre-existing independent
+`mq` startup-namespace cascade; the three LAT division failures are gone, and
+the existing bias, correlation, and Fourier-coefficient scaling controls still
+pass.  The authoritative SQLite dashboards and clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-sbox-matrix-mod2/`.  Applying the
+complete accumulated Sagelite patch exactly once with
+`patch --batch --forward -p1` to a `git archive` of pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed module is byte-identical to the tested staged source.
+
+The exact Meson `matrix_mod2_dense` and `sage.crypto.sbox` Cython/C/WASM
+targets compile successfully.  Both rebuilt modules were installed in the
+ignored local Electron resource tree for testing, whose manifest now validates
+all 546 side modules and 692 required-resource hashes.  Focused and complete
+shared/reconstructed replays, SQLite integrity checks, clean source
+reconstruction, resource-manifest validation, and `git diff --check` pass.  No
+tracked resource-bundle change is required.  The next pass can address the
+bounded missing `mq` startup namespace or continue with another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

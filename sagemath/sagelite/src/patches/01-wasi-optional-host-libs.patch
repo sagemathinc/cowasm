@@ -26128,6 +26128,9 @@ diff --git a/src/sage/crypto/sbox.pyx b/src/sage/crypto/sbox.pyx
 @@ -344 +344 @@
 -            sage: S._rpad([1,1])  # not tested
 +            sage: S._rpad([1,1])
+@@ -836 +836 @@
+-            A /= 2
++            A = matrix(ZZ, nrows, ncols, [entry // 2 for entry in L])
 --- a/src/sage/libs/ntl/ntl_ZZ_pE.pyx
 +++ b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
 @@ -38,0 +39 @@
