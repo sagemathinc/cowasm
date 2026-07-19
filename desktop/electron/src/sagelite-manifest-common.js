@@ -273,7 +273,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 151,
+  schemaVersion: 152,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -281,7 +281,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

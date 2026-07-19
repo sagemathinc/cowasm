@@ -56181,6 +56181,57 @@ patch syntax, JavaScript and shell syntax checks, SQLite integrity, and
 `git diff --check` pass.  The next pass can select another persisted
 backend/runtime cluster.
 
+Laurent-localization delivery-contract pass on 2026-07-19 UTC:
+
+A bounded continuation of the interrupted corpus refresh covered entries
+53--62 and recorded 722 passed, 53 failed, and 71 skipped blocks.  The
+smallest coherent cluster was the three-row multivariate Laurent localization
+example in `sage/rings/polynomial/laurent_polynomial_ring.py`.  Its source fix
+had already been committed, but the latest retained Electron resource snapshot
+had regressed to an older `laurent_polynomial_mpair` side module and rejected
+`R.localization(x + 1)` as a nonconstant scalar conversion.
+
+Rebuilding the Laurent side module from the accumulated patched source exposed
+two coupled stale pure-Python resources in order.  The old
+`multi_polynomial_sequence.py` imported the unavailable `plural` backend
+unconditionally, and the old `multi_polynomial_element.py` entered the
+Singular/`pexpect` path instead of its generic multivariate long-division
+fallback.  A coherent bundle containing all three existing source corrections
+now constructs the localization, converts `~x` into it, and converts the result
+back to the Laurent ring.
+
+Both standalone and Electron-shaped smokes now require polynomial conversion
+for a nonnegative multivariate Laurent element, rejection of a negative
+exponent, and the localization round trip.  `sage/rings/localization.py` and
+`sage/rings/polynomial/multi_polynomial_sequence.py` are newly hashed required
+resources; the multivariate element module and Laurent side module were already
+required.  The Electron manifest schema advances to version 152 and its smoke
+contract to `laurent-localization-v112`.
+
+The final coherent replay records:
+
+```text
+laurent_polynomial_ring.py: 117 passed, 0 failed, 38 skipped
+Electron-shaped packaged smoke: passed, including Laurent localization
+```
+
+The authoritative SQLite dashboard, isolated pinned build, rebuilt module, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-post-gosper-cluster/`.  The final
+database passes `PRAGMA integrity_check` and has empty block- and file-failure
+cluster queries.  The resource manifest validates 545 side modules and 697
+required-resource hashes.
+
+The exact Laurent Meson target was generated, compiled, and linked from a fresh
+detached worktree at pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` after applying the complete
+accumulated patch once; a second forward dry-run is rejected.  Source/resource
+comparisons, packaged Electron smoke, manifest hash validation, patch syntax,
+shell and JavaScript syntax checks, SQLite integrity, empty-cluster checks, and
+`git diff --check` pass.  The next pass can continue with the independent
+Laurent-series, multivariate-polynomial, lazy-series, or native file-level
+clusters recorded by the bounded refresh.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

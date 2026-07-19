@@ -630,6 +630,19 @@ assert g.exponents() == [1, 2, 4]
 assert g.dict() == {1: QQ(1), 2: QQ(2), 4: QQ(1)}
 assert g.coefficients() == [QQ(1), QQ(2), QQ(1)]
 assert (t + t**-1)**2 == t**2 + 2 + t**-2
+M = LaurentPolynomialRing(QQ, ('x', 'y'))
+x, y = M.gens()
+P = M.polynomial_ring()
+assert P(x**2 + x*y + 1) == P.gen(0)**2 + P.gen(0)*P.gen(1) + 1
+try:
+    P(x**-1 + y)
+except ValueError as err:
+    assert 'negative exponent' in str(err)
+else:
+    raise AssertionError('negative Laurent exponent unexpectedly converted to polynomial')
+ML = M.localization(x + 1)
+xi = ML(~x)
+assert M(xi) == ~x
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");
