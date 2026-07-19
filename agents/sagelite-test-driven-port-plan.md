@@ -54412,6 +54412,58 @@ diff --check` pass.  No tracked resource-bundle change is required.  The next
 pass should continue with another bounded upstream-deferred semantic contract
 or the persisted NTL dynamic-link cluster.
 
+NTL extension-field side-module context restoration pass on 2026-07-19 UTC:
+
+The persisted S-box backend boundary had two coupled causes.  The
+`polynomial_zz_pex` Meson target omitted its direct NTL dependency, leaving 41
+NTL C++ operations as dynamic imports; the first unresolved import was
+`ZZ_pContext::restore`.  Adding `ntl` to that target resolved those operations
+inside the side module, but a linked-only probe then trapped in NTL
+`PlainRem`.  That second result exposed the WASM side-module state boundary:
+calling the context wrapper's restore method updated the copy of NTL globals
+linked into `ntl_ZZ_pEContext`, not the distinct copy used by `ntl_ZZ_pE` and
+its polynomial caller.
+
+The accumulated WASI patch now links `polynomial_zz_pex` against NTL and makes
+`ntl_ZZ_pE` reconstruct and restore its prime-field and extension-field
+contexts locally before every NTL operation.  This follows the existing
+local-context pattern in the `ntl_ZZ_p` and `ntl_ZZ_pX` wrappers and keeps the
+globals used by each statically linked WASM side module synchronized.  Replays
+under runner version 125 record:
+
+```text
+persisted S-box constructor before:      0 passed, 1 wasm_link_error
+linked-only constructor diagnostic:      0 passed, 1 wasm_trap
+final S-box ring constructor shared:      1 passed, 0 failed
+final S-box polynomial power shared:      1 passed, 0 failed
+complete ntl_ZZ_pE wrapper shared:       27 passed, 0 failed
+S-box polynomial power reconstructed:     1 passed, 0 failed
+complete ntl_ZZ_pE wrapper reconstructed: 27 passed, 0 failed
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-sbox-ntl-context/`.  All five retained
+final databases pass `PRAGMA integrity_check`, and their saved block-failure
+and file-error queries are empty.  Applying the complete accumulated Sagelite
+patch exactly once with `patch --batch --forward -p1` to a `git archive` of
+pinned commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds without
+rejects, and both affected source files are byte-identical to the tested
+staged source.
+
+The exact Meson `ntl_ZZ_pE` and `polynomial_zz_pex` Cython/C/WASM targets
+compile successfully.  The final polynomial side module has zero direct NTL
+C++ imports.  The rebuilt side modules were installed in the ignored local
+Electron resource tree for testing, where all 691 manifest hashes validate.
+Focused and complete shared/reconstructed replays, SQLite integrity and
+cluster checks, clean source reconstruction, resource-manifest validation,
+and `git diff --check` pass.  No tracked resource-bundle change is required.
+
+The S-box audit now advances through the former NTL boundary to line 151,
+where conversion reaches the separate missing resource
+`sage.matrix.matrix_mod2_dense`.  A future pass can address that bounded
+matrix resource-profile gap or continue with another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

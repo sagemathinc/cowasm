@@ -26128,3 +26128,74 @@ diff --git a/src/sage/crypto/sbox.pyx b/src/sage/crypto/sbox.pyx
 @@ -344 +344 @@
 -            sage: S._rpad([1,1])  # not tested
 +            sage: S._rpad([1,1])
+--- a/src/sage/libs/ntl/ntl_ZZ_pE.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
+@@ -38,0 +39 @@
++from sage.libs.ntl.types cimport ZZ_pContext_c, ZZ_pEContext_c
+@@ -46,0 +48,7 @@
++cdef inline void restore_ZZ_pE_context(ntl_ZZ_pEContext_class context) noexcept:
++    cdef ZZ_pContext_c prime_context = ZZ_pContext_c(context.pc.p.x)
++    prime_context.restore()
++    cdef ZZ_pEContext_c extension_context = ZZ_pEContext_c(context.f.x)
++    extension_context.restore()
++
++
+@@ -98 +106 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -113 +121 @@
+-                self.c.restore_c()   # allocating tmp_zzpx can change the current modulus; Issue #25790
++                restore_ZZ_pE_context(self.c)   # allocating tmp_zzpx can change the current modulus; Issue #25790
+@@ -127 +135 @@
+-                self.c.restore_c()
++                restore_ZZ_pE_context(self.c)
+@@ -148 +156 @@
+-            self.c.restore_c()
++            restore_ZZ_pE_context(self.c)
+@@ -151 +159 @@
+-            self.c.restore_c()
++            restore_ZZ_pE_context(self.c)
+@@ -155 +163 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -174 +182 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -191 +199 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -214 +222 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -227 +235 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -237 +245 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -250 +258 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -258 +266 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -266 +274 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -275 +283 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -301 +309 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+@@ -318 +326 @@
+-    #    self.c.restore_c()
++    #    restore_ZZ_pE_context(self.c)
+@@ -331 +339 @@
+-        self.c.restore_c()
++        restore_ZZ_pE_context(self.c)
+--- a/src/sage/rings/polynomial/meson.build
++++ b/src/sage/rings/polynomial/meson.build
+@@ -213 +213 @@
+-    deps += [cypari2]
++    deps += [cypari2, ntl]
