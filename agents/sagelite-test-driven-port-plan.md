@@ -55716,6 +55716,44 @@ JavaScript and shell syntax checks, and `git diff --check` pass.  The next pass
 can continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Differential-Weyl startup-namespace pass on 2026-07-19 UTC:
+
+The persisted optional-profile failures in
+`sage/categories/modules_with_basis.py` were a five-row startup-name cascade.
+Both independent setup examples used `DifferentialWeylAlgebra`, which is
+present in the browser resource bundle but was absent from Sagelite's explicit
+common doctest globals.  Their three dependent coefficient and
+`_sum_of_monomials()` rows consequently failed with follow-on `NameError`
+diagnostics.
+
+The Node doctest runner now seeds `DifferentialWeylAlgebra` from
+`sage.algebras.weyl_algebra`, alongside the existing explicit algebra
+constructors such as `FreeAlgebra` and `ExteriorAlgebra`.  No Sage source or
+resource-bundle change is required.  Replays under runner version 127 record:
+
+```text
+persisted complete module before: 473 passed, 5 failed, 146 skipped
+focused five-row replay final:       5 passed, 0 failed,   0 skipped
+complete latest-source module final: 478 passed, 0 failed, 146 skipped
+```
+
+The authoritative final SQLite databases are under
+`.tmp/current-run/scheduled-2026-07-19-differential-weyl-startup/`; both final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+clusters.  An exploratory refresh of the now 1,139-file curated corpus was
+stopped after 52 completed files because a full refresh was disproportionate
+to the one-name namespace fix.  Its checkpointed database remains valid with
+run status `interrupted`, 9,438 passed, 21 failed, and 2,295 skipped blocks;
+the retained failures are independent numeric and function-field clusters and
+there are no file-level errors.
+
+The affected complete module replay preserves the same 624 total blocks while
+converting exactly the five startup failures to passes.  Focused and complete
+latest-source replays, SQLite integrity and empty final-cluster checks, Node
+and shell syntax checks, and `git diff --check` pass.  The next pass can
+continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

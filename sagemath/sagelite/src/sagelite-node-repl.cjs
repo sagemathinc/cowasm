@@ -1382,6 +1382,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.algebras.commutative_dga", ("GradedCommutativeAlgebra",)),
         ("sage.algebras.clifford_algebra", ("ExteriorAlgebra",)),
         ("sage.algebras.free_algebra", ("FreeAlgebra",)),
+        ("sage.algebras.weyl_algebra", ("DifferentialWeylAlgebra",)),
         ("sage.algebras.octonion_algebra", ("OctonionAlgebra",)),
         ("sage.algebras.steenrod.steenrod_algebra", ("SteenrodAlgebra", "Sq")),
         ("sage.categories.graded_modules", ("GradedModules",)),
