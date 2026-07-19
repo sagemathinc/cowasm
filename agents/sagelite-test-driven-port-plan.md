@@ -55173,6 +55173,59 @@ manifest validation, patch idempotence, and `git diff --check` pass.  The next
 pass can continue with another bounded upstream-deferred semantic contract or
 persisted backend/runtime cluster.
 
+Infinite-polynomial fraction-field coercion pass on 2026-07-19 UTC:
+
+The issue-37756 guard on `FF(a[0])` in
+`sage/rings/polynomial/infinite_polynomial_element.py` was not merely stale
+metadata.  Forced execution reached `FractionField_generic`'s fraction
+normalization fallback, where multiplication of incompatible intermediate
+parents raised the coercion model's internal `RuntimeError`.  This exposed a
+narrow error-containment gap: `resolve_fractions` already treated
+`AttributeError`, `TypeError`, and `ValueError` as failed trial coercions, but
+did not classify the coercion model's incompatible-parent diagnostic the same
+way.
+
+The accumulated WASI patch now also contains `RuntimeError` in each of those
+three trial normalization paths.  The conversion consequently proceeds to the
+normal user-facing rejection, `TypeError: unable to convert a_0 to a rational`,
+instead of leaking the internal "There is a bug in the coercion code" report.
+The obsolete `# known bug` marker is removed and the browser-profile
+expectation records that stable generic-polynomial diagnostic.
+
+Replays under runner version 127 record:
+
+```text
+forced deferred row before:           0 passed, 1 failed, 0 skipped (internal RuntimeError)
+default focused row final:            1 passed, 0 failed, 0 skipped
+fraction-field conversion controls:   8 passed, 0 failed, 0 skipped
+reconstructed focused row final:      1 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-infinite-polynomial-coercion/`.  The
+three final/control databases pass `PRAGMA integrity_check` and have empty
+block-failure and file-error cluster queries.  Applying the complete
+accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and both reconstructed changed sources are
+byte-identical to the tested generated sources.
+
+Complete-module probes retained the two established independent boundaries.
+`infinite_polynomial_element.py` stops at line 156 when CPython 3.14's
+traceback suggestion logic indexes an infinite polynomial ring and leaks a
+`KeyError`; `fraction_field.py` times out after 180 seconds on its first
+NTL-backed simplification example at line 20.  Neither complete probe reaches
+the changed row.  The preserved Electron resource manifest validates after
+refreshing the ignored pure-Python `fraction_field.py` resource and its hash;
+it still records 545 side modules and 691 required-resource hashes.  Focused
+shared/reconstructed replays, conversion controls, SQLite integrity and
+empty-cluster checks, Python compilation, JavaScript and shell syntax checks,
+source reconstruction and comparison, patch idempotence, manifest loading,
+and `git diff --check` pass.  This is a pure-Python resource change and
+requires no Cython or native WASM rebuild.  The next pass can continue with
+another bounded upstream-deferred semantic contract or persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

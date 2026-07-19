@@ -26709,3 +26709,26 @@ diff --git a/src/sage/rings/invariants/invariant_theory.py b/src/sage/rings/inva
 +            g = identity_matrix(F, self._n)
 +            if self._n > 1:
 +                g[0, 1] = 1
+
+diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
+--- a/src/sage/rings/fraction_field.py
++++ b/src/sage/rings/fraction_field.py
+@@ -800 +800 @@
+-            except (AttributeError, TypeError, ValueError):
++            except (AttributeError, RuntimeError, TypeError, ValueError):
+@@ -806 +806 @@
+-            except (AttributeError, TypeError, ValueError):
++            except (AttributeError, RuntimeError, TypeError, ValueError):
+@@ -811 +811 @@
+-            except (AttributeError, TypeError, ValueError):
++            except (AttributeError, RuntimeError, TypeError, ValueError):
+
+diff --git a/src/sage/rings/polynomial/infinite_polynomial_element.py b/src/sage/rings/polynomial/infinite_polynomial_element.py
+--- a/src/sage/rings/polynomial/infinite_polynomial_element.py
++++ b/src/sage/rings/polynomial/infinite_polynomial_element.py
+@@ -621 +621 @@
+-            sage: FF(a[0])  # known bug
++            sage: FF(a[0])
+@@ -624 +624 @@
+-            TypeError: Could not find a mapping of the passed element to this ring.
++            TypeError: unable to convert a_0 to a rational
