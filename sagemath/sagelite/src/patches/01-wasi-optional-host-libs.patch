@@ -6814,6 +6814,13 @@ diff -urN a/src/sage/categories/map.pyx b/src/sage/categories/map.pyx
 @@ -64 +64 @@
 -        sage: is_Map(f)
 +        sage: is_Map(f)                                                               # random
+@@ -249 +249,5 @@
+-            return homset.Hom(D, C, self._category_for)
++            # This map's original Homset may have been constructed with
++            # ``check=False`` when the category framework cannot formally
++            # recognize a compatible scalar extension.  Reconstructing an
++            # already-valid parent must preserve that contract.
++            return homset.Hom(D, C, self._category_for, check=False)
 @@ -477 +477 @@
 -            sage: f._extra_slots_test()
 +            sage: f._extra_slots_test()                                               # random

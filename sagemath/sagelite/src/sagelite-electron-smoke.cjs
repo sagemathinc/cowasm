@@ -976,6 +976,19 @@ assert type(r) is int
     console.log(
       "sagelite-electron-ok q-binomial Python parent delivery smoke",
     );
+    console.log("sagelite-electron-start scalar-extension map parent smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, ZZ
+from sage.combinat.free_module import CombinatorialFreeModule
+
+X = CombinatorialFreeModule(ZZ, ('x',))
+Y = CombinatorialFreeModule(QQ, ('x',))
+X.module_morphism(on_basis=Y.monomial, codomain=Y).register_as_coercion()
+phi = Y.coerce_map_from(X)
+assert phi is not None
+assert phi(X.monomial('x')) == Y.monomial('x')
+`);
+    console.log("sagelite-electron-ok scalar-extension map parent smoke");
     console.log("sagelite-electron-start exterior differential delivery smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ, ExteriorAlgebra

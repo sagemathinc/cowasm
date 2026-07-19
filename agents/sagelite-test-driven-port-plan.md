@@ -56877,6 +56877,57 @@ idempotence checks, and `git diff --check` pass.  The next pass can continue
 with corpus entries 418--427 or select another persisted backend/runtime
 cluster.
 
+Scalar-extension map-parent delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 418--427 initially recorded 450 passed,
+one failed, and 101 skipped blocks.  Nine root-system files were clean; the
+only failure was `sage/combinat/root_system/type_affine.py:145`, where the
+ambient-space `TestSuite` reached `coerce_map_from(root_lattice)` and failed
+while copying the cached scalar-extension morphism.
+
+The morphism was validly created in an unchecked `ZZ`-linear Homset with a
+`QQ` codomain, preserving the strongest finite-dimensional module-with-basis
+category established by the earlier scalar-extension work.  Coercion caching
+then weakened the map's parent reference.  `Map.parent()` reconstructed that
+already-valid Homset with the default endpoint-membership check, which cannot
+formally recognize the cross-ring module structure and raised `ValueError`.
+The accumulated WASI patch now reconstructs an existing weakly held map parent
+with `check=False`, preserving the validation contract under which the map was
+originally created without weakening validation for newly constructed maps.
+
+The standalone and Electron-shaped smokes now construct a `ZZ` free-module to
+`QQ` free-module coercion, retrieve it through the public `coerce_map_from`
+copying path, and evaluate it.  The Electron manifest schema advances to 162
+and its smoke contract to `scalar-extension-map-parent-v122`, so the already-
+mandatory `sage.categories.map` side module cannot regress silently.
+
+The retained results record:
+
+```text
+entries 418--427 before:             450 passed, 1 failed, 101 skipped
+focused type_affine.py:145 final:       1 passed, 0 failed,   0 skipped
+complete type_affine.py final:         47 passed, 0 failed,  37 skipped
+complete categories/map.pyx final:    315 passed, 0 failed, 108 skipped
+entries 418--427 final:               451 passed, 0 failed, 101 skipped
+Electron-shaped packaged smoke:      passed, including map-parent delivery
+```
+
+The authoritative SQLite dashboards, rebuilt side module, targeted pinned
+reconstruction, and manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-next-root-window/`.  Every retained
+database passes `PRAGMA integrity_check` and has no failed file or block rows.
+The resource manifest validates 545 side modules and 704 required-resource
+hashes.
+
+The exact Cython generation and native module build, focused and complete
+affected-module replays, repaired bounded replay, complete Electron-shaped
+smoke, manifest parity/runtime/forge-resource tests, manifest hash validation,
+targeted pinned-source reconstruction and idempotence check, accumulated-patch
+syntax check, exact source comparison, shell and JavaScript syntax checks,
+SQLite integrity and empty-cluster checks, and `git diff --check` pass.  The
+next pass can continue with corpus entries 428--437 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
