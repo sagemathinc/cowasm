@@ -26639,3 +26639,10 @@ diff --git a/src/sage/algebras/weyl_algebra.py b/src/sage/algebras/weyl_algebra.
 +                base = InfinitePolynomialRing(base, names[:-1], order=R._order)
 +                names = names[-1:]
 +            R = base
+
+diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/polynomial/polynomial_element.pyx
+--- a/src/sage/rings/polynomial/polynomial_element.pyx
++++ b/src/sage/rings/polynomial/polynomial_element.pyx
+@@ -12710 +12710 @@
+-        sage: for S in [ZZ, GF(3)]:             # known bug, not tested (see :issue:`32075`)
++        sage: for S in [ZZ, GF(3)]:

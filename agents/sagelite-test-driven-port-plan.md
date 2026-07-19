@@ -54963,6 +54963,46 @@ did not produce a full-suite result.  The next pass can continue with another
 bounded upstream-deferred semantic contract or persisted backend/runtime
 cluster.
 
+Generic polynomial truncated-power parity promotion pass on 2026-07-19 UTC:
+
+The upstream-deferred randomized comparison in
+`sage/rings/polynomial/polynomial_element.pyx` was stale.  The test compares
+the specialized `power_trunc` implementation with `generic_power_trunc` for
+100 random polynomials, exponents, and truncation precisions over each of
+`ZZ[x]` and `GF(3)[x]`.  A forced replay of the historical combined
+`# known bug, not tested` row completed without an assertion failure.  The
+accumulated WASI patch now removes the obsolete marker and promotes all 200
+randomized parity checks to normal coverage.
+
+Replays under runner version 127 record:
+
+```text
+forced deferred row before:            1 passed, 0 failed, 0 skipped
+shared staged source final:             1 passed, 0 failed, 0 skipped
+clean reconstructed source final #1:   1 passed, 0 failed, 0 skipped
+clean reconstructed source final #2:   1 passed, 0 failed, 0 skipped
+clean reconstructed source final #3:   1 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-polynomial-power-trunc/`.  Every
+retained database passes `PRAGMA integrity_check`, and all final databases
+have empty block-failure and file-error cluster queries.  Applying the
+complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward application is rejected, and the reconstructed polynomial source is
+byte-identical to the tested staged source.
+
+This is a Cython-docstring-only promotion and requires no native WASM or
+resource-bundle rebuild.  The known broad `polynomial_element.pyx`
+inverse-modulus performance and NTL dynamic-import boundaries remain
+independent of this bounded method-level contract, so validation used repeated
+focused replays rather than re-entering those established whole-file
+clusters.  Focused shared/reconstructed replays, SQLite integrity and
+empty-cluster checks, clean source reconstruction and comparison, and
+`git diff --check` pass.  The next pass can continue with another bounded
+upstream-deferred semantic contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
