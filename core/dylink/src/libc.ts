@@ -375,7 +375,7 @@ struct group  *getgrnam(const char *) { return NULL; }
 // _ZdlPv is operator delete.
 void _ZdlPv();
 void _Znwm();
-void __cxa_allocate_exception();
+void *__cxa_allocate_exception(size_t);
 int __cxa_atexit(void (*func)(void *), void *arg, void *dso_handle);
 void _ZNSt20bad_array_new_lengthC1Ev();
 void _ZNSt20bad_array_new_lengthD1Ev();

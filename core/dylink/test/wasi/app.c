@@ -131,6 +131,14 @@ int found_with_bsearch() {
 }
 
 EXPORTED_SYMBOL
+int allocated_cxx_exception_storage() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f =
+      (FUN_VOID_PTR)dlsym(handle, "allocated_cxx_exception_storage");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int found_with_strchr() {
   void* handle = dlopen("./dynamic-library.so", 2);
   FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "found_with_strchr");
@@ -262,6 +270,10 @@ int main() {
 
   printf("found_with_bsearch() = %d\n", found_with_bsearch());
   assert(found_with_bsearch() == 1);
+
+  printf("allocated_cxx_exception_storage() = %d\n",
+         allocated_cxx_exception_storage());
+  assert(allocated_cxx_exception_storage() == 1);
 
   printf("found_with_strchr() = %d\n", found_with_strchr());
   assert(found_with_strchr() == 1);

@@ -659,6 +659,10 @@ export default class DlopenManger {
     if (name == "__cxa_atexit") {
       return () => 0;
     }
+    if (name == "__cxa_allocate_exception") {
+      return (size: number) =>
+        this.malloc(size, "C++ exception object", false);
+    }
     if (name == "__cxa_begin_catch") {
       return (ptr: number) => ptr;
     }
@@ -944,6 +948,8 @@ export default class DlopenManger {
         );
       },
       __cxa_atexit: () => 0,
+      __cxa_allocate_exception: (size: number) =>
+        this.malloc(size, "C++ exception object", false),
       __cxa_begin_catch: (ptr: number) => ptr,
       __cxa_find_matching_catch_2: () => 0,
       __cxa_find_matching_catch_3: (ptr: number) => ptr,

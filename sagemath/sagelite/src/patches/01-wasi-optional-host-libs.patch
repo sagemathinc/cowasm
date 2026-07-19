@@ -26389,3 +26389,68 @@ diff --git a/src/sage/combinat/e_one_star.py b/src/sage/combinat/e_one_star.py
 @@ -1315 +1315 @@
 -        for f in self:
 +        for f in sorted(self):
+diff --git a/src/sage/combinat/tiling.py b/src/sage/combinat/tiling.py
+--- a/src/sage/combinat/tiling.py
++++ b/src/sage/combinat/tiling.py
+@@ -350,2 +350,17 @@
+-    from sage.combinat.root_system.weyl_group import WeylGroup
+-    L = [w.matrix() for w in WeylGroup(['B', n])]
++    if n <= 0:
++        raise ValueError(f"['B', {n}] is not a valid Cartan type")
++
++    from sage.matrix.constructor import matrix
++    from sage.rings.rational_field import QQ
++
++    # The isometries of an n-cube are exactly its signed permutation
++    # matrices.  Construct them directly instead of going through the default
++    # matrix implementation of WeylGroup(['B', n]), which requires libGAP.
++    L = []
++    for permutation in itertools.permutations(range(n)):
++        for signs in itertools.product((-1, 1), repeat=n):
++            entries = [signs[i] if j == permutation[i] else 0
++                       for i in range(n) for j in range(n)]
++            m = matrix(QQ, n, n, entries)
++            m.set_immutable()
++            L.append(m)
+@@ -376 +391 @@
+-        sage: sorted(ncube_isometry_group_cosets(2))
++        sage: sorted(ncube_isometry_group_cosets(2))  # needs sage.matrix.matrix_rational_dense
+@@ -384 +399 @@
+-        sage: sorted(ncube_isometry_group_cosets(2, False))
++        sage: sorted(ncube_isometry_group_cosets(2, False))  # needs sage.matrix.matrix_rational_dense
+@@ -395 +410 @@
+-        sage: sorted(ncube_isometry_group_cosets(3))
++        sage: sorted(ncube_isometry_group_cosets(3))  # needs sage.matrix.matrix_rational_dense
+@@ -429 +444 @@
+-        sage: type(cosets[0][0])
++        sage: type(cosets[0][0])  # needs sage.matrix.matrix_rational_dense
+@@ -581 +596 @@
+-            sage: p.frozenset()
++            sage: p.frozenset()  # random
+@@ -1441 +1456 @@
+-            sage: solution = H.self_surrounding(8)
++            sage: solution = H.self_surrounding(8)  # needs sage.plot cysignals.alarm
+diff --git a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
+--- a/src/sage/games/quantumino.py
++++ b/src/sage/games/quantumino.py
+@@ -65 +65 @@
+-    sage: s.show3d()                                      # long time (<1s)
++    sage: s.show3d()                                      # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -70 +70 @@
+-    sage: s.show3d().show(frame=False)                    # long time (<1s)
++    sage: s.show3d().show(frame=False)                    # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -78 +78 @@
+-    sage: s.show3d()                                      # long time (<1s)
++    sage: s.show3d()                                      # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -107 +107 @@
+-    sage: next(it)                                     # not tested (10s)
++    sage: next(it)                                     # long time (10s)
+@@ -110 +110 @@
+-    sage: next(it)                                     # not tested (0.001s)
++    sage: next(it)                                     # long time (0.001s)
+@@ -113 +113 @@
+-    sage: next(it)                                     # not tested (0.001s)
++    sage: next(it)                                     # long time (0.001s)
+@@ -499 +499 @@
+-            sage: s.show3d()                                     # long time (< 1s)
++            sage: s.show3d()                                     # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf

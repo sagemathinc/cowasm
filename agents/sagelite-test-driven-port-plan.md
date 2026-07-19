@@ -54772,6 +54772,58 @@ source comparison, manifest loading, and `git diff --check` pass.  The next
 pass can continue with another bounded upstream-deferred semantic contract or
 a persisted backend/runtime cluster.
 
+N-cube isometry and Quantumino C++ allocation ABI pass on 2026-07-19 UTC:
+
+The deferred first `QuantuminoSolver(7)` iterator row exposed two independent
+browser-runtime boundaries. Its initial forced replay failed because
+`ncube_isometry_group()` constructed the signed-permutation group indirectly
+through the matrix implementation of `WeylGroup(['B', 3])`, which imports the
+unavailable libGAP backend. Replacing that dependency then reached the
+dancing-links side module and exposed a loader ABI mismatch:
+`__cxa_allocate_exception` was exported as `void(void)` while current C++
+side modules import `void *(size_t)`.
+
+The accumulated WASI patch now constructs the n-cube's signed permutation
+matrices directly over `QQ`, preserving orientation filtering, immutability,
+coset behavior, and the historical `n <= 0` diagnostic without libGAP. The
+dylink runtime now supplies correctly typed exception-object storage to side
+modules, and its generated export declaration matches the libc++ ABI. The
+WASI dylink smoke imports and calls that exact signature through both the
+direct and archive-linked loader paths.
+
+The three deterministic Quantumino iterator outputs are promoted from stale
+`# not tested` guards to `# long time`. Browser-specific exact rational-matrix
+display rows declare `sage.matrix.matrix_rational_dense`, the frozenset output
+is classified as random ordering, the self-surrounding setup declares its
+plot/alarm dependencies, and four long 3D display rows declare the absent RDF
+interpreter wrapper. Replays under runner version 126 record:
+
+```text
+forced iterator before:                 0 passed, 1 failed,  0 skipped (missing libGAP)
+forced after pure group construction:   0 passed, 1 failed,  0 skipped (C++ ABI mismatch)
+forced iterator final:                  1 passed, 0 failed,  0 skipped
+shared tiling complete final:          458 passed, 0 failed, 38 skipped
+reconstructed tiling complete final:   458 passed, 0 failed, 38 skipped
+shared Quantumino default final:        57 passed, 0 failed, 42 skipped
+shared Quantumino long final:           73 passed, 0 failed, 26 skipped
+reconstructed Quantumino long final:    73 passed, 0 failed, 26 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-quantumino-iterator/`. All six retained
+final databases pass `PRAGMA integrity_check` and have empty block-failure and
+file-error cluster queries. Applying the complete accumulated patch exactly
+once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and both
+reconstructed Python sources are byte-identical to the tested staged sources.
+
+The direct and archive-linked WASI dylink suites, C++ runtime smoke, Python
+extension smoke, TypeScript compilation, Python compilation, SQLite integrity
+and empty-cluster checks, clean source reconstruction, source comparison,
+resource-manifest validation (550 side modules and 696 hashes), and
+`git diff --check` pass. The next pass can continue with another bounded
+upstream-deferred semantic contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

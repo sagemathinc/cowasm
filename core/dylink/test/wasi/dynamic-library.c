@@ -118,6 +118,18 @@ int found_with_bsearch(void) {
   return found != NULL && *found == needle && not_found == NULL;
 }
 
+extern void* __cxa_allocate_exception(size_t size);
+
+EXPORTED_SYMBOL
+int allocated_cxx_exception_storage(void) {
+  void* storage = __cxa_allocate_exception(32);
+  if (storage == NULL) {
+    return 0;
+  }
+  free(storage);
+  return 1;
+}
+
 EXPORTED_SYMBOL
 int found_with_strchr(void) {
   const char* text = "side-module-string";
