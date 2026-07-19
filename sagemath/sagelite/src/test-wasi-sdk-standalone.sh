@@ -1348,6 +1348,21 @@ with redirect_stdout(StringIO()):
     reverse = getattr_debug(list, 'reverse')
 assert reverse is list.reverse
 print('sagelite-node-ok CPython static-type getattr smoke')"
+run_node_import "NTL GF2X delivery smoke" "from sage.all import GF, PolynomialRing, polygen
+from sage.libs.ntl import all as ntl
+context = ntl.GF2EContext(ntl.GF2X([1, 1, 0, 1, 1, 0, 0, 0, 1]))
+value = ntl.GF2E([1, 0, 1, 0, 1], context)
+ntl.GF2XHexOutput(True)
+assert repr(value) == '0x51'
+ntl.GF2XHexOutput(False)
+R = PolynomialRing(GF(2), 'x')
+x = R.gen()
+generic = ntl.GF2X(x**5 + x**2 + 1)
+assert repr(generic) == '[1 0 1 0 0 1]'
+assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
+extension_value = GF(2**8, 'a').gen()**20
+assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
+print('sagelite-node-ok NTL GF2X delivery smoke')"
 run_node_import "exterior differential delivery smoke" "from sage.all import QQ, ZZ, ExteriorAlgebra
 from sage.misc.persist import dumps, loads
 E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
@@ -1654,7 +1669,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=158
+electron_manifest_schema_version=159
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1665,6 +1680,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-exterior-differential-delivery-v116"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weyl-display-and-nested-generators-v117"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython-static-type-getattr-v118"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2x-delivery-v119"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

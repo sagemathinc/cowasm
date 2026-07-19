@@ -923,6 +923,25 @@ with redirect_stdout(StringIO()):
 assert reverse is list.reverse
 `);
     console.log("sagelite-electron-ok CPython static-type getattr smoke");
+    console.log("sagelite-electron-start NTL GF2X delivery smoke");
+    await python.exec(String.raw`
+from sage.all import GF, PolynomialRing, polygen
+from sage.libs.ntl import all as ntl
+
+context = ntl.GF2EContext(ntl.GF2X([1, 1, 0, 1, 1, 0, 0, 0, 1]))
+value = ntl.GF2E([1, 0, 1, 0, 1], context)
+ntl.GF2XHexOutput(True)
+assert repr(value) == '0x51'
+ntl.GF2XHexOutput(False)
+R = PolynomialRing(GF(2), 'x')
+x = R.gen()
+generic = ntl.GF2X(x**5 + x**2 + 1)
+assert repr(generic) == '[1 0 1 0 0 1]'
+assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
+extension_value = GF(2**8, 'a').gen()**20
+assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
+`);
+    console.log("sagelite-electron-ok NTL GF2X delivery smoke");
     console.log("sagelite-electron-start exterior differential delivery smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ, ExteriorAlgebra

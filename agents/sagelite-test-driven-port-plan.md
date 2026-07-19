@@ -56639,6 +56639,59 @@ measurement rather than a behavior change, validation requires no native
 rebuild or Electron smoke rerun.  The next pass can continue with corpus
 entries 258--267 or select another persisted backend/runtime cluster.
 
+NTL GF(2) polynomial delivery-contract pass on 2026-07-19 UTC:
+
+Four bounded corpus windows continued the curated dashboard through entry
+297.  Entries 258--267 covered ARB, braiding, and FLINT; entries 268--277
+covered the remaining FLINT helper, GAP workspace, GSL, LRCalc, MPMath,
+Sirocco, PARI GMP conversion, and the first NTL modules; entries 278--287
+continued through the GF(2), integer, and modular NTL wrappers; and entries
+288--297 covered the first geometry and polyhedron modules.
+
+Thirty-nine files were clean against the latest packaged resource snapshot.
+The only failures were four rows in `sage/libs/ntl/ntl_GF2X.pyx`: cross-module
+hexadecimal display returned coefficient-list notation, generic GF(2)
+polynomial construction returned zero and then compared unequal, and PARI
+finite-field conversion also returned zero.  All four runtime corrections
+were already present in the accumulated source patch and had previously
+passed focused replays.  The retained Electron snapshot had regressed to
+older `ntl_GF2X` and `ntl_GF2E` side modules.
+
+Replacing exactly those two binaries with their previously validated coherent
+builds closes the cluster.  The standalone and Electron-shaped smokes now
+require cross-side-module hexadecimal-state synchronization, generic GF(2)
+polynomial construction and comparison, and PARI finite-field element
+conversion.  The Electron manifest schema advances to version 159 and its
+smoke contract to `ntl-gf2x-delivery-v119`, so a future bundle cannot silently
+retain either stale binary.
+
+The retained results record:
+
+```text
+entries 258--267:                 367 passed, 0 failed,  69 skipped
+entries 268--277:                 287 passed, 0 failed,   9 skipped
+entries 278--287 before:          782 passed, 4 failed,   9 skipped
+complete ntl_GF2X.pyx final:      112 passed, 0 failed,   0 skipped
+entries 278--287 final:           786 passed, 0 failed,   9 skipped
+entries 288--297:                 579 passed, 0 failed, 142 skipped
+combined repaired windows:       2019 passed, 0 failed, 229 skipped
+Electron-shaped packaged smoke: passed, including NTL GF2X delivery
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-flint-window/`.  All five final
+databases pass `PRAGMA integrity_check` and have no failed file or block rows.
+The resource manifest validates 545 side modules and 702 required-resource
+hashes.
+
+The repaired bounded replay, complete NTL GF2X replay, complete
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, shell and JavaScript syntax checks, SQLite integrity and
+empty-failure checks, and `git diff --check` pass.  The next pass can continue
+with corpus entries 298--307 or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
