@@ -57128,6 +57128,50 @@ JavaScript syntax checks, SQLite integrity and empty-failure checks, and
 `git diff --check` pass.  The next pass can continue with corpus entries
 478--487 or select another persisted backend/runtime cluster.
 
+Fast vector-halving delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 478--487 initially recorded 2,651
+passed, three failed, and 331 skipped blocks.  Nine files were clean; all
+three failures were in `sage/combinat/fast_vector_partitions.pyx`.  The import
+of `vector_halve` failed because the schema-166 package retained the older
+side module whose helper was still Cython-internal, and the two value rows
+then failed through the missing name.
+
+The complete accumulated WASI source patch already declares `vector_halve`
+as `cpdef` and promotes its three formerly deferred doctests.  Rebuilding the
+exact Meson Cython/C/WASM target from that tested source closes the delivery
+cluster without a new Sagelite source change.
+
+The standalone and Electron-shaped smokes now require both documented
+halving results, and the side module is explicitly mandatory in the Electron
+resource contract.  The manifest schema advances to version 167 and its smoke
+contract to `fast-vector-halving-delivery-v127`, so a freshly generated
+manifest cannot accept the older binary merely by hashing it.
+
+The retained results record:
+
+```text
+entries 478--487 before:                  2651 passed, 3 failed, 331 skipped
+complete fast_vector_partitions.pyx final:  19 passed, 0 failed,   0 skipped
+entries 478--487 final:                   2654 passed, 0 failed, 331 skipped
+Electron-shaped packaged smoke:          passed, including vector halving
+```
+
+The authoritative SQLite dashboards, exact Meson target output, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-combinat-window-478-487/`.  Both final
+databases pass `PRAGMA integrity_check` and have no failed file or block rows.
+The resource manifest validates 545 side modules and 706 required-resource
+hashes.
+
+The exact Cython generation and native module build, standalone semantic
+smoke, complete affected-module replay, repaired bounded replay, complete
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, accumulated-patch syntax check, shell and JavaScript syntax
+checks, SQLite integrity and empty-failure checks, and `git diff --check` pass.
+The next pass can continue with corpus entries 488--497 or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -1047,6 +1047,14 @@ else:
     raise AssertionError('invalid cyclic permutation unexpectedly accepted')
 `);
     console.log("sagelite-electron-ok cyclic permutation delivery smoke");
+    console.log("sagelite-electron-start fast vector halving delivery smoke");
+    await python.exec(String.raw`
+from sage.combinat.fast_vector_partitions import vector_halve
+
+assert vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9]) == [0, 2, 3, 4, 5, 6, 7, 8, 9]
+assert vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9]) == [1, 2, 3, 4, 2, 6, 7, 8, 9]
+`);
+    console.log("sagelite-electron-ok fast vector halving delivery smoke");
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

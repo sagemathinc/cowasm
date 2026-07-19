@@ -1428,6 +1428,10 @@ except ValueError:
 else:
     raise AssertionError('invalid cyclic permutation unexpectedly accepted')
 print('sagelite-node-ok cyclic permutation delivery smoke')"
+run_node_import "fast vector halving delivery smoke" "from sage.combinat.fast_vector_partitions import vector_halve
+assert vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9]) == [0, 2, 3, 4, 5, 6, 7, 8, 9]
+assert vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9]) == [1, 2, 3, 4, 2, 6, 7, 8, 9]
+print('sagelite-node-ok fast vector halving delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1743,7 +1747,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=166
+electron_manifest_schema_version=167
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1762,6 +1766,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-rpp-s
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-envelope-delivery-v124"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pairwise-maximal-subsets-delivery-v125"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclic-permutation-delivery-v126"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fast-vector-halving-delivery-v127"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2000,6 +2005,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/composition.py"
   "site-packages/sage/combinat/composition_signed.py"
   "site-packages/sage/combinat/derangements.py"
+  "site-packages/sage/combinat/fast_vector_partitions.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/hillman_grassl.py"
   "site-packages/sage/combinat/integer_lists/__init__.py"
   "site-packages/sage/combinat/integer_lists/base.cpython-314-wasm32-wasi.so"
