@@ -26646,3 +26646,10 @@ diff --git a/src/sage/rings/polynomial/polynomial_element.pyx b/src/sage/rings/p
 @@ -12710 +12710 @@
 -        sage: for S in [ZZ, GF(3)]:             # known bug, not tested (see :issue:`32075`)
 +        sage: for S in [ZZ, GF(3)]:
+
+diff --git a/src/sage/combinat/tableau.py b/src/sage/combinat/tableau.py
+--- a/src/sage/combinat/tableau.py
++++ b/src/sage/combinat/tableau.py
+@@ -7355 +7355 @@
+-        sage: RowStandardTableaux(40).cardinality()  # not tested, too long
++        sage: RowStandardTableaux(40).cardinality()

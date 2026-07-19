@@ -55003,6 +55003,42 @@ empty-cluster checks, clean source reconstruction and comparison, and
 `git diff --check` pass.  The next pass can continue with another bounded
 upstream-deferred semantic contract or persisted backend/runtime cluster.
 
+Row-standard-tableau cardinality promotion pass on 2026-07-19 UTC:
+
+The historical `# not tested, too long` marker on
+`RowStandardTableaux(40).cardinality()` was stale.  A forced replay of the
+deferred row returned the documented 49-digit cardinality without a failure;
+SQLite measured the example itself at 55 ms.  The accumulated WASI patch now
+removes the obsolete marker and promotes the large-cardinality check to normal
+browser-profile coverage.
+
+Replays under runner version 127 record:
+
+```text
+previous clean-corpus module:       1254 passed, 0 failed, 162 skipped
+forced deferred row before:            1 passed, 0 failed,   3 skipped
+default focused row final:              1 passed, 0 failed,   3 skipped
+clean reconstructed module final:    1255 passed, 0 failed, 161 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-tableau-cardinality/`.  Every retained
+tableau database passes `PRAGMA integrity_check`, and the complete final
+database has empty block-failure and file-error cluster queries.  Applying the
+complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, a second
+forward dry-run is rejected, and the reconstructed tableau source is
+byte-identical to the restored singly-patched build source.
+
+This is a doctest-metadata-only promotion and requires no Python, Cython, or
+native WASM resource rebuild.  The generated `build/wasi-sdk` source tree was
+also restored from a clean pinned checkout after an earlier interrupted build
+had left it only partially patched.  The focused and complete reconstructed
+replays, JavaScript and shell syntax checks, SQLite integrity and empty-cluster
+checks, clean source reconstruction and comparison, clean build-tree restore,
+and `git diff --check` pass.  The next pass can continue with another bounded
+upstream-deferred semantic contract or persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
