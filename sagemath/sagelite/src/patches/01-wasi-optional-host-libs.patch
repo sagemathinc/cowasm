@@ -3338,6 +3338,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          try:
 --- a/src/sage/combinat/root_system/root_space.py
 +++ b/src/sage/combinat/root_system/root_space.py
+@@ -39,2 +39,2 @@
+-        sage: for ct in CartanType.samples(crystallographic=True)+[CartanType(["A",2],["C",5,1])]:
++        sage: for ct in CartanType.samples(crystallographic=True)+[CartanType(["A",2],["C",5,1])]:  # long time
+         ....:     TestSuite(ct.root_system().root_lattice()).run()
 @@ -274,2 +274,2 @@
              sage: lat = RootSystem(['B', 3]).root_lattice()
 -            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))

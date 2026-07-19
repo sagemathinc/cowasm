@@ -56827,6 +56827,56 @@ JavaScript syntax checks, SQLite integrity and empty-failure checks, and
 `git diff --check` pass.  The next pass can continue with corpus entries
 388--397 or select another persisted backend/runtime cluster.
 
+Species and root-system long-test classification pass on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+417.  Entries 388--397 covered the remaining combinatorial species modules and
+the first four root-system modules.  Entries 398--407 covered the central root
+system, root-space, lattice-realization, weight-space, and classical finite
+type modules.  Entries 408--417 covered exceptional, noncrystallographic,
+queer, and the first affine Cartan types.
+
+Twenty-nine files were clean against the schema-161 packaged resource
+snapshot.  The only failure was the aggregate test at
+`sage/combinat/root_system/root_space.py:42`, whose loop runs both root-lattice
+and root-space `TestSuite` coverage across 35 crystallographic Cartan samples.
+It exceeded the ordinary 120-second file boundary, while a focused replay with
+a 600-second boundary passed after about 369 seconds.  This identifies
+cumulative long-test cost rather than a semantic failure or runtime hang.
+
+The accumulated WASI source patch now marks only that aggregate setup row as
+`# long time`.  The default profile records it as an explicit long-time skip,
+while `--long` retains the full opt-in coverage.  Replays under runner version
+127 record:
+
+```text
+entries 388--397:                 808 passed, 0 failed, 282 skipped
+entries 398--407 before:          698 passed, 1 failed, 783 skipped
+focused aggregate with --long:      1 passed, 0 failed,   0 skipped
+focused aggregate default final:    0 passed, 0 failed,   1 skipped
+complete root_space.py final:      52 passed, 0 failed,  36 skipped
+entries 398--407 final:           750 passed, 0 failed, 819 skipped
+entries 408--417:                 277 passed, 0 failed,  55 skipped
+combined final windows:          1835 passed, 0 failed, 1156 skipped
+```
+
+The authoritative SQLite dashboards and pinned targeted reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-species-root-window/`.  Every
+retained database passes `PRAGMA integrity_check`; all three final bounded
+windows have no failed file or block rows.  Applying the targeted
+`root_space.py` patch section once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, a second forward
+application is rejected, and the reconstructed source is byte-identical to
+the tested build source.
+
+This is source-level doctest metadata and requires no native rebuild or
+Electron resource change.  Focused default and long-profile replays, complete
+module and repaired bounded replays, SQLite integrity and empty-failure checks,
+targeted clean-source reconstruction and comparison, patch syntax and
+idempotence checks, and `git diff --check` pass.  The next pass can continue
+with corpus entries 418--427 or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
