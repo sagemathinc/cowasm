@@ -26956,3 +26956,51 @@ diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b
 +            # system, so treating them as vectors for ``self`` is incorrect.
 +            B = [A(b) for b in self.basis()]
 +            LB = [A(lb) for lb in L.basis()]
+diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/with_basis/indexed_element.pyx
+--- a/src/sage/modules/with_basis/indexed_element.pyx
++++ b/src/sage/modules/with_basis/indexed_element.pyx
+@@ -25 +24,0 @@
+-from sage.misc.superseded import deprecation
+@@ -44,7 +43,11 @@
+         True
+         sage: isinstance(f, collections.abc.Iterable)
+         True
+-        sage: isinstance(f, collections.abc.Collection)  # known bug - will be fixed by removing __contains__
++        sage: isinstance(f, collections.abc.Collection)
++        False
++        sage: 'a' in f.support()
++        True
++        sage: 'b' in f.support()
+         False
+     """
+     def __init__(self, M, x) -> None:
+@@ -87,29 +90,0 @@
+-    def __contains__(self, x) -> bool:
+-        """
+-        Return whether or not a combinatorial object ``x`` indexing a basis
+-        element is in the support of ``self``.
+-
+-        EXAMPLES::
+-
+-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+-            sage: B = F.basis()
+-            sage: f = B['a'] + 3*B['c']
+-            sage: 'a' in f
+-            doctest:warning...
+-            DeprecationWarning: using 'index in vector' is deprecated; use 'index in vector.support()' instead
+-            See https://github.com/sagemath/sage/issues/34509 for details.
+-            True
+-            sage: 'b' in f
+-            False
+-
+-            sage: # needs sage.combinat
+-            sage: s = SymmetricFunctions(QQ).schur()
+-            sage: a = s([2,1]) + s([3])
+-            sage: Partition([2,1]) in a
+-            True
+-            sage: Partition([1,1,1]) in a
+-            False
+-        """
+-        deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
+-        return x in self.support()
+-

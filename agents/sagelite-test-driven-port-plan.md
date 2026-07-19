@@ -55481,6 +55481,48 @@ JavaScript and shell syntax checks, and `git diff --check` pass.  The next
 pass can continue with another bounded upstream-deferred semantic contract or
 a persisted backend/runtime cluster.
 
+Indexed free-module collection-ABC cleanup pass on 2026-07-19 UTC:
+
+The persisted known-bug row in
+`sage/modules/with_basis/indexed_element.pyx` exposed the deprecated
+containment protocol that the source itself scheduled for removal.  An
+indexed free-module element iterates over `(basis_index, coefficient)` pairs,
+but its separate `__contains__` method interpreted membership as support
+membership.  Defining `__len__`, `__iter__`, and that inconsistent
+`__contains__` together also made the element satisfy
+`collections.abc.Collection`, contrary to the documented contract.
+
+The accumulated WASI patch now removes the deprecated containment method and
+its unused deprecation import.  Support membership remains available through
+the explicit `support()` API, and new default doctests cover present and
+absent basis indices there.  Replays under runner version 127 record:
+
+```text
+forced collection row before:        0 passed, 1 failed,  0 skipped (returned True)
+promoted focused row final:           1 passed, 0 failed,  0 skipped
+shared complete module final:       145 passed, 0 failed, 86 skipped
+reconstructed complete final:       145 passed, 0 failed, 86 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstructions are
+under `.tmp/current-run/scheduled-2026-07-19-indexed-collection-abc/`.  Every
+final database passes `PRAGMA integrity_check`, and the complete final
+databases have empty block-failure and file-error cluster queries.  Applying
+the complete accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed indexed-element source is byte-identical to the tested staged
+source.
+
+The exact Meson `indexed_element` Cython/C/WASM target compiles successfully.
+The rebuilt side module was installed in a copy-on-write Electron resource
+bundle, whose manifest validates all 545 side modules and 691 required-resource
+hashes.  Focused and complete shared/reconstructed replays, SQLite integrity
+and empty-cluster checks, clean source reconstruction and comparison, manifest
+hash validation, patch idempotence, and `git diff --check` pass.  No tracked
+resource-bundle change is required.  The next pass can continue with another
+bounded upstream-deferred semantic contract or persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
