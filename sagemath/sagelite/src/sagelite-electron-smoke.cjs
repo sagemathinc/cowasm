@@ -1027,6 +1027,26 @@ assert P != PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate)
     console.log(
       "sagelite-electron-ok pairwise maximal subsets delivery smoke",
     );
+    console.log("sagelite-electron-start cyclic permutation delivery smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.combinat.permutation import CyclicPermutations
+
+C = CyclicPermutations([1, 2, 3, 3])
+assert C.cardinality() == 3
+assert C.cardinality() == len(C.list())
+assert C(C.an_element()) == C.an_element()
+assert all(C.rank(C.unrank(i)) == i for i in range(C.cardinality()))
+assert CyclicPermutations([1, 1, 1]).cardinality() == 1
+assert CyclicPermutations([]).cardinality() == 0
+try:
+    C((1, 2))
+except ValueError:
+    pass
+else:
+    raise AssertionError('invalid cyclic permutation unexpectedly accepted')
+`);
+    console.log("sagelite-electron-ok cyclic permutation delivery smoke");
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

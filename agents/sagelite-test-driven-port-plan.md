@@ -57078,6 +57078,56 @@ JavaScript syntax checks, SQLite integrity and empty-failure checks, and
 `git diff --check` pass.  The next pass can continue with corpus entries
 458--467 or select another persisted backend/runtime cluster.
 
+Cyclic-permutation delivery-contract pass on 2026-07-19 UTC:
+
+Two bounded corpus windows continued the curated dashboard through entry 477.
+Entries 458--467 were completely clean across composition tableaux, subset
+families, poset iterators, signed compositions, derangements, and perfect
+matchings.  Entries 468--477 initially recorded 2,086 passed, seven failed,
+and 413 skipped blocks.  Nine files were clean; all seven failures were in
+`sage/combinat/permutation.py`.
+
+The accumulated WASI source already implemented the missing
+`CyclicPermutations` element constructor, cardinality, rank, and unrank
+contracts and promoted its formerly deferred `TestSuite`.  The schema-165
+package retained the older pure-Python module, so construction returned lists,
+cardinality inherited the multiset-permutation count, and invalid elements
+were accepted.  Staging the byte-identical accumulated-source
+`permutation.py` closes the cluster without a native rebuild.
+
+The standalone and Electron-shaped smokes now require construction,
+cardinality/list agreement, rank/unrank round trips, empty and repeated-entry
+cardinalities, and invalid-element rejection.  The module was already
+mandatory and hashed; the new semantic smoke prevents a freshly generated
+manifest from accepting an older module merely by hashing it.  The manifest
+schema advances to version 166 and its smoke contract to
+`cyclic-permutation-delivery-v126`.
+
+The retained results record:
+
+```text
+entries 458--467:                       685 passed, 0 failed,  58 skipped
+entries 468--477 before:               2086 passed, 7 failed, 413 skipped
+complete permutation.py final:         1024 passed, 0 failed, 315 skipped
+entries 468--477 final:                2093 passed, 0 failed, 413 skipped
+Electron-shaped packaged smoke:        passed, including cyclic permutations
+```
+
+The authoritative SQLite dashboards, clean pinned reconstruction, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-combinat-window-458-467/`.  Every final
+database passes `PRAGMA integrity_check` and has no failed file or block rows.
+The resource manifest validates 545 side modules and 706 required-resource
+hashes.
+
+The complete affected-module replay, repaired bounded replay, complete
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, clean pinned-source reconstruction, accumulated-patch syntax
+check, exact staged-source comparison, Python compilation, shell and
+JavaScript syntax checks, SQLite integrity and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+478--487 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

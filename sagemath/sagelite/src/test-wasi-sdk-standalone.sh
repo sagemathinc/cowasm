@@ -1412,6 +1412,22 @@ assert Set([4, 5]) not in P
 assert Set([4, 5, 9]) in P
 assert P != PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate)
 print('sagelite-node-ok pairwise maximal subsets delivery smoke')"
+run_node_import "cyclic permutation delivery smoke" "import sage.all
+from sage.combinat.permutation import CyclicPermutations
+C = CyclicPermutations([1, 2, 3, 3])
+assert C.cardinality() == 3
+assert C.cardinality() == len(C.list())
+assert C(C.an_element()) == C.an_element()
+assert all(C.rank(C.unrank(i)) == i for i in range(C.cardinality()))
+assert CyclicPermutations([1, 1, 1]).cardinality() == 1
+assert CyclicPermutations([]).cardinality() == 0
+try:
+    C((1, 2))
+except ValueError:
+    pass
+else:
+    raise AssertionError('invalid cyclic permutation unexpectedly accepted')
+print('sagelite-node-ok cyclic permutation delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1727,7 +1743,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=165
+electron_manifest_schema_version=166
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1745,6 +1761,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-scalar-ext
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-rpp-shape-delivery-v123"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-envelope-delivery-v124"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pairwise-maximal-subsets-delivery-v125"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclic-permutation-delivery-v126"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
