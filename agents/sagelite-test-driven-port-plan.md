@@ -56692,6 +56692,61 @@ empty-failure checks, and `git diff --check` pass.  The next pass can continue
 with corpus entries 298--307 or select another persisted backend/runtime
 cluster.
 
+Generic linear-group delivery-contract pass on 2026-07-19 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+327.  Entries 298--307 covered the remaining geometry and polyhedron helpers,
+graph dot2tex and fast-digraph helpers, and the first two abelian-group
+modules.  Entries 308--317 completed the abelian and additive-abelian group
+slice and covered Euclidean, Galois, base-group, and exponent helpers.  Those
+20 files were clean against the latest coherent packaged resource snapshot.
+
+Entries 318--327 initially recorded 263 passed, seven failed, and 246 skipped
+blocks.  Eight files were clean; all failures were in
+`sage/groups/matrix_gps/linear.py` and
+`sage/groups/matrix_gps/finitely_generated.py`.  A stale packaged
+`sage.groups.matrix_gps.linear` accepted a nonunit diagonal matrix over
+`Integers(6)`, lacked finite generic-group iteration, and lacked the standard
+two generators of `SL(2, ZZ)`.  The dependent failures were one output
+mismatch, four `AttributeError` rows, and two state-following `NameError`
+rows.
+
+All three runtime corrections were already present in the complete
+accumulated source patch.  Staging the byte-identical accumulated-source
+`linear.py` closes the cluster without a native rebuild.  The standalone and
+Electron-shaped smokes now require modular-ring invertibility rejection,
+finite generic `GL`/`SL` iteration, the standard `SL(2, ZZ)` generators, and
+subgroup construction from `T^2`.  The module is newly mandatory and hashed
+in the Electron resource manifest.  The manifest schema advances to version
+160 and its smoke contract to `generic-linear-group-delivery-v120`.
+
+The retained results record:
+
+```text
+entries 298--307:                         359 passed, 0 failed, 286 skipped
+entries 308--317:                         394 passed, 0 failed, 186 skipped
+entries 318--327 before:                  263 passed, 7 failed, 246 skipped
+complete linear/finitely_generated final: 79 passed, 0 failed,  89 skipped
+entries 318--327 final:                   270 passed, 0 failed, 246 skipped
+combined repaired windows:              1023 passed, 0 failed, 718 skipped
+Electron-shaped packaged smoke:         passed, including generic linear groups
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-geometry-group-window/`.  All five
+retained final databases pass `PRAGMA integrity_check` and have no failed file
+or block rows.  The resource manifest validates 545 side modules and 703
+required-resource hashes.
+
+The focused contract replay, complete affected-module replay, repaired
+bounded replay, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, accumulated-patch syntax check,
+exact staged-source comparison, shell and JavaScript syntax checks, SQLite
+integrity and empty-failure checks, and `git diff --check` pass.  The next pass
+can continue with corpus entries 328--337 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

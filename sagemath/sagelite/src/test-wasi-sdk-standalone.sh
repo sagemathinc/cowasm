@@ -1363,6 +1363,23 @@ assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
 extension_value = GF(2**8, 'a').gen()**20
 assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
 print('sagelite-node-ok NTL GF2X delivery smoke')"
+run_node_import "generic linear group delivery smoke" "from sage.all import GL, SL, ZZ, Integers
+from sage.matrix.constructor import matrix
+G = GL(2, Integers(6))
+try:
+    G(G.matrix_space().diagonal_matrix([2, 1]))
+except TypeError as err:
+    assert str(err) == 'matrix must be invertible'
+else:
+    raise AssertionError('noninvertible modular matrix was accepted')
+S, T = SL(2, ZZ).gens()
+assert S.matrix() == matrix(ZZ, [[0, 1], [-1, 0]])
+assert T.matrix() == matrix(ZZ, [[1, 1], [0, 1]])
+assert SL(2, ZZ).subgroup([T**2]).gen(0).matrix() == (T**2).matrix()
+assert G.order() == len(list(G))
+H = SL(2, Integers(6))
+assert H.order() == len(list(H))
+print('sagelite-node-ok generic linear group delivery smoke')"
 run_node_import "exterior differential delivery smoke" "from sage.all import QQ, ZZ, ExteriorAlgebra
 from sage.misc.persist import dumps, loads
 E = ExteriorAlgebra(QQ, ['x', 'y', 'z'])
@@ -1669,7 +1686,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=159
+electron_manifest_schema_version=160
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1681,6 +1698,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-exterior-d
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weyl-display-and-nested-generators-v117"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython-static-type-getattr-v118"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2x-delivery-v119"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-linear-group-delivery-v120"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1895,6 +1913,7 @@ electron_required_paths=(
   "site-packages/sage/groups/abelian_gps/abelian_group.py"
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py"
   "site-packages/sage/groups/abelian_gps/element_base.py"
+  "site-packages/sage/groups/matrix_gps/linear.py"
   "site-packages/sage/monoids/__init__.py"
   "site-packages/sage/monoids/free_abelian_monoid.py"
   "site-packages/sage/monoids/free_abelian_monoid_element.cpython-314-wasm32-wasi.so"

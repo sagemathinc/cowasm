@@ -177,6 +177,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/groups/abelian_gps/abelian_group.py",
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py",
   "site-packages/sage/groups/abelian_gps/element_base.py",
+  "site-packages/sage/groups/matrix_gps/linear.py",
   "site-packages/sage/monoids/__init__.py",
   "site-packages/sage/monoids/free_abelian_monoid.py",
   "site-packages/sage/monoids/free_abelian_monoid_element.cpython-314-wasm32-wasi.so",
@@ -280,7 +281,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 159,
+  schemaVersion: 160,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -288,7 +289,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116-weyl-display-and-nested-generators-v117-cpython-static-type-getattr-v118-ntl-gf2x-delivery-v119";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116-weyl-display-and-nested-generators-v117-cpython-static-type-getattr-v118-ntl-gf2x-delivery-v119-generic-linear-group-delivery-v120";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

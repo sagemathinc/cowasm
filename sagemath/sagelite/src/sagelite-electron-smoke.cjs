@@ -942,6 +942,27 @@ extension_value = GF(2**8, 'a').gen()**20
 assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
 `);
     console.log("sagelite-electron-ok NTL GF2X delivery smoke");
+    console.log("sagelite-electron-start generic linear group delivery smoke");
+    await python.exec(String.raw`
+from sage.all import GL, SL, ZZ, Integers
+from sage.matrix.constructor import matrix
+
+G = GL(2, Integers(6))
+try:
+    G(G.matrix_space().diagonal_matrix([2, 1]))
+except TypeError as err:
+    assert str(err) == 'matrix must be invertible'
+else:
+    raise AssertionError('noninvertible modular matrix was accepted')
+S, T = SL(2, ZZ).gens()
+assert S.matrix() == matrix(ZZ, [[0, 1], [-1, 0]])
+assert T.matrix() == matrix(ZZ, [[1, 1], [0, 1]])
+assert SL(2, ZZ).subgroup([T**2]).gen(0).matrix() == (T**2).matrix()
+assert G.order() == len(list(G))
+H = SL(2, Integers(6))
+assert H.order() == len(list(H))
+`);
+    console.log("sagelite-electron-ok generic linear group delivery smoke");
     console.log("sagelite-electron-start exterior differential delivery smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ, ExteriorAlgebra
