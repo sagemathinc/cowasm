@@ -26105,3 +26105,17 @@ diff --git a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
 @@ -474 +474 @@
 -        sage: C().unimplemented_B_implemented_A # todo: not implemented
 +        sage: C().unimplemented_B_implemented_A
+diff --git a/src/sage/combinat/fast_vector_partitions.pyx b/src/sage/combinat/fast_vector_partitions.pyx
+--- a/src/sage/combinat/fast_vector_partitions.pyx
++++ b/src/sage/combinat/fast_vector_partitions.pyx
+@@ -32 +32 @@
+-cdef list vector_halve(list v):
++cpdef list vector_halve(list v):
+@@ -49,2 +49,2 @@
+-        sage: from sage.combinat.fast_vector_partitions import vector_halve  # not tested
+-        sage: vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9])  # not tested
++        sage: from sage.combinat.fast_vector_partitions import vector_halve
++        sage: vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9])
+@@ -52 +52 @@
+-        sage: vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9])  # not tested
++        sage: vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9])

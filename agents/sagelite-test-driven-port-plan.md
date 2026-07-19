@@ -54327,6 +54327,45 @@ docstring-only metadata promotion requires no native WASM or resource-bundle
 rebuild.  The next pass should continue with another bounded
 upstream-deferred semantic contract or a persisted backend/runtime cluster.
 
+Fast vector-halving helper exposure pass on 2026-07-19 UTC:
+
+The three upstream-deferred rows for `vector_halve` in
+`sage/combinat/fast_vector_partitions.pyx` exposed a narrow native visibility
+gap.  The helper and its documented behavior were already implemented, but
+the function was declared `cdef`, so Python could not import it and the two
+dependent examples failed before exercising the algorithm.
+
+The accumulated WASI patch now declares the helper `cpdef`, preserving the
+direct Cython call path used by `fast_vector_partitions` while adding the
+Python wrapper required by its public docstring.  The obsolete `# not tested`
+markers are removed from the import and both value contracts.  Replays under
+runner version 125 record:
+
+```text
+forced focused rows before:       0 passed, 2 failed, 0 skipped
+shared focused value final:       1 passed, 0 failed, 0 skipped
+shared complete module final:    19 passed, 0 failed, 0 skipped
+reconstructed complete final:    19 passed, 0 failed, 0 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-fast-vector-halve/`.  Every retained
+database passes `PRAGMA integrity_check`, and the final saved block-failure and
+file-error cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once with `patch --batch --forward -p1` to a `git
+archive` of pinned commit `f575cf6224f749763d7c875229cbd684e5939e58`
+succeeds without rejects, and the reconstructed module is byte-identical to
+the tested staged source.
+
+The exact Meson `fast_vector_partitions` Cython/C/WASM target compiles
+successfully.  The rebuilt side module was installed in the ignored local
+Electron resource tree for testing, where all 691 manifest hashes validate.
+Focused and complete shared/reconstructed replays, SQLite integrity and
+cluster checks, clean source reconstruction, resource-manifest validation,
+and `git diff --check` pass.  No tracked resource-bundle change is required.
+The next pass should continue with another bounded upstream-deferred semantic
+contract or a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
