@@ -98,6 +98,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/__init__.py",
   "site-packages/sage/rings/abc.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/all.py",
+  "site-packages/sage/rings/continued_fraction.py",
+  "site-packages/sage/rings/continued_fraction_gosper.py",
   "site-packages/sage/rings/fast_arith.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/ideal.py",
   "site-packages/sage/rings/ideal_monoid.py",
@@ -271,7 +273,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 150,
+  schemaVersion: 151,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -279,7 +281,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

@@ -887,6 +887,18 @@ r = sqrt(RDF(2))
 assert str(r.algebraic_dependency(5)) == 'x^2 - 2'
 `);
     console.log("sagelite-electron-ok real-double algebraic dependency smoke");
+    console.log("sagelite-electron-start Gosper constant homography smoke");
+    await python.exec(String.raw`
+from sage.rings.continued_fraction import continued_fraction
+from sage.rings.continued_fraction_gosper import gosper_iterator
+
+cf = continued_fraction(([1, 2], [3, 4]))
+it = iter(gosper_iterator(6, -9, -2, 3, cf))
+assert list(it) == [-3]
+assert it.output_preperiod_length == 1
+assert cf.apply_homography(6, -9, -2, 3).value() == -3
+`);
+    console.log("sagelite-electron-ok Gosper constant homography smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

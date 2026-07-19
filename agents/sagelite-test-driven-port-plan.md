@@ -56127,6 +56127,60 @@ and empty-cluster checks, JavaScript and shell syntax checks, and
 `git diff --check` pass. The next pass can select another persisted
 backend/runtime cluster.
 
+Gosper constant-homography stabilization pass on 2026-07-19 UTC:
+
+The retained upstream-deferred row in
+`sage/rings/continued_fraction_gosper.py` reproduced Sage issue 32127.  A
+homography with proportional numerator and denominator coefficients is a
+constant rational function, but the iterator fed that state into periodic
+cycle detection.  For the issue's `(6, -9, -2, 3)` coefficients it emitted
+`[-3]` while recording the quotient as a negative period, so reconstructing
+the result raised `ValueError: the elements of the period cannot be negative`.
+The randomized upstream doctest was also a poor WASM regression: unlucky
+nonconstant cases spent the complete 240-second worker timeout in an exact
+quadratic comparison.
+
+`gosper_iterator` now detects nonzero proportional coefficient rows at
+construction time and iterates the finite continued fraction of their rational
+value.  It records every emitted constant quotient as preperiodic, preserving
+the finite representation and the high-level `apply_homography()` result.
+The rational-pole and zero-denominator paths retain their previous empty-
+iterator/infinity behavior.  The deferred randomized doctest is replaced by
+the exact upstream issue reproducer and now asserts both `[-3]` and the
+`([-3], [])` preperiod/period split without an expensive number-field
+comparison.
+
+Replays under runner version 127 record:
+
+```text
+constant API fixture before:  1 passed, 4 failed, 0 skipped
+randomized retained row:      0 passed, 1 timeout after 240 seconds
+complete Gosper module final: 22 passed, 0 failed, 15 skipped
+constant/control API final:    9 passed, 0 failed, 0 skipped
+Electron-shaped smoke:        passed, including constant homography delivery
+```
+
+The standalone and Electron-shaped smokes now require the direct iterator
+output, its preperiod length, and the high-level constant result.  Both
+continued-fraction Python modules are manifest-required resources.  The
+Electron manifest schema advances to version 151 and its smoke contract to
+`gosper-constant-homography-v111`, so a packaged runtime cannot retain the old
+iterator silently.
+
+The authoritative SQLite dashboards, pinned clean reconstruction, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-gosper-constant/`.  The two final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+cluster queries.  The resource manifest validates 545 side modules and 695
+required-resource hashes.
+
+Complete clean-source application to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, Python compilation, the complete
+module and API replays, packaged Electron smoke, manifest hash validation,
+patch syntax, JavaScript and shell syntax checks, SQLite integrity, and
+`git diff --check` pass.  The next pass can select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -5341,6 +5341,39 @@ diff -urN a/src/sage/rings/continued_fraction_gosper.py b/src/sage/rings/continu
 -    sage: it = iter(gosper_iterator(3,2,3,1,x))
 +    sage: x = continued_fraction(pi)                                                    # needs sage.symbolic
 +    sage: it = iter(gosper_iterator(3,2,3,1,x))                                         # needs sage.symbolic
+@@ -55,2 +55 @@
+-            sage: a = Integer(randint(-10,10)); b = Integer(randint(-10,10));
+-            sage: c = Integer(randint(-10,10)); d = Integer(randint(-10,10));
++            sage: a, b, c, d = 6, -9, -2, 3
+@@ -59 +58,2 @@
+-            sage: l = list(i)
++            sage: l = list(i); l
++            [-3]
+@@ -63 +63 @@
+-            sage: c == d == 0 or continued_fraction((preperiod, period), x.value()) == continued_fraction((a*x.value()+b)/(c*x.value()+d))  # not tested, known bug (see :issue:`32127`)
++            sage: preperiod, period
+@@ -64 +64 @@
+-            True
++            ([-3], [])
+@@ -96,0 +97,11 @@
++        self.constant_quotients = None
++        if (c or d) and a * d == b * c:
++            if (isinstance(x, ContinuedFraction_periodic)
++                    and x.length() is not Infinity
++                    and c * x.value() + d == 0):
++                self.constant_quotients = iter(())
++            else:
++                from sage.rings.rational_field import QQ
++                value = QQ(a) / c if c else QQ(b) / d
++                self.constant_quotients = iter(value.continued_fraction())
++
+@@ -127,0 +139,6 @@
++        if self.constant_quotients is not None:
++            q = next(self.constant_quotients)
++            self.currently_emitted += 1
++            self.output_preperiod_length = self.currently_emitted
++            return q
++
 diff -urN a/src/sage/sets/primes.py b/src/sage/sets/primes.py
 --- a/src/sage/sets/primes.py
 +++ b/src/sage/sets/primes.py
