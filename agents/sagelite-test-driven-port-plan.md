@@ -55383,6 +55383,53 @@ hash validation, and `git diff --check` pass.  The next pass can continue with
 the recognizable-series noncommutative action cluster or another bounded
 backend/runtime failure.
 
+Recognizable-series noncommutative coefficient-action pass on 2026-07-19 UTC:
+
+The historical issue-21317 deferral in
+`sage/combinat/recognizable_series.py` now gets past construction of vectors
+over a matrix coefficient ring, but its evaluation and scalar actions still
+used commutative matrix/vector shortcuts.  A forced replay therefore failed
+while representing the series with a low-level
+`TypeError: 'NotImplementedType' object is not callable`; `m * S` reached the
+same defect through free-module scalar action, and the remaining rows failed
+as cascades.
+
+The accumulated WASI patch now retains the existing vector/matrix fast path
+for commutative coefficient rings and evaluates noncommutative linear
+representations with explicit ordered sums.  Transition matrices multiply
+entry by entry, partial coefficient evaluation preserves its requested left
+or right vector, and scalar actions update each representation-vector entry
+on the correct side.  The stale display-only `# not tested` rows are replaced
+by direct matrix-coefficient identities that distinguish `n * S` from
+`S * n`.
+
+Replays under runner version 127 record:
+
+```text
+forced deferred rows before:        4 passed, 4 failed, 0 skipped
+focused ordered-action final:      15 passed, 0 failed, 0 skipped
+shared complete module final:     345 passed, 0 failed, 1 skipped
+reconstructed complete final:     345 passed, 0 failed, 1 skipped
+```
+
+The authoritative SQLite dashboards and fresh clean pinned reconstruction are
+under `.tmp/current-run/scheduled-2026-07-19-recognizable-actions/`.  Every
+final database passes `PRAGMA integrity_check` and has zero block failures and
+zero file errors.  Applying the complete accumulated patch exactly once to
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` succeeds
+without rejects, a second forward application is rejected, and the
+reconstructed recognizable-series source is byte-identical to both the tested
+staged source and runtime resource.
+
+This is a pure-Python resource change and requires no Cython or native WASM
+rebuild.  The preserved Electron manifest loads throughout the final replays
+with 545 side modules and 691 required-resource hashes.  Focused and complete
+shared/reconstructed replays, Python compilation, SQLite integrity and
+empty-cluster checks, clean source reconstruction and comparison, patch
+idempotence, manifest loading, and `git diff --check` pass.  The next pass can
+continue with another bounded upstream-deferred semantic contract or a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

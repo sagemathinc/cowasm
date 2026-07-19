@@ -26809,3 +26809,101 @@ diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/li
 @@ -785 +789 @@
 -        return Integer(2)
 +        return Integer(1 if self._n == 0 else 2)
+
+diff --git a/src/sage/combinat/recognizable_series.py b/src/sage/combinat/recognizable_series.py
+--- a/src/sage/combinat/recognizable_series.py
++++ b/src/sage/combinat/recognizable_series.py
+@@ -673,0 +674,12 @@
++
++        from sage.categories.commutative_rings import CommutativeRings
++        R = self.parent().coefficient_ring()
++        if R in CommutativeRings():
++            if multiply_left:
++                result = self.left * result
++            if multiply_right:
++                result = result * self.right
++            return result
++
++        from sage.modules.free_module_element import vector
++        zero = R.zero()
+@@ -675 +687,5 @@
+-            result = self.left * result
++            result = vector(R, [
++                sum((self.left[i] * result[i, j]
++                     for i in range(result.nrows())), zero)
++                for j in range(result.ncols())
++            ])
+@@ -677 +693,9 @@
+-            result = result * self.right
++            if multiply_left:
++                result = sum((result[i] * self.right[i]
++                              for i in range(len(result))), zero)
++            else:
++                result = vector(R, [
++                    sum((result[i, j] * self.right[j]
++                         for j in range(result.ncols())), zero)
++                    for i in range(result.nrows())
++                ])
+@@ -749,2 +773,17 @@
+-        from sage.misc.misc_c import prod
+-        return prod((self.mu[a] for a in w), z=self._mu_of_empty_word_())
++        from sage.categories.commutative_rings import CommutativeRings
++        R = self.parent().coefficient_ring()
++        if R in CommutativeRings():
++            from sage.misc.misc_c import prod
++            return prod((self.mu[a] for a in w), z=self._mu_of_empty_word_())
++
++        from sage.matrix.constructor import Matrix
++        result = self._mu_of_empty_word_()
++        zero = R.zero()
++        for right in (self.mu[a] for a in w):
++            result = Matrix([
++                [sum((result[i, k] * right[k, j]
++                      for k in range(result.ncols())), zero)
++                 for j in range(right.ncols())]
++                for i in range(result.nrows())
++            ])
++        return result
+@@ -1350 +1389,3 @@
+-        return P.element_class(P, self.mu, other * self.left, self.right)
++        from sage.modules.free_module_element import vector
++        left = vector([other * entry for entry in self.left])
++        return P.element_class(P, self.mu, left, self.right)
+@@ -1389,5 +1430,2 @@
+-        The following is not tested, as `MS^i` for integers `i` does
+-        not work, thus ``vector([m])`` fails. (See :issue:`21317` for
+-        details.)
+-
+-        ::
++        Noncommutative coefficient rings preserve the side on which a
++        scalar acts (see :issue:`21317`)::
+@@ -1398 +1436 @@
+-            sage: S = Rec((Matrix([[m]]), Matrix([[m]])),  # not tested
++            sage: S = Rec((Matrix([[m]]), Matrix([[m]])),
+@@ -1400,4 +1438,17 @@
+-            sage: S  # not tested
+-            sage: M = m * S  # not tested indirect doctest
+-            sage: M  # not tested
+-            sage: M.linear_representation()  # not tested
++            sage: n = MS([[1, 1], [0, 1]])
++            sage: W = Rec.indices()
++            sage: words = (W(), W([0]), W([1]), W([0, 1]))
++            sage: S._mu_of_word_(W([0, 1]))[0, 0] == m^2
++            True
++            sage: S.coefficient_of_word(W([0]), multiply_left=False)[0] == m^2
++            True
++            sage: S.coefficient_of_word(W([0]), multiply_right=False)[0] == m^2
++            True
++            sage: L = n * S  # indirect doctest
++            sage: all(L[w] == n * S[w] for w in words)
++            True
++            sage: R = S * n  # indirect doctest
++            sage: all(R[w] == S[w] * n for w in words)
++            True
++            sage: L[W()] == R[W()]
++            False
+@@ -1410 +1461,3 @@
+-        return P.element_class(P, self.mu, self.left, self.right * other)
++        from sage.modules.free_module_element import vector
++        right = vector([entry * other for entry in self.right])
++        return P.element_class(P, self.mu, self.left, right)
