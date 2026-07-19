@@ -56747,6 +56747,37 @@ integrity and empty-failure checks, and `git diff --check` pass.  The next pass
 can continue with corpus entries 328--337 or select another persisted
 backend/runtime cluster.
 
+Group, interface, and combinatorics clean-frontier checkpoint on 2026-07-19
+UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+357.  Entries 328--337 covered argument groups, partition-refinement helpers,
+and the first five interface modules.  Entries 338--347 completed the current
+interface slice and entered combinatorics through the SJT implementation.
+Entries 348--357 covered core combinatorics, combinations, colored and
+decorated permutations, cyclic sieving, de Bruijn sequences, and degree
+sequences.
+
+All 30 files pass against the latest coherent packaged resource snapshot; no
+runtime, source, or delivery correction is needed for this slice.  The
+retained results record:
+
+```text
+entries 328--337:  487 passed, 0 failed, 128 skipped
+entries 338--347:  126 passed, 0 failed, 315 skipped
+entries 348--357: 1039 passed, 0 failed, 305 skipped
+combined:         1652 passed, 0 failed, 748 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-19-next-group-interface-window/`.  All
+three runs finish in `passed` state, pass `PRAGMA integrity_check`, and have no
+failed file or block rows.  The coherent resource manifest validates 545 side
+modules and 703 required-resource hashes.  Because this is a clean-frontier
+measurement rather than a behavior change, validation requires no native
+rebuild or Electron smoke rerun.  The next pass can continue with corpus
+entries 358--367 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
