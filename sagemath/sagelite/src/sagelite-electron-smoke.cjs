@@ -1005,6 +1005,28 @@ assert f != Envelope([3, 2, 1])
 assert f != Envelope([3, 2, 2], min_part=2)
 `);
     console.log("sagelite-electron-ok integer-list envelope delivery smoke");
+    console.log(
+      "sagelite-electron-start pairwise maximal subsets delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.arith.misc import gcd
+from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
+from sage.sets.set import Set
+
+def predicate(x, y):
+    return gcd(x, y) == 1
+
+P = PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate, maximal=True)
+expected = {frozenset((4, 5, 9)), frozenset((5, 6)), frozenset((5, 8, 9))}
+assert {frozenset(s) for s in P} == expected
+assert P.cardinality() == 3
+assert Set([4, 5]) not in P
+assert Set([4, 5, 9]) in P
+assert P != PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate)
+`);
+    console.log(
+      "sagelite-electron-ok pairwise maximal subsets delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

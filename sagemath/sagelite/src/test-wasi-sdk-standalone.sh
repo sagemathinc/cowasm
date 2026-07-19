@@ -1400,6 +1400,18 @@ a = S.an_element()
 assert repr(a) == '[[0, 0, 0], [0]]'
 assert a.parent() is S
 print('sagelite-node-ok weak reverse plane partition shape smoke')"
+run_node_import "pairwise maximal subsets delivery smoke" "from sage.arith.misc import gcd
+from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
+from sage.sets.set import Set
+def predicate(x, y): return gcd(x, y) == 1
+P = PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate, maximal=True)
+expected = {frozenset((4, 5, 9)), frozenset((5, 6)), frozenset((5, 8, 9))}
+assert {frozenset(s) for s in P} == expected
+assert P.cardinality() == 3
+assert Set([4, 5]) not in P
+assert Set([4, 5, 9]) in P
+assert P != PairwiseCompatibleSubsets([4, 5, 6, 8, 9], predicate)
+print('sagelite-node-ok pairwise maximal subsets delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1715,7 +1727,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=164
+electron_manifest_schema_version=165
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1732,6 +1744,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-q-binomial
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-scalar-extension-map-parent-v122"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-rpp-shape-delivery-v123"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-envelope-delivery-v124"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pairwise-maximal-subsets-delivery-v125"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1991,6 +2004,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/skew_tableau.py"
   "site-packages/sage/combinat/subword.py"
   "site-packages/sage/combinat/subset.py"
+  "site-packages/sage/combinat/subsets_pairwise.py"
   "site-packages/sage/combinat/tableau.py"
   "site-packages/sage/combinat/tools.py"
   "site-packages/sage/combinat/tuple.py"

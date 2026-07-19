@@ -57028,6 +57028,56 @@ and JavaScript syntax checks, SQLite integrity and empty-failure checks, and
 `git diff --check` pass.  The next pass can continue with corpus entries
 448--457 or select another persisted backend/runtime cluster.
 
+Pairwise-compatible maximal-subset delivery-contract pass on 2026-07-19 UTC:
+
+The bounded corpus window for entries 448--457 initially recorded 1,883
+passed, four failed, and 255 skipped blocks.  Nine files were clean; all four
+failures were in `sage/combinat/subsets_pairwise.py`.  The tested accumulated
+source already filtered `PairwiseCompatibleSubsets(..., maximal=True)` to the
+three maximal subsets, enforced maximal membership, and distinguished maximal
+and unrestricted parents.  The schema-164 package retained the older pure-
+Python module, so it enumerated all 14 compatible subsets and ignored the
+maximal flag in membership and equality.
+
+Staging the byte-identical accumulated-source `subsets_pairwise.py` closes the
+cluster without a native rebuild.  The standalone and Electron-shaped smokes
+now require the exact maximal family, cardinality, membership, and parent-
+equality semantics.  The module is newly mandatory and hashed in the Electron
+resource manifest.  The manifest schema advances to version 165 and its smoke
+contract to `pairwise-maximal-subsets-delivery-v125`.
+
+The retained results record:
+
+```text
+entries 448--457 before:                   1883 passed, 4 failed, 255 skipped
+self-contained packaged semantic smoke:     10 passed, 0 failed,   0 skipped
+complete subsets_pairwise.py final:          37 passed, 0 failed,   0 skipped
+entries 448--457 final:                    1887 passed, 0 failed, 255 skipped
+Electron-shaped packaged smoke:            passed, including maximal subsets
+```
+
+A direct `--line 57` replay is retained separately as a focused-rerun setup
+diagnostic: the target depends on `predicate` defined before an intervening
+prose block, so contiguous setup reconstruction cannot supply that name.  The
+self-contained 10-block smoke provides the narrow packaged-runtime proof
+without changing doctest semantics.
+
+The authoritative SQLite dashboards, pinned targeted reconstruction, and
+manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-combinat-window-448-457/`.  All three
+final databases pass `PRAGMA integrity_check` and have no failed file or block
+rows.  The resource manifest validates 545 side modules and 706 required-
+resource hashes.
+
+The self-contained focused smoke, complete affected-module replay, repaired
+bounded replay, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, targeted pinned-source
+reconstruction and second-application rejection, accumulated-patch syntax
+check, exact staged-source comparison, Python compilation, shell and
+JavaScript syntax checks, SQLite integrity and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+458--467 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
