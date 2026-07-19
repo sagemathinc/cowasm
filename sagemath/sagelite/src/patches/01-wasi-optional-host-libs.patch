@@ -4035,42 +4035,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +else:
 +    from sage.rings.imaginary_unit import I
  i = I
---- a/src/sage/rings/all.py
-+++ b/src/sage/rings/all.py
-@@ -130,22 +130,23 @@
-                        number_field_elements_from_algebraics)
-
- # Intervals
--from sage.rings.real_mpfi import (RealIntervalField,
--                       RIF,
--                       RealInterval)
-+lazy_import('sage.rings.real_mpfi',
-+            ['RealIntervalField', 'RIF', 'RealInterval'])
-
- # Complex numbers
--from sage.rings.complex_mpfr import ComplexField
--from sage.rings.complex_mpfr import create_ComplexNumber as ComplexNumber
-+lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'create_ComplexNumber'],
-+            as_=['ComplexField', 'ComplexNumber'])
- Complexes = ComplexField
--from sage.rings.complex_interval_field import ComplexIntervalField
--from sage.rings.complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
-+lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
-+lazy_import('sage.rings.complex_interval', 'create_ComplexIntervalFieldElement',
-+            as_='ComplexIntervalFieldElement')
-
--from sage.rings.complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
-+lazy_import('sage.rings.complex_double',
-+            ['ComplexDoubleField', 'ComplexDoubleElement', 'CDF'])
-
--from sage.rings.complex_mpc import MPComplexField
-+lazy_import('sage.rings.complex_mpc', 'MPComplexField')
-
--from sage.rings.complex_arb import ComplexBallField, CBF
-+lazy_import('sage.rings.complex_arb', ['ComplexBallField', 'CBF'])
-
- lazy_import("sage.rings.imaginary_unit", "I")
-
 --- a/src/sage/rings/infinity.py
 +++ b/src/sage/rings/infinity.py
 @@ -1203,9 +1203,9 @@
@@ -4085,32 +4049,6 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 
          As explained above, comparison works by coercing to the
 
---- a/src/sage/rings/all.py
-+++ b/src/sage/rings/all.py
-@@ -186,12 +187,20 @@
- # c-finite sequences
- from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences
-
--from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-+if sys.platform == 'wasi':
-+    lazy_import('sage.rings.bernoulli_mod_p',
-+                ['bernoulli_mod_p', 'bernoulli_mod_p_single'])
-+else:
-+    from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-
- from sage.rings.monomials import monomials
-
--from sage.rings.cc import CC
--from sage.rings.cif import CIF
-+if sys.platform == 'wasi':
-+    lazy_import('sage.rings.cc', 'CC')
-+    lazy_import('sage.rings.cif', 'CIF')
-+else:
-+    from sage.rings.cc import CC
-+    from sage.rings.cif import CIF
-
- # invariant theory
- from sage.rings.invariants.all import *
 --- a/src/sage/rings/integer.pyx
 +++ b/src/sage/rings/integer.pyx
 @@ -3201,6 +3201,10 @@
@@ -4281,7 +4219,27 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +            self.val = gclone(g)
 +        else:
 +            self.val = gcloneref(g)
-@@ -1322,3 +1329,3 @@
+@@ -523,8 +530,13 @@
+-        elif isinstance(x, sage.libs.gap.element.GapElement_FiniteField):
+-            try:
+-                self.construct_from(x.sage(ring=self._parent))
+-            except (ValueError, IndexError, TypeError):
+-                raise TypeError("no coercion defined")
+-
+         else:
++            try:
++                from sage.libs.gap.element import GapElement_FiniteField
++            except ImportError:
++                pass
++            else:
++                if isinstance(x, GapElement_FiniteField):
++                    try:
++                        self.construct_from(x.sage(ring=self._parent))
++                        return 0
++                    except (ValueError, IndexError, TypeError):
++                        raise TypeError("no coercion defined")
+             raise TypeError("no coercion defined")
+@@ -1322,3 +1334,3 @@
 -        if self._parent._need_replace_varname:
 +        if self._parent._need_replace_varname and sys.platform != "wasi":
              raise ValueError("variable name illegal in PARI")

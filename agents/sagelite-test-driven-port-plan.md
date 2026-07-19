@@ -56025,6 +56025,58 @@ SQLite integrity, and `git diff --check` pass.  The next pass can classify or
 implement the isolated GAP-dependent Drinfeld rows, or continue with another
 persisted backend/runtime cluster.
 
+GAP-optional PARI FFELT coercion pass on 2026-07-19 UTC:
+
+The final six Drinfeld failures were not actually GAP-dependent.  When a
+PARI-backed finite field rejected an unrelated fraction-field element during
+ring-extension generator discovery, `FiniteFieldElement_pari_ffelt` evaluated
+an unguarded `sage.libs.gap.element.GapElement_FiniteField` type check.  The
+browser profile does not ship GAP, so this fallback raised `AttributeError`
+instead of reaching the normal `TypeError: no coercion defined` result that
+Sage's membership machinery expects.
+
+The optional GAP finite-field conversion now follows the existing Givaro and
+NTL pattern: import `GapElement_FiniteField` inside the fallback, ignore a
+missing optional module, preserve real GAP conversion when it is installed,
+and otherwise fail with the ordinary coercion `TypeError`.  The standalone and
+Electron-shaped finite-field smokes require this exact GAP-free fraction-field
+coercion contract.  The Electron manifest schema advances to version 149 and
+its smoke contract to `optional-gap-free-finite-field-coercion-v109`.
+
+Replays under runner version 127 record:
+
+```text
+focused coercion before:       3 passed, 1 failed, 0 skipped
+focused coercion final:        4 passed, 0 failed, 0 skipped
+complete Drinfeld before:    223 passed, 6 failed, 4 skipped
+complete Drinfeld final:     229 passed, 0 failed, 4 skipped
+Electron-shaped smoke:        passed, including the GAP-free coercion contract
+```
+
+The authoritative SQLite dashboards, rebuilt side module, clean patch
+reconstruction, and manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-gap-optional-coercion/`.  The final
+database passes `PRAGMA integrity_check` and has empty block- and file-failure
+cluster queries.  The resource manifest validates 545 side modules and 691
+required-resource hashes.
+
+The clean-source audit also found that two later `sage/rings/all.py` sections
+duplicated lazy-import changes already delivered by an earlier broader hunk.
+The accumulated patch passed strict syntax parsing but once-only application
+rejected those sections as already applied.  Removing only the duplicate
+sections makes a complete application to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeed without rejects; a second
+forward application is rejected, and the reconstructed FFELT Cython source is
+byte-identical to the source used for the native build.
+
+Cython generation and native linking, the focused and complete doctest
+replays, SQLite integrity and empty-cluster checks, the complete clean-source
+application and second-application rejection, `sage/rings/all.py` Python
+compilation, packaged Electron smoke, manifest hash validation, patch syntax,
+Node and shell syntax, and `git diff --check` pass.  The feature-enabled
+Drinfeld category now has no runnable failures, so the next pass can select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

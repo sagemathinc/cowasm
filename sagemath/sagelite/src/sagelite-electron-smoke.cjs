@@ -496,6 +496,13 @@ S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
 assert type(w).__module__ == 'sage.rings.polynomial.polynomial_zz_pex'
 assert (w + a)**2 == w**2 + 2*a*w + a**2
+K25 = S25.fraction_field()
+try:
+    F25(K25.gen())
+except TypeError as error:
+    assert str(error) == 'no coercion defined'
+else:
+    raise AssertionError('unsupported coercion unexpectedly succeeded')
 F11 = GF(11)
 K = F11.extension(4, 'z')
 z = K.gen()
