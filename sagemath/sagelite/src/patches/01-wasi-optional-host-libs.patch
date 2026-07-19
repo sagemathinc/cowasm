@@ -12171,19 +12171,42 @@ diff -urN -U0 a/src/sage/rings/convert/mpfi.pyx b/src/sage/rings/convert/mpfi.py
 @@ -144 +144 @@
 -        sage: x in F(x.str(style="question", error_digits=0))
 +        sage: x in F(x.str(style="question", error_digits=0))  # needs sage.symbolic
-@@ -243,0 +244,13 @@
+@@ -230,0 +231 @@
++    cdef int exponent_base, exponent_log2_floor
+@@ -243,0 +245,34 @@
 +    # MPFR parses the exponent through ``long``.  On 32-bit WASI, an
 +    # exponent outside that type can wrap instead of saturating, turning a
 +    # huge positive exponent into a finite number with a negative exponent.
-+    # Any exponent above MPFR's maximum is already an overflow, so replace it
-+    # with the first overflowing exponent before passing the string to MPFR.
++    # For an exponent base ``b``, using emax // floor(log2(b)) + 1 still
++    # guarantees overflow while keeping the parser's signed intermediate
++    # exponent arithmetic in range.
 +    if sci_expo_string and not sci_expo_string.startswith(b'-'):
 +        unsigned_expo = sci_expo_string.lstrip(b'+').lstrip(b'0') or b'0'
 +        max_expo_string = str(mpfr_get_emax()).encode('ascii')
 +        if (len(unsigned_expo) > len(max_expo_string)
 +                or (len(unsigned_expo) == len(max_expo_string)
 +                    and unsigned_expo > max_expo_string)):
-+            sci_expo_string = str(mpfr_get_emax() + 1).encode('ascii')
++            if e in (b'p', b'P'):
++                exponent_base = 2
++            elif base:
++                exponent_base = base
++            elif base_prefix:
++                exponent_base = 16
++            else:
++                exponent_base = 10
++            if exponent_base >= 32:
++                exponent_log2_floor = 5
++            elif exponent_base >= 16:
++                exponent_log2_floor = 4
++            elif exponent_base >= 8:
++                exponent_log2_floor = 3
++            elif exponent_base >= 4:
++                exponent_log2_floor = 2
++            else:
++                exponent_log2_floor = 1
++            sci_expo_string = str(
++                mpfr_get_emax() // exponent_log2_floor + 1
++            ).encode('ascii')
 +
 diff -urN -U0 a/src/sage/interfaces/genus2reduction.py b/src/sage/interfaces/genus2reduction.py
 --- a/src/sage/interfaces/genus2reduction.py

@@ -55800,6 +55800,52 @@ shell syntax checks, and `git diff --check` pass.  The next pass can continue
 with the isolated MPFI exponent-range output mismatch, the explicit cypari2
 object-model boundary, or another persisted backend/runtime cluster.
 
+MPFI exponent-base saturation pass on 2026-07-19 UTC:
+
+The oversized-exponent guard in `sage/rings/convert/mpfi.pyx` originally
+replaced every positive exponent beyond `mpfr_get_emax()` with the same
+`emax + 1` value.  That is sufficient at the mathematical MPFR boundary, but
+not for every parser spelling on 32-bit WASI: MPFR scales non-binary exponent
+forms internally, and an oversized intermediate can wrap before the range
+check.  During the focused refinement, the binary `p` spelling consequently
+returned the finite interval `1.?e107742833` instead of the documented entire
+interval.
+
+The guard now derives the exponent base from `p` notation, the explicit input
+base, an inferred hexadecimal prefix, or the decimal default.  It substitutes
+`emax // floor(log2(base)) + 1`, using a small integer decision tree for Sage's
+supported bases.  The replacement still guarantees MPFR overflow, while its
+base-scaled intermediate remains within the 32-bit parser range.  Boundary
+controls preserve `1.?e323228496` as finite, saturate the next decimal
+exponent, and preserve the existing valid `e100000000` question-style
+round-trip.
+
+Replays under runner version 127 record:
+
+```text
+focused refinement before:  7 passed, 1 failed, 0 skipped
+focused base-aware final:   10 passed, 0 failed, 0 skipped
+complete converter final:   54 passed, 0 failed, 3 skipped
+```
+
+The authoritative SQLite dashboards and rebuilt resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-mpfi-exponent-range/`.  Both final
+databases pass `PRAGMA integrity_check` and have empty block- and file-failure
+cluster queries.  The Electron manifest validates with 545 side modules and
+691 required-resource hashes.
+
+This is a Cython/native converter change, so the MPFI side module was rebuilt
+before the final replays.  Applying the complete accumulated patch once to a
+fresh archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, and the reconstructed
+converter is byte-identical to the tested staged source.  That reconstruction
+also caught and corrected the new hunk's inserted-line count before commit.
+Focused and complete replays, Cython generation and native rebuild, SQLite
+integrity and empty-cluster checks, clean source reconstruction and comparison,
+manifest validation, and `git diff --check` pass.  The next pass can continue
+with the explicit cypari2 object-model boundary or another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
