@@ -55930,6 +55930,52 @@ compilation, and `git diff --check` pass.  This pass restores structural
 delivery of later accumulated fixes without requiring a native WASM rebuild.
 The next pass can return to another persisted backend/runtime cluster.
 
+Extension-field polynomial delivery-contract pass on 2026-07-19 UTC:
+
+The persisted `DrinfeldModules.A_field` failure at
+`sage/categories/drinfeld_modules.py:366` was still reproducible in the latest
+retained Electron resource snapshot.  Constructing `GF(25)[]` loaded an old
+`polynomial_zz_pex` side module whose direct
+`NTL::ZZ_pContext::restore()` import was not callable.  Replacing only that
+module with the already-correct NTL-linked build advanced to the coupled old
+`ntl_ZZ_pE` module and trapped in `NTL::PlainRem`; replacing both modules with
+builds from the accumulated patched source closed the complete setup path.
+
+The existing source corrections were therefore sufficient, but the packaged
+runtime had no smoke that required an NTL polynomial over a non-prime finite
+field.  Both the Node standalone smoke and Electron-shaped smoke now construct
+`PolynomialRing(GF(25), 'w')`, assert the specialized
+`polynomial_zz_pex` implementation, and exercise extension-field coefficient
+arithmetic.  The Electron manifest schema advances to version 147, so a future
+coherent bundle cannot silently retain only one half of the context fix.
+
+The focused before/after sequence records:
+
+```text
+retained Drinfeld line before:       0 passed, 1 wasm_link_error
+polynomial-only rebuild diagnostic: 0 passed, 1 wasm_trap (NTL::PlainRem)
+coupled-module Drinfeld line final:  1 passed, 0 failed
+Electron-shaped packaged smoke:     passed, including the new F25 polynomial contract
+```
+
+The focused SQLite dashboards and manifest-validated copy-on-write resource
+bundle are under
+`.tmp/current-run/scheduled-2026-07-19-drinfeld-ntl-link/`.  The final database
+passes `PRAGMA integrity_check` and has empty block- and file-failure cluster
+queries.  Both exact Meson targets compile from a fresh accumulated-patch
+source/build directory, the rebuilt `polynomial_zz_pex` has no unresolved
+`ZZ_pContext::restore` import, and the resource manifest validates with 545
+side modules and 691 required-resource hashes.
+
+A complete feature-enabled Drinfeld category audit now passes the former line
+366 boundary and reaches an independent cypari2 clone-cleanup trap at line
+496 while releasing a PARI finite-field element.  That later failure is a
+separate persisted backend cluster.  The focused doctest, complete packaged
+Electron smoke, manifest loading, patch syntax target, SQLite integrity and
+empty-cluster checks, Node and shell syntax checks, and `git diff --check`
+pass.  The next pass can address the cypari2 clone-cleanup cluster or another
+persisted backend/runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -490,6 +490,12 @@ S5 = PolynomialRing(GF(5), 'u')
 u = S5.gen()
 assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
 assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
+F25 = GF(25, 'a')
+a = F25.gen()
+S25 = PolynomialRing(F25, 'w')
+w = S25.gen()
+assert type(w).__module__ == 'sage.rings.polynomial.polynomial_zz_pex'
+assert (w + a)**2 == w**2 + 2*a*w + a**2
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");
