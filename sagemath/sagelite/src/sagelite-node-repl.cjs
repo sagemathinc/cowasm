@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 125;
+const doctestRunnerVersion = 126;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1519,6 +1519,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
             import sage.all as sage_all
             if not hasattr(sage_all, "key_exchange"):
                 setattr(sage_all, "key_exchange", key_exchange)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
+        from sage.crypto import mq
+        namespace.setdefault("mq", mq)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "mq"):
+                setattr(sage_all, "mq", mq)
         except BaseException:
             pass
     except BaseException:

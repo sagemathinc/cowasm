@@ -2813,12 +2813,14 @@ doctest_stats_namespace_log="$dist_dir/doctest-stats-namespace.log"
 doctest_stats_namespace_file="$probe_dir/sagelite-doctest-stats-namespace.py"
 cat >"$doctest_stats_namespace_file" <<'PY'
 """
-Check that the stripped Sagelite startup namespace includes the stats catalog.
+Check that the stripped Sagelite startup namespace includes lightweight catalogs.
 
 EXAMPLES::
 
     sage: hasattr(distributions, "DiscreteGaussianDistributionPolynomialSampler")
     True
+    sage: mq.SR(1, 1, 1, 4, allow_zero_inversions=True).sbox()(0)
+    6
 """
 PY
 set +e
@@ -2845,6 +2847,12 @@ if [ "$doctest_stats_namespace_count" != "1" ]; then
   cat "$doctest_stats_namespace_log" >&2
   sqlite3 "$doctest_stats_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t stats-namespace doctest smoke did not expose the stats distributions catalog."
+fi
+doctest_mq_namespace_count="$(sqlite3 "$doctest_stats_namespace_db" "select count(*) from blocks where status = 'passed' and source like 'mq.SR(1, 1, 1, 4, allow_zero_inversions=True).sbox()(0)%';")"
+if [ "$doctest_mq_namespace_count" != "1" ]; then
+  cat "$doctest_stats_namespace_log" >&2
+  sqlite3 "$doctest_stats_namespace_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t startup-namespace doctest smoke did not expose the crypto mq catalog."
 fi
 doctest_user_globals_db="$probe_dir/sagelite-doctest-user-globals.sqlite3"
 doctest_user_globals_log="$dist_dir/doctest-user-globals.log"

@@ -54512,6 +54512,56 @@ tracked resource-bundle change is required.  The next pass can address the
 bounded missing `mq` startup namespace or continue with another persisted
 backend/runtime cluster.
 
+S-box `mq` startup catalog and canonical field-order pass on 2026-07-19 UTC:
+
+The remaining seven S-box failures were one startup-namespace cascade.  The
+WASI branch of `sage.all` omitted the lightweight `sage.crypto.mq` catalog even
+though the native branch exported it, and the Node doctest runner consequently
+did not seed the expected `mq` global.  The accumulated WASI patch now restores
+that catalog import, runner version 126 seeds it into both the doctest namespace
+and `sage.all`, and the standalone namespace fixture exercises a small
+`mq.SR(...).sbox()` calculation so future resource builds retain the contract.
+
+Once `mq` was reachable, the audit exposed one implementation-dependent
+example rather than a runtime defect.  Its hand-built S-box iterated a finite
+field directly, but Givaro's multiplicative-generator order differs from the
+polynomial/integer order of the generic and NTL backends available in the WASI
+profile.  The example now calls `sr.sbox()`, whose existing implementation
+sorts the field and defines the S-box by canonical integer indices.  The
+documented tuple therefore describes the same substitution map independently
+of the selected finite-field backend.
+
+Replays under runner version 126 record:
+
+```text
+complete S-box audit before:          277 passed, 7 failed, 2 skipped
+mq startup catalog restored:          283 passed, 1 failed, 2 skipped
+complete S-box audit final:           284 passed, 0 failed, 2 skipped
+reconstructed complete audit:         284 passed, 0 failed, 2 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-sbox-mq/`.  Both retained complete-audit
+databases pass `PRAGMA integrity_check`; their saved file-error, block-failure,
+and failure-cluster queries are empty.  Applying the complete accumulated
+Sagelite patch exactly once to pinned commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds without rejects, and the
+reconstructed `sage.all`, `sage.crypto.sbox`, and plural-polynomial fallback
+sources are byte-identical to the staged sources used by the audit.
+
+The isolated clean standalone target completes all 501 selected Cython
+generations, its four-job Meson compile, and installation, then soft-blocks at
+the pre-existing Node linear-algebra category/coercion smoke before its resource
+copy step.  Reassembling those freshly installed clean resources with the same
+shared manifest contract validates all 550 copied side modules and 696 required
+resource hashes.  Against that bundle, the complete S-box audit again records
+`284 passed, 0 failed, 2 skipped`, while the focused `mq` startup-global fixture
+records `1 passed, 0 failed`.  All resulting databases pass SQLite integrity and
+empty-cluster checks; Node syntax, shell syntax, manifest loading, source
+comparisons, and `git diff --check` also pass.  The next pass can select another
+bounded persisted backend/runtime cluster from the now-clean complete S-box
+dashboard or address the independent standalone linear-algebra smoke.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

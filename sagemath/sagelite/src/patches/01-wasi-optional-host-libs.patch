@@ -3566,7 +3566,7 @@ diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dyna
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,247 @@
+@@ -253,74 +253,248 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -3673,6 +3673,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra, Sq
 +    import sage.algebras.catalog as algebras
 +    import sage.coding.codes_catalog as codes
++    from sage.crypto import mq
 +    import sage.combinat.designs.design_catalog as designs
 +    import sage.combinat.path_tableaux.catalog as path_tableaux
 +    from sage.combinat.species.all import species
@@ -26122,6 +26123,12 @@ diff --git a/src/sage/combinat/fast_vector_partitions.pyx b/src/sage/combinat/fa
 diff --git a/src/sage/crypto/sbox.pyx b/src/sage/crypto/sbox.pyx
 --- a/src/sage/crypto/sbox.pyx
 +++ b/src/sage/crypto/sbox.pyx
+@@ -100,3 +100,3 @@
+-        sage: S = SBox([sr.sub_byte(e) for e in list(sr.k)])
++        sage: S = sr.sbox()
+         sage: S
+-        (6, 5, 2, 9, 4, 7, 3, 12, 14, 15, 10, 0, 8, 1, 13, 11)
++        (6, 11, 5, 4, 2, 14, 7, 10, 9, 13, 15, 12, 3, 1, 0, 8)
 @@ -336 +336 @@
 -    cdef list _rpad(self, list x, Py_ssize_t n=-1):
 +    cpdef list _rpad(self, list x, Py_ssize_t n=-1):
