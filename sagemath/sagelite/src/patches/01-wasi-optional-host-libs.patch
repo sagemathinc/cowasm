@@ -14028,6 +14028,9 @@ diff --git a/src/sage/rings/polynomial/skew_polynomial_ring.py b/src/sage/rings/
 diff -urN -U0 a/src/sage/combinat/integer_vector.py b/src/sage/combinat/integer_vector.py
 --- a/src/sage/combinat/integer_vector.py
 +++ b/src/sage/combinat/integer_vector.py
+@@ -208 +208 @@
+-        sage: print(gale_ryser_theorem(p1, p2))         # not tested
++        sage: print(gale_ryser_theorem(p1, p2))                         # needs sage.numerical.mip
 @@ -212,4 +212,4 @@
 -        sage: A = gale_ryser_theorem(p1, p2)
 -        sage: rs = [sum(x) for x in A.rows()]
@@ -14037,6 +14040,9 @@ diff -urN -U0 a/src/sage/combinat/integer_vector.py b/src/sage/combinat/integer_
 +        sage: rs = [sum(x) for x in A.rows()]                                          # needs sage.combinat sage.modules
 +        sage: cs = [sum(x) for x in A.columns()]                                       # needs sage.combinat sage.modules
 +        sage: p1 == rs; p2 == cs                                                       # needs sage.combinat sage.modules
+@@ -246 +246 @@
+-        sage: print(gale_ryser_theorem(p1, p2, algorithm='gale'))       # not tested
++        sage: print(gale_ryser_theorem(p1, p2, algorithm='gale'))       # needs sage.numerical.mip
 diff -urN -U0 a/src/sage/categories/additive_magmas.py b/src/sage/categories/additive_magmas.py
 --- a/src/sage/categories/additive_magmas.py
 +++ b/src/sage/categories/additive_magmas.py

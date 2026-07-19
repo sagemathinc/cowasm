@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 126;
+const doctestRunnerVersion = 127;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1765,7 +1765,7 @@ def __cowasm_optional_enabled(source):
     if __cowasm_optional:
         return True
     features = __cowasm_optional_features_in(source)
-    return bool(features and any(feature in __cowasm_optional_features for feature in features))
+    return bool(features and all(feature in __cowasm_optional_features for feature in features))
 
 
 def _cowasm_source_hash(source):

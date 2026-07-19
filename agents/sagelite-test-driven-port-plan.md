@@ -54915,6 +54915,54 @@ and 696 required-resource hashes), and `git diff --check` pass.  The next pass
 can continue with another bounded upstream-deferred semantic contract or a
 persisted backend/runtime cluster.
 
+Gale-Ryser dependency conjunction pass on 2026-07-19 UTC:
+
+The two historical `# not tested` matrix-output rows in
+`sage/combinat/integer_vector.py` are not stale semantic guards.  Both use
+Gale's default MILP construction and fail in the browser profile because
+`sage.numerical.backends.generic_backend` is intentionally absent.  The
+accumulated WASI patch now classifies both rows as
+`# needs sage.numerical.mip`; the adjacent pure combinatorial Ryser example
+continues to run and match its exact matrix.
+
+The focused audit also exposed a doctest-runner correctness bug.  A filtered
+`--optional` allowlist enabled a block when any declared dependency matched,
+so `--optional=sage.combinat,sage.modules` could unlock a block that also
+required `sage.numerical.mip`.  Inline filtering could replace that block with
+`pass` before inherited directives were composed, recording a false pass.
+Runner version 127 now requires every declared feature to be present in the
+allowlist.  The standalone smoke fixture covers the conjunctive contract with
+a two-feature block: selecting one feature leaves it skipped, while selecting
+both runs it.
+
+Focused and complete replays record:
+
+```text
+forced Gale rows before:                 0 passed, 2 failed, 0 skipped
+Gale rows with partial allowlist final:  0 passed, 0 failed, 2 skipped
+Ryser exact matrix final:                1 passed, 0 failed, 0 skipped
+shared complete module final:          248 passed, 0 failed, 37 skipped
+reconstructed complete module final:   248 passed, 0 failed, 37 skipped
+```
+
+The authoritative SQLite dashboards and clean pinned reconstruction are under
+`.tmp/current-run/scheduled-2026-07-19-gale-ryser-output/`.  Every retained
+runner-127 database passes `PRAGMA integrity_check`; both complete databases
+have empty block-failure and file-error cluster queries.  Applying the complete
+accumulated patch exactly once to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` succeeds, a second forward
+application is rejected, and the reconstructed integer-vector source is
+byte-identical to the tested staged source.
+
+The direct conjunction probes, focused and complete shared/reconstructed
+replays, JavaScript and shell syntax checks, SQLite integrity and empty-cluster
+checks, clean source reconstruction and comparison, and `git diff --check`
+pass.  A direct standalone integration run was stopped cleanly during its
+unrelated serial regeneration of all 503 Cython sources (117 completed), so it
+did not produce a full-suite result.  The next pass can continue with another
+bounded upstream-deferred semantic contract or persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
