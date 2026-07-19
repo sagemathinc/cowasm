@@ -105,6 +105,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/ideal_monoid.py",
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/localization.py",
   "site-packages/sage/rings/fraction_field.py",
   "site-packages/sage/rings/fraction_field_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/quotient_ring.py",
@@ -126,6 +127,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/polynomial/multi_polynomial_element.py",
   "site-packages/sage/rings/polynomial/multi_polynomial_ring.py",
   "site-packages/sage/rings/polynomial/multi_polynomial_ring_base.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/multi_polynomial_sequence.py",
   "site-packages/sage/rings/polynomial/polydict.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/laurent_polynomial.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/laurent_polynomial_mpair.cpython-314-wasm32-wasi.so",
@@ -273,7 +275,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 152,
+  schemaVersion: 153,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -281,7 +283,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

@@ -136,10 +136,16 @@ function sageliteStandaloneScript() {
 }
 
 function extractShellScalar(script, name) {
-  const pattern = new RegExp(`^${name}=([^\\n]+)$`, "m");
-  const match = script.match(pattern);
-  assert(match, `missing ${name} in Sagelite standalone script`);
-  return match[1].replace(/^"|"$/g, "");
+  const pattern = new RegExp(`^${name}=([^\\n]+)$`, "gm");
+  const assignments = [...script.matchAll(pattern)];
+  assert(assignments.length, `missing ${name} in Sagelite standalone script`);
+  let value = "";
+  for (const assignment of assignments) {
+    value = assignment[1]
+      .replace(/^"|"$/g, "")
+      .replaceAll("${" + name + "}", value);
+  }
+  return value;
 }
 
 function extractShellArray(script, name) {

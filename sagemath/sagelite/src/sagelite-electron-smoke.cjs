@@ -630,6 +630,9 @@ assert g.exponents() == [1, 2, 4]
 assert g.dict() == {1: QQ(1), 2: QQ(2), 4: QQ(1)}
 assert g.coefficients() == [QQ(1), QQ(2), QQ(1)]
 assert (t + t**-1)**2 == t**2 + 2 + t**-2
+rational = (t + 1) / (t**2 + t + 1)
+assert str(rational) == '(t + 1)/(t^2 + t + 1)'
+assert rational * (t**2 + t + 1) == t + 1
 M = LaurentPolynomialRing(QQ, ('x', 'y'))
 x, y = M.gens()
 P = M.polynomial_ring()

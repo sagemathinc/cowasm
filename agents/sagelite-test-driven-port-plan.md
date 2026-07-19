@@ -56232,6 +56232,64 @@ shell and JavaScript syntax checks, SQLite integrity, empty-cluster checks, and
 Laurent-series, multivariate-polynomial, lazy-series, or native file-level
 clusters recorded by the bounded refresh.
 
+Generic rational-polynomial delivery-contract pass on 2026-07-19 UTC:
+
+The bounded refresh's `sage/rings/lazy_series_ring.py:359` timeout remained
+reproducible in the latest coherent Electron resource snapshot.  A phased
+fixture narrowed the stall to constructing `(1+t)/(1+t+t^2)` in the fraction
+field of `LaurentPolynomialRing(QQ)`, before lazy-series conversion began.  An
+interactive replay exposed the underlying JavaScript symptom as
+`RangeError: Maximum call stack size exceeded` in generic polynomial
+construction.
+
+Rebuilding `polynomial_element` from the complete accumulated patch did not
+change the failure.  Comparing the concrete polynomial MRO with a previously
+working resource snapshot identified the stale pure-Python factory instead:
+the packaged `polynomial_ring.py` still treated `QQ` as an absolute number
+field after the unavailable FLINT class was skipped.  It therefore mixed
+`Polynomial_absolute_number_field_dense` into the generic rational polynomial
+class and recursively re-entered the degree-one number-field constructor while
+normalizing the fraction.  The accumulated source already contains the
+correct `RationalField` exclusion; staging that source file alone makes the
+focused row pass with the existing packaged native module.
+
+The standalone and Electron-shaped Laurent-polynomial smokes now construct the
+exact rational function, require its canonical representation, and verify the
+cross-multiplied identity.  The Electron manifest schema advances to version
+153 and its smoke contract to `laurent-fraction-normalization-v113`, so a
+future bundle cannot silently retain the stale rational-polynomial factory.
+The manifest parity test now folds repeated shell scalar assignments before
+comparison, so the separately appended contract suffixes are covered.  Its
+shared mandatory-resource list also includes the localization and polynomial
+sequence files added by the preceding delivery pass.
+
+Replays under runner version 127 record:
+
+```text
+retained packaged line before: 0 passed, 1 timeout after 120 seconds
+focused packaged line final:   1 passed, 0 failed, 0 skipped
+fraction-normalization fixture: 9 passed, 0 failed, 0 skipped
+complete lazy-series module:  641 passed, 0 failed, 403 skipped
+Electron-shaped packaged smoke: passed, including Laurent fraction normalization
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-polynomial-delivery/`.  The coherent
+bundle also stages the already-correct current `lazy_series.py` and
+`lazy_series_ring.py` resources, avoiding the independent stale finite-field
+display mismatch exposed after the polynomial factory enabled the full module
+frontier.  The manifest validates 545 side modules and 697 required-resource
+hashes.
+
+The focused and complete doctest replays, complete Electron-shaped smoke,
+manifest hash validation, exact staged-source comparison, JavaScript and shell
+syntax checks, SQLite integrity and empty-cluster checks, and
+`git diff --check` pass.  This is a delivery regression for an existing
+pure-Python source correction and requires no native WASM rebuild.  The next
+pass can continue with the independent multivariate-polynomial or native
+file-level clusters recorded by the bounded refresh.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
