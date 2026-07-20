@@ -1070,6 +1070,20 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
     console.log(
       "sagelite-electron-ok incompatible word concatenation delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start category parameter refinement delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces
+
+assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
+assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
+assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
+assert QQ['x'] in Algebras(Fields())
+`);
+    console.log(
+      "sagelite-electron-ok category parameter refinement delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

@@ -1439,6 +1439,12 @@ result = z + y
 assert repr(result) == 'word: 1222353587'
 assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
 print('sagelite-node-ok incompatible word concatenation delivery smoke')"
+run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces
+assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
+assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
+assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
+assert QQ['x'] in Algebras(Fields())
+print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1754,7 +1760,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=168
+electron_manifest_schema_version=169
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1775,6 +1781,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pairwise-m
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclic-permutation-delivery-v126"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fast-vector-halving-delivery-v127"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-incompatible-word-concatenation-delivery-v128"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-parameter-refinement-delivery-v129"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1880,6 +1887,7 @@ electron_required_paths=(
   "site-packages/sage/categories/algebras_with_basis.py"
   "site-packages/sage/categories/associative_algebras.py"
   "site-packages/sage/categories/category.py"
+  "site-packages/sage/categories/category_types.py"
   "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_with_axiom.py"

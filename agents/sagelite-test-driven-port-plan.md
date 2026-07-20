@@ -57234,6 +57234,58 @@ JavaScript syntax checks, SQLite integrity and empty-failure checks, and
 `git diff --check` pass.  The next pass can continue with corpus entries
 508--517 or select another persisted backend/runtime cluster.
 
+Category-parameter-refinement delivery-contract pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+537.  Entries 508--517 were completely clean across the remaining core word
+datatypes, infinite words, morphisms, shuffles, and suffix trees.  Entries
+518--527 were likewise clean across word generators and the first additive and
+algebra category modules.  Entries 528--537 initially recorded 645 passed,
+five failed, and 193 skipped blocks.  Nine files were clean; all five failures
+were in `sage/categories/category_types.py`.
+
+The failures were one cluster: base-category refinements were ignored by
+`Category_over_base_ring._subcategory_hook_` and membership.  The accumulated
+WASI source already handles category-valued bases structurally and delegates
+membership through a concrete base ring.  The schema-168 package retained the
+older pure-Python module, so refined vector-space and module subcategories
+returned `False`, as did `QQ['x'] in Algebras(Fields())`.
+
+Staging the byte-identical accumulated-source `category_types.py` in a copy-on-
+write resource bundle closes the cluster without replacing the coherent native
+baseline.  The standalone and Electron-shaped smokes now require category-
+parameter subcategory and membership semantics.  The module is newly mandatory
+and hashed in the Electron resource manifest.  The manifest schema advances to
+version 169 and its smoke contract to
+`category-parameter-refinement-delivery-v129`.
+
+The retained results record:
+
+```text
+entries 508--517:                         1820 passed, 0 failed, 137 skipped
+entries 518--527:                          913 passed, 0 failed, 184 skipped
+entries 528--537 before:                   645 passed, 5 failed, 193 skipped
+self-contained packaged semantic smoke:     5 passed, 0 failed,   0 skipped
+complete category_types.py final:           72 passed, 0 failed,  25 skipped
+entries 528--537 final:                    650 passed, 0 failed, 193 skipped
+Electron-shaped packaged smoke:            passed, including parameter refinements
+```
+
+The authoritative SQLite dashboards and manifest-validated copy-on-write
+resource bundle are under
+`.tmp/current-run/scheduled-2026-07-20-combinat-window-508-517/`.  Every final
+database passes `PRAGMA integrity_check` and has no failed file or block rows.
+The resource manifest validates 545 side modules and 708 required-resource
+hashes.
+
+The self-contained focused smoke, complete affected-module replay, repaired
+bounded replay, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, accumulated-patch source comparison,
+exact staged-source comparison, shell and JavaScript syntax checks, SQLite
+integrity and empty-failure checks, and `git diff --check` pass.  The next pass
+can continue with corpus entries 538--547 or select another persisted backend/
+runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
