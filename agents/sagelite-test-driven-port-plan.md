@@ -57624,6 +57624,43 @@ SQLite lifecycle, integrity, and empty-failure checks, and `git diff --check`
 pass.  No native rebuild was needed.  The next pass can continue with corpus
 entries 758--767 or select another persisted backend/runtime cluster.
 
+Miscellaneous helpers and lazy-infrastructure clean-window pass on 2026-07-20
+UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+787.  All 30 files were clean.  The first window covered class graphs,
+compatibility helpers, constant functions, converting dictionaries,
+decorators, defaults, developer tools, derivatives, edit-module helpers, and
+labeled elements.  The second covered pickle explanation, fast methods,
+flattening, functional helpers, function pickling and mangling, HTML,
+comparison inheritance, inline Fortran, and instance documentation.  The
+third covered lazy attributes, formatting, imports, lists, strings, LaTeX,
+standalone LaTeX, and messaging.
+
+The retained results record:
+
+```text
+entries 758--767:                         325 passed, 0 failed,  80 skipped
+entries 768--777:                         712 passed, 0 failed, 411 skipped
+entries 778--787:                        1143 passed, 0 failed, 272 skipped
+combined:                                2180 passed, 0 failed, 763 skipped
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-758-767/` and
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-758-787/`.  The runs use the
+manifest-validated schema-172 copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-schema-172/`.  Every database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has no failed file or block rows.  The resource manifest validates
+545 side modules and 710 required-resource hashes.
+
+The three bounded replays, complete Electron-shaped smoke, manifest parity,
+runtime, and forge-resource tests, manifest hash validation, SQLite lifecycle,
+integrity, and empty-failure checks, and `git diff --check` pass.  No source or
+packaged runtime correction was needed.  The next pass can continue with
+corpus entries 788--797 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
