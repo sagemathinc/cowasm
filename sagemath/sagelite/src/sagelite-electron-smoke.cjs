@@ -1055,6 +1055,21 @@ assert vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9]) == [0, 2, 3, 4, 5, 6, 7, 8, 9]
 assert vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9]) == [1, 2, 3, 4, 2, 6, 7, 8, 9]
 `);
     console.log("sagelite-electron-ok fast vector halving delivery smoke");
+    console.log(
+      "sagelite-electron-start incompatible word concatenation delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.combinat.words.word import Word
+
+y = Word([5, 3, 5, 8, 7])
+z = Word('12223', alphabet='123')
+result = z + y
+assert repr(result) == 'word: 1222353587'
+assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
+`);
+    console.log(
+      "sagelite-electron-ok incompatible word concatenation delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

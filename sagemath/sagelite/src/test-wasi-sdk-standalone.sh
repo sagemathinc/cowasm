@@ -1432,6 +1432,13 @@ run_node_import "fast vector halving delivery smoke" "from sage.combinat.fast_ve
 assert vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9]) == [0, 2, 3, 4, 5, 6, 7, 8, 9]
 assert vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9]) == [1, 2, 3, 4, 2, 6, 7, 8, 9]
 print('sagelite-node-ok fast vector halving delivery smoke')"
+run_node_import "incompatible word concatenation delivery smoke" "from sage.combinat.words.word import Word
+y = Word([5, 3, 5, 8, 7])
+z = Word('12223', alphabet='123')
+result = z + y
+assert repr(result) == 'word: 1222353587'
+assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
+print('sagelite-node-ok incompatible word concatenation delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1747,7 +1754,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=167
+electron_manifest_schema_version=168
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1767,6 +1774,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-li
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pairwise-maximal-subsets-delivery-v125"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclic-permutation-delivery-v126"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fast-vector-halving-delivery-v127"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-incompatible-word-concatenation-delivery-v128"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2031,6 +2039,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/tableau.py"
   "site-packages/sage/combinat/tools.py"
   "site-packages/sage/combinat/tuple.py"
+  "site-packages/sage/combinat/words/finite_word.py"
   "site-packages/sage/sets/__init__.py"
   "site-packages/sage/sets/disjoint_union_enumerated_sets.py"
   "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so"

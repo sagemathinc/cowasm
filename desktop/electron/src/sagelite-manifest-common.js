@@ -227,6 +227,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/tableau.py",
   "site-packages/sage/combinat/tools.py",
   "site-packages/sage/combinat/tuple.py",
+  "site-packages/sage/combinat/words/finite_word.py",
   "site-packages/sage/sets/__init__.py",
   "site-packages/sage/sets/disjoint_union_enumerated_sets.py",
   "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so",
@@ -285,7 +286,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 167,
+  schemaVersion: 168,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -293,7 +294,7 @@ const expectedSageliteManifest = {
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 expectedSageliteManifest.smokeContract +=
-  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116-weyl-display-and-nested-generators-v117-cpython-static-type-getattr-v118-ntl-gf2x-delivery-v119-generic-linear-group-delivery-v120-q-binomial-python-parent-delivery-v121-scalar-extension-map-parent-v122-weak-rpp-shape-delivery-v123-integer-list-envelope-delivery-v124-pairwise-maximal-subsets-delivery-v125-cyclic-permutation-delivery-v126-fast-vector-halving-delivery-v127";
+  "-real-double-algebraic-dependency-v110-gosper-constant-homography-v111-laurent-localization-v112-laurent-fraction-normalization-v113-padic-lattice-pickle-v114-polynomial-integer-lcm-content-v115-exterior-differential-delivery-v116-weyl-display-and-nested-generators-v117-cpython-static-type-getattr-v118-ntl-gf2x-delivery-v119-generic-linear-group-delivery-v120-q-binomial-python-parent-delivery-v121-scalar-extension-map-parent-v122-weak-rpp-shape-delivery-v123-integer-list-envelope-delivery-v124-pairwise-maximal-subsets-delivery-v125-cyclic-permutation-delivery-v126-fast-vector-halving-delivery-v127-incompatible-word-concatenation-delivery-v128";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

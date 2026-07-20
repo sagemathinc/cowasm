@@ -57172,6 +57172,68 @@ checks, SQLite integrity and empty-failure checks, and `git diff --check` pass.
 The next pass can continue with corpus entries 488--497 or select another
 persisted backend/runtime cluster.
 
+Incompatible-word-concatenation delivery-contract pass on 2026-07-19 UTC:
+
+Two bounded corpus windows continued the curated dashboard through entry 507.
+Entries 488--497 were completely clean across partition tuples, plane and
+ribbon tableaux, skew partitions and tableaux, six-vertex models, super
+tableaux and partitions, and T-sequences.  Entries 498--507 initially recorded
+3,993 passed, one failed, and 472 skipped blocks.  Nine files were clean; the
+only failure was `sage/combinat/words/finite_word.py:378`, where concatenating
+words over incompatible alphabets still raised `ValueError`.
+
+The accumulated WASI source already catches that parent-construction failure
+and returns a generic word containing both alphabets.  The schema-167 package
+retained the older pure-Python module.  Staging the byte-identical accumulated-
+source `finite_word.py` in a copy-on-write resource bundle closes the delivery
+cluster without replacing the known-good native side modules.
+
+The standalone and Electron-shaped smokes now require the documented mixed-
+alphabet result and its exact string/integer letter sequence.  The module is
+newly mandatory and hashed in the Electron resource manifest.  The manifest
+schema advances to version 168 and its smoke contract to
+`incompatible-word-concatenation-delivery-v128`.
+
+The retained results record:
+
+```text
+entries 488--497:                         1945 passed, 0 failed, 209 skipped
+entries 498--507 before:                  3993 passed, 1 failed, 472 skipped
+self-contained packaged semantic smoke:     6 passed, 0 failed,   0 skipped
+complete finite_word.py final:            1265 passed, 0 failed,  50 skipped
+entries 498--507 final:                   3994 passed, 0 failed, 472 skipped
+Electron-shaped packaged smoke:          passed, including mixed alphabets
+```
+
+A direct `--line 378` replay is retained as a focused-rerun setup diagnostic:
+the target uses `y` defined before an intervening prose block, so contiguous
+setup reconstruction cannot supply that name.  The self-contained six-block
+smoke provides the narrow packaged-runtime proof without changing doctest
+semantics.
+
+An attempted complete native refresh was not promoted.  Four concurrent large
+links first exhausted the host, their direct serial retries succeeded, and the
+fresh package then exposed an unrelated `integer`/`integer_ring` circular-
+initialization regression at the pre-existing Gosper smoke.  The validated
+copy-on-write bundle therefore deliberately preserves the previous coherent
+native baseline while replacing only the pure-Python module in scope.
+
+The authoritative SQLite dashboards, exact targeted pinned reconstruction,
+and manifest-validated copy-on-write resource bundle are under
+`.tmp/current-run/scheduled-2026-07-19-combinat-window-488-497/`.  Every retained
+final database passes `PRAGMA integrity_check` and has no failed file or block
+rows.  The resource manifest validates 545 side modules and 707 required-
+resource hashes.
+
+The self-contained focused smoke, complete affected-module replay, repaired
+bounded replay, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, exact targeted pinned-source
+reconstruction and second-application rejection, accumulated-patch syntax
+check, exact staged-source comparison, Python compilation, shell and
+JavaScript syntax checks, SQLite integrity and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+508--517 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
