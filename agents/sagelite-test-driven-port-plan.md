@@ -57576,6 +57576,54 @@ checks, SQLite lifecycle, integrity, and empty-failure checks, and
 continue with corpus entries 748--757 or select another persisted backend/
 runtime cluster.
 
+WASI doctest-tag introspection delivery-contract pass on 2026-07-20 UTC:
+
+The bounded corpus window for entries 748--757 initially recorded 1,022
+passed, one failed, and 365 skipped blocks.  Nine files were clean; the only
+failure was `sage/misc/cachefunc.pyx:907`.  Its indirect `sage_getdoc()`
+example expected the warning derived from the enclosing polynomial-ideal
+module's `# sage.doctest: needs sage.libs.singular` directive, but the packaged
+runtime returned the documentation without that warning.
+
+The complete accumulated WASI source already teaches `sage_getdoc()` to parse
+file-level optional tags on WASI.  The schema-171 resource bundle retained the
+older `sageinspect.py`, while the tagged `multi_polynomial_ideal.py` was already
+current.  Staging the byte-identical accumulated-source `sageinspect.py` in a
+copy-on-write bundle closes the delivery cluster without replacing the
+coherent native baseline.
+
+The standalone and Electron-shaped smokes now require the documented
+file-level tag warning.  `sageinspect.py` is newly mandatory and hashed in the
+Electron resource manifest.  The manifest schema advances to version 172 and
+its smoke contract to
+`wasi-doctest-tag-introspection-delivery-v132`.
+
+The retained results record:
+
+```text
+entries 748--757 before:                 1022 passed, 1 failed, 365 skipped
+focused cachefunc.pyx:907 final:            1 passed, 0 failed,   0 skipped
+complete cachefunc.pyx final:             636 passed, 0 failed, 222 skipped
+entries 748--757 final:                  1023 passed, 0 failed, 365 skipped
+Electron-shaped packaged smoke:          passed, including tag introspection
+```
+
+The authoritative SQLite dashboards are under
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-748-757/`, and the manifest-
+validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-172/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run, and has empty block-
+and file-failure cluster queries.  The resource manifest validates 545 side
+modules and 710 required-resource hashes.
+
+The focused and complete affected-module replays, repaired bounded replay,
+direct standalone semantic probe, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, exact staged-
+source comparison, Python compilation, JavaScript and shell syntax checks,
+SQLite lifecycle, integrity, and empty-failure checks, and `git diff --check`
+pass.  No native rebuild was needed.  The next pass can continue with corpus
+entries 758--767 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

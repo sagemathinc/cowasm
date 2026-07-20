@@ -58,6 +58,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/misc/__init__.py",
   "site-packages/sage/misc/flatten.py",
   "site-packages/sage/misc/functional.py",
+  "site-packages/sage/misc/sageinspect.py",
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so",
   "site-packages/sage/functions/__init__.py",
   "site-packages/sage/functions/all.py",
@@ -288,7 +289,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 171,
+  schemaVersion: 172,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -301,6 +302,8 @@ expectedSageliteManifest.smokeContract +=
   "-set-element-construction-delivery-v130";
 expectedSageliteManifest.smokeContract +=
   "-generic-complex-root-delivery-v131";
+expectedSageliteManifest.smokeContract +=
+  "-wasi-doctest-tag-introspection-delivery-v132";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

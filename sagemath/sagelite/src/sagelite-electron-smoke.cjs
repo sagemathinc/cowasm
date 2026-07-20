@@ -1124,6 +1124,22 @@ assert all(multiplicity == 1 for _, multiplicity in roots)
     console.log(
       "sagelite-electron-ok generic complex root delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start WASI doctest tag introspection delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import QQ
+from sage.misc.sageinspect import sage_getdoc
+
+P = QQ['x,y']
+x, y = P.gens()
+I = P * [x, y]
+doc = sage_getdoc(I.groebner_basis)
+assert doc.startswith("WARNING: the enclosing module is marked 'needs sage.libs.singular',\nso doctests may not pass.")
+`);
+    console.log(
+      "sagelite-electron-ok WASI doctest tag introspection delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

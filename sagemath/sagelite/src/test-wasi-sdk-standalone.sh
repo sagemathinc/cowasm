@@ -1468,6 +1468,14 @@ roots = complex_roots(x**5 - x - 1)
 assert len(roots) == 5
 assert all(multiplicity == 1 for _, multiplicity in roots)
 print('sagelite-node-ok generic complex root delivery smoke')"
+run_node_import "WASI doctest tag introspection delivery smoke" "from sage.all import QQ
+from sage.misc.sageinspect import sage_getdoc
+P = QQ['x,y']
+x, y = P.gens()
+I = P * [x, y]
+doc = sage_getdoc(I.groebner_basis)
+assert doc.startswith(\"WARNING: the enclosing module is marked 'needs sage.libs.singular',\\nso doctests may not pass.\")
+print('sagelite-node-ok WASI doctest tag introspection delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1783,7 +1791,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=171
+electron_manifest_schema_version=172
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1807,6 +1815,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-incompatib
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-parameter-refinement-delivery-v129"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-element-construction-delivery-v130"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-complex-root-delivery-v131"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-wasi-doctest-tag-introspection-delivery-v132"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1902,6 +1911,7 @@ electron_required_paths=(
   "site-packages/sage/misc/__init__.py"
   "site-packages/sage/misc/flatten.py"
   "site-packages/sage/misc/functional.py"
+  "site-packages/sage/misc/sageinspect.py"
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so"
   "site-packages/sage/functions/__init__.py"
   "site-packages/sage/functions/all.py"
