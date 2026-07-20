@@ -58068,6 +58068,49 @@ No source or packaged runtime correction was needed.  The next pass can
 continue with corpus entries 942--951 or select another persisted
 backend/runtime cluster.
 
+Generic matrix backend delivery pass on 2026-07-20 UTC:
+
+The bounded corpus window for logical entries 942--951 initially recorded 888
+passed, eight failed, and 197 skipped blocks.  Seven files were clean.  The
+eight failures across `constructor.pyx`, `special.py`, and
+`matrix_generic_dense.pyx` all came from packaged resources that predated
+already-validated accumulated-source corrections: the dense-dimension
+overflow guard, generic-QQ random-matrix bounds, and generic integer-matrix
+`gcd()` and PARI-backed `frobenius_form()` operations.
+
+The corrected `matrix_space.py` and `special.py` resources and focused rebuilt
+`matrix_generic_dense` and `convert_sage` side modules now travel together in
+the validated package.  Standalone and Electron-shaped smokes require the
+stable oversized-matrix `RuntimeError`, both bounded rational-random-matrix
+contracts, generic dense gcd, and a reconstructed Frobenius similarity
+witness.  The manifest advances to schema 177 and smoke contract
+`generic-matrix-backend-delivery-v137`.
+
+The retained results record:
+
+```text
+entries 942--951 before:                  888 passed, 8 failed, 197 skipped
+affected three-file replay final:         651 passed, 0 failed, 172 skipped
+entries 942--951 final:                   896 passed, 0 failed, 197 skipped
+Electron-shaped packaged smoke:          passed, including the new contract
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-matrix-window-942-951.nDk6z3/`, and the
+manifest-validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-177/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has empty block- and file-failure cluster queries.  The resource
+manifest validates 545 side modules and 713 required-resource hashes.
+
+The focused native rebuild, complete affected-module replay, repaired ten-file
+window, complete Electron-shaped smoke, manifest parity/runtime/forge-resource
+tests, manifest hash validation, JavaScript and shell syntax checks, SQLite
+lifecycle, integrity, and empty-failure checks, and `git diff --check` pass.
+No new Sage semantic patch was needed because the accumulated source already
+contained all four corrections.  The next pass can continue with corpus
+entries 952--961 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

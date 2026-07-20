@@ -1527,6 +1527,32 @@ for operation in (
     else:
         raise AssertionError('non-integral coefficient input was accepted')
 print('sagelite-node-ok Drinfeld modular-form ring delivery smoke')"
+run_node_import "generic matrix backend delivery smoke" "import sys
+from sage.all import Matrix, MatrixSpace, QQ, ZZ, random_matrix
+from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+
+try:
+    Matrix(ZZ, sys.maxsize, sys.maxsize)
+except RuntimeError as error:
+    assert str(error) == 'matrix dimensions are too large'
+else:
+    raise AssertionError('oversized dense matrix was accepted')
+
+for matrix, num_bound, den_bound in (
+    (random_matrix(QQ, 4, 10, den_bound=10), 2, 10),
+    (random_matrix(QQ, 4, 10), 2, 2),
+):
+    assert all(
+        -num_bound <= entry.numerator() <= num_bound
+        and 1 <= entry.denominator() <= den_bound
+        for entry in matrix.list()
+    )
+
+A = Matrix_generic_dense(MatrixSpace(ZZ, 3), range(9))
+assert A.gcd() == 1
+F, B = A.frobenius_form(2)
+assert A == B**(-1) * F * B
+print('sagelite-node-ok generic matrix backend delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1850,7 +1876,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=176
+electron_manifest_schema_version=177
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1879,6 +1905,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-high-byte-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython314-doc-and-structure-native-delivery-v134"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-vector-space-homspace-delivery-v135"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-drinfeld-modform-ring-delivery-v136"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-matrix-backend-delivery-v137"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

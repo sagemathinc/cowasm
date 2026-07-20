@@ -1223,6 +1223,39 @@ for operation in (
       "sagelite-electron-ok Drinfeld modular-form ring delivery smoke",
     );
     console.log(
+      "sagelite-electron-start generic matrix backend delivery smoke",
+    );
+    await python.exec(String.raw`
+import sys
+from sage.all import Matrix, MatrixSpace, QQ, ZZ, random_matrix
+from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+
+try:
+    Matrix(ZZ, sys.maxsize, sys.maxsize)
+except RuntimeError as error:
+    assert str(error) == 'matrix dimensions are too large'
+else:
+    raise AssertionError('oversized dense matrix was accepted')
+
+for matrix, num_bound, den_bound in (
+    (random_matrix(QQ, 4, 10, den_bound=10), 2, 10),
+    (random_matrix(QQ, 4, 10), 2, 2),
+):
+    assert all(
+        -num_bound <= entry.numerator() <= num_bound
+        and 1 <= entry.denominator() <= den_bound
+        for entry in matrix.list()
+    )
+
+A = Matrix_generic_dense(MatrixSpace(ZZ, 3), range(9))
+assert A.gcd() == 1
+F, B = A.frobenius_form(2)
+assert A == B**(-1) * F * B
+`);
+    console.log(
+      "sagelite-electron-ok generic matrix backend delivery smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`
