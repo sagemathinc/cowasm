@@ -1303,6 +1303,19 @@ assert D._rank_pari() == 5
 assert matrix(ZZ, 3, list(range(1, 10)))._rank_pari() == 2
 assert matrix(ZZ, 2, 3, [1,2,3,2,4,6])._rank_pari() == 1
 assert matrix(ZZ, 0, 0)._rank_pari() == 0
+S = matrix(ZZ, 3, list(range(9)))
+SD, SU, SV = S.smith_form()
+assert SD.diagonal() == [1, 3, 0]
+assert SU * S * SV == SD
+T = matrix(ZZ, 3, 2, list(range(6)))
+TD, TU, TV = T.smith_form()
+assert TD.diagonal() == [1, 2]
+assert TU * T * TV == TD
+assert S.smith_form(transformation=False) == SD
+for nr, nc in ((2, 0), (0, 2), (0, 0)):
+    E = matrix(ZZ, nr, nc)
+    ED, EU, EV = E.smith_form()
+    assert EU * E * EV == ED
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 F, U = Z.frobenius_form(2)

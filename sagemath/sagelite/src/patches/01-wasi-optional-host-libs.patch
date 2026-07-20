@@ -28158,3 +28158,110 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 
      def _hnf_pari(self, int flag=0, bint include_zero_rows=True):
          """
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -8,6 +8,7 @@ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
+ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols, long flag=*)
+ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1
++cpdef tuple integer_matrix_smith(list entries, long nrows, long ncols)
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
+ cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols, long flag=*, bint include_zero_rows=*)
+ cpdef set_rational_from_gen(Rational self, Gen x)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -36,6 +36,7 @@ from cypari2.paridecl cimport (
+     is_rational_t,
+     mathnf0,
+     matfrobenius,
++    matsnf0,
+     maxprime,
+     rank,
+     pari_init,
+@@ -490,6 +491,35 @@ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1:
+         sig_off()
+
+
++cpdef tuple integer_matrix_smith(list entries, long nrows, long ncols):
++    """
++    Return PARI Smith form data for a row-major Sage integer matrix.
++
++    The returned tuple contains row-major entries for the left
++    transformation, right transformation, and diagonal matrix.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_smith
++        sage: U, V, D = integer_matrix_smith([ZZ(i) for i in range(9)], 3, 3)
++        sage: len(U), len(V), len(D)
++        (9, 9, 9)
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++    if nrows == 0 or ncols == 0:
++        raise ValueError("direct integer-matrix Smith conversion requires nonempty dimensions")
++
++    cdef GEN result
++    sig_on()
++    try:
++        result = matsnf0(_new_GEN_from_integer_matrix(entries, nrows, ncols), 1)
++        return (_sage_matrix_entries(gel(result, 1)),
++                _sage_matrix_entries(gel(result, 2)),
++                _sage_matrix_entries(gel(result, 3)))
++    finally:
++        sig_off()
++
++
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols,
+                                       long flag=0):
+     """
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -2450,29 +2450,27 @@ cdef class Matrix_integer_dense(Matrix_dense):
+
+            :meth:`elementary_divisors`
+         """
++        if self._nrows == 0 or self._ncols == 0:
++            D = self.new_matrix()
++            if not transformation:
++                return D
++            U = self.matrix_space(ncols=self._nrows)(1)
++            V = self.matrix_space(nrows=self._ncols)(1)
++            return D, U, V
++
+         X = self.matrix_space()([self[i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
+-        v = X.__pari__().matsnf(1).sage()
++        from sage.libs.pari.convert_sage import integer_matrix_smith
++        entries = integer_matrix_smith(X.list(), self._nrows, self._ncols)
++        v = (self.matrix_space(ncols=self._nrows)(entries[0]),
++             self.matrix_space(nrows=self._ncols)(entries[1]),
++             self.matrix_space()(entries[2]))
+         # need to reverse order of rows of U, columns of V, and both of D.
+         D = self.matrix_space()([v[2][i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
+
+         if not transformation:
+             return D
+
+-        if self._ncols == 0:
+-            v[0] = self.matrix_space(ncols = self._nrows)(1)
+-        if self._nrows == 0:
+-            v[1] = self.matrix_space(nrows = self._ncols)(1)
+-
+-        if self._ncols == 0:
+-            # silly special cases for matrices with 0 columns (PARI has a unique empty matrix)
+-            U = self.matrix_space(ncols = self._nrows)(1)
+-        else:
+-            U = self.matrix_space(ncols = self._nrows)([v[0][i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._nrows-1,-1,-1)])
+-
+-        if self._nrows == 0:
+-            # silly special cases for matrices with 0 rows (PARI has a unique empty matrix)
+-            V = self.matrix_space(nrows = self._ncols)(1)
+-        else:
+-            V = self.matrix_space(nrows = self._ncols)([v[1][i,j] for i in range(self._ncols-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
++        U = self.matrix_space(ncols = self._nrows)([v[0][i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._nrows-1,-1,-1)])
++        V = self.matrix_space(nrows = self._ncols)([v[1][i,j] for i in range(self._ncols-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
+
+         return D, U, V

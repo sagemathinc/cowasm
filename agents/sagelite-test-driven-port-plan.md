@@ -58904,6 +58904,62 @@ next pass can address the broad cypari2 object-model cluster, classify
 intentionally out-of-profile full-module examples, or select another persisted
 backend/runtime cluster.
 
+Integer-matrix Smith-form backend pass on 2026-07-20 UTC:
+
+The persisted dense-integer Smith-form cluster in
+`sage/matrix/matrix_integer_dense.pyx` is repaired.  The native matrix module
+previously converted through `Gen.matsnf()`, which belongs to the intentionally
+unsupported broad cypari2 object model.  Integer matrix conversion and PARI's
+`matsnf0(..., 1)` execution now run through the initialized
+`sage.libs.pari.convert_sage` side module, following the direct bridges used
+for Frobenius forms, Hermite forms, determinants, and rank.  Sage's existing
+row and column reversal conventions are preserved, while zero-dimensional
+matrices return their correctly shaped identity transformations without
+entering PARI.
+
+The retained results record:
+
+```text
+square Smith source line 2402:       1 passed, 0 failed,  0 skipped
+rectangular source line 2423:        1 passed, 0 failed,  0 skipped
+three empty-shape source lines:      3 passed, 0 failed,  0 skipped
+focused Smith backend contract:     8 passed, 0 failed,  0 skipped
+complete matrix module before:    623 passed, 58 failed, 14 skipped
+complete matrix module final:     637 passed, 44 failed, 14 skipped
+Electron-shaped packaged smoke:     passed, including Smith transforms
+```
+
+The focused runner-version-128 SQLite databases and worker state are under
+`/tmp/cowasm-sagelite-smith-probe.JzJcQY/`.  The authoritative complete-module
+database is
+`/tmp/cowasm-sagelite-smith-full-module.kFUNG4/complete-matrix.sqlite3`; it
+records 695 blocks, no file-level errors, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  All fourteen Smith-related failures and
+dependent-name cascades from the previous replay are now passing.  The largest
+remaining independent clusters are ten unavailable `fpylll` examples and nine
+broader cypari2 object-model examples.
+
+The Electron manifest advances to schema 186 and smoke contract
+`integer-matrix-smith-delivery-v146`.  The validated packaged resource snapshot
+records clean Sagelite revision `f575cf6224f`, 555 side modules, 724 required-
+resource hashes, and seven native-library paths.  Validation includes exact-
+line replays, the focused square/rectangular/zero-dimensional contract, exact
+Cython/C/C++/WASM rebuilds of `convert_sage` and `matrix_integer_dense`, the
+complete matrix-module replay, the complete Electron-shaped smoke, manifest
+parity, forge-resource and runtime tests, manifest hash validation, an actual
+clean-source accumulated-patch application with byte-for-byte affected-source
+comparisons, SQLite lifecycle and integrity checks, and patch, JavaScript,
+shell, and `git diff --check` validation.
+
+The monolithic standalone target could not restage from the external developer
+Sagelite checkout because that checkout still contains intentional overlapping
+changes in `integer_ring.pyx`; the already-applied hunks were retained as
+rejects in the disposable build copy.  The external checkout was not modified,
+and the validated packaged runtime and clean accumulated-patch reconstruction
+cover the delivered change.  The next pass can route the PARI-backed right-
+kernel or LLL paths through focused initialized bridges, classify intentionally
+out-of-profile full-module examples, or select another persisted cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
