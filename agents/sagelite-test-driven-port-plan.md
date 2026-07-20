@@ -57381,6 +57381,38 @@ integrity, and empty-failure checks, and `git diff --check` pass.  No source or
 packaged runtime correction was needed.  The next pass can continue with corpus
 entries 628--637 or select another persisted backend/runtime cluster.
 
+Category algebra and structure clean-window pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+657.  All 30 files were clean.  The first window covered Hopf algebras with
+basis, isomorphic objects, trivial semigroup categories, Kac--Moody and Kahler
+algebras, and Lie conformal algebra categories.  The second covered magmatic
+and additive structures, division rings, matrix algebras, manifolds, metric
+spaces, and modular abelian varieties.  The third covered monoids, number
+fields, Ore modules, permutation groups, pointed sets, and polyhedra.
+
+The retained results record:
+
+```text
+entries 628--637:                          45 passed, 0 failed, 188 skipped
+entries 638--647:                         274 passed, 0 failed, 133 skipped
+entries 648--657:                         157 passed, 0 failed,  92 skipped
+combined:                                 476 passed, 0 failed, 413 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-20-category-window-628-637/`.  Every
+database passes `PRAGMA integrity_check`, records a completed passing run, and
+has no failed file or block rows.  The runs use the retained schema-169 copy-
+on-write Electron resource bundle, whose manifest validates 545 side modules
+and 708 required-resource hashes.
+
+The three bounded replays, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, SQLite lifecycle,
+integrity, and empty-failure checks, and `git diff --check` pass.  No source or
+packaged runtime correction was needed.  The next pass can continue with corpus
+entries 658--667 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
