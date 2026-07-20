@@ -57918,6 +57918,37 @@ failure checks, and `git diff --check` pass.  No native rebuild was needed.
 The next pass can continue with corpus entries 902--911 or select another
 persisted backend/runtime cluster.
 
+Vector-space morphism and tensor-module clean-frontier checkpoint on
+2026-07-20 UTC:
+
+The bounded corpus window for logical entries 902--911 is completely clean
+against the manifest-validated schema-175 packaged resource snapshot.  The
+window covers `vector_space_morphism.py`, the indexed-element and with-basis
+morphism helpers, and the first seven finite-rank tensor modules through
+`free_module_alt_form.py`.  No source, native backend, or delivery correction
+is needed for this slice.
+
+The retained result records:
+
+```text
+entries 902--911: 3038 passed, 0 failed, 277 skipped
+Electron-shaped packaged smoke: passed
+```
+
+The authoritative SQLite dashboard and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-tensor-window-902-911.G85xFx/`, and the run
+uses the manifest-validated schema-175 copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-schema-175/`.  The database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has no failed file or block rows.  The resource manifest validates
+545 side modules and 712 required-resource hashes.
+
+The complete ten-file replay, complete Electron-shaped smoke, manifest hash
+validation, SQLite lifecycle, integrity, and empty-failure checks, and
+`git diff --check` pass.  No source or packaged runtime correction was needed.
+The next pass can continue with corpus entries 912--921 or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
