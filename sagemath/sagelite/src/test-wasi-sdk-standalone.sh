@@ -1553,6 +1553,16 @@ assert A.gcd() == 1
 F, B = A.frobenius_form(2)
 assert A == B**(-1) * F * B
 print('sagelite-node-ok generic matrix backend delivery smoke')"
+run_node_import "polynomial matrix quotient delivery smoke" "from sage.all import GF, PolynomialRing
+from sage.matrix.constructor import matrix
+R = PolynomialRing(GF(7), 'x')
+x = R.gen()
+B = matrix(R, [[x + 1, 0], [0, x - 1]])
+A = matrix(R, [[(x + 1)**2, (x - 1)*(x + 2)]])
+Q, remainder = A._right_quo_rem_solve(B)
+assert Q == matrix(R, [[x + 1, x + 2]])
+assert remainder.is_zero()
+print('sagelite-node-ok polynomial matrix quotient delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1876,7 +1886,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=177
+electron_manifest_schema_version=178
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1906,6 +1916,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython314
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-vector-space-homspace-delivery-v135"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-drinfeld-modform-ring-delivery-v136"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-matrix-backend-delivery-v137"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-matrix-quotient-delivery-v138"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2105,6 +2116,7 @@ electron_required_paths=(
   "site-packages/sage/matrix/matrix2.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_dense.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_generic_dense.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_polynomial_dense.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_misc.py"
   "site-packages/sage/matrix/matrix_space.py"
   "site-packages/sage/matrix/special.py"

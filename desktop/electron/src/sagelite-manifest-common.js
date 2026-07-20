@@ -164,6 +164,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/matrix/matrix2.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_dense.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_generic_dense.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_polynomial_dense.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_misc.py",
   "site-packages/sage/matrix/matrix_space.py",
   "site-packages/sage/matrix/special.py",
@@ -292,7 +293,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 177,
+  schemaVersion: 178,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -317,6 +318,8 @@ expectedSageliteManifest.smokeContract +=
   "-drinfeld-modform-ring-delivery-v136";
 expectedSageliteManifest.smokeContract +=
   "-generic-matrix-backend-delivery-v137";
+expectedSageliteManifest.smokeContract +=
+  "-polynomial-matrix-quotient-delivery-v138";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

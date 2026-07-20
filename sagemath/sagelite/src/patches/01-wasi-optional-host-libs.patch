@@ -27220,3 +27220,116 @@ diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfe
 -            'Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2 (using GF2X)'
 +            sage: M._repr_().startswith('Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2')
 +            True
+diff -urN a/src/sage/matrix/matrix_polynomial_dense.pyx b/src/sage/matrix/matrix_polynomial_dense.pyx
+--- a/src/sage/matrix/matrix_polynomial_dense.pyx
++++ b/src/sage/matrix/matrix_polynomial_dense.pyx
+@@ -3204,13 +3204,13 @@
+             X = B.solve_left(self)
+         except ValueError:
+             raise ValueError("dividing via system solving yields no solution")
+         from sage.arith.functions import lcm
+-        f = lcm([X[i,j].denom() for j in range(m) for i in range(k)])
++        f = lcm([X[i,j].denominator() for j in range(m) for i in range(k)])
+         # Write X = Q + R/r with Q and R having polynomial entries;
+         # keep only the Q part
+         for i in range(k):
+             for j in range(m):
+-                X[i,j] = ((X[i,j].numer() * f) // X[i,j].denom()) // f
++                X[i,j] = ((X[i,j].numerator() * f) // X[i,j].denominator()) // f
+         Q = X.change_ring(self.base_ring())
+         R = self - Q*B
+         return (Q,R)
+diff --git a/src/sage/matrix/matrix_polynomial_dense.pyx b/src/sage/matrix/matrix_polynomial_dense.pyx
+--- a/src/sage/matrix/matrix_polynomial_dense.pyx
++++ b/src/sage/matrix/matrix_polynomial_dense.pyx
+@@ -2231,6 +2231,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.matrix.matrix_mod2_dense
+             sage: F.<a> = GF(2^4, 'a')
+             sage: PF.<x> = F[]
+             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],
+@@ -2632,6 +2633,7 @@
+
+         The last example shows the usage of the transformation parameter::
+
++            sage: # needs sage.matrix.matrix_mod2_dense
+             sage: Fq.<a> = GF(2^3)
+             sage: pR.<x> = Fq[]
+             sage: A = matrix(pR, [[x^2+a,  x^4+a],
+@@ -5100,6 +5102,7 @@
+             [    0     1     0]
+             [    0     0 1/2*x]
+
++            sage: # needs sage.rings.number_field
+             sage: field.<a> = NumberField(x**2 - 2)
+             sage: ring.<y> = field[]
+             sage: mat = matrix([[3*a*y - 1, (-8*a - 1)*y - 2*a + 1]])
+diff --git a/src/sage/matrix/matrix_rational_dense.pyx b/src/sage/matrix/matrix_rational_dense.pyx
+--- a/src/sage/matrix/matrix_rational_dense.pyx
++++ b/src/sage/matrix/matrix_rational_dense.pyx
+@@ -2351,6 +2351,6 @@
+             ....:             1/2: 1/18, 1: 3/18, 2: 1/9}
+             sage: add_samples()
+-            sage: while not all(abs(dic[a]/total_count - expected[a]) < 0.001 for a in dic):
++            sage: while not all(abs(dic[a]/total_count - expected[a]) < 0.001 for a in dic):  # long time
+             ....:     add_samples()
+
+         The distribution ``'1/n'``::
+@@ -2372,7 +2372,7 @@
+             sage: add_samples('1/n')
+             sage: for _ in range(8):
+             ....:     dic2[mpq_randomize_entry_recip_uniform()] += 1
+-            sage: while not all(abs(dic[a] - dic2[a])/total_count < 0.005 for a in dic):
++            sage: while not all(abs(dic[a] - dic2[a])/total_count < 0.005 for a in dic):  # long time
+             ....:     add_samples('1/n')
+
+         EXAMPLES::
+diff --git a/src/sage/matrix/matrix_rational_dense.pyx b/src/sage/matrix/matrix_rational_dense.pyx
+--- a/src/sage/matrix/matrix_rational_dense.pyx
++++ b/src/sage/matrix/matrix_rational_dense.pyx
+@@ -2380,7 +2380,7 @@
+         The default can be used to obtain matrices of different rank::
+
+             sage: ranks = [False]*11
+-            sage: while not all(ranks):
++            sage: while not all(ranks):  # long time
+             ....:     for dens in (0.05, 0.1, 0.2, 0.5):
+             ....:         A = Matrix(QQ, 10, 10, 0)
+             ....:         A.randomize(dens)
+@@ -2398,7 +2398,7 @@
+             sage: total_count = 0.0
+             sage: expected_density = 6/9
+             sage: add_sample(1.0, 100, 100)
+-            sage: while abs(density_sum/total_count - expected_density) > 0.001:
++            sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+             ....:     add_sample(1.0, 100, 100)
+
+         The modified density depends on the number of columns::
+@@ -2407,7 +2407,7 @@
+             sage: total_count = 0.0
+             sage: expected_density = 6/9*0.5
+             sage: add_sample(0.5, 100, 2)
+-            sage: while abs(density_sum/total_count - expected_density) > 0.001:
++            sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+             ....:     add_sample(0.5, 100, 2)
+
+             sage: density_sum = 0.0
+@@ -2417,14 +2417,14 @@
+             0.263...
+
+             sage: add_sample(0.5, 100, 100)
+-            sage: while abs(density_sum/total_count - expected_density) > 0.001:
++            sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+             ....:     add_sample(0.5, 100, 100)
+
+         Modifying the bounds for numerator and denominator::
+
+             sage: num_dic = defaultdict(Integer)
+             sage: den_dic = defaultdict(Integer)
+-            sage: while not (all(num_dic[i] for i in range(-200, 201))
++            sage: while not (all(num_dic[i] for i in range(-200, 201))  # long time
+             ....:            and all(den_dic[i] for i in range(1, 101))):
+             ....:     a = matrix(QQ, 2, 4)
+             ....:     a.randomize(num_bound=200, den_bound=100)

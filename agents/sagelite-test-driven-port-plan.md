@@ -58111,6 +58111,70 @@ No new Sage semantic patch was needed because the accumulated source already
 contained all four corrections.  The next pass can continue with corpus
 entries 952--961 or select another persisted backend/runtime cluster.
 
+Polynomial-matrix quotient compatibility and matrix-backend checkpoint on
+2026-07-20 UTC:
+
+Three bounded matrix windows extended the backend audit beyond the previous
+generic-matrix delivery pass.  The first two windows were clean.  They cover
+sparse rational/integer/modular helpers, generic sparse utilities, Strassen,
+symplectic bases, matrix tests, dense modular-float/double helpers, and the
+browser-profile dependency boundaries for unavailable specialized dense
+backends.
+
+The third window exposed one rational-matrix timeout and 21 failures in
+`sage/matrix/matrix_polynomial_dense.pyx`.  Seven direct polynomial-matrix
+failures called the obsolete dynamic aliases `numer()` and `denom()` on
+Cython fraction-field elements.  In the stripped runtime those aliases fell
+through category lookup and reported a missing `__dict__`; seven following
+rows then failed dependently.  `_right_quo_rem_solve()` now calls the concrete
+`numerator()` and `denominator()` API.  The remaining polynomial-matrix rows
+are explicitly classified as GF(2) matrix-side-module and number-field/PARI
+object-model dependencies, leaving the complete module clean.
+
+The rational-matrix timeout was a sequence of unbounded statistical
+convergence loops in `randomize()` examples.  All seven loops are now marked
+`# long time`, while their bounded setup and deterministic randomization
+coverage remain runnable.  The complete file then reaches a separate broad
+backend-selection frontier: 108 failures, chiefly internal FLINT/PARI matrix
+methods executing on the browser profile's generic dense matrix fallback.
+That coherent cluster remains for a later native/backend pass.
+
+The rebuilt `matrix_polynomial_dense` side module is now an explicit mandatory
+Electron resource.  Standalone and Electron-shaped smokes require a
+polynomial-matrix quotient/remainder over `GF(7)`, including the exact quotient
+and zero remainder.  The manifest advances to schema 178 and smoke contract
+`polynomial-matrix-quotient-delivery-v138`.
+
+The retained results record:
+
+```text
+first matrix window:                       336 passed,   0 failed, 37 skipped
+second dense-helper window:                 90 passed,   0 failed,  8 skipped
+third window before:                       666 passed,  22 failed, 11 skipped
+polynomial quotient focused final:           1 passed,   0 failed,  0 skipped
+polynomial module after runtime fix:        680 passed,   7 failed,  3 skipped
+polynomial module after dependency tags:    659 passed,   0 failed, 31 skipped
+rational module after long-time tags:       244 passed, 108 failed,  8 skipped
+Electron-shaped packaged smoke:            passed, including polynomial quotient
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-matrix-backend-next/`, and the manifest-
+validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-178/`.  Every retained database passes
+`PRAGMA integrity_check`; the clean runs record completed passing lifecycles.
+The resource manifest validates 545 side modules and 713 required-resource
+hashes.
+
+The focused native rebuild, focused and complete polynomial-matrix replays,
+complete rational-matrix audit, two clean bounded windows, standalone-shaped
+quotient probe, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, targeted clean-source patch dry-run
+and application with exact source comparison, JavaScript and shell syntax
+checks, SQLite lifecycle and integrity checks, and `git diff --check` pass.
+The next pass can address the generic rational-matrix backend-selection
+cluster or resume the bounded corpus frontier.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

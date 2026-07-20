@@ -1256,6 +1256,24 @@ assert A == B**(-1) * F * B
       "sagelite-electron-ok generic matrix backend delivery smoke",
     );
     console.log(
+      "sagelite-electron-start polynomial matrix quotient delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import GF, PolynomialRing
+from sage.matrix.constructor import matrix
+
+R = PolynomialRing(GF(7), 'x')
+x = R.gen()
+B = matrix(R, [[x + 1, 0], [0, x - 1]])
+A = matrix(R, [[(x + 1)**2, (x - 1)*(x + 2)]])
+Q, remainder = A._right_quo_rem_solve(B)
+assert Q == matrix(R, [[x + 1, x + 2]])
+assert remainder.is_zero()
+`);
+    console.log(
+      "sagelite-electron-ok polynomial matrix quotient delivery smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`
