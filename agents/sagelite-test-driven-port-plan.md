@@ -59009,6 +59009,60 @@ validation.  The external developer Sagelite checkout remains untouched.  The
 next backend pass can address the focused PARI LLL paths, classify the
 unavailable `fpylll` default/BKZ surface, or select another persisted cluster.
 
+Integer-matrix PARI LLL backend pass on 2026-07-20 UTC:
+
+The persisted dense-integer PARI LLL cluster in
+`sage/matrix/matrix_integer_dense.pyx` is repaired.  The native matrix module
+previously converted through `Gen.qflll(4)` and broad cypari2 matrix helpers,
+which are intentionally unsupported in the browser profile.  Row-major Sage
+integer entries are now rotated into PARI's column-vector convention and
+`qflll0(..., 4)` runs through the initialized
+`sage.libs.pari.convert_sage` side module.  The bridge returns the combined
+kernel/image transformation in Sage row convention and the computed rank, so
+the existing result and rank-cache behavior is preserved.
+
+The retained results record:
+
+```text
+random-matrix transform line 3110:  target block passed
+rank-deficient line 3125:           target block passed
+rank-cache line 3166:               target block passed
+focused PARI LLL contract:         13 passed,  0 failed,  0 skipped
+complete matrix module before:    644 passed, 37 failed, 14 skipped
+complete matrix module final:     648 passed, 33 failed, 14 skipped
+standalone and Electron smokes:    passed, including PARI LLL transforms
+```
+
+The authoritative runner-version-128 focused database is
+`/tmp/cowasm-sagelite-pari-lll-contract-final.p4UtMS/contract.sqlite3`.
+It covers a rank-deficient rectangular matrix, transformation orientation,
+zero-row placement, result equality, and input/result rank caching; it records
+a completed passing lifecycle and `PRAGMA integrity_check = ok`.  The exact
+source-line databases are under
+`/tmp/cowasm-sagelite-pari-lll-lines.lLH60e/`; each target block passes, while
+the overall filtered file rows remain failed because the runner replays earlier
+stateful setup blocks that exercise the separately unavailable default
+`fpylll` backend.  The authoritative complete-module database is
+`/tmp/cowasm-sagelite-pari-lll-full-module.b51BO0/complete-matrix.sqlite3`;
+it records 695 blocks, no file-level errors, a completed failed lifecycle, and
+a clean integrity check.  The four repaired rows are the three direct PARI LLL
+examples plus the transformation-equality example that previously cascaded
+from the missing result.
+
+The Electron manifest advances to schema 188 and smoke contract
+`integer-matrix-pari-lll-delivery-v148`.  The validated packaged resources
+record clean Sagelite revision `f575cf6224f`, 555 side modules, 724 required-
+resource paths and hashes, and seven native-library paths.  Validation includes
+a zero-reject clean-source accumulated-patch application, byte-for-byte
+comparison of all three affected sources, a from-scratch 507-target Cython and
+1,024-step native WASM build, all 70 Node runtime probes, the standalone and
+relocated Electron smokes, manifest parity, forge-resource and runtime tests,
+manifest hash validation, SQLite lifecycle and integrity checks, and patch,
+JavaScript, shell, and `git diff --check` validation.  The external developer
+Sagelite checkout remains untouched.  The next pass can classify the ten
+unavailable `fpylll` examples, address the two remaining broad cypari2 object-
+model examples, or select another persisted backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

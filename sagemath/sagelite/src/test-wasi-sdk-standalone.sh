@@ -1622,6 +1622,14 @@ for nr, nc in ((18, 11), (60, 55)):
     K_format, K = matrix(ZZ, nr, nc)._right_kernel_matrix()
     assert K_format == 'computed-pari-int'
     assert K == identity_matrix(ZZ, nc)
+L_input = matrix(ZZ, 4, 3, [1,2,3,2,4,6,7,0,1,-1,-2,-3])
+L, L_transform = L_input.LLL(algorithm='pari', transformation=True)
+assert L_transform * L_input == L
+assert L[:2] == matrix(ZZ, 2, 3)
+assert L_input._cache == {'rank': 2}
+L_input._clear_cache()
+assert L_input.LLL(algorithm='pari')[:2] == matrix(ZZ, 2, 3)
+assert L_input._cache == {'rank': 2}
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 F, U = Z.frobenius_form(2)
@@ -1978,7 +1986,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=187
+electron_manifest_schema_version=188
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2018,6 +2026,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-pari-rank-delivery-v145"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-smith-delivery-v146"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-right-kernel-delivery-v147"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-pari-lll-delivery-v148"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

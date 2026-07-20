@@ -28347,3 +28347,106 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
              format = 'computed-pari-int'
          elif algorithm == 'padic':
              proof = kwds.pop('proof', None)
+
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -8,6 +8,7 @@ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
+ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols, long flag=*)
++cpdef tuple integer_matrix_lll(list entries, long nrows, long ncols)
+ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1
+ cpdef tuple integer_matrix_right_kernel(list entries, long nrows, long ncols)
+ cpdef tuple integer_matrix_smith(list entries, long nrows, long ncols)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -40,5 +40,6 @@ from cypari2.paridecl cimport (
+     matsnf0,
+     maxprime,
++    qflll0,
+     rank,
+     pari_init,
+     pari_PRIMES,
+@@ -471,7 +472,56 @@ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols,
+         sig_off()
+
+
++cpdef tuple integer_matrix_lll(list entries, long nrows, long ncols):
++    """
++    Return the PARI LLL transformation and rank for a Sage integer matrix.
++
++    The transformation entries are row-major.  PARI reduces column vectors,
++    so this bridge rotates Sage's row vectors counterclockwise before calling
++    ``qflll0(..., 4)`` and transposes PARI's kernel/image transformation on
++    return.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_lll
++        sage: entries, rank = integer_matrix_lll(
++        ....:     [ZZ(1), ZZ(2), ZZ(3), ZZ(2), ZZ(4), ZZ(6),
++        ....:      ZZ(7), ZZ(0), ZZ(1), ZZ(-1), ZZ(-2), ZZ(-3)], 4, 3
++        ....: )
++        sage: rank, len(entries)
++        (2, 16)
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++    if nrows == 0 or ncols == 0:
++        raise ValueError("direct integer-matrix LLL conversion requires nonempty dimensions")
++
++    cdef list rotated = [entries[i * ncols + ncols - j - 1]
++                         for j in range(ncols) for i in range(nrows)]
++    cdef GEN result
++    cdef GEN kernel
++    cdef GEN image
++    cdef long kernel_dimension
++    cdef long matrix_rank
++    cdef long i, j
++    sig_on()
++    try:
++        result = qflll0(
++            _new_GEN_from_integer_matrix(rotated, ncols, nrows), 4
++        )
++        kernel = gel(result, 1)
++        image = gel(result, 2)
++        kernel_dimension = lg(kernel) - 1
++        matrix_rank = lg(image) - 1
++        return ([_sage_integer_or_rational(gcoeff(kernel, j + 1, i + 1))
++                 for i in range(kernel_dimension) for j in range(nrows)] +
++                [_sage_integer_or_rational(gcoeff(image, j + 1, i + 1))
++                 for i in range(matrix_rank) for j in range(nrows)],
++                matrix_rank)
++    finally:
++        sig_off()
++
++
+ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1:
+     """
+     Return the PARI rank of a row-major Sage integer matrix.
+
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -3352,13 +3352,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             U = Ufplll.to_matrix(self.new_matrix(Ufplll.nrows, Ufplll.ncols))
+
+         elif algorithm == 'pari':
+-            # call pari with flag=4: kernel+image
+-            # pari uses column convention: need to transpose the matrices
+-            A = integer_matrix(self._matrix, 1)
+-            K, T = A.qflll(4)
+-            r = ZZ(T.length())
+-            # TODO: there is no optimized matrix converter pari -> sage
+-            U = gen_to_sage_matrix(pari.matconcat([K, T]).mattranspose())
++            from sage.libs.pari.convert_sage import integer_matrix_lll
++            entries, r = integer_matrix_lll(
++                self.list(), self._nrows, self._ncols
++            )
++            U = self.new_matrix(
++                nrows=self._nrows, ncols=self._nrows, entries=entries
++            )
+             R = U * self
+
+         else:

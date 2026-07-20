@@ -1329,6 +1329,14 @@ for nr, nc in ((18, 11), (60, 55)):
     K_format, K = matrix(ZZ, nr, nc)._right_kernel_matrix()
     assert K_format == 'computed-pari-int'
     assert K == identity_matrix(ZZ, nc)
+L_input = matrix(ZZ, 4, 3, [1,2,3,2,4,6,7,0,1,-1,-2,-3])
+L, L_transform = L_input.LLL(algorithm='pari', transformation=True)
+assert L_transform * L_input == L
+assert L[:2] == matrix(ZZ, 2, 3)
+assert L_input._cache == {'rank': 2}
+L_input._clear_cache()
+assert L_input.LLL(algorithm='pari')[:2] == matrix(ZZ, 2, 3)
+assert L_input._cache == {'rank': 2}
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 F, U = Z.frobenius_form(2)
