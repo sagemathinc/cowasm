@@ -1180,6 +1180,23 @@ assert R.one().gcd(S.one(), 'modular') == S.one()
 `);
     console.log("sagelite-electron-ok structure native delivery smoke");
     console.log(
+      "sagelite-electron-start vector-space homspace delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import MatrixSpace, QQ
+from sage.misc.sage_unittest import TestSuite
+from sage.modules.vector_space_morphism import VectorSpaceMorphism
+
+H = MatrixSpace(QQ, ['a', 'b'], 2)
+sample = H.an_element()
+assert isinstance(sample, VectorSpaceMorphism)
+assert sample.is_zero()
+TestSuite(H).run()
+`);
+    console.log(
+      "sagelite-electron-ok vector-space homspace delivery smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`

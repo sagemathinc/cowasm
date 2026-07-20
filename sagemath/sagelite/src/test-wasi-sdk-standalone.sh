@@ -1500,6 +1500,15 @@ S = PolynomialRing(QQ, names=('x', 'y', 'z'))
 assert R.one().gcd(R(2), algorithm='modular') == R.one()
 assert R.one().gcd(S.one(), 'modular') == S.one()
 print('sagelite-node-ok structure native delivery smoke')"
+run_node_import "vector-space homspace delivery smoke" "from sage.all import MatrixSpace, QQ
+from sage.misc.sage_unittest import TestSuite
+from sage.modules.vector_space_morphism import VectorSpaceMorphism
+H = MatrixSpace(QQ, ['a', 'b'], 2)
+sample = H.an_element()
+assert isinstance(sample, VectorSpaceMorphism)
+assert sample.is_zero()
+TestSuite(H).run()
+print('sagelite-node-ok vector-space homspace delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1823,7 +1832,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=174
+electron_manifest_schema_version=175
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1850,6 +1859,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-co
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-wasi-doctest-tag-introspection-delivery-v132"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-high-byte-string-literal-delivery-v133"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython314-doc-and-structure-native-delivery-v134"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-vector-space-homspace-delivery-v135"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2055,7 +2065,9 @@ electron_required_paths=(
   "site-packages/sage/modules/__init__.py"
   "site-packages/sage/modules/free_module.py"
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/modules/free_module_homspace.py"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/modules/vector_space_homspace.py"
   "site-packages/sage/algebras/clifford_algebra.py"
   "site-packages/sage/algebras/weyl_algebra.py"
   "site-packages/sage/homology/chain_complex.py"

@@ -3402,6 +3402,16 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 @@ -141 +141 @@
 -    sage: phi.is_injective()
 +    sage: phi.is_injective()                                                           # needs sage.libs.pari
+@@ -824,2 +824,2 @@
+-            sage: type(phi)
+-            <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
++            sage: isinstance(phi, VectorSpaceMorphism)
++            True
+@@ -834,2 +834,2 @@
+-            sage: type(rho)
+-            <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
++            sage: isinstance(rho, VectorSpaceMorphism)
++            True
 diff -urN a/src/sage/monoids/indexed_free_monoid.py b/src/sage/monoids/indexed_free_monoid.py
 --- a/src/sage/monoids/indexed_free_monoid.py
 +++ b/src/sage/monoids/indexed_free_monoid.py

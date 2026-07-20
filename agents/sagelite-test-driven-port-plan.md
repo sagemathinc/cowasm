@@ -57866,6 +57866,58 @@ validation, SQLite lifecycle, integrity, and empty-failure checks, and
 The next pass can continue with corpus entries 892--901 or select another
 persisted backend/runtime cluster.
 
+Vector-space Homset Python-resource delivery pass on 2026-07-20 UTC:
+
+The bounded corpus window for logical entries 892--901 initially recorded 729
+passed, two failed, and 220 skipped blocks.  Nine files were clean; both
+failures were in `sage/modules/vector_space_homspace.py`.  A Homset from
+`QQ^2` to a keyed `MatrixSpace` codomain could not construct its canonical zero
+because the schema-174 bundle retained the pre-correction
+`free_module_homspace.py` and `vector_space_homspace.py` resources.
+
+The complete accumulated WASI source already selects category-aware Homset
+elements, accepts both parent `coordinates()` and element `to_vector()`
+coordinate protocols, and uses zero as the canonical representative.  Staging
+those two byte-identical accumulated-source Python modules in a copy-on-write
+bundle closed the semantic failure.  That exposed two stale exact-type checks
+in the neighboring `vector_space_morphism.py` doctests: category-aware elements
+are proper `VectorSpaceMorphism` subclasses.  The doctests now assert the
+stable `isinstance(..., VectorSpaceMorphism)` contract instead of requiring the
+uncategorized concrete class.
+
+The standalone and Electron-shaped smokes now require the keyed Homset sample
+to be a zero `VectorSpaceMorphism` and run its complete `TestSuite`.  Both
+corrected Homset Python modules are newly mandatory and hashed in the Electron
+resource manifest.  The manifest advances to schema 175 and smoke contract
+`vector-space-homspace-delivery-v135`.
+
+The retained results record:
+
+```text
+entries 892--901 before:                  729 passed, 2 failed, 220 skipped
+focused vector_space_homspace.py:383:       1 passed, 0 failed,   0 skipped
+complete vector_space_morphism.py final:  131 passed, 0 failed,  78 skipped
+entries 892--901 final:                   731 passed, 0 failed, 220 skipped
+Electron-shaped packaged smoke:          passed, including keyed Homset suite
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-module-window-892-901/`, and the manifest-
+validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-175/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has no failed file or block rows.  The resource manifest validates
+545 side modules and 712 required-resource hashes.
+
+The focused Homset replay, complete affected morphism replay, repaired bounded
+window, complete Electron-shaped smoke, manifest parity/runtime/forge-resource
+tests, manifest hash validation, clean application of the accumulated patch to
+the documented Sagelite revision, exact affected-source comparison, Python,
+JavaScript, and shell syntax checks, SQLite lifecycle, integrity, and empty-
+failure checks, and `git diff --check` pass.  No native rebuild was needed.
+The next pass can continue with corpus entries 902--911 or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

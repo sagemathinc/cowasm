@@ -170,7 +170,9 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/modules/__init__.py",
   "site-packages/sage/modules/free_module.py",
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/modules/free_module_homspace.py",
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/modules/vector_space_homspace.py",
   "site-packages/sage/algebras/clifford_algebra.py",
   "site-packages/sage/algebras/weyl_algebra.py",
   "site-packages/sage/homology/chain_complex.py",
@@ -289,7 +291,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 174,
+  schemaVersion: 175,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -308,6 +310,8 @@ expectedSageliteManifest.smokeContract +=
   "-high-byte-string-literal-delivery-v133";
 expectedSageliteManifest.smokeContract +=
   "-cpython314-doc-and-structure-native-delivery-v134";
+expectedSageliteManifest.smokeContract +=
+  "-vector-space-homspace-delivery-v135";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
