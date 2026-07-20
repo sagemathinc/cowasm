@@ -185,6 +185,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/algebras/clifford_algebra.py",
   "site-packages/sage/algebras/weyl_algebra.py",
   "site-packages/sage/homology/chain_complex.py",
+  "site-packages/sage/quadratic_forms/extras.py",
   "site-packages/sage/groups/__init__.py",
   "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so",
   "site-packages/sage/groups/abelian_gps/__init__.py",
@@ -300,7 +301,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 180,
+  schemaVersion: 181,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -331,6 +332,8 @@ expectedSageliteManifest.smokeContract +=
   "-native-integer-rational-matrix-backends-v139";
 expectedSageliteManifest.smokeContract +=
   "-rational-matrix-backend-completeness-v140";
+expectedSageliteManifest.smokeContract +=
+  "-quadratic-form-native-matrix-helpers-v141";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

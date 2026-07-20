@@ -3454,6 +3454,9 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras.py
 --- a/src/sage/quadratic_forms/extras.py
 +++ b/src/sage/quadratic_forms/extras.py
+@@ -3,0 +4,2 @@
++
++import sys
 @@ -94,5 +94,5 @@
          sage: A = Matrix(ZZ, 3, 2, range(6))
 -        sage: extend_to_primitive(A)
@@ -3465,6 +3468,19 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 -        sage: extend_to_primitive([vector([1,2,3])])
 +        sage: extend_to_primitive([vector([1,2,3])])                                  # random
          [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
+@@ -122,2 +124,10 @@
+-    # Smith normal form transformation, assuming more columns than rows
+-    V = A.smith_form()[2]
++    # Smith normal form transformation, assuming more columns than rows.
++    # The stripped WASI cypari2 object model cannot provide PARI's matsnf()
++    # transformation matrices, but a full Hermite transformation of the
++    # transpose gives an equivalent unimodular right transformation.
++    if sys.platform == "wasi":
++        _, U = A.transpose().hermite_form(transformation=True,
++                                          include_zero_rows=True)
++        V = U.transpose()
++    else:
++        V = A.smith_form()[2]
 diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/binary_qf.py
 --- a/src/sage/quadratic_forms/binary_qf.py
 +++ b/src/sage/quadratic_forms/binary_qf.py
@@ -15222,6 +15238,11 @@ diff --git a/src/sage/libs/gap/all_documented_functions.py b/src/sage/libs/gap/a
 diff --git a/src/sage/libs/pari/convert_flint.pyx b/src/sage/libs/pari/convert_flint.pyx
 --- a/src/sage/libs/pari/convert_flint.pyx
 +++ b/src/sage/libs/pari/convert_flint.pyx
+@@ -32,0 +33,4 @@
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
 @@ -133,1 +133,1 @@
 -        sage: matrix(ZZ,2,[1..6]).__pari__()   # indirect doctest
 +        sage: matrix(ZZ,2,[1..6]).__pari__()   # indirect doctest, needs sage.libs.pari
@@ -27491,6 +27512,15 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 +            algorithm = 'flint'
          proof = get_proof_flag(proof, "linear_algebra")
          pivots = None
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -2741,1 +2741,0 @@
+-    # TODO: implement using flint function
+@@ -2756,1 +2755,2 @@
+-        return self.parent()(self.__pari__().matadjoint().sage())
++        A = self.charpoly().shift(-1)(self)
++        return A if self._ncols % 2 else -A
 diff --git a/src/sage/matrix/matrix_rational_dense.pyx b/src/sage/matrix/matrix_rational_dense.pyx
 --- a/src/sage/matrix/matrix_rational_dense.pyx
 +++ b/src/sage/matrix/matrix_rational_dense.pyx

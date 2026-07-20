@@ -1301,6 +1301,25 @@ assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
       "sagelite-electron-ok native integer rational matrix backend smoke",
     );
     console.log(
+      "sagelite-electron-start quadratic form native matrix helper smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import Matrix, ZZ
+from sage.quadratic_forms.extras import extend_to_primitive
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+
+Z = Matrix(ZZ, 2, [1, 2, 3, 5])
+assert Z.__pari__() is not None
+A = Matrix(ZZ, 3, 2, range(6))
+D = extend_to_primitive(A)
+assert D[:, :2] == A
+assert abs(D.det()) == 2
+assert QuadraticForm(ZZ, 2, [1, 2, 3]).adjoint_primitive().coefficients() == [3, -2, 1]
+`);
+    console.log(
+      "sagelite-electron-ok quadratic form native matrix helper smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`

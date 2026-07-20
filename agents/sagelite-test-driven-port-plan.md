@@ -58271,6 +58271,67 @@ No source or packaged runtime correction was needed.  The next pass can
 continue with raw corpus lines 992--1001 or select another persisted
 backend/runtime cluster.
 
+Logic, symbolic-function, and quadratic-form native-helper pass on 2026-07-20
+UTC:
+
+Three bounded corpus windows continue the curated dashboard through raw corpus
+line 1021.  The first two windows cover the remaining propositional-logic
+modules and the complete symbolic-function group through
+`orthogonal_polys.py`; both are clean, with the large symbolic dependency
+surface retained as explicit browser-profile skips.
+
+The third window initially recorded 481 passed, two failed, and 351 skipped
+blocks.  Eight files were clean.  `quadratic_forms/extras.py` and
+`quadratic_form.py` both crashed on their first integer-matrix-to-PARI
+conversion because the `convert_flint` side module had not initialized its
+module-local PARI archive.  Adding the same guarded WASI `pari_init()` used by
+the other converters removes the signature mismatch and exposes the next
+cleanly reported boundary: unavailable `cypari2.Gen.matsnf()` and
+`Gen.matadjoint()` methods.
+
+The browser profile now keeps those pure integer operations native.
+`extend_to_primitive()` obtains its unimodular right transformation from a
+full Hermite transformation of the transposed matrix, avoiding PARI's Smith
+transformation object model.  Dense integer adjugates use the existing
+division-free characteristic-polynomial identity, matching the rational
+backend's already-delivered fallback.  Focused rebuilds of `convert_flint`
+and `matrix_integer_dense` close both file-level failures.
+
+The retained results record:
+
+```text
+lines 992--1001:                         575 passed, 0 failed,  862 skipped
+lines 1002--1011:                        121 passed, 0 failed, 2320 skipped
+lines 1012--1021 before:                 481 passed, 2 failed,  351 skipped
+affected quadratic modules final:       188 passed, 0 failed,   31 skipped
+lines 1012--1021 schema-181 final:       669 passed, 0 failed,  382 skipped
+three-window final total:               1365 passed, 0 failed, 3564 skipped
+Electron-shaped packaged smoke:         passed, including the new contract
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-logic-functions-window-992-1001.KaR9ZL/`.
+Every final database passes `PRAGMA integrity_check`, records a completed
+passing run under runner version 128, and has empty block- and file-failure
+cluster queries.  The Electron manifest advances to schema 181 and smoke
+contract `quadratic-form-native-matrix-helpers-v141`; it validates 555 side
+modules, 724 required-resource hashes, and seven native-library paths.  The
+newly mandatory Python resource is `sage/quadratic_forms/extras.py`.
+
+Validation includes both exact-line replays, the complete affected-module
+replay, repaired ten-file window, complete schema-181 Electron-shaped smoke,
+manifest parity/runtime/forge-resource tests, manifest hash validation,
+focused native builds, Python/JavaScript/shell syntax checks, SQLite lifecycle
+and integrity checks, an actual clean-source accumulated-patch application
+with byte-for-byte affected-source comparisons, and `git diff --check`.  The
+monolithic standalone target could not regenerate from the developer Sagelite
+checkout because that checkout already contains overlapping user changes in
+`integer_ring.pyx`; its patch-staging step treated the already-applied hunks as
+rejects.  The isolated clean-revision application and all packaged-runtime
+checks pass without modifying that checkout.  The next pass can continue with
+raw corpus lines 1022--1031 or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

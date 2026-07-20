@@ -1590,6 +1590,17 @@ assert Z.det() == ZZ(-1)
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 print('sagelite-node-ok native integer rational matrix backend smoke')"
+run_node_import "quadratic form native matrix helper smoke" "from sage.all import Matrix, ZZ
+from sage.quadratic_forms.extras import extend_to_primitive
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+Z = Matrix(ZZ, 2, [1, 2, 3, 5])
+assert Z.__pari__() is not None
+A = Matrix(ZZ, 3, 2, range(6))
+D = extend_to_primitive(A)
+assert D[:, :2] == A
+assert abs(D.det()) == 2
+assert QuadraticForm(ZZ, 2, [1, 2, 3]).adjoint_primitive().coefficients() == [3, -2, 1]
+print('sagelite-node-ok quadratic form native matrix helper smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1913,7 +1924,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=180
+electron_manifest_schema_version=181
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1946,6 +1957,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-matrix-quotient-delivery-v138"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-native-integer-rational-matrix-backends-v139"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-matrix-backend-completeness-v140"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quadratic-form-native-matrix-helpers-v141"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2165,6 +2177,7 @@ electron_required_paths=(
   "site-packages/sage/algebras/clifford_algebra.py"
   "site-packages/sage/algebras/weyl_algebra.py"
   "site-packages/sage/homology/chain_complex.py"
+  "site-packages/sage/quadratic_forms/extras.py"
   "site-packages/sage/repl/display/fancy_repr.py"
   "site-packages/sage/repl/display/pretty_print.py"
   "site-packages/sage/groups/__init__.py"
