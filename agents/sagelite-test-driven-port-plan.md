@@ -58614,6 +58614,42 @@ manifest continues to validate 555 side modules, 724 required-resource hashes,
 and seven native-library paths.  The next pass can continue with raw corpus
 lines 1112--1121 or select another persisted backend/runtime cluster.
 
+Judson abstract-algebra clean-frontier checkpoint on 2026-07-20 UTC:
+
+The next bounded corpus window advances the curated dashboard through raw
+corpus line 1121.  It covers the Judson abstract-algebra examples for group
+actions, Boolean algebras, cosets, cyclic groups, domains, finite fields,
+groups, homomorphisms, isomorphisms, and normal subgroups.
+
+All ten files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The runnable elementary algebra coverage is clean; six files are
+intentionally skipped-only because their file-level GAP or broader group
+dependency declarations apply to the complete module.  The remaining
+symbolic, number-field, GAP, polycyclic GAP package, LinBox, and deferred plot
+examples stay queryable as explicit browser-profile skips.  No source, native
+backend, or delivery correction is needed for this slice.  The retained result
+records:
+
+```text
+lines 1112--1121: 105 passed, 0 failed, 96 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-judson-window-1112-1121.zKUYGh/window-1112-1121-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It records
+201 blocks across ten passing files, a completed passing lifecycle,
+`PRAGMA integrity_check = ok`, and no block or file failures.  Its skip groups
+are 31 symbolic, 28 number-field, 16 GAP, 11 deferred-not-tested, seven
+polycyclic GAP package, two broader group/GAP, and one LinBox examples.
+
+The initial and authoritative complete ten-file replays, complete schema-181
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, patch syntax, SQLite lifecycle, integrity, skip-reason, and
+empty-failure checks, and `git diff --check` pass.  The packaged resource
+manifest continues to validate 555 side modules, 724 required-resource hashes,
+and seven native-library paths.  The next pass can continue with raw corpus
+lines 1122--1131 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
