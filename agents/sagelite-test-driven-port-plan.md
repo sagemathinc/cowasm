@@ -58332,6 +58332,39 @@ checks pass without modifying that checkout.  The next pass can continue with
 raw corpus lines 1022--1031 or select another persisted backend/runtime
 cluster.
 
+Quadratic-form local-invariant clean-frontier checkpoint on 2026-07-20 UTC:
+
+The next bounded corpus window advances the curated dashboard through raw
+corpus line 1031.  It covers the quadratic-form local-density interfaces,
+local field invariants and normal forms, theta and mass helpers, neighbors,
+reduction theory, and split local coverings.
+
+All ten files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The runnable coverage stays native and clean, while the existing
+PARI, symbolic, number-field, and GAP dependency boundaries remain explicit
+browser-profile skips.  No source, native backend, or delivery correction is
+needed for this slice.  The retained result records:
+
+```text
+lines 1022--1031: 269 passed, 0 failed, 94 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-quadratic-window-1022-1031.apnlee/window-1022-1031-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It records
+363 blocks across ten passing files, a completed passing lifecycle,
+`PRAGMA integrity_check = ok`, and no block or file failures.  Its 94 skips
+are queryable as 53 PARI, 32 symbolic, six number-field, two symbolic/GAP,
+and one GAP/PARI examples.
+
+The complete ten-file replay, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, SQLite
+lifecycle, integrity, and empty-failure checks, and `git diff --check` pass.
+The packaged resource manifest remains at schema 181 and validates 555 side
+modules, 724 required-resource hashes, and seven native-library paths.  The
+next pass can continue with raw corpus lines 1032--1041 or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
