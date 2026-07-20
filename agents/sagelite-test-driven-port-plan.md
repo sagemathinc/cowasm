@@ -58752,6 +58752,59 @@ The next pass should return to a persisted backend/runtime cluster such as the
 explicit-PARI HNF signature mismatch, or deliberately expand the curated
 corpus before resuming bounded frontier runs.
 
+Integer-matrix HNF backend pass on 2026-07-20 UTC:
+
+The persisted explicit-PARI HNF failure at
+`sage/matrix/matrix_integer_dense.pyx:1920` is repaired.  The native matrix
+module previously called its own statically linked `mathnf0()` copy, whose
+uninitialized private PARI recovery callback trapped with a WASM function-
+signature mismatch.  Integer HNF conversion and `mathnf0()` execution now run
+through the already initialized `sage.libs.pari.convert_sage` side module,
+following the direct bridge established for integer Frobenius forms.  The
+bridge preserves Sage's row-HNF orientation, PARI flags zero, one, three, and
+four, and `include_zero_rows=False` output.
+
+The newly reachable rank-deficient NTL example at source line 1943 exposed a
+second HNF-specific WASM failure: NTL's terminal error aborted with
+`RuntimeError: unreachable` before the documented Sage `ValueError` could be
+caught.  The native integer matrix backend now checks rank before entering NTL,
+while full-rank NTL HNF continues through the existing implementation.
+
+The retained results record:
+
+```text
+explicit PARI line 1920:           1 passed, 0 failed, 0 skipped
+rank-deficient NTL line 1943:      1 passed, 0 failed, 0 skipped
+full-rank NTL line 1947:           1 passed, 0 failed, 0 skipped
+focused HNF backend contract:     16 passed, 0 failed, 0 skipped
+complete matrix module frontier:  advances to independent line 3815
+Electron-shaped packaged smoke:   passed, including PARI and NTL HNF
+```
+
+The authoritative runner-version-128 SQLite databases are under
+`/tmp/cowasm-sagelite-hnf-lines-final.OTkTe1/` and
+`/tmp/cowasm-sagelite-hnf-contract-ntl-final.I31A9V/`.  Every passing database
+records a completed passing lifecycle and `PRAGMA integrity_check = ok`.  The
+exploratory complete-module database is
+`/tmp/cowasm-sagelite-hnf-full-module-final.9zKjUn/matrix-integer.sqlite3`;
+it preserves the next independent cluster at line 3815, where
+`A.determinant(algorithm='pari')` still calls `det0()` in the matrix module's
+private PARI copy and reaches the same recovery-callback signature mismatch.
+
+The Electron manifest advances to schema 183 and smoke contract
+`integer-matrix-hnf-delivery-v143`.  The validated resource bundle is
+`/tmp/cowasm-sagelite-schema183/`, containing 555 side modules, 724 required-
+resource hashes, and seven native-library paths.  Validation includes exact-
+line replays, the focused square/rectangular/zero-row/PARI-flag/NTL contract,
+exact Cython/C++/WASM rebuilds of `convert_sage` and
+`matrix_integer_dense`, the complete Electron-shaped smoke, manifest parity,
+forge-resource and runtime tests, manifest hash validation, accumulated-patch
+syntax and clean-source application, byte-for-byte affected-source
+comparisons, SQLite lifecycle and integrity checks, and `git diff --check`.
+The external developer Sagelite checkout remains untouched.  The next backend
+pass can route the explicit-PARI determinant path through the initialized
+bridge or choose another persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -1300,6 +1300,21 @@ F, U = Z.frobenius_form(2)
 assert Z == U.inverse() * F * U
 assert Z.frobenius_form() == F
 assert Z.frobenius_form(1) == [Z.charpoly()]
+H_input = matrix(ZZ, 3, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+H_expected = matrix(ZZ, [[1, 2, 3], [0, 3, 6], [0, 0, 0]])
+assert all(H_input.hermite_form(algorithm=name) == H_expected
+           for name in ('pari', 'pari0', 'pari1', 'pari4'))
+assert H_input._hnf_pari(3) == H_expected
+assert H_input._hnf_pari(0, include_zero_rows=False) == H_expected[:2]
+H_ntl_input = matrix(ZZ, 3, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+try:
+    H_ntl_input.hermite_form(algorithm='ntl')
+except ValueError as error:
+    assert str(error) == 'ntl only computes HNF for square matrices of full rank.'
+else:
+    raise AssertionError('rank-deficient NTL HNF must raise ValueError')
+H_full_rank = matrix(ZZ, 3, [0, 2, 3, 4, 5, 6, 7, 8, 9])
+assert H_full_rank.hermite_form(algorithm='ntl') == matrix(ZZ, [[1, 0, 0], [0, 1, 0], [0, 0, 3]])
 `);
     console.log(
       "sagelite-electron-ok native integer rational matrix backend smoke",

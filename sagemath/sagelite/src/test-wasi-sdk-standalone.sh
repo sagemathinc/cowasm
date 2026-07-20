@@ -1593,6 +1593,21 @@ F, U = Z.frobenius_form(2)
 assert Z == U.inverse() * F * U
 assert Z.frobenius_form() == F
 assert Z.frobenius_form(1) == [Z.charpoly()]
+H_input = matrix(ZZ, 3, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+H_expected = matrix(ZZ, [[1, 2, 3], [0, 3, 6], [0, 0, 0]])
+assert all(H_input.hermite_form(algorithm=name) == H_expected
+           for name in ('pari', 'pari0', 'pari1', 'pari4'))
+assert H_input._hnf_pari(3) == H_expected
+assert H_input._hnf_pari(0, include_zero_rows=False) == H_expected[:2]
+H_ntl_input = matrix(ZZ, 3, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+try:
+    H_ntl_input.hermite_form(algorithm='ntl')
+except ValueError as error:
+    assert str(error) == 'ntl only computes HNF for square matrices of full rank.'
+else:
+    raise AssertionError('rank-deficient NTL HNF must raise ValueError')
+H_full_rank = matrix(ZZ, 3, [0, 2, 3, 4, 5, 6, 7, 8, 9])
+assert H_full_rank.hermite_form(algorithm='ntl') == matrix(ZZ, [[1, 0, 0], [0, 1, 0], [0, 0, 3]])
 print('sagelite-node-ok native integer rational matrix backend smoke')"
 run_node_import "quadratic form native matrix helper smoke" "from sage.all import Matrix, ZZ
 from sage.quadratic_forms.extras import extend_to_primitive
@@ -1928,7 +1943,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=182
+electron_manifest_schema_version=183
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1963,6 +1978,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-native-int
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-matrix-backend-completeness-v140"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quadratic-form-native-matrix-helpers-v141"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-frobenius-delivery-v142"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-hnf-delivery-v143"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

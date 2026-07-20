@@ -1026,7 +1026,7 @@ diff -urN a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/prod
               (0 : 2 : 1 , 0 : 1),
 @@ -1262,7 +1262,7 @@
          EXAMPLES::
- 
+
              sage: P = ProductProjectiveSpaces([1, 1], GF(5))
 -            sage: P.rational_points()
 +            sage: P.rational_points()                                              # needs sage.libs.singular
@@ -27855,3 +27855,168 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 +            F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0])
 +            B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1])
              return F, B
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -7,6 +7,7 @@ cpdef gen_to_sage(Gen z, locals=*)
+ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
++cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols, long flag=*, bint include_zero_rows=*)
+ cpdef set_rational_from_gen(Rational self, Gen x)
+ cpdef Gen new_gen_from_rational(Rational self)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -29,9 +29,11 @@ from cypari2.paridecl cimport (
+     evallgefint,
+     FF_to_FpXQ_i,
+     gel,
++    gcoeff,
+     inf_get_sign,
+     int_LSW,
+     is_rational_t,
++    mathnf0,
+     matfrobenius,
+     maxprime,
+     pari_init,
+@@ -468,3 +470,56 @@ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols,
+         sig_off()
+-
+-
++
++
++cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols,
++                               long flag=0, bint include_zero_rows=True):
++    """
++    Return the PARI Hermite form of a row-major Sage integer matrix.
++
++    The returned pair contains the row-major entries and number of rows of
++    the Sage-oriented result.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_hnf
++        sage: integer_matrix_hnf([ZZ(i) for i in range(1, 10)], 3, 3)
++        ([1, 2, 3, 0, 3, 6, 0, 0, 0], 3)
++        sage: integer_matrix_hnf([ZZ(i) for i in range(1, 10)], 3, 3,
++        ....:                    include_zero_rows=False)
++        ([1, 2, 3, 0, 3, 6], 2)
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++    if flag not in (0, 1, 3, 4):
++        raise ValueError("direct integer-matrix HNF conversion supports flags 0, 1, 3, and 4")
++
++    # PARI computes a column HNF.  Rotate the Sage matrix counterclockwise,
++    # matching matrix_integer_dense._hnf_pari(), and rotate the result back.
++    cdef list rotated = [entries[i * ncols + ncols - j - 1]
++                         for j in range(ncols) for i in range(nrows)]
++    cdef GEN result
++    cdef long result_rows
++    cdef list result_entries
++    sig_on()
++    try:
++        result = mathnf0(
++            _new_GEN_from_integer_matrix(rotated, ncols, nrows), flag
++        )
++        if typ(result) == t_VEC:
++            result = gel(result, 1)
++        result_rows = lg(result) - 1
++        result_entries = [
++            _sage_integer_or_rational(
++                gcoeff(result, ncols - j, result_rows - i)
++            )
++            for i in range(result_rows) for j in range(ncols)
++        ]
++    finally:
++        sig_off()
++
++    if include_zero_rows:
++        result_entries.extend(
++            [Integer(0)] * ((nrows - result_rows) * ncols)
++        )
++        result_rows = nrows
++    return result_entries, result_rows
++
++
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -88,11 +88,11 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+ #########################################################
+ # PARI C library
+ from cypari2.gen cimport Gen
+-from cypari2.stack cimport clear_stack, new_gen
++from cypari2.stack cimport clear_stack
+ from cypari2.paridecl cimport *
+ from sage.libs.pari import pari
+ from sage.libs.pari.convert_gmp cimport INT_to_mpz
+ from sage.libs.pari.convert_flint cimport (_new_GEN_from_fmpz_mat_t,
+-           _new_GEN_from_fmpz_mat_t_rotate90, integer_matrix)
++           integer_matrix)
+ from sage.libs.pari.convert_sage_matrix import gen_to_sage_matrix
+ #########################################################
+@@ -5901,12 +5901,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             sage: pari('mathnf(Mat([0,1]), 4)')
+             [Mat(1), [1, 0; 0, 1]]
+         """
+-        sig_on()
+-        A = _new_GEN_from_fmpz_mat_t_rotate90(self._matrix)
+-        H = mathnf0(A, flag)
+-        if typ(H) == t_VEC:
+-            H = gel(H, 1)
+-        GenH = new_gen(H)
+-        return extract_hnf_from_pari_matrix(self, GenH, include_zero_rows)
++        from sage.libs.pari.convert_sage import integer_matrix_hnf
++        entries, nrows = integer_matrix_hnf(
++            self.list(), self._nrows, self._ncols, flag, include_zero_rows
++        )
++        return self.new_matrix(
++            nrows=nrows, ncols=self._ncols, entries=entries
++        )
+-
++
+     def p_minimal_polynomials(self, p, s_max=None):
+@@ -6045,28 +6045,6 @@ cdef inline GEN pari_GEN(Matrix_integer_dense B) noexcept:
+     return A
+-
+-
+-cdef extract_hnf_from_pari_matrix(Matrix_integer_dense self, Gen H, bint include_zero_rows):
+-    cdef mpz_t tmp
+-    mpz_init(tmp)
+-
+-    # Figure out how many columns we got back.
+-    cdef long H_nc = glength(H.g)  # number of columns
+-    # Now get the resulting Hermite form matrix back to Sage, suitably re-arranged.
+-    cdef Matrix_integer_dense B
+-    if include_zero_rows:
+-        B = self.new_matrix()
+-    else:
+-        B = self.new_matrix(nrows=H_nc)
+-    cdef long i, j
+-    for i in range(self._ncols):
+-        for j in range(H_nc):
+-            sig_check()
+-            INT_to_mpz(tmp, gcoeff(H.g, i+1, H_nc-j))
+-            fmpz_set_mpz(fmpz_mat_entry(B._matrix,j,self._ncols-i-1),tmp)
+-    mpz_clear(tmp)
+-    return B
+-
+-
++
++
+ cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n):
+     # Clear all columns
+     cdef Py_ssize_t i, k, p, l, m = A._ncols
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -2081,5 +2081,5 @@ cdef class Matrix_integer_dense(Matrix_dense):
+         elif algorithm == 'ntl':
+-            if nr != nc:
++            if nr != nc or self.rank() < nr:
+                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
+-
++
+             import sage.libs.ntl.ntl_mat_ZZ
