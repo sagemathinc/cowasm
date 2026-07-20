@@ -1141,6 +1141,45 @@ assert doc.startswith("WARNING: the enclosing module is marked 'needs sage.libs.
       "sagelite-electron-ok WASI doctest tag introspection delivery smoke",
     );
     console.log(
+      "sagelite-electron-start CPython 3.14 doc normalization smoke",
+    );
+    await python.exec(String.raw`
+from sage.misc.sageinspect import sage_getdoc
+
+def undocumented():
+    pass
+
+class Documented:
+    '''
+    docs
+    '''
+
+assert sage_getdoc(undocumented) == ''
+assert sage_getdoc(Documented) == 'docs\n'
+`);
+    console.log(
+      "sagelite-electron-ok CPython 3.14 doc normalization smoke",
+    );
+    console.log("sagelite-electron-start structure native delivery smoke");
+    await python.exec(String.raw`
+from copy import copy
+from sage.all import PolynomialRing, QQ, ZZ
+from sage.structure.coerce_maps import CallableConvertMap, NamedConvertMap, TryMap
+
+named = NamedConvertMap(ZZ, QQ, '_rational_')
+assert named == copy(named)
+callable_map = CallableConvertMap(ZZ, QQ, lambda parent, value: QQ(value))
+fallback = TryMap(callable_map, QQ.coerce_map_from(ZZ), error_types=(ValueError,))
+assert callable_map == copy(callable_map)
+assert fallback == copy(fallback)
+
+R = PolynomialRing(QQ, names=('x', 'y'))
+S = PolynomialRing(QQ, names=('x', 'y', 'z'))
+assert R.one().gcd(R(2), algorithm='modular') == R.one()
+assert R.one().gcd(S.one(), 'modular') == S.one()
+`);
+    console.log("sagelite-electron-ok structure native delivery smoke");
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`

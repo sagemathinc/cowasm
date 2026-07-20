@@ -1476,6 +1476,30 @@ I = P * [x, y]
 doc = sage_getdoc(I.groebner_basis)
 assert doc.startswith(\"WARNING: the enclosing module is marked 'needs sage.libs.singular',\\nso doctests may not pass.\")
 print('sagelite-node-ok WASI doctest tag introspection delivery smoke')"
+run_node_import "CPython 3.14 doc normalization smoke" "from sage.misc.sageinspect import sage_getdoc
+def undocumented():
+    pass
+class Documented:
+    '''
+    docs
+    '''
+assert sage_getdoc(undocumented) == ''
+assert sage_getdoc(Documented) == 'docs\\n'
+print('sagelite-node-ok CPython 3.14 doc normalization smoke')"
+run_node_import "structure native delivery smoke" "from copy import copy
+from sage.all import PolynomialRing, QQ, ZZ
+from sage.structure.coerce_maps import CallableConvertMap, NamedConvertMap, TryMap
+named = NamedConvertMap(ZZ, QQ, '_rational_')
+assert named == copy(named)
+callable_map = CallableConvertMap(ZZ, QQ, lambda parent, value: QQ(value))
+fallback = TryMap(callable_map, QQ.coerce_map_from(ZZ), error_types=(ValueError,))
+assert callable_map == copy(callable_map)
+assert fallback == copy(fallback)
+R = PolynomialRing(QQ, names=('x', 'y'))
+S = PolynomialRing(QQ, names=('x', 'y', 'z'))
+assert R.one().gcd(R(2), algorithm='modular') == R.one()
+assert R.one().gcd(S.one(), 'modular') == S.one()
+print('sagelite-node-ok structure native delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1799,7 +1823,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=173
+electron_manifest_schema_version=174
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1825,6 +1849,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-elemen
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-complex-root-delivery-v131"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-wasi-doctest-tag-introspection-delivery-v132"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-high-byte-string-literal-delivery-v133"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython314-doc-and-structure-native-delivery-v134"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

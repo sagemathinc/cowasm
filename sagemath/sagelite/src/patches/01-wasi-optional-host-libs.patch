@@ -27165,3 +27165,22 @@ diff -urN -U0 a/src/sage/combinat/integer_lists/lists.py b/src/sage/combinat/int
 @@ -155 +153 @@
 -            False
 +            True
+diff --git a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
+--- a/src/sage/misc/sageinspect.py
++++ b/src/sage/misc/sageinspect.py
+@@ -2243,2 +2243,2 @@
+-    r = sage_getdoc_original(obj)
+-    s = sage.misc.sagedoc.format(r, embedded=embedded)
++    r = sage_getdoc_original(obj).rstrip('\r\n')
++    s = sage.misc.sagedoc.format(r, embedded=embedded) if r else ''
+diff --git a/src/sage/misc/sage_unittest.py b/src/sage/misc/sage_unittest.py
+--- a/src/sage/misc/sage_unittest.py
++++ b/src/sage/misc/sage_unittest.py
+@@ -233,3 +233 @@
+             ...
+-            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+-            ...
+@@ -256,3 +254 @@
+             ...
+-            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+-            ...

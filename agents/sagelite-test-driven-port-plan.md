@@ -57719,6 +57719,72 @@ single-job regeneration of hundreds of unchanged Cython sources.  The next
 pass can continue with corpus entries 808--817 or select another persisted
 backend/runtime cluster.
 
+CPython 3.14 documentation and structure-native delivery pass on 2026-07-20
+UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+837.  Entries 808--817 initially had four failures: two in
+`sage/misc/sageinspect.py` and two in `sage/misc/sage_unittest.py`.  Entries
+818--827 were completely clean.  Entries 828--837 initially had eleven
+failures isolated to `sage/structure/coerce_maps.pyx` and
+`sage/structure/element.pyx`; the other eight structure modules were clean.
+
+CPython 3.14 preserves a trailing newline on the indented class docstring used
+by `sage_getdoc()`'s regression test.  `sage.misc.sagedoc.format()` added a
+second newline and also turned an empty raw docstring into `"\n"`.  The
+accumulated WASI source patch now strips trailing raw line endings before
+formatting and keeps an empty raw docstring empty.  The neighboring
+`TestSuite` examples asserted a specific interactive `PicklingError`, while
+the current stable doctest namespace correctly reaches the same failed
+pickling test through an unequal reconstructed instance.  Those examples now
+retain the failure name and boundary without overfitting the exception
+subtype.
+
+The eleven structure failures were stale native-resource delivery, not new
+source defects.  The accumulated source already implements structural rich
+comparison for `NamedConvertMap`, `CallableConvertMap`, and `TryMap`, and its
+generic multivariate-polynomial `gcd()` accepts the compatibility
+`algorithm` argument.  The schema-173 resource bundle still contained older
+`coerce_maps` and `multi_polynomial` side modules.  Rebuilding those exact
+Meson targets and staging them in the copy-on-write bundle closes all eleven
+failures without disturbing the coherent native baseline.
+
+The standalone and Electron-shaped smokes now require empty and class
+docstring normalization, conversion-map copy equality, fallback-map copy
+equality, and same-parent and cross-parent multivariate GCD argument
+forwarding.  The Electron manifest advances to schema 174 and smoke contract
+`cpython314-doc-and-structure-native-delivery-v134`.
+
+The retained results record:
+
+```text
+entries 808--817 before:                  516 passed, 4 failed, 210 skipped
+affected misc modules final:              391 passed, 0 failed, 104 skipped
+entries 808--817 final:                   520 passed, 0 failed, 210 skipped
+entries 818--827:                         511 passed, 0 failed,  95 skipped
+entries 828--837 before:                 1518 passed, 11 failed, 593 skipped
+affected structure modules final:         498 passed, 0 failed, 372 skipped
+entries 828--837 final:                  1529 passed, 0 failed, 593 skipped
+combined final windows:                  2560 passed, 0 failed, 898 skipped
+Electron-shaped packaged smoke:          passed, including all new contracts
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-808-837/`, and the manifest-
+validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-174/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has no failed file or block rows.  The resource manifest validates
+545 side modules and 710 required-resource hashes.
+
+The complete affected-module replays, three repaired or clean bounded
+windows, exact focused Meson rebuilds, complete Electron-shaped smoke,
+manifest parity/runtime/forge-resource tests, manifest hash validation,
+accumulated-patch syntax validation, Python/JavaScript/shell syntax checks,
+SQLite lifecycle, integrity, and empty-failure checks, and `git diff --check`
+pass.  The next pass can continue with corpus entries 838--847 or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
