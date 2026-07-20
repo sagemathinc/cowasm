@@ -1299,6 +1299,10 @@ D._clear_cache()
 assert D.determinant(algorithm='pari') == ZZ(-21)
 D._clear_cache()
 assert D._det_pari(1) == ZZ(-21)
+assert D._rank_pari() == 5
+assert matrix(ZZ, 3, list(range(1, 10)))._rank_pari() == 2
+assert matrix(ZZ, 2, 3, [1,2,3,2,4,6])._rank_pari() == 1
+assert matrix(ZZ, 0, 0)._rank_pari() == 0
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 F, U = Z.frobenius_form(2)

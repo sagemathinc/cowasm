@@ -58855,6 +58855,55 @@ and complete-module SQLite replays, manifest hash/count validation, and
 untouched.  The next backend pass can route `_rank_pari()` through the
 initialized conversion bridge or select another persisted runtime cluster.
 
+Integer-matrix PARI rank backend pass on 2026-07-20 UTC:
+
+The persisted `_rank_pari()` failure at
+`sage/matrix/matrix_integer_dense.pyx:5837` is repaired.  The native matrix
+module previously called its statically linked `rank()`/`ZM_pivots` path,
+whose private PARI recovery callback trapped with a WASM function-signature
+mismatch during modular-prime initialization.  Row-major integer conversion
+and PARI rank computation now run through the already initialized
+`sage.libs.pari.convert_sage` side module, following the direct bridges used
+for integer Frobenius forms, Hermite forms, and determinants.
+
+Standalone and Electron-shaped smokes cover a nonsingular matrix, a singular
+square matrix, a rank-deficient rectangular matrix, and the empty matrix.  The
+Electron manifest advances to schema 185 and smoke contract
+`integer-matrix-pari-rank-delivery-v145`.
+
+The retained focused result records:
+
+```text
+explicit PARI rank line 5837: 1 passed, 0 failed, 0 skipped
+standalone packaged smoke:   passed, including four PARI rank shapes
+Electron-shaped smoke:       passed, including four PARI rank shapes
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-rank-final.pa2szo/rank-line-5837.sqlite3`.  It records a
+completed passing lifecycle, `PRAGMA integrity_check = ok`, and the exact
+line-5837 block as passed.  A complete module replay in
+`/tmp/cowasm-sagelite-rank-full-module.17p0Xf/complete-matrix.sqlite3` now runs
+to completion instead of terminating at `_rank_pari()`: it records 623 passed,
+58 failed, and 14 skipped blocks, no file-level errors, a completed failed
+lifecycle, and a clean integrity check.  The remaining block failures expose
+ordinary independent coverage clusters rather than a runtime trap; the
+largest are 15 unsupported broad cypari2 object-model examples and ten missing
+`fpylll` examples.
+
+The manifest-validated schema-185 resource bundle records clean Sagelite
+revision `f575cf6224f`, 555 side modules, 724 required-resource hashes, and
+seven native-library paths.  Validation includes clean-source accumulated-
+patch application, a from-scratch Cython/native WASM rebuild, the complete
+standalone and relocated Electron resource smokes, manifest parity, forge-
+resource and runtime tests, manifest hash/count validation, byte-for-byte
+comparison of the three affected patched sources, the focused and complete-
+module SQLite replays, and patch, JavaScript, shell, and `git diff --check`
+validation.  The external developer Sagelite checkout remains untouched.  The
+next pass can address the broad cypari2 object-model cluster, classify
+intentionally out-of-profile full-module examples, or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

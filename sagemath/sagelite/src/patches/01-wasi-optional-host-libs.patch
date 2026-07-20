@@ -28095,3 +28095,66 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 
      def _det_ntl(self):
          """
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -8,6 +8,7 @@ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
+ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols, long flag=*)
++cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
+ cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols, long flag=*, bint include_zero_rows=*)
+ cpdef set_rational_from_gen(Rational self, Gen x)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -42,4 +42,5 @@ from cypari2.paridecl cimport (
+     mathnf0,
+     matfrobenius,
+     maxprime,
++    rank,
+     pari_init,
+@@ -462,6 +463,27 @@ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols,
+         sig_off()
+
+
++cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1:
++    """
++    Return the PARI rank of a row-major Sage integer matrix.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_rank
++        sage: integer_matrix_rank([ZZ(i) for i in range(1, 10)], 3, 3)
++        2
++        sage: integer_matrix_rank([], 0, 0)
++        0
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++
++    sig_on()
++    try:
++        return rank(_new_GEN_from_integer_matrix(entries, nrows, ncols))
++    finally:
++        sig_off()
++
++
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols,
+                                       long flag=0):
+     """
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -5837,9 +5837,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             2
+         """
+-        sig_on()
+-        cdef long r = rank(pari_GEN(self))
+-        clear_stack()
+-        return r
++        from sage.libs.pari.convert_sage import integer_matrix_rank
++        return integer_matrix_rank(self.list(), self._nrows, self._ncols)
+
+     def _hnf_pari(self, int flag=0, bint include_zero_rows=True):
+         """
