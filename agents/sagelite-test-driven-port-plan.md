@@ -58400,6 +58400,46 @@ and validates 555 side modules, 724 required-resource hashes, and seven native-
 library paths.  The next pass can continue with raw corpus lines 1042--1051 or
 select another persisted backend/runtime cluster.
 
+Scheme and numerical clean-frontier checkpoint on 2026-07-20 UTC:
+
+Two more bounded corpus windows advance the curated dashboard through raw
+corpus line 1061.  Lines 1042--1051 cover generic scheme points and spectra,
+hyperelliptic Jacobian helpers and invariants, affine and projective hom-sets,
+and product-projective morphisms and spaces.  Lines 1052--1061 cover weighted-
+projective spaces, points, and hom-sets, the Kodaira symbol and level-five
+elliptic family, plane conic and quartic helpers, and Gauss--Legendre
+integration.
+
+All 20 files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The native runnable coverage is clean, while the larger elliptic-
+curve, number-field, symbolic, PARI, Singular, finite-ring, algebraic-geometry,
+and numerical dependency surfaces remain explicit browser-profile skips.  No
+source, native backend, or delivery correction is needed for either slice.
+The retained results record:
+
+```text
+lines 1042--1051: 403 passed, 0 failed, 148 skipped
+lines 1052--1061: 174 passed, 0 failed,  94 skipped
+combined:         577 passed, 0 failed, 242 skipped
+```
+
+The authoritative runner-version-128 SQLite databases are
+`/tmp/cowasm-sagelite-2026-07-20-schemes-window-1042-1051.kk8Oay/window-1042-1051-authoritative.sqlite3`
+and
+`/tmp/cowasm-sagelite-2026-07-20-schemes-numerical-window-1052-1061.rtd3Iw/window-1052-1061-authoritative.sqlite3`;
+their worker state and bounded corpus lists are in the same respective
+directories.  They record 819 blocks across 20 passing files, completed
+passing lifecycles, `PRAGMA integrity_check = ok`, and no block or file
+failures.
+
+Both initial and authoritative complete ten-file replays, the complete schema-
+181 Electron-shaped smoke, manifest parity/runtime/forge-resource tests,
+manifest hash validation, SQLite lifecycle, integrity, and empty-failure
+checks, and `git diff --check` pass.  The packaged resource manifest continues
+to validate 555 side modules, 724 required-resource hashes, and seven native-
+library paths.  The next pass can continue with raw corpus lines 1062--1071 or
+select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
