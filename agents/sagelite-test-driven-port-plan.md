@@ -58037,6 +58037,37 @@ SQLite lifecycle, integrity, and empty-failure checks, and `git diff --check`
 pass.  No native rebuild was needed.  The next pass can continue with corpus
 entries 932--941 or select another persisted backend/runtime cluster.
 
+Homology and matrix-helper clean-frontier checkpoint on 2026-07-20 UTC:
+
+The bounded corpus window for logical entries 932--941 is completely clean
+against the manifest-validated schema-176 packaged resource snapshot.  The
+window covers the modular-symbol relation matrix, Pollack--Stevens `Sigma0`,
+five homology helpers from chain-complex morphisms through matrix utilities,
+and the matrix action, change-ring, and argument-parsing helpers.  No source,
+native backend, or delivery correction is needed for this slice.
+
+The retained result records:
+
+```text
+entries 932--941: 513 passed, 0 failed, 171 skipped
+Electron-shaped packaged smoke: passed
+```
+
+The authoritative SQLite dashboard and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-matrix-window-932-941.AK2nbF/`, and the run
+uses the manifest-validated schema-176 copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-schema-176/`.  The database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has empty block- and file-failure cluster queries.  The resource
+manifest validates 545 side modules and 713 required-resource hashes.
+
+The complete ten-file replay, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, SQLite
+lifecycle, integrity, and empty-failure checks, and `git diff --check` pass.
+No source or packaged runtime correction was needed.  The next pass can
+continue with corpus entries 942--951 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
