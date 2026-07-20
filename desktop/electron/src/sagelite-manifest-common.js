@@ -173,6 +173,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/modules/free_module_homspace.py",
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
   "site-packages/sage/modules/vector_space_homspace.py",
+  "site-packages/sage/modular/drinfeld_modform/ring.py",
   "site-packages/sage/algebras/clifford_algebra.py",
   "site-packages/sage/algebras/weyl_algebra.py",
   "site-packages/sage/homology/chain_complex.py",
@@ -291,7 +292,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 175,
+  schemaVersion: 176,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -312,6 +313,8 @@ expectedSageliteManifest.smokeContract +=
   "-cpython314-doc-and-structure-native-delivery-v134";
 expectedSageliteManifest.smokeContract +=
   "-vector-space-homspace-delivery-v135";
+expectedSageliteManifest.smokeContract +=
+  "-drinfeld-modform-ring-delivery-v136";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

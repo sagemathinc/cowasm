@@ -27212,3 +27212,11 @@ diff --git a/src/sage/tensor/modules/free_module_tensor.py b/src/sage/tensor/mod
 +++ b/src/sage/tensor/modules/free_module_tensor.py
 @@ -642,0 +643 @@
 +            sage: # needs _multiprocessing
+diff --git a/src/sage/modular/drinfeld_modform/ring.py b/src/sage/modular/drinfeld_modform/ring.py
+--- a/src/sage/modular/drinfeld_modform/ring.py
++++ b/src/sage/modular/drinfeld_modform/ring.py
+@@ -367,2 +367,2 @@
+-            sage: M._repr_()
+-            'Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2 (using GF2X)'
++            sage: M._repr_().startswith('Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2')
++            True

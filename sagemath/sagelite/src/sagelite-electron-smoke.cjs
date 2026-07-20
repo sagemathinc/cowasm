@@ -1197,6 +1197,32 @@ TestSuite(H).run()
       "sagelite-electron-ok vector-space homspace delivery smoke",
     );
     console.log(
+      "sagelite-electron-start Drinfeld modular-form ring delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import Frac, GF
+from sage.modular.drinfeld_modform.ring import DrinfeldModularForms
+
+A = GF(2)['T']
+K = Frac(A)
+T = K.gen()
+M = DrinfeldModularForms(K, 3)
+assert M._repr_().startswith('Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2')
+for operation in (
+    lambda: M.coefficient_form(1, K(1) / (T + 1)),
+    lambda: M.coefficient_forms(K(1) / T),
+):
+    try:
+        operation()
+    except ValueError as error:
+        assert str(error) == 'a must be an integral element'
+    else:
+        raise AssertionError('non-integral coefficient input was accepted')
+`);
+    console.log(
+      "sagelite-electron-ok Drinfeld modular-form ring delivery smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`

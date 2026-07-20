@@ -1509,6 +1509,24 @@ assert isinstance(sample, VectorSpaceMorphism)
 assert sample.is_zero()
 TestSuite(H).run()
 print('sagelite-node-ok vector-space homspace delivery smoke')"
+run_node_import "Drinfeld modular-form ring delivery smoke" "from sage.all import Frac, GF
+from sage.modular.drinfeld_modform.ring import DrinfeldModularForms
+A = GF(2)['T']
+K = Frac(A)
+T = K.gen()
+M = DrinfeldModularForms(K, 3)
+assert M._repr_().startswith('Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2')
+for operation in (
+    lambda: M.coefficient_form(1, K(1) / (T + 1)),
+    lambda: M.coefficient_forms(K(1) / T),
+):
+    try:
+        operation()
+    except ValueError as error:
+        assert str(error) == 'a must be an integral element'
+    else:
+        raise AssertionError('non-integral coefficient input was accepted')
+print('sagelite-node-ok Drinfeld modular-form ring delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1832,7 +1850,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=175
+electron_manifest_schema_version=176
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1860,6 +1878,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-wasi-docte
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-high-byte-string-literal-delivery-v133"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cpython314-doc-and-structure-native-delivery-v134"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-vector-space-homspace-delivery-v135"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-drinfeld-modform-ring-delivery-v136"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2068,6 +2087,7 @@ electron_required_paths=(
   "site-packages/sage/modules/free_module_homspace.py"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/vector_space_homspace.py"
+  "site-packages/sage/modular/drinfeld_modform/ring.py"
   "site-packages/sage/algebras/clifford_algebra.py"
   "site-packages/sage/algebras/weyl_algebra.py"
   "site-packages/sage/homology/chain_complex.py"
