@@ -58234,6 +58234,43 @@ of the affected sources, SQLite lifecycle/integrity checks, and
 `git diff --check`. The next pass can resume the bounded corpus frontier or
 select another persisted native/runtime cluster.
 
+Doctest, REPL, rich-output, and logic clean-frontier checkpoint on 2026-07-20
+UTC:
+
+Three bounded corpus windows resume the curated dashboard after the matrix
+backend work and continue it through raw corpus line 991.  Lines 962--971
+cover the doctest tolerance, fixture, marked-output, and utility helpers plus
+the first REPL configuration and interface modules.  Lines 972--981 cover
+REPL loading, display helpers, the preparser, and the first rich-output
+backends.  Lines 982--991 cover the remaining rich-output containers,
+display manager, test backend, preferences, and the first propositional-logic
+helper.
+
+All 30 files pass against the manifest-validated schema-180 packaged resource
+snapshot.  No source, native backend, or delivery correction is needed for
+this slice.  The retained results record:
+
+```text
+lines 962--971:  374 passed, 0 failed, 148 skipped
+lines 972--981:  597 passed, 0 failed,  64 skipped
+lines 982--991:  429 passed, 0 failed,  50 skipped
+combined:       1400 passed, 0 failed, 262 skipped
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-doctest-repl-window-962-971.bCFinW/`.
+Every database passes `PRAGMA integrity_check`, records a completed passing
+run under runner version 128, and has no failed file or block rows.  The
+packaged Electron resource manifest validates 555 side modules, 723 required-
+resource hashes, and seven native-library paths.
+
+The three complete ten-file replays, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, SQLite
+lifecycle, integrity, and empty-failure checks, and `git diff --check` pass.
+No source or packaged runtime correction was needed.  The next pass can
+continue with raw corpus lines 992--1001 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
