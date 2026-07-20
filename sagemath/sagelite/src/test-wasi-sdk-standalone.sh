@@ -1445,6 +1445,22 @@ assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is T
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
 print('sagelite-node-ok category parameter refinement delivery smoke')"
+run_node_import "set element construction delivery smoke" "from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.rings.integer import Integer
+from sage.sets.set import Set
+S = Set([1, 2, 3])
+assert S(Integer(2)) == Integer(2)
+try:
+    S(Integer(4))
+except ValueError as error:
+    assert str(error) == '4 not in {1, 2, 3}'
+else:
+    raise AssertionError('nonmember construction unexpectedly succeeded')
+NN = NonNegativeIntegers(facade=False)
+n = NN.from_integer(Integer(5))
+assert n.parent() is NN
+assert type(n) is NN.element_class
+print('sagelite-node-ok set element construction delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1760,7 +1776,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=169
+electron_manifest_schema_version=170
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1782,6 +1798,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclic-per
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fast-vector-halving-delivery-v127"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-incompatible-word-concatenation-delivery-v128"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-parameter-refinement-delivery-v129"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-element-construction-delivery-v130"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

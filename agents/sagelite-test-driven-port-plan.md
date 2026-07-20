@@ -57466,6 +57466,62 @@ change and requires no native rebuild or Electron resource change.  The next
 pass can continue with corpus entries 688--697 or select another persisted
 backend/runtime cluster.
 
+Set-element construction delivery-contract pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+717.  Entries 688--697 were clean.  Entries 698--707 initially had two
+failures in `sage/sets/set.py`: construction of a member raised the generic
+parent `NotImplementedError`, and the corresponding nonmember row did not
+reach its documented `ValueError`.  Entries 708--717 initially had four
+failures in `sage/sets/non_negative_integers.py`: the packaged constructor did
+not accept `facade=False`, followed by two dependent parent/type mismatches.
+
+Both corrections were already present in the complete accumulated WASI source
+patch.  The schema-169 resource bundle retained older pure-Python copies of
+`set.py` and `non_negative_integers.py`.  Staging the byte-identical
+accumulated-source files in a copy-on-write bundle closes both clusters without
+replacing the coherent native baseline.
+
+The standalone and Electron-shaped smokes now require member and nonmember
+finite-set construction plus non-facade nonnegative-integer parent and element
+semantics.  The Electron smoke uses explicit Sage `Integer` inputs because its
+raw Python snippets do not pass through the Sage preparser.  Both source files
+were already mandatory hashed resources.  The manifest schema advances to
+version 170 and its smoke contract to
+`set-element-construction-delivery-v130`.
+
+The retained results record:
+
+```text
+entries 688--697:                         287 passed, 0 failed, 550 skipped
+entries 698--707 before:                 1410 passed, 2 failed, 318 skipped
+finite-set focused final:                   2 passed, 0 failed,   0 skipped
+complete set.py final:                    303 passed, 0 failed, 116 skipped
+entries 698--707 final:                  1412 passed, 0 failed, 318 skipped
+entries 708--717 before:                  984 passed, 4 failed, 299 skipped
+nonnegative focused final:                  4 passed, 0 failed,   0 skipped
+complete non_negative_integers.py final:   51 passed, 0 failed,   5 skipped
+entries 708--717 final:                   988 passed, 0 failed, 299 skipped
+packaged semantic smoke:                    9 passed, 0 failed,   0 skipped
+Electron-shaped packaged smoke:          passed, including both set contracts
+```
+
+The authoritative SQLite dashboards are under
+`/tmp/cowasm-sagelite-2026-07-20-category-window-688-717/`, and the
+manifest-validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-170/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run, and has no failed
+file or block rows.  The resource manifest validates 545 side modules and 708
+required-resource hashes.
+
+The focused and complete affected-module replays, repaired bounded replays,
+self-contained packaged semantic smoke, complete Electron-shaped smoke,
+manifest parity/runtime/forge-resource tests, manifest hash validation, exact
+staged-source comparison, JavaScript and shell syntax checks, SQLite lifecycle,
+integrity, and empty-failure checks, and `git diff --check` pass.  No native
+rebuild was needed.  The next pass can continue with corpus entries 718--727 or
+select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

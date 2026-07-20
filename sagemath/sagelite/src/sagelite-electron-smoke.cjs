@@ -1084,6 +1084,31 @@ assert QQ['x'] in Algebras(Fields())
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start set element construction delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.set import Set
+
+S = Set([1, 2, 3])
+assert S(Integer(2)) == Integer(2)
+try:
+    S(Integer(4))
+except ValueError as error:
+    assert str(error) == '4 not in {1, 2, 3}'
+else:
+    raise AssertionError('nonmember construction unexpectedly succeeded')
+
+NN = NonNegativeIntegers(facade=False)
+n = NN.from_integer(Integer(5))
+assert n.parent() is NN
+assert type(n) is NN.element_class
+`);
+    console.log(
+      "sagelite-electron-ok set element construction delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ
