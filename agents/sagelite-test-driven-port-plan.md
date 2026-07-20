@@ -58706,6 +58706,52 @@ skip-reason, and empty-failure checks, and `git diff --check` pass.  The next
 pass can continue with raw corpus lines 1132--1141 or address the persisted
 explicit-PARI HNF cluster.
 
+Tests and typesetting terminal-corpus checkpoint on 2026-07-20 UTC:
+
+The final bounded corpus windows advance the curated dashboard from raw line
+1132 through its current end at line 1144.  They cover the Sage test-package
+helpers, Cython and STL-vector probes, startup and deprecation helpers, and the
+ASCII, character, symbol, and Unicode typesetting infrastructure.
+
+All thirteen files pass against the manifest-validated schema-182 packaged
+resource snapshot.  The runnable test-helper and typesetting coverage is
+clean; the remaining symbolic, combinatorics, module/matrix, IPython,
+subprocess, FLINT, Valgrind, and long-time dependency surfaces stay queryable
+as explicit browser-profile skips.  No source, native backend, or delivery
+correction is needed for this terminal slice.  The retained results record:
+
+```text
+lines 1132--1141: 175 passed, 0 failed, 64 skipped
+lines 1142--1144:  64 passed, 0 failed,  9 skipped
+lines 1132--1144: 239 passed, 0 failed, 73 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-terminal-window-1132-1144.qOwAWw/window-1132-1144-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It
+records 312 blocks across thirteen passing files, a completed passing
+lifecycle, `PRAGMA integrity_check = ok`, and no block or file failures.  Its
+largest skip groups are 23 symbolic, 20 combinatorics, ten module/matrix, five
+IPython, five subprocess, and three long-time examples.
+
+The developer Sagelite checkout contained intentional uncommitted source
+changes, including one hunk already represented by the accumulated CoWasm
+patch.  To preserve those changes and keep the run reproducible, validation
+used a detached clean snapshot at Sagelite commit `f575cf6224f`, reconstructed
+under `/tmp`, before applying the complete CoWasm patch.  The initial ten-file
+run, final three-file run, authoritative thirteen-file replay, complete
+schema-182 Electron-shaped smoke, manifest parity/runtime/forge-resource
+tests, manifest hash validation, accumulated-patch syntax and clean-source
+application, SQLite lifecycle, integrity, skip-reason, and empty-failure
+checks, and `git diff --check` pass.  The packaged resource manifest continues
+to validate 555 side modules, 724 required-resource hashes, and seven native-
+library paths.
+
+The bounded curated corpus is now measured through its current final entry.
+The next pass should return to a persisted backend/runtime cluster such as the
+explicit-PARI HNF signature mismatch, or deliberately expand the curated
+corpus before resuming bounded frontier runs.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
