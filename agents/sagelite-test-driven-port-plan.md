@@ -59063,6 +59063,47 @@ Sagelite checkout remains untouched.  The next pass can classify the ten
 unavailable `fpylll` examples, address the two remaining broad cypari2 object-
 model examples, or select another persisted backend cluster.
 
+Integer-matrix optional-backend classification pass on 2026-07-20 UTC:
+
+The complete dense-integer matrix replay's remaining optional-backend noise is
+now explicit browser-profile metadata.  Ten direct default LLL/BKZ examples
+that require the unavailable `fpylll` package are marked `# needs fpylll`,
+along with seven assertions whose state depends on those calls.  The three
+matrix-to-`Gen` examples that require cypari2's intentionally unsupported broad
+object model are marked `# needs sage.libs.pari`; the focused initialized PARI
+C bridges used by determinant, rank, Smith form, right kernels, and LLL remain
+runnable.
+
+The tags are attached to exact prompts rather than whole doctest paragraphs.
+This preserves setup state used by later NTL examples and keeps the adjacent
+explicit NTL and focused PARI LLL paths under active coverage.  The complete
+matrix-module dashboard advances as follows:
+
+```text
+before classification: 648 passed, 33 failed, 14 skipped
+after classification:  648 passed, 13 failed, 34 skipped
+new fpylll skips:        17
+new broad-PARI skips:     3
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-matrix-dependency-classification-final.xzXP7Y/complete-matrix.sqlite3`.
+It records 695 blocks, no file-level error, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  All ten neighboring explicit NTL/PARI rows in
+the affected LLL sections pass.  The thirteen remaining failures are ordinary
+independent clusters: eight `NameError`, two output mismatches, two unavailable
+`cysignals.alarm` examples, and one stale cache assertion.
+
+Validation includes the complete matrix-module replay, exact skip-reason and
+neighboring-backend SQLite queries, accumulated-patch syntax, a zero-reject
+sequential application to a clean Sagelite `f575cf6224f` snapshot, byte-for-
+byte comparison of the affected patched source, SQLite lifecycle and integrity
+checks, and `git diff --check`.  This is source-only doctest metadata and needs
+no Cython/native rebuild, manifest schema change, or resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The next pass can select one of the thirteen remaining independent
+matrix clusters or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
