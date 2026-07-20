@@ -1140,6 +1140,19 @@ assert doc.startswith("WARNING: the enclosing module is marked 'needs sage.libs.
     console.log(
       "sagelite-electron-ok WASI doctest tag introspection delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start high-byte string literal delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.misc.sage_input import sage_input
+
+value = '\200\300\234'
+assert value == ''.join(chr(codepoint) for codepoint in (0x80, 0xc0, 0x9c))
+sage_input(value, verify=True)
+`);
+    console.log(
+      "sagelite-electron-ok high-byte string literal delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

@@ -97,4 +97,5 @@ test("float repr keeps signed exponent digits", async () => {
 test("unicode before a string escape compiles correctly", async () => {
   const { repr } = await syncPython();
   expect(repr("ord('à\\nbb'[0])")).toBe("224");
+  expect(repr("[ord(c) for c in '\\x80À\\x9c']")).toBe("[128, 192, 156]");
 });

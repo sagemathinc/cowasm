@@ -1,28 +1,41 @@
 --- a/Parser/string_parser.c
 +++ b/Parser/string_parser.c
-@@ -133,0 +134,13 @@
-+static void
-+cowasm_write_unicode_escape(char *p, Py_UCS4 ch)
-+{
-+    static const char hex[] = "0123456789abcdef";
-+
-+    p[0] = '\\';
-+    p[1] = 'U';
-+    for (int i = 9; i >= 2; i--) {
-+        p[i] = hex[ch & 0xf];
-+        ch >>= 4;
-+    }
-+}
-+
- static PyObject *
- decode_unicode_with_escapes(Parser *parser, const char *s, size_t len, Token *t)
- {
-@@ -178,7 +191,7 @@
-             w_len = PyUnicode_GET_LENGTH(w);
-             for (i = 0; i < w_len; i++) {
-                 Py_UCS4 chr = PyUnicode_READ(kind, data, i);
--                sprintf(p, "\\U%08x", chr);
-+                cowasm_write_unicode_escape(p, chr);
-                 p += 10;
+@@ -167,27 +167,26 @@
              }
+         }
+         if (*s & 0x80) {
+             PyObject *w;
+-            int kind;
+-            const void *data;
+-            Py_ssize_t w_len;
+-            Py_ssize_t i;
++            PyObject *escaped;
++            Py_ssize_t escaped_len;
+             w = decode_utf8(&s, end);
+             if (w == NULL) {
+                 Py_DECREF(u);
+                 return NULL;
+             }
+-            kind = PyUnicode_KIND(w);
+-            data = PyUnicode_DATA(w);
+-            w_len = PyUnicode_GET_LENGTH(w);
+-            for (i = 0; i < w_len; i++) {
+-                Py_UCS4 chr = PyUnicode_READ(kind, data, i);
+-                sprintf(p, "\\U%08x", chr);
+-                p += 10;
++            escaped = PyUnicode_AsUnicodeEscapeString(w);
++            Py_DECREF(w);
++            if (escaped == NULL) {
++                Py_DECREF(u);
++                return NULL;
+             }
++            escaped_len = PyBytes_GET_SIZE(escaped);
++            memcpy(p, PyBytes_AS_STRING(escaped), escaped_len);
++            p += escaped_len;
              /* Should be impossible to overflow */
+             assert(p - buf <= PyBytes_GET_SIZE(u));
+-            Py_DECREF(w);
++            Py_DECREF(escaped);
+         }
+         else {
+             *p++ = *s++;

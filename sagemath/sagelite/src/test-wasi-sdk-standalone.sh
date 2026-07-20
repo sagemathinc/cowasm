@@ -1789,9 +1789,17 @@ assert G.spanning_trees_count() == 1
 assert G.rank_decomposition()[0] == 1
 print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
+run_node_import \
+  "high-byte string literal delivery smoke" \
+  "from sage.misc.sage_input import sage_input
+value = '\\200\\300\\234'
+assert value == ''.join(chr(codepoint) for codepoint in (0x80, 0xc0, 0x9c))
+sage_input(value, verify=True)
+print('sagelite-node-ok high-byte string literal delivery smoke')"
+
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=172
+electron_manifest_schema_version=173
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1816,6 +1824,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-p
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-element-construction-delivery-v130"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-complex-root-delivery-v131"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-wasi-doctest-tag-introspection-delivery-v132"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-high-byte-string-literal-delivery-v133"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

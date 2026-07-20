@@ -162,10 +162,14 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 
 CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${SRC}/sched.h ${DYLINK_LIBPYTHON_JS} $(wildcard ${SRC}/patches/*.patch)
 
+.PHONY: test-wasm-unicode-patch-syntax
+test-wasm-unicode-patch-syntax:
+	git apply --numstat ${SRC}/patches/29-wasi-string-literal-unicode-escapes.patch >/dev/null
+
 ${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
 	cd ${CORE_PACKAGES}/dylink && ./node_modules/.bin/tsc -b
 
-${BUILD_WASM}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} ${SRC}/pyconfig.h
+${BUILD_WASM}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} ${SRC}/pyconfig.h | test-wasm-unicode-patch-syntax
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
@@ -276,7 +280,7 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
 
-${BUILD_WASI_SDK}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS}
+${BUILD_WASI_SDK}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} | test-wasm-unicode-patch-syntax
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1

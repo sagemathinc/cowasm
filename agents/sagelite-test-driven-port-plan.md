@@ -57661,6 +57661,64 @@ integrity, and empty-failure checks, and `git diff --check` pass.  No source or
 packaged runtime correction was needed.  The next pass can continue with
 corpus entries 788--797 or select another persisted backend/runtime cluster.
 
+High-byte CPython string-literal delivery pass on 2026-07-20 UTC:
+
+Two bounded miscellaneous-module windows continued the curated dashboard
+through entry 807.  Entries 788--797 were clean.  Entries 798--807 initially
+had one failure among 1,136 blocks, at `sage/misc/sage_input.py:425`:
+`sage_input(..., verify=True)` could not round-trip the high-byte characters
+created by the documented octal escapes.  The other nine files were clean.
+
+The persisted failure exposed an incomplete earlier CPython correction.  The
+Unicode string-literal patch added its fixed-width formatting helper, but its
+first hunk declared zero old lines while retaining context.  GNU `patch`
+applied that insertion and then ignored the replacement hunk as trailing
+garbage, leaving the unsafe `sprintf("\\U%08x", ...)` call in both reconstructed
+backends.  The patch is now a strict, coherent hunk.  Instead of depending on
+WASM varargs or a new PIC helper boundary, the parser converts decoded UTF-8
+segments with CPython's own `PyUnicode_AsUnicodeEscapeString()` API.  A new
+order-only Make prerequisite runs `git apply --numstat` before either CPython
+backend stages the patch, preventing this malformed-patch regression from
+silently recurring.
+
+Both CPython runtime-contract suites and the `python-wasm` Jest regression now
+cover the exact high-byte-before-escape boundary.  The standalone and
+Electron-shaped Sagelite smokes also require `sage_input(..., verify=True)` to
+preserve code points `0x80`, `0xc0`, and `0x9c`.  The Electron resource
+manifest advances to schema 173 and smoke contract
+`high-byte-string-literal-delivery-v133`.
+
+The retained results record:
+
+```text
+entries 788--797:                         577 passed, 0 failed, 145 skipped
+entries 798--807 before:                 1018 passed, 1 failed, 117 skipped
+sage_input.py:425 final:                    1 passed, 0 failed,   3 skipped
+entries 798--807 final:                  1019 passed, 0 failed, 117 skipped
+pinned Zig CPython runtime contracts:      18 passed, 0 failed
+wasi-sdk CPython runtime contracts:        18 passed, 0 failed
+Electron-shaped packaged smoke:          passed, including high-byte literals
+```
+
+The SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-788-797/` and
+`/tmp/cowasm-sagelite-2026-07-20-misc-window-788-817/`.  The manifest-validated
+copy-on-write resource bundle is under `/tmp/cowasm-sagelite-schema-173/` and
+records 545 side modules plus 710 required-resource hashes.  Every final
+database passes `PRAGMA integrity_check`, records a completed passing run, and
+has no failed file or block rows.
+
+Fresh patch application, strict patch syntax, complete rebuilds of both
+CPython backends and the bundled `python-wasm` archive, focused Jest and
+isolated `noStdio` tests, both runtime-contract suites, repaired bounded
+doctests, complete Electron-shaped smoke, manifest/runtime/forge-resource
+tests, manifest hash validation, Python/JavaScript/shell syntax checks, SQLite
+lifecycle and integrity checks, and `git diff --check` pass.  The monolithic
+Sagelite standalone target was stopped after it expanded into an unrelated
+single-job regeneration of hundreds of unchanged Cython sources.  The next
+pass can continue with corpus entries 808--817 or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

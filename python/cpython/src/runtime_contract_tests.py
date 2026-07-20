@@ -277,6 +277,15 @@ class RuntimeContractTests(unittest.TestCase):
         exec(source, namespace)
         self.assertEqual(namespace["value"], "à" + chr(10) + "bb")
 
+    def test_high_byte_literal_before_escape(self):
+        source = "value = '" + chr(0x80) + chr(0xc0) + chr(92) + "x9c'"
+        namespace = {}
+        exec(source, namespace)
+        self.assertEqual(
+            [ord(character) for character in namespace["value"]],
+            [0x80, 0xc0, 0x9c],
+        )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
