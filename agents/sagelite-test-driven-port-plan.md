@@ -58509,6 +58509,40 @@ SQLite lifecycle, integrity, skip-reason, and empty-failure checks, and
 paths.  The next pass can continue with raw corpus lines 1082--1091 or select
 another persisted backend/runtime cluster.
 
+Plotting frontend clean-frontier checkpoint on 2026-07-20 UTC:
+
+The next bounded corpus window advances the curated dashboard through raw
+corpus line 1091.  It covers complex plots, disks, ellipses, graphics
+containers, histograms, matrix plots, lines, points, polygons, and the common
+graphics primitive base.
+
+All ten files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The runnable plotting frontend coverage is clean; the remaining
+symbolic, matplotlib, three-dimensional plotting, NumPy, scheme, finite-ring,
+PARI/complex-double, and SciPy dependency surfaces stay queryable as explicit
+browser-profile skips.  No source, native backend, or delivery correction is
+needed for this slice.  The retained result records:
+
+```text
+lines 1082--1091: 597 passed, 0 failed, 420 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-plot-window-1082-1091.wZTBlI/window-1082-1091-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It records
+1,017 blocks across ten passing files, a completed passing lifecycle,
+`PRAGMA integrity_check = ok`, and no block or file failures.  The largest
+individual skip groups are 294 symbolic, 42 matplotlib, 39 three-dimensional
+plotting, 15 NumPy, and ten scheme examples.
+
+The initial and authoritative complete ten-file replays, complete schema-181
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, patch syntax, SQLite lifecycle, integrity, skip-reason, and
+empty-failure checks, and `git diff --check` pass.  The packaged resource
+manifest continues to validate 555 side modules, 724 required-resource hashes,
+and seven native-library paths.  The next pass can continue with raw corpus
+lines 1092--1101 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
