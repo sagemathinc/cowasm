@@ -57949,6 +57949,48 @@ validation, SQLite lifecycle, integrity, and empty-failure checks, and
 The next pass can continue with corpus entries 912--921 or select another
 persisted backend/runtime cluster.
 
+Tensor multiprocessing dependency-boundary pass on 2026-07-20 UTC:
+
+The bounded corpus window for logical entries 912--921 initially recorded
+1,448 passed, three failed, and 25 skipped blocks.  Nine files were clean; all
+three failures were the same contiguous example in
+`sage/tensor/modules/free_module_tensor.py`.  The example explicitly set
+tensor parallelism to two processes, then tensor multiplication imported the
+unavailable CPython `_multiprocessing` extension.  The first prompt failed with
+`ModuleNotFoundError`, and the two following `t2` checks failed dependently.
+
+The accumulated WASI source patch now classifies the complete parallel example
+with the same standalone `# needs _multiprocessing` directive already used by
+the neighboring `comp.py` parallel doctests.  This skips both the state-changing
+setup and reset together, while retaining the serial tensor multiplication and
+display coverage in the default browser profile.  No native or packaged
+resource change is needed.
+
+The retained results record:
+
+```text
+entries 912--921 before:                 1448 passed, 3 failed, 25 skipped
+complete free_module_tensor.py final:     633 passed, 0 failed,  9 skipped
+entries 912--921 final:                  1446 passed, 0 failed, 30 skipped
+Electron-shaped packaged smoke:          passed
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-tensor-window-912-921.e0hKL9/`, and the runs
+use the manifest-validated schema-175 copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-schema-175/`.  The final database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has empty block- and file-failure cluster queries.  The resource
+manifest validates 545 side modules and 712 required-resource hashes.
+
+The complete affected-module replay, repaired ten-file window, complete
+Electron-shaped smoke, manifest hash validation, accumulated-patch syntax
+check, isolated dry-run and application of the targeted source hunk against
+the recorded Sagelite revision, exact affected-source comparison, SQLite
+lifecycle, integrity, skip-reason, and empty-failure checks, and
+`git diff --check` pass.  The next pass can continue with corpus entries
+922--931 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

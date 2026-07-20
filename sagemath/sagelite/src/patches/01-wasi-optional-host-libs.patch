@@ -27207,3 +27207,8 @@ diff --git a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object
 +            ....: except (PicklingError, AssertionError):
 +            ....:     print("pickling test failed")
 +            pickling test failed
+diff --git a/src/sage/tensor/modules/free_module_tensor.py b/src/sage/tensor/modules/free_module_tensor.py
+--- a/src/sage/tensor/modules/free_module_tensor.py
++++ b/src/sage/tensor/modules/free_module_tensor.py
+@@ -642,0 +643 @@
++            sage: # needs _multiprocessing
