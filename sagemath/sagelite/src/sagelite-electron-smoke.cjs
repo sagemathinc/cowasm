@@ -1296,6 +1296,10 @@ assert A.echelon_form(algorithm='multimodular') == A.echelon_form(algorithm='fli
 assert Z.det() == ZZ(-1)
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
+F, U = Z.frobenius_form(2)
+assert Z == U.inverse() * F * U
+assert Z.frobenius_form() == F
+assert Z.frobenius_form(1) == [Z.charpoly()]
 `);
     console.log(
       "sagelite-electron-ok native integer rational matrix backend smoke",

@@ -301,7 +301,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 181,
+  schemaVersion: 182,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -334,6 +334,8 @@ expectedSageliteManifest.smokeContract +=
   "-rational-matrix-backend-completeness-v140";
 expectedSageliteManifest.smokeContract +=
   "-quadratic-form-native-matrix-helpers-v141";
+expectedSageliteManifest.smokeContract +=
+  "-integer-matrix-frobenius-delivery-v142";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

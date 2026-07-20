@@ -58650,6 +58650,62 @@ manifest continues to validate 555 side modules, 724 required-resource hashes,
 and seven native-library paths.  The next pass can continue with raw corpus
 lines 1122--1131 or select another persisted backend/runtime cluster.
 
+Computational-mathematics book and integer Frobenius backend pass on
+2026-07-20 UTC:
+
+The bounded corpus window for raw lines 1122--1131 initially recorded 191
+passed, three failed, and 71 skipped blocks.  Nine files were clean.  All three
+failures in `sol/linalg_doctest.py` came from its `Similar()` helper: native
+integer matrices still routed `frobenius_form(2)` through the unavailable
+high-level `cypari2.Gen.matfrobenius()` object model, and the failed assignment
+left one dependent `V` display row without state.
+
+The runtime already shipped and manifest-hashed a focused direct PARI integer-
+matrix conversion helper for the generic dense fallback.  The native
+`Matrix_integer_dense.frobenius_form()` implementation now uses that helper for
+flags zero and two, while flag one obtains its invariant polynomials through
+the delivered rational-form backend.  This preserves the specialized native
+matrix class and avoids the unsupported cypari2 object-model boundary.
+
+Standalone and Electron-shaped smokes now require the native integer
+Frobenius form, invariant polynomial, and reconstructed similarity witness.
+The Electron manifest advances to schema 182 and smoke contract
+`integer-matrix-frobenius-delivery-v142`.
+
+The retained results record:
+
+```text
+lines 1122--1131 before:          191 passed, 3 failed, 71 skipped
+focused linalg line 45 final:       1 passed, 0 failed,  0 skipped
+complete linalg module final:      15 passed, 0 failed,  0 skipped
+lines 1122--1131 final:           194 passed, 0 failed, 71 skipped
+Electron-shaped packaged smoke:   passed, including native Frobenius
+```
+
+The authoritative runner-version-128 SQLite database and worker state are
+under
+`/tmp/cowasm-sagelite-2026-07-20-book-tests-window-1122-1131.JdW5mF/`.
+The database records 265 blocks across ten passing files, a completed passing
+lifecycle, `PRAGMA integrity_check = ok`, and empty block- and file-failure
+cluster queries.  Its largest skip groups are 43 symbolic, 12 plural-
+polynomial, five long-time, and five SciPy examples.  The manifest-validated
+schema-182 resource bundle is under `/tmp/cowasm-sagelite-schema182/` and
+validates 555 side modules, 724 required-resource hashes, and seven native-
+library paths.
+
+An exploratory complete `matrix_integer_dense.pyx` replay reaches the
+independent pre-existing explicit-PARI HNF signature mismatch at source line
+1920 before the Frobenius docstring, so this pass does not treat that broader
+file as a regression in the repaired method.  Focused and complete affected-
+book replays, the repaired ten-file window, exact native Cython/C++/WASM
+rebuild, complete Electron-shaped smoke, manifest parity/runtime/forge-
+resource tests, manifest hash validation, accumulated-patch syntax and clean-
+source application, byte-for-byte affected-source and rebuilt-resource
+comparisons, JavaScript and shell syntax checks, SQLite lifecycle, integrity,
+skip-reason, and empty-failure checks, and `git diff --check` pass.  The next
+pass can continue with raw corpus lines 1132--1141 or address the persisted
+explicit-PARI HNF cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

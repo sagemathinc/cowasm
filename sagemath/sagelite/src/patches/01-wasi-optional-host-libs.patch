@@ -27825,3 +27825,33 @@ diff --git a/src/sage/matrix/matrix_rational_dense.pyx b/src/sage/matrix/matrix_
              sage: A = random_matrix(QQ, 10, 10)
              sage: L = A.LLL()
              sage: A.is_LLL_reduced()
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -2573,14 +2573,15 @@
+-        v = self.__pari__().matfrobenius(flag)
++        if flag == 1:
++            r = PolynomialRing(self.base_ring(), names=var)
++            rational_self = self.change_ring(QQ)
++            return [r(f) for f in rational_self.rational_form(format='invariants')]
++
++        from sage.libs.pari.convert_sage import integer_matrix_frobenius
++        v = integer_matrix_frobenius(
++            self.list(), self._nrows, self._ncols, flag
++        )
+         if flag == 0:
+-            return self.matrix_space()(v.sage())
+-        elif flag == 1:
+-            r = PolynomialRing(self.base_ring(), names=var)
+-            retr = []
+-            for f in v:
+-                retr.append(eval(str(f).replace("^","**"),
+-                                 {'x': r.gen()}, r.gens_dict()))
+-            return retr
++            return self.matrix_space()(v)
+         elif flag == 2:
+-            F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0].sage())
+-            B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1].sage())
++            F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0])
++            B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1])
+             return F, B

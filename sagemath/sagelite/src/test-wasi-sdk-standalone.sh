@@ -1589,6 +1589,10 @@ assert A.echelon_form(algorithm='multimodular') == A.echelon_form(algorithm='fli
 assert Z.det() == ZZ(-1)
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
+F, U = Z.frobenius_form(2)
+assert Z == U.inverse() * F * U
+assert Z.frobenius_form() == F
+assert Z.frobenius_form(1) == [Z.charpoly()]
 print('sagelite-node-ok native integer rational matrix backend smoke')"
 run_node_import "quadratic form native matrix helper smoke" "from sage.all import Matrix, ZZ
 from sage.quadratic_forms.extras import extend_to_primitive
@@ -1924,7 +1928,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=181
+electron_manifest_schema_version=182
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1958,6 +1962,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-native-integer-rational-matrix-backends-v139"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-matrix-backend-completeness-v140"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quadratic-form-native-matrix-helpers-v141"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-frobenius-delivery-v142"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
