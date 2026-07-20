@@ -58578,6 +58578,42 @@ manifest continues to validate 555 side modules, 724 required-resource hashes,
 and seven native-library paths.  The next pass can continue with raw corpus
 lines 1102--1111 or select another persisted backend/runtime cluster.
 
+Matroid, symbolic, games, and book-example clean-frontier checkpoint on
+2026-07-20 UTC:
+
+The next bounded corpus window advances the curated dashboard through raw
+corpus line 1111.  It covers the matroid set-system and utility helpers,
+symbolic complexity, test, and symbol modules, Sudoku, Hexad, and Quantumino,
+and the integer and set examples from Judson's abstract algebra book.
+
+All ten files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The runnable matroid, combinatorial-game, and elementary abstract-
+algebra coverage is clean; the remaining broader matroid, graph, symbolic,
+finite-ring, number-field, GAP, matrix, plotting, deferred-not-tested, and
+long-time dependency surfaces stay queryable as explicit browser-profile
+skips.  No source, native backend, or delivery correction is needed for this
+slice.  The retained result records:
+
+```text
+lines 1102--1111: 383 passed, 0 failed, 109 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-matroid-symbolic-games-window-1102-1111.iV5Fg1/window-1102-1111-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It records
+492 blocks across ten passing files, a completed passing lifecycle,
+`PRAGMA integrity_check = ok`, and no block or file failures.  The largest
+skip groups are 25 matroid, 24 graph, 23 deferred-not-tested, 16 long-time,
+five finite-ring/number-field, and five symbolic examples.
+
+The initial and authoritative complete ten-file replays, complete schema-181
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation, patch syntax, SQLite lifecycle, integrity, skip-reason, and
+empty-failure checks, and `git diff --check` pass.  The packaged resource
+manifest continues to validate 555 side modules, 724 required-resource hashes,
+and seven native-library paths.  The next pass can continue with raw corpus
+lines 1112--1121 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
