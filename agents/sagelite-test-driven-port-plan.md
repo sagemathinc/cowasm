@@ -57318,6 +57318,37 @@ and empty-failure checks, and `git diff --check` pass.  No source or packaged
 runtime correction was needed.  The next pass can continue with corpus entries
 568--577 or select another persisted backend/runtime cluster.
 
+Category examples and finite-dimensional clean-window pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+597.  All 30 files were clean.  The first window completed the lightweight
+category examples and facade-set modules.  The second covered filtered
+algebras and modules, finite enumerated sets, and the first finite-dimensional
+categories.  The third completed the finite-dimensional tranche and covered
+infinite enumerated sets, finite sets, monoids, semigroups, Weyl groups, and
+finitely generated lambda-bracket algebras.
+
+The retained results record:
+
+```text
+entries 568--577:                         314 passed, 0 failed,   0 skipped
+entries 578--587:                         314 passed, 0 failed, 590 skipped
+entries 588--597:                         101 passed, 0 failed, 279 skipped
+combined:                                 729 passed, 0 failed, 869 skipped
+```
+
+The authoritative SQLite dashboards are under
+`.tmp/current-run/scheduled-2026-07-20-category-window-568-577/`.  Every
+database passes `PRAGMA integrity_check` and has no failed file or block rows.
+The runs use the retained schema-169 copy-on-write Electron resource bundle,
+whose manifest validates 545 side modules and 708 required-resource hashes.
+
+The three bounded replays, complete Electron-shaped smoke, manifest
+parity/runtime/forge-resource tests, manifest hash validation, SQLite integrity
+and empty-failure checks, and `git diff --check` pass.  No source or packaged
+runtime correction was needed.  The next pass can continue with corpus entries
+598--607 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
