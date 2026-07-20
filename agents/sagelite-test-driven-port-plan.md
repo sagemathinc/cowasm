@@ -58805,6 +58805,56 @@ The external developer Sagelite checkout remains untouched.  The next backend
 pass can route the explicit-PARI determinant path through the initialized
 bridge or choose another persisted runtime cluster.
 
+Integer-matrix PARI determinant backend pass on 2026-07-20 UTC:
+
+The persisted explicit-PARI determinant failure at
+`sage/matrix/matrix_integer_dense.pyx:3815` is repaired.  The native matrix
+module previously called its statically linked `det0()` copy, whose private
+PARI recovery callback trapped with a WASM function-signature mismatch.
+Integer determinant conversion and `det0()` execution now run through the
+already initialized `sage.libs.pari.convert_sage` side module, following the
+direct bridges used by integer Frobenius and Hermite forms.  Both PARI
+determinant flags zero and one return Sage integers through the same guarded
+row-major conversion path.
+
+The retained focused result records:
+
+```text
+explicit PARI line 3815: 1 passed, 0 failed, 0 skipped
+focused empty/nonempty flags 0/1: 4 passed, 0 failed, 0 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-determinant-final.7j5k3l/line-3815.sqlite3`.  It records
+a completed passing lifecycle, `PRAGMA integrity_check = ok`, and the exact
+line-3815 block as passed.  The four-case determinant contract database is
+`/tmp/cowasm-sagelite-determinant-final.7j5k3l/determinant-contract.sqlite3`;
+it also records a completed passing lifecycle and a clean integrity check.
+The complete module replay in
+`/tmp/cowasm-sagelite-determinant-final.7j5k3l/complete-matrix.sqlite3`
+advances to the next independent private-PARI cluster at source line 5837,
+where `_rank_pari()` still reaches `ZM_pivots` through the matrix module's
+uninitialized recovery state.  That database preserves the file-level
+`wasm_signature_mismatch` breadcrumb and also passes its SQLite integrity
+check.
+
+The Electron manifest advances to schema 184 and smoke contract
+`integer-matrix-determinant-delivery-v144`.  The validated bundle contains
+555 side modules, 724 required-resource hashes, and seven native-library
+paths.  Standalone and Electron-shaped smokes explicitly clear the matrix
+determinant cache before testing `algorithm='pari'` and `_det_pari(1)`, so a
+previous FLINT result cannot mask either native PARI path.
+
+Validation includes a complete clean-source accumulated-patch application
+against recorded Sagelite revision `f575cf6224f`, byte-for-byte comparison of
+all three affected sources, a from-scratch Cython/native rebuild, the complete
+standalone and relocated Electron resource smokes, manifest parity, forge-
+resource and runtime tests, patch and JavaScript/shell syntax checks, focused
+and complete-module SQLite replays, manifest hash/count validation, and
+`git diff --check`.  The external developer Sagelite checkout remains
+untouched.  The next backend pass can route `_rank_pari()` through the
+initialized conversion bridge or select another persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

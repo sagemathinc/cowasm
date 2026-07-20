@@ -28020,3 +28020,78 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 -
 +
              import sage.libs.ntl.ntl_mat_ZZ
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -7,6 +7,7 @@ cpdef gen_to_sage(Gen z, locals=*)
+ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
++cpdef object integer_matrix_determinant(list entries, long nrows, long ncols, long flag=*)
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
+ cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols, long flag=*, bint include_zero_rows=*)
+ cpdef set_rational_from_gen(Rational self, Gen x)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -24,5 +24,6 @@ from cypari2.paridecl cimport (
+     avma,
+     cgeti,
++    det0,
+     divisorsu,
+     evalsigne,
+     evallgefint,
+@@ -437,6 +438,32 @@ cpdef Gen new_gen_from_integer(Integer self):
+     return new_gen_from_mpz_t(self.value)
+
+
++cpdef object integer_matrix_determinant(list entries, long nrows, long ncols,
++                                        long flag=0):
++    """
++    Return the PARI determinant of a row-major Sage integer matrix.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_determinant
++        sage: integer_matrix_determinant([ZZ(1), ZZ(2), ZZ(3), ZZ(5)], 2, 2)
++        -1
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++    if nrows != ncols:
++        raise ValueError("self must be a square matrix")
++    if flag not in (0, 1):
++        raise ValueError("direct integer-matrix determinant supports flags 0 and 1")
++
++    cdef GEN result
++    sig_on()
++    try:
++        result = det0(_new_GEN_from_integer_matrix(entries, nrows, ncols), flag)
++        return _sage_integer_or_rational(result)
++    finally:
++        sig_off()
++
++
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols,
+                                       long flag=0):
+     """
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -3942,13 +3942,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             sage: matrix(ZZ, 3, [1..9])._det_pari(1)
+             0
+         """
+-        sig_on()
+-        cdef GEN d = det0(pari_GEN(self), flag)
+-        # now convert d to a Sage integer e
+-        cdef Integer e = Integer.__new__(Integer)
+-        INT_to_mpz(e.value, d)
+-        clear_stack()
+-        return e
++        from sage.libs.pari.convert_sage import integer_matrix_determinant
++        return integer_matrix_determinant(
++            self.list(), self._nrows, self._ncols, flag
++        )
+
+     def _det_ntl(self):
+         """
