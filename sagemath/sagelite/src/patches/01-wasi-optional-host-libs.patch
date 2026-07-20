@@ -28265,3 +28265,85 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 +        V = self.matrix_space(nrows = self._ncols)([v[1][i,j] for i in range(self._ncols-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
 
          return D, U, V
+
+diff --git a/src/sage/libs/pari/convert_sage.pxd b/src/sage/libs/pari/convert_sage.pxd
+--- a/src/sage/libs/pari/convert_sage.pxd
++++ b/src/sage/libs/pari/convert_sage.pxd
+@@ -8,6 +8,7 @@ cpdef set_integer_from_gen(Integer self, Gen x)
+ cpdef Gen new_gen_from_integer(Integer self)
+ cpdef object integer_matrix_determinant(list entries, long nrows, long ncols, long flag=*)
+ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1
++cpdef tuple integer_matrix_right_kernel(list entries, long nrows, long ncols)
+ cpdef tuple integer_matrix_smith(list entries, long nrows, long ncols)
+ cpdef object integer_matrix_frobenius(list entries, long nrows, long ncols, long flag=*)
+ cpdef tuple integer_matrix_hnf(list entries, long nrows, long ncols, long flag=*, bint include_zero_rows=*)
+
+diff --git a/src/sage/libs/pari/convert_sage.pyx b/src/sage/libs/pari/convert_sage.pyx
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -36,6 +36,7 @@ from cypari2.paridecl cimport (
+     is_rational_t,
+     mathnf0,
+     matfrobenius,
++    matkerint0,
+     matsnf0,
+     maxprime,
+     rank,
+@@ -490,6 +491,39 @@ cpdef long integer_matrix_rank(list entries, long nrows, long ncols) except -1:
+     finally:
+         sig_off()
+
++
++cpdef tuple integer_matrix_right_kernel(list entries, long nrows, long ncols):
++    """
++    Return a row basis for the integer right kernel of a Sage matrix.
++
++    The returned pair contains row-major entries and the number of basis
++    vectors.  PARI represents the basis as columns, so this bridge transposes
++    it while the initialized PARI stack is active.
++
++    EXAMPLES::
++
++        sage: from sage.libs.pari.convert_sage import integer_matrix_right_kernel
++        sage: entries, dimension = integer_matrix_right_kernel([ZZ(1), ZZ(1)], 1, 2)
++        sage: dimension, entries
++        (1, [-1, 1])
++    """
++    _validate_integer_matrix_entries(entries, nrows, ncols)
++
++    cdef GEN result
++    cdef long dimension
++    cdef long i, j
++    sig_on()
++    try:
++        result = matkerint0(
++            _new_GEN_from_integer_matrix(entries, nrows, ncols), 0
++        )
++        dimension = lg(result) - 1
++        return ([_sage_integer_or_rational(gcoeff(result, j + 1, i + 1))
++                 for i in range(dimension) for j in range(ncols)],
++                dimension)
++    finally:
++        sig_off()
++
+
+ cpdef tuple integer_matrix_smith(list entries, long nrows, long ncols):
+     """
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -2693,7 +2693,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             K = self._rational_kernel_flint().transpose().saturation(proof=proof)
+             format = 'computed-flint-int'
+         elif algorithm == 'pari':
+-            K = self.__pari__().matkerint().mattranspose().sage()
++            from sage.libs.pari.convert_sage import integer_matrix_right_kernel
++            entries, dimension = integer_matrix_right_kernel(
++                self.list(), self._nrows, self._ncols
++            )
++            K = self.new_matrix(
++                nrows=dimension, ncols=self._ncols, entries=entries
++            )
+             format = 'computed-pari-int'
+         elif algorithm == 'padic':
+             proof = kwds.pop('proof', None)

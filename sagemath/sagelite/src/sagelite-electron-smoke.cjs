@@ -1316,6 +1316,19 @@ for nr, nc in ((2, 0), (0, 2), (0, 0)):
     E = matrix(ZZ, nr, nc)
     ED, EU, EV = E.smith_form()
     assert EU * E * EV == ED
+K_input = matrix(ZZ, [[4, 7, 9, 7, 5, 0],
+                      [1, 0, 5, 8, 9, 1],
+                      [0, 1, 0, 1, 9, 7],
+                      [4, 7, 6, 5, 1, 4]])
+K_format, K = K_input._right_kernel_matrix(algorithm='pari')
+assert K_format == 'computed-pari-int'
+assert K == matrix(ZZ, [[26, -31, 30, -21, -2, 10],
+                        [-47, -13, 48, -14, -11, 18]])
+assert K_input * K.transpose() == matrix(ZZ, 4, 2)
+for nr, nc in ((18, 11), (60, 55)):
+    K_format, K = matrix(ZZ, nr, nc)._right_kernel_matrix()
+    assert K_format == 'computed-pari-int'
+    assert K == identity_matrix(ZZ, nc)
 assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
 assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
 F, U = Z.frobenius_form(2)

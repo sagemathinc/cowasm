@@ -58960,6 +58960,55 @@ cover the delivered change.  The next pass can route the PARI-backed right-
 kernel or LLL paths through focused initialized bridges, classify intentionally
 out-of-profile full-module examples, or select another persisted cluster.
 
+Integer-matrix PARI right-kernel backend pass on 2026-07-20 UTC:
+
+The persisted dense-integer right-kernel cluster in
+`sage/matrix/matrix_integer_dense.pyx` is repaired.  The native matrix module
+previously converted through `Gen.matkerint().mattranspose().sage()`, which
+belongs to the intentionally unsupported broad cypari2 object model.  Row-major
+integer conversion, PARI's `matkerint0()`, and basis transposition now run
+through the initialized `sage.libs.pari.convert_sage` side module, following
+the focused bridges used for Frobenius forms, Hermite forms, determinants,
+rank, and Smith forms.
+
+The retained results record:
+
+```text
+explicit PARI source line 2589:      1 passed, 0 failed,  0 skipped
+default PARI lines 2628 and 2637:    2 passed, 0 failed,  0 skipped
+focused right-kernel contract:     13 passed, 0 failed,  0 skipped
+complete matrix module before:    637 passed, 44 failed, 14 skipped
+complete matrix module final:     644 passed, 37 failed, 14 skipped
+Electron-shaped packaged smoke:    passed, including right kernels
+```
+
+The authoritative runner-version-128 focused database is
+`/tmp/cowasm-sagelite-right-kernel-probe.cO2IHy/right-kernel-contract-schema187.sqlite3`.
+It covers the documented two-vector basis and orientation, a full-rank matrix,
+and the 18-by-11 and 60-by-55 default-heuristic PARI paths.  The authoritative
+complete-module database is
+`/tmp/cowasm-sagelite-right-kernel-full-module.vfQyAI/complete-matrix.sqlite3`;
+it records 695 blocks, no file-level errors, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  All seven right-kernel failures and dependent-
+name cascades from the previous replay are now passing.  The largest remaining
+independent clusters are ten unavailable `fpylll` examples and five broader
+cypari2 object-model examples, three of which are PARI-backed LLL paths.
+
+The Electron manifest advances to schema 187 and smoke contract
+`integer-matrix-right-kernel-delivery-v147`.  The validated packaged resource
+snapshot is `/tmp/cowasm-sagelite-schema187/`; it records clean Sagelite
+revision `f575cf6224f`, 555 side modules, 724 required-resource paths and
+matching hashes, seven native-library paths, and no hash mismatches.
+Validation includes exact-line and focused contract replays, a complete clean-
+source accumulated-patch application, byte-for-byte affected-source
+comparisons, a from-scratch 507-target Cython and 1,024-step native WASM build,
+the complete standalone and relocated Electron smokes, manifest parity,
+forge-resource and runtime tests, manifest hash validation, SQLite lifecycle
+and integrity checks, and patch, JavaScript, shell, and `git diff --check`
+validation.  The external developer Sagelite checkout remains untouched.  The
+next backend pass can address the focused PARI LLL paths, classify the
+unavailable `fpylll` default/BKZ surface, or select another persisted cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
