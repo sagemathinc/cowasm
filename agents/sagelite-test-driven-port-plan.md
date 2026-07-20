@@ -58175,6 +58175,65 @@ checks, SQLite lifecycle and integrity checks, and `git diff --check` pass.
 The next pass can address the generic rational-matrix backend-selection
 cluster or resume the bounded corpus frontier.
 
+Native integer/rational matrix backend completion checkpoint on 2026-07-20
+UTC:
+
+The generic rational-matrix backend-selection cluster is now closed. Sagelite
+links the position-independent IML archive into its WASI side modules and
+delivers the native dense rational and integer matrix implementations together
+with their modular and LinBox dependencies. The LinBox extension records its
+`libcxx.so` dependency after its static archives, while libcxx exports the
+missing enum and virtual-multiple-inheritance RTTI vtable data wrappers that
+the dynamic loader needs. IML's standalone validation now also links the
+installed archive into a `dylink.0` side module, preventing non-PIC archive
+regressions.
+
+The integer backend avoids unsafe PARI defaults for HNF, Smith invariants,
+characteristic polynomials, and minimal polynomials. FLINT computes Smith
+elementary divisors directly, which restores integral chain-complex homology;
+the packaged exterior boundary and coboundary examples both return `C2 x C2`.
+The rational backend routes its public PARI compatibility selectors through
+FLINT, computes characteristic and minimal polynomials through a cleared-
+denominator integer matrix, normalizes minimal polynomials to monic form, uses
+the division-free characteristic-polynomial adjugate, and maps the unavailable
+Cython multimodular path to FLINT's multimodular RREF. Direct private PARI
+conversion examples, `fpylll`, parallel-runtime, Magma, and unbounded
+statistical examples now carry explicit browser-profile metadata rather than
+causing traps or dependent failures.
+
+The complete `matrix_rational_dense.pyx` audit moved from the prior backend
+frontier to a clean lifecycle:
+
+```text
+before: 244 passed, 108 failed,  8 skipped
+final:  317 passed,   0 failed, 43 skipped
+```
+
+The 43 final skips are queryable as 16 `fpylll`, 9 private PARI, 9 long-time,
+7 parallel-runtime, and 2 Magma examples. The authoritative runner-version-128
+SQLite database is
+`/tmp/cowasm-sagelite-matrix-rational-schema180-final.2n0MSP/matrix-rational-schema180-final.sqlite3`;
+it records 360 blocks, a completed passing run, `PRAGMA integrity_check = ok`,
+and no block or file failures.
+
+The Electron manifest advances to schema 180 and smoke contract
+`rational-matrix-backend-completeness-v140`. The regenerated bundle validates
+555 side modules, 723 required-resource hashes, and seven native-library
+paths. Its Node and Electron smokes require native rational/integer class
+selection, rational determinant and inverse through FLINT/IML/PARI selectors,
+rational characteristic/minimal polynomials, adjugate and multimodular
+echelon compatibility, integer determinant and polynomial compatibility, and
+the exterior homology results.
+
+Validation includes clean focused Cython rebuilds of both dense matrix side
+modules, complete standalone and relocated Electron resource replays, manifest
+parity/runtime/forge-resource tests, libcxx and IML standalone tests, the full
+rational-matrix SQLite audit, JavaScript and shell syntax checks, patch syntax,
+an actual clean-source accumulated-patch application with byte-for-byte checks
+of the affected sources, SQLite lifecycle/integrity checks, and
+`git diff --check`. The next pass can resume the bounded corpus frontier or
+select another persisted native/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

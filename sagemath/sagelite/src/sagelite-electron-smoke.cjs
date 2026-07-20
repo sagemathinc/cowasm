@@ -1274,6 +1274,33 @@ assert remainder.is_zero()
       "sagelite-electron-ok polynomial matrix quotient delivery smoke",
     );
     console.log(
+      "sagelite-electron-start native integer rational matrix backend smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import QQ, ZZ
+from sage.matrix.constructor import identity_matrix, matrix
+
+A = matrix(QQ, [[QQ(1)/2, QQ(1)/3], [QQ(2)/5, QQ(3)/7]])
+Z = matrix(ZZ, [[1, 2], [3, 5]])
+assert type(A).__module__ == 'sage.matrix.matrix_rational_dense'
+assert type(Z).__module__ == 'sage.matrix.matrix_integer_dense'
+assert A.det() == QQ(17)/210
+assert A.det(algorithm='pari') == QQ(17)/210
+assert A.inverse(algorithm='flint') * A == identity_matrix(QQ, 2)
+assert A.inverse(algorithm='pari') * A == identity_matrix(QQ, 2)
+assert A.inverse(algorithm='iml') * A == identity_matrix(QQ, 2)
+assert A.charpoly(algorithm='generic') == A.charpoly(algorithm='flint')
+assert A.minpoly(algorithm='generic') == A.minpoly(algorithm='linbox')
+assert A.adjugate() * A == A.det() * identity_matrix(QQ, 2)
+assert A.echelon_form(algorithm='multimodular') == A.echelon_form(algorithm='flint:multimodular')
+assert Z.det() == ZZ(-1)
+assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
+assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
+`);
+    console.log(
+      "sagelite-electron-ok native integer rational matrix backend smoke",
+    );
+    console.log(
       "sagelite-electron-start high-byte string literal delivery smoke",
     );
     await python.exec(String.raw`

@@ -109,8 +109,10 @@ for export in \
   __WASM_EXPORT___ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ifstreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTVN10__cxxabiv116__enum_type_infoE \
   __WASM_EXPORT___ZTVN10__cxxabiv117__class_type_infoE \
   __WASM_EXPORT___ZTVN10__cxxabiv120__si_class_type_infoE \
+  __WASM_EXPORT___ZTVN10__cxxabiv121__vmi_class_type_infoE \
   __WASM_EXPORT___ZTVNSt3__213basic_istreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTVNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTVNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE \

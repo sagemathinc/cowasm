@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 24 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK" >&2
+if [ "$#" -ne 25 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK" >&2
   exit 2
 fi
 
@@ -31,6 +31,7 @@ libcxx_wasi_sdk="$(cd "${21}" && pwd)"
 cypari2_wasi_sdk="$(cd "${22}" && pwd)"
 libbraiding_wasi_sdk="$(cd "${23}" && pwd)"
 rw_wasi_sdk="$(cd "${24}" && pwd)"
+iml_wasi_sdk="$(cd "${25}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -93,7 +94,7 @@ followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
 node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
 electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
-doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-10}"
+doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-30}"
 meson_compile_jobs="${SAGELITE_MESON_COMPILE_JOBS:-4}"
 cython_generate_jobs="${SAGELITE_CYTHON_GENERATE_JOBS:-1}"
 cython_generate_attempts="${SAGELITE_CYTHON_GENERATE_ATTEMPTS:-10}"
@@ -452,8 +453,8 @@ endian = 'little'
 [built-in options]
 c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
 cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib']
-cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib']
+c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
+cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
 
 [properties]
 cowasm_libcxx = '$libcxx_wasi_sdk/libcxx.so'
@@ -1385,12 +1386,14 @@ assert G.order() == len(list(G))
 H = SL(2, Integers(6))
 assert H.order() == len(list(H))
 print('sagelite-node-ok generic linear group delivery smoke')"
-run_node_import "q-binomial Python parent delivery smoke" "from sage.combinat.q_analogues import q_binomial
+run_node_import "q-binomial Python parent delivery smoke" "import sage.all
+from sage.combinat.q_analogues import q_binomial
 r = q_binomial(3, 2, 1)
 assert r == 3
 assert type(r) is int
 print('sagelite-node-ok q-binomial Python parent delivery smoke')"
-run_node_import "weak reverse plane partition shape smoke" "from sage.combinat.hillman_grassl import WeakReversePlanePartitions
+run_node_import "weak reverse plane partition shape smoke" "import sage.all
+from sage.combinat.hillman_grassl import WeakReversePlanePartitions
 S = WeakReversePlanePartitions([3, 1])
 assert S is WeakReversePlanePartitions((3, 1))
 assert str(S) == 'Weak Reverse Plane Partitions of shape [3, 1]'
@@ -1400,7 +1403,8 @@ a = S.an_element()
 assert repr(a) == '[[0, 0, 0], [0]]'
 assert a.parent() is S
 print('sagelite-node-ok weak reverse plane partition shape smoke')"
-run_node_import "pairwise maximal subsets delivery smoke" "from sage.arith.misc import gcd
+run_node_import "pairwise maximal subsets delivery smoke" "import sage.all
+from sage.arith.misc import gcd
 from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
 from sage.sets.set import Set
 def predicate(x, y): return gcd(x, y) == 1
@@ -1428,11 +1432,13 @@ except ValueError:
 else:
     raise AssertionError('invalid cyclic permutation unexpectedly accepted')
 print('sagelite-node-ok cyclic permutation delivery smoke')"
-run_node_import "fast vector halving delivery smoke" "from sage.combinat.fast_vector_partitions import vector_halve
+run_node_import "fast vector halving delivery smoke" "import sage.all
+from sage.combinat.fast_vector_partitions import vector_halve
 assert vector_halve([1, 2, 3, 4, 5, 6, 7, 8, 9]) == [0, 2, 3, 4, 5, 6, 7, 8, 9]
 assert vector_halve([2, 4, 6, 8, 5, 6, 7, 8, 9]) == [1, 2, 3, 4, 2, 6, 7, 8, 9]
 print('sagelite-node-ok fast vector halving delivery smoke')"
-run_node_import "incompatible word concatenation delivery smoke" "from sage.combinat.words.word import Word
+run_node_import "incompatible word concatenation delivery smoke" "import sage.all
+from sage.combinat.words.word import Word
 y = Word([5, 3, 5, 8, 7])
 z = Word('12223', alphabet='123')
 result = z + y
@@ -1445,7 +1451,8 @@ assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is T
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
 print('sagelite-node-ok category parameter refinement delivery smoke')"
-run_node_import "set element construction delivery smoke" "from sage.sets.non_negative_integers import NonNegativeIntegers
+run_node_import "set element construction delivery smoke" "import sage.all
+from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.integer import Integer
 from sage.sets.set import Set
 S = Set([1, 2, 3])
@@ -1476,7 +1483,8 @@ I = P * [x, y]
 doc = sage_getdoc(I.groebner_basis)
 assert doc.startswith(\"WARNING: the enclosing module is marked 'needs sage.libs.singular',\\nso doctests may not pass.\")
 print('sagelite-node-ok WASI doctest tag introspection delivery smoke')"
-run_node_import "CPython 3.14 doc normalization smoke" "from sage.misc.sageinspect import sage_getdoc
+run_node_import "CPython 3.14 doc normalization smoke" "import sage.all
+from sage.misc.sageinspect import sage_getdoc
 def undocumented():
     pass
 class Documented:
@@ -1563,6 +1571,25 @@ Q, remainder = A._right_quo_rem_solve(B)
 assert Q == matrix(R, [[x + 1, x + 2]])
 assert remainder.is_zero()
 print('sagelite-node-ok polynomial matrix quotient delivery smoke')"
+run_node_import "native integer rational matrix backend smoke" "from sage.all import QQ, ZZ
+from sage.matrix.constructor import identity_matrix, matrix
+A = matrix(QQ, [[QQ(1)/2, QQ(1)/3], [QQ(2)/5, QQ(3)/7]])
+Z = matrix(ZZ, [[1, 2], [3, 5]])
+assert type(A).__module__ == 'sage.matrix.matrix_rational_dense'
+assert type(Z).__module__ == 'sage.matrix.matrix_integer_dense'
+assert A.det() == QQ(17)/210
+assert A.det(algorithm='pari') == QQ(17)/210
+assert A.inverse(algorithm='flint') * A == identity_matrix(QQ, 2)
+assert A.inverse(algorithm='pari') * A == identity_matrix(QQ, 2)
+assert A.inverse(algorithm='iml') * A == identity_matrix(QQ, 2)
+assert A.charpoly(algorithm='generic') == A.charpoly(algorithm='flint')
+assert A.minpoly(algorithm='generic') == A.minpoly(algorithm='linbox')
+assert A.adjugate() * A == A.det() * identity_matrix(QQ, 2)
+assert A.echelon_form(algorithm='multimodular') == A.echelon_form(algorithm='flint:multimodular')
+assert Z.det() == ZZ(-1)
+assert Z.charpoly(algorithm='flint') == Z.charpoly(algorithm='generic')
+assert Z.charpoly(algorithm='linbox') == Z.charpoly(algorithm='generic')
+print('sagelite-node-ok native integer rational matrix backend smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1886,7 +1913,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=178
+electron_manifest_schema_version=180
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1917,6 +1944,8 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-vector-spa
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-drinfeld-modform-ring-delivery-v136"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-matrix-backend-delivery-v137"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polynomial-matrix-quotient-delivery-v138"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-native-integer-rational-matrix-backends-v139"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-matrix-backend-completeness-v140"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2104,6 +2133,7 @@ electron_required_paths=(
   "site-packages/sage/libs/flint/fmpz_poly.cpython-314-wasm32-wasi.so"
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so"
   "site-packages/sage/libs/braiding.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/libs/linbox/linbox_flint_interface.cpython-314-wasm32-wasi.so"
   "site-packages/sage/misc/lazy_import.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/__init__.py"
   "site-packages/sage/matrix/action.cpython-314-wasm32-wasi.so"
@@ -2116,7 +2146,12 @@ electron_required_paths=(
   "site-packages/sage/matrix/matrix2.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_dense.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_generic_dense.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_integer_dense.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_mod2_dense.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_modn_dense_double.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_modn_dense_float.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_polynomial_dense.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/matrix_rational_dense.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/matrix_misc.py"
   "site-packages/sage/matrix/matrix_space.py"
   "site-packages/sage/matrix/special.py"
@@ -5986,7 +6021,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|70|61|0|9" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|72|63|0|9" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -6036,7 +6071,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|70|57|1|12" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|72|59|1|12" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"

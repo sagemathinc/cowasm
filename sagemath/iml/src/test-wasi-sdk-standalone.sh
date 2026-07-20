@@ -38,7 +38,7 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CPPFLAGS="-I$gmp_dir/include -I$gsl_dir/include" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   LDFLAGS="-L$gmp_dir/lib -L$gsl_dir/lib ${standalone_ldlibs[*]}" \
   LIBS="-lgmp -lgslcblas -lm" \
   COWASM_TOOLCHAIN=wasi-sdk \
@@ -75,3 +75,27 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/iml-test" |
   grep "iml-ok det=99 rank=1 inverse=99,1,52,50 modular-basis=rank1 solution=(1/5,3/5) nullspace-dim=2"
+
+# Keep the installed archive usable from Python and other WASI side modules.
+# An ordinary executable link accepts absolute data relocations that wasm-ld
+# correctly rejects when the same archive is consumed by a shared object.
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  --experimental-pic \
+  -shared \
+  -fPIC \
+  "$src_dir/test-iml.c" \
+  -I"$dist_dir/include" \
+  -I"$gmp_dir/include" \
+  -I"$gsl_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -L"$gsl_dir/lib" \
+  -liml \
+  -lgmp \
+  -lgslcblas \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/iml-test.so"
+
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$probe_dir/iml-test.so" |
+  grep -F 'dylink.0'

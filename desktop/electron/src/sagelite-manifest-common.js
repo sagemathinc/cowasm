@@ -34,6 +34,7 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
   "deps/primecountpy/primecountpy/libcxx.so",
   "site-packages/sage/graphs/libcxx.so",
   "site-packages/sage/libs/libcxx.so",
+  "site-packages/sage/libs/linbox/libcxx.so",
   "site-packages/sage/libs/ntl/libcxx.so",
   "site-packages/sage/rings/finite_rings/libcxx.so",
 ]);
@@ -150,6 +151,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/libs/flint/fmpz_poly.cpython-314-wasm32-wasi.so",
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so",
   "site-packages/sage/libs/braiding.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/libs/linbox/linbox_flint_interface.cpython-314-wasm32-wasi.so",
   "site-packages/sage/misc/lazy_import.cpython-314-wasm32-wasi.so",
   "site-packages/sage/repl/display/fancy_repr.py",
   "site-packages/sage/repl/display/pretty_print.py",
@@ -164,7 +166,12 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/matrix/matrix2.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_dense.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_generic_dense.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_integer_dense.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_mod2_dense.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_modn_dense_double.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_modn_dense_float.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_polynomial_dense.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/matrix/matrix_rational_dense.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/matrix_misc.py",
   "site-packages/sage/matrix/matrix_space.py",
   "site-packages/sage/matrix/special.py",
@@ -293,7 +300,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 178,
+  schemaVersion: 180,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -320,6 +327,10 @@ expectedSageliteManifest.smokeContract +=
   "-generic-matrix-backend-delivery-v137";
 expectedSageliteManifest.smokeContract +=
   "-polynomial-matrix-quotient-delivery-v138";
+expectedSageliteManifest.smokeContract +=
+  "-native-integer-rational-matrix-backends-v139";
+expectedSageliteManifest.smokeContract +=
+  "-rational-matrix-backend-completeness-v140";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
