@@ -58474,6 +58474,41 @@ to validate 555 side modules, 724 required-resource hashes, and seven native-
 library paths.  The next pass can continue with raw corpus lines 1072--1081 or
 select another persisted backend/runtime cluster.
 
+Graph-generation and plotting clean-frontier checkpoint on 2026-07-20 UTC:
+
+The next bounded corpus window advances the curated dashboard through raw
+corpus line 1081.  It covers hypergraph and world-map generators, PQ trees,
+rank-width decomposition, permutation-group refinement sets, and the arc,
+arrow, bar-chart, Bezier-path, and circle plotting primitives.
+
+All ten files pass against the manifest-validated schema-181 packaged resource
+snapshot.  The runnable graph, permutation, and plotting coverage is clean;
+the remaining matplotlib, three-dimensional plotting, symbolic, nauty, NumPy,
+MIP, broader graph, and plotting dependency surfaces stay queryable as
+explicit browser-profile skips.  No source, native backend, or delivery
+correction is needed for this slice.  The retained result records:
+
+```text
+lines 1072--1081: 498 passed, 0 failed, 70 skipped
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-2026-07-20-graph-plot-window-1072-1081.95kO2R/window-1072-1081-authoritative.sqlite3`;
+worker state and the bounded corpus list are in the same directory.  It records
+568 blocks across ten passing files, a completed passing lifecycle,
+`PRAGMA integrity_check = ok`, and no block or file failures.  The largest
+individual skip groups are 18 matplotlib, 18 three-dimensional plotting, 14
+symbolic, nine nauty, and seven NumPy examples.
+
+The initial and authoritative complete ten-file replays, complete schema-181
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, the
+26-test runtime-manifest unit suite, manifest hash validation, patch syntax,
+SQLite lifecycle, integrity, skip-reason, and empty-failure checks, and
+`git diff --check` pass.  The packaged resource manifest continues to validate
+555 side modules, 724 required-resource hashes, and seven native-library
+paths.  The next pass can continue with raw corpus lines 1082--1091 or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
