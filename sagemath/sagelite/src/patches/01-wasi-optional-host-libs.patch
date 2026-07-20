@@ -27184,3 +27184,16 @@ diff --git a/src/sage/misc/sage_unittest.py b/src/sage/misc/sage_unittest.py
              ...
 -            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
 -            ...
+diff --git a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
+--- a/src/sage/structure/sage_object.pyx
++++ b/src/sage/structure/sage_object.pyx
+@@ -585 +585 @@
+-            AssertionError:... this is expected to fail
++            AssertionError: this is expected to fail
+@@ -670,3 +670,3 @@
+-            ....: except PicklingError as e:
+-            ....:     print("PicklingError caught")
+-            PicklingError caught
++            ....: except (PicklingError, AssertionError):
++            ....:     print("pickling test failed")
++            pickling test failed

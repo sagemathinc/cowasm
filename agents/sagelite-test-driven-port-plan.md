@@ -57785,6 +57785,51 @@ SQLite lifecycle, integrity, and empty-failure checks, and `git diff --check`
 pass.  The next pass can continue with corpus entries 838--847 or select
 another persisted backend/runtime cluster.
 
+CPython 3.14 SageObject diagnostic pass on 2026-07-20 UTC:
+
+Three bounded structure windows continued the curated dashboard through entry
+861.  Entries 838--847 were completely clean.  Entries 848--857 initially had
+two failures, both in `sage/structure/sage_object.pyx`; the other nine files
+were clean.  The final four structure helpers in entries 858--861 were also
+clean.
+
+Both failures were CPython 3.14 diagnostic drift in tests shared with the
+neighboring `sage.misc.sage_unittest` coverage.  The explicit-message
+`assertTrue()` example retained an obsolete ellipsis form, while the local
+`Bla` pickling example caught only `PicklingError`.  The current runtime gets
+through serialization and reaches the same intended failed pickling test as
+an equality `AssertionError`.  The accumulated WASI source patch now expects
+the stable assertion message and preserves the pickling-test failure boundary
+without pinning its exception subtype.
+
+The retained results record:
+
+```text
+entries 838--847:                         919 passed, 0 failed, 338 skipped
+entries 848--857 before:                  908 passed, 2 failed, 273 skipped
+focused sage_object.pyx lines final:         2 passed, 0 failed,   0 skipped
+complete sage_object.pyx final:             73 passed, 0 failed,  79 skipped
+entries 848--857 final:                    910 passed, 0 failed, 273 skipped
+entries 858--861:                          368 passed, 0 failed,  23 skipped
+combined final windows:                   2197 passed, 0 failed, 634 skipped
+```
+
+The authoritative SQLite dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-structure-window-838-847.utKzS8/`, and the
+runs use the manifest-validated schema-174 copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-schema-174/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run under runner version
+128, and has no failed file or block rows.
+
+The two focused reruns, complete affected-module replay, repaired and clean
+bounded windows, accumulated-patch syntax check, isolated dry-run and real
+application of the complete `sage_object.pyx` patch chain against the
+documented Sagelite revision, exact comparison with the staged source, SQLite
+lifecycle, integrity, and empty-failure checks, and `git diff --check` pass.
+This was a source-doctest correction, so no native rebuild or packaged-resource
+contract change was needed.  The next pass can continue with corpus entries
+862--871 or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
