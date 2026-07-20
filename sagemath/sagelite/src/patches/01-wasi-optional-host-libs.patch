@@ -28665,3 +28665,67 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
              <class 'cypari2.gen.Gen'>
          """
          return integer_matrix(self._matrix, 0)
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -1712,7 +1712,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+         EXAMPLES::
+
+             sage: m = matrix(ZZ,2,3,[1,2,-3,1,-2,-45])
+-            sage: m._magma_init_(magma)
++            sage: m._magma_init_(magma)                                  # needs magma
+             'Matrix(IntegerRing(),2,3,StringToIntegerSequence("1 2 -3 1 -2 -45"))'
+             sage: magma(m)                                               # optional - magma
+             [  1   2  -3]
+@@ -4459,7 +4459,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             sage: A = random_matrix(ZZ, 2000, 2000)
+             sage: B = random_matrix(ZZ, 2000, 2000)
+             sage: from sage.doctest.util import ensure_interruptible_after
+-            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)
++            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)  # needs cysignals.alarm
+
+         ALGORITHM: Uses IML.
+
+@@ -4617,7 +4617,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             sage: A = random_matrix(ZZ, 2000, 2000)
+             sage: B = random_matrix(ZZ, 2000, 2000)
+             sage: from sage.doctest.util import ensure_interruptible_after
+-            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)
++            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)  # needs cysignals.alarm
+
+         AUTHORS:
+
+@@ -4868,14 +4868,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
+
+         EXAMPLES::
+
+-            sage: t = ModularSymbols(11,sign=1).hecke_matrix(2)
+-            sage: w = t.change_ring(ZZ)
+-            sage: w
++            sage: t = ModularSymbols(11,sign=1).hecke_matrix(2)  # needs sage.modular.modsym
++            sage: w = t.change_ring(ZZ)                         # needs sage.modular.modsym
++            sage: w                                             # needs sage.modular.modsym
+             [ 3 -2]
+             [ 0 -2]
+-            sage: w.charpoly().factor()
++            sage: w.charpoly().factor()                         # needs sage.modular.modsym
+             (x - 3) * (x + 2)
+-            sage: w.decomposition()
++            sage: w.decomposition()                             # needs sage.modular.modsym
+             [(Free module of degree 2 and rank 1 over Integer Ring
+               Echelon basis matrix:
+               [ 5 -2],
+@@ -5693,11 +5693,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
+         EXAMPLES::
+
+             sage: A = matrix(ZZ, 3, 3, [-8, 2, 0, 0, 1, -1, 2, 1, -95])
+-            sage: As = singular(A); As
++            sage: As = singular(A); As  # needs sage.libs.singular
+             -8     2     0
+             0     1    -1
+             2     1   -95
+-            sage: As.type()
++            sage: As.type()            # needs sage.libs.singular
+             'intmat'
+         """
+         if singular is None:

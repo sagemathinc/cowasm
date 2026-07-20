@@ -59104,6 +59104,48 @@ external developer Sagelite checkout and its intentional changes remain
 untouched.  The next pass can select one of the thirteen remaining independent
 matrix clusters or another persisted backend/runtime cluster.
 
+Integer-matrix external-dependency classification pass on 2026-07-20 UTC:
+
+The complete dense-integer matrix replay's remaining external-dependency
+failures are now explicit browser-profile metadata.  The two interruptibility
+checks that require `cysignals.alarm`, five modular-symbol decomposition prompts
+that require `sage.modular.modsym`, two Singular-interface prompts that require
+`sage.libs.singular`, and the previously untagged Magma serialization prompt
+are marked with exact `# needs ...` tags.
+
+The tags remain prompt-local.  Matrix creation, imports, and other setup rows
+continue to run, while only the unavailable operations and their dependent
+assertions become queryable skips.  The complete matrix-module dashboard
+advances as follows:
+
+```text
+before classification: 648 passed, 13 failed, 34 skipped
+after classification:  648 passed,  3 failed, 44 skipped
+new dependency skips:    10
+```
+
+The authoritative runner-version-128 SQLite database is
+`/tmp/cowasm-sagelite-matrix-deps-final.YJQRwZ/complete-matrix.sqlite3`.
+It records 695 blocks, no file-level error, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  Representative exact-line reruns under
+`/tmp/cowasm-sagelite-matrix-deps.dAFLzH/` and
+`/tmp/cowasm-sagelite-matrix-deps-final.YJQRwZ/line-1715.sqlite3` each record
+the target as one skipped block with no failures.  All neighboring setup rows
+queried in the final database pass.  The three remaining failures are two
+output mismatches at source lines 220 and 2325 and one stale
+`charpoly_linbox` cache assertion at line 1355.
+
+Validation includes the representative exact-line reruns, the complete
+matrix-module replay, exact skip-reason and neighboring-setup SQLite queries,
+SQLite lifecycle and integrity checks, accumulated-patch syntax, a zero-reject
+application to a clean Sagelite `f575cf6224f` snapshot, byte-for-byte comparison
+of the affected patched source with the tested build copy, and
+`git diff --check`.  This is source-only doctest metadata and needs no
+Cython/native rebuild, manifest schema change, or resource restaging.  The
+external developer Sagelite checkout remains untouched.  The next pass can
+repair or explicitly defer one of the three remaining semantic/runtime
+clusters, or select another persisted backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
