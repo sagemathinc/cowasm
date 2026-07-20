@@ -30,6 +30,17 @@ Near-term work should be cluster-driven:
 - validate narrowly first, then run full corpus or standalone only for shared
   runtime/build changes.
 
+Scheduled-run artifact policy:
+
+- create SQLite dashboards, worker scratch, reconstructed source trees, and
+  copy-on-write resource bundles under `/tmp/cowasm-sagelite-*`, not under the
+  project-local `.tmp` tree;
+- retain durable results as committed summaries and source changes rather than
+  copied runtime trees;
+- never recursively search or size the legacy project-local `.tmp` tree; when
+  old evidence is indispensable, address one exact known run directory or
+  database directly.
+
 ## Current State
 
 As of 2026-06-23, CoWasm has a first useful test loop:
@@ -57412,6 +57423,48 @@ parity/runtime/forge-resource tests, manifest hash validation, SQLite lifecycle,
 integrity, and empty-failure checks, and `git diff --check` pass.  No source or
 packaged runtime correction was needed.  The next pass can continue with corpus
 entries 658--667 or select another persisted backend/runtime cluster.
+
+Suffix-ellipsis exception and category continuation pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+687.  Entries 658--667 initially recorded 1,068 passed, six failed, and 833
+skipped blocks.  Nine files were clean; all six failures were in
+`sage/categories/sets_cat.py` and shared one runner-compatibility cause.
+
+Sage exception expectations commonly use a suffix ellipsis without a colon,
+such as `AttributeError...` and `NotImplementedError...`.  The CoWasm checker
+already normalized traceback exception classes and details, but its parser did
+not recognize that suffix form.  Runner version 128 treats the suffix as an
+ellipsis detail while retaining exact exception-class matching.  The standalone
+doctest smoke now covers both an exception with detail and one without detail.
+
+The retained results record:
+
+```text
+suffix-ellipsis focused smoke:               2 passed, 0 failed,   0 skipped
+complete sets_cat.py final:                342 passed, 0 failed, 167 skipped
+entries 658--667 before:                  1068 passed, 6 failed, 833 skipped
+entries 658--667 final:                   1074 passed, 0 failed, 833 skipped
+entries 668--677:                          255 passed, 0 failed, 634 skipped
+entries 678--687:                           77 passed, 0 failed,  66 skipped
+combined final windows:                   1406 passed, 0 failed, 1533 skipped
+```
+
+Following the scratch-storage policy introduced by this pass, the SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-2026-07-20-category-window-658-687/`, and the schema-169
+copy-on-write resource bundle is under `/tmp/cowasm-sagelite-schema-169/`.
+These paths are deliberately ephemeral; this committed summary is the durable
+evidence.  Each final database passes `PRAGMA integrity_check`, records a
+completed passing run under runner version 128, and has no failed file or block
+rows.
+
+The focused regression, complete affected-module replay, three repaired bounded
+replays, JavaScript and shell syntax checks, SQLite lifecycle, integrity, and
+empty-failure checks, and `git diff --check` pass.  This is a doctest-runner
+change and requires no native rebuild or Electron resource change.  The next
+pass can continue with corpus entries 688--697 or select another persisted
+backend/runtime cluster.
 
 ## Phase 6: TypeScript/NPM Direction
 

@@ -31,3 +31,10 @@ EOF
 - Do not steer the project toward being only a Pyodide clone. Pyodide is the reference point for browser scientific Python; CoWasm should differentiate through an interruptible terminal/runtime, filesystem semantics, dynamic C/C++ packages, and pure-math/SageMath capability.
 - Use Sagelite as the practical bridge toward SageMath-in-WebAssembly. Full SageMath is a long-term north star; near-term work should keep the runtime reliable and port high-value mathematical dependencies incrementally.
 - Preserve the current pinned Zig-based build as the known-good baseline while making the underlying clang/lld/WASI contract more explicit. Prefer incremental toolchain-backend work over a broad rewrite.
+
+## Scratch Artifacts and I/O Safety
+
+- Put generated test databases, worker state, reconstructed source trees, and copy-on-write runtime bundles under `/tmp`, not a project-local `.tmp` directory. `/tmp` is intentionally ephemeral and is not included in project backups or snapshots.
+- Keep durable evidence in tracked summaries and source changes. Do not retain copied runtimes or large generated trees in the repository after their result has been summarized.
+- Treat a project-local `.tmp` tree as opaque legacy scratch. Never run an unbounded recursive search, size scan, or `--no-ignore` command over it. Inspect only an exact known child path when legacy evidence is required.
+- Exclude `.tmp` explicitly from repository-wide searches even when the search tool would normally honor ignore files.

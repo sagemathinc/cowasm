@@ -26,6 +26,7 @@ bin-wasm/**
 *.tsbuildinfo
 zig-cache
 .hypothesis
+.tmp/
 upstream/sources/*
 scratch/*
 logs/*

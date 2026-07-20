@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 127;
+const doctestRunnerVersion = 128;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2653,6 +2653,10 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         candidates = []
         for index, line in enumerate(lines):
             exception_class, detail = self.__split_exception_line(line)
+            if exception_class is None and line.endswith("..."):
+                exception_class, _ = self.__split_exception_line(line[:-3].rstrip())
+                if exception_class is not None:
+                    detail = "..."
             if exception_class is None or not self.__looks_like_exception_class(exception_class):
                 continue
             candidates.append((index, exception_class, detail))
