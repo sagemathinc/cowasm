@@ -1461,6 +1461,13 @@ n = NN.from_integer(Integer(5))
 assert n.parent() is NN
 assert type(n) is NN.element_class
 print('sagelite-node-ok set element construction delivery smoke')"
+run_node_import "generic complex root delivery smoke" "from sage.all import ZZ, polygen
+from sage.rings.polynomial.complex_roots import complex_roots
+x = polygen(ZZ)
+roots = complex_roots(x**5 - x - 1)
+assert len(roots) == 5
+assert all(multiplicity == 1 for _, multiplicity in roots)
+print('sagelite-node-ok generic complex root delivery smoke')"
 run_node_import "scalar-extension map parent smoke" "from sage.all import QQ, ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 X = CombinatorialFreeModule(ZZ, ('x',))
@@ -1776,7 +1783,7 @@ print('sagelite-node-ok basic graph polynomial boundary smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=170
+electron_manifest_schema_version=171
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1799,6 +1806,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fast-vecto
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-incompatible-word-concatenation-delivery-v128"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-parameter-refinement-delivery-v129"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-element-construction-delivery-v130"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-complex-root-delivery-v131"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -1960,6 +1968,7 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/__init__.py"
   "site-packages/sage/rings/polynomial/all.py"
   "site-packages/sage/rings/polynomial/commutative_polynomial.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/complex_roots.py"
   "site-packages/sage/rings/polynomial/multi_polynomial.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/multi_polynomial_element.py"
   "site-packages/sage/rings/polynomial/multi_polynomial_ring.py"

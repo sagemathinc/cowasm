@@ -1109,6 +1109,21 @@ assert type(n) is NN.element_class
     console.log(
       "sagelite-electron-ok set element construction delivery smoke",
     );
+    console.log(
+      "sagelite-electron-start generic complex root delivery smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import ZZ, polygen
+from sage.rings.polynomial.complex_roots import complex_roots
+
+x = polygen(ZZ)
+roots = complex_roots(x**5 - x - 1)
+assert len(roots) == 5
+assert all(multiplicity == 1 for _, multiplicity in roots)
+`);
+    console.log(
+      "sagelite-electron-ok generic complex root delivery smoke",
+    );
     console.log("sagelite-electron-start scalar-extension map parent smoke");
     await python.exec(String.raw`
 from sage.all import QQ, ZZ

@@ -57522,6 +57522,60 @@ integrity, and empty-failure checks, and `git diff --check` pass.  No native
 rebuild was needed.  The next pass can continue with corpus entries 718--727 or
 select another persisted backend/runtime cluster.
 
+Generic complex-root delivery-contract pass on 2026-07-20 UTC:
+
+Three bounded corpus windows continued the curated dashboard through entry
+747.  Entries 718--727 initially recorded 849 passed, seven failed, and 251
+skipped blocks.  Nine files were clean; all seven failures were in
+`sage/rings/polynomial/complex_roots.py`.  Entries 728--747 were completely
+clean across cyclotomic, Hilbert, integer-valued, p-adic, Arb, MPFR, GF2X,
+homomorphism, constructor, skew-polynomial, root-refinement, term-order,
+toy Groebner-basis, Berlekamp--Massey, and small misc modules.
+
+The complex-root failures were a stale-resource delivery cluster, not a new
+backend defect.  The complete accumulated WASI source already supplies a
+generic square-free fallback and NumPy initial root seeds followed by interval
+certification.  The schema-170 resource bundle retained the older pure-Python
+module, so three root-isolation prompts raised the generic polynomial
+`NotImplementedError` and four dependent prompts failed with `NameError`.
+
+Staging the byte-identical accumulated-source `complex_roots.py` in a copy-on-
+write bundle closes the cluster without replacing the coherent native
+baseline.  The standalone and Electron-shaped smokes now require generic
+complex-root isolation with certified multiplicities.  The module is newly
+mandatory and hashed in the Electron resource manifest.  The manifest schema
+advances to version 171 and its smoke contract to
+`generic-complex-root-delivery-v131`.
+
+The retained results record:
+
+```text
+entries 718--727 before:                  849 passed, 7 failed, 251 skipped
+complete complex_roots.py final:           35 passed, 0 failed,   7 skipped
+entries 718--727 final:                   856 passed, 0 failed, 251 skipped
+entries 728--737:                         749 passed, 0 failed, 115 skipped
+entries 738--747:                         695 passed, 0 failed, 225 skipped
+combined final windows:                  2300 passed, 0 failed, 591 skipped
+Electron-shaped packaged smoke:          passed, including generic complex roots
+```
+
+The authoritative SQLite dashboards are under
+`/tmp/cowasm-sagelite-2026-07-20-category-window-718-747/`, and the manifest-
+validated copy-on-write resource bundle is under
+`/tmp/cowasm-sagelite-schema-171/`.  Every final database passes
+`PRAGMA integrity_check`, records a completed passing run, and has no failed
+file or block rows.  The resource manifest validates 545 side modules and 709
+required-resource hashes.
+
+The complete affected-module replay, repaired bounded replay, two continuation
+windows, direct packaged semantic probe, complete Electron-shaped smoke,
+manifest parity/runtime/forge-resource tests, manifest hash validation, exact
+staged-source comparison, Python compilation, JavaScript and shell syntax
+checks, SQLite lifecycle, integrity, and empty-failure checks, and
+`git diff --check` pass.  No native rebuild was needed.  The next pass can
+continue with corpus entries 748--757 or select another persisted backend/
+runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
