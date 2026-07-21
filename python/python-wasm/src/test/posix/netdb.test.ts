@@ -26,6 +26,31 @@ addrinfo = socket.getaddrinfo(
   expect(repr("addrinfo[0][4]")).toBe("('127.0.0.1', 443)");
 });
 
+test("connect maps native errno after SSL context initialization", async () => {
+  const { exec, repr } = await syncPython();
+  exec(`
+import errno
+import socket
+import ssl
+ssl.create_default_context()
+
+probe = socket.socket()
+probe.bind(("127.0.0.1", 0))
+unused_port = probe.getsockname()[1]
+
+client = socket.socket()
+try:
+    client.connect(("127.0.0.1", unused_port))
+except OSError as error:
+    connect_error = error
+finally:
+    client.close()
+    probe.close()
+`);
+  expect(repr("type(connect_error).__name__")).toBe("'ConnectionRefusedError'");
+  expect(repr("connect_error.errno == errno.ECONNREFUSED")).toBe("True");
+});
+
 // test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {
 //   await exec("s = socket.gethostbyaddr('google.com')");
 //   expect(await repr("s[0].endswith('.net')")).toBe("True");

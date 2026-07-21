@@ -228,6 +228,8 @@ extern int cowasm_vforkexec(char **argv, char *path);
 extern uid_t _geteuid(void);
 extern int _fchown(int fd, uid_t owner, gid_t group);
 extern int _fchmod(int fd, mode_t mode);
+extern void setErrno(int error_number);
+WASM_EXPORT(setErrno)
 
 void keepalive(void) {}
 WASM_EXPORT(keepalive)

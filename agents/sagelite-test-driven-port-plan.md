@@ -62426,6 +62426,55 @@ regenerates hundreds of unrelated native modules and does not add coverage for
 this TypeScript-only callback fix.  The external developer checkout and its
 intentional changes remain untouched.
 
+Socket-address, `connect`, and errno runtime pass on 2026-07-21 UTC:
+
+The next network probe showed that the remaining `connect` failure combined
+three runtime-boundary defects.  The kernel passed WASI's compact eight-byte
+IPv4 sockaddr length directly to the native host, whose `sockaddr_in` requires
+its padded native size; the host therefore rejected every otherwise valid
+IPv4 connection with `EINVAL`.  The native N-API addon reports errno values as
+decimal `Error.code` strings, while the POSIX bridge previously understood
+only numbers or symbolic strings.  Finally, once an error was mapped, the
+bridge's direct `setErrno` export still used the Zig wrapper bookkeeping that
+SSL initialization invalidates.
+
+The native socket addon now expands AF_INET and AF_INET6 addresses to their
+platform `sizeof(struct sockaddr_in...)` values for `bind` and `connect`, while
+the kernel preserves the complete compact WASI address length in its host-side
+object.  The errno bridge parses strict decimal N-API codes, constructs its
+reverse lookup only after WASM constants are initialized, and excludes
+non-errno native constants that share the same numeric values.  `setErrno` now
+has a generated function-pointer accessor, so the existing startup snapshot
+keeps this callback stable after side-module initialization.
+
+The new regression initializes an SSL context, binds an ephemeral loopback
+socket without listening, and connects a second socket to that reserved port.
+It now receives `ConnectionRefusedError` with the WASI/Python
+`errno.ECONNREFUSED` value 14 instead of `OSError(0)`, `EINVAL`, or a callback
+signature mismatch.  The checked results are:
+
+```text
+focused post-SSL netdb/connect Jest:        3 passed, 0 failed
+complete python-wasm POSIX Jest set:       23 passed, 0 failed, 2 skipped
+kernel TypeScript and Jest:                 3 passed, 0 failed
+kernel C/WASM smoke set:                    passed
+posix-node TypeScript/native socket smoke:  passed
+post-SSL loopback refusal:                  ConnectionRefusedError, errno 14
+unverified HTTPS HEAD to www.sagemath.org:  200 OK
+```
+
+An ordinary verified HTTPS request now gets through DNS, native connect, and
+the TLS handshake far enough to report a normal `SSLCertVerificationError`
+for the unavailable local issuer certificate.  Supplying an unverified context
+returns `200 OK`, confirming that socket transport is no longer the blocker.
+The next network-runtime cluster is therefore CA trust-store packaging and
+resource discovery, not DNS, callback ABI, sockaddr conversion, connect, or
+errno propagation.  A broad posix-node run also encountered its pre-existing
+DNS-order-sensitive `example.com` equality assertion (the same addresses were
+returned in a different order); the deterministic native socket smoke and all
+runtime-focused tests pass.  Validation additionally includes native addon and
+kernel WASM rebuilds plus `git diff --check`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

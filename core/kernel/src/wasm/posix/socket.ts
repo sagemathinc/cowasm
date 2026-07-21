@@ -65,15 +65,12 @@ export default function socket({
       posix,
       callFunction("recv_sockaddr_sa_family", sockaddrPtr)
     );
-    const sa_len = address_len - 2;
+    const sa_data_len = address_len - 2;
     const sa_data = recv.buffer(
       callFunction("recv_sockaddr_sa_data", sockaddrPtr),
-      sa_len
+      sa_data_len
     );
-    for (let i = sa_len; i < sa_len; i++) {
-      sa_data[i] = 0;
-    }
-    return { sa_family, sa_len, sa_data };
+    return { sa_family, sa_len: address_len, sa_data };
   }
 
   function native_fd(virtual_fd: number): number {

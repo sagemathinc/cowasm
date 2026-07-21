@@ -117,16 +117,36 @@ export default function posix(context: Context): PosixEnv {
   const Q: any = {};
 
   let nativeErrnoToSymbol: { [code: number]: string } = {};
-  if (context.posix.constants != null) {
-    for (const symbol in context.posix.constants) {
-      nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
+  function initNativeErrnoToSymbol(): void {
+    nativeErrnoToSymbol = {};
+    if (context.posix.constants != null) {
+      for (const symbol in context.posix.constants) {
+        // The native constants object also contains address families, socket
+        // flags, terminal flags, and many other values that overlap errno
+        // numerically.  Only build this reverse lookup from constants that are
+        // also errno symbols in the initialized WASM runtime.
+        if (symbol.startsWith("E") && constants[symbol] != null) {
+          nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
+        }
+      }
     }
   }
+  initNativeErrnoToSymbol();
   function setErrnoFromNative(
     nativeError: number | string,
     name: string,
     args
   ): void {
+    // Native Node addons set Error.code through napi_throw_error, whose code
+    // argument is always a string.  Accept their decimal errno strings as the
+    // native numbers they represent while preserving symbolic Node codes such
+    // as ENOENT.
+    if (
+      typeof nativeError == "string" &&
+      /^-?\d+$/.test(nativeError.trim())
+    ) {
+      nativeError = Number(nativeError);
+    }
     if (
       typeof nativeError == "number" &&
       (nativeError == 0 || isNaN(nativeError))
@@ -219,6 +239,7 @@ export default function posix(context: Context): PosixEnv {
   }
   Q.init = () => {
     initConstants(context);
+    initNativeErrnoToSymbol();
   };
   return Q;
 }

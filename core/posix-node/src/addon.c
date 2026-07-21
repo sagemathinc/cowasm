@@ -1250,6 +1250,20 @@ static void fill_sockaddr(struct sockaddr_storage *storage, int sa_family,
   memcpy(((char *)addr) + 2, sa_data, copy_len);
 }
 
+static socklen_t native_sockaddr_len(int sa_family, int supplied_len) {
+  /* WASI uses compact sockaddr layouts, while native sockaddr_in and
+     sockaddr_in6 include platform padding.  Passing the WASI length to a
+     native bind/connect call therefore produces EINVAL even though the copied
+     family, port, and address bytes are valid. */
+  if (sa_family == AF_INET) {
+    return (socklen_t)sizeof(struct sockaddr_in);
+  }
+  if (sa_family == AF_INET6) {
+    return (socklen_t)sizeof(struct sockaddr_in6);
+  }
+  return (socklen_t)supplied_len;
+}
+
 static napi_value js_socket(napi_env env, napi_callback_info info) {
   napi_value argv[3];
   int family, socktype, protocol;
@@ -1282,7 +1296,8 @@ static napi_value js_bind(napi_env env, napi_callback_info info) {
   }
   struct sockaddr_storage storage;
   fill_sockaddr(&storage, sa_family, data, data_len);
-  if (bind(socket_fd, (struct sockaddr *)&storage, (socklen_t)sa_len) == -1) {
+  if (bind(socket_fd, (struct sockaddr *)&storage,
+           native_sockaddr_len(sa_family, sa_len)) == -1) {
     throw_errno(env, "error calling bind");
     return NULL;
   }
@@ -1304,7 +1319,8 @@ static napi_value js_connect(napi_env env, napi_callback_info info) {
   }
   struct sockaddr_storage storage;
   fill_sockaddr(&storage, sa_family, data, data_len);
-  if (connect(socket_fd, (struct sockaddr *)&storage, (socklen_t)sa_len) == -1) {
+  if (connect(socket_fd, (struct sockaddr *)&storage,
+              native_sockaddr_len(sa_family, sa_len)) == -1) {
     throw_errno(env, "error calling connect");
     return NULL;
   }
