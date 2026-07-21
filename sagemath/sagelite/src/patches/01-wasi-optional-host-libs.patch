@@ -28980,3 +28980,9 @@ diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
 @@ -481 +481 @@
 -        sage: elliptic_e(z, 1).simplify()       # not tested                            # needs sage.symbolic
 +        sage: elliptic_e(z, 1).simplify()                                               # needs sage.symbolic
+diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
+--- a/src/sage/structure/element.pyx
++++ b/src/sage/structure/element.pyx
+@@ -2719 +2719 @@
+-            sage: x^(2^64 + 12345)  # known bug: macos                                  # needs sage.rings.number_field
++            sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field

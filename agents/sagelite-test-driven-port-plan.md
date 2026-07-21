@@ -59869,6 +59869,47 @@ checkout and its intentional changes remain untouched.  The next pass can
 audit another persisted deferred marker or select a separate backend/runtime
 cluster.
 
+Polynomial exponent-overflow stale-deferral pass on 2026-07-21 UTC:
+
+The macOS-specific known-bug marker on the large multivariate-polynomial
+exponent test in `sage/structure/element.pyx` is now removed.  A focused
+`--deferred=known-bug --optional=sage.rings.number_field` replay reached the
+polynomial implementation and raised the exact documented
+`OverflowError: exponent overflow (2147483648)`.  The runtime behavior is
+therefore already correct; the row retains only its exact number-field
+dependency contract.
+
+The retained runner-version-128 results record:
+
+```text
+forced deferred target before:      1 passed, 0 failed,   3 skipped
+default focused row final:           0 passed, 0 failed,   5 skipped
+number-field focused row final:      1 passed, 0 failed,   3 skipped
+complete element module final:     399 passed, 0 failed, 339 skipped
+deferred rows in complete final:     0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-element-overflow-audit.CTKZRU/element-line-2719.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-element-overflow-final.CSJPfd/`; all three record
+completed passing lifecycles, no block or file failures, no deferred rows,
+and `PRAGMA integrity_check = ok`.  In the default profile the setup and
+target rows both record `optional:sage.rings.number_field`; with that feature
+enabled the target records the expected overflow as a pass.
+
+Validation includes the forced, default, and number-field-enabled exact-line
+replays, the complete default-module replay, exact SQLite lifecycle, status,
+tag, deferred-row, failure, and integrity checks, `git diff --check`, a
+zero-reject sequential application of all 1,506 accumulated-patch sections
+and 4,513 hunks to a clean Sagelite `f575cf6224f` snapshot, and byte-for-byte
+comparison of the reconstructed element source with the tested patched copy.
+This is source-doctest metadata only and needs no native WASM rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+pass can audit another persisted deferred marker or select a separate
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
