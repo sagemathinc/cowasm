@@ -60431,6 +60431,57 @@ permanent resource restaging.  The external developer Sagelite checkout and
 its intentional changes remain untouched.  The next pass can audit another
 persisted deferred marker or select a separate backend/runtime cluster.
 
+C-finite negative-slice semantics pass on 2026-07-21 UTC:
+
+The historical `# not tested` row in `sage/rings/cfinite_sequence.py` exposed
+a real sequence-slicing bug.  `CFiniteSequence.__getitem__()` normalized slice
+bounds with `slice.indices()` against an invented finite length.  That turns
+the requested integer interval `[-1, 4)` into the empty interval, so the
+documented `r[-1:4]` returned `[]`.  Its expected output also contained the
+typo `0 -2` instead of separate `0, -2` entries.
+
+The generic implementation now treats finite slices as direct integer ranges.
+Negative indices therefore retain the class's existing zero-extension
+semantics, reverse slices can cross zero, and an omitted start defaults to
+zero.  Because the sequence is infinite, an omitted stop raises the explicit
+`ValueError: slice stop must be specified`.  The source regression covers all
+four behaviors and removes the generic deferral from the repaired row.
+
+The retained runner-version-128 results record:
+
+```text
+forced negative slice before:       0 passed, 1 failed,  0 skipped (actual [])
+feature-selected negative final:    1 passed, 0 failed,  0 skipped
+feature-selected reverse final:     1 passed, 0 failed,  0 skipped
+feature-selected open-stop final:   1 passed, 0 failed,  0 skipped
+default focused replay final:       exact optional:sage.symbolic skips
+complete feature diagnostic:      200 passed, 72 failed, 4 skipped
+```
+
+The before database is
+`/tmp/cowasm-sagelite-cfinite-negative-slice.v41sfD/cfinite-line-617.sqlite3`.
+The authoritative final databases and manifest-validated copy-on-write
+resource bundle are under
+`/tmp/cowasm-sagelite-cfinite-negative-slice-final.t3AS21/`.  The complete
+diagnostic records every edited slice/setup row as a pass.  Its 72 independent
+failures are pre-existing broad-module startup and display clusters, led by 65
+`NameError` rows where separately extracted docstrings use an unseeded `x`;
+they do not involve `__getitem__()`.  The default focused database contains no
+deferred rerun and preserves the file-wide `sage.symbolic` dependency.
+
+Validation includes the before and final exact-line replays, the complete
+feature-selected module diagnostic, default dependency-only replay,
+reconstructed-source replays, exact SQLite status, tag, lifecycle, failure-
+cluster, deferred-query, and integrity checks, Python syntax, accumulated-
+patch syntax, and `git diff --check`.  All 1,043 accumulated patch sections
+and 4,532 hunks apply without rejects to a fresh Sagelite `f575cf6224f`
+archive, and the reconstructed C-finite source is byte-for-byte identical to
+the tested patched copy.  This is a pure-Python sequence fix and needs no
+native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit the separate C-finite
+startup-name clusters or select another persisted backend/runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

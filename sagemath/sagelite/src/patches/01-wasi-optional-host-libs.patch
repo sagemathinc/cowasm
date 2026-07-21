@@ -29268,3 +29268,30 @@ diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptot
 +            sage: errors = sage.structure.element.coercion_traceback(dump=False)
 +            sage: [error.splitlines()[-1].split(':', 1)[0] for error in errors]
 +            ['TypeError', 'AttributeError', 'TypeError', 'AttributeError']
+diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequence.py
+--- a/src/sage/rings/cfinite_sequence.py
++++ b/src/sage/rings/cfinite_sequence.py
+@@ -615,4 +615,12 @@
+             sage: r[0:4]
+             [1, 0, -2, 0]
++            sage: r[:4]
++            [1, 0, -2, 0]
+-            sage: r[-1:4]             # not tested, python will not allow this!
+-            [0, 1, 0 -2, 0]
++            sage: r[-1:4]
++            [0, 1, 0, -2, 0]
++            sage: r[3:-2:-1]
++            [0, -2, 0, 1, 0]
++            sage: r[1:]
++            Traceback (most recent call last):
++            ...
++            ValueError: slice stop must be specified
+@@ -656,3 +660,6 @@
+         if isinstance(key, slice):
+-            m = max(key.start, key.stop)
+-            return [self[ii] for ii in range(*key.indices(m + 1))]
++            if key.stop is None:
++                raise ValueError("slice stop must be specified")
++            start = 0 if key.start is None else key.start
++            step = 1 if key.step is None else key.step
++            return [self[ii] for ii in range(start, key.stop, step)]
