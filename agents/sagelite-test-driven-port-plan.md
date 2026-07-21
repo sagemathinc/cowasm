@@ -61478,6 +61478,55 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Pairing-heap bounded-scale promotion on 2026-07-21 UTC:
+
+The final generic deferred row in
+`sage/data_structures/pairing_heap.pyx` is now active, bounded
+browser-profile coverage.  The historical example ran the randomized heap
+comparison with one million items, printed three literal host CPU timings,
+and combined `# not tested`, long-time, and random metadata.  Explicitly
+selecting both the long and deferred options reaches the worker timeout after
+20 seconds before producing that machine-specific transcript.
+
+The replacement runs the same three-implementation ordering comparison with
+1,000 items and expects no output.  This retains a larger-capacity correctness
+check without imposing a host-performance contract; the adjacent verbose
+100-item example continues to demonstrate the timing output under its existing
+`# random` acceptance.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:    281 passed, 0 failed, 13 skipped
+forced historical large row:    timed out after 20 seconds
+focused final bounded row:        1 passed, 0 failed,  0 skipped
+complete proposed module:       282 passed, 0 failed, 12 skipped
+failure-disallowing make target: 282 passed, 0 failed, 12 skipped
+Electron resource smoke:         passed
+```
+
+The authoritative historical, forced, focused, proposed, clean-reconstructed,
+and make-target SQLite databases, worker roots, clean source reconstruction,
+patch log, focused corpus fixture, and Electron smoke log are under
+`/tmp/cowasm-sagelite-pairing-heap-audit.qhhsCR/`.  Both complete final
+databases have closed passing lifecycles, empty saved block- and file-failure
+cluster queries, no deferred rows, and `PRAGMA integrity_check = ok`; the
+forced database records the expected closed file-level `timeout`.
+
+Validation includes the historical default and forced long/deferred replays,
+the focused and complete proposed replays, the failure-disallowing
+`test-sage-doctest-corpus` make target against a pinned clean source
+reconstruction, exact SQLite lifecycle, integrity, deferred-row, and saved
+failure-cluster checks, accumulated-patch syntax, zero-reject sequential
+application to pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron-shaped resource
+smoke.  All 1,578 accumulated source-patch sections (1,062 `diff --git` and
+516 legacy sections) and 4,580 hunks apply.  This is deterministic doctest-
+coverage work only and needs no native WASM rebuild, Electron manifest change,
+or permanent resource restaging.  The external developer Sagelite checkout
+and its intentional changes remain untouched.  The next pass can audit another
+default-profile deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

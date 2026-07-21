@@ -29914,3 +29914,22 @@ diff --git a/src/sage/misc/classcall_metaclass.pyx b/src/sage/misc/classcall_met
      """
      cdef int i
      for 0<=i<n:
+diff --git a/src/sage/data_structures/pairing_heap.pyx b/src/sage/data_structures/pairing_heap.pyx
+--- a/src/sage/data_structures/pairing_heap.pyx
++++ b/src/sage/data_structures/pairing_heap.pyx
+@@ -1384,10 +1384,11 @@ def _compare_heaps(n=100, verbose=False):
+         PairingHeap_of_n_integers: 7.800000000024454e-05
+         PairingHeap_of_n_hashables: 9.400000000026054e-05
+         PairingHeap (C++): 6.899999999987472e-05
+-        sage: _compare_heaps(1000000, verbose=True)  # not tested (long time), random
+-        PairingHeap_of_n_integers: 1.5106779999999995
+-        PairingHeap_of_n_hashables: 4.998040000000001
+-        PairingHeap (C++): 1.7841750000000012
++
++        Larger heaps exercise the same ordering contract without comparing
++        machine-dependent timings::
++
++        sage: _compare_heaps(1000)
+     """
+     from sage.misc.prandom import shuffle
+     from sage.misc.timing import cputime
