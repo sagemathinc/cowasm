@@ -2148,6 +2148,16 @@ __cowasm_tested_module_global_exclusions = {
 }
 
 
+def __cowasm_seed_tested_module_doctest_globals(namespace, module_name):
+    if module_name == "sage.rings.cfinite_sequence":
+        try:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            from sage.rings.rational_field import QQ
+        except BaseException:
+            return
+        namespace.setdefault("x", PolynomialRing(QQ, "x").gen())
+
+
 def __cowasm_namespace(filename):
     namespace = {}
     exec("from sage.all import *", namespace)
@@ -2173,6 +2183,7 @@ def __cowasm_namespace(filename):
             for name, value in vars(module).items():
                 if name not in excluded_names:
                     namespace.setdefault(name, value)
+            __cowasm_seed_tested_module_doctest_globals(namespace, module_name)
             __cowasm_resolve_core_lazy_namespace(namespace)
     namespace["__name__"] = "__main__"
     try:

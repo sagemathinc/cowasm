@@ -60482,6 +60482,53 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit the separate C-finite
 startup-name clusters or select another persisted backend/runtime boundary.
 
+C-finite polynomial-startup namespace pass on 2026-07-21 UTC:
+
+The dominant startup-name cluster exposed by the feature-selected complete
+`sage/rings/cfinite_sequence.py` diagnostic is narrowed.  The WASI
+`sage.all` profile intentionally omits the command-line symbolic startup,
+including its predefined symbolic `x`, but most C-finite examples only need a
+rational polynomial generator.  Their first use of `x` consequently failed
+and cascaded through later examples in each independently isolated docstring.
+
+The doctest runner now gives this tested module a scoped `QQ['x']`-equivalent
+polynomial generator.  It does not import the unavailable
+`sage.symbolic.expression` extension or expose `x` to unrelated doctest
+modules.  The standalone smoke retains both the module path and the first
+Fibonacci constructor contract so this special seed cannot silently regress.
+
+The retained runner-version-128 results record:
+
+```text
+focused module-docstring line 17 before: 0 passed, 1 failed, 0 skipped
+focused module-docstring line 17 final:  1 passed, 0 failed, 0 skipped
+focused class-docstring line 187 final:  1 passed, 0 failed, 0 skipped
+complete feature diagnostic before:   200 passed, 72 failed, 4 skipped
+complete feature diagnostic final:    242 passed, 31 failed, 4 skipped
+```
+
+The fresh failing exact-line database is
+`/tmp/cowasm-sagelite-cfinite-x-audit3.3IPZEn/line-17.sqlite3`.  The
+authoritative passing exact-line databases are
+`/tmp/cowasm-sagelite-cfinite-poly-x-final.j3vFqo/line-17.sqlite3` and
+`/tmp/cowasm-sagelite-cfinite-class-x-final.CiuoMt/line-187.sqlite3`.  The
+authoritative complete-module database is
+`/tmp/cowasm-sagelite-cfinite-x-full-final.YcE3AC/cfinite-complete.sqlite3`;
+it records 277 blocks, no file-level error, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  The remaining 31 failures are independent
+symbolic-expression, `var`, PARI/cypari2, and comparison-output boundaries;
+the 37 matching prior `NameError` rows that directly depended on polynomial
+`x` are now passing.
+
+Validation includes the before and final exact-line replays, a second isolated
+class-docstring replay, the complete feature-selected module diagnostic, the
+new standalone-smoke command against the manifest-validated copy-on-write
+resource bundle, exact SQLite transition, lifecycle, cluster, and integrity
+checks, Node and shell syntax, and `git diff --check`.  This is a host doctest-
+runner compatibility seed and needs no native WASM rebuild, Electron manifest
+change, or resource restaging.  The next pass can classify the remaining true
+symbolic rows or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

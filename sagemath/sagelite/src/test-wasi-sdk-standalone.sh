@@ -3256,6 +3256,38 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_cfinite_namespace_db="$probe_dir/sagelite-doctest-cfinite-namespace.sqlite3"
+doctest_cfinite_namespace_log="$dist_dir/doctest-cfinite-namespace.log"
+doctest_cfinite_namespace_file="$build_dir/src/sage/rings/cfinite_sequence.py"
+doctest_cfinite_namespace_line="$(grep -nF 'sage: fibo = CFiniteSequence(x/(1-x-x^2))' "$doctest_cfinite_namespace_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --optional=sage.symbolic \
+      --line "$doctest_cfinite_namespace_line" \
+      --sqlite "$doctest_cfinite_namespace_db" \
+      "$doctest_cfinite_namespace_file" \
+      >"$doctest_cfinite_namespace_log" 2>&1
+doctest_cfinite_namespace_status=$?
+set -e
+if [ "$doctest_cfinite_namespace_status" -eq 124 ]; then
+  tail -120 "$doctest_cfinite_namespace_log" >&2
+  record_blocker "sagelite-blocked: sage -t C-finite namespace smoke timed out after $node_import_timeout; see $doctest_cfinite_namespace_log for the first runtime blocker."
+fi
+if [ "$doctest_cfinite_namespace_status" -ne 0 ]; then
+  tail -120 "$doctest_cfinite_namespace_log" >&2
+  sqlite3 "$doctest_cfinite_namespace_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t C-finite namespace smoke failed; see $doctest_cfinite_namespace_log for the first runtime blocker."
+fi
+doctest_cfinite_namespace_count="$(sqlite3 "$doctest_cfinite_namespace_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_cfinite_namespace_line and source like 'fibo = CFiniteSequence(x/(1-x-x^2))%';")"
+if [ "$doctest_cfinite_namespace_count" != "1" ]; then
+  cat "$doctest_cfinite_namespace_log" >&2
+  sqlite3 "$doctest_cfinite_namespace_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t C-finite namespace smoke did not seed the module's polynomial generator."
+fi
 doctest_module_global_exclusion_db="$probe_dir/sagelite-doctest-module-global-exclusion.sqlite3"
 doctest_module_global_exclusion_log="$dist_dir/doctest-module-global-exclusion.log"
 doctest_module_global_exclusion_file="$build_dir/src/sage/misc/dev_tools.py"
