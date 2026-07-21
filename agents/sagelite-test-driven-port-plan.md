@@ -59740,6 +59740,50 @@ its intentional changes remain untouched.  The next pass can audit the
 ambient-space TestSuite deferral or select another persisted backend/runtime
 cluster.
 
+Generic ambient-space applicable-TestSuite coverage pass on 2026-07-21 UTC:
+
+The historical deferred `TestSuite(A).run()` row in
+`sage/schemes/generic/ambient_space.py` mixed applicable generic-parent checks
+with contracts that cannot hold for the abstract `AmbientSpace` base class.
+A forced `--deferred=not-tested` replay failed eight suite methods: seven
+element-oriented checks asked the abstract class for a point and reached the
+unavailable Singular-backed scheme path, while `_test_pickling` expected two
+noncanonical abstract parents to compare equal.  The six independent generic
+checks for cardinality, category, construction, equality, allocation, and
+unimplemented methods all passed.
+
+The accumulated WASI patch now runs the suite by default with only those eight
+inapplicable methods explicitly skipped.  This removes the generic deferral
+while preserving meaningful coverage of the abstract parent contract.
+
+The retained runner-version-128 results record:
+
+```text
+forced deferred row before:  0 passed, 1 failed, 0 skipped
+default focused row final:    1 passed, 0 failed, 0 skipped
+complete module final:       55 passed, 0 failed, 1 skipped
+deferred rows before/final:   1 / 0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-ambient-space-audit.PtHMEY/ambient-line-36.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-ambient-space-final.KbqNSx/`; both record completed
+passing lifecycles, no block or file failures, no deferred reruns, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the forced and default exact-line replays, the complete-
+module replay, direct verbose execution of the narrowed suite, exact SQLite
+status, lifecycle, deferred-query, and integrity checks, Python syntax, a
+zero-reject application of the accumulated patch to a clean Sagelite
+`f575cf6224f` snapshot, byte-for-byte comparison of the reconstructed ambient-
+space source with the tested patched copy, and `git diff --check`.  This is
+source-doctest coverage only and needs no native WASM rebuild, Electron
+manifest change, or resource restaging.  The external developer Sagelite
+checkout and its intentional changes remain untouched.  The next pass can
+audit another persisted deferred marker or select a separate backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

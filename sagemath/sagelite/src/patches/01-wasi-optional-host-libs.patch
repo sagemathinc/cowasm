@@ -28957,3 +28957,14 @@ diff --git a/src/sage/plot/plot3d/tachyon.py b/src/sage/plot/plot3d/tachyon.py
 @@ -789 +789 @@
 -            sage: show(t)  # known bug (trac #7232)
 +            sage: show(t)  # needs subprocess
+diff --git a/src/sage/schemes/generic/ambient_space.py b/src/sage/schemes/generic/ambient_space.py
+--- a/src/sage/schemes/generic/ambient_space.py
++++ b/src/sage/schemes/generic/ambient_space.py
+@@ -36 +36,6 @@
+-            sage: TestSuite(A).run() # not tested (abstract scheme with no elements?)
++            sage: TestSuite(A).run(skip=[
++            ....:     '_test_an_element', '_test_elements',
++            ....:     '_test_elements_eq_reflexive',
++            ....:     '_test_elements_eq_symmetric',
++            ....:     '_test_elements_eq_transitive', '_test_elements_neq',
++            ....:     '_test_pickling', '_test_some_elements'])
