@@ -30022,3 +30022,18 @@ diff --git a/src/sage/misc/viewer.py b/src/sage/misc/viewer.py
 @@ -14 +14 @@
 -    sage: viewer.pdf_viewer('open -a /Applications/Adobe\ Reader.app') # not tested
 +    sage: viewer.pdf_viewer('open -a /Applications/Adobe\ Reader.app')
+diff --git a/src/sage/categories/covariant_functorial_construction.py b/src/sage/categories/covariant_functorial_construction.py
+--- a/src/sage/categories/covariant_functorial_construction.py
++++ b/src/sage/categories/covariant_functorial_construction.py
+@@ -272,11 +272,0 @@
+-        We note that because ``Algebras.WithBasis`` is not lazily imported
+-        on startup (see :issue:`22955`), the test fails at a different
+-        point in the code. However, if this import becomes lazy again, then
+-        the following error will be generated and can replace the above::
+-
+-            sage: F._foo  # not tested
+-            Traceback (most recent call last):
+-            ...
+-            ValueError: could not infer axiom for the nested class
+-            <...AlgebrasWithBasis'> of <...GradedAlgebrasWithBasis'>
+-

@@ -61824,6 +61824,60 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Covariant-functor alternate-error doctest cleanup on 2026-07-21 UTC:
+
+The sole generic deferred row in
+`sage/categories/covariant_functorial_construction.py` no longer documents an
+unreachable alternate exception.  The active transcript assigns
+`F._foo = F._base_category_class[0]` and immediately verifies the current
+`AssertionError` raised by category-class lookup.  A second `F._foo` prompt
+claimed that a future lazy-import configuration could instead raise
+`ValueError`, but the current runtime cannot reach that branch.  Forcing the
+complete historical module reproduced the same `AssertionError` already
+covered by the active prompt, while an isolated exact-line replay had no `F`
+binding and raised `NameError`.  The speculative paragraph and deferred
+prompt are removed rather than promoted as a false runtime contract.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:        61 passed, 0 failed, 7 skipped
+forced historical exact line:       0 passed, 1 failed, 0 skipped (NameError)
+forced historical complete module: 61 passed, 1 failed, 6 skipped (AssertionError)
+complete proposed module:          61 passed, 0 failed, 6 skipped
+complete reconstructed module:     61 passed, 0 failed, 6 skipped
+failure-disallowing make target:   61 passed, 0 failed, 6 skipped
+Electron resource smoke:           passed
+```
+
+The authoritative historical, forced, proposed, reconstructed, and strict
+SQLite databases, worker roots, pinned clean source reconstructions, patch
+logs, focused corpus fixture, copy-on-write resource bundle, and Electron
+smoke log are under
+`/tmp/cowasm-sagelite-covariant-audit.oxViJ3/`.  The three final databases
+have closed passing lifecycles, empty saved block- and file-failure cluster
+queries, and `PRAGMA integrity_check = ok`.  The strict database has no
+generic `deferred:not tested` row; its six remaining skips are two explicit
+`# not implemented` contracts and four `sage.modules` dependency boundaries.
+
+Validation includes historical default, exact-line, and complete forced
+replays, complete proposed and pinned-clean-reconstructed module replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, deferred-row, and saved failure-cluster checks,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,585
+accumulated source-patch sections (1,069 `diff --git` and 516 legacy sections)
+and 4,592 hunks apply.  The make target's first refresh attempt encountered
+the already documented overlapping edits in the external developer checkout;
+strict validation therefore used the pinned clean reconstruction, and the
+generated `build/wasi-sdk` source was restored from that validated tree.  The
+external checkout and its intentional changes remain untouched.  This is
+documentation-only cleanup and needs no native WASM rebuild, Electron manifest
+change, or permanent resource restaging.  The next pass can classify the
+remaining five-minute `fast_digraph.test_popcount()` marker as long-time
+coverage or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
