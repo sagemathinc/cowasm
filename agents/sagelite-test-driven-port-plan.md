@@ -61676,6 +61676,59 @@ developer Sagelite checkout and its intentional changes remain untouched.
 The next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Disjoint-union bounded nontermination promotion on 2026-07-21 UTC:
+
+All three generic deferred rows in
+`sage/sets/disjoint_union_enumerated_sets.py` are now active, bounded
+browser-profile coverage.  The historical membership example asked whether
+an integer belongs to an infinite union of partition families, while the two
+iteration examples tried to exhaust an infinite family whose four elements
+are followed by infinitely many empty components.  Neither operation can
+prove that no later component supplies another match, so a forced historical
+replay reaches the worker timeout.
+
+The replacement constructs an infinite family of finite enumerated sets and
+checks the first twenty components for the absent value instead of starting
+the unbounded membership search.  The iteration example now states why
+exhaustion or requesting a fifth element would hang, imports `islice` locally,
+and retains the existing exact four-element prefix check.  The module now has
+no generic `# not tested` rows.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:     59 passed, 0 failed, 70 skipped
+forced historical module:        timed out after 3 seconds
+focused membership row:           1 passed, 0 failed,  0 skipped
+focused iteration row:            1 passed, 0 failed,  0 skipped
+complete reconstructed module:   62 passed, 0 failed, 67 skipped
+failure-disallowing make target: 62 passed, 0 failed, 67 skipped
+Electron resource smoke:          passed
+```
+
+The authoritative historical, forced, focused, complete, reconstructed, and
+strict make-target SQLite databases, worker roots, pinned clean source
+reconstruction, patch logs, focused corpus fixture, and schema-191
+copy-on-write resource bundle are under
+`/tmp/cowasm-sagelite-disjoint-union-audit.OK24x3/`.  The strict database has
+a closed passing lifecycle, 129 block rows, empty saved block- and file-failure
+cluster queries, no deferred rows, and `PRAGMA integrity_check = ok`; the
+forced database records the expected closed file-level `timeout`.
+
+Validation includes the historical default and forced-deferred replays, both
+exact-line bounded replays, complete proposed and pinned-clean-reconstructed
+module replays, the failure-disallowing `test-sage-doctest-corpus` make target,
+exact SQLite lifecycle, integrity, deferred-row, and saved failure-cluster
+checks, accumulated-patch syntax, zero-reject sequential application to pinned
+clean Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,582
+accumulated source-patch sections and 4,588 hunks apply.  This is deterministic
+documentation and doctest-coverage work only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

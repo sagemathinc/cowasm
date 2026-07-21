@@ -29979,3 +29979,30 @@ diff --git a/src/sage/combinat/integer_lists/invlex.pyx b/src/sage/combinat/inte
 +            ....:                     check=False).is_empty()
 +            ....:     for n in range(20))
 +            True
+diff --git a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/disjoint_union_enumerated_sets.py
+--- a/src/sage/sets/disjoint_union_enumerated_sets.py
++++ b/src/sage/sets/disjoint_union_enumerated_sets.py
+@@ -378,3 +378,10 @@
+-        The following call will loop forever::
+-
+-            sage: 2 in U4 # not tested, loop forever
++        Testing whether ``-1`` belongs to the following union would loop
++        forever: the default implementation cannot rule it out over an
++        infinite family.  Bounded component checks show the issue without
++        starting the unbounded search::
++
++            sage: U5 = DisjointUnionEnumeratedSets(
++            ....:          Family(NonNegativeIntegers(),
++            ....:                 lambda n: FiniteEnumeratedSet(range(n))))
++            sage: all(-1 not in U5._family[n] for n in range(20))
++            True
+@@ -448 +455,3 @@
+-        The following cannot be determined to be finite, but the first elements can still be retrieved::
++        The following cannot be determined to be finite: exhausting it or
++        requesting a fifth element would hang.  Its four elements can still
++        be retrieved with a bounded prefix::
+@@ -449,0 +459 @@
++            sage: from itertools import islice
+@@ -453,2 +462,0 @@
+-            sage: list(U)  # not tested
+-            sage: list(islice(iter(U), 5))  # not tested, hangs
