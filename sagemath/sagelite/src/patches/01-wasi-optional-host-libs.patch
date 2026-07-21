@@ -3492,6 +3492,12 @@ diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/bin
 @@ -1478 +1479 @@
 -            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list)
 +            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list) # needs sage.libs.pari
+@@ -1650 +1651 @@
+-            sage: timeit('Q.solve_integer(n)')                          # not tested
++            sage: timeit('Q.solve_integer(n)')                          # needs IPython sage.libs.pari
+@@ -1652 +1653 @@
+-            sage: timeit('Q.solve_integer(n, algorithm="cornacchia")')  # not tested
++            sage: timeit('Q.solve_integer(n, algorithm="cornacchia")')  # needs IPython sage.libs.pari
 @@ -1810,0 +1813 @@
 +            sage: # needs sage.libs.pari
 diff -urN a/src/sage/quadratic_forms/quadratic_form__split_local_covering.py b/src/sage/quadratic_forms/quadratic_form__split_local_covering.py

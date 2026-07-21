@@ -59824,6 +59824,51 @@ checkout and its intentional changes remain untouched.  The next pass can
 audit the adjacent binary-quadratic-form timing deferrals or select a separate
 backend/runtime cluster.
 
+Binary-quadratic-form timing dependency-metadata pass on 2026-07-21 UTC:
+
+The two historical timing deferrals in
+`sage/quadratic_forms/binary_qf.py` are now classified by their complete
+execution contract.  A stateful complete-module replay with
+`--deferred=not-tested` reached both benchmarks in normal doctest order, and
+both failed when Sage's timing helper imported `sage.repl.interpreter`, which
+requires the intentionally absent IPython package.  The operations being
+timed are the adjacent general and Cornacchia `solve_integer()` calls, whose
+implementations already have exact `sage.libs.pari` dependency metadata.
+Both rows therefore now carry the conjunction
+`# needs IPython sage.libs.pari` instead of a generic `# not tested` marker.
+
+The retained runner-version-128 results record:
+
+```text
+forced deferred module before:  243 passed, 2 failed, 114 skipped
+default complete module final:  243 passed, 0 failed, 116 skipped
+focused lines 1651/1653 final:     0 failed, exact combined optional skips
+deferred rows before/final:        2 / 0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-binary-qf-audit.fLfgSB/binary-qf-deferred.sqlite3`;
+both failed blocks record `ModuleNotFoundError: IPython`.  The authoritative
+final databases are under
+`/tmp/cowasm-sagelite-binary-qf-final.1H0bXR/`.  The complete-module database
+records a completed passing lifecycle, no block or file failures, an empty
+deferred-rerun query, and `PRAGMA integrity_check = ok`.  Both timing rows
+record `optional:ipython,sage.libs.pari` with the corresponding two `needs`
+tags.
+
+Validation includes the forced stateful complete-module replay, both default
+exact-line replays, the complete default-module replay, exact SQLite status,
+tag, lifecycle, deferred-query, failure-cluster, and integrity checks, Python
+syntax, accumulated-patch syntax, a zero-reject sequential application of all
+1,505 diff sections and 4,512 hunks to a clean Sagelite `f575cf6224f`
+snapshot, byte-for-byte comparison of the reconstructed binary-quadratic-form
+source with the tested patched copy, and `git diff --check`.  This is source-
+doctest dependency metadata only and needs no native WASM rebuild, Electron
+manifest change, or resource restaging.  The external developer Sagelite
+checkout and its intentional changes remain untouched.  The next pass can
+audit another persisted deferred marker or select a separate backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
