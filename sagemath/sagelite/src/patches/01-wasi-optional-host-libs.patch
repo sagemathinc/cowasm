@@ -29582,3 +29582,13 @@ diff --git a/src/sage/symbolic/function.pyx b/src/sage/symbolic/function.pyx
 +        other_key = (other_cls.__module__, other_cls.__qualname__,
 +                     (<Function>other)._name, (<Function>other)._nargs)
 +        return richcmp(self_key, other_key, op)
+diff --git a/src/sage/features/__init__.py b/src/sage/features/__init__.py
+--- a/src/sage/features/__init__.py
++++ b/src/sage/features/__init__.py
+@@ -976,2 +976 @@ class PythonModule(Feature):
+-    Not all builds of python include the ``ssl`` module, so you could check
+-    whether it is available::
++    The ``sys`` module is part of every Python build, so requiring it succeeds::
+@@ -980 +979 @@ class PythonModule(Feature):
+-        sage: PythonModule("ssl").require()  # not tested - output depends on the python build
++        sage: PythonModule("sys").require()

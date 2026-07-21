@@ -61093,6 +61093,51 @@ a second full 1,100-plus-file corpus refresh would not add proportionate
 validation.  The next scheduled pass can select another persisted
 backend/runtime cluster or audit a separate default-profile deferred marker.
 
+Python-module deterministic requirement promotion on 2026-07-21 UTC:
+
+The final generic deferred row in `sage/features/__init__.py` is now active,
+portable browser-profile coverage.  The historical example called
+`PythonModule("ssl").require()`, but both success and failure depended on how
+the host Python was built, so upstream marked the no-output call as
+`# not tested`.  Forcing that row in the current CoWasm runtime happened to
+pass, but retaining it would have made the documentation contract vary with
+the selected Python build.
+
+The example now requires `sys`, which is part of every Python implementation.
+This exercises the same successful `PythonModule.require()` path with a stable
+no-output expectation and removes the generic deferral without asserting that
+an optional networking module must exist in every target profile.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module: 125 passed, 0 failed, 22 skipped
+historical forced row:         1 passed, 0 failed,  0 skipped
+focused final row:             1 passed, 0 failed,  0 skipped
+complete final module:       126 passed, 0 failed, 21 skipped
+complete reconstructed final: 126 passed, 0 failed, 21 skipped
+Electron resource smoke:     passed
+```
+
+The authoritative historical, focused, complete, and reconstructed SQLite
+databases and worker roots are under
+`/tmp/cowasm-sagelite-pythonmodule-audit.KcVk5F/`.  Both complete final
+databases have closed passing lifecycles, empty saved block- and file-failure
+cluster queries, no deferred rows, and `PRAGMA integrity_check = ok`.
+
+Validation includes historical default and forced-row replays, focused and
+complete patched-source replays, a complete clean-reconstructed-source replay,
+exact SQLite lifecycle and deferred-row checks, saved failure-cluster queries,
+Python syntax, accumulated-patch syntax, zero-reject sequential application to
+pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron-shaped resource
+smoke.  All 1,054 accumulated patch sections and 4,566 hunks apply.  This is
+documentation and doctest-coverage work only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
