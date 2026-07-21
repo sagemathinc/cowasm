@@ -62263,6 +62263,64 @@ WASM rebuild, Electron manifest change, or permanent resource restaging.  The
 next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Pushover messaging network-boundary audit on 2026-07-21 UTC:
+
+The two generic deferrals in `sage/misc/messaging.py` now record both reasons
+that they must not run in an ordinary doctest profile.  Each example sends a
+real Pushover notification and requires user credentials, so the `# not
+tested` safeguard remains with an explicit explanation.  Both rows now also
+carry Sage's established `internet` optional-feature tag because their first
+operation is an HTTPS request to the external Pushover service.
+
+A forced historical replay confirms that this is a concrete browser-runtime
+boundary rather than documentation hygiene alone.  Enabling generic deferred
+coverage starts DNS resolution, reaches the unresolved `getaddrinfo` function
+signature, and terminates in a WASM memory trap before any response can be
+returned.  With the layered tags, forcing deferred coverage alone stops both
+rows safely at `optional:internet`; selecting both safeguards deliberately
+reproduces the same network trap.
+
+The retained runner-version-128 results record:
+
+```text
+historical default profile:                    2 passed, 0 failed, 2 skipped
+forced historical deferred coverage:           0 passed, 1 failed, 0 skipped
+proposed default profile:                       2 passed, 0 failed, 2 skipped
+proposed forced deferred coverage:              2 passed, 0 failed, 2 skipped
+proposed with deferred and internet selected:   0 passed, 1 failed, 0 skipped
+complete pinned reconstruction:                 2 passed, 0 failed, 2 skipped
+failure-disallowing make target:                2 passed, 0 failed, 2 skipped
+Electron resource smoke:                        passed
+```
+
+The authoritative historical, proposed, selected-feature, reconstructed, and
+strict SQLite databases, worker roots, pinned source reconstruction, failed
+developer-checkout refreshes, focused corpus fixture, and Electron smoke log
+are under `/tmp/cowasm-sagelite-messaging-audit.Z1rc4h/`.  All supported-
+profile databases have closed passing lifecycles, empty saved block- and
+file-failure cluster queries, and `PRAGMA integrity_check = ok`.  Their two
+deferred rows retain both `deferred:not tested` and `optional:internet` tags;
+the forced supported-profile run records `optional:internet` as the active
+skip reason.  The intentionally selected database has a closed failed
+lifecycle with the expected line-64 `wasm_trap` diagnostic.
+
+Validation includes historical and layered proposed replays, the complete
+pinned-source replay, the failure-disallowing `test-sage-doctest-corpus` make
+target, exact SQLite lifecycle, tag, integrity, and saved failure-cluster
+checks, Python syntax, accumulated-patch syntax, strict sequential application
+of the new section after the previously validated pinned reconstruction,
+byte-for-byte target-source reconstruction, `git diff --check`, and the full
+Electron-shaped resource smoke.  All 1,593 accumulated source-patch sections
+(1,077 `diff --git` and 516 legacy sections) and 4,608 hunks apply.  The make
+target's initial source refresh encountered the already documented overlapping
+edits in the external developer checkout; strict validation therefore used
+the pinned clean reconstruction, and the generated build source was restored
+from that tree.  The external checkout and its intentional changes remain
+untouched.  This is doctest dependency and external-side-effect metadata only
+and needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging.  The next pass can audit another default-profile deferred
+marker or select the persisted DNS/`getaddrinfo` runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

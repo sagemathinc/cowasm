@@ -30122,3 +30122,12 @@ diff --git a/src/sage/graphs/graph_editor.py b/src/sage/graphs/graph_editor.py
 @@ -71 +71 @@
 -        sage: e.show()                                                              # not tested
 +        sage: e.show()                                                              # not tested (requires a live Jupyter frontend)  # optional - phitigra
+diff --git a/src/sage/misc/messaging.py b/src/sage/misc/messaging.py
+--- a/src/sage/misc/messaging.py
++++ b/src/sage/misc/messaging.py
+@@ -64 +64 @@
+-        sage: sage.misc.messaging.pushover("Hi, how are you?", user="XXX") # not tested
++        sage: sage.misc.messaging.pushover("Hi, how are you?", user="XXX")  # not tested (requires credentials and sends a notification)  # optional - internet
+@@ -69 +69 @@
+-        sage: sage.misc.messaging.pushover("Hi, how are you?") # not tested
++        sage: sage.misc.messaging.pushover("Hi, how are you?")  # not tested (requires credentials and sends a notification)  # optional - internet
