@@ -60732,6 +60732,55 @@ untouched.  The complete broad-symbolic C-finite module is now clean; the next
 pass can select another persisted backend/runtime cluster or audit another
 generic deferred marker.
 
+Continued-fraction symbolic-expression dependency pass on 2026-07-21 UTC:
+
+The randomized homography audit in `sage/rings/continued_fraction.py` now
+states the compiled symbolic backend contract shared by its mixed input
+fixture and the dependent loop.  The fixture constructs `sqrt(2)`, algebraic
+real values, and `pi`; selecting only the existing broad `sage.symbolic` and
+number-field features therefore entered `sage.symbolic.ring.SR` and failed
+because the stripped WASI profile does not provide
+`sage.symbolic.expression`.  The forced loop then failed independently with
+`NameError: name 'CF' is not defined`, obscuring the single backend boundary.
+
+Both the `CF` setup and the historical randomized known-bug row now carry
+`# needs sage.symbolic.expression`.  A broad symbolic/number-field audit
+records both rows as explicit optional skips instead of executing the broken
+setup chain.  Selecting the expression feature as well still reproduces the
+exact missing-extension failure, while the loop retains its upstream
+`# not tested, known bug` deferral for a future audit on a complete symbolic
+runtime.
+
+The retained runner-version-128 results record:
+
+```text
+broad-symbolic focused rows before:      0 passed, 2 failed, 0 skipped
+broad-symbolic focused rows final:       0 passed, 0 failed, 2 skipped
+expression-selected diagnostic final:   0 passed, 2 failed, 0 skipped
+reconstructed broad-symbolic final:      0 passed, 0 failed, 2 skipped
+```
+
+The before database is
+`/tmp/cowasm-sagelite-continued-fraction-audit.LCycgU/continued-fraction-line-1202.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-continued-fraction-dependency.Y5wdtV/`.  The broad and
+reconstructed databases have closed passing lifecycles, no block or file
+failures, exact `needs:sage.symbolic.expression` metadata on both rows, and
+`PRAGMA integrity_check = ok`.  The explicitly selected database preserves
+the expected `ModuleNotFoundError` plus the dependent missing-`CF` failure.
+
+Validation includes the before, broad-profile, explicitly selected, and
+clean-source reconstructed exact-line replays; exact SQLite lifecycle, tag,
+failure-cluster, and integrity checks; Python syntax; accumulated-patch
+syntax; zero-reject sequential patch application; byte-for-byte target-source
+reconstruction; and `git diff --check`.  All 1,519 accumulated patch sections
+and 4,551 hunks apply without rejects to a clean Sagelite `f575cf6224f`
+worktree.  This is source-doctest dependency metadata only and needs no native
+WASM rebuild, Electron manifest change, or resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.
+The next pass can audit another default-profile deferred marker or select a
+separate persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

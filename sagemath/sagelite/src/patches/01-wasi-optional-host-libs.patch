@@ -29354,3 +29354,12 @@ diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequenc
 +    sage: fibo[137] == fibonacci(137)  # needs sage.libs.pari
 @@ -1232,0 +1233 @@
 +            sage: # needs sage.libs.pari
+diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fraction.py
+--- a/src/sage/rings/continued_fraction.py
++++ b/src/sage/rings/continued_fraction.py
+@@ -1199 +1199 @@
+-            sage: CF = [continued_fraction(x) for x in [sqrt(2), AA(3).sqrt(),          # needs sage.rings.number_field sage.symbolic
++            sage: CF = [continued_fraction(x) for x in [sqrt(2), AA(3).sqrt(),          # needs sage.rings.number_field sage.symbolic sage.symbolic.expression
+@@ -1202 +1202 @@
+-            sage: for _ in range(100):  # not tested, known bug (see :issue:`32086`)
++            sage: for _ in range(100):  # not tested, known bug (see :issue:`32086`)  # needs sage.symbolic.expression
