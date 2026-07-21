@@ -61428,6 +61428,56 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Class-call behavioral coverage promotion on 2026-07-21 UTC:
+
+All eleven generic deferred rows in
+`sage/misc/classcall_metaclass.pyx` are now active, portable
+browser-profile coverage.  The historical examples invoked IPython's
+`%timeit` magic and compared literal host microsecond measurements for
+Python, Cython, metaclass, and direct `__classcall__` paths.  Those
+transcripts could not test a stable behavior across machines or runtimes.
+
+The replacement retains each path with bounded calls and deterministic result
+checks.  It verifies equivalent construction through the reference and
+metaclass classes, exercises their repeated-call paths, checks the direct and
+indirect `__classcall__` results, and confirms that the two documented Cython
+metaclass syntaxes construct equivalent objects.  The module now has no
+generic `# not tested` rows.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:       75 passed, 0 failed, 15 skipped
+historical generic deferred rows:  11
+complete proposed module:          86 passed, 0 failed,  4 skipped
+complete reconstructed module:     86 passed, 0 failed,  4 skipped
+failure-disallowing make target:    86 passed, 0 failed,  4 skipped
+Electron resource smoke:           passed
+```
+
+The authoritative historical, proposed, clean-reconstructed, and make-target
+SQLite databases, worker roots, source reconstructions, accumulated-patch log,
+focused corpus fixture, and Electron smoke log are under
+`/tmp/cowasm-sagelite-classcall-audit.oLTD54/`.  All four databases have
+closed passing lifecycles, empty saved block- and file-failure cluster
+queries, and `PRAGMA integrity_check = ok`; the three final databases have no
+deferred rows.  The remaining four skips are explicit
+`optional:sage.combinat` coverage.
+
+Validation includes the complete historical and proposed replays, the
+failure-disallowing `test-sage-doctest-corpus` make target against a pinned
+clean source reconstruction, exact SQLite lifecycle, integrity, deferred-row,
+and saved failure-cluster checks, accumulated-patch syntax, zero-reject
+sequential application to pinned clean Sagelite `f575cf6224f`, byte-for-byte
+target-source reconstruction, `git diff --check`, and the full
+Electron-shaped resource smoke.  All 1,577 accumulated source-patch sections
+(1,061 `diff --git` and 516 legacy sections) and 4,579 hunks apply.  This is
+documentation and deterministic doctest-coverage work only and needs no
+native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -29825,3 +29825,92 @@ diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recurs
 
          The algorithm uses a random enumeration of the nodes of the
          forest. This choice was motivated by examples in which both
+diff --git a/src/sage/misc/classcall_metaclass.pyx b/src/sage/misc/classcall_metaclass.pyx
+--- a/src/sage/misc/classcall_metaclass.pyx
++++ b/src/sage/misc/classcall_metaclass.pyx
+@@ -535,9 +535,6 @@
+
+     For reference let construct basic objects and a basic Python class::
+
+-        sage: %timeit timeCall(object, 1000)   # not tested
+-        625 loops, best of 3: 41.4 µs per loop
+-
+         sage: i1 = int(1); i3 = int(3) # don't use Sage's Integer
+         sage: class PRef():
+         ....:     def __init__(self, i):
+@@ -551,18 +548,21 @@
+         ....:     def __init__(self, i):
+         ....:         self.i = i+i1
+
+-        sage: %timeit timeCall(PRef, 1000, i3)   # not tested
+-        625 loops, best of 3: 420 µs per loop
+-        sage: %timeit timeCall(P, 1000, i3)      # not tested
+-        625 loops, best of 3: 458 µs per loop
++    The reference and metaclass paths construct equivalent objects, and both
++    can be exercised repeatedly::
++
++        sage: (PRef(i3).i, P(i3).i)
++        (4, 4)
++        sage: for T in (PRef, P):
++        ....:     timeCall(T, 100, i3)
+
+     For a Cython class (not cdef since they doesn't allows metaclasses), the
+     overhead is a little larger::
+
+-        sage: %timeit timeCall(CRef, 1000, i3)   # not tested
+-        625 loops, best of 3: 266 µs per loop
+-        sage: %timeit timeCall(C2, 1000, i3)     # not tested
+-        625 loops, best of 3: 298 µs per loop
++        sage: (CRef(i3).i, C2(i3).i)
++        (4, 4)
++        sage: for T in (CRef, C2):
++        ....:     timeCall(T, 100, i3)
+
+     Let's now compare when there is a classcall defined::
+
+@@ -570,10 +570,10 @@
+         ....:     @staticmethod
+         ....:     def __classcall__(cls, i):
+         ....:         return i+i1
+-        sage: %timeit timeCall(C2C, 1000, i3)   # not tested
+-        625 loops, best of 3: 148 µs per loop
+-        sage: %timeit timeCall(PC, 1000, i3)    # not tested
+-        625 loops, best of 3: 289 µs per loop
++        sage: (C2C(i3), PC(i3))
++        (4, 4)
++        sage: for T in (C2C, PC):
++        ....:     timeCall(T, 100, i3)
+
+     The overhead of the indirection ( ``C(...) ->
+     ClasscallMetaclass.__call__(...) -> C.__classcall__(...)``) is
+@@ -581,18 +581,18 @@
+     one). In reasonable usecases, the overhead should be mostly hidden by the
+     computations inside the classcall::
+
+-        sage: %timeit timeCall(C2C.__classcall__, 1000, C2C, i3)  # not tested
+-        625 loops, best of 3: 33 µs per loop
+-        sage: %timeit timeCall(PC.__classcall__, 1000, PC, i3)    # not tested
+-        625 loops, best of 3: 131 µs per loop
+-
+-    Finally, there is no significant difference between Cython's V2 and V3
+-    syntax for metaclass::
+-
+-        sage: %timeit timeCall(C2, 1000, i3)   # not tested
+-        625 loops, best of 3: 330 µs per loop
+-        sage: %timeit timeCall(C3, 1000, i3)   # not tested
+-        625 loops, best of 3: 328 µs per loop
++        sage: (C2C.__classcall__(C2C, i3), PC.__classcall__(PC, i3))
++        (4, 4)
++        sage: timeCall(C2C.__classcall__, 100, C2C, i3)
++        sage: timeCall(PC.__classcall__, 100, PC, i3)
++
++    Finally, Cython's V2 and V3 metaclass syntax have the same construction
++    behavior::
++
++        sage: (C2(i3).i, C3(i3).i)
++        (4, 4)
++        sage: for T in (C2, C3):
++        ....:     timeCall(T, 100, i3)
+     """
+     cdef int i
+     for 0<=i<n:
