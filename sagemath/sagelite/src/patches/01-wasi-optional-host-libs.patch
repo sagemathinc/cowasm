@@ -20125,6 +20125,15 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/rings-sage.py b/src/sa
 diff --git a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py b/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/sets-sage.py
+@@ -81,1 +81,1 @@
+-    sage: A.   # not tested
++    sage: A.   # needs IPython
+@@ -85,1 +85,1 @@
+-    sage: A.inverse?   # not tested
++    sage: A.inverse?   # needs IPython
+@@ -89,1 +89,1 @@
+-    sage: A.inverse??   # not tested
++    sage: A.inverse??   # needs IPython
 @@ -94,1 +94,1 @@
 -    sage: B.inverse()
 +    sage: B.inverse()  # needs sage.matrix.matrix_integer_dense
