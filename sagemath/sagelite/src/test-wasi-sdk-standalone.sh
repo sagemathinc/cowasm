@@ -858,6 +858,28 @@ try:
 finally:
     downloaded.unlink()
 print('sagelite-node-ok remote-file Node policy')"
+run_node_import "authorized remote Python load" "import os
+import sage.misc.remote_file as remote_file
+import sage.repl.load as sage_load
+assert os.environ['COWASM_RUNTIME'] == 'node'
+requests = []
+class Response:
+    def read(self):
+        return b'remote_value = local_value * 6\n'
+def authorized_urlopen(request, *, timeout, context):
+    requests.append((request, timeout, context))
+    return Response()
+remote_file.urlopen = authorized_urlopen
+namespace = {'local_value': 7}
+sage_load.load('https://example.com/authorized.py', namespace)
+assert namespace['remote_value'] == 42
+assert len(requests) == 1
+request, timeout, context = requests[0]
+assert request.full_url == 'https://example.com/authorized.py'
+assert request.get_header('User-agent') == 'sage-doctest'
+assert timeout == 1
+assert context is not None
+print('sagelite-node-ok authorized remote Python load')"
 run_node_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
 assert ZZ(2) + ZZ(3) == ZZ(5)
 assert QQ(6, 15) == QQ(2, 5)

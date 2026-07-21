@@ -62576,6 +62576,37 @@ exercise a deliberately authorized remote-load flow separately from transport
 support while retaining the doctest's remote-code and external-side-effect
 safeguards.
 
+Authorized remote-load regression on 2026-07-21 UTC:
+
+The standalone Node validation now exercises Sage's complete remote Python
+load path with a deliberately injected response.  The regression calls
+`sage.repl.load.load(...)` on an HTTPS `.py` URL, lets
+`sage.misc.remote_file.get_remote_file(...)` create the temporary source file,
+and verifies that the downloaded source is compiled and executed in the
+caller's namespace.  It also checks the request URL, Sage user-agent, timeout,
+and SSL-context handoff at the transport boundary.
+
+The response is deterministic and network-free, so routine validation never
+executes third-party code or depends on an external service.  The checked
+result against the retained version-matched Node/Electron resource bundle is:
+
+```text
+authorized remote Python load: passed (remote_value == 42)
+standalone shell syntax:        passed
+git diff --check:               passed
+```
+
+This closes the end-to-end `load -> download -> compile -> exec` coverage gap
+left after the transport and runtime-policy pass.  The existing remote-code
+and `internet` doctest safeguards remain unchanged, as do the browser and
+minimal-runtime fail-closed branches.  This is a standalone regression-only
+change and needs no native WASM rebuild, Sagelite source patch, Electron
+manifest change, or permanent resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+network-focused pass can select another persisted runtime cluster or audit an
+explicitly authorized live-download workflow without weakening the remote-code
+safeguard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
