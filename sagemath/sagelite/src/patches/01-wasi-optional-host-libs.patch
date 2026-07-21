@@ -29592,3 +29592,50 @@ diff --git a/src/sage/features/__init__.py b/src/sage/features/__init__.py
 @@ -980 +979 @@ class PythonModule(Feature):
 -        sage: PythonModule("ssl").require()  # not tested - output depends on the python build
 +        sage: PythonModule("sys").require()
+diff --git a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation.py
+--- a/src/sage/combinat/permutation.py
++++ b/src/sage/combinat/permutation.py
+@@ -1080,23 +1080,20 @@ class Permutation(CombinatorialElement):
+-        Note: there is an alternative implementation called ``_to_cycle_set``
+-        which could be slightly (10%) faster for some input (typically for
+-        permutations of size in the range [100, 10000]). You can run the
+-        following benchmarks. For small permutations::
+-
+-            sage: for size in range(9): # not tested
+-            ....:  print(size)
+-            ....:  lp = Permutations(size).list()
+-            ....:  timeit('[p.to_cycles(False) for p in lp]')
+-            ....:  timeit('[p._to_cycles_set(False) for p in lp]')
+-            ....:  timeit('[p._to_cycles_list(False) for p in lp]')
+-            ....:  timeit('[p._to_cycles_orig(False) for p in lp]')
+-
+-        and larger ones::
+-
+-            sage: for size in [10, 20, 50, 75, 100, 200, 500, 1000, # not tested
+-            ....:       2000, 5000, 10000, 15000, 20000, 30000,
+-            ....:       50000, 80000, 100000]:
+-            ....:    print(size)
+-            ....:    lp = [Permutations(size).random_element() for i in range(20)]
+-            ....:    timeit("[p.to_cycles() for p in lp]")
+-            ....:    timeit("[p._to_cycles_set() for p in lp]")
+-            ....:    timeit("[p._to_cycles_list() for p in lp]")
++        There are alternative implementations called ``_to_cycles_set``,
++        ``_to_cycles_list``, and ``_to_cycles_orig``.  They agree on all
++        small permutations::
++
++            sage: implementations = (Permutation.to_cycles,
++            ....:                    Permutation._to_cycles_set,
++            ....:                    Permutation._to_cycles_list,
++            ....:                    Permutation._to_cycles_orig)
++            sage: all(len({tuple(f(p, False)) for f in implementations}) == 1
++            ....:     for size in range(8) for p in Permutations(size))
++            True
++
++        The implementations intended for larger inputs also agree on a
++        selection of larger random permutations::
++
++            sage: samples = [Permutations(size).random_element()
++            ....:            for size in (10, 50, 100, 500, 1000)]
++            sage: all(p.to_cycles() == p._to_cycles_set() == p._to_cycles_list()
++            ....:     for p in samples)
++            True

@@ -61138,6 +61138,54 @@ developer Sagelite checkout and its intentional changes remain untouched.  The
 next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Permutation cycle-conversion equivalence promotion on 2026-07-21 UTC:
+
+The two generic `# not tested` rows in
+`sage/combinat/permutation.py` are now active, bounded browser-profile
+coverage.  The historical examples were interactive performance benchmarks:
+they called IPython's `timeit`, printed every selected size, allocated up to
+twenty permutations of size 100,000, and compared literal host timings rather
+than a mathematical contract.  Keeping those rows deferred hid the useful
+claim behind the benchmark: the alternative cycle-conversion implementations
+should agree.
+
+The small-input example now compares `to_cycles()`, `_to_cycles_set()`,
+`_to_cycles_list()`, and `_to_cycles_orig()` on every permutation of sizes
+zero through seven with singleton cycles omitted.  A second bounded example
+compares the three implementations intended for larger inputs on random
+permutations of sizes 10, 50, 100, 500, and 1,000.  The assertions are
+independent of which random permutations are selected, and all generic
+`# not tested` markers are gone from the module.
+
+The retained runner-version-128 results record:
+
+```text
+complete reconstructed module before: 1024 passed, 0 failed, 315 skipped
+focused final equivalence rows:           2 passed, 0 failed,   0 skipped
+complete reconstructed module final:   1028 passed, 0 failed, 313 skipped
+Electron resource smoke:                passed
+```
+
+The authoritative focused, complete-before, and complete-final SQLite
+databases and worker roots are under
+`/tmp/cowasm-sagelite-permutation-timing-audit.EZSgZ1/`.  All three
+authoritative databases have closed passing lifecycles, empty saved block- and
+file-failure cluster queries, and `PRAGMA integrity_check = ok`.  The complete
+coverage delta is four newly active prompt blocks in place of the two deferred
+benchmark blocks.
+
+Validation includes focused and complete clean-reconstructed doctest replays,
+exact SQLite lifecycle and integrity checks, saved failure-cluster queries,
+Python syntax, accumulated-patch syntax, zero-reject sequential application to
+pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron-shaped resource
+smoke.  All 1,055 accumulated patch sections and 4,567 hunks apply.  This is
+documentation and deterministic doctest-coverage work only and needs no native
+WASM rebuild, Electron manifest change, or permanent resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The next pass can audit another default-profile deferred marker or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
