@@ -60187,6 +60187,53 @@ external developer Sagelite checkout and its intentional changes remain
 untouched.  The next pass can address the remaining partial-cypari2 real-
 binomial path or select another persisted backend/runtime cluster.
 
+Real-binomial PARI dependency-metadata pass on 2026-07-21 UTC:
+
+The final failure in the complete `sage/arith/misc.py` browser-profile replay
+is now classified by its actual backend contract.  The large real-binomial
+performance example at line 3869 enters `x.__pari__().binomial(m)`; explicitly
+running it reaches the intentionally unsupported broad cypari2 `Gen` object
+model and raises CoWasm's focused-subset `NotImplementedError`.  The row now
+carries `# needs sage.libs.pari`, matching the module's other broad PARI
+binomial examples while leaving the neighboring base-field p-adic examples
+under active coverage.
+
+The retained runner-version-128 results record:
+
+```text
+focused line 3869 before:         0 passed, 1 failed,   0 skipped
+default focused line final:       0 passed, 0 failed,   1 skipped
+PARI-selected diagnostic final:   0 passed, 1 failed,   0 skipped
+complete arithmetic before:     608 passed, 1 failed, 579 skipped
+complete arithmetic final:      608 passed, 0 failed, 580 skipped
+neighboring Qp(3) rows final:      3 passed, 0 failed,   0 skipped
+```
+
+The fresh before database is
+`/tmp/cowasm-sagelite-real-binomial-audit.4XaKX1/line-3869.sqlite3`.
+The authoritative default and PARI-selected focused databases are
+`/tmp/cowasm-sagelite-real-binomial-final.S2oVk3/default.sqlite3` and
+`/tmp/cowasm-sagelite-real-binomial-pari.Zf25eR/pari-selected.sqlite3`.
+The authoritative complete-module database is
+`/tmp/cowasm-sagelite-real-binomial-full.RnhCKb/arith-complete.sqlite3`; it
+records 1,188 blocks, no block or file failures, a completed passing lifecycle,
+and `PRAGMA integrity_check = ok`.  The default focused row records
+`optional:sage.libs.pari`, while selecting that feature reproduces the exact
+broad-object-model failure guarded by the metadata.
+
+Validation includes the before, default, and PARI-selected exact-line replays,
+the complete default-module replay, exact SQLite status, tag, neighboring-row,
+lifecycle, failure-cluster, and integrity checks, accumulated-patch syntax,
+and `git diff --check`.  All 1,556 accumulated patch sections and 4,526 hunks
+apply without rejects to a fresh archive of Sagelite `f575cf6224f`, and the
+reconstructed arithmetic source is byte-for-byte identical to the tested
+patched copy.  This is source-doctest dependency metadata only and needs no
+native WASM rebuild, Electron manifest change, or resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The complete arithmetic module now has a clean default-profile
+dashboard; the next pass can select another persisted backend/runtime cluster
+or continue auditing generic deferred markers.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -29136,6 +29136,9 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
 --- a/src/sage/arith/misc.py
 +++ b/src/sage/arith/misc.py
+@@ -3869 +3869 @@
+-        sage: a = binomial(RR(1140000.78), 23310000)
++        sage: a = binomial(RR(1140000.78), 23310000)                                    # needs sage.libs.pari
 @@ -3950 +3950 @@
 -        sage: F.<w>=Qq(9); binomial(w,4) # p-adic extension field
 +        sage: F.<w>=Qq(9); binomial(w,4) # p-adic extension field                       # needs sage.libs.flint
