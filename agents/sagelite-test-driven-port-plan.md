@@ -61327,6 +61327,57 @@ developer Sagelite checkout and its intentional changes remain untouched.  The
 next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Catalan coefficient exact-arithmetic promotion on 2026-07-21 UTC:
+
+The last generic deferred row in `sage/combinat/tutorial.py` is now active,
+portable browser-profile coverage.  The historical example computed
+`c_{100000}` through the optional symbolic expression `c`, invoked IPython's
+`%time` magic, and compared literal host CPU and wall-clock timings.  A focused
+`--deferred=not-tested --optional=sage.symbolic` replay confirms that the WASM
+doctest runner reaches a `SyntaxError` at the `%time` syntax instead of testing
+the coefficient.
+
+The replacement computes the same coefficient directly as
+`catalan_number(99999)` and checks that its exact integer value has 60,198
+digits.  This preserves the tutorial's large-coefficient claim without the
+symbolic or IPython surfaces and without a machine-dependent timing transcript.
+There are no remaining generic `# not tested` rows in the module; its five
+other deferred rows are the independent `# not implemented` graph/fraction
+examples.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:     167 passed, 0 failed, 92 skipped
+historical forced timing row:      0 passed, 1 failed,  0 skipped
+focused final coefficient row:     1 passed, 0 failed,  0 skipped
+complete reconstructed module:   169 passed, 0 failed, 89 skipped
+failure-disallowing make target: 169 passed, 0 failed, 89 skipped
+Electron resource smoke:          passed
+```
+
+The authoritative historical-forced, focused, proposed, clean-reconstructed,
+and make-target SQLite databases, worker roots, clean source reconstruction,
+patch logs, and Electron smoke log are under
+`/tmp/cowasm-sagelite-tutorial-catalan-audit.LBmIvg/`.  Both final databases
+have closed passing lifecycles, empty saved block- and file-failure cluster
+queries, and `PRAGMA integrity_check = ok`.
+
+Validation includes the historical forced-deferred replay, focused proposed
+replay, complete proposed and pinned-clean-reconstructed module replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, and deferred-row checks, saved failure-cluster queries,
+Python syntax, accumulated-patch syntax, zero-reject sequential application to
+pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron-shaped resource
+smoke.  All 1,530 accumulated source-patch sections (1,059 `diff --git` and
+471 legacy sections) and 4,573 hunks apply.  This is deterministic
+documentation coverage only and needs no native WASM rebuild, Electron
+manifest change, or permanent resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next pass
+can audit another default-profile deferred marker or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
