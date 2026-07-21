@@ -59784,6 +59784,46 @@ checkout and its intentional changes remain untouched.  The next pass can
 audit another persisted deferred marker or select a separate backend/runtime
 cluster.
 
+Elliptic-integral symbolic dependency-metadata pass on 2026-07-21 UTC:
+
+The historical deferred simplification row in `sage/functions/special.py` is
+now classified solely by its existing symbolic dependency.  A forced
+`--deferred=not-tested --optional=sage.symbolic` replay included the two
+contiguous setup rows and failed all three at `var("z")`, because the stripped
+browser-profile startup namespace intentionally does not provide Sage's
+symbolic ring.  The target therefore cannot reach `simplify()` without that
+backend, and the generic `# not tested` marker added no contract beyond the
+already-exact `# needs sage.symbolic` metadata.
+
+The retained runner-version-128 results record:
+
+```text
+forced focused rows before:  0 passed, 3 failed,   0 skipped (NameError: var)
+default focused rows final:  0 passed, 0 failed,   3 skipped
+complete special module:    16 passed, 0 failed, 159 skipped
+deferred rows before/final:  1 / 0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-special-audit.c7vKug/special-line-481.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-special-final.fDRaD7/`; both record completed passing
+lifecycles, no block or file failures, an empty deferred-rerun query, and
+`PRAGMA integrity_check = ok`.  The line-481 row now records
+`optional:sage.symbolic` with `optional,needs:sage.symbolic` tags.
+
+Validation includes the forced and default exact-line replays, the complete-
+module replay, exact SQLite status, tag, lifecycle, deferred-query, failure,
+and integrity checks, Python syntax, a zero-reject sequential application of
+all 4,510 accumulated-patch hunks to a clean Sagelite `f575cf6224f`
+snapshot, byte-for-byte comparison of the reconstructed special-functions
+source with the tested patched copy, and `git diff --check`.  This is source-
+doctest dependency metadata only and needs no native WASM rebuild, Electron
+manifest change, or resource restaging.  The external developer Sagelite
+checkout and its intentional changes remain untouched.  The next pass can
+audit the adjacent binary-quadratic-form timing deferrals or select a separate
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

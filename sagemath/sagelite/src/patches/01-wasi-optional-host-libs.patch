@@ -28968,3 +28968,9 @@ diff --git a/src/sage/schemes/generic/ambient_space.py b/src/sage/schemes/generi
 +            ....:     '_test_elements_eq_symmetric',
 +            ....:     '_test_elements_eq_transitive', '_test_elements_neq',
 +            ....:     '_test_pickling', '_test_some_elements'])
+diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
+--- a/src/sage/functions/special.py
++++ b/src/sage/functions/special.py
+@@ -481 +481 @@
+-        sage: elliptic_e(z, 1).simplify()       # not tested                            # needs sage.symbolic
++        sage: elliptic_e(z, 1).simplify()                                               # needs sage.symbolic
