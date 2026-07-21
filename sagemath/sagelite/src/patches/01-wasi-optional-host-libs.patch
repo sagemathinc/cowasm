@@ -19821,6 +19821,14 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises
  ##          Sage Doctest File         ##
  #**************************************#
  #*    Generated from PreTeXt source   *#
+@@ -43,1 +44,2 @@
+-    sage: G.plot()   # not tested
++    sage: G.plot()
++    Graphics object consisting of 7 graphics primitives
+@@ -49,1 +51,2 @@
+-    sage: G.plot()   # not tested
++    sage: G.plot()
++    Graphics object consisting of 21 graphics primitives
 diff --git a/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py b/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py

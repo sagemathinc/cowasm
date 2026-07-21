@@ -59488,6 +59488,45 @@ resource restaging.  The external developer Sagelite checkout and its
 intentional changes remain untouched.  The next pass can audit another
 persisted deferred marker or select a separate backend/runtime cluster.
 
+Judson actions-exercise plotting coverage pass on 2026-07-21 UTC:
+
+The two remaining deferred rows in
+`sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py` are now
+active optional graph coverage.  A forced `--deferred=not-tested` replay under
+the file's existing `sage.graphs` feature showed that both `plot()` calls
+construct graphics successfully; their only failures were output mismatches
+because the historical `# not tested` prompts had no expected textual
+representation.  The triangle plot now asserts seven graphics primitives, and
+the augmented eight-cycle plot asserts twenty-one.
+
+The retained results record:
+
+```text
+forced deferred file before: 3 passed, 2 failed, 0 skipped
+feature-enabled file final:   5 passed, 0 failed, 0 skipped
+deferred rows before/final:   2 / 0
+```
+
+The runner-version-128 before database is
+`/tmp/cowasm-sagelite-actions-exercises-audit.VxuGVw/actions-exercises-deferred.sqlite3`.
+The authoritative final database is
+`/tmp/cowasm-sagelite-actions-exercises-final.ab6sKS/complete-actions-exercises.sqlite3`;
+it records a completed passing lifecycle, no block or file failures, no
+deferred reruns, and `PRAGMA integrity_check = ok`.  All five rows retain the
+file-level `optional,needs:sage.graphs` tags, so the default browser profile
+still exposes the established graph dependency boundary while an explicitly
+enabled graph run exercises the complete file.
+
+Validation includes the before/after complete-file replays, exact SQLite
+status, lifecycle, deferred-query, and integrity checks, Python syntax,
+accumulated-patch syntax, a zero-reject sequential application to a clean
+Sagelite `f575cf6224f` snapshot, byte-for-byte comparison of the affected
+source with the tested patched copy, and `git diff --check`.  This is source-
+doctest coverage only and needs no Cython/native rebuild, Electron manifest
+change, or resource restaging.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
