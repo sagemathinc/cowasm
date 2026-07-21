@@ -30037,3 +30037,9 @@ diff --git a/src/sage/categories/covariant_functorial_construction.py b/src/sage
 -            ValueError: could not infer axiom for the nested class
 -            <...AlgebrasWithBasis'> of <...GradedAlgebrasWithBasis'>
 -
+diff --git a/src/sage/graphs/graph_decompositions/fast_digraph.pyx b/src/sage/graphs/graph_decompositions/fast_digraph.pyx
+--- a/src/sage/graphs/graph_decompositions/fast_digraph.pyx
++++ b/src/sage/graphs/graph_decompositions/fast_digraph.pyx
+@@ -175 +175 @@
+-        sage: test_popcount() # not tested
++        sage: test_popcount()  # long time

@@ -61878,6 +61878,58 @@ change, or permanent resource restaging.  The next pass can classify the
 remaining five-minute `fast_digraph.test_popcount()` marker as long-time
 coverage or select a persisted backend/runtime cluster.
 
+Fast-digraph exhaustive popcount classification on 2026-07-21 UTC:
+
+The sole generic deferred row in
+`sage/graphs/graph_decompositions/fast_digraph.pyx` is now explicit long-time
+coverage.  The doctest exhaustively compares `popcount32` with the slow
+reference implementation over every nonzero 32-bit value, and its surrounding
+documentation already records a host runtime of about five minutes.  It is a
+valid automated correctness check, but it belongs behind Sage's `--long`
+selection rather than the semantically vague `# not tested` deferral.
+
+A focused forced historical replay confirms that the exhaustive loop reaches
+the worker's three-second timeout.  After changing only the tag to
+`# long time`, a default run records the same row with the dedicated
+`long time` skip reason, and a focused `--long` replay again reaches the
+expected timeout.  The module now has no generic deferred rows while retaining
+the expensive check for explicit long-test runs.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:      6 passed, 0 failed, 6 skipped
+forced historical exact row:      timed out after 3 seconds
+complete reconstructed module:   6 passed, 0 failed, 6 skipped
+forced reconstructed --long row:  timed out after 3 seconds
+failure-disallowing make target:  6 passed, 0 failed, 6 skipped
+Electron resource smoke:          passed
+```
+
+The authoritative historical, forced, reconstructed, and strict SQLite
+databases, pinned clean source reconstruction, patch log, focused corpus
+fixture, and Electron smoke logs are under
+`/tmp/cowasm-sagelite-fast-digraph-audit.dOrzFX/`.  The complete final
+databases have closed passing lifecycles, empty saved block- and file-failure
+cluster queries, no generic deferred rows, and `PRAGMA integrity_check = ok`.
+Their six skips are five explicit `sage.misc.cython` dependency boundaries and
+the newly classified long-time row.  Both forced databases record the expected
+closed file-level `timeout`.
+
+Validation includes the historical default and forced-deferred replays, the
+complete proposed and forced-`--long` replays, the failure-disallowing
+`test-sage-doctest-corpus` make target against a pinned clean source
+reconstruction, exact SQLite lifecycle, integrity, deferred-row, skip-reason,
+and saved failure-cluster checks, accumulated-patch syntax, zero-reject
+sequential application to pinned clean Sagelite `f575cf6224f`,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,586
+accumulated source-patch sections (1,070 `diff --git` and 516 legacy sections)
+and 4,593 hunks apply.  This is doctest-metadata classification only and needs
+no native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
