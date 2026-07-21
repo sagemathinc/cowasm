@@ -59230,6 +59230,49 @@ checkout remains untouched.  The next pass can select another persisted
 backend/runtime cluster now that the complete dense-integer matrix module is
 clean in the default browser profile.
 
+Sparse free-module basis-matrix delivery pass on 2026-07-21 UTC:
+
+The retained sparse free-module failure at
+`sage/modules/free_module.py:452` is no longer a live
+`Matrix.__setitem__` backend trap.  An isolated replay of the exact dense and
+sparse basis-matrix contract over `Integers(8)` now constructs both matrices,
+preserves mathematical equality of the two modules, and reports the expected
+storage modes:
+
+```text
+focused sparse-basis contract: 5 passed, 0 failed, 0 skipped
+relocated Electron smoke:      passed, including the sparse basis matrix
+```
+
+No source or native backend correction was needed; the later matrix/runtime
+work has made the old failure stale.  The standalone and Electron smokes now
+retain the exact regression contract so future resource bundles cannot regress
+the sparse `basis_matrix()` path silently.  The Electron manifest advances to
+schema 190 and smoke contract
+`sparse-free-module-basis-matrix-v150`.
+
+The authoritative runner-version-128 focused database is
+`/tmp/cowasm-sagelite-sparse-basis-contract.w5ZsD0/contract.sqlite3`.  It
+records a completed passing lifecycle and `PRAGMA integrity_check = ok`.  The
+validated copy-on-write Electron bundle is
+`/tmp/cowasm-sagelite-schema190-final.IguKmb/`; it records clean Sagelite
+revision `f575cf6224f`, 555 side modules, 724 required-resource paths and
+matching hashes, and seven native-library paths.  The complete relocated
+Electron smoke, manifest parity, forge-resource and runtime tests, JavaScript
+and shell syntax checks, and `git diff --check` pass.
+
+A direct `--line 452` replay against the complete `free_module.py` source did
+not reach the target because tested-module global seeding terminated while
+resolving the module's broad lazy-import surface; the isolated contract proves
+that this is no longer the persisted sparse-matrix call boundary.  The full
+standalone make target likewise could not refresh the patched source tree from
+the external developer Sagelite checkout because its intentional overlapping
+`integer_ring.pyx` changes caused the accumulated patch to reject.  That
+checkout was not modified, and the retained focused and clean packaged-bundle
+validation cover this delivery-only change.  The next pass can select another
+persisted backend/runtime cluster while treating broad `free_module.py`
+module-global seeding as a separate runner/import-surface issue.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

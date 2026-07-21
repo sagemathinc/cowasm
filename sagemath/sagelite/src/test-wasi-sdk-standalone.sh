@@ -938,7 +938,7 @@ assert C == matrix(QQ, [[QQ(1, 2), 1, QQ(3, 2)], [4, 5, 6]])
 C.rescale_col(2, QQ(2, 3))
 assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
 print('sagelite-node-ok matrix row-column mutation smoke')"
-run_node_import "free module smoke" "from sage.all import ZZ, QQ
+run_node_import "free module smoke" "from sage.all import ZZ, QQ, Integers
 from sage.modules.free_module import FreeModule
 M = FreeModule(ZZ, 3)
 v = M([1, 2, 3])
@@ -949,6 +949,12 @@ assert 2 * v == M([2, 4, 6])
 V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
+R8 = Integers(8)
+Md = FreeModule(R8, 2)
+Ms = FreeModule(R8, 2, sparse=True)
+assert not Md.basis_matrix().is_sparse()
+assert Md == Ms
+assert Ms.basis_matrix().is_sparse()
 print('sagelite-node-ok free module smoke')"
 run_node_import "finite abelian group smoke" "import sage.all
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
@@ -1989,7 +1995,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=189
+electron_manifest_schema_version=190
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2031,6 +2037,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-right-kernel-delivery-v147"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-pari-lll-delivery-v148"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-elementary-divisors-v149"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sparse-free-module-basis-matrix-v150"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

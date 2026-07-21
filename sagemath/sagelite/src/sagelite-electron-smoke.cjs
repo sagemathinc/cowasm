@@ -151,6 +151,12 @@ assert 2 * v == M([2, 4, 6])
 V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
+R8 = Integers(8)
+Md = FreeModule(R8, 2)
+Ms = FreeModule(R8, 2, sparse=True)
+assert not Md.basis_matrix().is_sparse()
+assert Md == Ms
+assert Ms.basis_matrix().is_sparse()
 A2x3 = AbelianGroup([2, 3])
 a, b = A2x3.gens()
 assert a.order() == 2
