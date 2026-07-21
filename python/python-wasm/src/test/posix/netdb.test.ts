@@ -1,4 +1,4 @@
-import { syncPython } from "../../node";
+import { asyncPython, syncPython } from "../../node";
 
 /*
 >>> import socket; socket.gethostbyaddr('2001:4860:4860::8888')
@@ -24,6 +24,36 @@ addrinfo = socket.getaddrinfo(
 )
 `);
   expect(repr("addrinfo[0][4]")).toBe("('127.0.0.1', 443)");
+});
+
+test("default SSL context uses the Node root certificate store", async () => {
+  const { exec, repr } = await syncPython();
+  exec(`
+import os
+import ssl
+
+verify_paths = ssl.get_default_verify_paths()
+certificate_stats = ssl.create_default_context().cert_store_stats()
+`);
+  expect(repr("verify_paths.cafile == os.environ['SSL_CERT_FILE']")).toBe(
+    "True"
+  );
+  expect(repr("os.path.isfile(verify_paths.cafile)")).toBe("True");
+  expect(Number(repr("certificate_stats['x509_ca']"))).toBeGreaterThan(100);
+});
+
+test("explicit SSL_CERT_FILE overrides the Node root certificate store", async () => {
+  const certificateFile = "/custom/trust-store.pem";
+  const { kernel, repr } = await asyncPython({
+    env: { SSL_CERT_FILE: certificateFile },
+  });
+  try {
+    expect(await repr("__import__('os').environ['SSL_CERT_FILE']")).toBe(
+      "'/custom/trust-store.pem'"
+    );
+  } finally {
+    await kernel.terminate();
+  }
 });
 
 test("connect maps native errno after SSL context initialization", async () => {

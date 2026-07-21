@@ -62,3 +62,10 @@ You can also use python-wasm in your web applications.  See
 
 - https://github.com/sagemathinc/cowasm-python/tree/main/packages/browser
 - https://github.com/sagemathinc/cowasm-python/tree/main/packages/terminal
+
+## Node TLS trust store
+
+Under Node.js and Electron, python-wasm makes Node's bundled root certificates
+available to OpenSSL through `SSL_CERT_FILE`.  A caller-provided
+`opts.env.SSL_CERT_FILE` or host `SSL_CERT_FILE` takes precedence, so custom
+and enterprise trust stores remain supported.

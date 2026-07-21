@@ -62475,6 +62475,45 @@ returned in a different order); the deterministic native socket smoke and all
 runtime-focused tests pass.  Validation additionally includes native addon and
 kernel WASM rebuilds plus `git diff --check`.
 
+Node/Electron CA trust-store provisioning pass on 2026-07-21 UTC:
+
+The verified-HTTPS failure was only a trust-store discovery gap.  Node and
+Electron already carry a maintained Mozilla root set through
+`tls.rootCertificates`, so the Node `python-wasm` entrypoint now exposes that
+set to WASI as an in-memory PEM file at
+`/usr/share/cowasm/node-root-certificates.pem` and sets `SSL_CERT_FILE` to that
+path by default.  This avoids copying a Linux host's `/etc/ssl` state into an
+Electron bundle and makes the behavior portable across supported Node hosts.
+The injection is Node-only; it does not imply raw browser socket support.
+
+Caller policy remains authoritative.  If either the host environment or
+`opts.env` already supplies `SSL_CERT_FILE`, `python-wasm` neither replaces the
+value nor provisions its default in-memory bundle.  The focused regression
+checks that OpenSSL discovers the default file, that the file is readable from
+WASI, that a default context loads more than 100 CA certificates, and that an
+async worker preserves an explicit caller override.
+
+The checked results are:
+
+```text
+python-wasm TypeScript:                     passed
+focused default/override trust-store Jest:  5 passed, 0 failed
+complete python-wasm POSIX Jest set:        25 passed, 0 failed, 2 skipped
+complete python-wasm Jest set:              48 passed, 0 failed, 4 skipped
+default OpenSSL CA count:                   120
+verified HTTPS GET to example.com:          200 OK
+async-worker trust-store probe:             passed
+```
+
+Validation also includes `git diff --check`.  This is a TypeScript filesystem
+and environment setup change, so it requires no native WASM rebuild, Sagelite
+source patch, Electron manifest change, or permanent resource restaging.  The
+original DNS, callback ABI, sockaddr, connect, errno, TLS handshake, and CA
+discovery chain is now clear for ordinary Node/Electron HTTPS.  The next
+network-focused pass can audit the remaining explicit Sagelite remote-download
+policy boundaries separately from transport support, while retaining their
+remote-code and external-side-effect safeguards.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

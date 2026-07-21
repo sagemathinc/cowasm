@@ -1,6 +1,7 @@
 import { syncKernel, asyncKernel, FileSystemSpec } from "@cowasm/kernel";
 import { join } from "path";
 import { existsSync } from "fs";
+import { rootCertificates } from "tls";
 import debug from "debug";
 
 const log = debug("python-wasm");
@@ -18,6 +19,8 @@ const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonStdlib = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
+const NODE_ROOT_CERTIFICATES =
+  "/usr/share/cowasm/node-root-certificates.pem";
 
 // For now this is the best we can do.  TODO: cleanest solution in general would be to also include the
 // python3.wasm binary (which has main) from the cpython package, to support running python from python.
@@ -45,8 +48,14 @@ async function createPython(
 ): Promise<PythonWasmSync | PythonWasmAsync> {
   opts = { fs: "everything", ...opts }; // default fs is everything
   log("creating Python; sync = ", sync, ", opts = ", opts);
-  const fs = getFilesystem(opts);
+  const useNodeRootCertificates =
+    process.env.SSL_CERT_FILE == null &&
+    opts.env?.SSL_CERT_FILE == null;
+  const fs = getFilesystem(opts, useNodeRootCertificates);
   let env: any = { PYTHONEXECUTABLE };
+  if (useNodeRootCertificates) {
+    env.SSL_CERT_FILE = NODE_ROOT_CERTIFICATES;
+  }
   let wasm = python_wasm;
   if (opts?.fs == "everything") {
     wasm = `${PYTHON_LIB}/python.wasm`;
@@ -77,9 +86,23 @@ async function createPython(
   return python;
 }
 
-function getFilesystem(opts?: Options): FileSystemSpec[] {
+function getFilesystem(
+  opts: Options | undefined,
+  useNodeRootCertificates: boolean
+): FileSystemSpec[] {
+  const trustStore: FileSystemSpec[] = useNodeRootCertificates
+    ? [
+        {
+          type: "mem",
+          contents: {
+            [NODE_ROOT_CERTIFICATES]: `${rootCertificates.join("\n")}\n`,
+          },
+        },
+      ]
+    : [];
   if (opts?.fs == "everything") {
     return [
+      ...trustStore,
       {
         type: "zipfile",
         zipfile: pythonEverything,
@@ -90,6 +113,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
   }
   if (opts?.fs == "stdlib") {
     return [
+      ...trustStore,
       {
         type: "zipfile",
         zipfile: pythonStdlib,
@@ -101,6 +125,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
   if (opts?.fs == "bundle" || !existsSync(PYTHONEXECUTABLE)) {
     // explicitly requested or not dev environment.
     return [
+      ...trustStore,
       // This will result in synchronously loading a tiny filesystem needed for starting python interpreter.
       {
         type: "zipfile",
@@ -120,6 +145,6 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
     ];
   } else {
     // native
-    return [{ type: "native" }];
+    return [...trustStore, { type: "native" }];
   }
 }
