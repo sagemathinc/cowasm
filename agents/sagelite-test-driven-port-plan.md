@@ -61729,6 +61729,58 @@ developer Sagelite checkout and its intentional changes remain untouched.  The
 next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Nested-parent stale-binding doctest cleanup on 2026-07-21 UTC:
+
+The final generic deferred row in `sage/misc/test_nested_class.py` no longer
+runs a test suite against the wrong object.  The historical transcript first
+assigned `P = TestParent1()`, then attempted `P = TestParent2()`.  Because the
+second constructor raises a metaclass conflict, Python preserves the earlier
+`TestParent1` binding.  Forcing the historical `TestSuite(P).run()` row in
+complete module order therefore reproduced the `TestParent1` pickling and
+element failures instead of testing `TestParent2`; an exact-line replay had no
+setup binding and raised `NameError`.
+
+The corrected transcript deletes the earlier binding before the expected
+constructor failure and states explicitly that no parent was constructed on
+which a test suite could run.  This keeps the metaclass-conflict coverage while
+removing the misleading deferred prompt.  The module now has no generic
+`# not tested` rows.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:         18 passed, 0 failed, 1 skipped
+forced historical exact line:         0 passed, 1 failed, 0 skipped (NameError)
+forced historical complete module:   18 passed, 1 failed, 0 skipped
+complete proposed module:             19 passed, 0 failed, 0 skipped
+complete reconstructed module:        19 passed, 0 failed, 0 skipped
+failure-disallowing make target:       19 passed, 0 failed, 0 skipped
+Electron resource smoke:              passed
+```
+
+The authoritative historical, forced, proposed, reconstructed, and strict
+SQLite databases, worker roots, pinned clean source reconstruction, focused
+corpus fixture, and patch logs are under
+`/tmp/cowasm-sagelite-nested-class-audit.Fu06uF/`.  The three final databases
+have closed passing lifecycles, empty saved block- and file-failure cluster
+queries, no deferred rows, and `PRAGMA integrity_check = ok`; the complete
+forced database preserves the historical line-26 output mismatch against the
+stale `TestParent1` binding.
+
+Validation includes the historical default, exact-line, and complete forced
+replays, complete proposed and pinned-clean-reconstructed module replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, deferred-row, and saved failure-cluster checks, Python
+syntax, accumulated-patch syntax, zero-reject sequential application to pinned
+clean Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,583
+accumulated source-patch sections and 4,590 hunks apply.  This is deterministic
+documentation and doctest-coverage work only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

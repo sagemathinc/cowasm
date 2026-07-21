@@ -30006,3 +30006,13 @@ diff --git a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/dis
 @@ -453,2 +462,0 @@
 -            sage: list(U)  # not tested
 -            sage: list(islice(iter(U), 5))  # not tested, hangs
+diff --git a/src/sage/misc/test_nested_class.py b/src/sage/misc/test_nested_class.py
+--- a/src/sage/misc/test_nested_class.py
++++ b/src/sage/misc/test_nested_class.py
+@@ -21,0 +22 @@
++    sage: del P
+@@ -26 +27,3 @@
+-    sage: TestSuite(P).run()  # not tested
++
++The failed assignment does not construct a parent on which a test suite could
++be run.
