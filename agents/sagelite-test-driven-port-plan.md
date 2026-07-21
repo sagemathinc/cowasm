@@ -61281,6 +61281,52 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Combinatorics-tutorial finite-prefix promotion on 2026-07-21 UTC:
+
+Four generic deferred rows in `sage/combinat/tutorial.py` are now active,
+bounded browser-profile coverage.  The historical examples demonstrated
+infinite enumerators by printing `Partitions()`, `Primes()`, a generator of
+Mersenne-prime counterexamples, and a disjoint union forever, with an ellipsis
+standing in for a manual interrupt.  Running those examples cannot terminate
+under an automated doctest runner.
+
+The replacement uses `itertools.islice` to check deterministic finite
+prefixes.  It preserves the tutorial's enumeration examples while asserting
+the first six partitions, first seven primes, first seven Mersenne
+counterexamples, and first ten permutations in the disjoint union.  The two
+local `islice` imports also keep the examples reproducible when selected apart
+from the surrounding tutorial.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:    161 passed, 0 failed, 96 skipped
+complete proposed module:      167 passed, 0 failed, 92 skipped
+complete reconstructed module: 167 passed, 0 failed, 92 skipped
+generic deferred rows:            5 before, 1 after
+Electron resource smoke:        passed
+```
+
+The one remaining generic deferred row is the independent symbolic
+`%time c(100000)` timing example.  The authoritative historical, proposed,
+and clean-reconstructed SQLite databases, worker roots, source reconstruction,
+and probe are under `/tmp/cowasm-sagelite-tutorial-audit.0IJBiv/`.  The final
+database has a closed passing lifecycle, empty saved block- and file-failure
+cluster queries, and `PRAGMA integrity_check = ok`.
+
+Validation includes complete historical, proposed, and pinned-clean-
+reconstructed module replays, exact SQLite lifecycle and deferred-row checks,
+saved failure-cluster queries, Python syntax, accumulated-patch syntax,
+zero-reject sequential application to pinned clean Sagelite `f575cf6224f`,
+byte-for-byte target-source reconstruction, `git diff --check`, and the full
+Electron-shaped resource smoke.  All 1,529 accumulated source-patch sections
+(1,058 `diff --git` and 471 legacy sections) and 4,572 hunks apply.  This is
+deterministic documentation coverage only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
