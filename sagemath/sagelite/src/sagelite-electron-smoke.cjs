@@ -1476,6 +1476,18 @@ assert it.output_preperiod_length == 1
 assert cf.apply_homography(6, -9, -2, 3).value() == -3
 `);
     console.log("sagelite-electron-ok Gosper constant homography smoke");
+    console.log("sagelite-electron-start symbolic function identity smoke");
+    await python.exec(String.raw`
+from sage.ext.fast_callable import ExpressionTreeBuilder
+from sage.functions.all import ceil, cos, sin
+
+assert sin != cos and sin != ceil and cos != ceil
+assert len({sin, cos, ceil}) == 3
+etb = ExpressionTreeBuilder(vars=('x',), domain=float)
+x = etb.var('x')
+assert str(etb.call(sin, x)) == 'sin(v_0)'
+`);
+    console.log("sagelite-electron-ok symbolic function identity smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

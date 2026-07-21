@@ -60964,6 +60964,63 @@ resource restaging.  The five broader module failures keep `fast_callable.pyx`
 out of the quiet corpus for now; the next pass can address those persisted
 clusters or audit another generic deferred marker.
 
+Fast-callable symbolic-function identity pass on 2026-07-21 UTC:
+
+Two of the five persisted `sage/ext/fast_callable.pyx` failures shared a
+partial-symbolic runtime root cause.  When `sage.symbolic.expression` is not
+available, Sage's `Function` objects never receive registry serial numbers.
+Their existing hash and comparison methods therefore gave every function a
+zero hash and treated distinct singletons such as `sin`, `cos`, and `ceil` as
+equal.  `get_builtin_functions()` collapsed its dispatch dictionary onto one
+key, so the documented `sin` expression tree displayed as `log`.  The second
+row also exposed that native Sage's `ln` startup name was absent from the
+Sagelite doctest namespace.
+
+The WASI source patch now preserves serial-based identity when the symbolic
+registry is present and uses a stable function-class/name/arity key when both
+serials are zero.  Mixed registered/unregistered functions remain distinct so
+hash/equality consistency is preserved.  The doctest runner seeds `ln` from
+`sage.functions.log`, and standalone plus Electron-shaped delivery smokes
+assert distinct hashes/equality and the correct `sin(v_0)` expression tree.
+The Electron manifest schema advances to 191 with the
+`symbolic-function-identity-v151` smoke contract.
+
+The retained runner-version-128 results record:
+
+```text
+complete module before:                    200 passed, 5 failed, 433 skipped
+focused identity and ln rows final:           2 passed, 0 failed,  28 skipped
+complete module final:                     202 passed, 3 failed, 432 skipped
+standalone-shaped identity smoke:          passed
+complete Electron-shaped resource smoke:  passed
+```
+
+The focused and complete authoritative SQLite databases are under
+`/tmp/cowasm-sagelite-function-identity-doctest.cdHl4W/` and
+`/tmp/cowasm-sagelite-function-identity-complete.pwFl27/`.  Both have closed
+lifecycle rows and `PRAGMA integrity_check = ok`; the focused database records
+the exact line-429 `sin(add(ipow(v_0, 2), v_1))` output and line-1764 `'log'`
+lookup as passes.  The complete replay leaves only the three independent
+compiler-metadata expected-output mismatches at lines 2114, 2116, and 2344.
+
+The clean pinned reconstruction and exact Cython/C/WASM build use Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`.  The accumulated patch now has
+1,053 sections and 4,562 hunks, applies sequentially with no rejects, and
+reconstructs the tested `function.pyx` byte-for-byte.  The rebuilt module and
+manifest-valid copy-on-write resource bundle are retained under
+`/tmp/cowasm-sagelite-function-identity-bundle/`; the failed exploratory build
+tree that inherited developer-checkout changes was moved under `/tmp`, and the
+external developer checkout plus its intentional changes remain untouched.
+
+Validation includes the exact Meson Cython/C/WASM target, focused and complete
+doctest replays, the standalone-shaped semantic probe, the full
+Electron-shaped smoke, manifest parity/runtime/forge-resource tests, manifest
+hash validation through both the Electron and Node runners, clean sequential
+patch application, exact reconstructed-source comparison, shell and JavaScript
+syntax checks, SQLite integrity checks, and `git diff --check`.  The next pass
+can update or reclassify the three remaining compiler-metadata output contracts
+or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

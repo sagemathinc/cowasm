@@ -1430,6 +1430,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.functions.bessel", ("bessel_J",)),
         ("sage.calculus.transforms.dwt", ("WaveletTransform",)),
         ("sage.functions.jacobi", ("jacobi",)),
+        ("sage.functions.log", ("ln",)),
         ("sage.functions.trig", ("cos", "cot", "sin", "tan")),
         ("sage.functions.transcendental", ("dickman_rho",)),
         ("sage.functions.other", ("ceil", "floor", "imag", "imag_part", "real", "real_part")),

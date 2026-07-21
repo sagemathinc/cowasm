@@ -29511,3 +29511,34 @@ diff --git a/src/sage/ext/fast_callable.pyx b/src/sage/ext/fast_callable.pyx
 +
 +.. TODO::
 +
+diff --git a/src/sage/symbolic/function.pyx b/src/sage/symbolic/function.pyx
+--- a/src/sage/symbolic/function.pyx
++++ b/src/sage/symbolic/function.pyx
+@@ -361 +361,5 @@
+-        return hash(self._name)*(self._nargs+1)*self._serial
++        if self._serial:
++            return hash(self._name)*(self._nargs+1)*self._serial
++        cls = type(self)
++        return hash((cls.__module__, cls.__qualname__,
++                     self._name, self._nargs))
+@@ -404,5 +408,16 @@
+-        try:
+-            return richcmp((<Function>self)._serial,
+-                           (<Function>other)._serial, op)
+-        except AttributeError:
++        if not isinstance(other, Function):
+             return NotImplemented
++        self_serial = (<Function>self)._serial
++        other_serial = (<Function>other)._serial
++        if self_serial and other_serial:
++            return richcmp(self_serial, other_serial, op)
++        if self_serial or other_serial:
++            return richcmp((bool(self_serial), self_serial),
++                           (bool(other_serial), other_serial), op)
++        self_cls = type(self)
++        other_cls = type(other)
++        self_key = (self_cls.__module__, self_cls.__qualname__,
++                    (<Function>self)._name, (<Function>self)._nargs)
++        other_key = (other_cls.__module__, other_cls.__qualname__,
++                     (<Function>other)._name, (<Function>other)._nargs)
++        return richcmp(self_key, other_key, op)

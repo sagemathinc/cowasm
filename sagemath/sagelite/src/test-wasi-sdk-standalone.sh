@@ -1790,13 +1790,19 @@ assert h.derivative(c).subs({a: 1, b: 2, c: 3}) == QQ(90)
 assert (h - (a + 2*b + 3*c + 1)**2).is_zero()
 print('sagelite-node-ok multivariate polynomial smoke')"
 run_node_import "fast callable interpreter smoke" "from sage.all import QQ, PolynomialRing
-from sage.ext.fast_callable import fast_callable
+from sage.ext.fast_callable import ExpressionTreeBuilder, fast_callable
 from sage.ext.fast_eval import fast_float
+from sage.functions.all import ceil, cos, sin
 K = PolynomialRing(QQ, ('x', 'y', 'z'))
 x, y, z = K.gens()
 zero = K(0)
 compiled = fast_callable(zero)
 assert compiled(0, 0, 0) == QQ(0)
+assert sin != cos and sin != ceil and cos != ceil
+assert len({sin, cos, ceil}) == 3
+etb = ExpressionTreeBuilder(vars=('x',), domain=float)
+etb_x = etb.var('x')
+assert str(etb.call(sin, etb_x)) == 'sin(v_0)'
 assert fast_float(K(0)).op_list() == [('load_const', 0.0), 'return']
 assert fast_float(K(17)).op_list() == [('load_const', 0.0), ('load_const', 17.0), 'add', 'return']
 assert fast_float(y).op_list() == [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 1), ('ipow', 1), 'mul', 'add', 'return']
@@ -1995,7 +2001,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=190
+electron_manifest_schema_version=191
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2038,6 +2044,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-pari-lll-delivery-v148"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-elementary-divisors-v149"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sparse-free-module-basis-matrix-v150"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-symbolic-function-identity-v151"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
