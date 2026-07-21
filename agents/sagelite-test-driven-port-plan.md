@@ -59446,6 +59446,48 @@ manifest change, or resource restaging.  The external developer Sagelite
 checkout remains untouched.  The next pass can audit another persisted
 deferred marker or select a separate backend/runtime cluster.
 
+Category-singleton timing dependency-metadata pass on 2026-07-21 UTC:
+
+The eleven historical deferred rows in
+`sage/categories/category_singleton.pyx` are now classified by their actual
+browser-profile dependency.  A stateful complete-module replay with
+`--deferred=not-tested` executed every benchmark, and all eleven failed at the
+same boundary: `sage_timeit()` imports `sage.repl.interpreter`, which requires
+the intentionally absent IPython package.  The shared marker covering the
+first four benchmarks and the seven individual timing markers now carry exact
+`# needs IPython` metadata.
+
+The retained results record:
+
+```text
+forced deferred module before:  59 passed, 11 failed,  0 skipped
+default complete module final:   59 passed,  0 failed, 11 skipped
+forced IPython line 137 final:    0 passed,  1 failed,  0 skipped
+deferred rows before/final:      11 / 0
+new IPython dependency rows:     11
+```
+
+The authoritative runner-version-128 before database is
+`/tmp/cowasm-sagelite-category-singleton-audit.M2b1Hp/category-singleton-deferred.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-category-singleton-final.imCFTO/`.  The default database
+records a completed passing lifecycle, eleven `optional:ipython` rows, no
+failed block or file rows, an empty deferred-rerun query, and
+`PRAGMA integrity_check = ok`.  Explicitly enabling IPython at line 137 reaches
+the same `ModuleNotFoundError`, confirming that the optional metadata guards a
+live dependency boundary rather than a stale test.
+
+Validation includes the before/after stateful complete-module replays, the
+forced exact-line replay, exact skip-reason and deferred-query checks, SQLite
+lifecycle and integrity checks, accumulated-patch syntax, a zero-reject
+application across 1,546 patch targets in a clean Sagelite `f575cf6224f`
+snapshot, byte-for-byte comparison of the affected reconstructed source with
+the tested build copy, and `git diff --check`.  This is source-only doctest
+metadata and needs no Cython/native rebuild, Electron manifest change, or
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -28881,3 +28881,30 @@ diff --git a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
 +            sage: next(it).show3d()               # long time (2s)  # needs sage.ext.interpreters.wrapper_rdf
 +            sage: next(it).show3d()               # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf
 +            sage: next(it).show3d()               # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf
+diff --git a/src/sage/categories/category_singleton.pyx b/src/sage/categories/category_singleton.pyx
+--- a/src/sage/categories/category_singleton.pyx
++++ b/src/sage/categories/category_singleton.pyx
+@@ -136 +136 @@
+-        sage: # not tested
++        sage: # needs IPython
+@@ -149 +149 @@
+-        sage: timeit("R.is_ring()", number=10000)                     # not tested
++        sage: timeit("R.is_ring()", number=10000)                     # needs IPython
+@@ -159 +159 @@
+-        sage: timeit("R3.is_ring()", number=10000)                    # not tested
++        sage: timeit("R3.is_ring()", number=10000)                    # needs IPython
+@@ -161 +161 @@
+-        sage: timeit("R3 in Rings()", number=10000)                   # not tested
++        sage: timeit("R3 in Rings()", number=10000)                   # needs IPython
+@@ -163 +163 @@
+-        sage: timeit("R3 in _Rings", number=10000)                    # not tested
++        sage: timeit("R3 in _Rings", number=10000)                    # needs IPython
+@@ -169 +169 @@
+-        sage: timeit("MyRingsSingleton.__classcall__()", number=10000)# not tested
++        sage: timeit("MyRingsSingleton.__classcall__()", number=10000)# needs IPython
+@@ -173 +173 @@
+-        sage: timeit("R in X  ", number=10000)                        # not tested
++        sage: timeit("R in X  ", number=10000)                        # needs IPython
+@@ -177 +177 @@
+-        sage: timeit("c(R)", number = 10000)                          # not tested
++        sage: timeit("c(R)", number = 10000)                          # needs IPython
