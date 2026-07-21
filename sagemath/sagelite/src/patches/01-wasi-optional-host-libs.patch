@@ -29022,3 +29022,79 @@ diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/
 @@ -823 +823 @@
 -                sage: %timeit f._vector_()   # not tested
 +                sage: %timeit f._vector_()   # random                          # needs IPython
+diff --git a/src/sage/categories/unique_factorization_domains.py b/src/sage/categories/unique_factorization_domains.py
+--- a/src/sage/categories/unique_factorization_domains.py
++++ b/src/sage/categories/unique_factorization_domains.py
+@@ -174,7 +174,20 @@
+                 sage: p = sum(QQbar.zeta(i + 1) * P.gen(i) for i in range(4))
+                 sage: ((p^4 - 1).gcd(p^3 + 1) / (p + 1)).is_unit()
+                 True
++
++            Match the canonical sign of the specialized integer-polynomial
++            implementations when the generic fallback is used::
++
++                sage: R.<x> = PolynomialRing(ZZ, implementation='generic')
++                sage: gcd(2*x*(x - 1), x^2)
++                x
+             """
++            def normalize(X):
++                from sage.rings.integer_ring import ZZ
++                if self is ZZ and X and X.leading_coefficient() < 0:
++                    return -X
++                return X
++
+             def content(X):
+                 """
+                 Return the content of ``X`` up to a unit.
+@@ -201,7 +214,7 @@
+                 A, B = f, g
+
+             if B.is_zero():
+-                return A
++                return normalize(A)
+
+             a = content(A)
+             if a is not None:
+@@ -230,9 +243,39 @@
+             if R.is_zero():
+                 b = content(B)
+                 if b is None:
+-                    return d * B
+-                return d * B // b
+-            return f.parent()(d)
++                    return normalize(d * B)
++                return normalize(d * B // b)
++            return normalize(f.parent()(d))
++
++        def _xgcd_univariate_polynomial(self, f, g):
++            r"""
++            Return a scaled extended gcd of ``f`` and ``g``.
++
++            The extended Euclidean algorithm runs over the fraction field;
++            clearing the three result denominators then gives coefficients in
++            this unique factorization domain.  The gcd may be multiplied by a
++            divisor of the resultant, as for Sage's specialized integer-
++            polynomial implementations.
++
++            EXAMPLES::
++
++                sage: R.<x> = PolynomialRing(ZZ, implementation='generic')
++                sage: xgcd(2*x*(x - 1), x^2)
++                (2*x, -1, 2)
++                sage: d, u, v = xgcd(x + 2, x + 4)
++                sage: d == u*(x + 2) + v*(x + 4)
++                True
++            """
++            fraction_field = self.fraction_field()
++            fraction_polynomials = f.parent().base_extend(fraction_field)
++            d, u, v = fraction_field._xgcd_univariate_polynomial(
++                fraction_polynomials(f), fraction_polynomials(g)
++            )
++            denominator = d.denominator().lcm(u.denominator())
++            denominator = denominator.lcm(v.denominator())
++            polynomials = f.parent()
++            return tuple(polynomials(denominator * value)
++                         for value in (d, u, v))
+
+     class ElementMethods:
+         # prime?

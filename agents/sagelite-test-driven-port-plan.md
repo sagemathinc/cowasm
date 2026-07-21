@@ -60040,6 +60040,59 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 pass can audit another persisted deferred marker or select one of the
 polynomial/cypari2/FLINT clusters exposed by the complete-module diagnostic.
 
+Generic integer-polynomial gcd/xgcd fallback pass on 2026-07-21 UTC:
+
+The two adjacent polynomial failures exposed by the complete
+`sage/arith/misc.py` diagnostic are now working browser-profile semantics.
+With FLINT's integer-polynomial side module intentionally disabled, `ZZ[]`
+uses Sage's generic UFD pseudo-division fallback.  That fallback returned the
+valid but noncanonical associate `-x` for the documented gcd and did not
+provide the scaled extended gcd available from Sage's specialized FLINT and
+NTL implementations.
+
+The accumulated WASI patch now canonicalizes the sign of generic integer-
+polynomial gcd results.  It also gives UFD polynomial rings a generic xgcd:
+run the extended Euclidean algorithm after base extension to the fraction
+field, take the least common multiple of the three polynomial denominators,
+and coerce the scaled gcd and Bézout coefficients back to the original ring.
+For the motivating example this recovers the exact specialized result
+`(2*x, -1, 2)` without loading a native polynomial backend.
+
+The retained runner-version-128 results record:
+
+```text
+complete arithmetic before:  605 passed, 6 failed, 577 skipped
+focused gcd line final:         1 passed, 0 failed,   0 skipped
+focused xgcd line final:        1 passed, 0 failed,   0 skipped
+UFD category module final:     44 passed, 0 failed,   8 skipped
+complete arithmetic final:    607 passed, 4 failed, 577 skipped
+```
+
+The focused databases are under
+`/tmp/cowasm-sagelite-polynomial-xgcd-probe.LrL1QO/`.  The authoritative
+module databases are under
+`/tmp/cowasm-sagelite-polynomial-xgcd-final.6PFPbY/`.  Both repaired
+arithmetic rows record exact passing output.  The category database records a
+completed passing lifecycle, no block or file failures, and
+`PRAGMA integrity_check = ok`.  The complete arithmetic database is closed
+and internally consistent; its four remaining failures are the independent
+partial-cypari2 binomial row, one finite-field binomial representation drift,
+and two p-adic extension rows guarded by the disabled FLINT integer-polynomial
+side module.
+
+Validation includes the focused and complete-module replays, saved failure-
+cluster and lifecycle queries, SQLite integrity checks, direct Bézout and
+parent assertions for zero, constant, coprime, non-coprime, and nested-
+polynomial inputs, Python syntax through the category doctest import, and
+`git diff --check`.  A fresh detached Sagelite `f575cf6224f` snapshot accepts
+all 1,554 accumulated source-patch sections and 4,520 hunks with zero rejects;
+the reconstructed UFD category source is byte-for-byte identical to the
+tested build copy.  This is a pure-Python category fallback and needs no
+native WASM rebuild or Electron manifest change.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+pass can select the finite-field binomial representation drift, the partial
+cypari2 real-binomial path, or the disabled-FLINT p-adic extension cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
