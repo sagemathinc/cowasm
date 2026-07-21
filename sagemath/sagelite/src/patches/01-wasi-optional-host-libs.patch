@@ -29461,3 +29461,53 @@ diff --git a/src/sage/calculus/ode.pyx b/src/sage/calculus/ode.pyx
 -        sage: T.solution               # not tested
 +        sage: T.solution
 +        []
+diff --git a/src/sage/ext/fast_callable.pyx b/src/sage/ext/fast_callable.pyx
+--- a/src/sage/ext/fast_callable.pyx
++++ b/src/sage/ext/fast_callable.pyx
+@@ -234,24 +234,22 @@
+-
+-AUTHOR:
+-
+-- Carl Witty (2009-02): initial version (heavily inspired by
+-  Robert Bradshaw's fast_eval.pyx)
+-
+-.. TODO::
+-
+-    The following bits of text were written for the module docstring.
+-    They are not true yet, but I hope they will be true someday, at
+-    which point I will move them into the main text.
+-
+-    The final interesting method of :class:`ExpressionTreeBuilder` is
+-    :meth:`choice`.  This produces conditional expressions, like the C
+-    ``COND ? T : F`` expression or the Python ``T if COND else F``.
+-    This lets you define piecewise functions using :func:`fast_callable`. ::
+-
+-        sage: v4 = etb.choice(v3 >= etb.constant(0), v1, v2)  # not tested
+-
+-    The arguments are ``(COND, T, F)`` (the same order as in C), so the
+-    above means that if ``v3`` evaluates to a nonnegative number,
+-    then ``v4`` will evaluate to the result of ``v1``;
+-    otherwise, ``v4`` will evaluate to the result of ``v2``.
+-
++A fourth method, :meth:`choice`, constructs conditional expression trees.
++The condition must itself be an expression tree, which can be built with
++:meth:`call`::
++
++    sage: import operator
++    sage: choice_etb = ExpressionTreeBuilder(vars=('x',))
++    sage: choice_x = choice_etb.var('x')
++    sage: condition = choice_etb.call(operator.ge, choice_x, 0)
++    sage: choice = choice_etb.choice(condition, 1, -1)
++    sage: (choice.condition(), choice.if_true(), choice.if_false())
++    ({ge}(v_0, 0), 1, -1)
++
++Conditional expression trees can be constructed and inspected, but
++:func:`fast_callable` does not yet compile them as evaluators.
++
++AUTHOR:
++
++- Carl Witty (2009-02): initial version (heavily inspired by
++  Robert Bradshaw's fast_eval.pyx)
++
++.. TODO::
++

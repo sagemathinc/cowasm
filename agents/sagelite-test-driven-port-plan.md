@@ -60918,6 +60918,52 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Fast-callable conditional-tree promotion on 2026-07-21 UTC:
+
+The stale deferred conditional-expression example in
+`sage/ext/fast_callable.pyx` is now active browser-profile coverage.  The old
+TODO claimed that the documented interface was not yet true and attempted to
+form its condition with `ExpressionCall >= ExpressionConstant`; forcing that
+row raised `TypeError` before `ExpressionTreeBuilder.choice()` was called.
+
+The replacement documentation constructs the condition through
+`ExpressionTreeBuilder.call(operator.ge, ...)`, builds the choice node, and
+checks its condition, true branch, and false branch.  It accurately separates
+the supported expression-tree construction and inspection API from the still
+unsupported compilation of choice nodes by `fast_callable`.  The generic
+`# not tested` marker is gone from the module.
+
+The retained runner-version-128 results record:
+
+```text
+historical forced row before:     0 passed, 1 failed,   31 skipped
+focused conditional row final:   1 passed, 0 failed,   31 skipped
+complete committed-patch before: 194 passed, 5 failed, 433 skipped
+complete pending-patch final:    200 passed, 5 failed, 432 skipped
+```
+
+The authoritative source reconstructions, SQLite databases, and worker roots
+are under `/tmp/cowasm-sagelite-fast-callable-audit.zWcuTW/`.  The complete
+before and final runs preserve the same five independent startup/display
+failures; the only coverage delta is the six active construction prompts that
+replace the one deferred invalid expression.  The focused final and both
+complete databases have exact lifecycle metadata and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the historical forced replay, exact-line final replay,
+complete committed-patch and pending-patch module diagnostics, exact SQLite
+status and failure-cluster comparisons, accumulated-patch syntax, application
+to a pinned clean Sagelite `f575cf6224f` archive with no rejects,
+`git diff --check`, and the full Electron resource smoke.  All 1,052
+accumulated patch sections and 4,560 hunks apply.  The repository-generated
+resource directory had pre-existing manifest checksum drift, so validation
+used the retained manifest-valid copy-on-write bundle under
+`/tmp/cowasm-sagelite-profiler-audit.NlwlGf/`.  This is documentation and
+doctest-coverage work only and needs no native WASM rebuild or permanent
+resource restaging.  The five broader module failures keep `fast_callable.pyx`
+out of the quiet corpus for now; the next pass can address those persisted
+clusters or audit another generic deferred marker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
