@@ -60781,6 +60781,53 @@ developer Sagelite checkout and its intentional changes remain untouched.
 The next pass can audit another default-profile deferred marker or select a
 separate persisted runtime cluster.
 
+Profiler deterministic-checkpoint promotion on 2026-07-21 UTC:
+
+The entirely deferred example in `sage/misc/profiler.py` is now active,
+deterministic browser-profile coverage.  Its introductory import was plain
+documentation text rather than a `sage:` prompt, so the historical opt-in
+replay defined the wrapper function without its `Profiler` dependency and
+then produced five cascading `NameError` rows.  The final example also
+compared literal CPU timings and resolved the deprecated broad-startup
+`Profiler` alias, producing a separate output mismatch instead of testing the
+module-local class.
+
+The example now imports `Profiler` explicitly, replaces real CPU timing with
+a controlled iterator-backed clock, and checks `print_last()`, accumulated
+checkpoint formatting, and `clear()` without any timing tolerance or host
+performance assumption.  All generic `# not tested` markers are gone from
+the module.  `src/sage/misc/profiler.py` is promoted into
+`basic-pure-math.txt`, bringing the curated corpus to 1,140 non-comment
+entries.
+
+The retained runner-version-128 results record:
+
+```text
+historical deferred module before:  4 passed, 6 failed, 0 skipped
+focused make-target module final:   11 passed, 0 failed, 0 skipped
+final deferred rows:                 0
+```
+
+The authoritative before and final databases, focused corpus fixture,
+worker roots, and manifest-validated copy-on-write resource bundle are under
+`/tmp/cowasm-sagelite-profiler-audit.NlwlGf/`.  The before database preserves
+five `NameError` rows and the deprecated-import timing output mismatch.  The
+final database has a closed passing lifecycle, empty saved block- and
+file-failure cluster queries, and `PRAGMA integrity_check = ok`.
+
+Validation includes the historical `--deferred=not-tested` replay, the
+failure-disallowing `test-sage-doctest-corpus` make target against a pinned
+clean source reconstruction, exact SQLite lifecycle and deferred-row checks,
+Python syntax, accumulated-patch syntax, zero-reject sequential application,
+byte-for-byte target-source reconstruction, single-entry corpus membership,
+and `git diff --check`.  All 1,520 accumulated patch sections and 4,554 hunks
+apply without rejects to Sagelite `f575cf6224f`.  This is a documentation and
+doctest-coverage change only and needs no native WASM rebuild or permanent
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit another
+default-profile deferred marker or select a separate persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

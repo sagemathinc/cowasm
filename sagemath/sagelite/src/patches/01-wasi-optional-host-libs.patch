@@ -29363,3 +29363,61 @@ diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fra
 @@ -1202 +1202 @@
 -            sage: for _ in range(100):  # not tested, known bug (see :issue:`32086`)
 +            sage: for _ in range(100):  # not tested, known bug (see :issue:`32086`)  # needs sage.symbolic.expression
+diff --git a/src/sage/misc/profiler.py b/src/sage/misc/profiler.py
+--- a/src/sage/misc/profiler.py
++++ b/src/sage/misc/profiler.py
+@@ -31,3 +31,2 @@
+-        from sage.misc.profiler import Profiler
+-        sage: def f():                        # not tested
+-        ....:     p = Profiler()
++        sage: from sage.misc.profiler import Profiler
++        sage: p = Profiler()
+@@ -35 +34,2 @@
+-    Calling ``p(message)`` creates a checkpoint::
++    Calling ``p(message)`` creates a checkpoint.  We use a controlled clock
++    here so that the elapsed times are deterministic::
+@@ -37,26 +37,18 @@
+-        sage: p("try factoring 15")           # not tested
+-
+-    Do something time-consuming::
+-
+-        sage: x = factor(15)                  # not tested
+-
+-    You can create a checkpoints without a string; ``Profiler``
+-    will use the source code instead::
+-
+-        sage: # not tested
+-        sage: p()
+-        sage: y = factor(25)
+-        sage: p("last step")
+-        sage: z = factor(35)
+-        sage: p()
+-
+-    This will give a nice list of timings between checkpoints::
+-
+-        sage: print(p)                        # not tested
+-
+-    Let's try it out::
+-
+-        sage: f()                             # not tested
+-            3.020s -- try factoring 15
+-           15.240s -- line 17: y = factor(25)
+-         5000.190s -- last step
++        sage: ticks = iter([0.0, 1.0, 3.0, 5.0, 10.0, 11.0])
++        sage: p._cputime_functions = [lambda: next(ticks)]
++        sage: p("setup")
++        sage: p("work")
++        sage: p.print_last().strip()
++        '2.000s -- setup'
++
++    Each new checkpoint records the elapsed time for the previous one::
++
++        sage: p("done")
++        sage: [line.strip() for line in str(p).splitlines()]
++        ['2.000s -- setup', '5.000s -- work']
++
++    Clearing the profiler removes the recorded checkpoints::
++
++        sage: p.clear()
++        sage: p
++        no checkpoints defined
