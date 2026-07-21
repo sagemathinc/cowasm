@@ -59954,6 +59954,46 @@ change, or resource restaging.  The external developer Sagelite checkout and
 its intentional changes remain untouched.  The next pass can audit another
 persisted deferred marker or select a separate backend/runtime cluster.
 
+Indexed-element timing dependency-metadata pass on 2026-07-21 UTC:
+
+The historical timing deferral in
+`sage/modules/with_basis/indexed_element.pyx` is now classified by its exact
+interactive dependency.  A focused `--deferred=not-tested` replay reached the
+`%timeit` prompt and failed with `SyntaxError` because the browser-profile
+doctest worker deliberately executes plain Python rather than IPython magic.
+The row now carries `# needs IPython`; its inherently machine- and
+load-dependent benchmark output is also tagged `# random`.
+
+The retained runner-version-128 results record:
+
+```text
+forced focused row before:  0 passed, 1 failed, 8 skipped
+default focused row final:  0 passed, 0 failed, 9 skipped
+complete module final:    145 passed, 0 failed, 86 skipped
+historical deferred rows:   1 before, 0 final
+```
+
+The before database is
+`/tmp/cowasm-sagelite-indexed-vector-audit.Yv3GGq/indexed-line-823.sqlite3`;
+its target failure is the expected plain-Python `SyntaxError`.  The
+authoritative final databases are under
+`/tmp/cowasm-sagelite-indexed-vector-final.vthl5A/`.  The complete-module
+database records the adjacent `F` and `f` setup rows as passes and the timing
+row as an `optional:ipython` skip with `random,optional,needs:ipython` tags.  It
+also records a completed passing lifecycle, no block or file failures, an
+empty deferred-rerun query, and `PRAGMA integrity_check = ok`.
+
+Validation includes the forced and default exact-line replays, the complete
+default-module replay, exact SQLite lifecycle, tag, deferred-query,
+failure-cluster, and integrity checks, `git diff --check`, and a zero-reject
+application of all 4,516 accumulated-patch hunks to a clean Sagelite
+`f575cf6224f` snapshot.  The reconstructed indexed-element source is
+byte-for-byte identical to the tested patched copy.  This is source-doctest
+dependency metadata only and needs no native WASM rebuild, Electron manifest
+change, or resource restaging.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

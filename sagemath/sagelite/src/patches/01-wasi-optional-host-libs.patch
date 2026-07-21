@@ -29013,3 +29013,9 @@ diff --git a/src/sage/misc/verbose.py b/src/sage/misc/verbose.py
 +        verbose 2 (<module>) This is Sage.
 +        sage: _ = verbose("This is Sage.", level=3)
          sage: set_verbose(0)
+diff --git a/src/sage/modules/with_basis/indexed_element.pyx b/src/sage/modules/with_basis/indexed_element.pyx
+--- a/src/sage/modules/with_basis/indexed_element.pyx
++++ b/src/sage/modules/with_basis/indexed_element.pyx
+@@ -823 +823 @@
+-                sage: %timeit f._vector_()   # not tested
++                sage: %timeit f._vector_()   # random                          # needs IPython
