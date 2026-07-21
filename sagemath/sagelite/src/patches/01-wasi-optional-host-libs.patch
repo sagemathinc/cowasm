@@ -29304,3 +29304,15 @@ diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequenc
 +            sage: # needs sage.symbolic.expression
 @@ -860,0 +863 @@
 +            sage: # needs sage.symbolic.expression
+diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequence.py
+--- a/src/sage/rings/cfinite_sequence.py
++++ b/src/sage/rings/cfinite_sequence.py
+@@ -32,0 +33 @@
++    sage: # needs sage.symbolic.expression
+@@ -221,0 +223 @@
++        sage: # needs sage.symbolic.expression
+@@ -243 +245 @@
+-        sage: CFiniteSequence(pi/(1-x))
++        sage: CFiniteSequence(pi/(1-x))  # needs sage.symbolic.expression
+@@ -287,0 +290 @@
++            sage: # needs sage.symbolic.expression

@@ -60580,6 +60580,60 @@ change, or resource restaging.  The next pass can address the remaining
 symbolic-variable startup rows, the two focused PARI boundaries, or a separate
 persisted runtime cluster.
 
+C-finite symbolic-variable dependency pass on 2026-07-21 UTC:
+
+The remaining symbolic-conversion regions in
+`sage/rings/cfinite_sequence.py` now state their compiled-expression backend
+contract.  The module's broad `sage.symbolic` feature is sufficient for its
+rational-polynomial C-finite implementation, but symbolic `var(...)`, `log`,
+and `pi` inputs require the unavailable `sage.symbolic.expression` extension.
+Without that extension, the doctests either raised `NameError` for `var` or
+silently exercised the runner's scoped polynomial `x` seed instead of the
+documented symbolic-to-rational conversion path.
+
+Standalone directives now cover the three contiguous symbolic-expression
+groups, and the isolated `pi/(1-x)` test carries the same dependency inline.
+The neighboring polynomial-only constructor and multivariate rejection tests
+remain active.  Selecting both features still reproduces the two missing-`var`
+failures and the two non-symbolic conversion mismatches, confirming that the
+metadata guards the intended unavailable backend.
+
+The retained runner-version-128 results record:
+
+```text
+forced representative rows before:       0 passed, 4 failed,  0 skipped
+broad-symbolic focused rows final:        2 passed, 0 failed,  4 skipped
+expression-selected diagnostic final:    0 passed, 4 failed,  0 skipped
+complete broad-symbolic before:         242 passed, 19 failed, 16 skipped
+complete broad-symbolic final:          236 passed,  5 failed, 36 skipped
+reconstructed focused rows final:         2 passed, 0 failed,  4 skipped
+```
+
+The fresh before database is
+`/tmp/cowasm-sagelite-cfinite-var-before.cGdBdd/symbolic-before.sqlite3`.
+The authoritative focused databases are under
+`/tmp/cowasm-sagelite-cfinite-var-final.4F2BMl/`, and the authoritative
+complete-module database is
+`/tmp/cowasm-sagelite-cfinite-var-full.ZyxdGT/cfinite-complete.sqlite3`.
+The complete replay records 277 blocks, no file-level error, a closed failed
+lifecycle with only five independent remaining block failures, and
+`PRAGMA integrity_check = ok`.  Those rows are two rational-polynomial
+comparison expectations and two PARI/cypari2 boundaries plus the dependent
+PARI-guess slice mismatch.
+
+Validation includes fresh before, broad-feature, and explicitly selected
+focused replays; the complete broad-symbolic module diagnostic; exact SQLite
+status, tag, lifecycle, failure-cluster, and integrity checks; Python and
+accumulated-patch syntax; polynomial-only control rows; reconstructed-source
+focused replays; and `git diff --check`.  All 1,516 accumulated patch sections
+and 4,539 hunks apply without rejects to a clean Sagelite `f575cf6224f`
+archive, and the reconstructed C-finite source is byte-for-byte identical to
+the tested patched copy.  This is source-doctest dependency metadata only and
+needs no native WASM rebuild, Electron manifest change, or resource restaging.
+The external developer Sagelite checkout and its intentional changes remain
+untouched.  The next pass can address the two comparison-semantic rows or
+classify the focused PARI boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
