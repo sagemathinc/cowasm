@@ -30049,3 +30049,15 @@ diff --git a/src/sage/geometry/hyperplane_arrangement/arrangement.py b/src/sage/
 @@ -2013 +2013 @@
 -            sage: len(A.regions())            # not tested (~25s)
 +            sage: len(A.regions())            # long time (~25s)                      # needs ppl
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -27 +27,3 @@
+-    This could end up resulting in infinite loops::
++    This could end up resulting in infinite loops, so check the conservative
++    truth value without attempting an operation that must prove the series is
++    nonzero::
+@@ -31 +33,2 @@
+-        sage: 1 / f  # not tested - infinite loop
++        sage: bool(f)
++        True

@@ -61984,6 +61984,59 @@ intentional changes remain untouched.  The next pass can classify another
 default-profile deferred marker or select a persisted backend/runtime
 cluster.
 
+Lazy-series conservative-truth coverage promotion on 2026-07-21 UTC:
+
+The generic deferred row in the module-level warning of
+`sage/rings/lazy_series_ring.py` is now active, bounded browser-profile
+coverage.  The historical example attempted `1 / f` for a lazy series whose
+coefficient stream is identically zero but whose halting precision is
+infinite.  The division must prove that the denominator is nonzero and cannot
+terminate; a focused forced historical replay confirms that the worker reaches
+its three-second timeout.
+
+The replacement preserves the nontermination warning while checking its
+deterministic cause: `bool(f)` conservatively returns `True` because the lazy
+series is not known to be zero.  This exercises the documented infinite-
+precision truth-value contract without starting the unbounded division.  The
+module's two remaining generic deferred rows are independent: the implicit-
+equation `B[2]` query also loops forever, and the lazy Laurent-series setup row
+is additionally behind the explicit `sage.modules` dependency boundary.
+
+The retained runner-version-128 results record:
+
+```text
+forced historical division row:       timed out after 3 seconds
+focused final truth-value row:          1 passed, 0 failed,   0 skipped
+complete reconstructed module:        642 passed, 0 failed, 402 skipped
+failure-disallowing make target:       642 passed, 0 failed, 402 skipped
+Electron resource smoke:               passed
+```
+
+The authoritative historical-forced, focused, reconstructed, and strict
+SQLite databases, worker roots, pinned clean source reconstruction, focused
+corpus fixture, and resource link are under
+`/tmp/cowasm-sagelite-lazy-bool-audit.b6W06F/`.  The final complete databases
+have closed passing lifecycles, empty saved block- and file-failure cluster
+queries, and `PRAGMA integrity_check = ok`; the historical forced database
+records the expected closed file-level `timeout`.
+
+Validation includes the historical forced-deferred exact-line replay, the
+focused final replay, the complete pinned-clean-reconstructed module replay,
+the failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, deferred-row, and saved failure-cluster checks,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,588
+accumulated source-patch sections (1,072 `diff --git` and 516 legacy sections)
+and 4,596 hunks apply.  The make target's first scratch refresh encountered the
+already documented overlapping edits in the external developer checkout;
+strict validation therefore used the pinned clean reconstruction.  The
+external checkout and its intentional changes remain untouched.  This is
+documentation and deterministic doctest-coverage work only and needs no
+native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The next pass can audit another default-profile deferred marker or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
