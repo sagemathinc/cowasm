@@ -61231,6 +61231,56 @@ resource restaging.  The external developer Sagelite checkout and its
 intentional changes remain untouched.  The next pass can audit another
 default-profile deferred marker or select a persisted backend/runtime cluster.
 
+LaTeX failure-diagnostic determinism promotion on 2026-07-21 UTC:
+
+The two generic `# not tested` rows in `sage/features/latex.py` are now active,
+portable browser-profile coverage.  The historical example invoked the host
+`latex` executable, included a random temporary filename in its expected
+output, and compared a transcript whose details depend on the installed TeX
+distribution.  Forcing the deferred rows in the CoWasm runtime reaches the
+subprocess shim and times out instead of testing the documented diagnostic.
+
+The replacement uses a mocked failed `CompletedProcess` and checks the stable
+`FeatureTestResult` contract: the result is false and its reason preserves the
+exit status, stderr, and stdout.  It still exercises the real
+`LaTeX.is_functional()` implementation, including temporary input creation and
+failure-reason formatting, without requiring a host executable or accepting a
+host-specific transcript.  All generic deferred markers are gone from the
+module.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:       29 passed, 0 failed, 14 skipped
+historical generic deferred rows:   2
+forced historical module:           timed out after 5 seconds
+complete reconstructed final:      37 passed, 0 failed, 12 skipped
+failure-disallowing make target:    37 passed, 0 failed, 12 skipped
+Electron resource smoke:            passed
+```
+
+The authoritative historical, forced, reconstructed-final, and make-target
+SQLite databases, clean source reconstructions, worker roots, and smoke log are
+under `/tmp/cowasm-sagelite-latex-audit.KxsKVR/`.  The historical default
+database preserves both deferred rows, and the forced database records a
+closed file-level `timeout`.  Both final databases have closed passing
+lifecycles, empty saved block- and file-failure cluster queries, no deferred
+rows, and `PRAGMA integrity_check = ok`.
+
+Validation includes the historical default and forced-deferred replays, the
+failure-disallowing `test-sage-doctest-corpus` make target against a pinned
+clean source reconstruction, exact SQLite lifecycle and deferred-row checks,
+saved failure-cluster queries, Python syntax, accumulated-patch syntax,
+zero-reject sequential application to pinned clean Sagelite `f575cf6224f`,
+byte-for-byte target-source reconstruction, `git diff --check`, and the full
+Electron-shaped resource smoke.  All 1,528 accumulated source-patch sections
+(1,057 `diff --git` and 471 legacy sections) and 4,569 hunks apply without
+rejects.  This is deterministic documentation coverage only and needs no
+native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -29650,3 +29650,40 @@ diff --git a/src/sage/geometry/pseudolines.py b/src/sage/geometry/pseudolines.py
 +    True
 +    sage: all(0 <= b < 20*n + 1 for _, b in l)
 +    True
+diff --git a/src/sage/features/latex.py b/src/sage/features/latex.py
+--- a/src/sage/features/latex.py
++++ b/src/sage/features/latex.py
+@@ -55,15 +55,18 @@ class LaTeX(Executable):
+-        can be obtained as follows::
++        can be obtained as follows.  Mocking the subprocess keeps this example
++        independent of the installed TeX distribution::
+-
+-            sage: result = latex().is_functional()    # not tested
+-            sage: print(result.reason)                # not tested
+-            Running latex on a sample file
+-            (with command='latex -interaction=nonstopmode tmp_wmpos8ak.tex')
+-            returned nonzero exit status='1' with stderr=''
+-            and stdout='This is pdfTeX,
+-            ...
+-            Runaway argument?
+-            {document
+-            ! File ended while scanning use of \end.
+-            ...
+-            No pages of output.
+-            Transcript written on tmp_wmpos8ak.log.'
++
++            sage: from subprocess import CompletedProcess
++            sage: from unittest.mock import patch as mock_patch
++            sage: failed = CompletedProcess('latex', 1,
++            ....:                           stdout='sample output',
++            ....:                           stderr='sample error')
++            sage: with mock_patch('subprocess.run', return_value=failed):
++            ....:     result = latex().is_functional()
++            sage: bool(result)
++            False
++            sage: "returned nonzero exit status='1'" in result.reason
++            True
++            sage: "stderr='sample error'" in result.reason
++            True
++            sage: "stdout='sample output'" in result.reason
++            True
