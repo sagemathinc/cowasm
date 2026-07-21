@@ -60234,6 +60234,56 @@ untouched.  The complete arithmetic module now has a clean default-profile
 dashboard; the next pass can select another persisted backend/runtime cluster
 or continue auditing generic deferred markers.
 
+Heisenberg matrix-basis display coverage pass on 2026-07-21 UTC:
+
+The two remaining explicitly Sagelite-specific known-bug markers in the
+patched source are now active browser-profile coverage.  The matrix
+Heisenberg basis examples at lines 652 and 685 previously expected Sage's
+host rich-layout rendering for a list of keyed matrices.  Selecting both the
+file-wide `sage.graphs` feature and the deferred tag showed that the runtime
+returns the correct basis keys and matrix entries deterministically, but in
+the browser profile's plain nested-list layout.
+
+The accumulated WASI patch now documents that exact browser-profile output
+and removes both generic known-bug tags.  The `sage.graphs` dependency remains
+intact: default focused replays skip the rows with only
+`optional,needs:sage.graphs`, while feature-selected replays execute and
+compare every key and matrix entry.  The retained runner-version-128 results
+record:
+
+```text
+forced focused rows before:          0 passed, 2 failed, 0 skipped
+feature-selected focused rows final: 2 passed, 0 failed, 0 skipped
+default focused target rows final:   exact optional:sage.graphs skips
+reconstructed focused rows final:    2 passed, 0 failed, 0 skipped
+complete feature diagnostic:       116 passed, 16 failed, 0 skipped
+```
+
+The authoritative databases and manifest-validated copy-on-write resource
+bundle are under
+`/tmp/cowasm-sagelite-display-manager-audit.D9y3Ww/`.  The focused final and
+reconstructed databases record completed passing lifecycles,
+`PRAGMA integrity_check = ok`, exact expected/actual output, and no deferred
+tags.  In normal file order the two edited rows also pass.  The 16 independent
+complete-module diagnostic failures are 14 pre-existing category-Homset MRO
+errors in coercion examples and two broad `TestSuite` output mismatches; they
+do not involve either promoted display row.
+
+The same pass removes the now-redundant early add/later-remove patch pair for
+the already-promoted rich-output warning doctest, without changing its tested
+source.  Validation includes both before replays, dependency-only defaults,
+feature-selected shared and reconstructed replays, the complete diagnostic,
+exact SQLite status/tag/lifecycle/integrity checks, accumulated-patch syntax,
+and `git diff --check`.  All 1,510 accumulated patch sections and 4,526 hunks
+apply without rejects to a clean Sagelite `f575cf6224f` snapshot; the
+reconstructed Heisenberg and display-manager sources are byte-for-byte
+identical to the tested patched copies.  This is source-doctest display
+coverage only and needs no native WASM rebuild, Electron manifest change, or
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can address the exposed
+category-Homset MRO cluster or select another persisted backend/runtime
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

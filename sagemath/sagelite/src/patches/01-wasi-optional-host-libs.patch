@@ -8699,12 +8699,6 @@ diff -urN a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty
 @@ -154 +154 @@
 -            sage: stream.getvalue()
 +            sage: stream.getvalue()                                                 # known bug - lightweight Sagelite pretty-printer fallback formatting
-diff -urN a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_output/display_manager.py
---- a/src/sage/repl/rich_output/display_manager.py
-+++ b/src/sage/repl/rich_output/display_manager.py
-@@ -572 +572 @@
--            sage: dm._call_rich_repr(Foo(), {})
-+            sage: dm._call_rich_repr(Foo(), {})                                      # not tested - Sagelite runner does not capture warning stream yet
 diff -urN a/src/sage/repl/rich_output/test_backend.py b/src/sage/repl/rich_output/test_backend.py
 --- a/src/sage/repl/rich_output/test_backend.py
 +++ b/src/sage/repl/rich_output/test_backend.py
@@ -24810,12 +24804,6 @@ diff --git a/src/sage/combinat/dyck_word.py b/src/sage/combinat/dyck_word.py
 @@ -434 +434 @@
 -            sage: D.latex_options()                                                    # known bug
 +            sage: D.latex_options()
-diff --git a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_output/display_manager.py
---- a/src/sage/repl/rich_output/display_manager.py
-+++ b/src/sage/repl/rich_output/display_manager.py
-@@ -575 +575 @@
--            sage: dm._call_rich_repr(Foo(), {})                                      # not tested - Sagelite runner does not capture warning stream yet
-+            sage: dm._call_rich_repr(Foo(), {})
 diff --git a/src/sage/algebras/jordan_algebra.py b/src/sage/algebras/jordan_algebra.py
 --- a/src/sage/algebras/jordan_algebra.py
 +++ b/src/sage/algebras/jordan_algebra.py
@@ -29145,3 +29133,64 @@ diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
 @@ -3954 +3954 @@
 -        sage: F.<w>=Qq(9); binomial(w,10).parent()
 +        sage: F.<w>=Qq(9); binomial(w,10).parent()                                      # needs sage.libs.flint
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -652,31 +652,17 @@
+-        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+-        [(
+-              [0 1 0 0]
+-              [0 0 0 0]
+-              [0 0 0 0]
+-        'p1', [0 0 0 0]
+-        ),
+-         (
+-              [0 0 1 0]
+-              [0 0 0 0]
+-              [0 0 0 0]
+-        'p2', [0 0 0 0]
+-        ),
+-         (
+-              [0 0 0 0]
+-              [0 0 0 1]
+-              [0 0 0 0]
+-        'q1', [0 0 0 0]
+-        ),
+-         (
+-              [0 0 0 0]
+-              [0 0 0 0]
+-              [0 0 0 1]
+-        'q2', [0 0 0 0]
+-        ),
+-         (
+-             [0 0 0 1]
+-             [0 0 0 0]
+-             [0 0 0 0]
+-        'z', [0 0 0 0]
+-        )]
++        sage: sorted(dict(L.basis()).items())
++        [('p1', [0 1 0 0]
++        [0 0 0 0]
++        [0 0 0 0]
++        [0 0 0 0]), ('p2', [0 0 1 0]
++        [0 0 0 0]
++        [0 0 0 0]
++        [0 0 0 0]), ('q1', [0 0 0 0]
++        [0 0 0 1]
++        [0 0 0 0]
++        [0 0 0 0]), ('q2', [0 0 0 0]
++        [0 0 0 0]
++        [0 0 0 1]
++        [0 0 0 0]), ('z', [0 0 0 1]
++        [0 0 0 0]
++        [0 0 0 0]
++        [0 0 0 0])]
+@@ -685,5 +671,3 @@
+-        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+-        [(
+-             [0 1]
+-        'z', [0 0]
+-        )]
++        sage: sorted(dict(L.basis()).items())
++        [('z', [0 1]
++        [0 0])]
