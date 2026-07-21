@@ -30078,3 +30078,13 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 +            sage: candidates = [(-z^3, z^3, L.zero(), L.zero()), (-2*z^3, 2*z^3, L.zero(), L.zero())]
 +            sage: [[c^2 + d^2, a + b + c + d, a*d] for a, b, c, d in candidates]
 +            [[0, 0, 0], [0, 0, 0]]
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -1967,2 +1967,5 @@
++        The noncommutative exterior-algebra case currently does not terminate
++        during lazy Laurent-series ring construction::
++
+             sage: E.<x,y> = ExteriorAlgebra(QQ)                                         # needs sage.modules
+-            sage: L = LazyLaurentSeriesRing(E, 't')     # not tested                    # needs sage.modules
++            sage: L = LazyLaurentSeriesRing(E, 't')     # known bug - nontermination    # needs sage.modules

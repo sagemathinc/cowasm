@@ -62088,6 +62088,63 @@ coverage work only and needs no native WASM rebuild, Electron manifest change,
 or permanent resource restaging.  The next pass can audit the remaining lazy
 Laurent-series setup marker or select a persisted backend/runtime cluster.
 
+Lazy Laurent-series exterior-algebra nontermination classification on
+2026-07-21 UTC:
+
+The last generic deferred row in `sage/rings/lazy_series_ring.py` now records
+its two independent execution boundaries explicitly.  Constructing a lazy
+Laurent-series ring over the noncommutative exterior algebra does not complete
+in the current runtime, so the historical `# not tested` marker is now the
+specific `# known bug - nontermination` classification.  The existing
+`# needs sage.modules` tag remains on both the exterior-algebra setup and the
+constructor row.
+
+The layered focused replays confirm that the metadata composes correctly.
+The default profile records the setup as `optional:sage.modules` and the
+constructor as `deferred:known bug`; opting into `known-bug` coverage exposes
+the constructor's `optional:sage.modules` boundary; opting into both features
+reproduces the worker timeout.  This prevents a future profile that adds
+`sage.modules` from accidentally enabling the nonterminating constructor.
+The module now has no generic `# not tested` row.
+
+The retained runner-version-128 results record:
+
+```text
+historical exact constructor row:       timed out after 10 seconds
+focused default fixture:                 0 passed, 0 failed,   2 skipped
+focused --deferred=known-bug:            0 passed, 0 failed,   2 skipped
+focused with both boundaries enabled:    0 passed, 1 failed,   0 skipped
+complete reconstructed module:         644 passed, 0 failed, 401 skipped
+failure-disallowing make target:        644 passed, 0 failed, 401 skipped
+Electron resource smoke:                passed (52 completion checkpoints)
+```
+
+The authoritative historical, focused, complete, and strict SQLite
+databases, worker roots, pinned clean source reconstruction, focused corpus
+fixture, copy-on-write resource link, and Electron smoke log are under
+`/tmp/cowasm-sagelite-lazy-laurent-audit.4omR0N/`.  The complete and strict
+databases have closed passing lifecycles, 1,045 block rows, empty saved block-
+and file-failure cluster queries, and `PRAGMA integrity_check = ok`.  The
+fully enabled focused database has the expected closed failed lifecycle with
+one file-level timeout.
+
+Validation includes the historical exact-line timeout, all three layered
+focused replays, the complete reconstructed module replay, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, tag, integrity, and saved failure-cluster checks, Python syntax,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,590
+accumulated source-patch sections (1,074 `diff --git` and 516 legacy sections)
+and 4,599 hunks apply.  A first strict-target scratch refresh encountered the
+already documented overlapping edits in the external developer checkout;
+strict validation therefore used the pinned clean reconstruction.  The
+external checkout and its intentional changes remain untouched.  This is
+doctest metadata and documentation only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The next pass can
+select another default-profile deferred marker or a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
