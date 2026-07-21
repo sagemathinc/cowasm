@@ -59608,6 +59608,51 @@ external developer Sagelite checkout and its intentional changes remain
 untouched.  The next pass can audit another persisted deferred marker or
 select a separate backend/runtime cluster.
 
+Feature-interface deferred-contract pass on 2026-07-21 UTC:
+
+The three historical deferred feature probes in
+`sage/features/interfaces.py` are now classified by their actual browser-
+profile behavior.  Forced `--deferred=not-tested` execution showed that the
+Mathics and Regina probes already produce their documented deterministic
+`FeatureTestResult(..., False)` values, so both are active default coverage.
+The Mathematica probe reaches a different false-result representation because
+importing `sage.interfaces.mathematica` requires the intentionally absent
+`pexpect`; its generic `# not tested` marker is therefore replaced with exact
+`# needs pexpect` metadata.
+
+The retained results record:
+
+```text
+forced deferred module before:   37 passed, 1 failed, 5 skipped
+focused Mathics line final:        1 passed, 0 failed, 0 skipped
+focused Regina line final:         1 passed, 0 failed, 0 skipped
+default complete module final:    37 passed, 0 failed, 6 skipped
+deferred rows before/final:        3 / 0
+new pexpect dependency rows:       1
+```
+
+The runner-version-128 before database is
+`/tmp/cowasm-sagelite-interface-features-audit.jVzhJi/interfaces-deferred.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-interface-features-final/`; the complete-module database
+records a completed passing lifecycle, the two exact active feature results,
+one `optional:pexpect` row, no failed block or file rows, an empty deferred-
+rerun query, and `PRAGMA integrity_check = ok`.  Explicitly enabling pexpect
+at the Mathematica row reproduces its output mismatch; a focused diagnostic
+records the missing-pexpect import reason, confirming that the metadata guards
+a live dependency boundary.
+
+Validation includes the before/after complete-module and exact-line replays,
+exact SQLite status, lifecycle, deferred-query, and integrity checks, Python
+syntax, a zero-reject application of all 4,503 accumulated-patch hunks to a
+clean Sagelite `f575cf6224f` snapshot, byte-for-byte comparison of the
+reconstructed interface-feature source with the tested patched copy, and
+`git diff --check`.  This is source-doctest coverage and dependency metadata
+only and needs no native WASM rebuild, Electron manifest change, or resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another persisted deferred
+marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

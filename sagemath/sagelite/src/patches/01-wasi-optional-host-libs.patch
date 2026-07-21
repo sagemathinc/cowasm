@@ -8842,9 +8842,18 @@ diff -urN a/src/sage/features/interfaces.py b/src/sage/features/interfaces.py
 +            sage: # needs pexpect
              sage: from sage.features.interfaces import InterfaceFeature
              sage: from sage.interfaces.sage0 import Sage
+@@ -101 +102 @@
+-        sage: Mathics().is_present()  # not tested
++        sage: Mathics().is_present()
+@@ -118 +119 @@
+-        sage: Regina().is_present()  # not tested
++        sage: Regina().is_present()
 @@ -130 +131 @@
 -            sage: regina(~7)
 +            sage: regina(~7)                                                      # needs pexpect
+@@ -188 +189 @@
+-        sage: Mathematica().is_present()  # not tested
++        sage: Mathematica().is_present()  # needs pexpect
 diff -urN a/src/sage/features/pkg_systems.py b/src/sage/features/pkg_systems.py
 --- a/src/sage/features/pkg_systems.py
 +++ b/src/sage/features/pkg_systems.py
