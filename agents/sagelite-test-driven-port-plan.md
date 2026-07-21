@@ -62206,6 +62206,63 @@ additional native WASM rebuild or Electron manifest change.  The next pass can
 audit the remaining unmentioned graph-editor markers or select a persisted
 backend/runtime cluster.
 
+Graph-editor frontend-boundary audit on 2026-07-21 UTC:
+
+The three generic display deferrals in `sage/graphs/graph_editor.py` now also
+carry the `phitigra` optional-feature boundary and explain that they require a
+live Jupyter frontend.  Previously, forcing `not-tested` coverage while only
+selecting `sage.graphs` ran each `e.show()` after its widget setup had been
+skipped; the retained historical replay records three artificial
+`AttributeError: 'float' object has no attribute 'show'` failures against the
+pre-existing doctest namespace value of `e`.
+
+The two independent graph setup rows now use the deterministic
+`graphs.PetersenGraph()` constructor instead of `graphs.RandomGNP(...)`.  This
+keeps those rows runnable in the graph-enabled browser profile without pulling
+in the intentionally unavailable `sage.graphs.graph_generators_pyx` helper.
+The focused profile therefore exercises real graph construction while all
+widget and display operations stop at their exact frontend boundary.
+
+The retained runner-version-128 results record:
+
+```text
+historical --optional=sage.graphs:                  0 passed, 2 failed, 9 skipped
+historical plus --deferred=not-tested:              0 passed, 5 failed, 6 skipped
+proposed --optional=sage.graphs:                    2 passed, 0 failed, 9 skipped
+proposed plus --deferred=not-tested:                2 passed, 0 failed, 9 skipped
+proposed with sage.graphs and phitigra selected:    2 passed, 6 failed, 3 skipped
+failure-disallowing default-profile make target:   0 passed, 0 failed, 1 skipped
+```
+
+The fully selected replay fails at the expected unavailable `phitigra`
+frontend and dependent widget state; it no longer contains the unrelated
+random-graph extension failure.  In the forced supported-profile replay, all
+three display rows retain both `deferred:not tested` and
+`optional:phitigra` tags and are skipped specifically as
+`optional:sage.graphs,phitigra`.
+
+The authoritative historical, proposed, forced, selected-feature, and strict
+SQLite databases, worker root, focused corpus fixture, pinned clean source
+reconstructions, and patch logs are under
+`/tmp/cowasm-sagelite-graph-editor-audit.m7PHA1/`.  All supported-profile
+databases have closed passing lifecycles, empty block and file failure sets,
+and `PRAGMA integrity_check = ok`; the intentionally selected unavailable
+frontend database has a closed failed lifecycle with the expected dependency
+diagnostics.
+
+Validation includes the historical and layered proposed replays, the
+failure-disallowing `test-sage-doctest-corpus` make target against the pinned
+reconstruction, exact SQLite lifecycle, tag, integrity, and failure checks,
+Python syntax, accumulated-patch syntax, zero-reject sequential application to
+pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, and `git diff --check`.  All 1,592 accumulated source-patch
+sections (1,076 `diff --git` and 516 legacy sections) and 4,606 hunks apply.
+The tests reused the unchanged validated Electron resource bundle; this is
+doctest metadata and deterministic example coverage only and needs no native
+WASM rebuild, Electron manifest change, or permanent resource restaging.  The
+next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -30104,3 +30104,21 @@ diff --git a/src/sage/tests/combinatorial_hopf_algebras.py b/src/sage/tests/comb
 @@ -49 +49 @@
 -    sage: all(go2(n) for n in range(6))  # not tested (needs more morphisms)
 +    sage: all(go2(n) for n in range(6))  # known bug - needs more morphisms
+diff --git a/src/sage/graphs/graph_editor.py b/src/sage/graphs/graph_editor.py
+--- a/src/sage/graphs/graph_editor.py
++++ b/src/sage/graphs/graph_editor.py
+@@ -50 +50 @@
+-        sage: e.show()                      # not tested
++        sage: e.show()                      # not tested (requires a live Jupyter frontend)  # optional - phitigra
+@@ -54,3 +54,3 @@
+-        sage: G = graphs.RandomGNP(10, 0.5)
++        sage: G = graphs.PetersenGraph()
+         sage: e = graph_editor(G)           # optional - phitigra
+-        sage: e.show()                      # not tested
++        sage: e.show()                      # not tested (requires a live Jupyter frontend)  # optional - phitigra
+@@ -60 +60 @@
+-        sage: G = graphs.RandomGNP(10, 0.5)
++        sage: G = graphs.PetersenGraph()
+@@ -71 +71 @@
+-        sage: e.show()                                                              # not tested
++        sage: e.show()                                                              # not tested (requires a live Jupyter frontend)  # optional - phitigra
