@@ -59403,6 +59403,49 @@ checkout and its intentional changes remain untouched.  The next pass can
 audit the adjacent Judson plotting deferred cluster or select another
 persisted backend/runtime cluster.
 
+Judson Boolean-lattice plotting coverage pass on 2026-07-21 UTC:
+
+The eleven remaining deferred rows in
+`sage/tests/books/judson_abstract_algebra/boolean-sage.py` are now active
+coverage.  A forced replay showed that all ten poset and lattice `plot()`
+calls construct graphics successfully in the browser profile; their only
+failures were output mismatches because the historical `# not tested` prompts
+had no expected textual representation.  Nine deterministic plots now assert
+their exact `Graphics object` primitive counts.  The `RandomPoset` plot is
+active with `# random`, since two retained runs produced different valid
+primitive counts.  The complements-dictionary display already matched its
+complete expected output and is active without a deferred tag.
+
+The retained results record:
+
+```text
+complete Boolean book before:       51 passed, 0 failed, 11 skipped
+forced deferred replay before:      52 passed, 10 failed, 0 skipped
+complete Boolean book final:        62 passed, 0 failed,  0 skipped
+deferred rows before/final:          11 / 0
+active exact/random rows promoted:   10 / 1
+```
+
+The forced runner-version-128 database is
+`/tmp/cowasm-sagelite-judson-boolean-before.bWNx8p/boolean-deferred.sqlite3`.
+It records the ten empty-expected-output mismatches while the exact
+complements row passes.  The authoritative final database is
+`/tmp/cowasm-sagelite-judson-boolean-final.03xsm9/complete-boolean.sqlite3`;
+it records 62 passing blocks, a completed passing lifecycle, no block or file
+failures, no deferred reruns, and `PRAGMA integrity_check = ok`.  Its random
+plot row records `random` tags and expected kind, while every deterministic
+plot and the complements display records an exact passing expectation.
+
+Validation includes the before/after complete-module replays, exact SQLite
+status, random-tag, deferred-query, lifecycle, and integrity checks,
+accumulated-patch syntax, a zero-reject application to a detached clean
+Sagelite `f575cf6224f` snapshot, byte-for-byte comparison of the reconstructed
+Boolean-book source with the tested build copy, and `git diff --check`.  This
+is source-doctest coverage only and needs no Cython/native rebuild, Electron
+manifest change, or resource restaging.  The external developer Sagelite
+checkout remains untouched.  The next pass can audit another persisted
+deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

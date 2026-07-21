@@ -19829,6 +19829,51 @@ diff --git a/src/sage/tests/books/judson_abstract_algebra/algcodes-sage.py b/src
  ##          Sage Doctest File         ##
  #**************************************#
  #*    Generated from PreTeXt source   *#
+diff --git a/src/sage/tests/books/judson_abstract_algebra/boolean-sage.py b/src/sage/tests/books/judson_abstract_algebra/boolean-sage.py
+--- a/src/sage/tests/books/judson_abstract_algebra/boolean-sage.py
++++ b/src/sage/tests/books/judson_abstract_algebra/boolean-sage.py
+@@ -57,1 +57,2 @@
+-    sage: D.plot()   # not tested
++    sage: D.plot()
++    Graphics object consisting of 19 graphics primitives
+@@ -68,1 +69,2 @@
+-    sage: L.plot()   # not tested
++    sage: L.plot()
++    Graphics object consisting of 19 graphics primitives
+@@ -73,1 +75,2 @@
+-    sage: Q.plot()   # not tested
++    sage: Q.plot()
++    Graphics object consisting of 11 graphics primitives
+@@ -78,1 +81,2 @@
+-    sage: S.plot()   # not tested
++    sage: S.plot()
++    Graphics object consisting of 49 graphics primitives
+@@ -83,1 +87,1 @@
+-    sage: T.plot()   # not tested
++    sage: T.plot()   # random
+@@ -133,1 +137,2 @@
+-    sage: P.plot()   # not tested
++    sage: P.plot()
++    Graphics object consisting of 41 graphics primitives
+@@ -162,1 +167,2 @@
+-    sage: B.plot()   # not tested
++    sage: B.plot()
++    Graphics object consisting of 18 graphics primitives
+@@ -167,1 +173,2 @@
+-    sage: Pdual.plot()   # not tested
++    sage: Pdual.plot()
++    Graphics object consisting of 41 graphics primitives
+@@ -172,1 +179,2 @@
+-    sage: Ddual.plot()   # not tested
++    sage: Ddual.plot()
++    Graphics object consisting of 19 graphics primitives
+@@ -191,1 +199,2 @@
+-    sage: C.plot()   # not tested
++    sage: C.plot()
++    Graphics object consisting of 49 graphics primitives
+@@ -241,1 +250,1 @@
+-    sage: comp   # not tested
++    sage: comp
 diff --git a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
 --- a/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
 +++ b/src/sage/tests/books/judson_abstract_algebra/finite-sage.py
