@@ -59273,6 +59273,45 @@ validation cover this delivery-only change.  The next pass can select another
 persisted backend/runtime cluster while treating broad `free_module.py`
 module-global seeding as a separate runner/import-surface issue.
 
+Integer-matrix LLL dependency-metadata pass on 2026-07-21 UTC:
+
+The complete dense-integer matrix dashboard's lone deferred row is now an
+explicit optional-dependency boundary.  The default `X.LLL(delta=1)` example
+was still marked `# not tested, will eat lots of ram`, but the current default
+selector reaches the unavailable `fpylll` package before exercising that
+historical behavior.  Replaying the deferred row therefore produced a
+`ModuleNotFoundError` rather than the documented infinite-loop diagnostic.
+The prompt now carries `# needs fpylll`, matching the other default-LLL
+examples in the same docstring, while the adjacent explicit NTL implementation
+remains active coverage.
+
+The retained results record:
+
+```text
+deferred line 3092 before:       0 passed, 1 failed, 5 skipped
+default line 3092 final:         0 passed, 0 failed, 6 skipped
+explicit NTL line 3096 final:    1 passed, 0 failed, 6 skipped
+complete integer matrix final: 651 passed, 0 failed, 44 skipped
+```
+
+The focused runner-version-128 SQLite databases are under
+`/tmp/cowasm-sagelite-lll-metadata-final.K2Ftbd/`.  The authoritative complete-
+module database is
+`/tmp/cowasm-sagelite-lll-metadata-full.WvHfOM/complete-matrix.sqlite3`; it
+records 695 blocks, no file-level error, a completed passing lifecycle, and
+`PRAGMA integrity_check = ok`.  Its deferred-rerun query is empty, and the
+reclassified row records `optional:fpylll` with `optional,needs:fpylll` tags.
+
+Validation includes both exact-line replays, the complete matrix-module
+replay, SQLite lifecycle, integrity, and deferred-query checks, accumulated-
+patch syntax, a zero-reject sequential application to a clean Sagelite
+`f575cf6224f` snapshot, byte-for-byte comparison of the affected patched
+source, and `git diff --check`.  This is source-only doctest metadata and needs
+no Cython/native rebuild, Electron manifest change, or resource restaging.
+The external developer Sagelite checkout remains untouched.  The next pass can
+audit another persisted deferred marker or select a separate backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

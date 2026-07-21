@@ -28760,3 +28760,15 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
              x^2 - 3*x - 2
 
          Test corner cases::
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -3114,7 +3114,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             Traceback (most recent call last):
+             ...
+             TypeError: delta must be <= 1
+-            sage: L = X.LLL(delta=1)    # not tested, will eat lots of ram
++            sage: L = X.LLL(delta=1)    # needs fpylll
+             Traceback (most recent call last):
+             ...
+             RuntimeError: infinite loop in LLL
