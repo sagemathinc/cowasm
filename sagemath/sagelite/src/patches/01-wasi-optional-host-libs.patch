@@ -29231,3 +29231,32 @@ diff --git a/src/sage/categories/homsets.py b/src/sage/categories/homsets.py
          functor_category = getattr(category.__class__, cls._functor_category)
          if isinstance(functor_category, type) and issubclass(functor_category, Category):
              return Homsets()
+diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+--- a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
++++ b/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py
+@@ -1208,0 +1209,10 @@
++
++            Converting a coordinate submodule must not depend on which
++            coercion maps were previously cached::
++
++                sage: H = lie_algebras.Heisenberg(QQ, 2)
++                sage: HM = lie_algebras.Heisenberg(QQ, 2, representation='matrix')
++                sage: H.has_coerce_map_from(HM)
++                True
++                sage: tuple(S.dimension() for S in H.lower_central_series(submodule=True))
++                (5, 1, 0)
+@@ -1241,7 +1251,13 @@
+             # particular, elements of a Lie ideal use the ideal's coordinate
+             # system, so treating them as vectors for ``self`` is incorrect.
+             B = [A(b) for b in self.basis()]
+-            LB = [A(lb) for lb in L.basis()]
++            if L in LieAlgebras(L.base_ring()):
++                LB = [A(lb) for lb in L.basis()]
++            else:
++                # A coordinate submodule is expressed in ``self``'s basis.
++                # Convert it explicitly instead of consulting A's cached
++                # coercion maps, which may prefer another Lie representation.
++                LB = [A(self.from_vector(lb)) for lb in L.basis()]
+             b_mat = matrix(A.base_ring(), [A.bracket(b, lb).to_vector()
+                                            for b in B for lb in LB])
+             if submodule is True or not (self.is_ideal(A) and L.is_ideal(A)):

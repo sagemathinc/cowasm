@@ -60334,6 +60334,58 @@ intentional changes remain untouched.  The next pass can address either of
 the two remaining Heisenberg `TestSuite` output mismatches or select another
 persisted backend/runtime cluster.
 
+Heisenberg coordinate-submodule stabilization pass on 2026-07-21 UTC:
+
+The two remaining Heisenberg `TestSuite` failures were an order-dependent
+coordinate-conversion bug rather than expected-output drift.  Earlier
+cross-representation examples cache coercion maps between basis and matrix
+Heisenberg algebras.  `product_space(..., submodule=True)` subsequently sent
+raw coordinate vectors through the ambient algebra's cached conversion map;
+depending on that cache state, the basis representation expected a coefficient
+dictionary while the matrix representation expected a full matrix entry list.
+Both paths failed inside `_test_nilpotency`.
+
+`product_space()` now distinguishes Lie-algebra operands from coordinate
+submodules.  Lie elements continue to coerce through the common ambient
+algebra, preserving the earlier ideal/subalgebra fix, while coordinate vectors
+are explicitly converted through `self.from_vector()` before entering that
+ambient algebra.  A source regression first caches the basis-from-matrix
+Heisenberg coercion map and then checks that the submodule lower central series
+has dimensions `(5, 1, 0)`.
+
+The retained runner-version-128 results record:
+
+```text
+complete feature-selected Heisenberg before: 130 passed, 2 failed, 0 skipped
+complete feature-selected Heisenberg final:  132 passed, 0 failed, 0 skipped
+focused cache-order regression final:           1 passed, 0 failed, 0 skipped
+reconstructed cache-order regression final:     1 passed, 0 failed, 0 skipped
+existing ideal product-space control final:     1 passed, 0 failed, 0 skipped
+```
+
+The authoritative databases and manifest-validated copy-on-write resource
+bundle are under
+`/tmp/cowasm-sagelite-heisenberg-nilpotency.rHD6Se/`.  The final complete
+Heisenberg database records a closed passing lifecycle, no block or file
+failures, a 100% non-skipped pass rate, and `PRAGMA integrity_check = ok`.
+The exact regression and reconstructed-source databases also record completed
+passing lifecycles and clean integrity checks.  A broad all-option category
+diagnostic confirms that the edited regression row passes; its independent
+forced optional-backend failures remain non-gating browser-profile clusters.
+
+Validation includes the fresh before and final complete-module replays,
+focused shared and reconstructed regression replays, the existing ideal
+control, saved lifecycle and failure-cluster queries, Python syntax, patch
+syntax, `git diff --check`, and the full Electron resource smoke.  All 1,557
+accumulated patch sections and 4,529 hunks apply without rejects to a fresh
+Sagelite `f575cf6224f` archive, and the reconstructed category source is
+byte-for-byte identical to the tested patched copy.  This is a pure-Python
+category fix and needs no native WASM rebuild or permanent resource restaging.
+The external developer Sagelite checkout and its intentional changes remain
+untouched.  The feature-selected Heisenberg module is now clean; the next pass
+can select another persisted backend/runtime cluster or audit a generic
+deferred marker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
