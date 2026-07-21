@@ -62321,6 +62321,65 @@ and needs no native WASM rebuild, Electron manifest change, or permanent
 resource restaging.  The next pass can audit another default-profile deferred
 marker or select the persisted DNS/`getaddrinfo` runtime cluster.
 
+Remote-load security and network-boundary audit on 2026-07-21 UTC:
+
+The generic deferral on the remote-code example in `sage/repl/load.py` now
+records both parts of its execution contract.  The example downloads and
+executes Python code from `www.sagemath.org`, so it retains the `# not tested`
+safeguard with an explicit remote-code explanation.  It also carries Sage's
+established `internet` optional-feature tag because the download is the first
+operation.
+
+A forced historical exact-line replay reaches the runtime's explicit
+`NotImplementedError: remote file downloads require SSL/network support, which
+is not available in the WASI browser profile`.  With the layered metadata,
+forcing generic deferred coverage alone stops safely at `optional:internet`;
+selecting both safeguards deliberately exposes the same unsupported browser-
+network boundary.  The adjacent already-tagged HTTPS example remains
+unchanged.
+
+The retained runner-version-128 results record:
+
+```text
+historical default exact row:                    0 passed, 0 failed, 1 skipped
+forced historical deferred row:                  0 passed, 1 failed, 0 skipped
+proposed default exact row:                      0 passed, 0 failed, 1 skipped
+proposed forced deferred row:                    0 passed, 0 failed, 1 skipped
+proposed with deferred and internet selected:    0 passed, 1 failed, 0 skipped
+complete reconstructed module:                  23 passed, 0 failed, 14 skipped
+failure-disallowing make target:                23 passed, 0 failed, 14 skipped
+version-matched Electron resource smoke:         passed (52 completion checkpoints)
+```
+
+The authoritative historical, proposed, selected-feature, reconstructed, and
+strict SQLite databases, worker roots, pinned source clones, focused corpus
+fixture, patch logs, and Electron resource-smoke log are under
+`/tmp/cowasm-sagelite-load-audit.oyR19t/`.  All supported-profile databases
+have closed passing lifecycles, empty saved block- and file-failure cluster
+queries, and `PRAGMA integrity_check = ok`.  The forced supported-profile row
+retains both `deferred:not tested` and `optional:internet` tags and records
+`optional:internet` as its active skip reason.  The two deliberately enabled
+databases have closed failed lifecycles with exactly the expected
+`NotImplementedError` diagnostic.  An initial probe without a resource root
+and a newer source-smoke/resource-contract mismatch are retained as
+non-authoritative diagnostics; the embedded smoke matched to the validated
+resource manifest is the passing Electron check.
+
+Validation includes the historical and layered proposed exact-line replays,
+the complete proposed module replay, the failure-disallowing
+`test-sage-doctest-corpus` make target against a fresh shared clone of pinned
+Sagelite `f575cf6224f`, exact SQLite lifecycle, tag, integrity, and saved
+failure-cluster checks, Python syntax, accumulated-patch syntax, zero-reject
+sequential application, byte-for-byte target-source reconstruction,
+`git diff --check`, and the version-matched Electron-shaped resource smoke.
+All 1,594 accumulated source-patch sections (1,078 `diff --git` and 516 legacy
+sections) and 4,609 hunks apply.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  This is doctest dependency and
+remote-code safety metadata only and needs no native WASM rebuild, Electron
+manifest change, or permanent resource restaging.  The next pass can audit
+another default-profile deferred marker or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

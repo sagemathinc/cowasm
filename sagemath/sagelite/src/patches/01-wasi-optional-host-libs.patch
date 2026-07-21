@@ -30131,3 +30131,9 @@ diff --git a/src/sage/misc/messaging.py b/src/sage/misc/messaging.py
 @@ -69 +69 @@
 -        sage: sage.misc.messaging.pushover("Hi, how are you?") # not tested
 +        sage: sage.misc.messaging.pushover("Hi, how are you?")  # not tested (requires credentials and sends a notification)  # optional - internet
+diff --git a/src/sage/repl/load.py b/src/sage/repl/load.py
+--- a/src/sage/repl/load.py
++++ b/src/sage/repl/load.py
+@@ -178 +178 @@
+-        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals())  # not tested
++        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals())  # not tested (executes remote code)  # optional - internet
