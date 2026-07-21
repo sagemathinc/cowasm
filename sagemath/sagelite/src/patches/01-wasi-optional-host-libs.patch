@@ -30016,3 +30016,9 @@ diff --git a/src/sage/misc/test_nested_class.py b/src/sage/misc/test_nested_clas
 +
 +The failed assignment does not construct a parent on which a test suite could
 +be run.
+diff --git a/src/sage/misc/viewer.py b/src/sage/misc/viewer.py
+--- a/src/sage/misc/viewer.py
++++ b/src/sage/misc/viewer.py
+@@ -14 +14 @@
+-    sage: viewer.pdf_viewer('open -a /Applications/Adobe\ Reader.app') # not tested
++    sage: viewer.pdf_viewer('open -a /Applications/Adobe\ Reader.app')

@@ -61781,6 +61781,49 @@ developer Sagelite checkout and its intentional changes remain untouched.  The
 next pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Viewer-preference deterministic coverage promotion on 2026-07-21 UTC:
+
+The sole generic deferred row in `sage/misc/viewer.py` is now active,
+deterministic browser-profile coverage.  The historical example sets the PDF
+viewer preference to an OS X command string but does not execute that command;
+`Viewer.pdf_viewer(...)` only updates the module's in-memory preference map.
+Forcing the historical row therefore passes without opening a host viewer or
+requiring any OS-specific executable, so the `# not tested` suffix was stale.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:      49 passed, 0 failed, 1 skipped
+forced historical exact line:     1 passed, 0 failed, 0 skipped
+complete proposed module:        50 passed, 0 failed, 0 skipped
+complete reconstructed module:   50 passed, 0 failed, 0 skipped
+failure-disallowing make target: 50 passed, 0 failed, 0 skipped
+Electron resource smoke:         passed
+```
+
+The authoritative historical, forced, proposed, reconstructed, and strict
+SQLite databases, worker roots, pinned clean source reconstruction,
+accumulated-patch log, focused corpus fixture, schema-191 copy-on-write
+resource bundle, and Electron smoke log are under
+`/tmp/cowasm-sagelite-viewer-audit.10bsEJ/`.  All five databases have closed
+passing lifecycles, empty saved block- and file-failure cluster queries, and
+`PRAGMA integrity_check = ok`; the three complete final databases have no
+deferred rows.
+
+Validation includes the historical default and forced-deferred exact-line
+replays, complete proposed and pinned-clean-reconstructed module replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, deferred-row, and saved failure-cluster checks,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,584
+accumulated source-patch sections (1,068 `diff --git` and 516 legacy sections)
+and 4,591 hunks apply.  This is deterministic documentation coverage only and
+needs no native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
