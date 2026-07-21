@@ -24268,6 +24268,9 @@ diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
 +                    )
 +                if f is None:
 +                    raise
+@@ -540 +561 @@
+-        sage: is_prime(a)    # not tested - takes ~ 1min
++        sage: is_prime(a)    # long time                                                # needs sage.libs.pari
 diff --git a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 --- a/src/sage/rings/real_double.pyx
 +++ b/src/sage/rings/real_double.pyx

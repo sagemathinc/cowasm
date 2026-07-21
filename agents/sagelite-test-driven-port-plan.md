@@ -59994,6 +59994,52 @@ change, or resource restaging.  The external developer Sagelite checkout and
 its intentional changes remain untouched.  The next pass can audit another
 persisted deferred marker or select a separate backend/runtime cluster.
 
+Arithmetic primality timing dependency-metadata pass on 2026-07-21 UTC:
+
+The historical long-primality deferral in `sage/arith/misc.py` is now
+classified by both parts of its execution contract.  A stateful focused
+`--deferred=not-tested` replay constructed `a = 2**2048 + 981`, reached
+`is_prime(a)`, and failed through `Integer.is_prime()` and cypari2
+`Gen.isprime()` with `PariError: PARI error 17`.  The row now carries
+`# long time` and `# needs sage.libs.pari` instead of the generic
+`# not tested` marker.
+
+The retained runner-version-128 results record:
+
+```text
+forced focused row before:       0 passed, 1 failed, 0 skipped (PARI error 17)
+default focused row final:        0 passed, 0 failed, 1 skipped (optional PARI)
+PARI-selected focused row final:  0 passed, 0 failed, 1 skipped (long time)
+complete-module diagnostic:     605 passed, 6 failed, 577 skipped
+historical deferred rows final:   0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-arith-misc-audit.PC9rYX/arith-misc-line-540.sqlite3`.
+The authoritative focused final databases are under
+`/tmp/cowasm-sagelite-arith-misc-final.D4cm54/`; both record completed passing
+lifecycles, the exact combined tags, no block or file failures, empty
+deferred and failure queries, and `PRAGMA integrity_check = ok`.  Selecting
+the PARI feature changes the same row's skip reason from
+`optional:sage.libs.pari` to `long time`, demonstrating that each guard is
+independently active.
+
+The complete-module diagnostic records the edited setup and cleanup rows as
+passes and the target as the intended optional skip.  Its six failures are
+pre-existing clusters elsewhere in this broad, non-curated module: two
+polynomial gcd/xgcd rows, two partial cypari2/p-adic rows, and two disabled
+FLINT integer-polynomial rows.  They are not part of the focused validation.
+
+Validation also includes Python syntax, `git diff --check`, a zero-reject
+sequential application of all 1,508 accumulated-patch sections and 4,517
+hunks to a clean Sagelite `f575cf6224f` snapshot, and byte-for-byte comparison
+of the reconstructed arithmetic source with the tested patched copy.  This is
+source-doctest dependency metadata only and needs no native WASM rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+pass can audit another persisted deferred marker or select one of the
+polynomial/cypari2/FLINT clusters exposed by the complete-module diagnostic.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
