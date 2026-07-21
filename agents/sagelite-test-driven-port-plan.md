@@ -60828,6 +60828,52 @@ intentional changes remain untouched.  The next pass can audit another
 default-profile deferred marker or select a separate persisted runtime
 cluster.
 
+Product-tree deterministic interpolation promotion on 2026-07-21 UTC:
+
+The two historical `# not tested` timing rows in
+`sage/rings/generic.py` are now active, deterministic browser-profile
+coverage.  The rows used IPython `%timeit` syntax, which the source doctest
+runner correctly treated as invalid Python when the generic deferral was
+forced, and compared literal native CPU timings that cannot form a portable
+WASM correctness contract.
+
+The example now checks the mathematical claim behind the benchmark: three
+repeated product-tree interpolations agree with direct CRT, and the reusable
+CRT-basis cache is populated.  The fixture uses the existing 25-prime range
+rather than the old 135-prime benchmark range, keeping the correctness check
+bounded for a browser worker while still exercising repeated interpolation.
+All generic `# not tested` markers are gone from the module.
+
+The retained runner-version-128 results record:
+
+```text
+historical deferred module before: 74 passed, 2 failed, 4 skipped
+focused deterministic row final:    1 passed, 0 failed, 0 skipped
+complete generic module final:     77 passed, 0 failed, 4 skipped
+reconstructed complete final:      77 passed, 0 failed, 4 skipped
+```
+
+The authoritative before and final SQLite databases and worker roots are
+under `/tmp/cowasm-sagelite-product-tree-audit.ult0nh/`.  The complete before
+database preserves both `%timeit` `SyntaxError` rows; the final databases have
+closed passing lifecycles, empty saved block- and file-failure cluster
+queries, no remaining deferred row, and `PRAGMA integrity_check = ok`.  The
+manifest-validated resource bundle is retained under
+`/tmp/cowasm-sagelite-profiler-audit.NlwlGf/`.
+
+Validation includes the forced historical replay, exact-line final replay,
+complete patched-source and clean reconstructed-source module replays, exact
+SQLite status and lifecycle checks, saved failure-cluster queries, Python
+syntax, accumulated-patch application, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron resource smoke.
+All 1,521 accumulated patch sections and 4,556 hunks apply without rejects to
+Sagelite `f575cf6224f`.  This is documentation and doctest-coverage work only
+and needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit another
+default-profile deferred marker or select a separate persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

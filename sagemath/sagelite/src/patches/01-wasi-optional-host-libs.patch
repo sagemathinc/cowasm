@@ -29421,3 +29421,25 @@ diff --git a/src/sage/misc/profiler.py b/src/sage/misc/profiler.py
 +        sage: p.clear()
 +        sage: p
 +        no checkpoints defined
+diff --git a/src/sage/rings/generic.py b/src/sage/rings/generic.py
+--- a/src/sage/rings/generic.py
++++ b/src/sage/rings/generic.py
+@@ -229,2 +229,3 @@
+-        This method is faster than :func:`CRT` for repeated calls with
+-        the same moduli::
++        This method caches the CRT bases used for repeated calls with
++        the same moduli.  Check that repeated interpolations agree with
++        :func:`CRT`::
+@@ -233,7 +234,7 @@
+-            sage: vs = prime_range(1000,2000)
++            sage: vs = prime_range(100)
+             sage: rs = lambda: [randrange(1,100) for _ in vs]
+             sage: tree = ProductTree(vs)
+-            sage: %timeit CRT(rs(), vs)             # not tested
+-            372 µs ± 3.34 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+-            sage: %timeit tree.interpolation(rs())  # not tested
+-            146 µs ± 479 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
++            sage: samples = [rs() for _ in range(3)]
++            sage: matches = [tree.interpolation(xs) == CRT(xs, vs) for xs in samples]
++            sage: matches, tree._crt_bases is not None
++            ([True, True, True], True)
