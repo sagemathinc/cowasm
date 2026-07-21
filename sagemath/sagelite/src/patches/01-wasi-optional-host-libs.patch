@@ -29260,3 +29260,11 @@ diff --git a/src/sage/categories/finite_dimensional_lie_algebras_with_basis.py b
              b_mat = matrix(A.base_ring(), [A.bracket(b, lb).to_vector()
                                             for b in B for lb in LB])
              if submodule is True or not (self.is_ideal(A) and L.is_ideal(A)):
+diff --git a/src/sage/rings/asymptotic/growth_group.py b/src/sage/rings/asymptotic/growth_group.py
+--- a/src/sage/rings/asymptotic/growth_group.py
++++ b/src/sage/rings/asymptotic/growth_group.py
+@@ -2366 +2366,3 @@
+-            sage: sage.structure.element.coercion_traceback()  # not tested
++            sage: errors = sage.structure.element.coercion_traceback(dump=False)
++            sage: [error.splitlines()[-1].split(':', 1)[0] for error in errors]
++            ['TypeError', 'AttributeError', 'TypeError', 'AttributeError']

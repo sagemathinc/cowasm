@@ -60386,6 +60386,51 @@ untouched.  The feature-selected Heisenberg module is now clean; the next pass
 can select another persisted backend/runtime cluster or audit a generic
 deferred marker.
 
+Growth-group coercion-traceback coverage pass on 2026-07-21 UTC:
+
+The historical `# not tested` row in
+`sage/rings/asymptotic/growth_group.py` is now deterministic default-profile
+coverage.  In normal module order, `cm.record_exceptions()` followed by the
+disjoint-variable growth-group pushout leaves four expected internal coercion
+attempts in the diagnostic stack.  Printing the full tracebacks made the
+doctest depend on Cython filenames and line numbers, so the row had no stable
+expected output and failed as an output mismatch when forced.
+
+The source test now calls `coercion_traceback(dump=False)` and asserts the
+stable exception-class sequence
+`TypeError, AttributeError, TypeError, AttributeError`.  This preserves the
+intended diagnostic coverage without comparing volatile traceback frames or
+discarding the caught-exception contract behind a generic deferral.
+
+The retained runner-version-128 results record:
+
+```text
+complete growth-group module before: 767 passed, 1 failed, 184 skipped
+complete growth-group module final:  769 passed, 0 failed, 184 skipped
+reconstructed complete module final: 769 passed, 0 failed, 184 skipped
+historical deferred rows final:         0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-growth-trace-audit.1PzxLT/growth-complete-forced.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-growth-trace-final.irpIba/`; both the tested patched copy
+and the reconstructed source record completed passing lifecycles, no block or
+file failures, an empty deferred-rerun query, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the forced and default complete-module replays, the
+reconstructed complete-module replay, exact SQLite row, lifecycle, deferred,
+failure-cluster, and integrity checks, Python syntax, accumulated-patch syntax,
+`git diff --check`, and the full Electron resource smoke.  All 1,042
+accumulated patch sections and 4,530 hunks apply without rejects to a clean
+Sagelite `f575cf6224f` archive, and the reconstructed growth-group source is
+byte-for-byte identical to the tested patched copy.  This is source-doctest
+coverage only and needs no native WASM rebuild, Electron manifest change, or
+permanent resource restaging.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
