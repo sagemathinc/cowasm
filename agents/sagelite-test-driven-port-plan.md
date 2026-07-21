@@ -62676,6 +62676,36 @@ The only remaining skips in the complete `python-wasm` suite are the two
 general async-API examples in `python-async.test.ts`, which a later pass can
 audit independently of the POSIX runtime.
 
+Async Python API regression re-enable pass on 2026-07-21 UTC:
+
+The final two historical `python-wasm` skips are enabled again.  Their stale
+comment described intermittent `uv_cwd`/`ENOENT` hangs caused by conflicts
+between Node workers, which was the same process-wide host-CWD leak repaired
+by the preceding kernel pass.  Both async API examples now pass in isolation
+and in the complete suite order that previously exposed that leak.
+
+The regressions now terminate and await their Python workers in `finally`
+blocks, so an assertion failure cannot leave a live worker behind.  The sleep
+example also measures elapsed time with the monotonic `performance.now()`
+clock and reports its lower and upper bounds as separate Jest assertions.
+
+The checked results are:
+
+```text
+python-wasm TypeScript:                     passed
+focused async API Jest:                     2 passed, 0 failed
+three consecutive focused async replays:    6 passed, 0 failed
+complete python-wasm Jest:                  53 passed, 0 failed, 0 skipped
+```
+
+This closes every skip in the complete `python-wasm` suite and confirms that
+the general async API, POSIX workers, terminal behavior, socket lifecycle, and
+host-CWD isolation coexist in full-suite order.  It is a regression-only
+TypeScript change and requires no native WASM rebuild, Sagelite source patch,
+resource restaging, Electron manifest change, or external checkout mutation.
+Validation also includes `git diff --check`.  The next scheduled pass can
+return to another persisted Sagelite backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
