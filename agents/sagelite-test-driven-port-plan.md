@@ -59910,6 +59910,50 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 pass can audit another persisted deferred marker or select a separate
 backend/runtime cluster.
 
+Verbose-output stale-doctest coverage pass on 2026-07-21 UTC:
+
+The four historical `# not tested` rows in `sage/misc/verbose.py` are now
+ordinary browser-profile coverage.  A forced complete-module replay showed
+that all four rows executed successfully but expected an obsolete `VERBOSE1`
+or `VERBOSE2` prefix, imported `verbose` through a deprecated lazy alias, and
+left the returned CPU time visible as an extra result.  These were stale
+documentation contracts rather than runtime failures.
+
+The accumulated WASI patch now imports `verbose` directly in both example
+groups, assigns its timing return value to `_`, and documents the current
+`verbose LEVEL (caller)` output.  The elapsed-time example uses `# random`
+because its numeric suffix is inherently nondeterministic; the level-three
+example correctly expects no output.  This promotes all four deferred rows
+while retaining execution of the timing and verbosity-level behavior.
+
+The retained runner-version-128 results record:
+
+```text
+forced complete module before:  22 passed, 4 failed, 0 skipped
+default complete module final:   28 passed, 0 failed, 0 skipped
+historical deferred rows final:   0
+```
+
+The before database is
+`/tmp/cowasm-sagelite-verbose-audit.G6gFL0/verbose-complete-forced.sqlite3`;
+its four historical rows at lines 140, 201, 203, and 205 are all
+`output_mismatch` failures.  The authoritative final database is
+`/tmp/cowasm-sagelite-verbose-final.4HpqUW/verbose-complete.sqlite3`; it
+records a completed passing lifecycle, all four replacement rows as passes,
+no block or file failures, an empty deferred-rerun query, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the forced before replay, the complete default-module
+replay, exact SQLite lifecycle, status, tag, deferred-row, and integrity
+checks, Python syntax, `git diff --check`, a zero-reject sequential
+application of all 1,507 accumulated-patch sections and 4,515 hunks to a
+clean Sagelite `f575cf6224f` snapshot, and byte-for-byte comparison of the
+reconstructed verbose source with the tested patched copy.  This is source-
+doctest coverage only and needs no native WASM rebuild, Electron manifest
+change, or resource restaging.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

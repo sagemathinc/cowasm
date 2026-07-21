@@ -28986,3 +28986,30 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -2719 +2719 @@
 -            sage: x^(2^64 + 12345)  # known bug: macos                                  # needs sage.rings.number_field
 +            sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
+diff --git a/src/sage/misc/verbose.py b/src/sage/misc/verbose.py
+--- a/src/sage/misc/verbose.py
++++ b/src/sage/misc/verbose.py
+@@ -138,5 +138,6 @@
++        sage: from sage.misc.verbose import verbose
+         sage: set_verbose(1)
+         sage: t = cputime()
+-        sage: t = verbose("This is Sage.", t, level=1, caller_name="william")       # not tested
+-        VERBOSE1 (william): This is Sage. (time = 0.0)
++        sage: _ = verbose("This is Sage.", t, level=1, caller_name="william")       # random
++        verbose 1 (william) This is Sage. (time = ...)
+         sage: set_verbose(0)
+@@ -200,8 +201,8 @@
++        sage: from sage.misc.verbose import verbose
+         sage: set_verbose(2)
+-        sage: verbose("This is Sage.", level=1)  # not tested
+-        VERBOSE1 (?): This is Sage.
+-        sage: verbose("This is Sage.", level=2)  # not tested
+-        VERBOSE2 (?): This is Sage.
+-        sage: verbose("This is Sage.", level=3)  # not tested
+-        [no output]
++        sage: _ = verbose("This is Sage.", level=1)
++        verbose 1 (<module>) This is Sage.
++        sage: _ = verbose("This is Sage.", level=2)
++        verbose 2 (<module>) This is Sage.
++        sage: _ = verbose("This is Sage.", level=3)
+         sage: set_verbose(0)
