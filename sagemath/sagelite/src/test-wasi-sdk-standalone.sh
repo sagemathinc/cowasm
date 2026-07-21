@@ -3252,6 +3252,51 @@ if [ "$doctest_line_setup_unexpected_count" != "0" ]; then
   sqlite3 "$doctest_line_setup_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t line-setup doctest smoke recorded an unselected setup block."
 fi
+doctest_skipped_line_file="$probe_dir/sagelite-doctest-skipped-line-setup.py"
+doctest_skipped_line_db="$probe_dir/sagelite-doctest-skipped-line-setup.sqlite3"
+doctest_skipped_line_log="$dist_dir/doctest-skipped-line-setup.log"
+cat >"$doctest_skipped_line_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: raise RuntimeError("skipped target setup must not run")
+    sage: 2^5  # needs unavailable.line_setup_backend
+    32
+"""
+PY
+doctest_skipped_line="$(grep -nF 'sage: 2^5' "$doctest_skipped_line_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_skipped_line" \
+      --sqlite "$doctest_skipped_line_db" "$doctest_skipped_line_file" \
+      >"$doctest_skipped_line_log" 2>&1
+doctest_skipped_line_status=$?
+set -e
+if [ "$doctest_skipped_line_status" -eq 124 ]; then
+  tail -120 "$doctest_skipped_line_log" >&2
+  record_blocker "sagelite-blocked: sage -t skipped-line setup smoke timed out after $node_import_timeout; see $doctest_skipped_line_log for the first runtime blocker."
+fi
+if [ "$doctest_skipped_line_status" -ne 0 ]; then
+  tail -120 "$doctest_skipped_line_log" >&2
+  sqlite3 "$doctest_skipped_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t skipped-line setup smoke failed; see $doctest_skipped_line_log for the first runtime blocker."
+fi
+doctest_skipped_line_counts="$(sqlite3 "$doctest_skipped_line_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_skipped_line_counts" != "passed|1|0|0|1" ]; then
+  cat "$doctest_skipped_line_log" >&2
+  sqlite3 "$doctest_skipped_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t skipped-line setup smoke wrote unexpected SQLite counts: $doctest_skipped_line_counts"
+fi
+doctest_skipped_line_reason="$(sqlite3 "$doctest_skipped_line_db" "select skip_reason from blocks where start_line = $doctest_skipped_line;")"
+if [ "$doctest_skipped_line_reason" != "optional:unavailable.line_setup_backend" ]; then
+  cat "$doctest_skipped_line_log" >&2
+  sqlite3 "$doctest_skipped_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t skipped-line setup smoke did not preserve the target skip reason: $doctest_skipped_line_reason"
+fi
 doctest_missing_line_db="$probe_dir/sagelite-doctest-missing-line.sqlite3"
 doctest_missing_line_log="$dist_dir/doctest-missing-line.log"
 set +e

@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 128;
+const doctestRunnerVersion = 129;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2827,6 +2827,7 @@ def __cowasm_run_file(filename):
             for example in test.examples:
                 example.want = __cowasm_restore_protected_expected_output(example.want)
             line_setup_examples = set()
+            line_setup_targets = {}
             if __cowasm_lines:
                 converted_lines = converted.splitlines()
                 example_locations = []
@@ -2854,6 +2855,7 @@ def __cowasm_run_file(filename):
                     current_start_line = location["start_line"]
                     if current_start_line not in __cowasm_lines:
                         continue
+                    selected_example = location["example"]
                     current_relative_start = location["relative_start"]
                     for previous_position in range(position - 1, -1, -1):
                         previous = example_locations[previous_position]
@@ -2877,6 +2879,9 @@ def __cowasm_run_file(filename):
                             current_relative_start = previous["relative_start"]
                             continue
                         line_setup_examples.add(previous_example)
+                        line_setup_targets.setdefault(previous_example, set()).add(
+                            selected_example
+                        )
                         current_start_line = previous["start_line"]
                         current_relative_start = previous["relative_start"]
             active_directive_source = None
@@ -3036,6 +3041,12 @@ def __cowasm_run_file(filename):
                         })
                         example.options[doctest.SKIP] = True
                 previous_physical_end_line = physical_end_line
+            for setup_example, target_examples in line_setup_targets.items():
+                if not any(
+                    not target.options.get(doctest.SKIP, False)
+                    for target in target_examples
+                ):
+                    setup_example.options[doctest.SKIP] = True
             __cowasm_note_state(filename, "run_doctest", name, line_offset, None, None)
             if any(not example.options.get(doctest.SKIP, False) for example in test.examples):
                 if namespace is None:

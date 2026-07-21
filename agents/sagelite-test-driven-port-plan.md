@@ -62706,6 +62706,60 @@ resource restaging, Electron manifest change, or external checkout mutation.
 Validation also includes `git diff --check`.  The next scheduled pass can
 return to another persisted Sagelite backend/runtime cluster.
 
+Path-algebra timing metadata and skipped-line setup pass on 2026-07-21 UTC:
+
+The generic timing deferral in `sage/quivers/algebra_elements.pyx` now records
+its actual browser-profile dependency.  All five benchmarks use Sage's
+`timeit` helper, which imports `sage.repl.interpreter` and therefore requires
+the intentionally absent IPython package.  The shared standalone marker is
+now `# needs IPython` instead of `# not tested`; the file-level
+`sage.quivers` and `sage.graphs` boundaries remain unchanged.
+
+The first exact-line audit also exposed a focused-runner defect.  Selecting
+the skipped timing row with `--line 93` still executed every physically
+contiguous setup prompt before it, and terminated at the unrelated
+letterplace path-algebra comparison on line 81.  Runner version 129 now tracks
+which selected targets require each setup prompt and suppresses setup when all
+of its targets are skipped.  Runnable selected targets continue to receive
+their setup state, including when several selected lines share it.
+
+The retained results record:
+
+```text
+historical exact source line:       failed in unrelated setup at line 81
+historical focused timing row:      0 passed, 1 failed, 0 skipped (IPython)
+proposed exact source line:         0 passed, 0 failed, 1 optional skip
+proposed focused default row:       0 passed, 0 failed, 1 optional skip
+proposed with IPython selected:     0 passed, 1 failed, 0 skipped (IPython)
+skipped failing-setup regression:   0 passed, 0 failed, 1 optional skip
+runnable setup regression:          1 passed, 0 failed, 0 skipped
+failure-disallowing make target:     1 passed, 0 failed, 1 optional skip
+```
+
+The authoritative runner-version-129 SQLite databases, worker state, focused
+fixtures, pinned clean source reconstruction, accumulated-patch log, and
+copy-on-write resource bundle are under
+`/tmp/cowasm-sagelite-path-algebra-timeit.Qgritx/`.  Every supported-profile
+database has a closed passing lifecycle and `PRAGMA integrity_check = ok`.
+The exact source row records
+`optional:sage.quivers,sage.graphs,ipython`; the focused row records
+`optional:ipython`.  Explicitly selecting IPython reaches the expected
+`ModuleNotFoundError: No module named 'IPython'`.
+
+Validation includes the historical and proposed exact-line replays, both
+setup-selection regressions, focused default and selected-feature replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, Node and shell
+syntax, SQLite lifecycle and integrity checks, accumulated-patch syntax, a
+zero-reject sequential application to pinned clean Sagelite `f575cf6224f`,
+byte-for-byte target-source reconstruction, and `git diff --check`.  All
+1,596 accumulated source-patch sections (1,080 `diff --git` and 516 legacy
+sections) and 4,611 hunks apply.  This is runner and doctest-metadata work; it
+needs no native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next scheduled pass can investigate the
+separate large-`free_module.py` docstring-collection termination or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

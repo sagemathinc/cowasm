@@ -30156,3 +30156,9 @@ diff --git a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 +        raise NotImplementedError(
 +            "remote file downloads require the optional WASI SSL runtime"
 +        ) from error
+diff --git a/src/sage/quivers/algebra_elements.pyx b/src/sage/quivers/algebra_elements.pyx
+--- a/src/sage/quivers/algebra_elements.pyx
++++ b/src/sage/quivers/algebra_elements.pyx
+@@ -92 +92 @@
+-        sage: # not tested
++        sage: # needs IPython
