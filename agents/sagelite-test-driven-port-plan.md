@@ -60529,6 +60529,57 @@ runner compatibility seed and needs no native WASM rebuild, Electron manifest
 change, or resource restaging.  The next pass can classify the remaining true
 symbolic rows or select another persisted backend/runtime cluster.
 
+C-finite symbolic-expression dependency pass on 2026-07-21 UTC:
+
+The `CFiniteSequence.closed_form()` doctests now state their actual symbolic
+backend contract.  The module's file-wide `sage.symbolic` tag covers its
+general symbolic-facing API, but `closed_form()` imports
+`sage.symbolic.ring.SR`, which in turn requires the unavailable compiled
+`sage.symbolic.expression` extension.  Selecting only the broad feature had
+therefore run 11 closed-form examples and their dependent substitution check
+into the same `ModuleNotFoundError` cluster.
+
+Standalone directives now attach `# needs sage.symbolic.expression` to each
+of the three contiguous closed-form example groups.  Default and broad-
+symbolic profiles preserve those 12 rows as explicit dependency skips, while
+selecting both features still reproduces the exact missing-extension failure.
+The neighboring rational-polynomial C-finite examples remain active.
+
+The retained runner-version-128 results record:
+
+```text
+focused closed-form row before:                  0 passed,  1 failed,  0 skipped
+broad-symbolic focused row final:                0 passed,  0 failed,  1 skipped
+symbolic-expression-selected diagnostic final:  0 passed,  1 failed,  0 skipped
+complete broad-symbolic module before:         242 passed, 31 failed,  4 skipped
+complete broad-symbolic module final:          242 passed, 19 failed, 16 skipped
+reconstructed three-group focused replay:        0 passed,  0 failed,  3 skipped
+```
+
+The fresh before database is
+`/tmp/cowasm-sagelite-cfinite-symbolic-before2.3rTKCH/line-838.sqlite3`.
+The authoritative broad-profile and explicitly selected focused databases are
+`/tmp/cowasm-sagelite-cfinite-symbolic-final-broad.VkYqXD/line-839.sqlite3`
+and
+`/tmp/cowasm-sagelite-cfinite-symbolic-final-forced.JqN8PJ/line-839.sqlite3`.
+The authoritative complete-module database is
+`/tmp/cowasm-sagelite-cfinite-symbolic-full-final.aG2Rnc/cfinite-complete.sqlite3`;
+it records 277 blocks, no file-level error, a completed failed lifecycle with
+only the 19 independent remaining block failures, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes before, broad-feature, and explicitly selected exact-line
+replays; the complete broad-symbolic module diagnostic; exact SQLite status,
+tag, lifecycle, failure-cluster, and integrity checks; Python and accumulated-
+patch syntax; reconstructed-source focused replays; and `git diff --check`.
+All 1,044 accumulated patch sections and 4,535 hunks apply without rejects to
+a clean Sagelite `f575cf6224f` archive, and the reconstructed C-finite source
+is byte-for-byte identical to the tested patched copy.  This is source-doctest
+dependency metadata only and needs no native WASM rebuild, Electron manifest
+change, or resource restaging.  The next pass can address the remaining
+symbolic-variable startup rows, the two focused PARI boundaries, or a separate
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

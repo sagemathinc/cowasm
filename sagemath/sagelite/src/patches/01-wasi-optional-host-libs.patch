@@ -29295,3 +29295,12 @@ diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequenc
 +            start = 0 if key.start is None else key.start
 +            step = 1 if key.step is None else key.step
 +            return [self[ii] for ii in range(start, key.stop, step)]
+diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequence.py
+--- a/src/sage/rings/cfinite_sequence.py
++++ b/src/sage/rings/cfinite_sequence.py
+@@ -837,0 +838 @@
++            sage: # needs sage.symbolic.expression
+@@ -850,0 +852 @@
++            sage: # needs sage.symbolic.expression
+@@ -860,0 +863 @@
++            sage: # needs sage.symbolic.expression
