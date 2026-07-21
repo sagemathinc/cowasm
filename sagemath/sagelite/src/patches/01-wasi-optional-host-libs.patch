@@ -30061,3 +30061,20 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
 -        sage: 1 / f  # not tested - infinite loop
 +        sage: bool(f)
 +        True
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -1013,4 +1013,4 @@
+-        The following system does not determine `B`, but the solver
+-        will inductively discover that each coefficient of `A` must
+-        be zero.  Therefore, asking for a coefficient of `B` will
+-        loop forever::
++        The following system does not determine `A` or `B`, and asking
++        for a coefficient of `B` will loop forever.  Two distinct bounded
++        candidate solutions show the underdetermination without starting
++        that search::
+@@ -1024 +1024,3 @@
+-            sage: B[2]  # not tested
++            sage: candidates = [(-z^3, z^3, L.zero(), L.zero()), (-2*z^3, 2*z^3, L.zero(), L.zero())]
++            sage: [[c^2 + d^2, a + b + c + d, a*d] for a, b, c, d in candidates]
++            [[0, 0, 0], [0, 0, 0]]
