@@ -29098,3 +29098,38 @@ diff --git a/src/sage/categories/unique_factorization_domains.py b/src/sage/cate
 
      class ElementMethods:
          # prime?
+diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/rings/polynomial/multi_polynomial_element.py
+--- a/src/sage/rings/polynomial/multi_polynomial_element.py
++++ b/src/sage/rings/polynomial/multi_polynomial_element.py
+@@ -62 +62,3 @@
++import sage.rings.abc
+ import sage.rings.integer_ring
++from sage.rings.finite_rings.finite_field_base import FiniteField
+@@ -506,0 +508,6 @@
++
++        Integer-mod-ring parents retain their nonnegative representatives::
++
++            sage: S.<x,y> = PolynomialRing(Integers(7), implementation='generic')
++            sage: 6*y^3 + 3*y^2 + 5*y
++            6*y^3 + 3*y^2 + 5*y
+@@ -529,6 +537,14 @@
+-            if not base_ring.is_prime_field():
+-                return element, False
+-            coefficients = {
+-                exponent: coefficient.lift_centered()
+-                for exponent, coefficient in element.dict().items()
+-            }
++            if isinstance(base_ring, FiniteField):
++                if not base_ring.is_prime_field():
++                    return element, False
++                coefficients = {
++                    exponent: coefficient.lift_centered()
++                    for exponent, coefficient in element.dict().items()
++                }
++            elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
++                coefficients = {
++                    exponent: coefficient.lift()
++                    for exponent, coefficient in element.dict().items()
++                }
++            else:
++                return element, False

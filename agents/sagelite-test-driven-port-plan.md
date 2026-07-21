@@ -60093,6 +60093,58 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 pass can select the finite-field binomial representation drift, the partial
 cypari2 real-binomial path, or the disabled-FLINT p-adic extension cluster.
 
+Integer-mod polynomial display parity pass on 2026-07-21 UTC:
+
+The finite-field binomial representation drift exposed an overbroad branch in
+the generic multivariate-polynomial display fallback.  The earlier Singular-
+parity fix centered coefficients whenever the base parent reported itself as
+a prime field.  That correctly rendered generic polynomials over `GF(p)`, but
+also centered coefficients over the distinct `Integers(p)` parent.  The two
+parents intentionally have different display contracts: `GF(31)` polynomial
+coefficients use centered representatives, while `Integers(7)` polynomial
+coefficients use nonnegative lifts.  Consequently the mathematically correct
+`binomial(y, 3)` result printed as `-y^3 + 3*y^2 - 2*y` instead of the
+documented `6*y^3 + 3*y^2 + 5*y`.
+
+`MPolynomial_polydict` now distinguishes actual `FiniteField` parents from
+integer-mod-ring parents.  Prime finite fields continue to use centered
+integer lifts, extension fields keep their native coefficient display, and
+integer-mod rings use ordinary nonnegative lifts before polynomial rendering.
+The source regression covers both the existing `GF(31)` centered contract and
+the newly restored `Integers(7)` contract.
+
+The retained runner-version-128 results record:
+
+```text
+focused arithmetic line 3927 final:        1 passed, 0 failed,   0 skipped
+centered GF(31) source regression:          1 passed, 0 failed,   0 skipped
+Integers(7) source regression:              1 passed, 0 failed,   0 skipped
+hyperelliptic invariant regression:         1 passed, 0 failed,   0 skipped
+complete arithmetic before/final:         607/4/577 -> 608/3/577
+```
+
+The authoritative databases and coherent copy-on-write resource bundle are
+under `/tmp/cowasm-sagelite-finite-binomial.pR19fw/`.  The final
+`polydict-display-final.sqlite3`, `arith-display-final.sqlite3`, and
+`invariants-line.sqlite3` databases each record a completed passing lifecycle
+and `PRAGMA integrity_check = ok`.  The complete arithmetic diagnostic removes
+exactly the line-3927 display failure; its three remaining failures are the
+independent partial-cypari2 real-binomial row and two disabled-FLINT p-adic
+extension rows.  A complete generic-polynomial diagnostic records both new
+display rows as passes; its broader 393/35/137 result reflects pre-existing
+missing startup names and unavailable optional backends exposed by explicitly
+enabling the file-wide NTL feature.
+
+Validation also includes Python syntax, `git diff --check`, and a zero-reject
+sequential application of all 1,555 accumulated patch sections and 4,523
+hunks to a fresh detached Sagelite `f575cf6224f` snapshot.  The reconstructed
+multivariate-polynomial source is byte-for-byte identical to the tested build
+copy.  This is a pure-Python display correction and needs no native WASM
+rebuild or permanent Electron resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+pass can select the partial-cypari2 real-binomial path or the disabled-FLINT
+p-adic extension cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
