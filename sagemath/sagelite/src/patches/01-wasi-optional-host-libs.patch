@@ -27476,7 +27476,7 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
          """
          Return the elementary divisors of self, in order.
 
-@@ -2364,12 +2364,12 @@
+@@ -2364,12 +2364,13 @@
              d = []
          elif algorithm == 'linbox':
              raise ValueError("linbox too broken -- currently Linbox SNF is disabled.")
@@ -27491,7 +27491,8 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
 +            sig_on()
 +            fmpz_mat_snf((<Matrix_integer_dense>D)._matrix, self._matrix)
 +            sig_off()
-+            d = [D[i, i] for i in range(min(self._nrows, self._ncols))]
++            d = ([D[i, i] for i in range(min(self._nrows, self._ncols))]
++                 + [ZZ.zero()] * max(self._nrows - self._ncols, 0))
          else:
              raise ValueError("algorithm (='%s') unknown" % algorithm)
 

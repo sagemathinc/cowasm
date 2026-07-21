@@ -1312,6 +1312,9 @@ TD, TU, TV = T.smith_form()
 assert TD.diagonal() == [1, 2]
 assert TU * T * TV == TD
 assert S.smith_form(transformation=False) == SD
+E = matrix(ZZ, [[3, 0, 1], [0, 1, 0]])
+assert E.elementary_divisors() == [1, 1]
+assert E.transpose().elementary_divisors() == [1, 1, 0]
 for nr, nc in ((2, 0), (0, 2), (0, 0)):
     E = matrix(ZZ, nr, nc)
     ED, EU, EV = E.smith_form()

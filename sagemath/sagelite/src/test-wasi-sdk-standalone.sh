@@ -1605,6 +1605,9 @@ TD, TU, TV = T.smith_form()
 assert TD.diagonal() == [1, 2]
 assert TU * T * TV == TD
 assert S.smith_form(transformation=False) == SD
+E = matrix(ZZ, [[3, 0, 1], [0, 1, 0]])
+assert E.elementary_divisors() == [1, 1]
+assert E.transpose().elementary_divisors() == [1, 1, 0]
 for nr, nc in ((2, 0), (0, 2), (0, 0)):
     E = matrix(ZZ, nr, nc)
     ED, EU, EV = E.smith_form()
@@ -1986,7 +1989,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=188
+electron_manifest_schema_version=189
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2027,6 +2030,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-smith-delivery-v146"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-right-kernel-delivery-v147"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-pari-lll-delivery-v148"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-elementary-divisors-v149"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

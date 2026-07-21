@@ -59146,6 +59146,51 @@ external developer Sagelite checkout remains untouched.  The next pass can
 repair or explicitly defer one of the three remaining semantic/runtime
 clusters, or select another persisted backend cluster.
 
+Integer-matrix rectangular elementary-divisor pass on 2026-07-21 UTC:
+
+The remaining Smith-invariant mismatch at
+`sage/matrix/matrix_integer_dense.pyx:2325` is repaired.  The FLINT-backed
+`elementary_divisors()` fallback previously returned only the
+`min(nrows, ncols)` diagonal entries of the Smith matrix.  For a tall matrix,
+that omitted the zero invariants contributed by the extra codomain rows, so
+the documented transpose example returned `[1, 1]` instead of `[1, 1, 0]`.
+The fallback now appends exactly `nrows - ncols` Sage integer zeros when the
+matrix is tall, while preserving the existing wide and square behavior.
+
+The retained results record:
+
+```text
+exact source line 2325:              1 passed, 0 failed,  0 skipped
+complete matrix module before:    648 passed, 3 failed, 44 skipped
+complete matrix module final:     649 passed, 2 failed, 44 skipped
+standalone and Electron smokes:     passed, including rectangular invariants
+```
+
+The authoritative runner-version-128 exact-line database is
+`/tmp/cowasm-sagelite-elementary-final.8nI4bQ/line-2325.sqlite3`; it uses the
+freshly packaged resource bundle, records a completed passing lifecycle, and
+passes `PRAGMA integrity_check`.  The authoritative complete-module database
+is `/tmp/cowasm-sagelite-elementary.14raRE/complete-matrix.sqlite3`; it records
+695 blocks, no file-level error, a completed failed lifecycle, and a clean
+integrity check.  The only remaining failures are the large-dimension
+diagnostic drift at line 220 and the stale `charpoly_linbox` cache assertion at
+line 1355.
+
+The Electron manifest advances to schema 189 and smoke contract
+`integer-matrix-elementary-divisors-v149`.  The rebuilt packaged resources
+record clean Sagelite revision `f575cf6224f`, 555 side modules, 724 required-
+resource paths and matching hashes, and seven native-library paths.  Validation
+includes the exact-line and complete-module replays, the complete incremental
+standalone build with all 70 Node import probes and runner regressions, the
+standalone and relocated Electron smokes, manifest parity, forge-resource and
+runtime tests, manifest hash validation, a zero-reject accumulated-patch
+application to a clean source archive with byte-for-byte affected-source
+comparison, SQLite lifecycle and integrity checks, and patch, JavaScript,
+shell, and `git diff --check` validation.  The external developer Sagelite
+checkout remains untouched.  The next pass can repair or explicitly defer one
+of the two remaining matrix clusters, or select another persisted backend
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
