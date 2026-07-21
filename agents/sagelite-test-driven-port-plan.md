@@ -61068,6 +61068,31 @@ Sagelite checkout and its intentional changes remain untouched.  The next pass
 can promote this newly clean module into an appropriate corpus or select
 another persisted runtime/deferred cluster.
 
+Fast-callable curated-corpus promotion pass on 2026-07-21 UTC:
+
+The now-clean `src/sage/ext/fast_callable.pyx` is included beside the other
+extension modules in the checked-in pure-math corpus, which now has 1,141
+non-comment entries.  Its authoritative complete runner-version-128 replay
+records:
+
+```text
+fast_callable.pyx: 209 passed, 0 failed, 432 skipped
+```
+
+The fresh promotion replay database is
+`/tmp/cowasm-sagelite-fast-callable-promotion.YYcOEx/promotion.sqlite3`.
+It has a closed passing lifecycle, 641 persisted block rows, no file-level
+error, and `PRAGMA integrity_check = ok`.  The strict promotion helper reports
+the file before corpus subtraction and no longer reports it after the
+checked-in corpus is applied.
+
+This pass changes only corpus membership.  It reuses the preceding complete
+clean-reconstructed module replay and Electron resource smoke; no runner,
+runtime, source patch, native WASM artifact, or resource manifest changed, so
+a second full 1,100-plus-file corpus refresh would not add proportionate
+validation.  The next scheduled pass can select another persisted
+backend/runtime cluster or audit a separate default-profile deferred marker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

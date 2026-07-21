@@ -189,6 +189,7 @@ src/sage/dynamics/finite_dynamical_system.py
 src/sage/dynamics/cellular_automata/elementary.py
 src/sage/dynamics/cellular_automata/glca.py
 src/sage/dynamics/arithmetic_dynamics/projective_ds_helper.pyx
+src/sage/ext/fast_callable.pyx
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
 src/sage/game_theory/cooperative_game.py
