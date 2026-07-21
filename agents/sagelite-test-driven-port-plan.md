@@ -61930,6 +61930,60 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Hyperplane-arrangement long/PPL boundary classification on 2026-07-21 UTC:
+
+The sole generic deferred row in
+`sage/geometry/hyperplane_arrangement/arrangement.py` now records both parts
+of its actual execution contract.  The five-dimensional `len(A.regions())`
+example is documented upstream as taking about 25 seconds, so it belongs
+behind Sage's `--long` selection.  A focused opt-in replay also shows that the
+default rational-polyhedron path reaches `backend_ppl` and raises
+`FeatureNotPresentError` because the browser profile has no `ppl` module.
+
+The row therefore carries `# long time (~25s) # needs ppl` instead of the
+semantically vague `# not tested` marker.  Default browser dashboards record
+the missing PPL backend explicitly while complete native profiles retain the
+expensive correctness example for long-test runs.  The module now has no
+generic `# not tested` row; its broader runnable frontier remains outside the
+quiet corpus because other region examples share the same unported PPL
+boundary and the module has separate historical runtime clusters.
+
+The retained runner-version-128 results record:
+
+```text
+historical exact block:             0 passed, 0 failed, 1 deferred skip
+final exact block:                  0 passed, 0 failed, 1 optional:ppl skip
+focused default fixture:            6 passed, 0 failed, 1 optional:ppl skip
+failure-disallowing make target:     6 passed, 0 failed, 1 optional:ppl skip
+selected --long --optional=ppl:      6 passed, 1 failed, 0 skipped
+Electron resource smoke:            passed (52 completion checkpoints)
+```
+
+The selected diagnostic preserves the expected
+`FeatureNotPresentError: ppl is not available` on `len(A.regions())`.  The
+authoritative historical, final block-key, focused, selected-feature, and
+strict make-target SQLite databases, pinned clean source reconstructions,
+patch logs, corpus fixture, and Electron smoke log are under
+`/tmp/cowasm-sagelite-arrangement-audit.uEgv9r/`.  All passing databases have
+closed lifecycles, empty saved block- and file-failure cluster queries, and
+`PRAGMA integrity_check = ok`; the selected-feature database has a closed
+failed lifecycle with exactly the expected PPL feature failure.
+
+Validation includes the historical and final exact block-key replays, the
+focused default and explicitly selected feature replays, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, tag, integrity, and saved failure-cluster checks, Python syntax,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,587
+accumulated source-patch sections (1,071 `diff --git` and 516 legacy sections)
+and 4,594 hunks apply.  This is doctest dependency and duration metadata only
+and needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can classify another
+default-profile deferred marker or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

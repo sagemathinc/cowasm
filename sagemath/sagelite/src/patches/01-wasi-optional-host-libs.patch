@@ -30043,3 +30043,9 @@ diff --git a/src/sage/graphs/graph_decompositions/fast_digraph.pyx b/src/sage/gr
 @@ -175 +175 @@
 -        sage: test_popcount() # not tested
 +        sage: test_popcount()  # long time
+diff --git a/src/sage/geometry/hyperplane_arrangement/arrangement.py b/src/sage/geometry/hyperplane_arrangement/arrangement.py
+--- a/src/sage/geometry/hyperplane_arrangement/arrangement.py
++++ b/src/sage/geometry/hyperplane_arrangement/arrangement.py
+@@ -2013 +2013 @@
+-            sage: len(A.regions())            # not tested (~25s)
++            sage: len(A.regions())            # long time (~25s)                      # needs ppl
