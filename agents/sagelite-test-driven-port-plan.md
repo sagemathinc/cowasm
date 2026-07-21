@@ -60145,6 +60145,48 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 pass can select the partial-cypari2 real-binomial path or the disabled-FLINT
 p-adic extension cluster.
 
+Q-adic binomial dependency-metadata pass on 2026-07-21 UTC:
+
+The two p-adic extension failures left by the complete `sage/arith/misc.py`
+diagnostic are now explicit browser-profile dependency boundaries.  Both
+examples construct `Qq(9)`, whose extension-field factory imports
+`pow_computer_flint` and consequently the deliberately disabled FLINT integer-
+polynomial side module.  The exact prompts at lines 3950 and 3954 now carry
+`# needs sage.libs.flint`; the adjacent base-field `Qp(3)` binomial examples
+remain active coverage.
+
+The retained runner-version-128 results record:
+
+```text
+focused lines 3950/3954 before:  2 ImportError failures
+focused lines 3950/3954 final:   exact optional:sage.libs.flint skips
+complete arithmetic before:     608 passed, 3 failed, 577 skipped
+complete arithmetic final:      608 passed, 1 failed, 579 skipped
+neighboring Qp(3) rows:          3 passed, 0 failed,   0 skipped
+```
+
+The fresh before databases are under
+`/tmp/cowasm-sagelite-qadic-audit-coherent.fX9Siy/`, and the authoritative
+focused final databases are under
+`/tmp/cowasm-sagelite-qadic-final.jyiUW1/`.  The authoritative complete-module
+database is
+`/tmp/cowasm-sagelite-qadic-full.76sfcM/arith-complete.sqlite3`; it records
+1,188 blocks, no file-level error, a completed failed lifecycle, and
+`PRAGMA integrity_check = ok`.  Its only remaining failure is the independent
+real-binomial cypari2 object-model row at line 3869.
+
+Validation includes both exact-line before and final replays, the complete
+arithmetic-module replay, exact SQLite status, tag, neighboring-row,
+lifecycle, failure-cluster, and integrity checks, accumulated-patch syntax,
+and `git diff --check`.  All 1,556 accumulated patch sections and 4,525 hunks
+apply without rejects to a fresh archive of Sagelite `f575cf6224f`, and the
+reconstructed arithmetic source is byte-for-byte identical to the tested
+patched copy.  This is source-doctest dependency metadata only and needs no
+native WASM rebuild, Electron manifest change, or resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The next pass can address the remaining partial-cypari2 real-
+binomial path or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -29133,3 +29133,12 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial_element.py b/src/sage/ri
 +                }
 +            else:
 +                return element, False
+diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
+--- a/src/sage/arith/misc.py
++++ b/src/sage/arith/misc.py
+@@ -3950 +3950 @@
+-        sage: F.<w>=Qq(9); binomial(w,4) # p-adic extension field
++        sage: F.<w>=Qq(9); binomial(w,4) # p-adic extension field                       # needs sage.libs.flint
+@@ -3954 +3954 @@
+-        sage: F.<w>=Qq(9); binomial(w,10).parent()
++        sage: F.<w>=Qq(9); binomial(w,10).parent()                                      # needs sage.libs.flint
