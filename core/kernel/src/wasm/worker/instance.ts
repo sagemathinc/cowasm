@@ -63,6 +63,8 @@ export default class WasmInstanceSync extends EventEmitter {
     this.table = table;
     this.fs = fs;
 
+    this.cacheMainFunctionPointers();
+
     const opts = {
       memory: this.memory,
       callFunction: (name: string, ...args) => {
@@ -76,6 +78,44 @@ export default class WasmInstanceSync extends EventEmitter {
     };
     this.send = new SendToWasm(opts);
     this.recv = new RecvFromWasm(opts);
+  }
+
+  /**
+   * Resolve main-module function-pointer exports before loading any dynamic
+   * libraries.  Zig wraps the generated __WASM_EXPORT__ accessors in runtime
+   * entry/exit bookkeeping.  Some side modules mutate that bookkeeping, which
+   * can make a later accessor call trap even though the table entry it returns
+   * is still valid.  Keeping the WebAssembly function object makes subsequent
+   * JS-to-WASM callbacks independent of that mutable accessor state.
+   */
+  private cacheMainFunctionPointers(): void {
+    if (this.table == null) return;
+
+    const prefix = "__WASM_EXPORT__";
+    for (const [exportName, getPointer] of Object.entries(this.exports)) {
+      if (!exportName.startsWith(prefix) || typeof getPointer != "function") {
+        continue;
+      }
+      const name = exportName.slice(prefix.length);
+      try {
+        const f = this.table.get((getPointer as CallableFunction)());
+        if (typeof f == "function") {
+          this._getFunctionCache[name] = f;
+        }
+      } catch (err) {
+        // The generated export list also contains data symbols.  Their
+        // accessors return linear-memory addresses, not table indexes.
+        if (!(err instanceof RangeError)) throw err;
+      }
+    }
+
+    // c_malloc/c_free are exported wrapper functions around libc's allocators.
+    // Use the snapshotted functions directly so SendToWasm does not re-enter
+    // the same Zig wrapper bookkeeping after a side module has changed it.
+    const malloc = this._getFunctionCache.malloc;
+    const free = this._getFunctionCache.free;
+    if (malloc != null) this._getFunctionCache.c_malloc = malloc;
+    if (free != null) this._getFunctionCache.c_free = free;
   }
 
   terminate(): void {
@@ -136,7 +176,7 @@ export default class WasmInstanceSync extends EventEmitter {
         ptrs.push(this.send.string(s));
       }
       const len = ptrs.length;
-      const ptr = this.exports.c_malloc((len + 1) * 4); // sizeof(char*) = 4 in WASM.
+      const ptr = this.send.malloc((len + 1) * 4); // sizeof(char*) = 4 in WASM.
       const array = new Int32Array(this.memory.buffer, ptr, len + 1);
       let i = 0;
       for (const p of ptrs) {
@@ -149,9 +189,9 @@ export default class WasmInstanceSync extends EventEmitter {
         r = f(len, ptr, ...args);
       } finally {
         // @ts-ignore
-        this.exports.c_free(ptr);
+        this.send.free(ptr);
         for (const p of ptrs) {
-          this.exports.c_free(p);
+          this.send.free(p);
         }
       }
     }
@@ -163,7 +203,7 @@ export default class WasmInstanceSync extends EventEmitter {
 
   private getSmallStringPtr(): number {
     if (this.smallStringPtr == null) {
-      this.smallStringPtr = this.exports.c_malloc(SMALL_STRING_SIZE);
+      this.smallStringPtr = this.send.malloc(SMALL_STRING_SIZE);
       if (!this.smallStringPtr) {
         throw Error(
           "MemoryError -- out of memory allocating small string buffer"
@@ -185,7 +225,7 @@ export default class WasmInstanceSync extends EventEmitter {
   private getLargeStringPtr(size: number): number {
     if (this.largeStringPtr == null || this.largeStringSize < size) {
       this.largeStringSize = Math.max(size, this.largeStringSize * 2);
-      this.largeStringPtr = this.exports.c_malloc(this.largeStringSize);
+      this.largeStringPtr = this.send.malloc(this.largeStringSize);
       if (!this.largeStringPtr) {
         throw Error(
           `MemoryError -- out of memory allocating ${this.largeStringSize} byte string buffer`

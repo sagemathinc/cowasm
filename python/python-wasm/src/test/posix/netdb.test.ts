@@ -13,6 +13,19 @@ test("gethostbyaddr for google's v4 ip -- consistency check", async () => {
   expect(repr("s[0].endswith('.net')")).toBe("True");
 });
 
+test("getaddrinfo remains usable after SSL context initialization", async () => {
+  const { exec, repr } = await syncPython();
+  exec(`
+import socket
+import ssl
+ssl.create_default_context()
+addrinfo = socket.getaddrinfo(
+    "127.0.0.1", 443, socket.AF_INET, socket.SOCK_STREAM
+)
+`);
+  expect(repr("addrinfo[0][4]")).toBe("('127.0.0.1', 443)");
+});
+
 // test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {
 //   await exec("s = socket.gethostbyaddr('google.com')");
 //   expect(await repr("s[0].endswith('.net')")).toBe("True");

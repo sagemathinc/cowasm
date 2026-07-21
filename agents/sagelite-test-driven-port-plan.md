@@ -62380,6 +62380,52 @@ manifest change, or permanent resource restaging.  The next pass can audit
 another default-profile deferred marker or select a persisted backend/runtime
 cluster.
 
+Kernel callback-pointer and `getaddrinfo` runtime pass on 2026-07-21 UTC:
+
+The persisted Pushover failure exposed a general JS-to-WASM callback problem,
+not a missing DNS implementation.  A direct numeric-host reproducer passed
+until `ssl.create_default_context()` initialized the SSL runtime; the same
+`socket.getaddrinfo(...)` call after that transition raised `RuntimeError:
+function signature mismatch` while allocating its returned sockaddr, then
+repeated the mismatch in `gai_strerror` and terminated in a WASM memory trap.
+
+The kernel's Zig-generated `__WASM_EXPORT__...` accessors are wrapped in
+runtime entry/exit bookkeeping.  SSL context initialization changes that
+bookkeeping enough that calling an accessor later can trap, even though a
+function-table entry resolved before the transition remains callable.  The
+synchronous kernel instance now snapshots all main-module function-table
+exports during construction, while their accessors are healthy, and uses
+those stable function objects for later callbacks.  Generated data-symbol
+accessors are ignored.  The `c_malloc` and `c_free` callback names use the
+snapshotted underlying libc allocators directly because their small exported
+wrappers enter the same invalidated bookkeeping path.
+
+The new regression initializes an SSL default context and then resolves
+`127.0.0.1` through `getaddrinfo`, so it covers the original ordering without
+depending on external DNS.  The checked results are:
+
+```text
+kernel TypeScript and Jest:                 3 passed, 0 failed
+python-wasm TypeScript:                     passed
+focused netdb Jest:                         2 passed, 0 failed
+complete python-wasm POSIX Jest set:       22 passed, 0 failed, 2 skipped
+post-SSL numeric getaddrinfo:               ('127.0.0.1', 443)
+```
+
+A harmless HTTPS `HEAD` probe now passes DNS without a signature mismatch or
+memory trap and reaches the next independent socket boundary: `connect`
+returns native error codes that the POSIX wrapper does not yet map, producing
+a normal `OSError` with errno zero.  That connect/errno mapping is the next
+network-runtime cluster; full browser networking is not claimed by this pass.
+
+Validation also includes `git diff --check`.  A pinned clean Sagelite
+`f575cf6224f` standalone rebuild applied all accumulated source patches and
+entered the serial Cython regeneration phase successfully.  That optional full
+resource rebuild was stopped after confirming active progress because it
+regenerates hundreds of unrelated native modules and does not add coverage for
+this TypeScript-only callback fix.  The external developer checkout and its
+intentional changes remain untouched.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

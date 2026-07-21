@@ -153,7 +153,7 @@ export default class PosixContext {
   }
 
   private free(ptr: number): void {
-    this.wasm?.exports.c_free(ptr);
+    this.wasm?.send.free(ptr);
   }
 
   private run(args: string[]): number {
