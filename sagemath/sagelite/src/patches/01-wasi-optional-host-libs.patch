@@ -28951,3 +28951,9 @@ diff --git a/src/sage/structure/global_options.py b/src/sage/structure/global_op
 @@ -275 +275 @@
 -    sage: Menu.options.dessert?                # not tested
 +    sage: Menu.options.dessert?                # needs IPython
+diff --git a/src/sage/plot/plot3d/tachyon.py b/src/sage/plot/plot3d/tachyon.py
+--- a/src/sage/plot/plot3d/tachyon.py
++++ b/src/sage/plot/plot3d/tachyon.py
+@@ -789 +789 @@
+-            sage: show(t)  # known bug (trac #7232)
++            sage: show(t)  # needs subprocess

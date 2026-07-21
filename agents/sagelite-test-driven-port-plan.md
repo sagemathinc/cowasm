@@ -59699,6 +59699,47 @@ intentional changes remain untouched.  The next pass can audit the adjacent
 Tachyon known-bug row or the ambient-space TestSuite deferral from the
 persisted dashboards.
 
+Tachyon renderer dependency-metadata pass on 2026-07-21 UTC:
+
+The historical known-bug row in `sage/plot/plot3d/tachyon.py` is now
+classified by its actual browser-profile boundary.  A focused
+`--deferred=known-bug` replay executed `show(t)`: the display manager caught
+`[Errno 58] wasi does not support processes`, emitted a `RichReprWarning`, and
+fell back to the `Tachyon` object representation.  The row therefore has the
+same exact `# needs subprocess` contract as the module's other renderer calls,
+rather than an unexplained issue-7232 deferral.
+
+The retained results record:
+
+```text
+forced deferred line 789 before:  1 passed, 0 failed, 0 skipped (renderer warning)
+default line 789 final:            0 passed, 0 failed, 1 skipped
+subprocess-enabled line final:     1 passed, 0 failed, 0 skipped
+complete Tachyon module final:   335 passed, 0 failed, 69 skipped
+deferred rows at line before/final: 1 / 0
+```
+
+The runner-version-128 before database is
+`/tmp/cowasm-sagelite-tachyon-audit.lcctP5/tachyon-line-789.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-tachyon-final.j5ljVS/`; the default exact-line row
+records `optional:subprocess` with `optional,needs:subprocess` tags, and the
+complete-module database records a completed passing lifecycle, no block or
+file failures, no remaining deferral at line 789, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the forced, default, and subprocess-enabled exact-line
+replays, the complete-module replay, exact SQLite status, tag, lifecycle,
+failure, deferred-row, and integrity checks, accumulated-patch syntax, a
+zero-reject sequential application to a clean Sagelite `f575cf6224f`
+snapshot, byte-for-byte comparison of the reconstructed Tachyon source with
+the tested patched copy, and `git diff --check`.  This is source-doctest
+dependency metadata only and needs no native WASM rebuild, Electron manifest
+change, or resource restaging.  The external developer Sagelite checkout and
+its intentional changes remain untouched.  The next pass can audit the
+ambient-space TestSuite deferral or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
