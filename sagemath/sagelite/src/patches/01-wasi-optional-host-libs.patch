@@ -29443,3 +29443,21 @@ diff --git a/src/sage/rings/generic.py b/src/sage/rings/generic.py
 +            sage: matches = [tree.interpolation(xs) == CRT(xs, vs) for xs in samples]
 +            sage: matches, tree._crt_bases is not None
 +            ([True, True, True], True)
+diff --git a/src/sage/calculus/ode.pyx b/src/sage/calculus/ode.pyx
+--- a/src/sage/calculus/ode.pyx
++++ b/src/sage/calculus/ode.pyx
+@@ -136,2 +136,2 @@
+-    There are examples below, if your jacobian was the function
+-    ``my_jacobian`` you would do::
++    For example, a one-dimensional Jacobian callback can be assigned as
++    follows::
+@@ -139 +139,4 @@
+-        sage: T.jacobian = my_jacobian     # not tested, since it doesn't make sense to test this
++        sage: my_jacobian = lambda t, y: [[1], [0]]
++        sage: T.jacobian = my_jacobian
++        sage: T.jacobian is my_jacobian
++        True
+@@ -222 +225,2 @@
+-        sage: T.solution               # not tested
++        sage: T.solution
++        []

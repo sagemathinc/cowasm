@@ -60874,6 +60874,50 @@ intentional changes remain untouched.  The next pass can audit another
 default-profile deferred marker or select a separate persisted runtime
 cluster.
 
+ODE wrapper state-check promotion on 2026-07-21 UTC:
+
+The two generic `# not tested` rows in `sage/calculus/ode.pyx` are now
+active, deterministic browser-profile coverage.  The Jacobian example used
+an undefined `my_jacobian` placeholder, so forcing the historical deferral
+raised `NameError` instead of checking the documented callback assignment.
+The solution example evaluated the solver's initial state without documenting
+its `[]` output, producing a separate output mismatch.
+
+The introductory example now defines a shape-compatible one-dimensional
+Jacobian callback, assigns it, and verifies callback identity.  The solution
+example now asserts the empty initial result explicitly.  Both checks exercise
+ordinary wrapper state and do not invoke the GSL numerical backend.  All
+generic deferred markers are gone from the ODE module.
+
+The retained runner-version-128 results record:
+
+```text
+historical deferred module before: 34 passed, 2 failed, 15 skipped
+complete patched module final:     38 passed, 0 failed, 15 skipped
+complete reconstructed final:      38 passed, 0 failed, 15 skipped
+focused final state checks:         2 passed, 0 failed,  0 skipped
+```
+
+The authoritative before, final, focused, and clean-reconstructed SQLite
+databases and worker roots are under
+`/tmp/cowasm-sagelite-ode-audit.hDJaby/`.  The before database preserves the
+undefined-callback `NameError` and missing-expected-output mismatch.  Both
+complete final databases have closed passing lifecycles, empty saved block-
+and file-failure cluster queries, no deferred rows, and
+`PRAGMA integrity_check = ok`.
+
+Validation includes the historical forced replay, both exact-line final
+replays, complete patched-source and clean reconstructed-source module
+replays, exact SQLite lifecycle and deferred-row checks, saved failure-cluster
+queries, accumulated-patch syntax, zero-reject sequential application,
+byte-for-byte target-source reconstruction, `git diff --check`, and the full
+Electron resource smoke.  All 4,559 accumulated hunks apply to clean Sagelite
+`f575cf6224f`.  This is documentation and wrapper-state coverage only and
+needs no native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
