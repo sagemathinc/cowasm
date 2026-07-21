@@ -29639,3 +29639,14 @@ diff --git a/src/sage/combinat/permutation.py b/src/sage/combinat/permutation.py
 +            sage: all(p.to_cycles() == p._to_cycles_set() == p._to_cycles_list()
 +            ....:     for p in samples)
 +            True
+diff --git a/src/sage/geometry/pseudolines.py b/src/sage/geometry/pseudolines.py
+--- a/src/sage/geometry/pseudolines.py
++++ b/src/sage/geometry/pseudolines.py
+@@ -134,3 +134,4 @@ avoid a common crossing of three lines by adding a random noise to `b`::
+-    sage: print(l[:5])                          # not tested                            # needs sage.combinat
+-    [(96, 278.0130613051349), (74, 332.92512282478714), (13, 155.65820951249867),
+-     (209, 34.753946221755307), (147, 193.51376457741441)]
++    sage: len(l) == n and all(l[i][0] < l[i+1][0] for i in range(n-1))
++    True
++    sage: all(0 <= b < 20*n + 1 for _, b in l)
++    True

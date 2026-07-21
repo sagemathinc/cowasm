@@ -61186,6 +61186,51 @@ external developer Sagelite checkout and its intentional changes remain
 untouched.  The next pass can audit another default-profile deferred marker or
 select a persisted backend/runtime cluster.
 
+Pseudoline sample-invariant promotion on 2026-07-21 UTC:
+
+The generic deferred row in `sage/geometry/pseudolines.py` is now active,
+deterministic browser-profile coverage.  The historical example printed five
+randomly selected line coefficients and compared them with one literal sample,
+so forcing the row produced an expected-output mismatch whenever the random
+selection changed.
+
+The replacement checks the mathematical invariants used by the construction:
+there are exactly twenty distinct, increasingly sorted slope coefficients, and
+every perturbed intercept remains in its documented sampling interval.  These
+assertions are independent of the selected random sample, and the generic
+`# not tested` marker and unnecessary prompt-local dependency tag are gone from
+the module.
+
+The retained runner-version-128 results record:
+
+```text
+historical forced sample row:       0 passed, 1 failed, 0 skipped
+complete reconstructed before:    72 passed, 0 failed, 6 skipped
+focused final invariant row:        1 passed, 0 failed, 0 skipped
+complete reconstructed final:      74 passed, 0 failed, 5 skipped
+Electron resource smoke:          passed
+```
+
+The authoritative historical, focused, complete-before, and complete-final
+SQLite databases and worker roots are under
+`/tmp/cowasm-sagelite-next-audit.1ua7D1/`.  Both complete databases have closed
+passing lifecycles and `PRAGMA integrity_check = ok`; the final database has
+empty saved block- and file-failure cluster queries and no deferred rows.  The
+coverage delta is two active invariant prompts in place of one deferred random
+output prompt.
+
+Validation includes the historical forced replay, focused final replay,
+complete clean-reconstructed before and final module replays, exact SQLite
+lifecycle and deferred-row checks, saved failure-cluster queries, accumulated-
+patch syntax, zero-reject sequential application to pinned clean Sagelite
+`f575cf6224f`, byte-for-byte target-source reconstruction, `git diff --check`,
+and the full Electron-shaped resource smoke.  All 1,056 accumulated patch
+sections and 4,568 hunks apply.  This is deterministic documentation coverage
+only and needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit another
+default-profile deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
