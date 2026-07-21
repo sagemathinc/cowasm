@@ -29933,3 +29933,21 @@ diff --git a/src/sage/data_structures/pairing_heap.pyx b/src/sage/data_structure
      """
      from sage.misc.prandom import shuffle
      from sage.misc.timing import cputime
+diff --git a/src/sage/monoids/automatic_semigroup.py b/src/sage/monoids/automatic_semigroup.py
+--- a/src/sage/monoids/automatic_semigroup.py
++++ b/src/sage/monoids/automatic_semigroup.py
+@@ -253,7 +253,13 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
+             A submonoid of (Integer Ring) with 1 generators
+             sage: M.retract(2)
+             2
+-            sage: M.retract(3)   # not tested: runs forever trying to find 3
++
++        Calling ``M.retract(3)`` would run forever trying to find ``3``.
++        A bounded prefix demonstrates why without starting that search::
++
++            sage: from itertools import islice
++            sage: 3 not in list(islice(M, 100))
++            True
+     """
+     @staticmethod
+     def __classcall_private__(cls, generators, ambient=None, one=None, mul=operator.mul, category=None):
