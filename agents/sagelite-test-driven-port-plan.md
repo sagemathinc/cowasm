@@ -60634,6 +60634,55 @@ The external developer Sagelite checkout and its intentional changes remain
 untouched.  The next pass can address the two comparison-semantic rows or
 classify the focused PARI boundaries.
 
+C-finite coercion-symmetric comparison pass on 2026-07-21 UTC:
+
+The two remaining comparison rows in `sage/rings/cfinite_sequence.py` exposed
+a real asymmetric equality bug.  `CFiniteSequence.__eq__()` returned `False`
+immediately for a rational-function operand, while the reversed comparison
+entered Sage's coercion model.  Because the C-finite parent deliberately has a
+canonical coercion from its fraction field, that reversed path converted both
+operands to C-finite sequences and returned `True`.  Inequality had the same
+inconsistency in reverse.
+
+`CFiniteSequence` now implements `_richcmp_()` and compares ordinary generating
+functions only after the coercion model has selected the common C-finite
+parent.  Its explicit `__ne__()` delegates through `self == other`, preserving
+the same coercion path.  The doctests now assert the mathematically consistent
+contract: a sequence and its canonically coercible generating function compare
+equal in both operand orders and unequal in neither order.
+
+The retained runner-version-128 results record:
+
+```text
+focused four comparisons before: 2 passed, 2 failed,  0 skipped
+focused four comparisons final:  4 passed, 0 failed,  0 skipped
+reconstructed focused final:     4 passed, 0 failed,  0 skipped
+complete broad-symbolic before: 236 passed, 5 failed, 36 skipped
+complete broad-symbolic final:  238 passed, 3 failed, 36 skipped
+```
+
+The fresh focused before database is
+`/tmp/cowasm-sagelite-cfinite-comparison.vmnsi8/comparison-before-exact.sqlite3`.
+The authoritative final focused, reconstructed, and complete-module databases
+and the manifest-validated copy-on-write resource bundle are under
+`/tmp/cowasm-sagelite-cfinite-comparison.vmnsi8/`.  The complete replay records
+277 blocks, no file-level error, a closed failed lifecycle with only the three
+independent PARI rows, and `PRAGMA integrity_check = ok`.  Those remaining rows
+are the unavailable cypari2 Fibonacci path, callable PARI `ggf` support, and
+the dependent guess-result slice.
+
+Validation includes the fresh before and final four-row replays, the complete
+broad-symbolic module diagnostic, the reconstructed-source focused replay,
+exact SQLite transition, lifecycle, saved failure-cluster, file-error, and
+integrity checks, Python syntax, accumulated-patch application, byte-for-byte
+target-source reconstruction, `git diff --check`, and the full Electron
+resource smoke.  All 1,046 accumulated patch sections and 4,547 hunks apply
+without rejects to a clean Sagelite `f575cf6224f` archive.  This is a
+pure-Python comparison-protocol fix and needs no native WASM rebuild, Electron
+manifest change, or permanent resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next pass
+can classify or implement the focused PARI Fibonacci and `ggf` boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
