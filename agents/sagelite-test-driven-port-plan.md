@@ -59527,6 +59527,46 @@ change, or resource restaging.  The external developer Sagelite checkout and
 its intentional changes remain untouched.  The next pass can audit another
 persisted deferred marker or select a separate backend/runtime cluster.
 
+Global-options IPython help metadata pass on 2026-07-21 UTC:
+
+The sole deferred row in `sage/structure/global_options.py` is now classified
+by its actual execution contract.  `Menu.options.dessert?` uses Sage/IPython
+help syntax and is not a Python expression that the browser-profile doctest
+evaluator can execute.  A forced `--deferred=not-tested` replay failed at the
+expected Python parser boundary, so the historical `# not tested` marker is
+replaced with exact `# needs IPython` metadata.
+
+The retained results record:
+
+```text
+forced deferred line 275 before:  0 passed, 1 failed,  0 skipped (SyntaxError)
+default line 275 final:            0 passed, 0 failed,  1 skipped
+complete module final:           117 passed, 0 failed, 44 skipped
+deferred rows before/final:        1 / 0
+new IPython dependency rows:       1
+```
+
+The runner-version-128 before database is
+`/tmp/cowasm-sagelite-global-options-audit.e31Bod/global-options-line-275.sqlite3`.
+The authoritative final databases are under
+`/tmp/cowasm-sagelite-global-options-final.xL39PU/`; the complete-module
+database records a completed passing lifecycle, no block or file failures, an
+empty deferred-rerun query, and `PRAGMA integrity_check = ok`.  Its line-275
+row records `optional:ipython` with `optional,needs:ipython` tags.  Explicitly
+enabling IPython at that line reaches the same `SyntaxError`, confirming that
+the metadata guards the live interactive-syntax boundary.
+
+Validation includes the forced and default exact-line replays, the complete
+module replay, exact skip-reason and deferred-query checks, SQLite lifecycle
+and integrity checks, Python syntax, a zero-reject sequential replay of all
+4,498 accumulated-patch hunks against a clean Sagelite `f575cf6224f`
+snapshot, byte-for-byte comparison of the affected reconstructed source with
+the tested patched copy, and `git diff --check`.  This is source-only doctest
+metadata and needs no Cython/native rebuild, Electron manifest change, or
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit another
+persisted deferred marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

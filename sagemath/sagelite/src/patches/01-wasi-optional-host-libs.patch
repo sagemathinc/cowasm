@@ -28916,3 +28916,9 @@ diff --git a/src/sage/categories/category_singleton.pyx b/src/sage/categories/ca
 @@ -177 +177 @@
 -        sage: timeit("c(R)", number = 10000)                          # not tested
 +        sage: timeit("c(R)", number = 10000)                          # needs IPython
+diff --git a/src/sage/structure/global_options.py b/src/sage/structure/global_options.py
+--- a/src/sage/structure/global_options.py
++++ b/src/sage/structure/global_options.py
+@@ -275 +275 @@
+-    sage: Menu.options.dessert?                # not tested
++    sage: Menu.options.dessert?                # needs IPython
