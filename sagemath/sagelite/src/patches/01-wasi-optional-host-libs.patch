@@ -29951,3 +29951,15 @@ diff --git a/src/sage/monoids/automatic_semigroup.py b/src/sage/monoids/automati
      """
      @staticmethod
      def __classcall_private__(cls, generators, ambient=None, one=None, mul=operator.mul, category=None):
+diff --git a/src/sage/categories/tutorial.py b/src/sage/categories/tutorial.py
+--- a/src/sage/categories/tutorial.py
++++ b/src/sage/categories/tutorial.py
+@@ -14,1 +14,1 @@ point the provided example::
+-You may lookup the implementation of this example with::
++You may identify the implementation of this example directly::
+@@ -16,1 +16,4 @@ You may lookup the implementation of this example with::
+-    sage: S??                               # not tested
++    sage: S.__class__.__module__
++    'sage.categories.examples.finite_semigroups'
++    sage: S.__class__.__name__.startswith('LeftRegularBand')
++    True
