@@ -62760,6 +62760,50 @@ changes remain untouched.  The next scheduled pass can investigate the
 separate large-`free_module.py` docstring-collection termination or select
 another persisted backend/runtime cluster.
 
+Large Python docstring-collection performance pass on 2026-07-21 UTC:
+
+The focused `sage/modules/free_module.py` termination was a runner-side
+collection defect rather than another module-global or sparse-matrix backend
+failure.  For every Python docstring, the collector called
+`ast.get_source_segment(...)`, which split the complete 294 KB source again;
+it also traversed the AST by repeatedly removing the first element of a list.
+Together those operations made the large module's collection path quadratic.
+Runner version 130 now pre-splits the source once, slices AST spans directly
+with their UTF-8 byte columns, and traverses the work list with a monotonically
+increasing index.  Exact raw doctest source and physical line metadata remain
+unchanged, including when a docstring begins after a non-ASCII identifier.
+
+The retained before/after results record:
+
+```text
+runner 129, free_module.py:262:  timed out at 20 seconds with 0 block rows
+runner 129, same row at 60s:    passed after 46.129 seconds
+runner 130, same optional row:  0 passed, 0 failed, 1 skipped in 10.353 seconds
+runner 130, original line 452:  1 passed, 0 failed, 0 skipped in 13.379 seconds
+Unicode/raw-source fixture:     3 passed, 0 failed, 0 skipped in 9.558 seconds
+```
+
+The original `Ms.basis_matrix().is_sparse()` target now reaches and passes in
+the complete `free_module.py` source, confirming that the stale sparse-matrix
+cluster and the apparent module-global seeding boundary were both obscured by
+collection time.  The standalone regression selects a real optional row from
+that source under a 30-second worker deadline; this retains useful scheduling
+margin for runner 130 while failing the measured runner-129 path.  Its adjacent
+small-source regression asserts raw escape preservation after a Unicode AST
+column.
+
+The authoritative runner-version-130 SQLite databases and historical
+benchmark are under
+`/tmp/cowasm-sagelite-free-module-seeding.9e54eu/`.  Every final database has
+a closed passing lifecycle and `PRAGMA integrity_check = ok`.  Validation also
+includes Node and shell syntax checks and `git diff --check`.  This is doctest-
+runner and standalone-regression work only; it needs no native WASM rebuild,
+Sagelite source patch, Electron manifest change, or resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The next scheduled pass can use focused lines from the now-
+collectable `free_module.py` source or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

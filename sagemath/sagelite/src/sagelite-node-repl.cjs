@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 129;
+const doctestRunnerVersion = 130;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1990,8 +1990,35 @@ def __cowasm_triple_quoted_docstrings(filename, text):
         position = content_end + len(quote)
 
 
-def __cowasm_raw_docstring_source(text, node):
-    segment = ast.get_source_segment(text, node)
+def __cowasm_ast_source_segment(lines, node):
+    # CPython AST columns are UTF-8 byte offsets.  Slice the pre-split source
+    # directly so large modules do not split the whole file for each docstring.
+    lineno = getattr(node, "lineno", None)
+    end_lineno = getattr(node, "end_lineno", None)
+    col_offset = getattr(node, "col_offset", None)
+    end_col_offset = getattr(node, "end_col_offset", None)
+    if (
+        lineno is None
+        or end_lineno is None
+        or col_offset is None
+        or end_col_offset is None
+        or lineno < 1
+        or end_lineno < lineno
+        or end_lineno > len(lines)
+    ):
+        return None
+    first = lines[lineno - 1].encode("utf-8")
+    if lineno == end_lineno:
+        return first[col_offset:end_col_offset].decode("utf-8")
+    parts = [first[col_offset:].decode("utf-8")]
+    parts.extend(lines[lineno:end_lineno - 1])
+    last = lines[end_lineno - 1].encode("utf-8")
+    parts.append(last[:end_col_offset].decode("utf-8"))
+    return "".join(parts)
+
+
+def __cowasm_raw_docstring_source(lines, node):
+    segment = __cowasm_ast_source_segment(lines, node)
     if not segment:
         return None
     match = re.match(r"(?is)^\\s*(?:[rubf]+)?('''|\\\"\\\"\\\")", segment)
@@ -2025,11 +2052,14 @@ def __cowasm_docstrings(filename, text):
         if filtered:
             yield os.path.basename(filename), filtered, lineno
         return
+    lines = text.splitlines(True)
     docstrings = []
     module_name = os.path.splitext(os.path.basename(filename))[0]
     stack = [(module_name, tree)]
-    while stack:
-        name, node = stack.pop(0)
+    stack_index = 0
+    while stack_index < len(stack):
+        name, node = stack[stack_index]
+        stack_index += 1
         body = getattr(node, "body", [])
         if body:
             first = body[0]
@@ -2038,7 +2068,7 @@ def __cowasm_docstrings(filename, text):
                 and isinstance(first.value, ast.Constant)
                 and isinstance(first.value.value, str)
             ):
-                raw_docstring = __cowasm_raw_docstring_source(text, first.value)
+                raw_docstring = __cowasm_raw_docstring_source(lines, first.value)
                 docstrings.append((
                     max(0, first.lineno - 1),
                     name,
@@ -2054,7 +2084,7 @@ def __cowasm_docstrings(filename, text):
             and isinstance(node.value, ast.Constant)
             and isinstance(node.value.value, str)
         ):
-            raw_docstring = __cowasm_raw_docstring_source(text, node.value)
+            raw_docstring = __cowasm_raw_docstring_source(lines, node.value)
             docstring = raw_docstring if raw_docstring is not None else node.value.value
             filtered, _ = __cowasm_filtered_text_with_prompts(docstring)
             if filtered:

@@ -2997,6 +2997,13 @@ EXAMPLES::
     sage: extra_string_value + 5
     42
 """
+
+def café(): """
+EXAMPLES::
+
+    sage: "\x41"
+    'A'
+"""
 PY
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
@@ -3018,7 +3025,7 @@ if [ "$doctest_extra_string_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t extra-string doctest smoke failed; see $doctest_extra_string_log for the first runtime blocker."
 fi
 doctest_extra_string_counts="$(sqlite3 "$doctest_extra_string_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_extra_string_counts" != "passed|2|2|0|0" ]; then
+if [ "$doctest_extra_string_counts" != "passed|3|3|0|0" ]; then
   cat "$doctest_extra_string_log" >&2
   sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t extra-string doctest smoke wrote unexpected SQLite counts: $doctest_extra_string_counts"
@@ -3029,6 +3036,50 @@ if [ "$doctest_extra_string_line_count" != "1" ]; then
   cat "$doctest_extra_string_log" >&2
   sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t extra-string doctest smoke did not preserve line numbers for extra top-level strings."
+fi
+doctest_unicode_column_source_count="$(sqlite3 "$doctest_extra_string_db" "select count(*) from blocks where status = 'passed' and source like '%x41%';")"
+if [ "$doctest_unicode_column_source_count" != "1" ]; then
+  cat "$doctest_extra_string_log" >&2
+  sqlite3 "$doctest_extra_string_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t extra-string doctest smoke did not preserve raw source after a Unicode AST column."
+fi
+doctest_large_python_db="$probe_dir/sagelite-doctest-large-python.sqlite3"
+doctest_large_python_log="$dist_dir/doctest-large-python.log"
+doctest_large_python_file="$build_dir/src/sage/modules/free_module.py"
+doctest_large_python_line="$(grep -nF 'sage: Q.is_integral_domain()' "$doctest_large_python_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --timeout 30 \
+      --line "$doctest_large_python_line" \
+      --sqlite "$doctest_large_python_db" \
+      "$doctest_large_python_file" \
+      >"$doctest_large_python_log" 2>&1
+doctest_large_python_status=$?
+set -e
+if [ "$doctest_large_python_status" -eq 124 ]; then
+  tail -120 "$doctest_large_python_log" >&2
+  record_blocker "sagelite-blocked: sage -t large-Python collection smoke timed out after $node_import_timeout; see $doctest_large_python_log for the first runtime blocker."
+fi
+if [ "$doctest_large_python_status" -ne 0 ]; then
+  tail -120 "$doctest_large_python_log" >&2
+  sqlite3 "$doctest_large_python_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t large-Python collection smoke failed; see $doctest_large_python_log for the first runtime blocker."
+fi
+doctest_large_python_counts="$(sqlite3 "$doctest_large_python_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_large_python_counts" != "passed|1|0|0|1" ]; then
+  cat "$doctest_large_python_log" >&2
+  sqlite3 "$doctest_large_python_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t large-Python collection smoke wrote unexpected SQLite counts: $doctest_large_python_counts"
+fi
+doctest_large_python_skip_count="$(sqlite3 "$doctest_large_python_db" "select count(*) from blocks where start_line = $doctest_large_python_line and status = 'skipped' and skip_reason = 'optional:sage.libs.singular' and source like 'Q.is_integral_domain()%';")"
+if [ "$doctest_large_python_skip_count" != "1" ]; then
+  cat "$doctest_large_python_log" >&2
+  sqlite3 "$doctest_large_python_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t large-Python collection smoke did not preserve the selected optional row."
 fi
 doctest_pyx_split_file="$probe_dir/sagelite-doctest-pyx-split.pyx"
 doctest_pyx_split_db="$probe_dir/sagelite-doctest-pyx-split.sqlite3"
