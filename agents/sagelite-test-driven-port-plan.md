@@ -60284,6 +60284,56 @@ intentional changes remain untouched.  The next pass can address the exposed
 category-Homset MRO cluster or select another persisted backend/runtime
 boundary.
 
+Homset category MRO stabilization pass on 2026-07-21 UTC:
+
+The 14 category-Homset failures exposed by the complete Heisenberg diagnostic
+were a cache-order-dependent category construction bug.  A finite-dimensional
+module-with-basis Homset could acquire both `Modules.Homsets` and its
+`ModulesWithBasis.Homsets` subclass as dynamic element-class bases in the
+wrong order, raising `TypeError: Cannot create a consistent method resolution
+order`.  Preconstructing one related Homset category happened to hide the
+problem, so it was not a graph-support dependency boundary.
+
+`HomsetsCategory.default_super_categories()` now removes structurally
+redundant Homset categories independently of the category sort key before
+forming their join.  The reduction uses the already-computed structural
+supercategory graph rather than recursively invoking semantic subcategory
+hooks.  A source regression constructs the finite-dimensional vector-space
+Homset from a fresh cache state, checks its single immediate Homset
+supercategory, and materializes its dynamic element class.
+
+The retained runner-version-128 results record:
+
+```text
+focused Heisenberg coercion final:      1 passed, 0 failed, 0 skipped
+focused Homset MRO regression final:   1 passed, 0 failed, 0 skipped
+complete Homset module final:         61 passed, 0 failed, 0 skipped
+complete Heisenberg before/final: 116/16/0 -> 130/2/0
+remaining Heisenberg MRO failures:      0
+```
+
+The authoritative databases and manifest-validated copy-on-write resource
+bundle are under `/tmp/cowasm-sagelite-homset-mro-fix.IuTsBc/`.  The two
+remaining complete-module failures are the independent broad `TestSuite(L)`
+output mismatches at lines 406 and 690.  All focused, reconstructed, and
+complete Homset databases record completed passing lifecycles; the complete
+Heisenberg database is closed with exactly those two output mismatches, and
+every retained database reports `PRAGMA integrity_check = ok`.
+
+Validation includes focused and complete source replays, the saved failure-
+cluster and lifecycle queries, Python syntax, patch syntax,
+`git diff --check`, and the full Electron resource smoke.  All 1,511
+accumulated patch
+sections and 4,527 hunks apply without rejects to a clean Sagelite
+`f575cf6224f` snapshot; the reconstructed Homset source is byte-for-byte
+identical to the tested build copy, and reconstructed focused replays pass for
+both the Homset regression and the motivating Heisenberg coercion.  This is a
+pure-Python category fix and needs no native WASM rebuild or permanent
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can address either of
+the two remaining Heisenberg `TestSuite` output mismatches or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -29194,3 +29194,40 @@ diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/li
 +        sage: sorted(dict(L.basis()).items())
 +        [('z', [0 1]
 +        [0 0])]
+diff --git a/src/sage/categories/homsets.py b/src/sage/categories/homsets.py
+--- a/src/sage/categories/homsets.py
++++ b/src/sage/categories/homsets.py
+@@ -107,11 +107,31 @@
+             sage: Sets().Homsets().super_categories()
+             [Category of homsets]
+             sage: (Magmas() & Posets()).Homsets().super_categories()
+             [Category of homsets]
++
++        Parameterized categories can have structural supercategory relations
++        which are not represented in the category sort key.  Reduce the
++        resulting homset categories independently of their sort order so
++        that their dynamic element classes have a consistent MRO::
++
++            sage: C = Modules(QQ).WithBasis().FiniteDimensional()
++            sage: H = HomsetsCategory.default_super_categories(C); H
++            Category of homsets of finite dimensional modules with basis over Rational Field
++            sage: H.super_categories()
++            [Category of homsets of modules with basis over Rational Field]
++            sage: H.element_class
++            <class 'sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.Homsets.element_class'>
+         """
+         if category.full_super_categories():
+-            return Category.join([getattr(cat, cls._functor_category)()
+-                                  for cat in category.full_super_categories()])
++            categories = tuple(getattr(cat, cls._functor_category)()
++                               for cat in category.full_super_categories())
++            categories = tuple(
++                category for category in categories
++                if not any(other is not category
++                           and category in other._set_of_super_categories
++                           for other in categories)
++            )
++            return Category.join(categories)
+         functor_category = getattr(category.__class__, cls._functor_category)
+         if isinstance(functor_category, type) and issubclass(functor_category, Category):
+             return Homsets()
