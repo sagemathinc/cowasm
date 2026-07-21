@@ -62514,6 +62514,68 @@ network-focused pass can audit the remaining explicit Sagelite remote-download
 policy boundaries separately from transport support, while retaining their
 remote-code and external-side-effect safeguards.
 
+Node remote-download capability and browser fail-closed pass on 2026-07-21
+UTC:
+
+Sagelite no longer rejects every remote file solely because Python reports
+`sys.platform == 'wasi'`.  The shared kernel entrypoints now set the reserved
+`COWASM_RUNTIME` environment value to `node` or `browser` after applying
+caller options, so all Node-hosted WASI programs—including the direct
+`python-wasi-sdk` launcher—receive the same non-spoofable host classification.
+The Sagelite remote-file guard permits the Node path while preserving the
+browser rejection, then separately reports an explicit optional-SSL boundary
+when a minimal Node runtime does not package `_ssl`.
+
+This distinction matters for the two supported Node launch shapes.  The raw
+`python-wasi-sdk` build is Node-hosted but intentionally lacks `_ssl`, so its
+standalone regression now closes cleanly with `remote file downloads require
+the optional WASI SSL runtime` and does not leave `ssl` or `_ssl` imported.
+Bundled `python-wasm` and Electron include `_ssl`, native socket transport, and
+the Node root-certificate store; their regression reaches the download path
+and writes a deterministic mocked response.  The browser-profile branch still
+raises the existing explicit unsupported-network diagnostic before importing
+SSL.  The remote-code and `internet` safeguards on
+`sage.repl.load.load(...)` remain unchanged.
+
+The checked results are:
+
+```text
+kernel TypeScript and Jest:                     3 passed, 0 failed
+python-wasm focused runtime-policy Jest:        6 passed, 0 failed
+complete python-wasm POSIX Jest set:            26 passed, 0 failed, 2 skipped
+raw python-wasi-sdk browser/SSL policy:          passed
+bundled Node remote-file policy:                 passed
+live verified Sagelite HTTPS download:           passed (39 bytes)
+Sagelite Cython generation:                      507 targets passed
+Sagelite compile/link:                         1,024 targets passed
+standalone Node import ladder:                   passed
+staged and relocated Electron smoke:             passed (53 checkpoints each)
+```
+
+An exploratory all-`python-wasm` Jest run recorded 47 passed, four skipped,
+and two failures in the independent `noStdio` terminal suite.  Its first
+failure shape was order-sensitive host-CWD removal; an isolated replay passed
+basic `noStdio` but retained the existing Ctrl-C/`KeyboardInterrupt` timeout.
+All focused and complete POSIX tests for this networking/runtime-marker change
+pass.
+
+The authoritative source reconstructions, patch logs, complete standalone
+build and install, staged and relocated Electron resources, doctest logs, and
+live-policy evidence are under
+`/tmp/cowasm-sagelite-remote-runtime.UV8ekE/`.  Validation includes direct
+kernel-launcher override resistance, TypeScript builds, kernel and
+python-wasm Jest, the live CA-verified HTTPS probe, shell and Python syntax,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, the complete isolated standalone build, and the full
+Electron-shaped resource smoke before and after relocation.  All 1,595
+accumulated source-patch sections (1,079 `diff --git` and 516 legacy sections)
+and 4,610 hunks apply.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next network-focused pass can
+exercise a deliberately authorized remote-load flow separately from transport
+support while retaining the doctest's remote-code and external-side-effect
+safeguards.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -69,3 +69,8 @@ Under Node.js and Electron, python-wasm makes Node's bundled root certificates
 available to OpenSSL through `SSL_CERT_FILE`.  A caller-provided
 `opts.env.SSL_CERT_FILE` or host `SSL_CERT_FILE` takes precedence, so custom
 and enterprise trust stores remain supported.
+
+The shared kernel host entrypoints also set the reserved `COWASM_RUNTIME`
+environment value to `node` or `browser` after applying caller options.  WASI
+packages can use this host-controlled value to distinguish capabilities that
+`sys.platform` alone cannot express.

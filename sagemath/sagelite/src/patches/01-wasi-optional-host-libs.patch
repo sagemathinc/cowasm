@@ -30137,3 +30137,22 @@ diff --git a/src/sage/repl/load.py b/src/sage/repl/load.py
 @@ -178 +178 @@
 -        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals())  # not tested
 +        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals())  # not tested (executes remote code)  # optional - internet
+diff --git a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
+--- a/src/sage/misc/remote_file.py
++++ b/src/sage/misc/remote_file.py
+@@ -29,6 +29,13 @@
+-    if sys.platform == 'wasi':
++    if sys.platform == 'wasi' and os.environ.get('COWASM_RUNTIME') != 'node':
+         raise NotImplementedError(
+             "remote file downloads require SSL/network support, "
+             "which is not available in the WASI browser profile"
+         )
+-    from ssl import create_default_context as default_context
++    try:
++        from ssl import create_default_context as default_context
++    except ModuleNotFoundError as error:
++        if sys.platform != 'wasi' or error.name != '_ssl':
++            raise
++        raise NotImplementedError(
++            "remote file downloads require the optional WASI SSL runtime"
++        ) from error

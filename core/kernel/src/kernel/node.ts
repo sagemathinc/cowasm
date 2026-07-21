@@ -32,6 +32,7 @@ function getOptions(wasmImport, opts?: Options) {
     TERMCAP: join(path, "..", "termcap"),
     PS1: "(cowasm)$ ",
     ...opts?.env,
+    COWASM_RUNTIME: "node",
   };
   //PS1: 'cowasm: (pwd | sed "s|^$HOME|~|")$ '
 

@@ -18,6 +18,7 @@ function getOptions(wasmImport, opts?: Options) {
     TERM: "xterm-256color",
     PS1: "(cowasm)$ ",
     ...opts?.env,
+    COWASM_RUNTIME: "browser",
   };
 
   return {

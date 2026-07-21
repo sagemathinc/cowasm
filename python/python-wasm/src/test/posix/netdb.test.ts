@@ -40,6 +40,14 @@ certificate_stats = ssl.create_default_context().cert_store_stats()
   );
   expect(repr("os.path.isfile(verify_paths.cafile)")).toBe("True");
   expect(Number(repr("certificate_stats['x509_ca']"))).toBeGreaterThan(100);
+  expect(repr("os.environ['COWASM_RUNTIME']")).toBe("'node'");
+});
+
+test("caller cannot spoof the python-wasm host runtime", async () => {
+  const { repr } = await syncPython({
+    env: { COWASM_RUNTIME: "browser" },
+  });
+  expect(repr("__import__('os').environ['COWASM_RUNTIME']")).toBe("'node'");
 });
 
 test("explicit SSL_CERT_FILE overrides the Node root certificate store", async () => {

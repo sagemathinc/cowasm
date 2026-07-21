@@ -819,20 +819,45 @@ else:
     raise AssertionError('keyword_only should reject positional arguments')
 assert 'takes 0 positional arguments but 1 was given' in message, message
 print('sagelite-wasi-sdk-ok unicode typeerror integer fields')"
-run_wasi_sdk_python_import "remote-file browser guard" "import sys
+run_wasi_sdk_python_import "remote-file runtime policy" "import os
+import sys
 import sage.misc.all
 assert 'ssl' not in sys.modules
 assert '_ssl' not in sys.modules
-from sage.misc.remote_file import get_remote_file
+import sage.misc.remote_file as remote_file
+assert os.environ['COWASM_RUNTIME'] == 'node'
+os.environ['COWASM_RUNTIME'] = 'browser'
 try:
-    get_remote_file('https://example.com/sagelite.txt')
+    remote_file.get_remote_file('https://example.com/sagelite.txt')
 except NotImplementedError as err:
     assert 'WASI browser profile' in str(err)
 else:
     raise AssertionError('remote file downloads should fail closed on WASI')
 assert 'ssl' not in sys.modules
 assert '_ssl' not in sys.modules
-print('sagelite-wasi-sdk-ok remote-file browser guard')"
+os.environ['COWASM_RUNTIME'] = 'node'
+try:
+    remote_file.get_remote_file('https://example.com/sagelite.txt', verbose=False)
+except NotImplementedError as err:
+    assert 'optional WASI SSL runtime' in str(err)
+else:
+    raise AssertionError('remote file downloads should require the WASI SSL runtime')
+assert 'ssl' not in sys.modules
+assert '_ssl' not in sys.modules
+print('sagelite-wasi-sdk-ok remote-file runtime policy')"
+run_node_import "remote-file Node policy" "import os
+import sage.misc.remote_file as remote_file
+assert os.environ['COWASM_RUNTIME'] == 'node'
+class Response:
+    def read(self):
+        return b'sagelite remote file transport enabled under Node\n'
+remote_file.urlopen = lambda *args, **kwargs: Response()
+downloaded = remote_file.get_remote_file('https://example.com/sagelite.txt', verbose=False)
+try:
+    assert downloaded.read_bytes() == b'sagelite remote file transport enabled under Node\n'
+finally:
+    downloaded.unlink()
+print('sagelite-node-ok remote-file Node policy')"
 run_node_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
 assert ZZ(2) + ZZ(3) == ZZ(5)
 assert QQ(6, 15) == QQ(2, 5)
