@@ -28730,3 +28730,33 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
              'intmat'
          """
          if singular is None:
+diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_integer_dense.pyx
+--- a/src/sage/matrix/matrix_integer_dense.pyx
++++ b/src/sage/matrix/matrix_integer_dense.pyx
+@@ -220,7 +220,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
+             Traceback (most recent call last):
+             ...
+-            RuntimeError: FLINT exception
++            RuntimeError: matrix dimensions are too large
+         """
+         sig_str("FLINT exception")
+         fmpz_mat_init(self._matrix, self._nrows, self._ncols)
+@@ -1312,7 +1312,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+
+         - ``var`` -- a variable name
+
+-        - ``algorithm`` -- (default: ``'linbox'``) either ``'generic'``,
++        - ``algorithm`` -- (default: ``'generic'``) either ``'generic'``,
+           ``'flint'`` or ``'linbox'``
+
+         EXAMPLES::
+@@ -1352,7 +1352,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
+             x^2 - 3*x - 2
+             sage: A.charpoly('y')
+             y^2 - 3*y - 2
+-            sage: A._cache['charpoly_linbox']
++            sage: A._cache['charpoly_generic']
+             x^2 - 3*x - 2
+
+         Test corner cases::

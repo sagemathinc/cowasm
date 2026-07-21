@@ -59191,6 +59191,45 @@ checkout remains untouched.  The next pass can repair or explicitly defer one
 of the two remaining matrix clusters, or select another persisted backend
 cluster.
 
+Integer-matrix doctest contract cleanup pass on 2026-07-21 UTC:
+
+The final two failures in the complete dense-integer matrix replay are closed
+by aligning the source doctests with deliberate Sagelite runtime behavior.  The
+impossible `sys.maxsize`-square allocation example now expects the proactive
+`MatrixSpace` dimension guard rather than a later FLINT allocation exception.
+The characteristic-polynomial cache example now documents the patched
+`generic` default and inspects `charpoly_generic`, matching the fallback that
+replaced the unavailable native LinBox/FLINT polynomial implementation.
+
+The retained results record:
+
+```text
+large-dimension diagnostic line 220:       1 passed, 0 failed,  0 skipped
+generic cache assertion line 1355:         1 passed, 0 failed,  0 skipped
+complete matrix module before:           649 passed, 2 failed, 44 skipped
+complete matrix module final:            651 passed, 0 failed, 44 skipped
+```
+
+The exact-line runner-version-128 SQLite databases are under
+`/tmp/cowasm-sagelite-matrix-final-lines.l6pXdT/`.  The authoritative complete-
+module database is
+`/tmp/cowasm-sagelite-matrix-final-full.RW7zEk/complete-matrix.sqlite3`; it
+records 695 blocks, no file-level error, a completed passing lifecycle, and
+`PRAGMA integrity_check = ok`.  This closes every non-skipped failure in the
+persisted `sage/matrix/matrix_integer_dense.pyx` frontier while preserving all
+44 explicit external-dependency skips.
+
+Validation includes both exact-line reruns, the complete matrix-module replay,
+SQLite lifecycle and integrity checks, accumulated-patch syntax, a zero-reject
+application to a clean Sagelite `f575cf6224f` snapshot, byte-for-byte comparison
+of the affected patched source with the tested build copy, and
+`git diff --check`.  The changes affect source doctest expectations and
+documentation only, so no Cython/native rebuild, Electron manifest schema
+change, or resource restaging is required.  The external developer Sagelite
+checkout remains untouched.  The next pass can select another persisted
+backend/runtime cluster now that the complete dense-integer matrix module is
+clean in the default browser profile.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
