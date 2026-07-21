@@ -29346,3 +29346,11 @@ diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequenc
 @@ -583 +582 @@
 -        return not self.__eq__(other)
 +        return not (self == other)
+diff --git a/src/sage/rings/cfinite_sequence.py b/src/sage/rings/cfinite_sequence.py
+--- a/src/sage/rings/cfinite_sequence.py
++++ b/src/sage/rings/cfinite_sequence.py
+@@ -45 +45 @@
+-    sage: fibo[137] == fibonacci(137)
++    sage: fibo[137] == fibonacci(137)  # needs sage.libs.pari
+@@ -1232,0 +1233 @@
++            sage: # needs sage.libs.pari

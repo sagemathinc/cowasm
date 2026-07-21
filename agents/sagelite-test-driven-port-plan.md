@@ -60683,6 +60683,55 @@ manifest change, or permanent resource restaging.  The external developer
 Sagelite checkout and its intentional changes remain untouched.  The next pass
 can classify or implement the focused PARI Fibonacci and `ggf` boundaries.
 
+C-finite PARI dependency-boundary pass on 2026-07-21 UTC:
+
+The final three failures in `sage/rings/cfinite_sequence.py` now state their
+actual backend contract.  Comparing the 137th C-finite Fibonacci value with
+`fibonacci(137)` enters the currently unported cypari2 object-model path, while
+the explicitly selected `algorithm='pari'` guessing implementation defines and
+calls a PARI `ggf` function through a callable `cypari2.gen.Gen`.  CoWasm's
+focused PARI subset deliberately supports neither operation yet.  The later
+slice assertion depended on the failed `ggf` assignment and was not an
+independent arithmetic mismatch.
+
+The Fibonacci comparison now carries an inline `# needs sage.libs.pari` tag,
+and a standalone directive applies the same dependency to the two contiguous
+PARI-guessing examples.  The existing file-wide `sage.symbolic` contract is
+preserved, so the broad symbolic profile records the rows with the combined
+`optional:sage.symbolic,sage.libs.pari` skip reason.  Neighboring pure-Python
+Fibonacci indexing and the default matrix-kernel guessing algorithm remain
+active.
+
+The retained runner-version-128 complete-module results record:
+
+```text
+broad-symbolic complete module before:        238 passed, 3 failed, 36 skipped
+broad-symbolic complete module final:         238 passed, 0 failed, 39 skipped
+reconstructed broad-symbolic module final:    238 passed, 0 failed, 39 skipped
+final non-skipped pass rate:                  100%
+```
+
+The authoritative before, final, and reconstructed SQLite databases are under
+`/tmp/cowasm-sagelite-cfinite-pari-before.k9KxLn/`.  Both final databases have
+closed passing lifecycles, empty saved block- and file-failure cluster queries,
+the exact combined dependency metadata on all three rows, and
+`PRAGMA integrity_check = ok`.  The before database preserves the independent
+`NotImplementedError` and callable-`Gen` `TypeError`, plus the dependent slice
+output mismatch.
+
+Validation includes the fresh complete before and final module replays, the
+complete reconstructed-source replay, exact SQLite lifecycle, tag, failure-
+cluster, and integrity checks, Python syntax, accumulated-patch syntax,
+zero-reject sequential application, byte-for-byte target-source
+reconstruction, and `git diff --check`.  All 1,047 accumulated patch sections
+and 4,549 hunks apply without rejects to a clean Sagelite `f575cf6224f`
+archive.  This is source-doctest dependency metadata only and needs no native
+WASM rebuild, Electron manifest change, or permanent resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The complete broad-symbolic C-finite module is now clean; the next
+pass can select another persisted backend/runtime cluster or audit another
+generic deferred marker.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
