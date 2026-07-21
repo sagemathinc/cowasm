@@ -61021,6 +61021,53 @@ syntax checks, SQLite integrity checks, and `git diff --check`.  The next pass
 can update or reclassify the three remaining compiler-metadata output contracts
 or select another persisted backend/runtime cluster.
 
+Fast-callable interpreter-metadata normalization pass on 2026-07-21 UTC:
+
+The final three `sage/ext/fast_callable.pyx` failures were one profile-sensitive
+documentation cluster rather than compiler defects.  The examples first load
+the lightweight element-interpreter metadata, then conditionally replace it
+with real-double metadata on a `# needs sage.modules` prompt.  Native expected
+output hard-coded the real-double `py_constants` storage layout and opcode
+numbers.  The browser profile correctly skips that conditional import and uses
+the element interpreter, whose Python call target lives in `constants` and
+whose later instruction opcodes differ.
+
+The doctests now check the portable compiler contract: the Python-call
+instruction has zero fixed inputs, one output, a variable-input-count
+parameter, and a consistent reverse opcode mapping.  The emitted instruction
+stream checks its scalar state, combines the two supported constant stores,
+and derives the expected bytecode from the active metadata instead of freezing
+one interpreter's internal opcode assignment.  These assertions retain
+meaningful coverage under both native Sage and the browser profile.
+
+The retained runner-version-128 results record:
+
+```text
+complete module before: 202 passed, 3 failed, 432 skipped
+focused final rows:       2 passed, 0 failed,   2 skipped
+complete module final:   209 passed, 0 failed, 432 skipped
+Electron resource smoke: passed
+```
+
+The authoritative source reconstructions, SQLite databases, and worker roots
+are under `/tmp/cowasm-sagelite-fast-callable-metadata-audit.rVZPeh/`.  The
+complete final database has a closed passing lifecycle, empty saved block- and
+file-failure cluster queries, and `PRAGMA integrity_check = ok`.  The complete
+module is now clean for all runnable default-profile rows; the 432 skips remain
+explicit dependency/deferred metadata rather than failures.
+
+Validation includes exact-line and complete clean-reconstructed doctest
+replays, SQLite lifecycle and integrity checks, saved failure-cluster queries,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte `fast_callable.pyx` reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,053
+accumulated patch sections and 4,564 hunks apply.  This is portable
+documentation coverage only, so it needs no native WASM rebuild, Electron
+manifest change, or permanent resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next pass
+can promote this newly clean module into an appropriate corpus or select
+another persisted runtime/deferred cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
