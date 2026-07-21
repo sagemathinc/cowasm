@@ -62145,6 +62145,67 @@ Electron manifest change, or permanent resource restaging.  The next pass can
 select another default-profile deferred marker or a persisted backend/runtime
 cluster.
 
+Combinatorial Hopf-algebra dependency and known-bug classification on
+2026-07-21 UTC:
+
+The three generic deferred rows in
+`sage/tests/combinatorial_hopf_algebras.py` now record the behavior they were
+originally suppressing: the comparison diagrams still need additional Hopf-
+algebra morphisms, so the rows use `# known bug - needs more morphisms`
+instead of the semantically vague `# not tested` marker.  The module now has
+no generic deferred rows.
+
+The module-wide directive now also names `sage.libs.symmetrica`.  A forced
+historical replay with the previously declared `sage.combinat` and
+`sage.modules` features enabled exposed 12 artificial failures, including a
+missing Symmetrica module while constructing `FSym` and follow-on missing
+startup names.  With the corrected directive, the same browser profile closes
+cleanly at the unavailable Symmetrica boundary instead of pretending that the
+module is runnable.  Selecting all three dependencies explicitly exposes the
+three specific known-bug skips; the remaining setup failures confirm that the
+current runtime does not actually provide the selected backend.
+
+The retained runner-version-128 results record:
+
+```text
+historical default profile:              0 passed,  0 failed, 1 skipped
+forced historical deferred coverage:     3 passed, 12 failed, 0 skipped
+proposed partial feature selection:       0 passed,  0 failed, 1 skipped
+proposed all-feature selection:           3 passed,  9 failed, 3 skipped
+complete reconstructed partial profile:   0 passed,  0 failed, 1 skipped
+full standalone and Electron smoke:       passed
+```
+
+The partial-profile skip is
+`optional:sage.combinat,sage.modules,sage.libs.symmetrica`.  The three
+all-feature skips are `deferred:known bug`, retain all three dependency tags,
+and point to source lines 34, 36, and 49.  The expected selected-feature
+failures group around the unavailable Symmetrica module and stripped startup
+namespace rather than an unclassified runtime trap.
+
+The authoritative historical, forced, proposed, reconstructed, and selected-
+feature SQLite databases, clean and proposed source reconstructions, patch
+logs, relocated Electron smoke log, and rebuilt resource bundle are under
+`/tmp/cowasm-sagelite-next-audit.Htvdph/`.  All supported-profile
+databases have closed passing lifecycles, empty saved block- and file-failure
+cluster queries, and `PRAGMA integrity_check = ok`; the intentionally forced
+databases have closed failed lifecycles with the expected dependency and
+namespace diagnostics.
+
+Validation includes the historical default and forced-deferred replays, both
+proposed feature-selection layers, the complete pinned-clean-reconstructed
+replay, exact SQLite lifecycle, tag, integrity, and saved failure-cluster
+checks, Python syntax, accumulated-patch syntax, zero-reject sequential
+application to pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, a clean full standalone rebuild, and the
+full Electron-shaped resource smoke.  All 1,591 accumulated source-patch
+sections (1,075 `diff --git` and 516 legacy sections) and 4,602 hunks apply.
+The external developer checkout and its intentional changes remain untouched.
+This is doctest dependency and deferred-test metadata only and needs no
+additional native WASM rebuild or Electron manifest change.  The next pass can
+audit the remaining unmentioned graph-editor markers or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

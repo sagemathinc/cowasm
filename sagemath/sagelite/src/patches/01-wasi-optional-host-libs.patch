@@ -30088,3 +30088,19 @@ diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_rin
              sage: E.<x,y> = ExteriorAlgebra(QQ)                                         # needs sage.modules
 -            sage: L = LazyLaurentSeriesRing(E, 't')     # not tested                    # needs sage.modules
 +            sage: L = LazyLaurentSeriesRing(E, 't')     # known bug - nontermination    # needs sage.modules
+diff --git a/src/sage/tests/combinatorial_hopf_algebras.py b/src/sage/tests/combinatorial_hopf_algebras.py
+--- a/src/sage/tests/combinatorial_hopf_algebras.py
++++ b/src/sage/tests/combinatorial_hopf_algebras.py
+@@ -1 +1 @@
+-# sage.doctest: needs sage.combinat sage.modules
++# sage.doctest: needs sage.combinat sage.modules sage.libs.symmetrica
+@@ -34,4 +34,4 @@
+-    sage: go([2,1,2])  # not tested (needs more morphisms)
++    sage: go([2,1,2])  # known bug - needs more morphisms
+     True
+-    sage: all(all(go(comp) for comp in Compositions(n)) for n in range(5))  # not tested (needs more morphisms)
++    sage: all(all(go(comp) for comp in Compositions(n)) for n in range(5))  # known bug - needs more morphisms
+     True
+@@ -49 +49 @@
+-    sage: all(go2(n) for n in range(6))  # not tested (needs more morphisms)
++    sage: all(go2(n) for n in range(6))  # known bug - needs more morphisms
