@@ -61626,6 +61626,56 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another default-profile
 deferred marker or select a persisted backend/runtime cluster.
 
+Integer-list functional-ceiling bounded-search promotion on 2026-07-21 UTC:
+
+The final generic deferred row in
+`sage/combinat/integer_lists/invlex.pyx` is now active, bounded
+browser-profile coverage.  The historical example called `L.first()` for an
+integer-list family whose functional ceiling is identically zero.  Because
+the algorithm cannot know that the ceiling remains zero forever, the search
+never finds a list and never terminates.  A focused forced replay confirms
+that the worker reaches its three-second timeout.
+
+The replacement keeps the nontermination warning and checks the underlying
+reason safely: every fixed-length truncation through length 19 is empty.  It
+therefore exercises the same functional-ceiling constructor and emptiness
+logic without starting the unbounded search.  The module now has no generic
+`# not tested` rows.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:     303 passed, 0 failed, 3 skipped
+forced historical first():       timed out after 3 seconds
+focused bounded fixture:           3 passed, 0 failed, 0 skipped
+complete reconstructed module:   305 passed, 0 failed, 2 skipped
+failure-disallowing make target: 305 passed, 0 failed, 2 skipped
+Electron resource smoke:          passed
+```
+
+The authoritative historical, historical-forced, focused, reconstructed, and
+strict make-target SQLite databases, worker roots, pinned clean source tree,
+patch logs, focused corpus fixture, schema-191 copy-on-write resource bundle,
+and Electron smoke log are under
+`/tmp/cowasm-sagelite-invlex-audit.DENDu8/`.  The final strict database has a
+closed passing lifecycle, 307 block rows, empty saved block- and file-failure
+cluster queries, no deferred rows, and `PRAGMA integrity_check = ok`; the
+forced database records the expected closed file-level `timeout`.
+
+Validation includes the historical default and forced-deferred replays, the
+focused bounded fixture, complete clean-reconstructed module replay, the
+failure-disallowing `test-sage-doctest-corpus` make target, exact SQLite
+lifecycle, integrity, deferred-row, and saved failure-cluster checks,
+accumulated-patch syntax, zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte target-source reconstruction,
+`git diff --check`, and the full Electron-shaped resource smoke.  All 1,581
+accumulated source-patch sections and 4,584 hunks apply.  This is deterministic
+documentation and doctest-coverage work only and needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.
+The next pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

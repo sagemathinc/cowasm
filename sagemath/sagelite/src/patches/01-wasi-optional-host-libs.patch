@@ -29963,3 +29963,19 @@ diff --git a/src/sage/categories/tutorial.py b/src/sage/categories/tutorial.py
 +    'sage.categories.examples.finite_semigroups'
 +    sage: S.__class__.__name__.startswith('LeftRegularBand')
 +    True
+diff --git a/src/sage/combinat/integer_lists/invlex.pyx b/src/sage/combinat/integer_lists/invlex.pyx
+--- a/src/sage/combinat/integer_lists/invlex.pyx
++++ b/src/sage/combinat/integer_lists/invlex.pyx
+@@ -426,2 +426,10 @@
+-            sage: L = IntegerListsLex(2,ceiling=lambda i:0, check=False)
+-            sage: L.first()           # not tested: will hang forever
++            sage: ceiling = lambda i: 0
++            sage: L = IntegerListsLex(2, ceiling=ceiling, check=False)
++
++        Calling ``L.first()`` would hang forever.  Fixed-length truncations
++        demonstrate why without starting the unbounded search::
++
++            sage: all(IntegerListsLex(2, length=n, ceiling=ceiling,
++            ....:                     check=False).is_empty()
++            ....:     for n in range(20))
++            True
