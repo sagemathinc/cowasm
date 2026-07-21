@@ -59653,6 +59653,52 @@ restaging.  The external developer Sagelite checkout and its intentional
 changes remain untouched.  The next pass can audit another persisted deferred
 marker or select a separate backend/runtime cluster.
 
+Graphics deferred-contract classification pass on 2026-07-21 UTC:
+
+The four historical deferred rows in `sage/plot/graphics.py` are now split by
+their actual safety and browser-profile contracts.  The custom symbolic-tick
+example remains deferred, but its generic `# not tested` marker is now the
+documented Matplotlib 3.6 `# known bug` plus exact `sage.symbolic` and
+`matplotlib` dependencies.  The two extreme-`figsize` examples remain
+intentionally deferred because their surrounding upstream documentation warns
+that executing them can trigger native segmentation faults; both now also
+carry exact `matplotlib` metadata, so the deferred-rerun dashboard preserves
+the dependency boundary.  The safe PGF `_latex_()` example no longer carries a
+generic deferral and is classified solely as `# needs matplotlib`.
+
+The retained results record:
+
+```text
+persisted deferred rows before/final:  4 / 3
+dependency-only row promoted:          1
+default complete graphics module:    167 passed, 0 failed, 241 skipped
+forced line 2108 dependency replay:    ModuleNotFoundError: matplotlib
+```
+
+The initial runner-version-128 audit database is
+`/tmp/cowasm-sagelite-graphics-deferred-audit.0PJaiP/graphics-deferred.sqlite3`.
+It records the three rendering/PGF rows reaching the unavailable Matplotlib
+module and the custom-tick row reaching the stripped startup namespace before
+rendering.  The authoritative final databases are under
+`/tmp/cowasm-sagelite-graphics-classified-final.5EaINo/`; the complete-module
+database records a completed passing lifecycle, no block or file failures, and
+`PRAGMA integrity_check = ok`.  Its three retained deferred reruns identify the
+custom-tick known bug and both deliberately non-runnable segmentation-fault
+examples, while line 3408 records `optional:matplotlib` without a deferred tag.
+
+Validation includes all four default exact-line replays, the complete-module
+replay, a forced dependency replay of the dangerous line 2108 that stops at
+the missing Matplotlib package, exact SQLite status, tag, deferred-query,
+lifecycle, and integrity checks, accumulated-patch syntax, a zero-reject
+sequential application to a clean Sagelite `f575cf6224f` snapshot, byte-for-
+byte comparison of the reconstructed graphics source with the tested patched
+copy, and `git diff --check`.  This is source-doctest safety and dependency
+metadata only and needs no native WASM rebuild, Electron manifest change, or
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The next pass can audit the adjacent
+Tachyon known-bug row or the ambient-space TestSuite deferral from the
+persisted dashboards.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

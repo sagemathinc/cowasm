@@ -9344,9 +9344,18 @@ diff -urN a/src/sage/plot/graphics.py b/src/sage/plot/graphics.py
 @@ -1933 +1933 @@
 -            sage: matrix_plot(M).show(gridlines=True)
 +            sage: matrix_plot(M).show(gridlines=True)                               # needs matplotlib
+@@ -2013 +2013 @@
+-            sage: plot(2*x + 1, (x,0,5),        # not tested (broken with matplotlib 3.6), needs sage.symbolic
++            sage: plot(2*x + 1, (x,0,5),        # known bug (broken with matplotlib 3.6), needs sage.symbolic matplotlib
 @@ -2075 +2075 @@
 -            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])
 +            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])  # needs matplotlib
+@@ -2108 +2108 @@
+-            sage: p.show(figsize=[232,232],dpi=100)  # not tested
++            sage: p.show(figsize=[232,232],dpi=100)  # not tested, needs matplotlib
+@@ -2115 +2115 @@
+-            sage: p.show(figsize=[327,181],dpi=100)  # not tested
++            sage: p.show(figsize=[327,181],dpi=100)  # not tested, needs matplotlib
 @@ -2246 +2246 @@
 -            sage: l.get_minmax_data()
 +            sage: l.get_minmax_data()                                               # random
@@ -9385,6 +9394,9 @@ diff -urN a/src/sage/plot/graphics.py b/src/sage/plot/graphics.py
 -            ....:        xmin=-1, xmax=3, ymin=-1, ymax=3)
 +            sage: c.save(f.name, figsize=[8,4], fig_tight=False,                   # needs matplotlib
 +            ....:        xmin=-1, xmax=3, ymin=-1, ymax=3)                          # needs matplotlib
+@@ -3408 +3408 @@
+-            sage: L._latex_()     # not tested
++            sage: L._latex_()     # needs matplotlib
 diff -urN a/src/sage/plot/arc.py b/src/sage/plot/arc.py
 --- a/src/sage/plot/arc.py
 +++ b/src/sage/plot/arc.py
