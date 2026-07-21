@@ -62641,6 +62641,41 @@ host cwd.  This is a TypeScript runtime and regression change; it requires no
 native WASM rebuild, Sagelite source patch, resource restaging, or external
 checkout mutation.  Validation also includes `git diff --check`.
 
+Node socket regression re-enable pass on 2026-07-21 UTC:
+
+The two historical `python-wasm` POSIX socket regressions are enabled again.
+They had been skipped because the client/server test intermittently reached
+`uv_cwd`/`ENOENT` after another test deleted the guest temporary directory that
+the shared Node process still used as its cwd.  The preceding host-cwd
+isolation fix removes that ordering hazard, and the complete suite now passes
+with the socket tests in their ordinary position.
+
+The regressions now retain and await their background server operations,
+terminate both Python workers in `finally` blocks, and immediately attach a
+rejection handler so cleanup after an earlier assertion cannot produce an
+unhandled worker-exit rejection.  The timeout case no longer accepts any
+arbitrary failure: it records the Python exception type and elapsed monotonic
+time, then requires `TimeoutError` between 0.4 and 1 second for a requested
+0.5-second socket timeout.
+
+The checked results are:
+
+```text
+python-wasm TypeScript:                     passed
+focused socket Jest:                        2 passed, 0 failed
+three consecutive focused socket replays:   6 passed, 0 failed
+complete python-wasm Jest:                  51 passed, 0 failed, 2 skipped
+```
+
+This closes the final two POSIX skips and confirms that the DNS, native socket,
+timeout, worker-lifecycle, and host-cwd paths coexist in full-suite order.  It
+is a regression-only TypeScript change and requires no native WASM rebuild,
+Sagelite source patch, resource restaging, Electron manifest change, or
+external checkout mutation.  Validation also includes `git diff --check`.
+The only remaining skips in the complete `python-wasm` suite are the two
+general async-API examples in `python-async.test.ts`, which a later pass can
+audit independently of the POSIX runtime.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
