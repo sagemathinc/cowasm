@@ -28772,3 +28772,58 @@ diff --git a/src/sage/matrix/matrix_integer_dense.pyx b/src/sage/matrix/matrix_i
              Traceback (most recent call last):
              ...
              RuntimeError: infinite loop in LLL
+diff --git a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
+--- a/src/sage/games/quantumino.py
++++ b/src/sage/games/quantumino.py
+@@ -119,2 +119,2 @@
+-    sage: s = next(QuantuminoSolver(7, box=(4,4,5)).solve())        # not tested (2s)
+-    sage: s.show3d()                                                # not tested (<1s)
++    sage: s = next(QuantuminoSolver(7, box=(4,4,5)).solve())        # long time (2s)
++    sage: s.show3d()                                                # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -124,2 +124,2 @@
+-    sage: s = next(QuantuminoSolver(7, box=(2,2,20)).solve())       # not tested (1s)
+-    sage: s.show3d()                                                # not tested (<1s)
++    sage: s = next(QuantuminoSolver(7, box=(2,2,20)).solve())       # long time (1s)
++    sage: s.show3d()                                                # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -147,2 +147,2 @@
+-    sage: rows = T.rows()                            # not tested (10 s)
+-    sage: len(rows)                                  # not tested (but fast)
++    sage: rows = T.rows()                            # long time (10 s)
++    sage: len(rows)                                  # long time (but fast)
+@@ -224 +224 @@
+-        sage: show_pentaminos()    # not tested (1s)
++        sage: show_pentaminos()    # needs sage.ext.interpreters.wrapper_rdf
+@@ -228 +228 @@
+-        sage: show_pentaminos().show(frame=False)  # not tested (1s)
++        sage: show_pentaminos().show(frame=False)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -280 +280 @@
+-        sage: next(QuantuminoSolver(3).solve())      # not tested (1.5s)
++        sage: next(QuantuminoSolver(3).solve())      # long time (1.5s)
+@@ -357,3 +357,3 @@
+-            sage: s = next(QuantuminoSolver(0).solve())    # not tested (1.5s)
+-            sage: G = s.show3d()                            # not tested (<1s)
+-            sage: type(G)                                   # not tested
++            sage: s = next(QuantuminoSolver(0).solve())    # long time (1.5s)
++            sage: G = s.show3d()                            # long time (<1s)  # needs sage.ext.interpreters.wrapper_rdf
++            sage: type(G)                                   # long time  # needs sage.ext.interpreters.wrapper_rdf
+@@ -364 +364 @@
+-            sage: G.show(frame=False) # not tested
++            sage: G.show(frame=False)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -368 +368 @@
+-            sage: G.show(viewer='tachyon', frame=False) # not tested
++            sage: G.show(viewer='tachyon', frame=False)  # needs sage.ext.interpreters.wrapper_rdf
+@@ -526 +526 @@
+-            sage: next(it)                                          # not tested
++            sage: next(it)                                          # long time
+@@ -529 +529 @@
+-            sage: next(it)                                          # not tested
++            sage: next(it)                                          # long time
+@@ -536,4 +536,4 @@
+-            sage: it = QuantuminoSolver(0).solve(partial='common')
+-            sage: next(it).show3d()               # not tested (2s)
+-            sage: next(it).show3d()               # not tested (< 1s)
+-            sage: next(it).show3d()               # not tested (< 1s)
++            sage: it = QuantuminoSolver(0).solve(partial='common_prefix')
++            sage: next(it).show3d()               # long time (2s)  # needs sage.ext.interpreters.wrapper_rdf
++            sage: next(it).show3d()               # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf
++            sage: next(it).show3d()               # long time (< 1s)  # needs sage.ext.interpreters.wrapper_rdf

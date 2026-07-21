@@ -59312,6 +59312,55 @@ The external developer Sagelite checkout remains untouched.  The next pass can
 audit another persisted deferred marker or select a separate backend/runtime
 cluster.
 
+Quantumino deferred-contract classification pass on 2026-07-21 UTC:
+
+Nineteen historical `# not tested` rows in `sage/games/quantumino.py` are now
+classified by their actual browser-profile behavior.  Eight deterministic
+solver and tiling-row computations pass under the current dancing-links and
+pure n-cube-isometry runtime, so they are promoted to `# long time`.  Eleven
+3D construction or display rows reach the intentionally unavailable RDF
+interpreter wrapper and now carry exact
+`# needs sage.ext.interpreters.wrapper_rdf` metadata.  The intentionally
+multi-day complete solution count remains the module's sole deferred row.
+
+The partial-solution display example also used the obsolete
+`partial='common'` spelling.  It now uses the documented `common_prefix`
+selector.  A forced dependency replay reaches the expected missing RDF wrapper
+instead of the former `ValueError: Unknown value for partial (=common)`, which
+separates the corrected API contract from the explicit browser dependency.
+
+The retained complete-module results record:
+
+```text
+default profile:             57 passed, 0 failed, 42 skipped
+long profile before:         73 passed, 0 failed, 26 skipped
+long profile final:          81 passed, 0 failed, 18 skipped
+deferred rows before/final:  20 / 1
+promoted long-time rows:      8
+new RDF dependency rows:     11
+```
+
+The authoritative runner-version-128 databases are
+`/tmp/cowasm-sagelite-quantumino-default-final.ZnRX7H/quantumino-default.sqlite3`
+and
+`/tmp/cowasm-sagelite-quantumino-long-final.hTSnAO/quantumino-long.sqlite3`.
+Both record a completed passing lifecycle, no block or file failures, and
+`PRAGMA integrity_check = ok`.  The eight exact-line passing databases are
+under `/tmp/cowasm-sagelite-quantumino-long-*`; the corrected partial-selector
+dependency replay is under
+`/tmp/cowasm-sagelite-quantumino-partial-forced.29Medx/`.
+
+Validation includes the before/after focused replays, all eight promoted exact
+lines, complete default and long module replays, exact skip-reason and deferred
+queries, SQLite lifecycle and integrity checks, accumulated-patch syntax, a
+zero-reject application to a clean Sagelite `f575cf6224f` snapshot, byte-for-
+byte comparison of the affected source with the tested patched copy, and
+`git diff --check`.  This is source-only doctest metadata and documentation;
+it needs no Cython/native rebuild, Electron manifest change, or resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another persisted deferred
+marker or select a separate backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
