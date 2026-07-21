@@ -62607,6 +62607,40 @@ network-focused pass can select another persisted runtime cluster or audit an
 explicitly authorized live-download workflow without weakening the remote-code
 safeguard.
 
+Node host-cwd isolation pass on 2026-07-21 UTC:
+
+The order-sensitive `python-wasm` `noStdio` failures were not terminal or
+Ctrl-C defects.  The earlier POSIX `fchdir` regression changed the WASM cwd
+into a temporary directory, and the kernel's native-call wrapper mirrored that
+guest cwd into Node's process-wide cwd without restoring it.  The regression
+then deleted the temporary tree while Node was still inside it.  Later async
+kernel construction could no longer evaluate `process.cwd()`, reported
+`uv_cwd`/`ENOENT`, and left both `noStdio` tests to reach their Jest timeouts.
+
+The POSIX bridge now saves the embedding process cwd before temporarily
+mirroring the WASM cwd for a native relative-path call and restores it in a
+`finally` block on both success and error.  Guest `chdir` and `fchdir` state
+remains independent and relative native operations still see the guest cwd;
+the host application no longer remains in a guest directory after the call.
+The `fchdir` regression now asserts this host-cwd invariant and always leaves
+the guest directory before removing its temporary tree.
+
+The checked results are:
+
+```text
+kernel TypeScript:                           passed
+kernel Jest:                                 3 passed, 0 failed
+focused fchdir/noStdio Jest:                11 passed, 0 failed
+complete python-wasm Jest:                  49 passed, 0 failed, 4 skipped
+```
+
+This clears both failures from the previously recorded all-`python-wasm` run,
+including the apparent Ctrl-C timeout: the multiline and `KeyboardInterrupt`
+test now passes in the same full-suite order that previously invalidated the
+host cwd.  This is a TypeScript runtime and regression change; it requires no
+native WASM rebuild, Sagelite source patch, resource restaging, or external
+checkout mutation.  Validation also includes `git diff --check`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

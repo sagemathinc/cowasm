@@ -185,22 +185,25 @@ export default function posix(context: Context): PosixEnv {
   // under node.js, but is really critical there.  Thus we wrap *all* posix calls
   // in this syncdir below.
   //    TODO: optimize.  This seems dangerously expensive.
-  let syncdir;
+  let syncdir: () => string | undefined;
   if (context.posix.chdir != null) {
     syncdir = () => {
+      let hostCwd: string | undefined;
       // TODO: it is expected that this may fail, e.g., if we are using a sandbox filesystem
       // deal with this in a better way.
       try {
+        hostCwd = context.process.cwd?.();
         context.posix.chdir?.(context.getcwd());
       } catch (_err) {}
+      return hostCwd;
     };
   } else {
-    syncdir = () => {};
+    syncdir = () => undefined;
   }
 
   for (const name in P) {
     Q[name] = (...args) => {
-      syncdir();
+      const hostCwd = syncdir();
       try {
         logCall(name, args);
         const ret = P[name](...args);
@@ -234,6 +237,15 @@ export default function posix(context: Context): PosixEnv {
           }
         }
         return err.ret ?? -1;
+      } finally {
+        // Native relative-path calls need the WASM cwd, but chdir is global to
+        // the Node process (and all of its worker threads). Never leave the
+        // embedding application in the guest directory after the call.
+        if (hostCwd != null) {
+          try {
+            context.posix.chdir?.(hostCwd);
+          } catch (_err) {}
+        }
       }
     };
   }

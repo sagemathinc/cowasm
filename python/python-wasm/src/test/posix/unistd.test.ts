@@ -95,14 +95,25 @@ test("fchdir works", async () => {
   // This is complicated, since e.g., on macos if you do "cd /tmp" you
   // end up in /private/tmp", etc.  It's weird.
   const { exec, repr } = await syncPython();
-  exec("import tempfile; td = tempfile.TemporaryDirectory()");
-  exec("import os; fd = os.open(td.name, os.O_RDONLY)");
-  exec("os.fchdir(fd)");
-  const actual = eval(repr("os.getcwd()"));
-  exec("os.mkdir('abc')");
-  exec("fd2 = os.open('abc', os.O_RDONLY)");
-  exec("os.fchdir(fd2)");
-  expect(eval(repr("os.getcwd()"))).toBe(actual + "/abc");
-  // it doesn't seem to always get removed (which is weird)
-  exec("import shutil; shutil.rmtree(td.name)");
+  const hostCwd = process.cwd();
+  try {
+    exec("import tempfile; td = tempfile.TemporaryDirectory()");
+    exec("import os; fd = os.open(td.name, os.O_RDONLY)");
+    exec("os.fchdir(fd)");
+    const actual = eval(repr("os.getcwd()"));
+    exec("os.mkdir('abc')");
+    exec("fd2 = os.open('abc', os.O_RDONLY)");
+    exec("os.fchdir(fd2)");
+    expect(eval(repr("os.getcwd()"))).toBe(actual + "/abc");
+    expect(process.cwd()).toBe(hostCwd);
+  } finally {
+    // Leave the WASM cwd outside the temporary tree before deleting it. The
+    // host restoration also keeps this cleanup safe with an older kernel.
+    process.chdir(hostCwd);
+    try {
+      exec("os.chdir('/'); import shutil; shutil.rmtree(td.name)");
+    } finally {
+      process.chdir(hostCwd);
+    }
+  }
 });
