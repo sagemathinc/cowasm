@@ -61378,6 +61378,56 @@ Sagelite checkout and its intentional changes remain untouched.  The next pass
 can audit another default-profile deferred marker or select a persisted
 backend/runtime cluster.
 
+Recursive-enumeration bounded-membership promotion on 2026-07-21 UTC:
+
+All three generic deferred rows in
+`sage/sets/recursively_enumerated_set.pyx` are now active, bounded
+browser-profile coverage.  The historical examples called ``in`` on infinite
+enumerations whose traversal could never answer: depth-first search follows
+the `0, 5, 10, ...` branch forever before reaching the member `8`, and neither
+that search nor the infinite forest can terminate for the absent values `7`
+and `-1`.  A focused forced historical replay confirms the first query reaches
+the worker timeout instead of returning a result.
+
+The replacement preserves the nontermination warning while showing the safe
+contract.  It uses a three-level breadth-first search to check that `8` is
+reachable and `7` is absent from the bounded traversal, and uses
+`itertools.islice` to check that `-1` is absent from the first 100 elements of
+the infinite forest.  The module now has no generic `# not tested` rows.
+
+The retained runner-version-128 results record:
+
+```text
+complete historical module:       339 passed, 0 failed, 39 skipped
+historical generic deferred rows:    3
+forced historical depth query:      timed out after 3 seconds
+complete proposed module:         344 passed, 0 failed, 36 skipped
+failure-disallowing make target:   344 passed, 0 failed, 36 skipped
+Electron resource smoke:           passed
+```
+
+The authoritative historical, historical-forced, proposed, and pinned-clean-
+reconstructed SQLite databases, worker roots, source reconstruction, patch
+log, focused corpus fixture, and Electron smoke log are under
+`/tmp/cowasm-sagelite-recursive-membership-audit.8fZs85/`.  The final database
+has a closed passing lifecycle, empty saved block- and file-failure clusters,
+no deferred rows, and `PRAGMA integrity_check = ok`; the forced database
+records the expected closed file-level `timeout`.
+
+Validation includes the historical default and forced-deferred replays, the
+complete proposed replay, the failure-disallowing
+`test-sage-doctest-corpus` make target against a pinned clean source
+reconstruction, exact SQLite lifecycle, integrity, and deferred-row checks,
+saved failure-cluster queries, accumulated-patch syntax, zero-reject sequential
+application to pinned clean Sagelite `f575cf6224f`, byte-for-byte target-source
+reconstruction, `git diff --check`, and the full Electron-shaped resource
+smoke.  All 1,531 accumulated source-patch sections and 4,575 hunks apply.
+This is documentation and deterministic doctest-coverage work only and needs
+no native WASM rebuild, Electron manifest change, or permanent resource
+restaging.  The external developer Sagelite checkout and its intentional
+changes remain untouched.  The next pass can audit another default-profile
+deferred marker or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

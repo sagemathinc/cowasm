@@ -29792,3 +29792,36 @@ diff --git a/src/sage/combinat/tutorial.py b/src/sage/combinat/tutorial.py
      60198
 
  The methods which we have used generalize to all recursively defined
+diff --git a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
+--- a/src/sage/sets/recursively_enumerated_set.pyx
++++ b/src/sage/sets/recursively_enumerated_set.pyx
+@@ -623,8 +623,16 @@
+             sage: it = iter(R)
+             sage: [next(it) for _ in range(6)]
+             [0, 5, 10, 15, 20, 25]
+-            sage: 8 in R     # (should return True) not tested: does not terminate
+-            sage: 7 in R     # (should return False) not tested: does not terminate
++
++        In particular, neither ``8 in R`` nor ``7 in R`` terminates with the
++        depth-first enumeration above.  A bounded breadth-first search can be
++        used when only a finite reachability question is needed::
++
++            sage: R = RecursivelyEnumeratedSet([0], f, max_depth=3)
++            sage: 8 in R
++            True
++            sage: 7 in R
++            False
+         """
+         return any(node == elt for node in self)
+
+@@ -1960,7 +1968,9 @@
+             True
+             sage: 732 in S
+             True
+-            sage: -1 in S  # not tested : Will never stop
++            sage: from itertools import islice
++            sage: -1 in list(islice(S, 100))
++            False
+
+         The algorithm uses a random enumeration of the nodes of the
+         forest. This choice was motivated by examples in which both
