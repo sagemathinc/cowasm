@@ -62804,6 +62804,51 @@ untouched.  The next scheduled pass can use focused lines from the now-
 collectable `free_module.py` source or select another persisted backend/runtime
 cluster.
 
+Free-module Singular dependency-metadata pass on 2026-07-21 UTC:
+
+The first complete runner-130 replay of `sage/modules/free_module.py` exposed
+a coherent optional-Singular cluster rather than the stale collection timeout.
+Polynomial quotient/submodule membership examples reached
+`sage.libs.singular.function` and `sage.libs.singular.groebner_strategy`, then
+cascaded into missing-name and expected-output failures.  Five complete
+doctest regions now carry standalone `# needs sage.libs.singular` directives:
+the submodule `TestSuite`, quotient-ring membership, polynomial-ring
+membership, subquotient membership, and the adjacent membership regression.
+This keeps their setup and dependent assertions together under one explicit
+browser-profile boundary.
+
+The retained before/after results record:
+
+```text
+complete module before:       1,442 passed, 45 failed, 103 skipped
+focused Singular regions:         0 passed,  0 failed,  23 skipped
+complete module final:        1,425 passed, 29 failed, 136 skipped
+removed Singular failures:       16
+new failures:                      0
+```
+
+The authoritative runner-version-130 SQLite databases, focused replay, patch
+application log, and pinned source reconstruction are under
+`/tmp/cowasm-sagelite-free-module-frontier.0bulDt/`.  Both complete databases
+record 1,590 blocks with closed failed lifecycles, while the focused database
+has a closed passing lifecycle; every database reports
+`PRAGMA integrity_check = ok`.  The final dashboard's remaining failures are
+separate FLINT integer-polynomial, doctest-namespace, SciPy, and expectation
+clusters.
+
+Validation includes the focused five-line replay, both complete-module
+dashboards, failure-set comparison, SQLite lifecycle and integrity checks,
+accumulated-patch syntax, a zero-reject sequential application to pinned clean
+Sagelite `f575cf6224f`, byte-for-byte comparison of the reconstructed and
+tested `free_module.py`, and `git diff --check`.  All 1,552 accumulated source-
+patch sections (1,081 `diff --git` and 471 legacy sections) and 4,616 hunks
+apply.  This is source-only doctest metadata; it needs no Cython/native rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+scheduled pass can address the repeated FLINT integer-polynomial conversion
+cluster or the narrower missing `IntegralLattice`, `FreeQuadraticModule`, and
+`zero_vector` doctest namespace rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

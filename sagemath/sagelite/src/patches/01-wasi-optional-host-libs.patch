@@ -30162,3 +30162,21 @@ diff --git a/src/sage/quivers/algebra_elements.pyx b/src/sage/quivers/algebra_el
 @@ -92 +92 @@
 -        sage: # not tested
 +        sage: # needs IPython
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -884 +884,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<x,y,z> = PolynomialRing(QQ)
+@@ -937 +938,2 @@
++            sage: # needs sage.libs.singular
+             sage: P.<a,b> = PolynomialRing(QQ, 2)
+@@ -954 +956,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<x,y,z> = PolynomialRing(QQ)
+@@ -966 +969,2 @@
++            sage: # needs sage.libs.singular
+             sage: S.<x,y,z> = PolynomialRing(QQ)
+@@ -988 +992,2 @@
++            sage: # needs sage.libs.singular
+             sage: P.<a,b> = PolynomialRing(QQ, 2)
