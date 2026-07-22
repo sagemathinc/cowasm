@@ -64168,6 +64168,63 @@ external developer Sagelite checkout and its intentional changes remain
 untouched. A future pass can deliver another nauty-family adapter or select the
 next persisted graph/runtime cluster.
 
+Graph nauty tree-generator delivery pass on 2026-07-22 UTC:
+
+The next nauty-family adapter is now backed by the existing `gentreeg` WASI
+command. The standalone resource bundle stages the executable beside `geng`,
+`genbgL`, and `genktreeg`, treats it as a hashed mandatory tool, and advances
+the Electron manifest contract to schema 199 and
+`nauty-gentreeg-delivery-v161`. The nauty package regression independently
+generates and counts all 106 unlabeled trees on ten vertices.
+
+`nauty_gentreeg()` now passes an argv array to `Popen` instead of using
+`shell=True` with an unused stdin pipe. The adapter also normalizes Sage
+integer-like values through `str()` before `shlex.split()`. The obsolete
+file-wide `sage.graphs` dependency on
+`src/sage/graphs/generators/trees.pyx` is removed, and the file is promoted
+into the curated pure-math corpus, raising it to 1,143 non-comment entries.
+
+A historical replay without the file-wide tag first recorded 93 passed, 23
+failed, and 38 skipped blocks. Nineteen failures were the native-shell
+`Exec format error` and its dependent empty generators; the remaining four
+were one PARI-backed Fibonacci-tree setup, now covered by the existing
+`sage.libs.pari` dependency boundary. The delivered focused dashboard records:
+
+```text
+trees.pyx: 111 passed, 0 failed, 43 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+One upstream `next(nauty_gentreeg("128"))` example remains a focused known
+bug. CoWasm's current raw-WASI subprocess transport executes synchronously to
+completion before Python can consume stdout, so asking only for the first
+128-vertex tree still attempts to materialize the command's astronomically
+large complete output. Smaller complete enumerations, bounded-degree and
+bounded-diameter options, debug output, invalid-input diagnostics, and mutable
+and immutable graph construction are active and passing.
+
+The durable Electron-shaped probe checks all 106 ten-vertex trees, degree and
+diameter filters, debug mode, and invalid input against a relocated 1.8-GiB
+resource tree. Validation also includes the nauty clean configure/build/install
+regression, a focused Cython generation and WASI extension compile, the
+complete module replay, saved block- and file-failure queries, SQLite lifecycle
+and integrity checks, Electron manifest/forge/runtime contract programs,
+Electron TypeScript compilation, shell and JavaScript syntax, corpus
+uniqueness, accumulated-patch syntax, and `git diff --check`. The full
+standalone script was intentionally stopped after it regenerated the focused
+tree extension because its serial generation phase continued through hundreds
+of unrelated Sage extensions; the extension was then built directly from the
+same Meson graph. The accumulated source patch now has 1,629 sections (1,114
+`diff --git` and 515 legacy sections) and 4,804 hunks. Authoritative SQLite
+databases, the focused resource relocation, source snapshots, and the
+Electron-shaped probe are under
+`/tmp/cowasm-sagelite-gentree-delivery.zv6pEa/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+runtime pass can add asynchronous raw-WASI process streaming and reopen the
+128-vertex first-result example, or deliver `gentourng`, `directg`, or
+`genposetg` for the directed-graph generator cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

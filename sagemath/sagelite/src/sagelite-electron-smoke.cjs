@@ -1530,6 +1530,9 @@ assert large_bipartite_graph.is_bipartite()
 ktrees = list(graphs.nauty_genktreeg("6"))
 assert len(ktrees) == 5
 assert all(graph.order() == 6 for graph in ktrees)
+trees = list(graphs.nauty_gentreeg("10"))
+assert len(trees) == 106
+assert all(graph.order() == 10 and graph.is_tree() for graph in trees)
 `);
     console.log("sagelite-electron-ok nauty WASI subprocess delivery smoke");
     console.log("sagelite-electron-start graph LaTeX color delivery smoke");

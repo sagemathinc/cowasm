@@ -79,6 +79,8 @@ large_bipartite_log="$probe_dir/genbgL-1-63.log"
 large_bipartite_count_log="$probe_dir/genbgL-1-63-count.log"
 ktree_file="$probe_dir/ktree-8.g6"
 ktree_count_log="$probe_dir/ktree-8-count.log"
+tree_file="$probe_dir/tree-10.g6"
+tree_count_log="$probe_dir/tree-10-count.log"
 
 cowasm_clang_standalone_run_wasi \
   "$bin_dir" "$dist_dir/bin/genbgL" 1 63 \
@@ -99,4 +101,13 @@ cowasm_clang_standalone_run_wasi \
 
 grep -F "39 graphs altogether" "$ktree_count_log"
 
-echo "nauty-ok library geng genbgL genktreeg countg showg"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/gentreeg" 10 \
+  >"$tree_file"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/countg" \
+  <"$tree_file" >"$tree_count_log"
+
+grep -F "106 graphs altogether" "$tree_count_log"
+
+echo "nauty-ok library geng genbgL genktreeg gentreeg countg showg"

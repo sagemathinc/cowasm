@@ -2122,7 +2122,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=198
+electron_manifest_schema_version=199
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2175,6 +2175,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-wasi
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-doctest-reopen-v158"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-large-output-delivery-v159"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-genktreeg-delivery-v160"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-gentreeg-delivery-v161"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2218,10 +2219,12 @@ mkdir -p "$electron_resources_dir/bin"
 cp "$nauty_wasi_sdk/bin/geng" "$electron_resources_dir/bin/geng"
 cp "$nauty_wasi_sdk/bin/genbgL" "$electron_resources_dir/bin/genbgL"
 cp "$nauty_wasi_sdk/bin/genktreeg" "$electron_resources_dir/bin/genktreeg"
+cp "$nauty_wasi_sdk/bin/gentreeg" "$electron_resources_dir/bin/gentreeg"
 chmod +x \
   "$electron_resources_dir/bin/geng" \
   "$electron_resources_dir/bin/genbgL" \
-  "$electron_resources_dir/bin/genktreeg"
+  "$electron_resources_dir/bin/genktreeg" \
+  "$electron_resources_dir/bin/gentreeg"
 
 runtime_dep_labels=(
   cypari2
@@ -2266,6 +2269,7 @@ electron_required_paths=(
   "bin/genbgL"
   "bin/geng"
   "bin/genktreeg"
+  "bin/gentreeg"
   "site-packages/sage/__init__.py"
   "site-packages/sage/all.py"
   "python.wasm"
