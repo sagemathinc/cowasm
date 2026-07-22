@@ -30218,3 +30218,12 @@ diff --git a/src/sage/misc/trace.py b/src/sage/misc/trace.py
 @@ -28 +28 @@
 -        sage: trace("factor(100)")             # not tested
 +        sage: trace("factor(100)")             # needs IPython
+diff --git a/src/sage/modules/tutorial_free_modules.py b/src/sage/modules/tutorial_free_modules.py
+--- a/src/sage/modules/tutorial_free_modules.py
++++ b/src/sage/modules/tutorial_free_modules.py
+@@ -19 +19 @@
+-    sage: CombinatorialFreeModule?                # not tested
++    sage: CombinatorialFreeModule?                # needs IPython
+@@ -135 +135 @@
+-    sage: f.<tab>                                 # not tested
++    sage: f.<tab>                                 # needs IPython

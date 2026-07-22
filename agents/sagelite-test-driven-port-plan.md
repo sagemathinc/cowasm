@@ -63086,6 +63086,49 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 scheduled pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Free-module tutorial IPython dependency pass on 2026-07-22 UTC:
+
+The two generic deferrals in `sage/modules/tutorial_free_modules.py` now state
+their actual interactive-shell dependency.  `CombinatorialFreeModule?` uses
+IPython's object-inspection syntax and `f.<tab>` represents tab completion;
+neither is valid in the plain-Python evaluator used by the browser-profile
+doctest worker.  Both rows now carry `# needs IPython` instead of the generic
+`# not tested` marker.
+
+The retained runner-version-131 results record:
+
+```text
+historical forced complete module:  42 passed, 2 failed, 1 skipped
+historical exact help row:            0 passed, 1 failed, 0 skipped
+historical exact tab row:             0 passed, 1 failed, 0 skipped
+default complete module final:       42 passed, 0 failed, 3 skipped
+IPython-selected exact help row:      0 passed, 1 failed, 0 skipped
+IPython-selected exact tab row:       0 passed, 1 failed, 0 skipped
+```
+
+The two historical and selected-feature failures are the expected plain-Python
+`SyntaxError` diagnostics.  In the supported default profile, both edited rows
+are `optional:ipython` skips with `optional,needs:ipython` tags.  The complete
+final dashboard has a closed passing lifecycle, empty saved block- and
+file-failure cluster queries, no remaining deferred reruns in this module, and
+`PRAGMA integrity_check = ok`.
+
+The authoritative SQLite databases, worker state, proposed source, pinned
+source reconstruction, and patch-application log are under
+`/tmp/cowasm-sagelite-tutorial-ipython.xfEZQ0/`.  Validation includes the
+historical complete and exact-line replays, default complete-module replay,
+both explicitly selected IPython boundaries, SQLite lifecycle, tag, failure,
+deferred, and integrity checks, Python syntax, zero-reject application of the
+accumulated patch to pinned clean Sagelite `f575cf6224f`, byte-for-byte
+comparison of the reconstructed and tested source, accumulated-patch
+structure, and `git diff --check`.  The accumulated patch now has 1,602 source
+sections (1,086 `diff --git` and 516 legacy sections) and 4,628 hunks.  This is
+source-only doctest dependency metadata; it needs no native WASM rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+scheduled pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
