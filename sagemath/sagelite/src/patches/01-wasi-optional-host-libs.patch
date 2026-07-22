@@ -31699,3 +31699,9 @@ diff --git a/src/sage/combinat/posets/hochschild_lattice.py b/src/sage/combinat/
          True
      """
      F = hochschild_fan(n)
+diff --git a/src/sage/combinat/posets/cartesian_product.py b/src/sage/combinat/posets/cartesian_product.py
+--- a/src/sage/combinat/posets/cartesian_product.py
++++ b/src/sage/combinat/posets/cartesian_product.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ """

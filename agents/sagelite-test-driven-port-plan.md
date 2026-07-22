@@ -65053,6 +65053,45 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the next stale dependency guard exposed by the
 expanded graph runtime or select another persisted backend/runtime cluster.
 
+Poset-cartesian-product dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/combinat/posets/cartesian_product.py` is removed now that the stripped
+graph and poset runtime executes the module directly. A complete historical
+replay with `sage.graphs` selected and a default-profile replay of the exact
+same source with only that guard removed record identical results:
+
+```text
+cartesian_product.py: 75 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The active rows cover native, lexicographic, and componentwise product orders;
+finite and infinite factors; comparisons, iteration, membership, cardinality,
+and element construction; and the module's error paths. Both retained
+runner-version-132 dashboards have no block failures or file-level errors and
+a 100% pass rate across active rows. This reopens a boundary that was correctly
+classified on 2026-07-03 and 2026-07-07, when importing the poset stack still
+failed through the stripped graph extension.
+
+`sage/combinat/posets/cartesian_product.py` is now part of the curated
+pure-math corpus, raising it to 1,160 non-comment entries with no duplicates.
+Validation includes the historical and default complete module replays, saved
+block- and file-failure and lifecycle queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the runtime-tested historical
+source, byte-for-byte comparison with the default-profile source, accumulated-
+patch syntax and structure, and `git diff --check`. The accumulated source
+patch now has 1,648 sections (1,133 `diff --git` and 515 legacy sections) and
+4,831 hunks. Authoritative databases, worker state, runtime-tested sources,
+and patch logs are under `/tmp/cowasm-sagelite-poset-cartesian.wzeFPz/`.
+This source-only dependency cleanup and corpus promotion needs no native WASM
+rebuild, Electron manifest change, or resource restaging. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit the next stale dependency guard exposed by the
+expanded graph runtime or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
