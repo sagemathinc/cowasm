@@ -32339,3 +32339,9 @@ diff --git a/src/sage/graphs/generators/distance_regular.pyx b/src/sage/graphs/g
 @@ -2840 +2839 @@
 -        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
 +        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)         # needs sage.libs.gap
+diff --git a/src/sage/graphs/graph_decompositions/cutwidth.pyx b/src/sage/graphs/graph_decompositions/cutwidth.pyx
+--- a/src/sage/graphs/graph_decompositions/cutwidth.pyx
++++ b/src/sage/graphs/graph_decompositions/cutwidth.pyx
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

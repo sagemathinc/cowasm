@@ -66476,6 +66476,53 @@ its intentional changes remain untouched. A future scheduled pass can audit
 the next stale dependency guard exposed by the expanded graph runtime or
 select another persisted backend/runtime cluster.
 
+Cutwidth dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_decompositions/cutwidth.pyx` hid 54 runnable graph-core
+doctests behind the broad graph profile. The module's mixed-integer linear
+programming examples already carry their narrower `sage.numerical.mip`
+metadata, so removing only the broad guard exposes the delivered dynamic
+programming implementation without changing that backend boundary.
+
+A controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay after removing only that
+guard both record:
+
+```text
+cutwidth.pyx: 54 passed, 0 failed, 11 skipped
+optional:sage.numerical.mip: 0 passed, 0 failed, 11 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have 65 block rows and no block failures or file-level
+errors. Their block order, source, source hashes, expected output, comparator
+modes, statuses, and actual output are identical. Their tag and skip-reason
+metadata differs only as expected from removing the inherited file-wide graph
+feature. The active coverage includes cutwidth dispatch and dynamic
+programming, decomposition-width checks, optimal orderings, disconnected and
+directed graph handling, and input validation; the 11 retained skips preserve
+the exact MILP and long-time boundaries.
+
+`sage/graphs/graph_decompositions/cutwidth.pyx` is now part of the curated
+pure-math corpus, raising it to 1,191 non-comment entries with no duplicates.
+Validation includes guarded and default complete module replays, saved block-
+and file-failure, lifecycle, latest-run, and skip queries, SQLite integrity,
+row-level cross-database comparison, corpus uniqueness and make-target dry
+run, exact zero-fuzz application of every accumulated target patch section
+from pristine Sagelite with byte-for-byte source comparison, accumulated-
+patch syntax and structure, and `git diff --check`. The accumulated source
+patch now has 1,682 sections (1,167 `diff --git` and 515 legacy sections) and
+4,959 hunks. Authoritative databases and worker state are under
+`/tmp/cowasm-sagelite-cutwidth.m4qy4P/`; the exact target replay is under
+`/tmp/cowasm-sagelite-cutwidth-replay.TpiSXa/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future scheduled pass can audit the remaining
+`tree_decomposition.pyx`, `vertex_separation.pyx`, `hyperbolicity.pyx`, or
+another persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
