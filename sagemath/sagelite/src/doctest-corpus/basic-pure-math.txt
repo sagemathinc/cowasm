@@ -1102,6 +1102,7 @@ src/sage/graphs/generators/intersection.py
 src/sage/graphs/pq_trees.py
 src/sage/graphs/graph_decompositions/bandwidth.pyx
 src/sage/graphs/graph_decompositions/rankwidth.pyx
+src/sage/graphs/graph_decompositions/graph_products.pyx
 src/sage/graphs/graph_decompositions/clique_separators.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_sets.pyx
 src/sage/plot/arc.py

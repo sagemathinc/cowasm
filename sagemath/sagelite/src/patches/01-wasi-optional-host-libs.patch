@@ -31769,3 +31769,9 @@ diff --git a/src/sage/graphs/generators/intersection.py b/src/sage/graphs/genera
          [0, 1, 2, 3]
          sage: g.get_vertices()
          {0: (1, 2), 1: (1, 2), 2: (1, 2), 3: (2, 3), 4: (3, 4)}
+diff --git a/src/sage/graphs/graph_decompositions/graph_products.pyx b/src/sage/graphs/graph_decompositions/graph_products.pyx
+--- a/src/sage/graphs/graph_decompositions/graph_products.pyx
++++ b/src/sage/graphs/graph_decompositions/graph_products.pyx
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
