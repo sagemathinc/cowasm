@@ -1066,6 +1066,7 @@ src/sage/numerical/knapsack.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/graphs/all.py
+src/sage/graphs/asteroidal_triples.pyx
 src/sage/graphs/base/overview.py
 src/sage/graphs/cographs.py
 src/sage/graphs/digraph_generators.py
