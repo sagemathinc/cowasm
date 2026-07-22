@@ -66669,6 +66669,54 @@ intentional changes remain untouched. A future scheduled pass can audit the
 next stale graph/backend dependency guard or select another persisted runtime
 cluster.
 
+Graph-isoperimetric dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/isoperimetric_inequalities.pyx` hid 33 runnable graph-core
+doctests. The only unavailable examples already carry narrower NetworkX
+metadata, so removing only the broad guard exposes the delivered compiled
+Cheeger and isoperimetric-number implementations without changing that
+backend boundary.
+
+A controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay after removing only that
+guard both record:
+
+```text
+isoperimetric_inequalities.pyx: 33 passed, 0 failed, 2 skipped
+optional:networkx:               0 passed, 0 failed, 2 skipped
+run lifecycle:                  passed and closed
+SQLite integrity:               ok
+```
+
+Both dashboards have 35 block rows and no block failures or file-level
+errors. Their block order, source, source hashes, expected output, comparator
+modes, statuses, and failure metadata are identical. Four accepted backend
+representation rows differ only in their process-local WASM object addresses;
+all other actual output is identical. The two retained skips are the
+NetworkX-backed random-regular-graph comparison and its dependent equality
+check. The 33 active rows cover Cheeger constants, edge and vertex
+isoperimetric numbers, complete, cyclic, bipartite, disconnected, empty, and
+immutable graphs, plus input validation and backend parity.
+
+`sage/graphs/isoperimetric_inequalities.pyx` is now part of the curated
+pure-math corpus, raising it to 1,195 non-comment entries with no duplicates.
+Validation includes the initial missing-planarity-module diagnostic, guarded
+and default complete isoperimetric replays, saved block- and file-failure,
+lifecycle, latest-run, and skip queries, normalized row-level cross-database
+comparison, SQLite integrity, corpus uniqueness and make-target dry run, and
+exact zero-fuzz application of the accumulated target patch from pristine
+Sagelite with byte-for-byte source comparison. The accumulated source patch
+now has 1,686 sections (1,171 `diff --git` and 515 legacy sections) and 5,001
+hunks. Authoritative databases and worker state are under
+`/tmp/cowasm-sagelite-isoperimetric-promote.VtdhaE/`; the initial planarity
+diagnostic is `/tmp/cowasm-sagelite-planarity-guarded.sqlite3`. This
+source-only dependency cleanup needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+the remaining delivered graph modules or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

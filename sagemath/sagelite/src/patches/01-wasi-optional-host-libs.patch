@@ -32504,3 +32504,8 @@ diff --git a/src/sage/graphs/hyperbolicity.pyx b/src/sage/graphs/hyperbolicity.p
 +++ b/src/sage/graphs/hyperbolicity.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs
+diff --git a/src/sage/graphs/isoperimetric_inequalities.pyx b/src/sage/graphs/isoperimetric_inequalities.pyx
+--- a/src/sage/graphs/isoperimetric_inequalities.pyx
++++ b/src/sage/graphs/isoperimetric_inequalities.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
