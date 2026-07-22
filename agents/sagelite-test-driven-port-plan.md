@@ -65640,6 +65640,47 @@ changes remain untouched. A future scheduled pass can audit the stale
 `sage.graphs` guard on `sage/graphs/base/static_sparse_backend.pyx` or select
 another persisted graph/backend cluster.
 
+Static-sparse-backend dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/base/static_sparse_backend.pyx` is removed now that the stripped
+graph runtime exercises the compiled immutable sparse backend directly. A
+complete historical replay with `sage.graphs` selected and a default-profile
+replay of the exact same source with only that guard removed record identical
+results:
+
+```text
+static_sparse_backend.pyx: 188 passed, 0 failed, 4 skipped
+optional:sage.combinat:       0 passed, 0 failed, 4 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The active rows cover directed and undirected graphs, immutable graph
+construction, vertex and edge labels, loops, multiple edges, neighbor and
+degree iteration, mutation rejection, and the static-backend method wrapper.
+Both retained runner-version-133 dashboards have no block failures or
+file-level errors and a 100% pass rate across active rows. The four De Bruijn
+and edge-set checks preserve their existing narrower `sage.combinat` metadata;
+they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/base/static_sparse_backend.pyx` is now part of the curated
+pure-math corpus, raising it to 1,174 non-comment entries with no duplicates.
+Validation includes the historical and default complete module replays, saved
+block- and file-failure, lifecycle, and skip queries, SQLite integrity, corpus
+uniqueness and make-target dry run, exact zero-fuzz application of the new
+final patch section to the prior guarded source, byte-for-byte comparison with
+the runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,663 sections (1,148
+`diff --git` and 515 legacy sections) and 4,853 hunks. Authoritative databases,
+worker state, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-static-sparse.UMIHE4/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+next stale dependency guard exposed by the expanded graph runtime or select
+another persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
