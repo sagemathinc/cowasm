@@ -65539,6 +65539,54 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the next stale dependency guard exposed by the
 expanded graph runtime or select another persisted backend/runtime cluster.
 
+Graph-domination dependency, deterministic-output, and corpus-promotion pass
+on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/domination.py` is removed now that the stripped graph runtime
+executes its native domination algorithms directly. Four historical failures
+were representation-only comparisons of sets whose iteration order differs in
+WASM. Those examples now normalize their computed sets to sorted lists before
+comparison, preserving exact result checks without weakening the examples with
+`# random`.
+
+A complete historical replay with `sage.graphs` selected and a default-profile
+replay of the narrowed, deterministic source record:
+
+```text
+historical: domination.py:    146 passed, 4 failed, 16 skipped
+default:    domination.py:    151 passed, 0 failed, 16 skipped
+optional:sage.numerical.mip:    0 passed, 0 failed, 15 skipped
+long time:                     0 passed, 0 failed,  1 skipped
+run lifecycle:                 passed and closed (default)
+SQLite integrity:             ok
+```
+
+The active rows cover domination and redundancy checks, private neighbors,
+greedy and minimal dominating sets, candidate extension and peeling helpers,
+distance variants, and graph-copy behavior. The default runner-version-132
+dashboard has no block failures or file-level errors and a 100% pass rate
+across active rows. Its remaining skips preserve the narrower mixed-integer-
+programming and long-time metadata; they are no longer hidden behind the broad
+graph feature.
+
+`sage/graphs/domination.py` is now part of the curated pure-math corpus,
+raising it to 1,172 non-comment entries with no duplicates. Validation includes
+the historical candidate-band replay and complete default module replay, saved
+block- and file-failure, lifecycle, and skip queries, SQLite integrity, Python
+source compilation, corpus uniqueness and make-target dry run, exact
+application of the new final patch section to the prior guarded source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,660 sections (1,145 `diff --git` and 515 legacy sections) and 4,850
+hunks. Authoritative databases, worker state, and the runtime-tested source are
+under `/tmp/cowasm-sagelite-next-graph.saQvAG/`. This source-only dependency
+cleanup and doctest stabilization needs no native WASM rebuild, Electron
+manifest change, or permanent resource restaging. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can address the five-row spanning-tree cluster or select
+another persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

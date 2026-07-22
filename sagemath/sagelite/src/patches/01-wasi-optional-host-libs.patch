@@ -31817,3 +31817,45 @@ diff --git a/src/sage/graphs/generators/platonic_solids.py b/src/sage/graphs/gen
          sage: G.show()                          # long time
      """
      adj = {0: [1, 10, 19], 1: [2, 8], 2: [3, 6], 3: [4, 19], 4: [5, 17],
+diff --git a/src/sage/graphs/domination.py b/src/sage/graphs/domination.py
+--- a/src/sage/graphs/domination.py
++++ b/src/sage/graphs/domination.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -677,7 +676,3 @@
+-        sage: G = graphs.PathGraph(10); _peel(G, set((i for i in range(10) if i%2==0)))
+-        [(None, set()),
+-        (8, {8}),
+-        (6, {6, 8}),
+-        (4, {4, 6, 8}),
+-        (2, {2, 4, 6, 8}),
+-        (0, {0, 2, 4, 6, 8})]
++        sage: G = graphs.PathGraph(10)
++        sage: [(u, sorted(V)) for u, V in _peel(G, set(range(0, 10, 2)))]
++        [(None, []), (8, [8]), (6, [6, 8]), (4, [4, 6, 8]), (2, [2, 4, 6, 8]), (0, [0, 2, 4, 6, 8])]
+@@ -884,19 +879,6 @@
+-        sage: list(G.minimal_dominating_sets(k=0))
+-        [{(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)}]
+-        sage: list(G.minimal_dominating_sets(k=1))
+-        [{(0, 0), (0, 2), (1, 1)},
+-         {(0, 1), (1, 1)},
+-         {(0, 0), (0, 1), (0, 2)},
+-         {(0, 2), (1, 0)},
+-         {(0, 0), (1, 2)},
+-         {(0, 1), (1, 0), (1, 2)},
+-         {(1, 0), (1, 1), (1, 2)}]
+-        sage: list(G.minimal_dominating_sets(k=2))
+-        [{(0, 0), (1, 2)},
+-         {(0, 2), (1, 2)},
+-         {(1, 0), (1, 2)},
+-         {(0, 1)},
+-         {(0, 0), (0, 2)},
+-         {(0, 2), (1, 0)},
+-         {(0, 0), (1, 0)},
+-         {(1, 1)}]
++        sage: sorted(sorted(S) for S in G.minimal_dominating_sets(k=0))
++        [[(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]]
++        sage: sorted(sorted(S) for S in G.minimal_dominating_sets(k=1))
++        [[(0, 0), (0, 1), (0, 2)], [(0, 0), (0, 2), (1, 1)], [(0, 0), (1, 2)], [(0, 1), (1, 0), (1, 2)], [(0, 1), (1, 1)], [(0, 2), (1, 0)], [(1, 0), (1, 1), (1, 2)]]
++        sage: sorted(sorted(S) for S in G.minimal_dominating_sets(k=2))
++        [[(0, 0), (0, 2)], [(0, 0), (1, 0)], [(0, 0), (1, 2)], [(0, 1)], [(0, 2), (1, 0)], [(0, 2), (1, 2)], [(1, 0), (1, 2)], [(1, 1)]]

@@ -1086,6 +1086,7 @@ src/sage/graphs/graph_input.py
 src/sage/graphs/graph_list.py
 src/sage/graphs/graph_editor.py
 src/sage/graphs/cycle_enumeration.py
+src/sage/graphs/domination.py
 src/sage/graphs/lovasz_theta.py
 src/sage/graphs/partial_cube.py
 src/sage/graphs/morphisms.py
