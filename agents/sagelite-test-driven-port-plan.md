@@ -65092,6 +65092,43 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the next stale dependency guard exposed by the
 expanded graph runtime or select another persisted backend/runtime cluster.
 
+Gauss-code dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/knots/gauss_code.py` is removed now that the stripped runtime executes
+the module's signed-Gauss-code helpers directly. A complete historical replay
+with `sage.graphs` selected and a default-profile replay of the exact same
+source with only that guard removed record identical results:
+
+```text
+gauss_code.py: 18 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The active rows cover validation and normalization of signed Gauss codes,
+Dowker notation, crossing orientation recovery, and rejection of malformed
+inputs. Both retained runner-version-132 dashboards have no block failures or
+file-level errors and a 100% pass rate across active rows. The module needs no
+narrower optional or deferred metadata.
+
+`sage/knots/gauss_code.py` is now part of the curated pure-math corpus,
+raising it to 1,161 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and
+file-failure and lifecycle queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior validated source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,649 sections (1,134 `diff --git` and 515 legacy sections) and 4,832
+hunks. Authoritative databases, worker state, and the runtime-tested source are
+under `/tmp/cowasm-sagelite-simplicial-catalog.ymCzcp/`. This source-only
+dependency cleanup and corpus promotion needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit the next stale dependency guard exposed by the
+expanded graph runtime or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

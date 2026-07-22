@@ -942,6 +942,7 @@ src/sage/homology/chain_homotopy.py
 src/sage/homology/homology_group.py
 src/sage/homology/koszul_complex.py
 src/sage/homology/matrix_utils.py
+src/sage/knots/gauss_code.py
 src/sage/matrix/action.pyx
 src/sage/matrix/change_ring.pyx
 src/sage/matrix/args.pyx

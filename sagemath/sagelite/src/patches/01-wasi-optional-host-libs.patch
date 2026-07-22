@@ -31705,3 +31705,9 @@ diff --git a/src/sage/combinat/posets/cartesian_product.py b/src/sage/combinat/p
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  """
+diff --git a/src/sage/knots/gauss_code.py b/src/sage/knots/gauss_code.py
+--- a/src/sage/knots/gauss_code.py
++++ b/src/sage/knots/gauss_code.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ """
