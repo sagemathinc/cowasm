@@ -2101,6 +2101,17 @@ assert convexity.hull([3, 7]) == [2, 3, 7]
 print('sagelite-node-ok graph convexity delivery smoke')"
 
 run_node_import \
+  "graph LaTeX color delivery smoke" \
+  "from sage.all import graphs, latex
+g = graphs.PathGraph(2)
+g.set_latex_options(vertex_color='#ff0000', vertex_fill_color=(0.25, 0.5, 1.0), edge_color='blue')
+rendered = latex(g)
+assert r'\\definecolor{cv0}{rgb}{1.0,0.0,0.0}' in rendered
+assert r'\\definecolor{cfv0}{rgb}{0.25,0.5,1.0}' in rendered
+assert r'\\definecolor{cv0v1}{rgb}{0.0,0.0,1.0}' in rendered
+print('sagelite-node-ok graph LaTeX color delivery smoke')"
+
+run_node_import \
   "high-byte string literal delivery smoke" \
   "from sage.misc.sage_input import sage_input
 value = '\\200\\300\\234'
@@ -2110,7 +2121,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=193
+electron_manifest_schema_version=194
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2158,6 +2169,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-random-gnp
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-gap-free-graph-ordering-v153"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-glpk-mip-delivery-v154"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-convexity-delivery-v155"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-latex-color-delivery-v156"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

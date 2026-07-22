@@ -30679,6 +30679,158 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 -    sage: Q.show()
 +    sage: Q = GraphQuery(display_cols=['graph6'],num_vertices=7, diameter=5)           # needs database_graphs
 +    sage: Q.show()                                                                     # needs database_graphs
+diff --git a/src/sage/graphs/graph_latex.py b/src/sage/graphs/graph_latex.py
+--- a/src/sage/graphs/graph_latex.py
++++ b/src/sage/graphs/graph_latex.py
+@@ -1080,12 +1080,10 @@ class GraphLatex(SageObject):
+         #   in dictionaries, plot with a spectrum of bends.
+         # Seems like a substantial project.
+
+-        from matplotlib.colors import ColorConverter
++        from sage.plot.colors import rgbcolor
+         from sage.rings.integer import Integer
+         from sage.rings.real_mpfr import RealLiteral
+
+-        cc = ColorConverter()  # used as a color tester
+-
+         if option_name not in GraphLatex.__graphlatex_options:
+             raise ValueError("%s is not a LaTeX option for a graph." % option_name)
+         if option_value is None:    # clear the option, if set
+@@ -1133,7 +1131,7 @@ class GraphLatex(SageObject):
+                 raise ValueError('%s option must be 4-tuple, not %s' % (name, value))
+             elif name in color_options:
+                 try:
+-                    cc.to_rgb(value)
++                    rgbcolor(value)
+                 except Exception:
+                     raise ValueError('%s option needs to be a matplotlib color (always as a string), not %s' % (name, value))
+             elif name in boolean_options and not isinstance(value, bool):
+@@ -1164,7 +1162,7 @@ class GraphLatex(SageObject):
+                 else:
+                     for key, c in value.items():
+                         try:
+-                            cc.to_rgb(c)
++                            rgbcolor(c)
+                         except Exception:
+                             raise ValueError('%s option for %s needs to be a matplotlib color (always as a string), not %s' % (name, key, c))
+             elif name in positive_scalar_dicts:
+@@ -1622,7 +1620,7 @@ class GraphLatex(SageObject):
+         if self._graph.has_multiple_edges():
+             raise NotImplementedError('it is not possible create a tkz-graph version of a graph with multiple edges')
+
+-        from matplotlib.colors import ColorConverter
++        from sage.plot.colors import rgbcolor
+         from sage.misc.latex import latex
+
+         # On first use of this method, the next call may print warnings as a
+@@ -1630,7 +1628,6 @@ class GraphLatex(SageObject):
+         check_tkz_graph()
+
+         # Overhead
+-        cc = ColorConverter()  # .to_rgb method to convert "colors" to triples
+         prefix = 'v'  # leading string on internal (to tkz-graph) vertex names
+
+         ####################
+@@ -1733,8 +1730,8 @@ class GraphLatex(SageObject):
+         # Defaults
+         #
+         if customized:
+-            dvc = cc.to_rgb(self.get_option('vertex_color'))
+-            dvfc = cc.to_rgb(self.get_option('vertex_fill_color'))
++            dvc = rgbcolor(self.get_option('vertex_color'))
++            dvfc = rgbcolor(self.get_option('vertex_fill_color'))
+             dsh = self.get_option('vertex_shape')
+             dvs = self.get_option('vertex_size')
+             #
+@@ -1742,7 +1739,7 @@ class GraphLatex(SageObject):
+             #
+             if vertex_labels:
+                 vertex_labels_math = self.get_option('vertex_labels_math')
+-                dvlc = cc.to_rgb(self.get_option('vertex_label_color'))
++                dvlc = rgbcolor(self.get_option('vertex_label_color'))
+                 dvlp = self.get_option('vertex_label_placement')
+                 # needs test for a pair of numbers, angle and distance (or None)
+
+@@ -1767,12 +1764,12 @@ class GraphLatex(SageObject):
+
+                 c = dvc
+                 if u in vertex_colors:
+-                    c = cc.to_rgb(vertex_colors[u])
++                    c = rgbcolor(vertex_colors[u])
+                 v_color[u] = c
+
+                 c = dvfc
+                 if u in vertex_fill_colors:
+-                    c = cc.to_rgb(vertex_fill_colors[u])
++                    c = rgbcolor(vertex_fill_colors[u])
+                 vf_color[u] = c
+
+                 sh = dsh
+@@ -1789,7 +1786,7 @@ class GraphLatex(SageObject):
+
+                     c = dvlc
+                     if u in vertex_label_colors:
+-                        c = cc.to_rgb(vertex_label_colors[u])
++                        c = rgbcolor(vertex_label_colors[u])
+                     vl_color[u] = c
+
+                     vlp = dvlp
+@@ -1819,14 +1816,14 @@ class GraphLatex(SageObject):
+
+             # Defaults
+
+-            dec = cc.to_rgb(self.get_option('edge_color'))
++            dec = rgbcolor(self.get_option('edge_color'))
+             if edge_fills:
+-                defc = cc.to_rgb(self.get_option('edge_fill_color'))
++                defc = rgbcolor(self.get_option('edge_fill_color'))
+             det = self.get_option('edge_thickness')
+
+             if edge_labels:
+                 edge_labels_math = self.get_option('edge_labels_math')
+-                delc = cc.to_rgb(self.get_option('edge_label_color'))
++                delc = rgbcolor(self.get_option('edge_label_color'))
+                 dels = self.get_option('edge_label_sloped')
+                 delp = self.get_option('edge_label_placement')
+
+@@ -1863,18 +1860,18 @@ class GraphLatex(SageObject):
+                 c = dec
+                 if edge in edge_colors or (not is_directed and reverse in edge_colors):
+                     if edge in edge_colors:
+-                        c = cc.to_rgb(edge_colors[edge])
++                        c = rgbcolor(edge_colors[edge])
+                     else:
+-                        c = cc.to_rgb(edge_colors[reverse])
++                        c = rgbcolor(edge_colors[reverse])
+                 e_color[edge] = c
+
+                 if edge_fills:
+                     c = defc
+                     if edge in edge_fill_colors or (not is_directed and reverse in edge_fill_colors):
+                         if edge in edge_colors:
+-                            c = cc.to_rgb(edge_fill_colors[edge])
++                            c = rgbcolor(edge_fill_colors[edge])
+                         else:
+-                            c = cc.to_rgb(edge_fill_colors[reverse])
++                            c = rgbcolor(edge_fill_colors[reverse])
+                     ef_color[edge] = c
+
+                 et = det
+@@ -1889,9 +1886,9 @@ class GraphLatex(SageObject):
+                     c = delc
+                     if edge in edge_label_colors or (not is_directed and reverse in edge_label_colors):
+                         if edge in edge_label_colors:
+-                            c = cc.to_rgb(edge_label_colors[edge])
++                            c = rgbcolor(edge_label_colors[edge])
+                         else:
+-                            c = cc.to_rgb(edge_label_colors[reverse])
++                            c = rgbcolor(edge_label_colors[reverse])
+                     el_color[edge] = c
+
+                     els = dels
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
 @@ -3482 +3482 @@
 -            sage: G.chromatic_number(algorithm='parallel')
 +            sage: G.chromatic_number(algorithm='parallel')                            # needs cysignals.alarm

@@ -1512,6 +1512,18 @@ assert convexity.hull([1, 3]) == [1, 2, 3]
 assert convexity.hull([3, 7]) == [2, 3, 7]
 `);
     console.log("sagelite-electron-ok graph convexity delivery smoke");
+    console.log("sagelite-electron-start graph LaTeX color delivery smoke");
+    await python.exec(String.raw`
+from sage.all import graphs, latex
+
+g = graphs.PathGraph(2)
+g.set_latex_options(vertex_color='#ff0000', vertex_fill_color=(0.25, 0.5, 1.0), edge_color='blue')
+rendered = latex(g)
+assert r'\definecolor{cv0}{rgb}{1.0,0.0,0.0}' in rendered
+assert r'\definecolor{cfv0}{rgb}{0.25,0.5,1.0}' in rendered
+assert r'\definecolor{cv0v1}{rgb}{0.0,0.0,1.0}' in rendered
+`);
+    console.log("sagelite-electron-ok graph LaTeX color delivery smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

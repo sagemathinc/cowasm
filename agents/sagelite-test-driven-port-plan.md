@@ -63787,6 +63787,66 @@ Sagelite checkout and its intentional changes remain untouched. The next
 scheduled pass can investigate the isolated graph-LaTeX import boundary or
 design the relocatable WASM subprocess contract required for `nauty_geng`.
 
+Graph LaTeX color dependency pass on 2026-07-22 UTC:
+
+The final isolated `matplotlib` failure in `sage/graphs/graph.py` was an
+avoidable implementation dependency rather than intentionally unavailable
+browser functionality. `GraphLatex.set_option()` and
+`GraphLatex.tkz_picture()` imported Matplotlib's `ColorConverter` only to
+validate and normalize ordinary named, hexadecimal, and RGB-tuple colors.
+Sagelite already ships Sage's pure-Python `sage.plot.colors.rgbcolor`, which
+supports those same graph-LaTeX color forms without importing Matplotlib. Both
+call sites now use `rgbcolor`, so default and customized TikZ rendering remain
+active in the browser profile.
+
+The retained runner-version-132 results record:
+
+```text
+historical complete graph.py:       926 passed, 4 failed, 396 skipped
+focused default/custom color rows:    7 passed, 0 failed,   0 skipped
+complete graph.py final:            927 passed, 3 failed, 396 skipped
+removed matplotlib failures:                    1
+new failure keys:                               0
+```
+
+The repaired row at `graph.py:377` now returns its TikZ representation. The
+three remaining failures are exactly the two direct `nauty_geng` subprocess
+rows and their dependent isomorphism assertion. The final dashboard has a
+closed lifecycle, no file-level error, and `PRAGMA integrity_check = ok`; an
+exact block-key comparison against the graph-database dashboard finds one
+removed failure and no new failure.
+
+Standalone Node and Electron-shaped smokes now verify hexadecimal, RGB-tuple,
+and named-color conversion in the emitted `\\definecolor` commands. The
+Electron manifest contract advances to schema 194 and
+`graph-latex-color-delivery-v156`. The updated Electron smoke passes from a
+copy-on-write relocation of the preceding schema-193 resource bundle after
+installing the reconstructed `graph_latex.py`, including its final relative-
+resources completion marker.
+
+The authoritative source reconstruction, focused and complete SQLite
+databases, copy-on-write resources, build logs, and worker state are under
+`/tmp/cowasm-sagelite-graph-latex.2okp9v/`. Full accumulated-patch application
+to clean pinned Sagelite `f575cf6224f` completes without rejects and produces
+the byte-identical tested `graph_latex.py`. A clean native build generated all
+520 Cython sources and linked all 1,050 Meson targets, installed 515 audited
+side modules, and then reached an existing cold `import sage.all` WASM
+function-signature mismatch before the harness could generate the schema-194
+bundle. The normal developer checkout could not be used for that rebuild
+because its intentional `integer_ring.pyx` edit already contains an accumulated
+patch hunk; it remains untouched. This broader startup blocker is recorded in
+the retained build `status.txt` and is separate from the graph-LaTeX runtime
+behavior, which passes both focused Node doctests and the relocated complete
+Electron-shaped smoke.
+
+Validation also includes accumulated-patch syntax and structure, Python,
+shell, and JavaScript syntax, complete historical failure-set comparison,
+SQLite lifecycle and integrity checks, manifest contract mirroring, and
+`git diff --check`. The accumulated source patch now has 1,621 source sections
+(1,106 `diff --git` and 515 legacy sections) and 4,749 hunks. The next
+scheduled pass can design the relocatable WASM subprocess contract required for
+`nauty_geng`, which is now the only remaining `graph.py` failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

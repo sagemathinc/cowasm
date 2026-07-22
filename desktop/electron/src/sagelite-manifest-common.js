@@ -301,7 +301,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 193,
+  schemaVersion: 194,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -362,6 +362,8 @@ expectedSageliteManifest.smokeContract +=
   "-glpk-mip-delivery-v154";
 expectedSageliteManifest.smokeContract +=
   "-graph-convexity-delivery-v155";
+expectedSageliteManifest.smokeContract +=
+  "-graph-latex-color-delivery-v156";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
