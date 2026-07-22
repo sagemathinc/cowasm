@@ -31658,3 +31658,9 @@ diff --git a/src/sage/graphs/morphisms.py b/src/sage/graphs/morphisms.py
 -        sage: g.chromatic_number()
 +        sage: g.chromatic_number()                                                       # needs sage.graphs.cliquer
          3
+diff --git a/src/sage/graphs/orientations.py b/src/sage/graphs/orientations.py
+--- a/src/sage/graphs/orientations.py
++++ b/src/sage/graphs/orientations.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

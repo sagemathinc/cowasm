@@ -64928,6 +64928,49 @@ its intentional changes remain untouched. A future scheduled pass can audit
 the next stale dependency guard exposed by the expanded graph runtime or
 select another persisted backend/runtime cluster.
 
+Graph-orientation dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/orientations.py` is removed now that the stripped graph runtime
+executes the module's native orientation algorithms directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact reconstructed source record identical results:
+
+```text
+orientations.py:             173 passed, 0 failed, 7 skipped
+optional:sage.numerical.mip:   0 passed, 0 failed, 6 skipped
+long time:                     0 passed, 0 failed, 1 skipped
+run lifecycle:                 passed and closed
+SQLite integrity:              ok
+```
+
+The active rows cover orientation generation and counting, acyclic and
+strong orientations, random orientations, bounded-outdegree feasibility,
+and vertex-orientation conversion. The six mixed-integer-programming examples
+preserve their existing narrower `sage.numerical.mip` metadata, and the one
+expensive randomized stress loop remains classified as `# long time`; these
+rows are no longer hidden behind the broad graph feature. Both retained
+runner-version-132 dashboards have no block failures or file-level errors and
+a 100% pass rate across active rows.
+
+`sage/graphs/orientations.py` is now part of the curated pure-math corpus,
+raising it to 1,157 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact application of
+the new final patch section to the prior validated graph source, byte-for-byte
+comparison with the runtime-tested source, accumulated-patch syntax and
+structure, and `git diff --check`. The accumulated source patch now has 1,645
+sections (1,130 `diff --git` and 515 legacy sections) and 4,826 hunks.
+Authoritative databases, worker state, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-orientations-historical.KZPc6G/` and
+`/tmp/cowasm-sagelite-orientations-current.FHKuci/`. This source-only
+dependency cleanup and corpus promotion needs no native WASM rebuild,
+Electron manifest change, or resource restaging. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the next stale dependency guard exposed by the
+expanded graph runtime or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
