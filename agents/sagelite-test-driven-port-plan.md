@@ -63999,6 +63999,62 @@ under `/tmp/cowasm-sagelite-nauty-delivery.6nNmhI/` and the associated
 `/tmp/cowasm-sagelite-nauty-*` validation directories. The external developer
 Sagelite checkout and its intentional changes remain untouched.
 
+Graph nauty doctest reopening pass on 2026-07-22 UTC:
+
+The schema-195 raw-WASI subprocess delivery is now reflected in active Sage
+coverage instead of remaining hidden behind the temporary `nauty` dependency
+classification. A selected replay first exposed one adapter regression:
+`graphs(4)` passes a Sage `Integer` through `GraphGenerators.__call__`, while
+the argv conversion added by the delivery pass called `shlex.split()` as if
+every option were already a Python string. Both `nauty_geng` and
+`nauty_genbg` now normalize their options with `str()` before splitting. The
+former failing `graph.py:224` enumeration consequently returns all 11 graphs
+of order four with the expected degree sequences.
+
+The 57 rows scoped during the graph-generator classification pass were then
+replayed against the staged `geng` and `genbgL` WASI commands. Fifty-six are
+now active and passing. The remaining `genbgL 1 63` boundary is no longer
+hidden behind a module-wide feature tag: the command deterministically traps
+with a `memory access out of bounds` diagnostic inside the raw WASI program,
+so that one exact prompt carries `# known bug` metadata. The final complete
+module dashboard records:
+
+```text
+historical classified default:  65 passed, 0 failed, 161 skipped
+reopened graph_generators.py:   121 passed, 0 failed, 105 skipped
+newly active passing rows:                   56
+remaining deferred genbg row:                 1
+```
+
+The final database has a closed passing lifecycle, no block or file failure,
+exactly one `deferred:known bug` row, 14 pre-existing `optional:nauty` rows for
+other unstaged nauty commands, and `PRAGMA integrity_check = ok`. The two
+`graph.py` prompts whose loop calls `chromatic_number()` are correctly
+reclassified from nauty to the separately unavailable
+`sage.graphs.cliquer` backend; default focused replays skip them, while an
+explicit selected-feature replay restores the precise missing
+`clique_number` import. The independent `graphs(4)` row passes normally.
+
+The durable Electron smoke now exercises `graphs(4)` in addition to direct
+string-option `nauty_geng` and `nauty_genbg` calls. The manifest advances to
+schema 196 and `nauty-doctest-reopen-v158`. Validation includes the complete
+graph-generator replay, focused default and selected-feature graph replays,
+SQLite lifecycle, skip-reason, and integrity queries, Electron manifest and
+runtime contract tests, Electron TypeScript compilation, shell and JavaScript
+syntax, accumulated-patch syntax, Python source compilation, `git diff
+--check`, and exact zero-fuzz application of the new final sections after the
+preceding accumulated graph source. The reconstructed `graph.py` and
+`graph_generators.py` are byte-identical to the tested sources. The
+accumulated source patch now has 1,626 source sections (1,111 `diff --git` and
+515 legacy sections) and 4,796 hunks. The authoritative resource relocation,
+focused and complete SQLite databases, reconstructed sources, and logs are
+under `/tmp/cowasm-sagelite-nauty-reopen.GUwgrD/` and
+`/tmp/cowasm-sagelite-nauty-reopen-delta.JLTPbU/`. This pass changes only
+Python/source doctest metadata and the Electron contract; it needs no native
+WASM rebuild. A future runtime pass can investigate the large `genbgL 1 63`
+memory trap or deliver the remaining nauty-family commands before reopening
+the 14 older `nauty` rows.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

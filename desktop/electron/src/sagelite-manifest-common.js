@@ -303,7 +303,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 195,
+  schemaVersion: 196,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -368,6 +368,8 @@ expectedSageliteManifest.smokeContract +=
   "-graph-latex-color-delivery-v156";
 expectedSageliteManifest.smokeContract +=
   "-nauty-wasi-subprocess-delivery-v157";
+expectedSageliteManifest.smokeContract +=
+  "-nauty-doctest-reopen-v158";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

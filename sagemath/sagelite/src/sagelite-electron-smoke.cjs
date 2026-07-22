@@ -1516,6 +1516,8 @@ assert convexity.hull([3, 7]) == [2, 3, 7]
     await python.exec(String.raw`
 from sage.all import graphs
 
+all_graphs = list(graphs(4))
+assert len(all_graphs) == 11
 connected_graphs = list(graphs.nauty_geng("4 -c"))
 assert len(connected_graphs) == 6
 assert all(graph.order() == 4 and graph.is_connected() for graph in connected_graphs)

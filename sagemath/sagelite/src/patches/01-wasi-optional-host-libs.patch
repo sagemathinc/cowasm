@@ -31057,3 +31057,229 @@ diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generat
                                stderr=subprocess.PIPE, close_fds=True,
                                encoding='latin-1') as sp:
              msg = sp.stderr.readline()
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -221,7 +221,7 @@
+
+ Use ``graphs(n)`` to iterate through all non-isomorphic graphs of given size::
+
+-    sage: for g in graphs(4):                                                         # needs nauty
++    sage: for g in graphs(4):
+     ....:     print(g.degree_sequence())
+     [0, 0, 0, 0]
+     [1, 1, 0, 0]
+@@ -239,10 +239,10 @@
+ vertices is of course the smallest graph with chromatic number bigger than
+ three::
+
+-    sage: for g in graphs():                                                          # needs nauty
++    sage: for g in graphs():  # needs sage.graphs.cliquer
+     ....:     if g.chromatic_number() > 3:
+     ....:         break
+-    sage: g.is_isomorphic(graphs.CompleteGraph(4))                                   # needs nauty
++    sage: g.is_isomorphic(graphs.CompleteGraph(4))  # needs sage.graphs.cliquer
+     True
+
+ For some commonly used graphs to play with, type::
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -610,7 +610,7 @@
+
+     ::
+
+-        sage: for G in graphs(3):                                                   # needs nauty
++        sage: for G in graphs(3):
+         ....:    print(G)
+         Graph on 3 vertices
+         Graph on 3 vertices
+@@ -685,14 +685,14 @@
+         sage: property = lambda G: G.is_bipartite()
+         sage: len(list(graphs(4, property)))
+         7
+-        sage: sum(1 for g in graphs(4) if property(g))                              # needs nauty
++        sage: sum(1 for g in graphs(4) if property(g))
+         7
+
+     Generate graphs on the fly: (see :oeis:`A000088`)
+
+     ::
+
+-        sage: for i in range(7):                                                    # needs nauty
++        sage: for i in range(7):
+         ....:     print(len(list(graphs(i))))
+         1
+         1
+@@ -737,7 +737,7 @@
+     Make sure that the graphs are really independent and the generator
+     survives repeated vertex removal (:issue:`8458`)::
+
+-        sage: for G in graphs(3):                                                   # needs nauty
++        sage: for G in graphs(3):
+         ....:     G.delete_vertex(0)
+         ....:     print(G.order())
+         2
+@@ -747,10 +747,10 @@
+
+     Returned graphs can be mutable or immutable::
+
+-        sage: G = next(graphs(3, immutable=False))                                  # needs nauty
+-        sage: G.delete_vertex(0)                                                     # needs nauty
+-        sage: G = next(graphs(3, immutable=True))                                   # needs nauty
+-        sage: G.delete_vertex(0)                                                     # needs nauty
++        sage: G = next(graphs(3, immutable=False))
++        sage: G.delete_vertex(0)
++        sage: G = next(graphs(3, immutable=True))
++        sage: G.delete_vertex(0)
+         Traceback (most recent call last):
+         ...
+         TypeError: this graph is immutable and so cannot be changed
+@@ -797,7 +797,7 @@
+
+         ::
+
+-            sage: for g in graphs():                                                # needs nauty
++            sage: for g in graphs():
+             ....:    if g.n_vertices() > 3: break
+             ....:    print(g)
+             Graph on 0 vertices
+@@ -956,7 +956,6 @@
+         create an entire list all at once if there is sufficient memory
+         to contain it.  ::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("2")
+             sage: next(gen)
+             Graph on 2 vertices
+@@ -970,7 +969,6 @@
+         A list of all graphs on 7 vertices.  This agrees with
+         :oeis:`A000088`.  ::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("7")
+             sage: len(list(gen))
+             1044
+@@ -978,14 +976,12 @@
+         A list of just the connected graphs on 7 vertices.  This agrees with
+         :oeis:`A001349`.  ::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("7 -c")
+             sage: len(list(gen))
+             853
+
+         A list of connected degree exactly 2 graphs on 5 vertices. ::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("5 -c -d2 -D2")
+             sage: len(list(gen))
+             1
+@@ -997,7 +993,6 @@
+         the first returned value might be an empty string if ``debug`` is
+         ``True``::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("4", debug=True)
+             sage: print(next(gen))
+             >A ...geng -d0D3 n=4 e=0-6
+@@ -1009,7 +1004,6 @@
+
+         Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:issue:`14068`)::
+
+-            sage: # needs nauty
+             sage: list(graphs.nauty_geng("-c3", debug=False))
+             Traceback (most recent call last):
+             ...
+@@ -1023,7 +1017,7 @@
+
+         from sage.features.nauty import NautyExecutable
+         geng_path = NautyExecutable("geng").absolute_filename()
+-        geng_argv = [geng_path, *shlex.split(options)]
++        geng_argv = [geng_path, *shlex.split(str(options))]
+         with subprocess.Popen(geng_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+@@ -1121,7 +1115,6 @@
+         create an entire list all at once if there is sufficient memory
+         to contain it::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genbg("1 1")
+             sage: next(gen)
+             Bipartite graph on 2 vertices
+@@ -1135,7 +1128,6 @@
+         Connected bipartite graphs of order 6 with different number of vertices
+         in each side::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genbg("1 5 -c")
+             sage: len(list(gen))
+             1
+@@ -1150,7 +1142,6 @@
+         graphs of order `n`. For instance, the list of all connected bipartite
+         graphs of order 6, which agrees with :oeis:`A005142`::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_geng("-b -c 6")
+             sage: len(list(gen))
+             17
+@@ -1159,7 +1150,6 @@
+         input in the ``options`` string. A message starting with ">A" indicates
+         success and a message starting with ">E" indicates a failure::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genbg("2 3", debug=True)
+             sage: print(next(gen))
+             >A ...genbg... n=2+3 e=0:6 d=0:0 D=3:2
+@@ -1169,7 +1159,6 @@
+
+         Check that the partition of the bipartite graph is consistent::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genbg("3 3")
+             sage: left = set(range(3))
+             sage: for g in gen:
+@@ -1180,7 +1169,6 @@
+
+         Wrong input::
+
+-            sage: # needs nauty
+             sage: list(graphs.nauty_genbg("-c1 2", debug=False))
+             Traceback (most recent call last):
+             ...
+@@ -1193,7 +1181,6 @@
+         We must have n1=1..30, n2=0..64 and n1+n2=1..64 (:issue:`34179`,
+         :issue:`38618`)::
+
+-            sage: # needs nauty
+             sage: next(graphs.nauty_genbg("31 1", debug=False))
+             Traceback (most recent call last):
+             ...
+@@ -1202,7 +1189,7 @@
+             '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+             sage: next(graphs.nauty_genbg("30 40", debug=True))
+             '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+-            sage: next(graphs.nauty_genbg("1 63", debug=False))
++            sage: next(graphs.nauty_genbg("1 63", debug=False))  # known bug
+             Bipartite graph on 64 vertices
+             sage: next(graphs.nauty_genbg("1 64", debug=True))
+             '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+@@ -1217,7 +1204,7 @@
+
+         from sage.features.nauty import NautyExecutable
+         genbg_path = NautyExecutable("genbgL").absolute_filename()
+-        genbg_argv = [genbg_path, *shlex.split(options)]
++        genbg_argv = [genbg_path, *shlex.split(str(options))]
+         with subprocess.Popen(genbg_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+@@ -3134,7 +3121,7 @@
+
+     ::
+
+-        sage: for G in graphs(3):                                                   # needs nauty
++        sage: for G in graphs(3):
+         ....:     print(G)
+         Graph on 3 vertices
+         Graph on 3 vertices
