@@ -1,7 +1,30 @@
 import { notImplemented } from "./util";
 import constants from "./constants";
 
-export default function wait({ posix, send}) {
+export default function wait(context) {
+  const { posix, send } = context;
+
+  function completedWasmProcesses(): Map<number, number> | undefined {
+    const processes = context.state.completedWasmProcesses;
+    return processes instanceof Map ? processes : undefined;
+  }
+
+  function takeCompletedWasmProcess(pid: number) {
+    const processes = completedWasmProcesses();
+    if (processes == null) return undefined;
+    if (pid == -1) {
+      const first = processes.entries().next();
+      if (first.done) return undefined;
+      const [completedPid, wstatus] = first.value;
+      processes.delete(completedPid);
+      return { ret: completedPid, wstatus };
+    }
+    const wstatus = processes.get(pid);
+    if (wstatus == null) return undefined;
+    processes.delete(pid);
+    return { ret: pid, wstatus };
+  }
+
   function nativeOptions(options: number): number {
     let native_options = 0;
     for (const option of ["WNOHANG", "WUNTRACED"]) {
@@ -20,6 +43,11 @@ export default function wait({ posix, send}) {
 
   const obj = {
     wait: (wstatusPtr: number): number => {
+      const completed = takeCompletedWasmProcess(-1);
+      if (completed != null) {
+        send.i32(wstatusPtr, completed.wstatus);
+        return completed.ret;
+      }
       if (posix.wait == null) {
         notImplemented("wait");
       }
@@ -38,6 +66,11 @@ export default function wait({ posix, send}) {
     // waitpid(pid: number, options : number) => {status: Status, ret:number}
 
     waitpid: (pid: number, wstatusPtr: number, options: number): number => {
+      const completed = takeCompletedWasmProcess(pid);
+      if (completed != null) {
+        send.i32(wstatusPtr, completed.wstatus);
+        return completed.ret;
+      }
       if (posix.waitpid == null) {
         notImplemented("waitpid");
       }
@@ -56,6 +89,11 @@ export default function wait({ posix, send}) {
       if (rusagePtr != 0) {
         console.warn("wait3 not implemented for non-NULL *rusage");
         notImplemented("wait3");
+      }
+      const completed = takeCompletedWasmProcess(-1);
+      if (completed != null) {
+        send.i32(wstatusPtr, completed.wstatus);
+        return completed.ret;
       }
       const { ret, wstatus } = posix.wait3(nativeOptions(options));
       send.i32(wstatusPtr, wasm_wstatus(wstatus));

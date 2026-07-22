@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 26 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK" >&2
+if [ "$#" -ne 27 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK" >&2
   exit 2
 fi
 
@@ -33,6 +33,7 @@ libbraiding_wasi_sdk="$(cd "${23}" && pwd)"
 rw_wasi_sdk="$(cd "${24}" && pwd)"
 iml_wasi_sdk="$(cd "${25}" && pwd)"
 glpk_wasi_sdk="$(cd "${26}" && pwd)"
+nauty_wasi_sdk="$(cd "${27}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -2121,7 +2122,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=194
+electron_manifest_schema_version=195
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2170,6 +2171,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-gap-free-g
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-glpk-mip-delivery-v154"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-convexity-delivery-v155"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-latex-color-delivery-v156"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-wasi-subprocess-delivery-v157"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2209,6 +2211,10 @@ stage_runtime_tree "$installed_site_packages" "$electron_resources_dir/site-pack
 cp "$python_wasm/dist/python.wasm" "$electron_resources_dir/python.wasm"
 cp "$repo_dir/desktop/electron/src/sagelite-manifest-common.js" "$electron_resources_dir/sagelite-manifest-common.cjs"
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
+mkdir -p "$electron_resources_dir/bin"
+cp "$nauty_wasi_sdk/bin/geng" "$electron_resources_dir/bin/geng"
+cp "$nauty_wasi_sdk/bin/genbgL" "$electron_resources_dir/bin/genbgL"
+chmod +x "$electron_resources_dir/bin/geng" "$electron_resources_dir/bin/genbgL"
 
 runtime_dep_labels=(
   cypari2
@@ -2250,6 +2256,8 @@ for i in "${!runtime_dep_labels[@]}"; do
 done
 
 electron_required_paths=(
+  "bin/genbgL"
+  "bin/geng"
   "site-packages/sage/__init__.py"
   "site-packages/sage/all.py"
   "python.wasm"

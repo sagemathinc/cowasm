@@ -63946,6 +63946,59 @@ Sagelite checkout and its intentional changes remain untouched. A future
 delivery pass can reopen the nauty rows after implementing the relocatable
 WASM subprocess contract with pipes and wait-status semantics.
 
+Graph nauty WASI subprocess delivery pass on 2026-07-22 UTC:
+
+CoWasm's Node runtime can now execute a raw WASI command through Python's
+ordinary `subprocess.Popen` fork/exec path. The bridge recognizes the WASM
+magic, creates an isolated `wasi-js` child instance with duplicated standard
+descriptors, runs it synchronously, and publishes the encoded exit status
+behind a synthetic PID for `wait`, `waitpid`, and `wait3`. Native host commands
+continue through the existing `posix-node` transport. This first bounded
+contract supports inherited stdin plus piped stdout and stderr; piped stdin is
+left on the native path because a synchronous child cannot safely consume a
+parent-fed pipe without an asynchronous process transport.
+
+The embedded Node Python setup disables CPython's native-only `posix_spawn`
+fast path and normalizes the WASI-disabled private `subprocess` fork/exec and
+wait bindings after initialization. A focused raw-WASI fixture verifies
+separate stdout and stderr capture plus exit code 23 through
+`subprocess.run(..., capture_output=True)`. The complete kernel suite passes 3
+tests in 2 suites, and the complete Python-WASM suite passes all 54 tests in 16
+suites.
+
+Sagelite's `nauty_geng` and `nauty_genbg` adapters now pass argument arrays
+directly to `Popen` instead of using `shell=True`, and they no longer create an
+unused stdin pipe. This avoids both the native shell boundary and the initial
+raw-WASI transport's deliberate piped-stdin exclusion. The standalone bundle
+stages executable `bin/geng` and `bin/genbgL`; the Electron runtime sets
+`PATH` to that resource-local directory. Both tools are mandatory
+hashed resources. The manifest advances to schema 195 and
+`nauty-wasi-subprocess-delivery-v157`, with contract tests covering the new
+environment value and tool entries.
+
+End-to-end probes against a 1.8-GiB relocated resource tree record the same
+result in synchronous Node and Electron-shaped worker execution:
+
+```text
+nauty_geng("4 -c"):   6 graphs, all connected and of order 4
+nauty_genbg("2 2 -c"): 2 graphs, all connected and of order 4
+combined probe result: (6, True, 2, True)
+```
+
+The durable Electron smoke exercises both generators. Validation also includes
+TypeScript compilation for kernel, Python-WASM, and Electron; all three
+Electron manifest/forge/runtime test programs; shell and JavaScript syntax;
+the Sagelite standalone Makefile dry run; accumulated-patch syntax;
+`git diff --check`; complete patch application to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`; and zero-fuzz application of the
+new final section after its predecessors. The resulting
+`graph_generators.py` is byte-identical to the runtime-tested source and passes
+Python compilation. The accumulated patch now reports 1,624 file sections and
+4,773 hunks. Scratch source reconstructions, logs, and relocated resources are
+under `/tmp/cowasm-sagelite-nauty-delivery.6nNmhI/` and the associated
+`/tmp/cowasm-sagelite-nauty-*` validation directories. The external developer
+Sagelite checkout and its intentional changes remain untouched.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

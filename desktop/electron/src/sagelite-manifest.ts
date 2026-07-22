@@ -33,6 +33,7 @@ export interface SageliteManifest {
 
 export interface SagelitePythonEnv extends Record<string, string> {
   PYTHONPATH: string;
+  PATH?: string;
   COWASM_SAGELITE_RESOURCE_ROOT?: string;
 }
 

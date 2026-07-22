@@ -1221,6 +1221,11 @@ withResourceRoot((root) => {
   assert.deepStrictEqual(sagelitePythonEnv(manifest), {
     PYTHONPATH: expectedSagelitePythonPath.join(":"),
   });
+  assert.deepStrictEqual(sagelitePythonEnv(manifest, root), {
+    PYTHONPATH: expectedSagelitePythonPath.join(":"),
+    PATH: path.join(root, "bin"),
+    COWASM_SAGELITE_RESOURCE_ROOT: root,
+  });
 });
 
 withResourceRoot((root) => {

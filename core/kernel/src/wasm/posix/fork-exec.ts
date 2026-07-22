@@ -24,6 +24,7 @@ extern int python_wasm_fork_exec(
 */
 
 import debug from "debug";
+import WASI from "wasi-js";
 import { nativeToWasm } from "./errno";
 import constants from "./constants";
 import { join, resolve } from "path";
@@ -32,20 +33,17 @@ const log = debug("posix:fork-exec");
 
 const WASM = Buffer.from("\0asm");
 
-export default function fork_exec({
-  posix,
-  recv,
-  wasi,
-  run,
-  fs,
-  child_process,
-  getcwd,
-}) {
+export default function fork_exec(context) {
+  const { posix, recv, wasi, run, fs, child_process, getcwd } = context;
   function isWasm(filename: string): boolean {
     const fd = fs.openSync(filename, "r");
-    const b = Buffer.alloc(4);
-    fs.readSync(fd, b, 0, 4, 0);
-    return WASM.equals(b);
+    try {
+      const b = Buffer.alloc(4);
+      fs.readSync(fd, b, 0, 4, 0);
+      return WASM.equals(b);
+    } finally {
+      fs.closeSync(fd);
+    }
   }
 
   function runNative(argv: string[]): number {
@@ -94,6 +92,126 @@ export default function fork_exec({
       return -1;
     }
     return data.real;
+  }
+
+  function completedWasmProcesses(): Map<number, number> {
+    if (!(context.state.completedWasmProcesses instanceof Map)) {
+      context.state.completedWasmProcesses = new Map<number, number>();
+    }
+    return context.state.completedWasmProcesses;
+  }
+
+  function allocateWasmPid(): number {
+    const processes = completedWasmProcesses();
+    let pid = context.state.nextWasmPid ?? 0x40000000;
+    while (processes.has(pid)) {
+      pid += 1;
+    }
+    context.state.nextWasmPid = pid + 1;
+    return pid;
+  }
+
+  function envObject(envp: string[]): { [key: string]: string } {
+    if (envp.length == 0) {
+      return { ...wasi.env };
+    }
+    const env: { [key: string]: string } = {};
+    for (const entry of envp) {
+      const i = entry.indexOf("=");
+      if (i >= 0) {
+        env[entry.slice(0, i)] = entry.slice(i + 1);
+      }
+    }
+    return env;
+  }
+
+  function runWasiExecutable({
+    executable,
+    argv,
+    envp,
+    stdinFd,
+    stdoutFd,
+    stderrFd,
+  }: {
+    executable: string;
+    argv: string[];
+    envp: string[];
+    stdinFd: number;
+    stdoutFd: number;
+    stderrFd: number;
+  }): number {
+    if (posix.dup == null) {
+      throw Error("WASI subprocesses require descriptor duplication support");
+    }
+
+    let exitCode = 0;
+    const childBindings = {
+      ...wasi.bindings,
+      exit: (code: number) => {
+        throw { cowasmWasiProcessExit: true, code };
+      },
+      kill: (signal: string) => {
+        throw { cowasmWasiProcessSignal: true, signal };
+      },
+    };
+    const childWasi = new WASI({
+      preopens: { "/": "/" },
+      bindings: childBindings,
+      args: argv,
+      env: envObject(envp),
+      sleep: wasi.sleep,
+    });
+
+    const parentFds = [
+      stdinFd < 0 ? 0 : stdinFd,
+      stdoutFd < 0 ? 1 : stdoutFd,
+      stderrFd < 0 ? 2 : stderrFd,
+    ];
+    for (let childFd = 0; childFd < parentFds.length; childFd++) {
+      const parentFile = wasi.FD_MAP.get(parentFds[childFd]);
+      if (parentFile == null) {
+        throw Error(`invalid WASI subprocess descriptor ${parentFds[childFd]}`);
+      }
+      childWasi.FD_MAP.set(childFd, {
+        ...parentFile,
+        real: posix.dup(parentFile.real),
+        rights: { ...parentFile.rights },
+      });
+    }
+
+    try {
+      const binary = new Uint8Array(fs.readFileSync(executable));
+      const module = new WebAssembly.Module(binary);
+      const instance = new WebAssembly.Instance(
+        module,
+        childWasi.getImports(module)
+      );
+      try {
+        childWasi.start(instance);
+      } catch (err) {
+        if (err?.cowasmWasiProcessExit) {
+          exitCode = err.code ?? 0;
+        } else if (err?.cowasmWasiProcessSignal) {
+          exitCode = 128;
+        } else {
+          throw err;
+        }
+      }
+      return exitCode;
+    } finally {
+      // Every descriptor in this child table was opened by the child WASI
+      // instance or duplicated above. Descriptors that the command closed are
+      // removed from the table by wasi-js, so only live descriptors remain.
+      const realFds = new Set<number>();
+      for (const file of childWasi.FD_MAP.values()) {
+        realFds.add(file.real);
+      }
+      for (const fd of realFds) {
+        try {
+          fs.closeSync(fd);
+        } catch (_err) {}
+      }
+    }
   }
 
   // map from wasi number to real fd number for inheritable descriptors plus
@@ -227,9 +345,11 @@ export default function fork_exec({
         envp.push(`WASI_FD_INFO=${WASI_FD_INFO}`);
       }
 
+      const execArray = recv.arrayOfStrings(exec_array_ptr);
+      const argv = recv.arrayOfStrings(argv_ptr);
       const opts = {
-        exec_array: recv.arrayOfStrings(exec_array_ptr),
-        argv: recv.arrayOfStrings(argv_ptr),
+        exec_array: execArray,
+        argv,
         envp,
         cwd: recv.string(cwd),
         p2cread: real_fd(p2cread),
@@ -250,6 +370,34 @@ export default function fork_exec({
       log("descriptors map = ", getInheritableDescriptorsMap(fdsToKeep));
 
       try {
+        // Native fork/exec cannot launch a raw WASI command. Run commands with
+        // the WASM magic directly through a fresh wasi-js instance and retain
+        // the completed status behind a synthetic pid for waitpid(). This is
+        // deliberately synchronous; piped stdin needs an asynchronous process
+        // transport and continues to use the native path for now.
+        if (p2cread < 0) {
+          const executable = execArray.find((path) => {
+            try {
+              return fs.existsSync(path) && isWasm(path);
+            } catch (_err) {
+              return false;
+            }
+          });
+          if (executable != null) {
+            const status = runWasiExecutable({
+              executable,
+              argv,
+              envp,
+              stdinFd: p2cread,
+              stdoutFd: c2pwrite,
+              stderrFd: errwrite,
+            });
+            const pid = allocateWasmPid();
+            completedWasmProcesses().set(pid, (status & 0xff) << 8);
+            log("completed WASI subprocess", { pid, status, executable });
+            return pid;
+          }
+        }
         const pid = posix.fork_exec(opts);
         log("got subprocess = ", pid);
         return pid;

@@ -31034,3 +31034,26 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 @@ -3785 +3785 @@
 -            sage: G.chromatic_quasisymmetric_function()
 +            sage: G.chromatic_quasisymmetric_function()                               # needs sage.libs.symmetrica
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -1024,7 +1024,7 @@
+         from sage.features.nauty import NautyExecutable
+         geng_path = NautyExecutable("geng").absolute_filename()
+-        with subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
+-                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++        geng_argv = [geng_path, *shlex.split(options)]
++        with subprocess.Popen(geng_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+             msg = sp.stderr.readline()
+@@ -1218,7 +1218,7 @@
+         from sage.features.nauty import NautyExecutable
+         genbg_path = NautyExecutable("genbgL").absolute_filename()
+-        with subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
+-                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++        genbg_argv = [genbg_path, *shlex.split(options)]
++        with subprocess.Popen(genbg_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+             msg = sp.stderr.readline()

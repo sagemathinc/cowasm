@@ -40,6 +40,8 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
 ]);
 
 const expectedSageliteRequiredToolPaths = Object.freeze([
+  "bin/genbgL",
+  "bin/geng",
   "sagelite-manifest-common.cjs",
   "sagelite-electron-smoke.cjs",
 ]);
@@ -301,7 +303,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 194,
+  schemaVersion: 195,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -364,6 +366,8 @@ expectedSageliteManifest.smokeContract +=
   "-graph-convexity-delivery-v155";
 expectedSageliteManifest.smokeContract +=
   "-graph-latex-color-delivery-v156";
+expectedSageliteManifest.smokeContract +=
+  "-nauty-wasi-subprocess-delivery-v157";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
@@ -399,7 +403,10 @@ function sagelitePythonEnv(manifest, resourceRoot) {
     PYTHONPATH: sagelitePythonPath(manifest),
     ...(resourceRoot == null
       ? {}
-      : { [manifest.resourceRootEnvName]: resourceRoot }),
+      : {
+          PATH: join(resourceRoot, "bin"),
+          [manifest.resourceRootEnvName]: resourceRoot,
+        }),
   };
 }
 

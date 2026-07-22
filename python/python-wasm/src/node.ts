@@ -52,7 +52,14 @@ async function createPython(
     process.env.SSL_CERT_FILE == null &&
     opts.env?.SSL_CERT_FILE == null;
   const fs = getFilesystem(opts, useNodeRootCertificates);
-  let env: any = { PYTHONEXECUTABLE };
+  // CoWasm's fork/exec bridge can dispatch both native host commands and raw
+  // WASI commands. CPython's posix_spawn fast path bypasses that bridge and
+  // can only ask the host kernel to execute the file, so keep it disabled in
+  // the embedded Node runtime.
+  let env: any = {
+    PYTHONEXECUTABLE,
+    _PYTHON_SUBPROCESS_USE_POSIX_SPAWN: "0",
+  };
   if (useNodeRootCertificates) {
     env.SSL_CERT_FILE = NODE_ROOT_CERTIFICATES;
   }
@@ -81,6 +88,25 @@ async function createPython(
     : new PythonWasmAsync(kernel as any, wasm);
   if (!opts.noInit) {
     await python.init();
+    // A native host Python source tree can coexist with CoWasm's bytecode
+    // bundle in the union filesystem. If its subprocess.py is selected, it
+    // disables fork/exec solely because sys.platform is "wasi". The embedded
+    // Node runtime does provide that contract, so normalize both private
+    // dispatch flags after initialization.
+    await python.exec(`
+import subprocess as __cowasm_subprocess
+import os as __cowasm_os
+from _posixsubprocess import fork_exec as __cowasm_fork_exec
+__cowasm_subprocess._can_fork_exec = True
+__cowasm_subprocess._USE_POSIX_SPAWN = False
+__cowasm_subprocess._fork_exec = __cowasm_fork_exec
+__cowasm_subprocess._del_safe.waitpid = __cowasm_os.waitpid
+__cowasm_subprocess._del_safe.waitstatus_to_exitcode = __cowasm_os.waitstatus_to_exitcode
+__cowasm_subprocess._del_safe.WIFSTOPPED = __cowasm_os.WIFSTOPPED
+__cowasm_subprocess._del_safe.WSTOPSIG = __cowasm_os.WSTOPSIG
+__cowasm_subprocess._del_safe.WNOHANG = __cowasm_os.WNOHANG
+del __cowasm_fork_exec, __cowasm_os, __cowasm_subprocess
+`);
     log("done");
   }
   return python;

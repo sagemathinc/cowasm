@@ -1512,6 +1512,18 @@ assert convexity.hull([1, 3]) == [1, 2, 3]
 assert convexity.hull([3, 7]) == [2, 3, 7]
 `);
     console.log("sagelite-electron-ok graph convexity delivery smoke");
+    console.log("sagelite-electron-start nauty WASI subprocess delivery smoke");
+    await python.exec(String.raw`
+from sage.all import graphs
+
+connected_graphs = list(graphs.nauty_geng("4 -c"))
+assert len(connected_graphs) == 6
+assert all(graph.order() == 4 and graph.is_connected() for graph in connected_graphs)
+bipartite_graphs = list(graphs.nauty_genbg("2 2 -c"))
+assert len(bipartite_graphs) == 2
+assert all(graph.order() == 4 and graph.is_connected() for graph in bipartite_graphs)
+`);
+    console.log("sagelite-electron-ok nauty WASI subprocess delivery smoke");
     console.log("sagelite-electron-start graph LaTeX color delivery smoke");
     await python.exec(String.raw`
 from sage.all import graphs, latex
