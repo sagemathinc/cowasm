@@ -81,6 +81,13 @@ ktree_file="$probe_dir/ktree-8.g6"
 ktree_count_log="$probe_dir/ktree-8-count.log"
 tree_file="$probe_dir/tree-10.g6"
 tree_count_log="$probe_dir/tree-10-count.log"
+tournament_file="$probe_dir/tournaments-7.txt"
+tournament_log="$probe_dir/gentourng-7.log"
+direct_input_file="$probe_dir/direct-input-3.g6"
+direct_output_file="$probe_dir/direct-output-3.d6"
+direct_log="$probe_dir/directg-3.log"
+poset_file="$probe_dir/posets-5.d6"
+poset_log="$probe_dir/genposetg-5.log"
 
 cowasm_clang_standalone_run_wasi \
   "$bin_dir" "$dist_dir/bin/genbgL" 1 63 \
@@ -110,4 +117,24 @@ cowasm_clang_standalone_run_wasi \
 
 grep -F "106 graphs altogether" "$tree_count_log"
 
-echo "nauty-ok library geng genbgL genktreeg gentreeg countg showg"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/gentourng" 7 \
+  >"$tournament_file" 2>"$tournament_log"
+test "$(wc -l < "$tournament_file")" -eq 456
+grep -F "456 graphs generated" "$tournament_log"
+
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/geng" 3 -c \
+  >"$direct_input_file"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/directg" -q \
+  <"$direct_input_file" >"$direct_output_file" 2>"$direct_log"
+test "$(grep -c '^&' "$direct_output_file")" -eq 13
+
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/genposetg" 5 o \
+  >"$poset_file" 2>"$poset_log"
+test "$(wc -l < "$poset_file")" -eq 63
+grep -F "63 posets written" "$poset_log"
+
+echo "nauty-ok library geng genbgL genktreeg gentreeg gentourng directg genposetg countg showg"

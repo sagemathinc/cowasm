@@ -64225,6 +64225,64 @@ runtime pass can add asynchronous raw-WASI process streaming and reopen the
 128-vertex first-result example, or deliver `gentourng`, `directg`, or
 `genposetg` for the directed-graph generator cluster.
 
+Graph nauty directed-generator delivery pass on 2026-07-22 UTC:
+
+The directed nauty cluster is now backed by the existing `gentourng`,
+`directg`, and `genposetg` WASI commands. The standalone resource bundle stages
+all three as hashed mandatory tools beside the previously delivered generators
+and advances the Electron manifest to schema 200 and
+`nauty-directed-generators-delivery-v162`. The clean nauty package regression
+independently verifies 456 seven-vertex tournaments, 13 non-isomorphic
+orientations of the connected three-vertex graphs, and all 63 five-element
+posets.
+
+The no-input `tournaments_nauty()` and `nauty_posetg()` adapters now pass argv
+arrays directly to `Popen`. `nauty_directg()` also uses argv, but its graph6
+input exposed a narrower runtime boundary: the synchronous raw-WASI subprocess
+bridge could capture output but intentionally rejected piped stdin. The kernel
+now recognizes inherited and regular-file stdin separately from a parent-owned
+pipe. The Sage adapter spools its already-materialized graph6 input through a
+seekable temporary file, preserving the public generator API without requiring
+an asynchronous child transport. A 175-byte raw-WASI stdin-echo fixture locks
+this behavior into the `python-wasm` subprocess suite.
+
+Removing the obsolete file-wide `sage.graphs` declaration from
+`digraph_generators.py` first produced 111 passed, 14 failed, and 44 skipped
+blocks. Ten failures were the `directg` stdin cluster; the other four were one
+PARI-backed strongly-regular construction and its continuation prompts. The
+delivered dashboard records:
+
+```text
+digraph_generators.py: 121 passed, 0 failed, 48 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The strongly-regular region now carries the precise `sage.libs.pari`
+dependency boundary. The module is promoted into the curated pure-math corpus,
+raising it to 1,144 non-comment entries with no duplicates. Tournament counts,
+directed orientations, acyclic-orientation filters, debug output, poset counts,
+and the remaining pure-Python directed-graph constructors are active.
+
+Validation includes the clean nauty configure/build/install regression, the
+complete module replay and saved SQLite lifecycle/skip/integrity queries, all
+56 tests in 16 `python-wasm` suites, the focused regular-file stdin regression,
+all three Electron manifest/forge/runtime contract programs, Electron
+TypeScript compilation, a schema-200 relocated Electron-shaped directed-nauty
+probe, shell/JavaScript/Python syntax, corpus uniqueness and make-target dry
+runs, accumulated-patch syntax, exact zero-fuzz application of the new final
+source section, byte-for-byte comparison with the tested
+`digraph_generators.py`, and `git diff --check`. The broader Electron smoke
+against the retained older resource snapshot reaches its already documented
+stale graph-convexity extension before the nauty section; the focused relocated
+probe is the authoritative result for this resource update. The accumulated
+source patch now has 1,630 sections (1,115 `diff --git` and 515 legacy
+sections) and 4,809 hunks. Authoritative databases, source reconstruction,
+resource relocation, logs, and the focused Electron-shaped probe are under
+`/tmp/cowasm-sagelite-directed-nauty.mCsRW3/`. A future runtime pass can add
+true asynchronous raw-WASI stdin/stdout streaming and reopen the 128-vertex
+first-tree example, or continue with the next persisted graph/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -31370,11 +31370,112 @@ diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/t
 @@ -1096,8 +1096,8 @@ def nauty_gentreeg(options='', debug=False, immutable=False):
      import subprocess
      from sage.features.nauty import NautyExecutable
-     gen_path = NautyExecutable("gentreeg").absolute_filename()
+    gen_path = NautyExecutable("gentreeg").absolute_filename()
 -    with subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
 -                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
 +    gen_argv = [gen_path, *shlex.split(str(options))]
 +    with subprocess.Popen(gen_argv, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, close_fds=True,
                            encoding='latin-1') as sp:
-         msg = sp.stderr.readline()
+        msg = sp.stderr.readline()
+diff --git a/src/sage/graphs/digraph_generators.py b/src/sage/graphs/digraph_generators.py
+--- a/src/sage/graphs/digraph_generators.py
++++ b/src/sage/graphs/digraph_generators.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Common digraphs
+
+@@ -396,6 +395,7 @@ class DiGraphGenerators:
+         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
+         `A` is the adjacency matrix::
+
++            sage: # needs sage.libs.pari
+             sage: g = digraphs.StronglyRegular(7); g
+             Strongly regular digraph: Digraph on 7 vertices
+             sage: A = g.adjacency_matrix()*ones_matrix(7)
+@@ -646,9 +646,8 @@ class DiGraphGenerators:
+         from sage.features.nauty import NautyExecutable
+         gentourng_path = NautyExecutable("gentourng").absolute_filename()
+
+-        with subprocess.Popen(shlex.quote(gentourng_path) + " {0}".format(nauty_input),
+-                              shell=True,
+-                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++        gentourng_argv = [gentourng_path, *shlex.split(nauty_input)]
++        with subprocess.Popen(gentourng_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True) as sp:
+
+             if debug:
+@@ -777,32 +776,36 @@ class DiGraphGenerators:
+         input = ''.join(g.graph6_string() + '\n' for g in graphs)
+
+         import shlex
++        import tempfile
+         from sage.features.nauty import NautyExecutable
+         directg_path = NautyExecutable("directg").absolute_filename()
+
+-        with subprocess.Popen(shlex.quote(directg_path) + ' {0}'.format(options),
+-                               shell=True,
+-                               stdout=subprocess.PIPE,
+-                               stdin=subprocess.PIPE,
+-                               stderr=subprocess.STDOUT,
+-                               encoding='latin-1') as sub:
+-            out, err = sub.communicate(input=input)
+-
+-            if debug:
+-                if err:
+-                    print(err)
+-
+-                if out:
+-                    print(out)
+-
+-            for line in out.split('\n'):
+-                # directg return graphs in the digraph6 format.
+-                # digraph6 is very similar with the dig6 format used in sage :
+-                # digraph6_string = '&' +  dig6_string
+-                # digraph6 specifications:
+-                # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
+-                if line and line[0] == '&':
+-                    yield DiGraph(line[1:], format='dig6', immutable=immutable)
++        directg_argv = [directg_path, *shlex.split(str(options))]
++        with tempfile.TemporaryFile(mode='w+', encoding='latin-1') as input_file:
++            input_file.write(input)
++            input_file.seek(0)
++            with subprocess.Popen(directg_argv,
++                                  stdout=subprocess.PIPE,
++                                  stdin=input_file,
++                                  stderr=subprocess.STDOUT,
++                                  encoding='latin-1') as sub:
++                out, err = sub.communicate()
++
++                if debug:
++                    if err:
++                        print(err)
++
++                    if out:
++                        print(out)
++
++                for line in out.split('\n'):
++                    # directg return graphs in the digraph6 format.
++                    # digraph6 is very similar with the dig6 format used in sage :
++                    # digraph6_string = '&' +  dig6_string
++                    # digraph6 specifications:
++                    # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
++                    if line and line[0] == '&':
++                        yield DiGraph(line[1:], format='dig6', immutable=immutable)
+
+     def nauty_posetg(self, options='', debug=False, immutable=False):
+         r"""
+@@ -844,9 +847,9 @@ class DiGraphGenerators:
+         """
+         import shlex
+         from sage.features.nauty import NautyExecutable
+-        geng_path = NautyExecutable("genposetg").absolute_filename()
+-        with subprocess.Popen(shlex.quote(geng_path) + f" {options}", shell=True,
+-                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++        genposetg_path = NautyExecutable("genposetg").absolute_filename()
++        genposetg_argv = [genposetg_path, *shlex.split(str(options))]
++        with subprocess.Popen(genposetg_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+             msg = sp.stderr.readline()

@@ -13,6 +13,11 @@ const WASI_SUBPROCESS_LARGE_OUTPUT_FIXTURE = Buffer.from(
   "base64"
 );
 
+const WASI_SUBPROCESS_STDIN_ECHO_FIXTURE = Buffer.from(
+  "AGFzbQEAAAABDAJgBH9/f38Bf2AAAAJEAhZ3YXNpX3NuYXBzaG90X3ByZXZpZXcxB2ZkX3JlYWQAABZ3YXNpX3NuYXBzaG90X3ByZXZpZXcxCGZkX3dyaXRlAAADAgEBBQMBAAEHEwIGbWVtb3J5AgAGX3N0YXJ0AAIKMwExAEEAQRA2AgBBBEHAADYCAEEAQQBBAUEIEAAaQQRBCCgCADYCAEEBQQBBAUEMEAEaCw==",
+  "base64"
+);
+
 let python: Awaited<ReturnType<typeof syncPython>>;
 
 beforeAll(async () => {
@@ -92,6 +97,36 @@ wasm_large_output = subprocess.run(
         "(wasm_large_output.returncode, len(wasm_large_output.stdout), wasm_large_output.stdout[:1], wasm_large_output.stdout[-1:], wasm_large_output.stderr)"
       )
     ).toBe("(17, 131072, 'x', 'x', 'large-output-ok\\n')");
+  } finally {
+    rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
+
+test("subprocess passes regular-file stdin to a raw WASI command", async () => {
+  const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
+  const fixture = join(fixtureDir, "stdin-echo.wasm");
+  const input = join(fixtureDir, "input.txt");
+  try {
+    writeFileSync(fixture, WASI_SUBPROCESS_STDIN_ECHO_FIXTURE);
+    writeFileSync(input, "file-stdin\n");
+    chmodSync(fixture, 0o755);
+
+    const { exec, repr } = python;
+    exec(`
+import subprocess
+with open(${JSON.stringify(input)}) as wasm_stdin:
+    wasm_file_stdin = subprocess.run(
+        [${JSON.stringify(fixture)}],
+        stdin=wasm_stdin,
+        text=True,
+        capture_output=True,
+    )
+`);
+    expect(
+      repr(
+        "(wasm_file_stdin.returncode, wasm_file_stdin.stdout, wasm_file_stdin.stderr)"
+      )
+    ).toBe("(0, 'file-stdin\\n', '')");
   } finally {
     rmSync(fixtureDir, { recursive: true, force: true });
   }

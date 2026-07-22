@@ -2122,7 +2122,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=199
+electron_manifest_schema_version=200
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2176,6 +2176,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-doct
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-large-output-delivery-v159"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-genktreeg-delivery-v160"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-gentreeg-delivery-v161"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-nauty-directed-generators-delivery-v162"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2216,15 +2217,21 @@ cp "$python_wasm/dist/python.wasm" "$electron_resources_dir/python.wasm"
 cp "$repo_dir/desktop/electron/src/sagelite-manifest-common.js" "$electron_resources_dir/sagelite-manifest-common.cjs"
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 mkdir -p "$electron_resources_dir/bin"
+cp "$nauty_wasi_sdk/bin/directg" "$electron_resources_dir/bin/directg"
 cp "$nauty_wasi_sdk/bin/geng" "$electron_resources_dir/bin/geng"
 cp "$nauty_wasi_sdk/bin/genbgL" "$electron_resources_dir/bin/genbgL"
 cp "$nauty_wasi_sdk/bin/genktreeg" "$electron_resources_dir/bin/genktreeg"
+cp "$nauty_wasi_sdk/bin/genposetg" "$electron_resources_dir/bin/genposetg"
 cp "$nauty_wasi_sdk/bin/gentreeg" "$electron_resources_dir/bin/gentreeg"
+cp "$nauty_wasi_sdk/bin/gentourng" "$electron_resources_dir/bin/gentourng"
 chmod +x \
+  "$electron_resources_dir/bin/directg" \
   "$electron_resources_dir/bin/geng" \
   "$electron_resources_dir/bin/genbgL" \
   "$electron_resources_dir/bin/genktreeg" \
-  "$electron_resources_dir/bin/gentreeg"
+  "$electron_resources_dir/bin/genposetg" \
+  "$electron_resources_dir/bin/gentreeg" \
+  "$electron_resources_dir/bin/gentourng"
 
 runtime_dep_labels=(
   cypari2
@@ -2266,10 +2273,13 @@ for i in "${!runtime_dep_labels[@]}"; do
 done
 
 electron_required_paths=(
+  "bin/directg"
   "bin/genbgL"
   "bin/geng"
   "bin/genktreeg"
+  "bin/genposetg"
   "bin/gentreeg"
+  "bin/gentourng"
   "site-packages/sage/__init__.py"
   "site-packages/sage/all.py"
   "python.wasm"

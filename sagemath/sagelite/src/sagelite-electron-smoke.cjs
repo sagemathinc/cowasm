@@ -1514,7 +1514,7 @@ assert convexity.hull([3, 7]) == [2, 3, 7]
     console.log("sagelite-electron-ok graph convexity delivery smoke");
     console.log("sagelite-electron-start nauty WASI subprocess delivery smoke");
     await python.exec(String.raw`
-from sage.all import graphs
+from sage.all import digraphs, graphs
 
 all_graphs = list(graphs(4))
 assert len(all_graphs) == 11
@@ -1533,6 +1533,14 @@ assert all(graph.order() == 6 for graph in ktrees)
 trees = list(graphs.nauty_gentreeg("10"))
 assert len(trees) == 106
 assert all(graph.order() == 10 and graph.is_tree() for graph in trees)
+tournaments = list(digraphs.tournaments_nauty(5))
+assert len(tournaments) == 12
+assert all(graph.is_tournament() for graph in tournaments)
+orientations = list(digraphs.nauty_directg(graphs.nauty_geng("-c 3")))
+assert len(orientations) == 13
+posets = list(digraphs.nauty_posetg("5 o"))
+assert len(posets) == 63
+assert all(graph.is_directed_acyclic() for graph in posets)
 `);
     console.log("sagelite-electron-ok nauty WASI subprocess delivery smoke");
     console.log("sagelite-electron-start graph LaTeX color delivery smoke");

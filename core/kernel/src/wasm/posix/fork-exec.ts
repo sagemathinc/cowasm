@@ -448,9 +448,10 @@ export default function fork_exec(context) {
         // Native fork/exec cannot launch a raw WASI command. Run commands with
         // the WASM magic directly through a fresh wasi-js instance and retain
         // the completed status behind a synthetic pid for waitpid(). This is
-        // deliberately synchronous; piped stdin needs an asynchronous process
-        // transport and continues to use the native path for now.
-        if (p2cread < 0) {
+        // deliberately synchronous, so inherited or regular-file stdin works
+        // but piped stdin (identified by its parent write descriptor) needs an
+        // asynchronous process transport and continues to use the native path.
+        if (p2cwrite < 0) {
           const executable = execArray.find((path) => {
             try {
               return fs.existsSync(path) && isWasm(path);
