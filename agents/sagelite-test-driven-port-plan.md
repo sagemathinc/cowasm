@@ -65129,6 +65129,44 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the next stale dependency guard exposed by the
 expanded graph runtime or select another persisted backend/runtime cluster.
 
+Graph-traversal dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/traversals.pyx` is removed now that the stripped graph runtime
+executes the module's native traversal algorithms directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact same source with only that guard removed record identical results:
+
+```text
+traversals.pyx: 267 passed, 0 failed, 0 skipped
+run lifecycle:  passed and closed
+SQLite integrity: ok
+```
+
+The active rows cover breadth-first and lexicographic traversals, maximum
+cardinality search, predecessor and distance maps, connectivity checks,
+elimination orderings, and directed and disconnected graph behavior. Both
+retained runner-version-132 dashboards have no block failures or file-level
+errors and a 100% pass rate across all extracted rows. The module needs no
+narrower optional or deferred metadata.
+
+`sage/graphs/traversals.pyx` is now part of the curated pure-math corpus,
+raising it to 1,162 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and
+file-failure and lifecycle queries, SQLite integrity, corpus uniqueness and
+make-target dry run, exact zero-fuzz application of the new final patch section
+to the prior validated source, byte-for-byte comparison with the runtime-tested
+source, accumulated-patch syntax and structure, and `git diff --check`. The
+accumulated source patch now has 1,650 sections (1,135 `diff --git` and 515
+legacy sections) and 4,833 hunks. Authoritative databases, worker state, and
+the runtime-tested source are under
+`/tmp/cowasm-sagelite-next-graph.KH7gVM/`. This source-only dependency cleanup
+and corpus promotion needs no native WASM rebuild, Electron manifest change,
+or permanent resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+the next stale dependency guard exposed by the expanded graph runtime or
+select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
