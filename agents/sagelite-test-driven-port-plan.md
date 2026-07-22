@@ -64386,6 +64386,45 @@ SQLite database, source snapshots, and dry-run logs are under
 add signal delivery for worker-backed synthetic processes or continue with the
 next persisted graph/backend cluster.
 
+Graph raw-WASI subprocess signal delivery pass on 2026-07-22 UTC:
+
+Worker-backed raw-WASI subprocesses now participate in Python's ordinary
+process-termination contract. Each streaming child retains its Node worker
+behind the synthetic PID and shares an atomic completion record for the done
+flag, POSIX wait status, requested signal, and completion claim. `kill()`
+routes a matching synthetic PID to that worker, publishes the signal wait
+status before terminating it, and wakes a blocking waiter. The parent and
+worker atomically claim completion so a natural-exit race cannot replace
+`WTERMSIG` with an ordinary exit code. Reaping the child also releases the
+retained worker handle, while signaling an already completed zombie preserves
+its existing status.
+
+The infinite-output raw-WASI fixture now has a focused
+`Popen.terminate()` regression. Python reads the first streamed line while the
+child is live, sends `SIGTERM`, and observes return code `-15`. The complete
+kernel suite passes all 3 tests in 2 suites, and the complete Python-WASM suite
+passes all 59 tests in 16 suites. A separate Electron-shaped probe against the
+retained schema-202 relocated Sagelite resources launches the real
+`gentreeg 128` WASI command, terminates it through Python's public subprocess
+API, and likewise records `-15`.
+
+The durable Electron smoke contains the real `gentreeg` termination assertion.
+The manifest contract advances to schema 203 and
+`raw-wasi-subprocess-signals-v165`; all three manifest, forge-resource, and
+runtime contract programs pass with Electron TypeScript compilation. The
+complete smoke against the retained older resource snapshot passed every
+preceding check before reaching its already documented stale graph-convexity
+extension, so the focused real-nauty probe is the authoritative execution
+result for this kernel-only change.
+
+Validation also includes kernel and Python-WASM TypeScript compilation,
+JavaScript and shell syntax, standalone and corpus make-target dry runs, and
+`git diff --check`. This pass needs no native WASM rebuild, Sagelite source
+patch, or permanent resource restaging. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future runtime pass
+can add process-group semantics or continue with the next persisted
+graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

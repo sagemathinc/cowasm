@@ -108,6 +108,13 @@ export default function fork_exec(context) {
     return context.state.completedWasmProcesses;
   }
 
+  function wasmProcessWorkers(): Map<number, any> {
+    if (!(context.state.wasmProcessWorkers instanceof Map)) {
+      context.state.wasmProcessWorkers = new Map<number, any>();
+    }
+    return context.state.wasmProcessWorkers;
+  }
+
   function allocateWasmPid(): number {
     const processes = completedWasmProcesses();
     let pid = context.state.nextWasmPid ?? 0x40000000;
@@ -270,7 +277,10 @@ export default function fork_exec(context) {
       throw err;
     }
 
-    const completion = new Int32Array(new SharedArrayBuffer(8));
+    // [done, wait status, requested signal, completion claimed].  The parent
+    // and worker atomically claim completion before publishing a status, so a
+    // natural exit cannot race with signal delivery and replace its status.
+    const completion = new Int32Array(new SharedArrayBuffer(16));
     const workerSource = String.raw`
 const { workerData } = require("worker_threads");
 const fs = require("fs");
@@ -281,6 +291,7 @@ const nodeBindings = bindingsModule.default || bindingsModule;
 const completion = new Int32Array(workerData.completion);
 const sleepArray = new Int32Array(new SharedArrayBuffer(4));
 let status = 1;
+let terminatingSignal = 0;
 try {
   const bindings = {
     ...nodeBindings,
@@ -318,7 +329,7 @@ try {
       if (err && err.cowasmWasiProcessExit) {
         status = err.code || 0;
       } else if (err && err.cowasmWasiProcessSignal) {
-        status = 128;
+        terminatingSignal = Number(err.signal) || 1;
       } else {
         throw err;
       }
@@ -337,9 +348,15 @@ try {
   try { fs.writeSync(workerData.realFds[2], detail + "\n"); } catch (_err) {}
   status = 1;
 } finally {
-  Atomics.store(completion, 1, (status & 0xff) << 8);
-  Atomics.store(completion, 0, 1);
-  Atomics.notify(completion, 0);
+  if (Atomics.compareExchange(completion, 3, 0, 1) === 0) {
+    Atomics.store(
+      completion,
+      1,
+      terminatingSignal ? terminatingSignal & 0x7f : (status & 0xff) << 8,
+    );
+    Atomics.store(completion, 0, 1);
+    Atomics.notify(completion, 0);
+  }
 }
 `;
 
@@ -360,6 +377,7 @@ try {
       });
       worker.unref();
       completedWasmProcesses().set(pid, completion);
+      wasmProcessWorkers().set(pid, worker);
       return pid;
     } catch (err) {
       for (const fd of childRealFds) {

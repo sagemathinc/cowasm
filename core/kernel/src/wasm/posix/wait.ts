@@ -24,6 +24,9 @@ export default function wait(context) {
               : undefined;
         if (wstatus != null) {
           processes.delete(completedPid);
+          if (context.state.wasmProcessWorkers instanceof Map) {
+            context.state.wasmProcessWorkers.delete(completedPid);
+          }
           return { ret: completedPid, wstatus };
         }
       }
@@ -39,6 +42,9 @@ export default function wait(context) {
           : undefined;
     if (wstatus == null) return undefined;
     processes.delete(pid);
+    if (context.state.wasmProcessWorkers instanceof Map) {
+      context.state.wasmProcessWorkers.delete(pid);
+    }
     return { ret: pid, wstatus };
   }
 

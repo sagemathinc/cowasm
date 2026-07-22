@@ -44,6 +44,38 @@ function setSignalSetToMask(setPtr: number): void {
 
 export default function signal(context) {
   const { process } = context;
+
+  function signalWasmProcess(pid: number, signal: number): boolean {
+    const processes = context.state.completedWasmProcesses;
+    if (!(processes instanceof Map)) return false;
+    const completion = processes.get(pid);
+    if (!(completion instanceof Int32Array)) return false;
+
+    // A completed-but-unreaped process is a zombie.  POSIX kill succeeds for
+    // it without changing the status that waitpid will later report.
+    if (signal == 0 || Atomics.load(completion, 0) != 0) return true;
+
+    if (
+      completion.length >= 4 &&
+      Atomics.compareExchange(completion, 3, 0, 1) != 0
+    ) {
+      // The worker has already claimed completion. It will publish the
+      // natural exit status, so treat this like signaling a zombie.
+      return true;
+    }
+    if (completion.length >= 3) Atomics.store(completion, 2, signal);
+    Atomics.store(completion, 1, signal & 0x7f);
+    Atomics.store(completion, 0, 1);
+    Atomics.notify(completion, 0);
+
+    const workers = context.state.wasmProcessWorkers;
+    const worker = workers instanceof Map ? workers.get(pid) : undefined;
+    // terminate() is asynchronous, but publishing the wait status first lets
+    // the synchronous POSIX wait interface reap the synthetic child now.
+    worker?.terminate();
+    return true;
+  }
+
   function getSignalHandlers(): { [signum: number]: number } {
     if (context.state.signalHandlers == null) {
       context.state.signalHandlers = {};
@@ -61,6 +93,7 @@ export default function signal(context) {
 
     // int kill(pid_t pid, int sig);
     kill: (pid: number, signal: number): number => {
+      if (signalWasmProcess(pid, signal)) return 0;
       if (process.kill == null) return 0;
       process.kill(pid, signal);
       return 0;

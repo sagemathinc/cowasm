@@ -198,3 +198,32 @@ wasm_stream_returncode = wasm_stream.wait()
     rmSync(fixtureDir, { recursive: true, force: true });
   }
 });
+
+test("subprocess terminates a streaming raw WASI command", async () => {
+  const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
+  const fixture = join(fixtureDir, "stream.wasm");
+  try {
+    writeFileSync(fixture, WASI_SUBPROCESS_STREAM_FIXTURE);
+    chmodSync(fixture, 0o755);
+
+    const { exec, repr } = python;
+    exec(`
+import signal
+import subprocess
+wasm_terminated = subprocess.Popen(
+    [${JSON.stringify(fixture)}],
+    text=True,
+    stdout=subprocess.PIPE,
+)
+wasm_terminated_first = wasm_terminated.stdout.readline()
+wasm_terminated.terminate()
+wasm_terminated_returncode = wasm_terminated.wait()
+wasm_terminated.stdout.close()
+`);
+    expect(
+      repr("(wasm_terminated_first, wasm_terminated_returncode)")
+    ).toBe("('stream-line\\n', -15)");
+  } finally {
+    rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});

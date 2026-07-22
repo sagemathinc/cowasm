@@ -1514,7 +1514,11 @@ assert convexity.hull([3, 7]) == [2, 3, 7]
     console.log("sagelite-electron-ok graph convexity delivery smoke");
     console.log("sagelite-electron-start nauty WASI subprocess delivery smoke");
     await python.exec(String.raw`
+import signal
+import subprocess
+
 from sage.all import digraphs, graphs
+from sage.features.nauty import NautyExecutable
 
 all_graphs = list(graphs(4))
 assert len(all_graphs) == 11
@@ -1543,6 +1547,14 @@ assert len(orientations) == 13
 posets = list(digraphs.nauty_posetg("5 o"))
 assert len(posets) == 63
 assert all(graph.is_directed_acyclic() for graph in posets)
+
+streaming_child = subprocess.Popen(
+    [NautyExecutable("gentreeg").absolute_filename(), "128"],
+    stdout=subprocess.PIPE,
+)
+streaming_child.terminate()
+assert streaming_child.wait() == -signal.SIGTERM
+streaming_child.stdout.close()
 `);
     console.log("sagelite-electron-ok nauty WASI subprocess delivery smoke");
     console.log("sagelite-electron-start graph LaTeX color delivery smoke");
