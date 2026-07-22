@@ -65329,6 +65329,48 @@ pass can audit either of the other clean frontier candidates
 `sage/graphs/graph_decompositions/clique_separators.pyx`, or select another
 persisted backend/runtime cluster.
 
+Tutte-polynomial dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/tutte_polynomial.py` is removed now that the stripped graph
+runtime executes its deletion-contraction implementation directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact same source with only that guard removed record identical results:
+
+```text
+tutte_polynomial.py:       104 passed, 0 failed, 5 skipped
+optional:sage.modules:       0 passed, 0 failed, 2 skipped
+optional:sage.symbolic:      0 passed, 0 failed, 2 skipped
+optional:sage.libs.flint:    0 passed, 0 failed, 1 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+The active rows cover graph-modification context managers, edge-selection
+heuristics, cache keys, the recursive Tutte-polynomial computation, and
+representative tree, cycle, complete, Petersen, loop, bridge, and multiedge
+graphs. Both retained runner-version-132 dashboards have no block failures or
+file-level errors and a 100% pass rate across active rows. The remaining skips
+preserve their narrower module, symbolic, and FLINT metadata; they are no
+longer hidden behind the broad graph feature.
+
+`sage/graphs/tutte_polynomial.py` is now part of the curated pure-math corpus,
+raising it to 1,167 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and file-
+failure, lifecycle, and skip queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior validated source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,655 sections (1,140 `diff --git` and 515 legacy sections) and 4,838
+hunks. Authoritative databases, worker state, and the runtime-tested source are
+under `/tmp/cowasm-sagelite-tutte.OWYtDB/`. This source-only dependency cleanup
+and corpus promotion needs no native WASM rebuild, Electron manifest change,
+or permanent resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+`sage/graphs/graph_decompositions/clique_separators.pyx` or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
