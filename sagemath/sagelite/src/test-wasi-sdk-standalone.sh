@@ -2657,6 +2657,8 @@ EXAMPLES::
     True
     sage: Set([2, 1, 2])
     {1, 2}
+    sage: (GraphQuery.__name__, 'graph_data' in graph_db_info(), len(graphs_list.from_graph6([graphs.CompleteGraph(4).graph6_string()])))
+    ('GraphQuery', True, 1)
     sage: from sage.structure.sequence import Sequence
     sage: Sequence([1, 2, 3], cr=True)
     [1, 2, 3]
@@ -2815,7 +2817,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|74|60|0|14" ]; then
+if [ "$doctest_smoke_counts" != "passed|75|61|0|14" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -2909,7 +2911,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "74" ]; then
+if [ "$doctest_block_key_count" != "75" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."

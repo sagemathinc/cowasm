@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 131;
+const doctestRunnerVersion = 132;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1440,6 +1440,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.graphs.graph", ("Graph",)),
         ("sage.graphs.digraph", ("DiGraph",)),
         ("sage.graphs.bipartite_graph", ("BipartiteGraph",)),
+        ("sage.graphs.graph_database", ("GraphDatabase", "GenericGraphQuery", "GraphQuery", "graph_db_info")),
         ("sage.graphs.all", ("graphs", "digraphs")),
         ("sage.groups.abelian_gps.abelian_group", ("AbelianGroup",)),
         ("sage.groups.matrix_gps.linear", ("GL", "SL")),
@@ -1497,6 +1498,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
                     setattr(sage_all, name, value)
             except BaseException:
                 pass
+    try:
+        import sage.graphs.graph_list as graphs_list
+        namespace.setdefault("graphs_list", graphs_list)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "graphs_list"):
+                setattr(sage_all, "graphs_list", graphs_list)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
     try:
         import sage.algebras.catalog as algebras
         namespace.setdefault("algebras", algebras)

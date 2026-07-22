@@ -63726,6 +63726,67 @@ Electron coverage), rather than a manifest-only change. The next scheduled pass
 can address the graph database startup namespace cluster or design that
 execution contract.
 
+Graph database namespace and dependency pass on 2026-07-22 UTC:
+
+The WASI startup namespace now exposes the lightweight graph database and graph
+list surfaces provided by upstream `sage.graphs.all`: `GraphDatabase`,
+`GenericGraphQuery`, `GraphQuery`, `graph_db_info`, and `graphs_list`. The
+doctest runner seeds the same objects directly so focused source runs retain
+upstream Sage startup behavior even before a rebuilt resource bundle installs
+the updated `sage.all` module. Runner version 132 records this namespace
+contract, and the standalone doctest fixture exercises all three affected
+public surfaces without requiring the optional database package.
+
+Direct runtime probes showed that `graph_db_info()` and
+`graphs_list.from_sparse6(...)` already work in WASI. By contrast, constructing
+a `GraphQuery` correctly reaches Sage's `DatabaseGraphs` feature check and
+reports that `graphs.db` is absent. The four query and dependent display rows
+in `sage/graphs/graph.py` therefore carry the established
+`database_graphs` dependency metadata; independently runnable schema and graph
+list examples remain active.
+
+The retained runner-version-132 results record:
+
+```text
+historical complete graph.py:       924 passed, 10 failed, 392 skipped
+focused namespace/database rows:      2 passed,  0 failed,   4 skipped
+selected database-backed row:         0 passed,  1 failed,   0 skipped
+complete graph.py final:            926 passed,  4 failed, 396 skipped
+removed namespace/database failures:             6
+new failure keys:                                0
+```
+
+Explicitly selecting `database_graphs` restores the precise
+`FeatureNotPresentError: database_graphs is not available` diagnostic with
+`'graphs.db' not found in any of []`. The final complete dashboard contains
+exactly four `optional:database_graphs` skips. Its remaining failures are the
+two direct `nauty_geng` rows and their dependent isomorphism assertion, plus
+the isolated graph-LaTeX `matplotlib` import boundary.
+
+The authoritative proposed and reconstructed sources, historical, focused,
+selected-feature, namespace-smoke, and complete SQLite databases, worker state,
+pinned clean Sagelite clones, and patch logs are under
+`/tmp/cowasm-sagelite-graph-database.HJvVYK/`. The complete comparison uses the
+version-matched schema-193 resources retained under
+`/tmp/cowasm-sagelite-convexity.5AP6Un/dist/electron-resources/`. Every retained
+final database has a closed lifecycle and reports
+`PRAGMA integrity_check = ok`.
+
+Validation includes the exact standalone namespace fixture prompt, focused
+default and selected-feature replays, complete-file exact block-key comparison,
+saved failure-detail queries, SQLite lifecycle, tag, and integrity checks,
+Python source syntax, Node runner syntax, standalone shell syntax, exact
+sequential application of the accumulated patch to clean pinned Sagelite
+`f575cf6224f`, byte-for-byte comparison of the reconstructed and tested
+`graph.py`, reconstructed-tree and repository `git diff --check`, and
+accumulated-patch structure. The source patch now has 1,619 source sections
+(1,104 `diff --git` and 515 legacy sections) and 4,737 hunks. This pass changes
+only Python/source doctest metadata and the JavaScript doctest harness; it needs
+no native WASM rebuild or Electron manifest change. The external developer
+Sagelite checkout and its intentional changes remain untouched. The next
+scheduled pass can investigate the isolated graph-LaTeX import boundary or
+design the relocatable WASM subprocess contract required for `nauty_geng`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
