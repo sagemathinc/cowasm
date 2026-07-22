@@ -32254,3 +32254,88 @@ diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/ba
 @@ -736 +735 @@
 -        sage: g.chromatic_number()
 +        sage: g.chromatic_number()                                                     # needs sage.graphs.cliquer
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -391 +391,2 @@
+-    from sage.graphs.graph_database import GraphDatabase, GenericGraphQuery, GraphQuery, graph_db_info
++    lazy_import('sage.graphs.graph_database',
++                ['GraphDatabase', 'GenericGraphQuery', 'GraphQuery', 'graph_db_info'])
+diff --git a/src/sage/graphs/generators/distance_regular.pyx b/src/sage/graphs/generators/distance_regular.pyx
+--- a/src/sage/graphs/generators/distance_regular.pyx
++++ b/src/sage/graphs/generators/distance_regular.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -13,2 +12,2 @@
+-    sage: G = graphs.cocliques_HoffmannSingleton()
+-    sage: G.is_distance_regular()
++    sage: G = graphs.cocliques_HoffmannSingleton()                                      # needs sage.graphs.cliquer
++    sage: G.is_distance_regular()                                                       # needs sage.graphs.cliquer
+@@ -16,2 +15,2 @@
+-    sage: H = graphs.distance_regular_graph([15, 14, 10, 3, 1, 5, 12, 15])
+-    sage: H == G
++    sage: H = graphs.distance_regular_graph([15, 14, 10, 3, 1, 5, 12, 15])              # needs sage.graphs.cliquer
++    sage: H == G                                                                        # needs sage.graphs.cliquer
+@@ -75,2 +74,2 @@
+-        sage: G = graphs.cocliques_HoffmannSingleton()
+-        sage: G.is_distance_regular(True)
++        sage: G = graphs.cocliques_HoffmannSingleton()                                 # needs sage.graphs.cliquer
++        sage: G.is_distance_regular(True)                                              # needs sage.graphs.cliquer
+@@ -83,2 +82,2 @@
+-        sage: G = graphs.cocliques_HoffmannSingleton()
+-        sage: G.is_immutable()
++        sage: G = graphs.cocliques_HoffmannSingleton()                                 # needs sage.graphs.cliquer
++        sage: G.is_immutable()                                                         # needs sage.graphs.cliquer
+@@ -86 +85 @@
+-        sage: G.copy().is_immutable()
++        sage: G.copy().is_immutable()                                                  # needs sage.graphs.cliquer
+@@ -88 +87 @@
+-        sage: G.copy(immutable=True).is_immutable()
++        sage: G.copy(immutable=True).is_immutable()                                    # needs sage.graphs.cliquer
+@@ -90,2 +89,2 @@
+-        sage: G = graphs.cocliques_HoffmannSingleton(immutable=True)
+-        sage: G.is_immutable()
++        sage: G = graphs.cocliques_HoffmannSingleton(immutable=True)                   # needs sage.graphs.cliquer
++        sage: G.is_immutable()                                                         # needs sage.graphs.cliquer
+@@ -93 +92 @@
+-        sage: G.copy().is_immutable()
++        sage: G.copy().is_immutable()                                                  # needs sage.graphs.cliquer
+@@ -95 +94 @@
+-        sage: G.copy(immutable=False).is_immutable()
++        sage: G.copy(immutable=False).is_immutable()                                   # needs sage.graphs.cliquer
+@@ -1639,2 +1638,2 @@
+-        sage: G = graphs.GeneralisedHexagonGraph(7, 1)
+-        sage: G.is_distance_regular(True)
++        sage: G = graphs.GeneralisedHexagonGraph(7, 1)                                 # needs sage.libs.gap
++        sage: G.is_distance_regular(True)                                              # needs sage.libs.gap
+@@ -1642 +1641 @@
+-        sage: graphs.GeneralisedHexagonGraph(1, 1)
++        sage: graphs.GeneralisedHexagonGraph(1, 1)                                     # needs sage.libs.gap
+@@ -1793,3 +1792,3 @@
+-        sage: G = graphs.GeneralisedHexagonGraph(1, 8)
+-        sage: lines = _extract_lines(G)
+-        sage: len(lines)
++        sage: G = graphs.GeneralisedHexagonGraph(1, 8)                                 # needs sage.libs.gap
++        sage: lines = _extract_lines(G)                                                # needs sage.libs.gap
++        sage: len(lines)                                                               # needs sage.libs.gap
+@@ -1797 +1796 @@
+-        sage: type(lines)
++        sage: type(lines)                                                              # needs sage.libs.gap
+@@ -1799,2 +1798,2 @@
+-        sage: line = lines[0]
+-        sage: type(line)
++        sage: line = lines[0]                                                          # needs sage.libs.gap
++        sage: type(line)                                                               # needs sage.libs.gap
+@@ -1802 +1801 @@
+-        sage: line[0] in G  # the elements in the line are vertices
++        sage: line[0] in G  # the elements in the line are vertices                    # needs sage.libs.gap
+@@ -1861,3 +1860,3 @@
+-        sage: G = graphs.GeneralisedHexagonGraph(1, 8)
+-        sage: H = _line_graph_generalised_polygon(G)
+-        sage: H.is_distance_regular(True)
++        sage: G = graphs.GeneralisedHexagonGraph(1, 8)                                 # needs sage.libs.gap
++        sage: H = _line_graph_generalised_polygon(G)                                  # needs sage.libs.gap
++        sage: H.is_distance_regular(True)                                              # needs sage.libs.gap
+@@ -2840 +2839 @@
+-        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
++        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)         # needs sage.libs.gap

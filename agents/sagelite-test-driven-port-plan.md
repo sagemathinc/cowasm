@@ -66406,6 +66406,76 @@ changes remain untouched. A future scheduled pass can audit the remaining
 `distance_regular.pyx` graph-generator guard or select another persisted
 graph/runtime cluster.
 
+Distance-regular generator dependency, lazy graph-database startup, and corpus-
+promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/generators/distance_regular.pyx` hid 112 runnable graph examples
+behind the broad graph profile. The exact Hoffmann-Singleton and generalized-
+polygon prompts now carry their narrower `sage.graphs.cliquer` or
+`sage.libs.gap` metadata, including state-dependent followups, and the broad
+guard is removed.
+
+A controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay of the exact same source
+after removing only that guard both record:
+
+```text
+distance_regular.pyx: 112 passed, 0 failed, 156 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have 268 block rows and no block failures or file-level
+errors. Their block order, source hashes, expected output, comparator modes,
+statuses, actual output, and failure metadata are byte-for-byte identical.
+The active coverage includes delivered distance-regular constructors,
+intersection arrays, graph recognition, and pure graph transformations. The
+156 skips preserve their exact Cliquer, GAP, PARI, finite-ring, module,
+combinatorics, database, internet, long-time, symbolic, and deferred-test
+boundaries; the leading narrow clusters are 34 AtlasRep/internet rows, 26 GAP
+rows, and 14 Cliquer rows.
+
+Rebuilding the standalone resources exposed a separate startup regression
+from the earlier graph-database promotion: eager `GraphDatabase` startup names
+made plain WASI `import sage.all` require the unavailable `_sqlite3` module.
+Those names are now Sage lazy imports. Plain WASI and Node `sage.all` imports
+both pass, while the Node smoke still resolves `GraphQuery`, `graph_db_info`,
+and `graphs_list` successfully. The standalone optional/deferred smoke totals
+are updated to include that already-present graph-database row:
+
+```text
+optional feature: passed|75|66|0|9
+deferred feature: failed|75|62|1|12
+```
+
+The first complete resource rebuild also revealed that the ignored build copy
+predated the already-committed direct-argv patches for directed nauty tools.
+After synchronizing those existing patch sections, an Electron-shaped focused
+diagnostic passes `geng`, `genbgL`, `genktreeg`, `gentreeg` including the
+128-vertex case, `gentourng`, `directg`, `genposetg`, and subprocess
+termination. The complete standalone harness then finishes successfully with
+its Meson configure/compile/install, WASI and Node imports, doctest runner,
+Electron resources, relocation, and followup checks.
+
+`sage/graphs/generators/distance_regular.pyx` is now part of the curated pure-
+math corpus, raising it to 1,190 non-comment entries with no duplicates.
+Validation includes the guarded/default complete module replays, saved block-
+and file-failure, lifecycle, latest-run, and skip queries, exact cross-database
+row comparison, SQLite integrity, shell syntax, corpus uniqueness and make-
+target dry run, target-specific zero-fuzz accumulated-patch replay with byte-
+for-byte source comparison, full standalone validation, accumulated-patch
+structure, and `git diff --check`. The accumulated source patch now has 1,681
+file sections (1,166 `diff --git` and 515 legacy sections) and 4,958 hunks.
+Authoritative dashboards and comparison data are under
+`/tmp/cowasm-sagelite-distance-validation.TWjR93/`; the exact target replay is
+under `/tmp/cowasm-sagelite-distance-target-replay.yCKFVp/`. The durable change
+needs no new native module, runner-version bump, Electron manifest change, or
+permanent resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+the next stale dependency guard exposed by the expanded graph runtime or
+select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
