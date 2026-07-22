@@ -2023,9 +2023,9 @@ run_node_import \
 assert lrcalc.lrcoef([2, 1], [1], [2]) == 1
 print('sagelite-node-ok lrcalc Python extension smoke')"
 run_node_import \
-  "basic graph polynomial boundary smoke" \
+  "basic graph polynomial and GAP-free ordering smoke" \
   "import sage.rings.all
-from sage.all import BipartiteGraph, DiGraph, digraphs, graphs
+from sage.all import BipartiteGraph, DiGraph, GF, Matrix, digraphs, graphs
 from sage.graphs.graph import Graph
 from sage.graphs.graph_generators_pyx import RandomGNP
 assert graphs.PathGraph(3).order() == 3
@@ -2035,6 +2035,20 @@ assert random_graph.order() == 12
 assert random_graph.size() > 0
 assert random_graph.edges(sort=True, labels=False) == RandomGNP(12, .25, seed=0).edges(sort=True, labels=False)
 assert graphs.RandomGNP(12, .25, seed=0).edges(sort=True, labels=False) == random_graph.edges(sort=True, labels=False)
+gray_graph = graphs.GrayGraph()
+assert gray_graph.order() == 54
+assert gray_graph.size() == 81
+ordering_matrix = Matrix(GF(2), [[0, 1], [1, 0]])
+row_ordering, column_ordering = ordering_matrix.doubly_lexical_ordering()
+assert repr(row_ordering) == '(1,2)'
+assert repr(column_ordering) == '()'
+assert row_ordering.dict() == {1: 2, 2: 1}
+ordering_matrix.permute_rows_and_columns(row_ordering, column_ordering)
+assert ordering_matrix == Matrix(GF(2), [[1, 0], [0, 1]])
+assert not graphs.CycleGraph(6).is_chordal_bipartite()
+is_chordal, certificate = graphs.Grid2dGraph(2, 6).is_chordal_bipartite(certificate=True)
+assert is_chordal
+assert len(certificate) == 16
 G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
 assert DiGraph(G).order() == 3
@@ -2048,7 +2062,7 @@ else:
 assert str(G.matching_polynomial()) == 'x^3 - 2*x'
 assert G.spanning_trees_count() == 1
 assert G.rank_decomposition()[0] == 1
-print('sagelite-node-ok basic graph polynomial boundary smoke')"
+print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
 run_node_import \
   "high-byte string literal delivery smoke" \
@@ -2105,6 +2119,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sparse-free-module-basis-matrix-v150"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-symbolic-function-identity-v151"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-random-gnp-generator-v152"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-gap-free-graph-ordering-v153"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

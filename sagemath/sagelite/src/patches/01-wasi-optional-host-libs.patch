@@ -30529,6 +30529,92 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 @@ -6518 +6518 @@
 -           sage: for i in range(20):
 +           sage: for i in range(20):                                                    # needs sage.graphs.cliquer
+diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
+--- a/src/sage/matrix/matrix_mod2_dense.pyx
++++ b/src/sage/matrix/matrix_mod2_dense.pyx
+@@ -164,0 +165,52 @@
++
++class _DoublyLexicalPermutation:
++    """A small GAP-free permutation result for doubly lexical ordering."""
++
++    def __init__(self, values):
++        self._values = tuple(values)
++
++    def __call__(self, value):
++        return self._values[value - 1]
++
++    def __iter__(self):
++        return iter(self._values)
++
++    def __len__(self):
++        return len(self._values)
++
++    def __repr__(self):
++        cycles = self.cycle_tuples()
++        if not cycles:
++            return "()"
++        return "".join("({})".format(",".join(map(str, cycle)))
++                       for cycle in cycles)
++
++    def __eq__(self, other):
++        try:
++            return self.dict() == other.dict()
++        except AttributeError:
++            return False
++
++    def __hash__(self):
++        return hash(self._values)
++
++    def dict(self):
++        return dict(enumerate(self._values, start=1))
++
++    def cycle_tuples(self):
++        cycles = []
++        seen = set()
++        for start in range(1, len(self._values) + 1):
++            if start in seen:
++                continue
++            cycle = []
++            value = start
++            while value not in seen:
++                seen.add(value)
++                cycle.append(value)
++                value = self._values[value - 1]
++            if len(cycle) > 1:
++                cycles.append(tuple(cycle))
++        return cycles
++
++
+@@ -2317,7 +2369,3 @@
+-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+-        from sage.groups.perm_gps.permgroup_element import make_permgroup_element_v2
+-        symmetric_group_nrows = SymmetricGroup(self._nrows)
+-        symmetric_group_ncols = SymmetricGroup(self._ncols)
+-
+         if self._nrows == 0 or self._ncols == 0:
+-            return symmetric_group_nrows.one(), symmetric_group_ncols.one()
++            return (_DoublyLexicalPermutation(range(1, self._nrows + 1)),
++                    _DoublyLexicalPermutation(range(1, self._ncols + 1)))
+@@ -2377,2 +2425,2 @@
+-        row_ordering = make_permgroup_element_v2(symmetric_group_nrows, row_swapped, symmetric_group_nrows.domain())
+-        col_ordering = make_permgroup_element_v2(symmetric_group_ncols, col_swapped, symmetric_group_ncols.domain())
++        row_ordering = _DoublyLexicalPermutation(row_swapped)
++        col_ordering = _DoublyLexicalPermutation(col_swapped)
+diff --git a/src/sage/graphs/generators/smallgraphs.py b/src/sage/graphs/generators/smallgraphs.py
+--- a/src/sage/graphs/generators/smallgraphs.py
++++ b/src/sage/graphs/generators/smallgraphs.py
+@@ -3229,3 +3229,8 @@
+-        o = g.automorphism_group(orbits=True)[-1]
+-        g._circle_embedding(o[0], center=(0, 0), radius=1)
+-        g._circle_embedding(o[1], center=(0, 0), radius=.6, shift=-.5)
++        try:
++            o = g.automorphism_group(orbits=True)[-1]
++        except ModuleNotFoundError as error:
++            if error.name != 'sage.libs.gap.libgap':
++                raise
++        else:
++            g._circle_embedding(o[0], center=(0, 0), radius=1)
++            g._circle_embedding(o[1], center=(0, 0), radius=.6, shift=-.5)
 diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 --- a/src/sage/graphs/graph.py
 +++ b/src/sage/graphs/graph.py

@@ -63442,6 +63442,72 @@ Sagelite checkout and its intentional changes remain untouched. The next
 scheduled pass can address the leading `sage.libs.gap.libgap` graph boundary or
 another persisted runtime cluster.
 
+Graph GAP-free ordering runtime pass on 2026-07-22 UTC:
+
+The leading `sage.libs.gap.libgap` cluster was partly an accidental dependency,
+not a reason to defer the underlying pure graph algorithms. The M4RI-backed
+`Matrix_mod2_dense.doubly_lexical_ordering()` implementation imported
+`SymmetricGroup` only to package its already-computed row and column orderings.
+That import pulled in the unavailable GAP-backed permutation-group stack before
+`Graph.is_chordal_bipartite()` could inspect a cycle or certificate. The WASI
+source now returns a small GAP-free permutation-compatible object with the
+`dict()`, `cycle_tuples()`, callable, iterable, equality, hash, and cycle-display
+behavior used by the matrix and graph callers. Existing matrix ordering
+doctests retain their historical `(1,2)` and `()` output and continue to work
+with `permute_rows_and_columns()`.
+
+The three remaining direct libgap failures were presentation-only construction
+failures in `graphs.GrayGraph()`: its default graph was already complete before
+an automorphism group was requested solely to compute a circle layout. In the
+stripped profile, the constructor now catches exactly the missing
+`sage.libs.gap.libgap` module and returns the same 54-vertex, 81-edge graph
+without that optional layout refinement; unrelated `ModuleNotFoundError`
+exceptions are still raised. GAP-backed transitivity property rows remain
+explicit `sage.libs.gap` skips.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:        881 passed, 70 failed, 375 skipped
+focused graph cluster prototype:      20 passed,  0 failed,   3 skipped
+selected matrix ordering rows:        17 passed,  0 failed,   0 skipped
+complete graph.py final:              901 passed, 50 failed, 375 skipped
+removed libgap/cascade failures:                  20
+new failures:                                      0
+remaining sage.libs.gap.libgap failures:           0
+```
+
+The removed set comprises all 11 direct missing-libgap rows plus nine dependent
+certificate, name, output, and validation failures. The final complete
+dashboard has a closed lifecycle, no file-level error,
+`PRAGMA integrity_check = ok`, and an exact block-key comparison against the
+historical dashboard finds no new failures. The next leading graph cluster is
+the nine-row missing `sage.libs.symmetrica.symmetrica` boundary.
+
+The standalone graph smoke now checks default Gray-graph construction, exact
+GAP-free row/column ordering representation and mapping, matrix permutation, a
+non-chordal six-cycle, and a positive grid-graph certificate. Electron manifest
+schema 191 retains its shape and advances the mirrored smoke contract to
+`gap-free-graph-ordering-v153`. The final manifest records 556 Electron side
+modules and 725 required-resource hashes.
+
+The authoritative pinned source, proposed and exactly reconstructed sources,
+prototype and final compiled resources, historical/focused/final SQLite
+databases, worker state, failed dirty-source build copy, and clean full-build
+logs are under `/tmp/cowasm-sagelite-gap-free-graph.NANKP3/`. Validation
+includes patch and shell syntax, JavaScript manifest-validator syntax, exact
+application of the new sections to the previously validated source, complete
+zero-reject application to clean pinned Sagelite `f575cf6224f`, byte-for-byte
+source comparisons, focused Cython compile and WASM link, selected matrix
+doctests, the complete standalone configure/compile/install/import/doctest and
+Electron staging/relocation ladder, complete-file failure-set comparison, saved
+failure-cluster and lifecycle queries, SQLite integrity, and `git diff --check`.
+The accumulated source patch now has 1,616 source sections (1,100 `diff --git`
+and 516 legacy sections) and 4,720 hunks. The external developer Sagelite
+checkout and its intentional changes remain untouched. The next scheduled pass
+can address the isolated Symmetrica graph boundary or another persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -356,6 +356,8 @@ expectedSageliteManifest.smokeContract +=
   "-symbolic-function-identity-v151";
 expectedSageliteManifest.smokeContract +=
   "-random-gnp-generator-v152";
+expectedSageliteManifest.smokeContract +=
+  "-gap-free-graph-ordering-v153";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
