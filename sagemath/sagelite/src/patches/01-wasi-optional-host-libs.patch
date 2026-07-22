@@ -32173,3 +32173,8 @@ diff --git a/src/sage/graphs/bipartite_graph.py b/src/sage/graphs/bipartite_grap
 +            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])                              # needs sage.libs.linbox
 +            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                    # needs sage.libs.linbox
 +            sage: B.reduced_adjacency_matrix(base_ring=RDF)                            # needs sage.libs.linbox
+diff --git a/src/sage/graphs/generators/chessboard.py b/src/sage/graphs/generators/chessboard.py
+--- a/src/sage/graphs/generators/chessboard.py
++++ b/src/sage/graphs/generators/chessboard.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs

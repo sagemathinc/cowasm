@@ -66242,6 +66242,49 @@ checkout and its intentional changes remain untouched. A future scheduled
 pass can audit another stale graph/backend dependency guard or select the next
 persisted runtime cluster.
 
+Chessboard-generator dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/generators/chessboard.py` is removed now that the stripped graph
+runtime exercises the pure-Python chessboard generators directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact same source with only that guard removed record identical results:
+
+```text
+chessboard.py: 49 passed, 0 failed, 3 skipped
+long time:      0 passed, 0 failed, 2 skipped
+optional:sage.numerical.mip:
+                0 passed, 0 failed, 1 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both runner-version-133 dashboards have no block failures or file-level
+errors and a 100% pass rate across active rows. Their 49 active rows have
+identical block order, source hashes, statuses, expected output, and actual
+output. The active coverage includes generalized multidimensional chessboard
+construction plus bishop, king, knight, queen, and rook graph generators,
+including radius restrictions, relabeling, immutable output, and input
+validation. The three retained skips preserve their narrower long-time and
+mixed-integer-programming metadata; they are no longer hidden behind the broad
+graph feature.
+
+`sage/graphs/generators/chessboard.py` is now part of the curated pure-math
+corpus, raising it to 1,187 non-comment entries with no duplicates. Validation
+includes the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness
+and make-target dry run, exact zero-fuzz application of the new final patch
+section to the prior guarded source with byte-for-byte source comparison,
+accumulated-patch structure, and `git diff --check`. The accumulated source
+patch now has 1,677 sections (1,162 `diff --git` and 515 legacy sections) and
+4,917 hunks. Authoritative databases, the exact patch-replay tree, and the
+runtime-tested source are under
+`/tmp/cowasm-sagelite-chessboard.PgMhEJ/`. This pure-Python source cleanup
+needs no native WASM rebuild, Electron manifest change, or resource restaging.
+The external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit another stale graph generator
+dependency guard or select the next persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
