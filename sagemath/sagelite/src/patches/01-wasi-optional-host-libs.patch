@@ -31984,3 +31984,10 @@ diff --git a/src/sage/graphs/centrality.pyx b/src/sage/graphs/centrality.pyx
 -# sage.doctest: needs sage.graphs
  r"""
  Centrality
+diff --git a/src/sage/graphs/convexity_properties.pyx b/src/sage/graphs/convexity_properties.pyx
+--- a/src/sage/graphs/convexity_properties.pyx
++++ b/src/sage/graphs/convexity_properties.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Convexity properties of graphs

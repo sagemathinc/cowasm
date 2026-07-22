@@ -66091,6 +66091,59 @@ future scheduled pass can audit the already-buildable
 `sage/graphs/convexity_properties.pyx` guard or select another persisted
 graph/runtime cluster.
 
+Convexity-properties delivery and corpus-promotion pass on 2026-07-22 UTC:
+
+The broad `sage.graphs` guard on
+`sage/graphs/convexity_properties.pyx` initially exposed a side-module
+delivery cluster rather than a doctest-semantic failure. The first historical
+replay recorded 30 passed, 44 failed, and 4 skipped rows: 22 direct
+`ModuleNotFoundError` rows for `sage.graphs.convexity_properties` and 22
+dependent name or output failures. The active Meson configuration already
+classified `convexity_properties` with graph-core extensions, but the retained
+copy-on-write runtime bundle predated its focused build and contained only the
+source and declaration files.
+
+A narrow C/WASM target build produced a side module with a
+`dylink.0` section and `PyInit_convexity_properties` export. After staging that
+module and regenerating the temporary Electron manifest, the formerly missing
+import rerun passes. A complete rebuilt historical replay with `sage.graphs`
+selected and a default-profile replay of the exact same source with only the
+broad guard removed record:
+
+```text
+convexity_properties.pyx: 74 passed, 0 failed, 4 skipped
+optional:sage.numerical.mip: 0 passed, 0 failed, 4 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both runner-version-133 dashboards have no block failures or file-level
+errors and a 100% pass rate across active rows. Their 74 active rows have
+identical block order, source hashes, and statuses. The only actual-output
+differences are six expected object-address values accepted by ellipsis. The
+active coverage includes graph hulls, hull membership and convexity, geodetic
+closure and geodetic graph recognition, directed and undirected inputs,
+mutable and immutable backends, graph products, and argument validation. The
+four retained skips preserve their narrower mixed-integer-programming
+metadata.
+
+`sage/graphs/convexity_properties.pyx` is now part of the curated pure-math
+corpus, raising it to 1,184 non-comment entries with no duplicates. Validation
+includes the initial delivery-cluster dashboard, focused rebuilt import,
+historical and default complete module replays, saved block- and file-failure,
+lifecycle, and skip queries, SQLite integrity, the narrow native side-module
+build and export audit, corpus uniqueness and make-target dry run, exact
+zero-fuzz application of the new final patch section with byte-for-byte source
+comparison, accumulated-patch syntax and structure, and `git diff --check`.
+The accumulated source patch now has 1,674 sections (1,159 `diff --git` and
+515 legacy sections) and 4,866 hunks. Authoritative databases, worker state,
+the copy-on-write resource bundle, rebuilt side module, patch logs, and
+runtime-tested source are under
+`/tmp/cowasm-sagelite-convexity.ylyuSL/`. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future scheduled
+pass can audit another stale graph/backend dependency guard or select the next
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
