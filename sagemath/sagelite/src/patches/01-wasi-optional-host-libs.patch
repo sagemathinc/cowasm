@@ -30189,3 +30189,21 @@ diff --git a/src/sage/all.py b/src/sage/all.py
 +    from sage.modules.free_quadratic_module import FreeQuadraticModule
 +    from sage.modules.free_module_element import vector, random_vector, zero_vector
 +    lazy_import('sage.modules.free_quadratic_module_integer_symmetric', 'IntegralLattice')
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -2161,0 +2162 @@
++            sage: # needs sage.libs.flint
+@@ -2223 +2224 @@
+-            sage: V.sparse_module()
++            sage: V.sparse_module()  # needs sage.libs.flint
+@@ -7048,0 +7050 @@
++            sage: # needs sage.libs.flint
+@@ -7277,0 +7280 @@
++            sage: # needs sage.libs.flint
+@@ -8044,0 +8048 @@
++            sage: # needs sage.libs.flint
+@@ -8240,0 +8245 @@
++            sage: # needs sage.libs.flint
+@@ -8374,0 +8380 @@
++            sage: # needs sage.libs.flint

@@ -62901,6 +62901,57 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 scheduled pass can address the repeated disabled-FLINT integer-polynomial
 conversion cluster now isolated by the complete `free_module.py` dashboard.
 
+Free-module sparse-rational FLINT dependency pass on 2026-07-22 UTC:
+
+The seven remaining disabled-FLINT roots in `sage/modules/free_module.py`
+now carry explicit `sage.libs.flint` dependency metadata.  They cover sparse
+rational span conversion, sparse-module conversion, sparse submodules with
+user bases, echelon coordinates, and the two sparse submodule display paths.
+Standalone directives keep each root and its dependent assertions together;
+the isolated `V.sparse_module()` row uses an inline tag because its setup is
+independently runnable.
+
+The retained runner-version-130 results record:
+
+```text
+complete module before:       1,435 passed, 19 failed, 136 skipped
+focused seven-root replay:         0 passed,  0 failed,   7 skipped
+complete module final:        1,435 passed,  5 failed, 150 skipped
+selected large sparse root:        0 passed,  1 failed,   0 skipped
+removed FLINT/cascade failures:   14
+new failures:                      0
+```
+
+The selected-feature replay reaches the expected explicit
+`ImportError: FLINT integer polynomial side module is disabled on CoWasm
+WASI` boundary.  A small 1-by-3 focused span can complete in a fresh worker,
+but the complete module and the larger sparse-submodule representative both
+deterministically reach the disabled backend; the dependency metadata is kept
+at the affected complete-run regions rather than widened to the module.
+The final dashboard's only failures are the existing SciPy quotient cluster
+(one root plus three cascades) and one exception-representation mismatch.
+
+The authoritative focused, complete, and selected-feature SQLite databases,
+worker state, proposed source, and exact patch reconstruction are under
+`/tmp/cowasm-sagelite-free-module-flint-audit.7j07Dm/`.  The focused database
+has a closed passing lifecycle with seven `optional:sage.libs.flint` skips;
+the complete database has a closed failed lifecycle with exactly the five
+independent pre-existing failures.  Every database reports
+`PRAGMA integrity_check = ok`.
+
+Validation includes the seven-line focused replay, the complete-module
+before/after failure-set comparison, the explicitly selected large sparse
+replay, SQLite lifecycle, tag, and integrity checks, accumulated-patch syntax,
+exact application of the new final section to the previously validated pinned
+reconstruction, byte-for-byte comparison with the tested source, and
+`git diff --check`.  The accumulated patch now has 1,599 source sections
+(1,083 `diff --git` and 516 legacy sections) and 4,624 hunks.  This is
+source-only doctest dependency metadata; it needs no native WASM rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+scheduled pass can address the isolated SciPy quotient dependency cluster or
+the exception-representation mismatch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
