@@ -1071,6 +1071,7 @@ src/sage/graphs/cographs.py
 src/sage/graphs/digraph_generators.py
 src/sage/graphs/line_graph.pyx
 src/sage/graphs/matching_covered_graph.py
+src/sage/graphs/matching.py
 src/sage/graphs/print_graphs.py
 src/sage/graphs/hypergraph_generators.py
 src/sage/graphs/graph_generators.py

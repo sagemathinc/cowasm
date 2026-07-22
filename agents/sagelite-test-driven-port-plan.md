@@ -64639,6 +64639,50 @@ intentional changes remain untouched. A future scheduled pass can audit
 another stale file-wide graph dependency or select the next persisted
 backend/runtime cluster.
 
+Graph matching dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/matching.py` is removed now that the stripped graph runtime
+executes the module's native matching algorithms directly. A complete
+historical replay with `sage.graphs` selected recorded 214 passed, 0 failed,
+and 49 skipped blocks. Removing the broad guard and replaying the exact source
+under the default node profile records the identical active coverage:
+
+```text
+matching.py:                 214 passed, 0 failed, 49 skipped
+optional:random:               0 passed, 0 failed, 18 skipped
+optional:networkx:             0 passed, 0 failed, 14 skipped
+optional:sage.numerical.mip:   0 passed, 0 failed,  7 skipped
+optional:sage.networkx:        0 passed, 0 failed,  6 skipped
+optional:numpy:                0 passed, 0 failed,  2 skipped
+optional:sage.libs.flint:      0 passed, 0 failed,  2 skipped
+run lifecycle:                 passed and closed
+SQLite integrity:              ok
+```
+
+The retained runner-version-132 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows. The remaining skips preserve
+the module's existing narrower dependencies for randomized checks, NetworkX,
+mixed-integer programming, NumPy, and FLINT-backed matching-polynomial
+verification; they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/matching.py` is now part of the curated pure-math corpus, raising
+it to 1,150 non-comment entries with no duplicates. Validation includes the
+historical and default complete module replays, saved block- and file-failure,
+lifecycle, and skip queries, SQLite integrity, Python source compilation,
+corpus uniqueness and make-target dry run, zero-fuzz application of the new
+final patch section to the prior validated graph source, byte-for-byte
+comparison with the runtime-tested source, accumulated-patch syntax and
+structure, and `git diff --check`. The accumulated source patch now has 1,638
+sections (1,123 `diff --git` and 515 legacy sections) and 4,818 hunks.
+Authoritative databases, worker state, patch logs, and source reconstruction
+are under `/tmp/cowasm-sagelite-matching.rI1RR2/`. This source-only dependency
+cleanup and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+another stale file-wide graph dependency or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
