@@ -1122,6 +1122,7 @@ src/sage/graphs/generators/distance_regular.pyx
 src/sage/graphs/pq_trees.py
 src/sage/graphs/graph_decompositions/bandwidth.pyx
 src/sage/graphs/graph_decompositions/cutwidth.pyx
+src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 src/sage/graphs/graph_decompositions/rankwidth.pyx
 src/sage/graphs/graph_decompositions/graph_products.pyx
 src/sage/graphs/graph_decompositions/clique_separators.pyx

@@ -66523,6 +66523,56 @@ changes remain untouched. A future scheduled pass can audit the remaining
 `tree_decomposition.pyx`, `vertex_separation.pyx`, `hyperbolicity.pyx`, or
 another persisted graph/backend cluster.
 
+Tree-decomposition dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_decompositions/tree_decomposition.pyx` hid 216 runnable
+graph-core doctests. A broad-profile diagnostic initially recorded 216 passed,
+53 failed, and 4 skipped rows. The failures formed one dependency boundary:
+32 direct treewidth computations imported the unavailable
+`sage.graphs.cliquer.clique_number`, while 21 assertions and transformations
+were state-dependent followups of those failed computations.
+
+The exact Cliquer-backed prompts and their stateful followups now carry
+`sage.graphs.cliquer` metadata, and the broad file guard is removed. A
+controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay after removing that guard
+both record:
+
+```text
+tree_decomposition.pyx: 216 passed, 0 failed, 57 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have 273 block rows and no block failures or file-level
+errors. Their block order, source, expected output, comparator modes, statuses,
+actual output, and failure metadata are identical. The 57 skips preserve 53
+Cliquer-dependent rows, including one random-output display row, and four
+TDLib-dependent rows. The 216 active rows cover treelength, validation,
+reduction, width and length measurements, nice-tree transformations that do
+not require a fresh Cliquer-backed certificate, decomposition helpers, and
+input validation.
+
+`sage/graphs/graph_decompositions/tree_decomposition.pyx` is now part of the
+curated pure-math corpus, raising it to 1,192 non-comment entries with no
+duplicates. Validation includes the initial failure-cluster dashboard,
+guarded and default complete module replays, saved block- and file-failure,
+lifecycle, latest-run, and skip queries, exact row-level cross-database
+comparison, SQLite integrity, corpus uniqueness and make-target dry run,
+exact zero-fuzz application of both accumulated target patch sections from the
+pristine pinned Sagelite commit with byte-for-byte source comparison,
+accumulated-patch syntax and structure, and `git diff --check`. The accumulated
+source patch now has 1,683 sections (1,168 `diff --git` and 515 legacy
+sections) and 4,998 hunks. Authoritative databases, worker state, comparison
+inputs, and the exact replay tree are under
+`/tmp/cowasm-sagelite-tree-decomposition.fFYVwb/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future scheduled pass can audit the remaining
+`vertex_separation.pyx`, `hyperbolicity.pyx`, or another persisted
+graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -32345,3 +32345,152 @@ diff --git a/src/sage/graphs/graph_decompositions/cutwidth.pyx b/src/sage/graphs
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
+--- a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
++++ b/src/sage/graphs/graph_decompositions/tree_decomposition.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -43 +42 @@
+-    sage: T.treewidth()
++    sage: T.treewidth()  # needs sage.graphs.cliquer
+@@ -50 +49 @@
+-    sage: [graphs.CycleGraph(n).treewidth() for n in range(3, 11)]
++    sage: [graphs.CycleGraph(n).treewidth() for n in range(3, 11)]  # needs sage.graphs.cliquer
+@@ -57 +56 @@
+-    sage: [graphs.CompleteGraph(n).treewidth() for n in range(3, 11)]
++    sage: [graphs.CompleteGraph(n).treewidth() for n in range(3, 11)]  # needs sage.graphs.cliquer
+@@ -137,2 +136,2 @@
+-        sage: T = G.treewidth(certificate=True)
+-        sage: is_valid_tree_decomposition(G, T)
++        sage: T = G.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: is_valid_tree_decomposition(G, T)  # needs sage.graphs.cliquer
+@@ -144 +143 @@
+-        sage: T = G.treewidth(certificate=True)
++        sage: T = G.treewidth(certificate=True)  # needs sage.graphs.cliquer
+@@ -152 +151 @@
+-        sage: T = G.treewidth(certificate=True)
++        sage: T = G.treewidth(certificate=True)  # needs sage.graphs.cliquer
+@@ -154 +153 @@
+-        sage: is_valid_tree_decomposition(G, T)
++        sage: is_valid_tree_decomposition(G, T)  # needs sage.graphs.cliquer
+@@ -278 +277 @@
+-        sage: T = G.treewidth(certificate=True)
++        sage: T = G.treewidth(certificate=True)  # needs sage.graphs.cliquer
+@@ -281 +280 @@
+-        sage: T == reduced_tree_decomposition(T)
++        sage: T == reduced_tree_decomposition(T)  # needs sage.graphs.cliquer
+@@ -340,2 +339,2 @@
+-        sage: T = G.treewidth(certificate=True)
+-        sage: width_of_tree_decomposition(G, T, check=True)
++        sage: T = G.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: width_of_tree_decomposition(G, T, check=True)  # needs sage.graphs.cliquer
+@@ -390,2 +389,2 @@
+-        sage: T = G.treewidth(algorithm='sage', certificate=True)
+-        sage: is_valid_tree_decomposition(G, T)
++        sage: T = G.treewidth(algorithm='sage', certificate=True)  # needs sage.graphs.cliquer
++        sage: is_valid_tree_decomposition(G, T)  # needs sage.graphs.cliquer
+@@ -503 +502 @@
+-        sage: petersen.treewidth(algorithm='sage')
++        sage: petersen.treewidth(algorithm='sage')  # needs sage.graphs.cliquer
+@@ -505 +504 @@
+-        sage: petersen.treewidth(algorithm='sage', certificate=True)
++        sage: petersen.treewidth(algorithm='sage', certificate=True)  # needs sage.graphs.cliquer
+@@ -519 +518 @@
+-        sage: petersen.treewidth(algorithm='sage', certificate=True, nice=True)
++        sage: petersen.treewidth(algorithm='sage', certificate=True, nice=True)  # needs sage.graphs.cliquer
+@@ -526 +525 @@
+-        sage: graphs.Grid2dGraph(2,5).treewidth()
++        sage: graphs.Grid2dGraph(2,5).treewidth()  # needs sage.graphs.cliquer
+@@ -528 +527 @@
+-        sage: graphs.Grid2dGraph(3,5).treewidth()
++        sage: graphs.Grid2dGraph(3,5).treewidth()  # needs sage.graphs.cliquer
+@@ -535 +534 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()  # needs sage.graphs.cliquer
+@@ -537 +536 @@
+-        sage: g.treewidth(kmin=2, algorithm='sage')
++        sage: g.treewidth(kmin=2, algorithm='sage')  # needs sage.graphs.cliquer
+@@ -545 +544 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()  # needs sage.graphs.cliquer
+@@ -548 +547 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()  # needs sage.graphs.cliquer
+@@ -550 +549 @@
+-        sage: g.treewidth(certificate=True)
++        sage: g.treewidth(certificate=True)  # needs sage.graphs.cliquer
+@@ -567 +566 @@
+-        sage: g.treewidth(certificate=True).is_tree()
++        sage: g.treewidth(certificate=True).is_tree()  # needs sage.graphs.cliquer
+@@ -582,2 +581,2 @@
+-        sage: td = g.treewidth(certificate=True)
+-        sage: for bag in td:
++        sage: td = g.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: for bag in td:  # needs sage.graphs.cliquer
+@@ -585 +584 @@
+-        sage: g.size()
++        sage: g.size()  # needs sage.graphs.cliquer
+@@ -594 +593 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()  # needs sage.graphs.cliquer
+@@ -600,2 +599,2 @@
+-        sage: t = g.treewidth(certificate=True)
+-        sage: t.is_tree()
++        sage: t = g.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: t.is_tree()  # needs sage.graphs.cliquer
+@@ -604 +603 @@
+-        sage: for s in t:
++        sage: for s in t:  # needs sage.graphs.cliquer
+@@ -606 +605 @@
+-        sage: vertices == set(g)
++        sage: vertices == set(g)  # needs sage.graphs.cliquer
+@@ -613 +612 @@
+-        sage: g.treewidth(algorithm='sage')
++        sage: g.treewidth(algorithm='sage')  # needs sage.graphs.cliquer
+@@ -615 +614 @@
+-        sage: g.treewidth(algorithm='sage', certificate=True)
++        sage: g.treewidth(algorithm='sage', certificate=True)  # needs sage.graphs.cliquer
+@@ -841,2 +840,2 @@
+-        sage: petersen_TD = petersen.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(petersen, petersen_TD)
++        sage: petersen_TD = petersen.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(petersen, petersen_TD)  # needs sage.graphs.cliquer
+@@ -849,2 +848,2 @@
+-        sage: cherry_TD = cherry.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(cherry, cherry_TD)
++        sage: cherry_TD = cherry.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(cherry, cherry_TD)  # needs sage.graphs.cliquer
+@@ -857,2 +856,2 @@
+-        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
++        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)  # needs sage.graphs.cliquer
+@@ -865,2 +864,2 @@
+-        sage: triangle_TD = triangle.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(triangle, triangle_TD)
++        sage: triangle_TD = triangle.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(triangle, triangle_TD)  # needs sage.graphs.cliquer
+@@ -873,2 +872,2 @@
+-        sage: graph_TD = graph.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(graph, graph_TD)
++        sage: graph_TD = graph.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(graph, graph_TD)  # needs sage.graphs.cliquer
+@@ -897,2 +896,2 @@
+-        sage: tree_decomp = an_edge.treewidth(certificate=True)
+-        sage: make_nice_tree_decomposition(an_edge, tree_decomp)
++        sage: tree_decomp = an_edge.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: make_nice_tree_decomposition(an_edge, tree_decomp)  # needs sage.graphs.cliquer
+@@ -1088,5 +1087,5 @@
+-        sage: claw_TD = claw.treewidth(certificate=True)
+-        sage: nice_TD = make_nice_tree_decomposition(claw, claw_TD)
+-        sage: root = sorted(nice_TD.vertices())[0]
+-        sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)
+-        sage: label_TD.name()
++        sage: claw_TD = claw.treewidth(certificate=True)  # needs sage.graphs.cliquer
++        sage: nice_TD = make_nice_tree_decomposition(claw, claw_TD)  # needs sage.graphs.cliquer
++        sage: root = sorted(nice_TD.vertices())[0]  # needs sage.graphs.cliquer
++        sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)  # needs sage.graphs.cliquer
++        sage: label_TD.name()  # needs sage.graphs.cliquer
+@@ -1094 +1093 @@
+-        sage: for node in sorted(label_TD):  # random
++        sage: for node in sorted(label_TD):  # random  # needs sage.graphs.cliquer
