@@ -64509,6 +64509,56 @@ change, or resource restaging. A future scheduled pass can audit another stale
 file-wide graph dependency or select the next persisted backend/runtime
 cluster.
 
+Graph-editor dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/graph_editor.py` is removed now that the stripped graph runtime
+can execute the module's ordinary graph setup directly. A historical replay
+with `sage.graphs` selected recorded 2 passed, 0 failed, and 9 skipped blocks.
+The two active rows construct Petersen graphs; every editor operation already
+carries the narrower `phitigra` metadata, while the three `show()` calls retain
+their live-Jupyter `# not tested` classification.
+
+The exact reconstructed source under runner version 132 records:
+
+```text
+graph_editor.py:       2 passed, 0 failed, 9 skipped
+optional:phitigra:     0 passed, 0 failed, 6 skipped
+deferred:not tested:   0 passed, 0 failed, 3 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The saved block- and file-failure cluster queries are empty, and the active-row
+pass rate is 100%. Explicitly selecting `phitigra` on the constructor row
+restores the precise `FeatureNotPresentError: phitigra is not available` with
+the underlying `No module named 'phitigra'` diagnostic. This confirms that the
+remaining skips describe the optional editor frontend rather than the now-
+available graph runtime.
+
+`sage/graphs/graph_editor.py` is now part of the curated pure-math corpus,
+raising it to 1,147 non-comment entries with no duplicates. Appending the new
+patch section also exposed shortened EOF-only context in the preceding
+`graph_input.py` removal hunk; both adjacent hunk ranges now describe exactly
+their two retained nonblank context lines, keeping the accumulated patch
+structurally valid without whitespace-only context.
+
+Validation includes the historical, default, and explicitly selected-feature
+focused replays, saved failure/lifecycle/skip queries, SQLite integrity,
+Python source compilation, corpus uniqueness and make-target dry run, exact
+zero-fuzz application of the final section to the prior validated graph source
+reconstruction, byte-for-byte comparison with the runtime-tested source,
+patch structure, and `git diff --check`. The accumulated source patch now has
+1,635 sections (1,120 `diff --git` and 515 legacy sections) and 4,815 hunks.
+Authoritative databases, worker state, logs, and source reconstructions are
+under `/tmp/cowasm-sagelite-graph-editor-historical.ZAlTUT/` and
+`/tmp/cowasm-sagelite-graph-editor-final-section.rR2PiE/`. This source-only
+dependency cleanup and corpus promotion needs no native WASM rebuild,
+Electron manifest change, or resource restaging. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another stale file-wide graph dependency or select
+the next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

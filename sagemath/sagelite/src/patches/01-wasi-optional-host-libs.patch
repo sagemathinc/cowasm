@@ -31580,7 +31580,14 @@ diff --git a/src/sage/graphs/graph_list.py b/src/sage/graphs/graph_list.py
 diff --git a/src/sage/graphs/graph_input.py b/src/sage/graphs/graph_input.py
 --- a/src/sage/graphs/graph_input.py
 +++ b/src/sage/graphs/graph_input.py
-@@ -1,4 +1,3 @@
+@@ -1,3 +1,2 @@
 -# sage.doctest: needs sage.graphs
  r"""
  Functions for reading/building graphs/digraphs
+diff --git a/src/sage/graphs/graph_editor.py b/src/sage/graphs/graph_editor.py
+--- a/src/sage/graphs/graph_editor.py
++++ b/src/sage/graphs/graph_editor.py
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Graph editor widget

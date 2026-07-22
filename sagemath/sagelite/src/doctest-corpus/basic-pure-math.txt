@@ -1076,6 +1076,7 @@ src/sage/graphs/hypergraph_generators.py
 src/sage/graphs/graph_generators.py
 src/sage/graphs/graph_input.py
 src/sage/graphs/graph_list.py
+src/sage/graphs/graph_editor.py
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
