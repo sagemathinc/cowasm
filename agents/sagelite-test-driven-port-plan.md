@@ -63327,6 +63327,59 @@ its intentional changes remain untouched. The next scheduled pass can address
 the isolated `sage.graphs.cliquer` cluster or another persisted graph backend
 boundary.
 
+Graph Cliquer dependency pass on 2026-07-22 UTC:
+
+The persisted `sage/graphs/graph.py` Cliquer boundary now carries explicit
+`sage.graphs.cliquer` dependency metadata. The annotations cover the 13
+`clique_number` import failures, the six `max_clique` import failures reached
+through maximum-clique, independent-set, and vertex-cover examples, and the
+three coloring assertions that depended on the failed `P` setup.
+
+The retained runner-version-131 results record:
+
+```text
+historical focused replay:        0 passed, 21 failed,   1 skipped
+default focused replay:           0 passed,  0 failed,  22 skipped
+selected Cliquer-backed row:      0 passed,  1 failed,   0 skipped
+complete graph.py before:       867 passed, 107 failed, 352 skipped
+complete graph.py final:        867 passed, 85 failed, 374 skipped
+removed Cliquer/cascade failures:             22
+new failures:                                 0
+```
+
+The clean focused replay intentionally omits the `vertex_cover` target at line
+6511 because focused setup reconstruction first reaches the independent
+`sage.graphs.graph_generators_pyx` boundary at its preceding `RandomGNP`
+prompt. The complete-file comparison verifies that target directly. The extra
+focused skip is the existing `sage.plot` setup before the selected
+`clique_number` row. Explicitly selecting `sage.graphs.cliquer` at the
+representative `C.clique_number()` row restores the precise
+`ImportError: cannot import name 'clique_number' from 'sage.graphs.cliquer'`.
+The final dashboard contains exactly 22
+`optional:sage.graphs.cliquer` skips and no remaining Cliquer failures. Its
+largest remaining clusters are the tied 11-row
+`sage.graphs.graph_generators_pyx` and `sage.libs.gap.libgap` boundaries.
+
+The authoritative historical, focused, selected-feature, and complete SQLite
+databases, worker state, proposed source, and exact source reconstruction are
+under `/tmp/cowasm-sagelite-graph-cliquer.jDtV45/`. Every retained database
+has a closed lifecycle and reports `PRAGMA integrity_check = ok`; the complete
+dashboard has no file-level errors.
+
+Validation includes the historical and default focused replays, explicitly
+selected representative replay, complete-file before/after failure-set
+comparison, saved block- and file-failure cluster queries, SQLite lifecycle,
+tag, and integrity checks, Python syntax, exact zero-fuzz application of the
+final patch section to the previously validated source reconstruction,
+byte-for-byte comparison with the tested source, accumulated-patch structure,
+and `git diff --check`. The accumulated patch now has 1,613 source sections
+(1,097 `diff --git` and 516 legacy sections) and 4,715 hunks. This is
+source-only doctest dependency metadata; it needs no native WASM rebuild,
+Electron manifest change, or resource restaging. The external developer
+Sagelite checkout and its intentional changes remain untouched. The next
+scheduled pass can address either tied 11-row graph backend boundary or another
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
