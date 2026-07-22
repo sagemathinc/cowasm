@@ -31884,3 +31884,10 @@ diff --git a/src/sage/graphs/base/static_sparse_backend.pyx b/src/sage/graphs/ba
 -# sage.doctest: needs sage.graphs
  r"""
  Static sparse graph backend
+diff --git a/src/sage/graphs/base/static_dense_graph.pyx b/src/sage/graphs/base/static_dense_graph.pyx
+--- a/src/sage/graphs/base/static_dense_graph.pyx
++++ b/src/sage/graphs/base/static_dense_graph.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Static dense graphs
