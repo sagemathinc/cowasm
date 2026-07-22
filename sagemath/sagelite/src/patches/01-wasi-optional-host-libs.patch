@@ -31924,3 +31924,10 @@ diff --git a/src/sage/graphs/base/sparse_graph.pyx b/src/sage/graphs/base/sparse
 -# sage.doctest: needs sage.graphs
  r"""
  Fast sparse graphs
+diff --git a/src/sage/graphs/base/graph_backends.pyx b/src/sage/graphs/base/graph_backends.pyx
+--- a/src/sage/graphs/base/graph_backends.pyx
++++ b/src/sage/graphs/base/graph_backends.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Backends for Sage (di)graphs

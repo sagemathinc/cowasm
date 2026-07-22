@@ -65859,6 +65859,44 @@ intentional changes remain untouched. A future scheduled pass can audit the
 stale `sage.graphs` guard on `sage/graphs/base/graph_backends.pyx` or select
 another persisted graph/backend cluster.
 
+Graph-backend dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/base/graph_backends.pyx` is removed now that the stripped graph
+runtime exercises the compiled generic backend contract directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact same source with only that guard removed record identical active
+results:
+
+```text
+graph_backends.pyx: 87 passed, 0 failed, 0 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The active rows cover all generic backend placeholder methods, their expected
+`NotImplementedError` contracts, edge and vertex iterators, loop and
+multiple-edge controls, labeling, relabeling, and metadata accessors. Both
+retained runner-version-133 dashboards have no block failures, file-level
+errors, or skipped rows and a 100% pass rate across active rows.
+
+`sage/graphs/base/graph_backends.pyx` is now part of the curated pure-math
+corpus, raising it to 1,179 non-comment entries with no duplicates. Validation
+includes the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness
+and make-target dry run, exact zero-fuzz application of the new final patch
+section to the prior guarded source, byte-for-byte comparison with the
+runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,668 sections
+(1,153 `diff --git` and 515 legacy sections) and 4,859 hunks. Authoritative
+databases, worker state, patch logs, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-graph-backends.WyD7Pg/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit
+another stale graph/backend dependency guard or select a persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
