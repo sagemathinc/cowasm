@@ -66195,6 +66195,53 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another stale graph/backend dependency guard
 or select the next persisted runtime cluster.
 
+Bipartite-graph dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The broad `sage.graphs sage.rings.finite_rings` guard on
+`sage/graphs/bipartite_graph.py` hid 395 runnable doctests behind the graph
+and finite-ring profiles. A complete historical replay with both broad
+features selected recorded 407 passed, 8 failed, and 50 skipped rows. All
+eight failures came from three stateful `GF(4)` matrix examples: the stripped
+runtime constructs PARI finite-field elements, while Sage's dense GF(2^e)
+matrix path expects the unavailable Givaro cache.
+
+The three complete setup-and-assertion sequences now retain the narrower
+`sage.libs.linbox` dependency, matching this project's Givaro feature boundary,
+and the obsolete file-wide guard is removed. A controlled replay retaining
+the broad guard with its two features selected and a default-profile replay
+after removing only that guard both record:
+
+```text
+bipartite_graph.py: 395 passed, 0 failed, 70 skipped
+optional:sage.libs.linbox: 0 passed, 0 failed, 20 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both runner-version-133 dashboards have no block failures or file-level
+errors and a 100% pass rate across active rows. The active coverage includes
+bipartite graph construction, mutations, projections, matchings, vertex
+covers, complements, matrix and file conversions, connectivity, plotting
+metadata, and input validation. The 70 retained skips preserve their narrower
+LinBox/Givaro, NetworkX, module, NumPy, plotting, symbolic, FLINT, and
+mixed-integer-programming boundaries.
+
+`sage/graphs/bipartite_graph.py` is now part of the curated pure-math corpus,
+raising it to 1,186 non-comment entries with no duplicates. Validation
+includes the initial failure-cluster dashboard, guarded and default complete
+module replays, saved block- and file-failure, lifecycle, and skip queries,
+SQLite integrity, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior guarded source with
+byte-for-byte source comparison, accumulated-patch structure, and
+`git diff --check`. Authoritative databases, worker state, comparison data,
+patch logs, and runtime-tested sources are under
+`/tmp/cowasm-sagelite-bipartite.wLJ6c3/`. The packaged pure-Python module made
+this a source-only metadata cleanup with no native WASM rebuild, Electron
+manifest change, or resource restaging. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future scheduled
+pass can audit another stale graph/backend dependency guard or select the next
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

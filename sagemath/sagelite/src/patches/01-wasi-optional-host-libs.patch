@@ -32122,3 +32122,54 @@ diff --git a/src/sage/graphs/strongly_regular_db.pyx b/src/sage/graphs/strongly_
 @@ -3070 +3069 @@
 -        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs sage.libs.pari
 +        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs database_graphs sage.libs.pari
+diff --git a/src/sage/graphs/bipartite_graph.py b/src/sage/graphs/bipartite_graph.py
+--- a/src/sage/graphs/bipartite_graph.py
++++ b/src/sage/graphs/bipartite_graph.py
+@@ -2 +1,0 @@
+-# sage.doctest: needs sage.graphs sage.rings.finite_rings
+@@ -246,5 +245,5 @@
+-         sage: F.<a> = GF(4)
+-         sage: MS = MatrixSpace(F, 2, 3)
+-         sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])
+-         sage: B = BipartiteGraph(M, weighted=True, sparse=True)
+-         sage: B.edges(sort=True)
++         sage: F.<a> = GF(4)                                                          # needs sage.libs.linbox
++         sage: MS = MatrixSpace(F, 2, 3)                                               # needs sage.libs.linbox
++         sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])                               # needs sage.libs.linbox
++         sage: B = BipartiteGraph(M, weighted=True, sparse=True)                       # needs sage.libs.linbox
++         sage: B.edges(sort=True)                                                       # needs sage.libs.linbox
+@@ -252 +251 @@
+-         sage: B.weighted()
++         sage: B.weighted()                                                            # needs sage.libs.linbox
+@@ -2030,6 +2029,6 @@
+-            sage: F.<a> = GF(4)
+-            sage: MS = MatrixSpace(F, 2, 3)
+-            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
+-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
+-            sage: N = B.reduced_adjacency_matrix(sparse=False)
+-            sage: N == M
++            sage: F.<a> = GF(4)                                                       # needs sage.libs.linbox
++            sage: MS = MatrixSpace(F, 2, 3)                                            # needs sage.libs.linbox
++            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])                              # needs sage.libs.linbox
++            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                    # needs sage.libs.linbox
++            sage: N = B.reduced_adjacency_matrix(sparse=False)                         # needs sage.libs.linbox
++            sage: N == M                                                               # needs sage.libs.linbox
+@@ -2037 +2036 @@
+-            sage: N[0,0].parent()
++            sage: N[0,0].parent()                                                      # needs sage.libs.linbox
+@@ -2039,2 +2038,2 @@
+-            sage: N2 = B.reduced_adjacency_matrix(base_ring=F)
+-            sage: N2[0, 0].parent()
++            sage: N2 = B.reduced_adjacency_matrix(base_ring=F)                         # needs sage.libs.linbox
++            sage: N2[0, 0].parent()                                                    # needs sage.libs.linbox
+@@ -2059,5 +2058,5 @@
+-            sage: F.<a> = GF(4)
+-            sage: MS = MatrixSpace(F, 2, 3)
+-            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
+-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
+-            sage: B.reduced_adjacency_matrix(base_ring=RDF)
++            sage: F.<a> = GF(4)                                                       # needs sage.libs.linbox
++            sage: MS = MatrixSpace(F, 2, 3)                                            # needs sage.libs.linbox
++            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])                              # needs sage.libs.linbox
++            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                    # needs sage.libs.linbox
++            sage: B.reduced_adjacency_matrix(base_ring=RDF)                            # needs sage.libs.linbox
