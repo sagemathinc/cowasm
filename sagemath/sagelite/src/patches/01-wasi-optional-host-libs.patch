@@ -32494,3 +32494,8 @@ diff --git a/src/sage/graphs/graph_decompositions/tree_decomposition.pyx b/src/s
 @@ -1094 +1093 @@
 -        sage: for node in sorted(label_TD):  # random
 +        sage: for node in sorted(label_TD):  # random  # needs sage.graphs.cliquer
+diff --git a/src/sage/graphs/graph_decompositions/vertex_separation.pyx b/src/sage/graphs/graph_decompositions/vertex_separation.pyx
+--- a/src/sage/graphs/graph_decompositions/vertex_separation.pyx
++++ b/src/sage/graphs/graph_decompositions/vertex_separation.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs

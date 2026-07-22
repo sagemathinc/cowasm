@@ -66573,6 +66573,55 @@ changes remain untouched. A future scheduled pass can audit the remaining
 `vertex_separation.pyx`, `hyperbolicity.pyx`, or another persisted
 graph/backend cluster.
 
+Vertex-separation dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_decompositions/vertex_separation.pyx` hid 179 runnable
+graph-core doctests. The module's unavailable mixed-integer programming,
+NetworkX, PySCIPOpt, and combinatorics examples already carry narrower feature
+metadata, so removing only the broad guard exposes the delivered exponential
+and branch-and-bound implementations without changing those backend
+boundaries.
+
+A controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay after removing only that
+guard both record:
+
+```text
+vertex_separation.pyx: 179 passed, 0 failed, 22 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have 201 block rows and no block failures or file-level
+errors. Their block order, source, source hashes, expected output, comparator
+modes, statuses, actual output, and failure metadata are identical. Their tag
+and skip-reason metadata differs only by removal of the inherited broad graph
+feature. The 22 retained skips preserve eight direct MILP rows, six NetworkX
+rows, five combinatorics or combined combinatorics/MILP rows, two PySCIPOpt
+rows, and one long-time MILP row. The 179 active rows cover pathwidth and
+vertex-separation dispatch, exponential and branch-and-bound algorithms,
+lower bounds, ordering and decomposition validation, graph transformations,
+and input validation.
+
+`sage/graphs/graph_decompositions/vertex_separation.pyx` is now part of the
+curated pure-math corpus, raising it to 1,193 non-comment entries with no
+duplicates. Validation includes guarded and default complete module replays,
+saved block- and file-failure, lifecycle, latest-run, and skip queries, exact
+row-level cross-database comparison, SQLite integrity, corpus uniqueness and
+make-target dry run, exact zero-fuzz application of both accumulated target
+patch sections from the pristine pinned Sagelite commit with byte-for-byte
+source comparison, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,684 sections (1,169
+`diff --git` and 515 legacy sections) and 4,999 hunks. Authoritative databases,
+worker state, and comparison inputs are under
+`/tmp/cowasm-sagelite-vertex-separation.h1i0WX/`; the exact target replay is
+under `/tmp/cowasm-sagelite-vertex-separation-replay.nadGZz/`. This source-only
+dependency cleanup needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+remaining `hyperbolicity.pyx` guard or another persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
