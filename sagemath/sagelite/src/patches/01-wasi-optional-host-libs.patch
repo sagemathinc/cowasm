@@ -31938,3 +31938,27 @@ diff --git a/src/sage/graphs/distances_all_pairs.pyx b/src/sage/graphs/distances
 -# sage.doctest: needs sage.graphs
  r"""
  Distances/shortest paths between all pairs of vertices
+diff --git a/src/sage/graphs/base/boost_graph.pyx b/src/sage/graphs/base/boost_graph.pyx
+--- a/src/sage/graphs/base/boost_graph.pyx
++++ b/src/sage/graphs/base/boost_graph.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Interface to run Boost algorithms
+@@ -1026,3 +1025,15 @@
+     elif algorithm in ['Dijkstra', 'Dijkstra_Boost']:
++        # Boost reports negative weights by throwing a C++ exception.  Check
++        # them here first so runtimes without C++ exception support still
++        # produce Sage's documented Python exception.
++        if weight_function is not None:
++            for e in g.edge_iterator():
++                if float(weight_function(e)) < 0:
++                    raise RuntimeError("Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead")
++        elif g.weighted():
++            for _, _, w in g.edge_iterator():
++                if float(w) < 0:
++                    raise RuntimeError("Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead")
++
+         try:
+             if g.is_directed():
+                 boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)

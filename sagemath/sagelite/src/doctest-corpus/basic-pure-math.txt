@@ -1073,6 +1073,7 @@ src/sage/probability/random_variable.py
 src/sage/graphs/all.py
 src/sage/graphs/asteroidal_triples.pyx
 src/sage/graphs/base/overview.py
+src/sage/graphs/base/boost_graph.pyx
 src/sage/graphs/base/dense_graph.pyx
 src/sage/graphs/base/graph_backends.pyx
 src/sage/graphs/base/sparse_graph.pyx

@@ -65945,6 +65945,51 @@ documented `RuntimeError`. The retained crash dashboard is under
 that focused C++ exception/runtime cluster or audit another stale graph
 dependency guard.
 
+Boost negative-weight exception and corpus-promotion pass on 2026-07-22 UTC:
+
+The explicit Dijkstra path in `sage/graphs/base/boost_graph.pyx` now checks
+weighted edges in Cython before entering Boost. This preserves Sage's
+documented `RuntimeError` for negative weights without relying on the Boost
+C++ exception path that traps the current no-exceptions WASM side module. The
+same check covers custom `weight_function` inputs as well as graph edge
+labels; nonnegative inputs continue through the compiled Boost algorithm.
+
+After rebuilding only the `boost_graph` WASM side module, the formerly
+crashing source-line rerun passes. A separate four-example temporary
+regression covers negative and positive custom weight functions. Complete
+historical and default-profile module replays record:
+
+```text
+boost_graph.pyx: 210 passed, 0 failed, 3 skipped
+optional:networkx: 0 passed, 0 failed, 3 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The historical replay selects the old file-wide `sage.graphs` guard; the
+default replay removes only that obsolete guard. Their 210 active rows have
+identical block order, source hashes, statuses, and actual output. Both
+runner-version-133 dashboards have no block failures or file-level errors and
+a 100% pass rate across active rows. The three retained skips preserve their
+narrower NetworkX metadata.
+
+`sage/graphs/base/boost_graph.pyx` is now part of the curated pure-math corpus,
+raising it to 1,181 non-comment entries with no duplicates. Validation
+includes the focused trap reproducer, custom-weight regression, historical
+and default complete module replays, saved block- and file-failure, lifecycle,
+and skip queries, SQLite integrity, a narrow Cython/C++/WASM rebuild, corpus
+uniqueness and make-target dry run, exact zero-fuzz application of the new
+final patch section to the prior guarded source, byte-for-byte comparison with
+the runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,670 sections (1,155
+`diff --git` and 515 legacy sections) and 4,862 hunks. Authoritative databases,
+worker state, the copy-on-write resource bundle, rebuilt side module, patch
+logs, and runtime-tested source are under
+`/tmp/cowasm-sagelite-boost-negative.t09cRO/`. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future scheduled
+pass can audit another stale graph/backend dependency guard or select the next
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
