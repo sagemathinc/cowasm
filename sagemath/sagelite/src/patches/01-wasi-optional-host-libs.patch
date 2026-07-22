@@ -31969,3 +31969,18 @@ diff --git a/src/sage/graphs/generic_graph_pyx.pyx b/src/sage/graphs/generic_gra
 -# sage.doctest: needs sage.graphs
  """
  GenericGraph Cython functions
+diff --git a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
+--- a/src/sage/graphs/meson.build
++++ b/src/sage/graphs/meson.build
+@@ -130,3 +130,3 @@
+-  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'convexity_properties' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly' or name == 'strongly_regular_db'
++  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'convexity_properties' or name == 'centrality' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly' or name == 'strongly_regular_db'
+     graph_extension_link_args = cowasm_graph_libcxx_link_args
+   elif name != 'graph_generators_pyx'
+diff --git a/src/sage/graphs/centrality.pyx b/src/sage/graphs/centrality.pyx
+--- a/src/sage/graphs/centrality.pyx
++++ b/src/sage/graphs/centrality.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Centrality

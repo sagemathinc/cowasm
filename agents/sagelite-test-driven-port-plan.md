@@ -66034,6 +66034,63 @@ intentional changes remain untouched. A future scheduled pass can audit
 another stale graph/backend dependency guard or select a persisted runtime
 cluster.
 
+Centrality build-boundary and corpus-promotion pass on 2026-07-22 UTC:
+
+The broad `sage.graphs` guard on `sage/graphs/centrality.pyx` initially exposed
+a concrete packaging cluster rather than a doctest-semantic failure. The first
+historical replay recorded 21 passed, 29 failed, and 27 skipped rows: 12
+`ModuleNotFoundError` rows for `sage.graphs.centrality`, 13 dependent
+`NameError` rows, and four dependent output mismatches. The WASM resource
+bundle contained the source but no compiled centrality side module because
+the graph Meson rules still grouped `centrality` with extensions requiring the
+unavailable Cliquer and Planarity libraries.
+
+`centrality` is now classified with the graph-core extensions that need only
+the common cysignals, FLINT, GMP, and libcxx link configuration. A focused
+Meson reconfigure and three-step Cython/C/WASM build produced a side module
+with a `dylink.0` section and `PyInit_centrality` export. After staging that
+module and regenerating the temporary Electron manifest, the formerly missing
+import rerun passes.
+
+A complete rebuilt historical replay with `sage.graphs` selected and a
+default-profile replay of the exact same source with only the broad guard
+removed now record:
+
+```text
+centrality.pyx: 50 passed, 0 failed, 27 skipped
+optional:networkx: 0 passed, 0 failed, 27 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both runner-version-133 dashboards have no block failures or file-level
+errors and a 100% pass rate across active rows. Their 50 active rows have
+identical block order, source hashes, and statuses. The only actual-output
+differences are the six expected object-address values accepted by ellipsis.
+The active coverage includes exact and floating betweenness centrality,
+top-k and sampled closeness centrality, mutable and immutable graph backends,
+directed and undirected inputs, empty graphs, and argument validation. The 27
+retained skips preserve their narrower NetworkX metadata.
+
+`sage/graphs/centrality.pyx` is now part of the curated pure-math corpus,
+raising it to 1,183 non-comment entries with no duplicates. Validation
+includes the initial failure-cluster dashboard, focused rebuilt import,
+historical and default complete module replays, saved block- and file-failure,
+lifecycle, and skip queries, SQLite integrity, the narrow native side-module
+build and export audit, corpus uniqueness and make-target dry run, exact
+zero-fuzz application of the two new final patch sections with byte-for-byte
+source comparison, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has
+1,673 sections (1,158 `diff --git` and 515 legacy sections) and 4,865 hunks.
+Authoritative databases, worker state, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-centrality.VHZ0k6/`; the rebuilt side module was staged
+in the existing copy-on-write resource bundle under
+`/tmp/cowasm-sagelite-boost-negative.t09cRO/resources/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit the already-buildable
+`sage/graphs/convexity_properties.pyx` guard or select another persisted
+graph/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
