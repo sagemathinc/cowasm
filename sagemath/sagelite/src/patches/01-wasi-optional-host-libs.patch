@@ -32224,3 +32224,33 @@ diff --git a/src/sage/graphs/generators/random.py b/src/sage/graphs/generators/r
 @@ -2385 +2384 @@
 -        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)
 +        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)                    # needs sage.graphs.planarity
+diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/basic.py
+--- a/src/sage/graphs/generators/basic.py
++++ b/src/sage/graphs/generators/basic.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs sage.plot
+@@ -63 +62 @@
+-        sage: g.chromatic_number()
++        sage: g.chromatic_number()                                                     # needs sage.graphs.cliquer
+@@ -73,3 +72,3 @@
+-        sage: chrompoly = g.chromatic_polynomial()
+-        sage: x = chrompoly.parent()('x')
+-        sage: x * (x - 2) * (x - 1)^3 == chrompoly
++        sage: chrompoly = g.chromatic_polynomial()                                     # needs sage.libs.flint
++        sage: x = chrompoly.parent()('x')                                              # needs sage.libs.flint
++        sage: x * (x - 2) * (x - 1)^3 == chrompoly                                    # needs sage.libs.flint
+@@ -86 +85 @@
+-        sage: D = x*Id - M
++        sage: D = x*Id - M                                                             # needs sage.libs.flint
+@@ -89 +88 @@
+-        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
++        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly                           # needs sage.libs.flint
+@@ -130 +129 @@
+-        sage: G.is_planar()
++        sage: G.is_planar()                                                            # needs sage.graphs.planarity
+@@ -150 +149 @@
+-        sage: G.chromatic_number()
++        sage: G.chromatic_number()                                                     # needs sage.graphs.cliquer
+@@ -736 +735 @@
+-        sage: g.chromatic_number()
++        sage: g.chromatic_number()                                                     # needs sage.graphs.cliquer

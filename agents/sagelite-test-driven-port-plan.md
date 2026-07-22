@@ -66342,6 +66342,70 @@ intentional changes remain untouched. A future scheduled pass can audit the
 remaining `basic.py` or `distance_regular.pyx` graph-generator guard, or select
 another persisted graph/runtime cluster.
 
+Basic-graph generator dependency and startup-namespace pass on 2026-07-22 UTC:
+
+The broad `sage.graphs sage.plot` guard on
+`sage/graphs/generators/basic.py` hid the pure graph constructors together
+with a small set of backend-dependent checks. The retained historical replay
+recorded 132 passed, 15 failed, and 111 skipped rows. Removing only the broad
+guard recorded 130 passed, 13 failed, and 115 skipped rows. The default-profile
+failures split into three Cliquer-backed chromatic-number checks, one
+Planarity-backed recognition check, five FLINT-polynomial or state-dependent
+followups, and four missing standard `graphics_array` startup globals.
+
+The exact backend-dependent prompts now carry
+`sage.graphs.cliquer`, `sage.graphs.planarity`, or `sage.libs.flint` metadata,
+and the obsolete file-wide graph/plot guard is removed. A focused explicit
+import probe confirmed that the packaged runtime already constructs a
+`GraphicsArray` through `sage.plot.plot.graphics_array`, so the stripped Sage
+startup namespace now exposes that standard global instead of deferring the
+four otherwise runnable plotting-array rows. Because the namespace change
+affects doctest semantics, the runner metadata version is raised from 134 to
+135.
+
+The final runner-version-135 replays record:
+
+```text
+default profile:
+  basic.py: 134 passed, 0 failed, 124 skipped
+historical sage.graphs,sage.plot profile:
+  basic.py: 138 passed, 0 failed, 120 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have no block failures or file-level errors and a 100% pass
+rate across active rows. All 258 rows have identical block order, source, and
+expected output. The only four status differences are plotting prompts already
+tagged `sage.plot`: the historical profile selects them while the default
+profile preserves them as explicit skips. The default profile's 134 active
+rows cover the bull, butterfly, circular-ladder, complete, complete-bipartite,
+correlation, cycle, friendship, ladder, lollipop, Möbius-ladder, path, star,
+and complete-multipartite constructors, including graph invariants, layouts,
+immutability, validation, and the delivered graphics-array paths. Its 124
+skips retain narrower NetworkX, plotting, NumPy, FLINT, Cliquer, Planarity,
+group, symbolic, and mixed-integer-programming boundaries.
+
+`sage/graphs/generators/basic.py` is now part of the curated pure-math corpus,
+raising it to 1,189 non-comment entries with no duplicates. Validation includes
+the initial failure-cluster dashboard, the focused `graphics_array` import and
+construction probe, historical and default complete module replays, saved
+block- and file-failure, lifecycle, latest-run, and skip queries, SQLite
+integrity, Node syntax, corpus uniqueness and make-target dry run, exact
+zero-fuzz replay of every accumulated patch section for `basic.py` from the
+pristine Sagelite source with byte-for-byte comparison, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,679 file sections (1,164 `diff --git` and 515 legacy sections) and 4,939
+hunks. Authoritative databases, worker state, comparison inputs, and
+runtime-tested sources are under `/tmp/cowasm-sagelite-basic-graph/`; the exact
+target patch replay is under
+`/tmp/cowasm-sagelite-basic-replay3.Y6jX38/`. This source and startup-namespace
+cleanup needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future scheduled pass can audit the remaining
+`distance_regular.pyx` graph-generator guard or select another persisted
+graph/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
