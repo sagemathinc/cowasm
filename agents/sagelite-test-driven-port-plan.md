@@ -64425,6 +64425,50 @@ checkout and its intentional changes remain untouched. A future runtime pass
 can add process-group semantics or continue with the next persisted
 graph/backend cluster.
 
+Graph-list database dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/graph_list.py` is removed now that the stripped graph runtime can
+import and execute its graph-list helpers directly. A complete historical
+replay with `sage.graphs` selected recorded 55 passed, 3 failed, and 8 skipped
+blocks. All three failures belonged to one contiguous optional graph-database
+cluster: constructing `GraphQuery` reached the expected missing `graphs.db`
+feature, and its two consumers then saw undefined setup names.
+
+The query setup and both consumers now carry the precise `database_graphs`
+dependency metadata. The plotting consumer records both `sage.plot` and
+`database_graphs`, so selecting plotting alone cannot expose a stale `g` name.
+The default runner-version-132 dashboard against the relocated schema-202
+resources records:
+
+```text
+graph_list.py:       55 passed, 0 failed, 11 skipped
+database_graphs rows: 0 passed, 0 failed,  4 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+Explicitly selecting `database_graphs` on the setup row restores the precise
+`FeatureNotPresentError: database_graphs is not available` diagnostic with
+`'graphs.db' not found in any of []`. The saved block- and file-failure cluster
+queries are empty for the default final dashboard.
+
+`sage/graphs/graph_list.py` is now part of the curated pure-math corpus,
+raising it to 1,145 non-comment entries with no duplicates. Validation includes
+the historical, default, and selected-feature focused replays, SQLite lifecycle
+and integrity queries, corpus uniqueness and make-target dry run, exact
+zero-fuzz application of the complete accumulated patch to clean pinned
+Sagelite `f575cf6224f749763d7c875229cbd684e5939e58`, byte-for-byte comparison
+with the runtime-tested source, and `git diff --check`. The accumulated source
+patch now has 1,633 sections (1,118 `diff --git` and 515 legacy sections) and
+4,813 hunks. Authoritative SQLite databases, worker state, logs, and source
+reconstructions are under `/tmp/cowasm-sagelite-graph-list.9rsrAX/` and
+`/tmp/cowasm-sagelite-graph-list-patch2.9a8YSI/`. This source-only dependency
+metadata and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or resource restaging. A future scheduled pass can audit another
+stale file-wide graph dependency or select the next persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

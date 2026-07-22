@@ -31553,3 +31553,27 @@ diff --git a/src/sage/graphs/digraph_generators.py b/src/sage/graphs/digraph_gen
 
      def nauty_posetg(self, options='', debug=False, immutable=False):
          r"""
+diff --git a/src/sage/graphs/graph_list.py b/src/sage/graphs/graph_list.py
+--- a/src/sage/graphs/graph_list.py
++++ b/src/sage/graphs/graph_list.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Lists of graphs
+
+@@ -390,11 +389,11 @@
+
+     Example where more than one graphics array is used::
+
+-        sage: gq = GraphQuery(display_cols=['graph6'], num_vertices=5)
+-        sage: g = gq.get_graphs_list()
+-        sage: len(g)
++        sage: gq = GraphQuery(display_cols=['graph6'], num_vertices=5)                  # needs database_graphs
++        sage: g = gq.get_graphs_list()                                                 # needs database_graphs
++        sage: len(g)                                                                   # needs database_graphs
+         34
+-        sage: graphs_list.show_graphs(g)                                                # needs sage.plot
++        sage: graphs_list.show_graphs(g)                                                # needs sage.plot database_graphs
+
+     See the .plot() or .show() documentation for an individual graph for
+     options, all of which are available from :func:`to_graphics_array`::

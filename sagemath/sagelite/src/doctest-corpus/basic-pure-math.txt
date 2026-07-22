@@ -1074,6 +1074,7 @@ src/sage/graphs/matching_covered_graph.py
 src/sage/graphs/print_graphs.py
 src/sage/graphs/hypergraph_generators.py
 src/sage/graphs/graph_generators.py
+src/sage/graphs/graph_list.py
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
