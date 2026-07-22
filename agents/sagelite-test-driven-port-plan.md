@@ -64846,6 +64846,46 @@ intentional changes remain untouched. A future scheduled pass can audit the
 next stale dependency guard exposed by the expanded graph runtime or select
 another persisted backend/runtime cluster.
 
+Combinatorial graph-path dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/combinat/graph_path.py` is removed now that the stripped graph runtime
+executes the module's directed-acyclic-path implementation directly. A
+complete historical replay with `sage.graphs` selected recorded 95 passed,
+0 failed, and 0 skipped blocks. Removing the broad guard and replaying the
+exact source under the default node profile records the identical result:
+
+```text
+graph_path.py:    95 passed, 0 failed, 0 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The active rows cover unrestricted, source-constrained, target-constrained,
+and source-to-target path families over directed acyclic graphs, including
+iteration, cardinality, indexing, random selection, and edge validation. The
+module needs no narrower optional or deferred metadata. Both retained
+runner-version-132 dashboards have no block failures or file-level errors and
+a 100% pass rate across active rows.
+
+`sage/combinat/graph_path.py` is now part of the curated pure-math corpus,
+raising it to 1,155 non-comment entries with no duplicates. Validation includes
+historical and default complete module replays, saved block- and file-failure
+and lifecycle queries, SQLite integrity, Python source compilation, corpus
+uniqueness and make-target dry run, zero-fuzz application of the new final
+patch section to the previously validated graph source, byte-for-byte
+comparison with the runtime-tested source, accumulated-patch syntax and
+structure, and `git diff --check`. The accumulated source patch now has 1,643
+sections (1,128 `diff --git` and 515 legacy sections) and 4,823 hunks.
+Authoritative databases, worker state, patch logs, source reconstruction, and
+the runtime-tested source are under
+`/tmp/cowasm-sagelite-graph-list.d013er/`. This source-only dependency cleanup
+and corpus promotion needs no native WASM rebuild, Electron manifest change,
+or resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+next stale dependency guard exposed by the expanded graph runtime or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

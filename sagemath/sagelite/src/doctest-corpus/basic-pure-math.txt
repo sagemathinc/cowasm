@@ -439,6 +439,7 @@ src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/regular_sequence_bounded.py
 src/sage/combinat/gray_codes.py
+src/sage/combinat/graph_path.py
 src/sage/combinat/hall_polynomial.py
 src/sage/combinat/ncsf_qsym/combinatorics.py
 src/sage/combinat/hillman_grassl.py
