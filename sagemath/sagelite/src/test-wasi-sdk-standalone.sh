@@ -985,8 +985,9 @@ assert C == matrix(QQ, [[QQ(1, 2), 1, QQ(3, 2)], [4, 5, 6]])
 C.rescale_col(2, QQ(2, 3))
 assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
 print('sagelite-node-ok matrix row-column mutation smoke')"
-run_node_import "free module smoke" "from sage.all import ZZ, QQ, Integers
+run_node_import "free module smoke" "from sage.all import FreeQuadraticModule, IntegralLattice, Integers, QQ, ZZ, zero_vector
 from sage.modules.free_module import FreeModule
+from sage.matrix.constructor import identity_matrix
 M = FreeModule(ZZ, 3)
 v = M([1, 2, 3])
 w = M([4, 5, 6])
@@ -1002,6 +1003,11 @@ Ms = FreeModule(R8, 2, sparse=True)
 assert not Md.basis_matrix().is_sparse()
 assert Md == Ms
 assert Ms.basis_matrix().is_sparse()
+Q = FreeQuadraticModule(ZZ, 2, identity_matrix(ZZ, 2))
+assert Q.inner_product_matrix() == identity_matrix(ZZ, 2)
+assert zero_vector(QQ, 2) == V.zero_vector()
+L = IntegralLattice('U')
+assert L._eq(IntegralLattice('U'))
 print('sagelite-node-ok free module smoke')"
 run_node_import "finite abelian group smoke" "import sage.all
 from sage.groups.abelian_gps.abelian_group import AbelianGroup

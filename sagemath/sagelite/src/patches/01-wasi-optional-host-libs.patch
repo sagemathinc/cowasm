@@ -30180,3 +30180,12 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 @@ -988 +992,2 @@
 +            sage: # needs sage.libs.singular
              sage: P.<a,b> = PolynomialRing(QQ, 2)
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -399,2 +399,4 @@
+     from sage.modules.free_module import FreeModule, VectorSpace, span
+-    from sage.modules.free_module_element import vector, random_vector
++    from sage.modules.free_quadratic_module import FreeQuadraticModule
++    from sage.modules.free_module_element import vector, random_vector, zero_vector
++    lazy_import('sage.modules.free_quadratic_module_integer_symmetric', 'IntegralLattice')

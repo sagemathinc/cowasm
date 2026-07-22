@@ -62849,6 +62849,58 @@ scheduled pass can address the repeated FLINT integer-polynomial conversion
 cluster or the narrower missing `IntegralLattice`, `FreeQuadraticModule`, and
 `zero_vector` doctest namespace rows.
 
+Free-module startup-namespace pass on 2026-07-22 UTC:
+
+The narrow missing-name cluster was a real omission in the WASI-specific
+`sage.all` startup surface.  That branch imported the basic free-module and
+vector constructors individually in place of `sage.modules.all`, but omitted
+three supported names that ordinary Sage exports.  It now exposes
+`FreeQuadraticModule` and `zero_vector` directly and preserves Sage's lazy
+loading behavior for `IntegralLattice`.  The standalone free-module smoke now
+imports all three names from `sage.all` and exercises representative quadratic-
+module, zero-vector, and integral-lattice operations.
+
+The retained before/after results record:
+
+```text
+complete module before:        1,425 passed, 29 failed, 136 skipped
+focused namespace regions:         4 passed,  0 failed,   0 skipped
+startup namespace fixture:         7 passed,  0 failed,   0 skipped
+complete module final:         1,435 passed, 19 failed, 136 skipped
+removed namespace failures:       10
+new failures:                       0
+```
+
+The ten repaired rows comprise the three `IntegralLattice` examples, six
+`FreeQuadraticModule` setup/dependent examples, and the `zero_vector`
+comparison.  This confirms that their dependent `NameError`, `TypeError`, and
+output-mismatch rows were cascades rather than separate backend defects.  The
+final dashboard's dominant remaining root is now seven attempts to load the
+intentionally disabled FLINT integer-polynomial module; its dependent rows
+account for most of the remaining failures.
+
+The authoritative runner-version-130 SQLite databases, focused fixture,
+copy-on-write schema-191 Electron resource bundle, pinned source
+reconstruction, split patch sections, and application log are under
+`/tmp/cowasm-sagelite-free-module-namespace.fqBEM0/`.  All three databases have
+closed lifecycles and `PRAGMA integrity_check = ok`.  The resource manifest
+validates 555 side modules and 724 required-resource hashes.
+
+Validation includes the four-line focused replay, seven-block startup fixture,
+complete-module before/after failure-set comparison, saved block- and file-
+failure cluster queries, SQLite lifecycle and integrity checks, Python,
+JavaScript, and shell syntax, a zero-reject sequential application to pinned
+clean Sagelite `f575cf6224f`, byte-for-byte comparisons of the reconstructed
+`all.py` and `free_module.py` against the tested sources, and
+`git diff --check`.  All 1,598 accumulated source-patch sections (1,082
+`diff --git` and 516 legacy sections) and 4,617 hunks apply.  This is pure-
+Python startup-surface and regression work; it needs no Cython/native rebuild
+or Electron manifest schema change, but a production bundle must restage the
+patched `all.py` and refresh its resource hash.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+scheduled pass can address the repeated disabled-FLINT integer-polynomial
+conversion cluster now isolated by the complete `free_module.py` dashboard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
