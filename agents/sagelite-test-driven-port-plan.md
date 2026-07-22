@@ -62952,6 +62952,53 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 scheduled pass can address the isolated SciPy quotient dependency cluster or
 the exception-representation mismatch.
 
+Free-module SciPy quotient dependency pass on 2026-07-22 UTC:
+
+The remaining real-double quotient cluster in
+`sage/modules/free_module.py` now carries an explicit `scipy` dependency.
+Constructing `V/W` in that example inverts a `Matrix_double_dense`, whose
+supported implementation imports SciPy; the stripped browser profile does not
+package that optional host library.  A standalone directive keeps the setup,
+quotient construction, and dependent type, equality, and coercion assertions
+together under the same boundary.
+
+The retained runner-version-130 results record:
+
+```text
+complete module before:       1,435 passed, 5 failed, 150 skipped
+focused quotient target:          0 passed, 0 failed,   2 skipped
+complete module final:        1,433 passed, 1 failed, 156 skipped
+selected SciPy quotient:          0 passed, 1 failed,   0 skipped
+removed SciPy/cascade failures:   4
+new failures:                     0
+```
+
+The two formerly passing setup rows join the four failing quotient/dependent
+rows as six `optional:scipy` skips in the complete dashboard.  Explicitly
+selecting SciPy reaches the expected `ModuleNotFoundError: No module named
+'scipy'` at the quotient-construction row.  The final dashboard's only failure
+is the independent abstract `FreeModule_generic_field` exception-representation
+mismatch at source line 4575.
+
+The authoritative focused, complete, and selected-feature SQLite databases,
+worker state, proposed source, and copy-on-write resource bundle are under
+`/tmp/cowasm-sagelite-free-module-scipy.Rod46r/`.  Every database has a closed
+lifecycle and reports `PRAGMA integrity_check = ok`; the full dashboard has a
+closed failed lifecycle solely because it deliberately retains the independent
+representation mismatch.
+
+Validation includes the focused default and selected-feature replays, the
+complete-module before/after failure-set comparison, SQLite lifecycle, tag,
+and integrity checks, manifest hash validation, exact dry-run application of
+the final patch section to the previously validated pinned reconstruction,
+byte-for-byte comparison of the proposed and tested source, Node and shell
+syntax, and `git diff --check`.  The accumulated patch now has 1,600 source
+sections (1,084 `diff --git` and 516 legacy sections) and 4,625 hunks.  This is
+source-only doctest dependency metadata; it needs no native WASM rebuild,
+Electron manifest change, or production resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next scheduled pass can address the isolated exception-representation mismatch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

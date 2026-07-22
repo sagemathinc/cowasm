@@ -30207,3 +30207,8 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 +            sage: # needs sage.libs.flint
 @@ -8374,0 +8380 @@
 +            sage: # needs sage.libs.flint
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -5294,0 +5295 @@
++            sage: # needs scipy
