@@ -66622,6 +66622,53 @@ resource restaging. The external developer Sagelite checkout and its
 intentional changes remain untouched. A future scheduled pass can audit the
 remaining `hyperbolicity.pyx` guard or another persisted graph/backend cluster.
 
+Graph-hyperbolicity dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/hyperbolicity.pyx` hid 68 runnable graph-core doctests. The only
+unavailable examples already carry narrower NetworkX metadata and are also
+marked long-time, so removing only the broad guard exposes the delivered
+hyperbolicity algorithms without changing that backend boundary.
+
+A controlled runner-version-135 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay after removing only that
+guard both record:
+
+```text
+hyperbolicity.pyx: 68 passed, 0 failed, 2 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have 70 block rows and no block failures or file-level
+errors. Their block order, source, source hashes, expected output, comparator
+modes, statuses, and failure metadata are identical. Source lines differ only
+by the expected one-line offset from removing the directive. One documented
+`# random` certificate row has a different accepted witness between runs; all
+other actual output is identical. Tag and skip-reason metadata differs only as
+expected from removing the inherited broad graph feature. The two retained
+skips are the long-time NetworkX comparison loops. The 68 active rows cover
+subgraph and dominating-set helpers, the basic, BCCM, CCL, far-apart, and
+dominating-set algorithms, approximation bounds and input validation, and
+exact hyperbolicity distributions.
+
+`sage/graphs/hyperbolicity.pyx` is now part of the curated pure-math corpus,
+raising it to 1,194 non-comment entries with no duplicates. Validation includes
+guarded and default complete module replays, saved block- and file-failure,
+lifecycle, latest-run, and skip queries, row-level cross-database comparison,
+SQLite integrity, corpus uniqueness and make-target dry run, and exact
+zero-fuzz application of both accumulated target patch sections from the
+pristine pinned Sagelite commit with byte-for-byte source comparison. The
+accumulated source patch now has 1,685 sections (1,170 `diff --git` and 515
+legacy sections) and 5,000 hunks. Authoritative databases and worker state are
+under `/tmp/cowasm-sagelite-hyperbolicity.JcPBtn/`; the exact target replay is
+under `/tmp/cowasm-sagelite-hyperbolicity-replay.6qY6sY/`. This source-only
+dependency cleanup needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+next stale graph/backend dependency guard or select another persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
