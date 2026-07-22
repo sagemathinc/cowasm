@@ -63673,6 +63673,59 @@ Sagelite checkout and its intentional changes remain untouched. The next
 scheduled pass can select one of the remaining persisted graph runtime
 clusters, such as the two-row `cysignals.alarm` or `nauty_geng` boundaries.
 
+Graph parallel-coloring dependency pass on 2026-07-22 UTC:
+
+The two remaining parallel chromatic-number examples in
+`sage/graphs/graph.py` now carry the established `cysignals.alarm` dependency
+metadata. Both algorithms route through Sage's fork/alarm-backed parallel
+decorator, which is intentionally unavailable in the browser profile; the
+serial DLX, constraint-programming, and newly delivered GLPK paths remain
+independently exercised.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:       924 passed, 12 failed, 390 skipped
+focused default alarm rows:            0 passed,  0 failed,   2 alarm skips
+selected alarm-backed row:             0 passed,  1 failed,   0 alarm skips
+complete graph.py final:             924 passed, 10 failed, 392 skipped
+removed cysignals.alarm failures:                  2
+new failure keys:                                 0
+```
+
+Explicitly selecting `cysignals.alarm` restores the precise
+`ModuleNotFoundError: No module named 'cysignals.alarm'`. The complete final
+dashboard has a closed lifecycle, no file-level error, and
+`PRAGMA integrity_check = ok`; an exact block-key comparison against the
+convexity dashboard finds no new failures. The default two-line focused replay
+also sees four neighboring already-optional rows selected by physical line
+range, for six skips total, while the two target rows themselves record exactly
+`optional:cysignals.alarm`.
+
+The authoritative proposed source, focused and explicitly selected SQLite
+databases, version-matched complete dashboard, worker state, clean pinned
+source reconstruction, and accumulated-patch log are under
+`/tmp/cowasm-sagelite-graph-alarm.ZlfH3L/`. Validation includes the default and
+selected-feature focused replays, complete-file failure-set comparison, SQLite
+lifecycle/tag/integrity queries, accumulated-patch syntax, zero-fuzz
+application to clean pinned Sagelite `f575cf6224f`, byte-for-byte comparison of
+the reconstructed and tested `graph.py`, shell syntax, and `git diff --check`.
+The accumulated source patch now has 1,617 sections (1,102 `diff --git` and
+515 legacy sections) and 4,734 hunks. This is source-only dependency metadata;
+it needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional changes
+remain untouched.
+
+A delivery audit also confirmed that CoWasm's existing nauty port is not yet a
+drop-in fix for the adjacent `nauty_geng` cluster. Its `geng` artifact is a raw
+WASM executable, while Sage invokes `geng` through `subprocess` and the current
+Node POSIX bridge delegates subprocess execution to the host operating system.
+Staging the file on `PATH` would therefore leave an execution-format failure.
+A future nauty pass needs a relocatable WASM-subprocess execution contract (and
+Electron coverage), rather than a manifest-only change. The next scheduled pass
+can address the graph database startup namespace cluster or design that
+execution contract.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

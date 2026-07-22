@@ -30648,6 +30648,15 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 @@ -3774 +3774 @@
 -            sage: G.chromatic_quasisymmetric_function()
 +            sage: G.chromatic_quasisymmetric_function()                               # needs sage.libs.symmetrica
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -3441 +3441 @@
+-            sage: G.chromatic_number(algorithm='parallel')
++            sage: G.chromatic_number(algorithm='parallel')                            # needs cysignals.alarm
+@@ -3482 +3482 @@
+-            sage: G.chromatic_number(algorithm='parallel')
++            sage: G.chromatic_number(algorithm='parallel')                            # needs cysignals.alarm
 @@ -3777 +3777 @@
 -            sage: XG = G.chromatic_quasisymmetric_function(); XG
 +            sage: XG = G.chromatic_quasisymmetric_function(); XG                      # needs sage.libs.symmetrica
