@@ -63129,6 +63129,50 @@ Sagelite checkout and its intentional changes remain untouched.  The next
 scheduled pass can audit another default-profile deferred marker or select a
 persisted backend/runtime cluster.
 
+Category-primer IPython inspection dependency pass on 2026-07-22 UTC:
+
+The 13 generic deferrals on object-inspection prompts in
+`sage/categories/primer.py` now state their actual `IPython` dependency.
+Forms such as `S?`, `C??`, and `x._mul_??` are IPython/Sage-shell inspection
+syntax rather than expressions accepted by the plain-Python evaluator used by
+the browser-profile doctest worker.
+
+The retained runner-version-131 results record:
+
+```text
+historical focused replay:       0 passed, 13 failed,  0 skipped
+default focused replay:          0 passed,  0 failed, 13 skipped
+IPython-selected replay:         0 passed, 13 failed,  0 skipped
+complete module before:        122 passed,  0 failed, 83 skipped
+complete module final:         122 passed,  0 failed, 83 skipped
+```
+
+Both the historical forced replay and the explicitly selected IPython replay
+fail all 13 rows with the expected plain-Python `SyntaxError`.  The supported
+default profile records all 13 as `optional:ipython` skips with
+`optional,needs:ipython` tags.  In the complete dashboard this reduces generic
+`deferred:not tested` rows from 22 to 9 without changing runnable pass counts.
+
+The authoritative historical, focused, selected-feature, and complete SQLite
+databases, worker state, proposed source, and exact final-section reconstruction
+are under `/tmp/cowasm-sagelite-ipython-extension.Tb3YUC/`.  Every retained
+database has a closed lifecycle and reports `PRAGMA integrity_check = ok`; the
+final complete dashboard has no block failures or file errors, and both saved
+failure-cluster queries are empty.
+
+Validation includes the 13-line historical, default, and selected-feature
+replays, the complete-module before/after comparison, SQLite lifecycle, tag,
+failure, and integrity checks, Python syntax, exact zero-fuzz application of
+the new final patch section to the previously validated pinned source
+reconstruction, byte-for-byte comparison with the tested source, accumulated-
+patch structure, and `git diff --check`.  The accumulated patch now has 1,603
+source sections (1,087 `diff --git` and 516 legacy sections) and 4,640 hunks.
+This is source-only doctest dependency metadata; it needs no native WASM
+rebuild, Electron manifest change, or resource restaging.  The external
+developer Sagelite checkout and its intentional changes remain untouched.  The
+next scheduled pass can audit another concentrated deferred-marker cluster or
+select a persisted backend/runtime failure.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

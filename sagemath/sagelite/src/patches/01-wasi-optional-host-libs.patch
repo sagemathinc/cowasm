@@ -30227,3 +30227,44 @@ diff --git a/src/sage/modules/tutorial_free_modules.py b/src/sage/modules/tutori
 @@ -135 +135 @@
 -    sage: f.<tab>                                 # not tested
 +    sage: f.<tab>                                 # needs IPython
+diff --git a/src/sage/categories/primer.py b/src/sage/categories/primer.py
+--- a/src/sage/categories/primer.py
++++ b/src/sage/categories/primer.py
+@@ -444 +444 @@
+-    sage: i._mul_??                   # not tested
++    sage: i._mul_??                   # needs IPython
+@@ -746 +746 @@
+-    sage: S??                                     # not tested
++    sage: S??                                     # needs IPython
+@@ -781,2 +781,2 @@
+-    sage: G.element_class._mul_?        # not tested
+-    sage: G.parent_class.one?           # not tested
++    sage: G.element_class._mul_?        # needs IPython
++    sage: G.parent_class.one?           # needs IPython
+@@ -844 +844 @@
+-    sage: S._test_associativity?? # not tested
++    sage: S._test_associativity?? # needs IPython
+@@ -918 +918 @@
+-    sage: S?                    # not tested
++    sage: S?                    # needs IPython
+@@ -947 +947 @@
+-    sage: x.__mul__??                           # not tested
++    sage: x.__mul__??                           # needs IPython
+@@ -960 +960 @@
+-    sage: x._mul_??                             # not tested
++    sage: x._mul_??                             # needs IPython
+@@ -985 +985 @@
+-    sage: S??                                     # not tested
++    sage: S??                                     # needs IPython
+@@ -1012 +1012 @@
+-    sage: C._mul_?                                # not tested
++    sage: C._mul_?                                # needs IPython
+@@ -1018 +1018 @@
+-    sage: FiniteSemigroups??                      # not tested
++    sage: FiniteSemigroups??                      # needs IPython
+@@ -1281 +1281 @@
+-    sage: C.Finite?              # not tested
++    sage: C.Finite?              # needs IPython
+@@ -1624 +1624 @@
+-    sage: C??                               # not tested
++    sage: C??                               # needs IPython
