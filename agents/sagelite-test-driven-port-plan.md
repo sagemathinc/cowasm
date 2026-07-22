@@ -65990,6 +65990,50 @@ checkout and its intentional changes remain untouched. A future scheduled
 pass can audit another stale graph/backend dependency guard or select the next
 persisted runtime cluster.
 
+Generic-graph Cython dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/generic_graph_pyx.pyx` is removed now that the stripped graph
+runtime exercises the compiled generic graph helpers directly. A complete
+historical replay with `sage.graphs` selected and a default-profile replay of
+the exact same source with only that guard removed record:
+
+```text
+generic_graph_pyx.pyx: 138 passed, 0 failed, 18 skipped
+optional:sage.modules:   0 passed, 0 failed, 17 skipped
+optional:sage.plot,
+  sage.symbolic:         0 passed, 0 failed,  1 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The active rows cover compiled distance calculations, spring-layout helpers,
+induced and non-induced subgraph search, directed and undirected inputs,
+isomorphism iteration, vertex maps, cardinalities, and argument validation.
+The historical and default runner-version-133 dashboards have identical
+active block order, source hashes, statuses, and deterministic actual output;
+their three accepted `# random` layout rows vary as expected. Both dashboards
+have no block failures or file-level errors and a 100% pass rate across active
+rows. The 18 retained skips preserve their narrower modules, plotting, and
+symbolic metadata; they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/generic_graph_pyx.pyx` is now part of the curated pure-math
+corpus, raising it to 1,182 non-comment entries with no duplicates. Validation
+includes the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness
+and make-target dry run, exact zero-fuzz application of the new final patch
+section to the prior guarded source, byte-for-byte comparison with the
+runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,671 sections
+(1,156 `diff --git` and 515 legacy sections) and 4,863 hunks. Authoritative
+databases, worker state, patch logs, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-generic-graph.fbFiFp/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit
+another stale graph/backend dependency guard or select a persisted runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
