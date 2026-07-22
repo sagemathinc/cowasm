@@ -65897,6 +65897,54 @@ intentional changes remain untouched. A future scheduled pass can audit
 another stale graph/backend dependency guard or select a persisted runtime
 cluster.
 
+All-pairs-distance dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/distances_all_pairs.pyx` is removed now that the stripped graph
+runtime executes the compiled all-pairs distance algorithms directly. A
+complete historical replay with `sage.graphs` selected and a default-profile
+replay of the exact same source with only that guard removed record identical
+active results:
+
+```text
+distances_all_pairs.pyx: 189 passed, 0 failed, 22 skipped
+optional:networkx:         0 passed, 0 failed, 20 skipped
+optional:sage.combinat:    0 passed, 0 failed,  2 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+The active rows cover distance and predecessor dictionaries, eccentricity,
+diameter, radius and center algorithms, Floyd-Warshall variants, Wiener and
+Szeged indices, directed and undirected graphs, disconnected inputs, labels,
+weights, and argument validation. Both retained runner-version-133 dashboards
+have no block failures or file-level errors and a 100% pass rate across active
+rows. The 22 retained skips preserve their narrower NetworkX and combinatorics
+metadata; they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/distances_all_pairs.pyx` is now part of the curated pure-math
+corpus, raising it to 1,180 non-comment entries with no duplicates. Validation
+includes the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness
+and make-target dry run, exact zero-fuzz application of the new final patch
+section to the prior guarded source, byte-for-byte comparison with the
+runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,669 sections
+(1,154 `diff --git` and 515 legacy sections) and 4,860 hunks. Authoritative
+databases, worker state, patch logs, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-distances-all-pairs.y8Mder/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched.
+
+The same pass kept `sage/graphs/base/boost_graph.pyx` out of the quiet corpus:
+its first active negative-weight Dijkstra diagnostic reaches a Boost exception
+path that traps the WASM worker at source line 962 instead of raising Sage's
+documented `RuntimeError`. The retained crash dashboard is under
+`/tmp/cowasm-sagelite-boost-graph.LM1rvF/`. A future scheduled pass can address
+that focused C++ exception/runtime cluster or audit another stale graph
+dependency guard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
