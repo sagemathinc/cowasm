@@ -31283,3 +31283,9 @@ diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generat
          ....:     print(G)
          Graph on 3 vertices
          Graph on 3 vertices
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -1192 +1192 @@
+-            sage: next(graphs.nauty_genbg("1 63", debug=False))  # known bug
++            sage: next(graphs.nauty_genbg("1 63", debug=False))

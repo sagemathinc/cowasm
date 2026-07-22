@@ -8,6 +8,11 @@ const WASI_SUBPROCESS_FIXTURE = Buffer.from(
   "base64"
 );
 
+const WASI_SUBPROCESS_LARGE_OUTPUT_FIXTURE = Buffer.from(
+  "AGFzbQEAAAABGwVgBH9/f38Bf2ABfwBgAABgAAF/YAN/f38BfwJGAhZ3YXNpX3NuYXBzaG90X3ByZXZpZXcxCGZkX3dyaXRlAAAWd2FzaV9zbmFwc2hvdF9wcmV2aWV3MQlwcm9jX2V4aXQAAQMKCQICAwQAAQICAgQFAXABAQEFAwEAAgYNAn8BQYCABAt/AEEACwcTAgZtZW1vcnkCAAZfc3RhcnQAAwrcBAkCAAtXAQF/AkACQCOBgICAAEGYgISAAGooAgANACOBgICAAEGYgISAAGpBATYCABCIgICAABCCgICAABCEgICAACEAEIqAgIAAIAANAQ8LAAsgABCHgICAAAALeQECfyOAgICAAEGAIGsiACSAgICAACAAQfgAQYAg/AsAQSEhAQJAAkADQCABQX9qIgFFDQFBASAAQYAgEIWAgIAAQYAgRg0AC0ECIQEMAQtBEUEDQQJBgICEgABBEBCFgICAAEEQRhshAQsgAEGAIGokgICAgAAgAQtwAQF/I4CAgIAAQRBrIgMkgICAgAAgAyACNgIMIAMgATYCCAJAAkAgACADQQhqQQEgA0EEahCGgICAACICRQ0AQQBBCCACIAJBzABGGzYCnICEgABBfyECDAELIAMoAgQhAgsgA0EQaiSAgICAACACCxUAIAAgASACIAMQgICAgABB//8DcQsLACAAEIGAgIAAAAvfAQECf0EAQaSAhIAANgKkgISAAEGAgISAACEAAkACQEGAgISAAEUNAEGAgISAAEGAgICAAGshAQwBCyOAgICAACEBQZCBhIAAQZCBhIAAa0GAgISAACABQYCAhIAASyIAGyEBQZCBhIAAQYCAhIAAIAAbIQALQThBADYCpICEgABBNCABNgKkgISAAEEwIAA2AqSAhIAAQQhBpICEgAA2AqSAhIAAQQRBpICEgAA2AqSAhIAAQQxBACgCoICEgAA2AqSAhIAAQQAgAUGAgIAEIAFBgICABEkbNgKUgISAAAsCAAsOABCJgICAABCJgICAAAsLJAIAQYCABAsRbGFyZ2Utb3V0cHV0LW9rCgAAQZSABAsEAAACAA==",
+  "base64"
+);
+
 let python: Awaited<ReturnType<typeof syncPython>>;
 
 beforeAll(async () => {
@@ -61,6 +66,32 @@ wasm_child = subprocess.run(
     expect(
       repr("(wasm_child.returncode, wasm_child.stdout, wasm_child.stderr)")
     ).toBe("(23, 'wasm-child-out\\n', 'wasm-child-err\\n')");
+  } finally {
+    rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
+
+test("subprocess captures raw WASI output larger than a host pipe", async () => {
+  const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
+  const fixture = join(fixtureDir, "large-output.wasm");
+  try {
+    writeFileSync(fixture, WASI_SUBPROCESS_LARGE_OUTPUT_FIXTURE);
+    chmodSync(fixture, 0o755);
+
+    const { exec, repr } = python;
+    exec(`
+import subprocess
+wasm_large_output = subprocess.run(
+    [${JSON.stringify(fixture)}],
+    text=True,
+    capture_output=True,
+)
+`);
+    expect(
+      repr(
+        "(wasm_large_output.returncode, len(wasm_large_output.stdout), wasm_large_output.stdout[:1], wasm_large_output.stdout[-1:], wasm_large_output.stderr)"
+      )
+    ).toBe("(17, 131072, 'x', 'x', 'large-output-ok\\n')");
   } finally {
     rmSync(fixtureDir, { recursive: true, force: true });
   }

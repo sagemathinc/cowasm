@@ -104,7 +104,14 @@ export default async function wasmImportNode(
 
   return await wasmImport({
     source: name,
-    bindings: { ...bindings, fs, os, child_process, posix },
+    bindings: {
+      ...bindings,
+      fs,
+      os,
+      child_process,
+      posix,
+      native_fs: bindings.fs,
+    },
     options,
     importWebAssembly,
     importWebAssemblySync,

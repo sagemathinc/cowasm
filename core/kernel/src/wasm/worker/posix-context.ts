@@ -70,6 +70,7 @@ export default class PosixContext {
       os: bindings.os ?? {},
       posix: bindings.posix ?? {},
       child_process: bindings.child_process ?? {},
+      native_fs: bindings.native_fs,
       memory,
       callFunction,
       callWithString,

@@ -69,6 +69,7 @@ export interface Context {
   child_process: {
     spawnSync?: (command: string) => number;
   };
+  native_fs?: FileSystem;
   // The WASM memory (so we can make sense of pointers efficiently).
   memory: WebAssembly.Memory;
   // Optional module that gets installed on Mac/Linux, but obviously not windows

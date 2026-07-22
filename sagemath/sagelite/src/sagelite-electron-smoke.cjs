@@ -1524,6 +1524,9 @@ assert all(graph.order() == 4 and graph.is_connected() for graph in connected_gr
 bipartite_graphs = list(graphs.nauty_genbg("2 2 -c"))
 assert len(bipartite_graphs) == 2
 assert all(graph.order() == 4 and graph.is_connected() for graph in bipartite_graphs)
+large_bipartite_graph = next(graphs.nauty_genbg("1 63"))
+assert large_bipartite_graph.order() == 64
+assert large_bipartite_graph.is_bipartite()
 `);
     console.log("sagelite-electron-ok nauty WASI subprocess delivery smoke");
     console.log("sagelite-electron-start graph LaTeX color delivery smoke");

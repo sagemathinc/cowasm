@@ -34,6 +34,7 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CFLAGS="-Oz" \
+  LDFLAGS="-Wl,-z,stack-size=1048576" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
       --build=i686-pc-linux-gnu \
@@ -73,4 +74,18 @@ grep -F "6 graphs altogether" "$count_log"
 grep -F "Graph 6, order 4." "$show_log"
 grep -F "  0 : 1 2 3;" "$show_log"
 
-echo "nauty-ok library geng countg showg"
+large_bipartite_file="$probe_dir/bipartite-1-63.g6"
+large_bipartite_log="$probe_dir/genbgL-1-63.log"
+large_bipartite_count_log="$probe_dir/genbgL-1-63-count.log"
+
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/genbgL" 1 63 \
+  >"$large_bipartite_file" 2>"$large_bipartite_log"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/countg" \
+  <"$large_bipartite_file" >"$large_bipartite_count_log"
+
+grep -F "64 graphs generated" "$large_bipartite_log"
+grep -F "64 graphs altogether" "$large_bipartite_count_log"
+
+echo "nauty-ok library geng genbgL countg showg"

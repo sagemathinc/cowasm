@@ -25,6 +25,7 @@ export interface WASIBindings {
   os?: any;
   child_process?: any;
   posix?: any;
+  native_fs?: any;
 }
 
 export type WASIArgs = string[];

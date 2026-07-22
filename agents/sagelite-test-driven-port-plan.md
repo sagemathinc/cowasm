@@ -64055,6 +64055,59 @@ WASM rebuild. A future runtime pass can investigate the large `genbgL 1 63`
 memory trap or deliver the remaining nauty-family commands before reopening
 the 14 older `nauty` rows.
 
+Graph nauty large-output delivery pass on 2026-07-22 UTC:
+
+The final deferred `graph_generators.py` row is active again. Its original
+`genbgL 1 63` memory trap had two layers: nauty's default WASI stack was too
+small for the 64-vertex boundary, and after raising that stack the synchronous
+raw-WASI subprocess bridge could fill its stdout pipe before Python had a
+chance to read it. The nauty WASI build now links commands with a 1 MiB stack,
+and its standalone regression generates and counts all 64 bipartite graphs at
+the exact boundary.
+
+Captured raw-WASI stdout and stderr now use anonymous seekable files behind
+Python's existing pipe descriptors. This preserves the ordinary
+`subprocess.Popen` and `subprocess.run(capture_output=True)` interface while
+removing the host pipe-capacity deadlock from the deliberately synchronous
+child transport. A compiled raw-WASI fixture writes 128 KiB to stdout, writes
+a separate stderr marker, and exits with status 17; Python receives all three
+values exactly. The complete kernel suite passes 3 tests in 2 suites, and the
+complete Python-WASM suite passes all 55 tests in 16 suites.
+
+The retained runner-version-132 focused dashboard records:
+
+```text
+graph_generators.py:1192: 1 passed, 0 failed, 0 skipped
+actual output:             Bipartite graph on 64 vertices
+run lifecycle:             passed
+SQLite integrity:          ok
+```
+
+The exact source prompt no longer carries temporary `# known bug` metadata.
+The Electron-shaped focused runtime probe also constructs the graph, verifies
+order 64 and bipartiteness, and exits successfully from a relocated resource
+tree. The durable Electron smoke contains the same boundary assertion. Its
+manifest contract advances to schema 197 and
+`nauty-large-output-delivery-v159`; Electron TypeScript compilation and all
+three manifest, forge-resource, and runtime contract programs pass. A broader
+compatibility replay against the retained older resource tree reached its
+pre-existing stale graph-convexity boundary before the nauty section, so the
+focused probe is the authoritative runtime result for this binary-only
+resource relocation.
+
+Validation also includes the clean nauty configure/build/install regression,
+the Sagelite make-target dry run, accumulated-patch syntax, Python, shell, and
+JavaScript syntax, exact zero-fuzz application of the final source section
+after its predecessor, byte-for-byte comparison with the tested
+`graph_generators.py`, SQLite lifecycle and integrity queries, and `git diff
+--check`. The accumulated source patch now has 1,627 source sections (1,112
+`diff --git` and 515 legacy sections) and 4,797 hunks. Focused databases,
+worker state, source reconstruction, resource relocation, and logs are under
+`/tmp/cowasm-sagelite-genbg-stack.YnVBvv/`. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future pass can
+deliver more nauty-family commands or continue with the next runtime-backed
+graph cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

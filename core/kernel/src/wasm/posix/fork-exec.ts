@@ -34,7 +34,8 @@ const log = debug("posix:fork-exec");
 const WASM = Buffer.from("\0asm");
 
 export default function fork_exec(context) {
-  const { posix, recv, wasi, run, fs, child_process, getcwd } = context;
+  const { posix, recv, wasi, run, fs, child_process, getcwd, native_fs } =
+    context;
   function isWasm(filename: string): boolean {
     const fd = fs.openSync(filename, "r");
     try {
@@ -123,6 +124,80 @@ export default function fork_exec(context) {
       }
     }
     return env;
+  }
+
+  function spoolCapturedOutput(readFd: number, writeFd: number): void {
+    if (readFd < 0 || writeFd < 0) {
+      return;
+    }
+    const readFile = wasi.FD_MAP.get(readFd);
+    const writeFile = wasi.FD_MAP.get(writeFd);
+    if (readFile == null || writeFile == null) {
+      throw Error(
+        `invalid WASI subprocess output descriptors ${readFd}/${writeFd}`
+      );
+    }
+    if (native_fs == null) {
+      throw Error("WASI subprocess output capture requires a native filesystem");
+    }
+
+    const spoolDir = native_fs.mkdtempSync(
+      join("/tmp", "cowasm-wasi-subprocess-output-")
+    );
+    const spoolPath = join(spoolDir, "output");
+    let readReal = -1;
+    let writeReal = -1;
+    try {
+      writeReal = native_fs.openSync(spoolPath, "w+");
+      readReal = native_fs.openSync(spoolPath, "r");
+      native_fs.unlinkSync(spoolPath);
+      native_fs.rmdirSync(spoolDir);
+    } catch (err) {
+      for (const fd of [readReal, writeReal]) {
+        if (fd >= 0) {
+          try {
+            native_fs.closeSync(fd);
+          } catch (_closeErr) {}
+        }
+      }
+      try {
+        native_fs.unlinkSync(spoolPath);
+      } catch (_unlinkErr) {}
+      try {
+        native_fs.rmdirSync(spoolDir);
+      } catch (_rmdirErr) {}
+      throw err;
+    }
+
+    const oldReadReal = readFile.real;
+    const oldWriteReal = writeFile.real;
+    wasi.FD_MAP.set(readFd, {
+      ...readFile,
+      real: readReal,
+      path: undefined,
+      fakePath: undefined,
+      filetype: undefined,
+      offset: BigInt(0),
+    });
+    wasi.FD_MAP.set(writeFd, {
+      ...writeFile,
+      real: writeReal,
+      path: undefined,
+      fakePath: undefined,
+      filetype: undefined,
+      offset: BigInt(0),
+    });
+
+    for (const realFd of new Set([oldReadReal, oldWriteReal])) {
+      const stillReferenced = Array.from(wasi.FD_MAP.values()).some(
+        (file: any) => file.real == realFd
+      );
+      if (!stillReferenced) {
+        try {
+          native_fs.closeSync(realFd);
+        } catch (_err) {}
+      }
+    }
   }
 
   function runWasiExecutable({
@@ -384,6 +459,12 @@ export default function fork_exec(context) {
             }
           });
           if (executable != null) {
+            // The child runs synchronously, so Python cannot consume a capture
+            // pipe until this call returns. Redirect captured output through
+            // anonymous seekable files to avoid deadlocking when a raw WASI
+            // command writes more than the host pipe buffer can hold.
+            spoolCapturedOutput(c2pread, c2pwrite);
+            spoolCapturedOutput(errread, errwrite);
             const status = runWasiExecutable({
               executable,
               argv,
