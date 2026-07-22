@@ -1092,6 +1092,7 @@ src/sage/graphs/graph_generators_pyx.pyx
 src/sage/graphs/generic_graph_pyx.pyx
 src/sage/graphs/centrality.pyx
 src/sage/graphs/convexity_properties.pyx
+src/sage/graphs/strongly_regular_db.pyx
 src/sage/graphs/graph_input.py
 src/sage/graphs/graph_list.py
 src/sage/graphs/graph_editor.py

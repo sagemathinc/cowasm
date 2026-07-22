@@ -31991,3 +31991,134 @@ diff --git a/src/sage/graphs/convexity_properties.pyx b/src/sage/graphs/convexit
 -# sage.doctest: needs sage.graphs
  r"""
  Convexity properties of graphs
+diff --git a/src/sage/graphs/strongly_regular_db.pyx b/src/sage/graphs/strongly_regular_db.pyx
+--- a/src/sage/graphs/strongly_regular_db.pyx
++++ b/src/sage/graphs/strongly_regular_db.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -215 +214 @@
+-        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t
++        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t                    # needs sage.libs.singular
+@@ -217 +216 @@
+-        sage: g = t[0](*t[1:]); g
++        sage: g = t[0](*t[1:]); g                                                       # needs sage.libs.singular
+@@ -219 +218 @@
+-        sage: g.is_strongly_regular(parameters=True)
++        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.singular
+@@ -221 +220 @@
+-        sage: t = is_orthogonal_array_block_graph(225,98,43,42); t
++        sage: t = is_orthogonal_array_block_graph(225,98,43,42); t                      # needs sage.libs.singular
+@@ -223 +222 @@
+-        sage: g = t[0](*t[1:]); g
++        sage: g = t[0](*t[1:]); g                                                       # needs sage.libs.singular
+@@ -225 +224 @@
+-        sage: g.is_strongly_regular(parameters=True)
++        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.singular
+@@ -227 +226 @@
+-        sage: t = is_orthogonal_array_block_graph(225,112,55,56); t
++        sage: t = is_orthogonal_array_block_graph(225,112,55,56); t                     # needs sage.libs.singular
+@@ -229 +228 @@
+-        sage: g = t[0](*t[1:]); g
++        sage: g = t[0](*t[1:]); g                                                       # needs sage.libs.singular
+@@ -231 +230 @@
+-        sage: g.is_strongly_regular(parameters=True)
++        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.singular
+@@ -1347 +1346 @@
+-        sage: g = t[0](*t[1:]); g
++        sage: g = t[0](*t[1:]); g                                                       # needs sage.libs.gap
+@@ -1349 +1348 @@
+-        sage: g.is_strongly_regular(parameters=True)
++        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
+@@ -1413 +1412 @@
+-        sage: g = t[0](*t[1:]); g
++        sage: g = t[0](*t[1:]); g                                                       # needs sage.libs.pari
+@@ -1415 +1414 @@
+-        sage: g.is_strongly_regular(parameters=True)
++        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.pari
+@@ -2797 +2796 @@
+-        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)                    # needs sage.libs.pari
++        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)                    # needs database_graphs sage.libs.pari
+@@ -2799 +2798 @@
+-        sage: graphs.strongly_regular_graph(10,3,0,1)
++        sage: graphs.strongly_regular_graph(10,3,0,1)                                   # needs database_graphs
+@@ -2804 +2803 @@
+-        sage: graphs.strongly_regular_graph(10,3,0)
++        sage: graphs.strongly_regular_graph(10,3,0)                                     # needs database_graphs
+@@ -2809 +2808 @@
+-        sage: graphs.strongly_regular_graph(5,5,5,5,existence=True)
++        sage: graphs.strongly_regular_graph(5,5,5,5,existence=True)                     # needs database_graphs
+@@ -2811 +2810 @@
+-        sage: graphs.strongly_regular_graph(5,5,5,5)
++        sage: graphs.strongly_regular_graph(5,5,5,5)                                    # needs database_graphs
+@@ -2818 +2817 @@
+-        sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # needs sage.combinat sage.modules
++        sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # needs database_graphs sage.combinat sage.modules
+@@ -2820 +2819 @@
+-        sage: graphs.strongly_regular_graph(324,57,0,12)                                # needs sage.combinat sage.modules
++        sage: graphs.strongly_regular_graph(324,57,0,12)                                # needs database_graphs sage.combinat sage.modules
+@@ -2829 +2828 @@
+-        sage: graphs.strongly_regular_graph(324,95,22,30,existence=True)                # needs sage.combinat
++        sage: graphs.strongly_regular_graph(324,95,22,30,existence=True)                # needs database_graphs sage.combinat
+@@ -2831 +2830 @@
+-        sage: graphs.strongly_regular_graph(324,95,22,30)                               # needs sage.combinat
++        sage: graphs.strongly_regular_graph(324,95,22,30)                               # needs database_graphs sage.combinat
+@@ -2840 +2839 @@
+-        sage: graphs.strongly_regular_graph(1394,175,0,25,existence=True)               # needs sage.combinat
++        sage: graphs.strongly_regular_graph(1394,175,0,25,existence=True)               # needs database_graphs sage.combinat
+@@ -2842 +2841 @@
+-        sage: graphs.strongly_regular_graph(1394,175,0,25)                              # needs sage.combinat
++        sage: graphs.strongly_regular_graph(1394,175,0,25)                              # needs database_graphs sage.combinat
+@@ -2850 +2849 @@
+-        sage: graphs.strongly_regular_graph(2058,242,91,20,existence=True)
++        sage: graphs.strongly_regular_graph(2058,242,91,20,existence=True)              # needs database_graphs
+@@ -2857 +2856 @@
+-        sage: graphs.strongly_regular_graph(539, 288, 162, 144)                         # needs sage.combinat
++        sage: graphs.strongly_regular_graph(539, 288, 162, 144)                         # needs database_graphs sage.combinat
+@@ -2859 +2858 @@
+-        sage: graphs.strongly_regular_graph(539, 250, 105, 125)                         # needs sage.combinat
++        sage: graphs.strongly_regular_graph(539, 250, 105, 125)                         # needs database_graphs sage.combinat
+@@ -2861 +2860 @@
+-        sage: graphs.strongly_regular_graph(209, 100, 45, 50)                           # needs sage.libs.pari
++        sage: graphs.strongly_regular_graph(209, 100, 45, 50)                           # needs database_graphs sage.libs.pari
+@@ -2879 +2878 @@
+-        sage: graphs.strongly_regular_graph(10,2,1)
++        sage: graphs.strongly_regular_graph(10,2,1)                                     # needs database_graphs
+@@ -2883 +2882 @@
+-        sage: graphs.strongly_regular_graph(12,3,2)
++        sage: graphs.strongly_regular_graph(12,3,2)                                     # needs database_graphs
+@@ -2885 +2884 @@
+-        sage: graphs.strongly_regular_graph(6,3,0)
++        sage: graphs.strongly_regular_graph(6,3,0)                                      # needs database_graphs
+@@ -2913 +2912 @@
+-        sage: g,p=strongly_regular_graph_lazy(10,6,3); g,p
++        sage: g,p=strongly_regular_graph_lazy(10,6,3); g,p                              # needs database_graphs
+@@ -2915 +2914 @@
+-        sage: g(p)
++        sage: g(p)                                                                       # needs database_graphs
+@@ -2917 +2916 @@
+-        sage: g,p=strongly_regular_graph_lazy(10,3,0,1); g,p
++        sage: g,p=strongly_regular_graph_lazy(10,3,0,1); g,p                            # needs database_graphs
+@@ -2920 +2919 @@
+-        sage: g(p)
++        sage: g(p)                                                                       # needs database_graphs
+@@ -2922 +2921 @@
+-        sage: g,p=strongly_regular_graph_lazy(12,3,2); g,p
++        sage: g,p=strongly_regular_graph_lazy(12,3,2); g,p                              # needs database_graphs
+@@ -2925 +2924 @@
+-        sage: g(p)
++        sage: g(p)                                                                       # needs database_graphs
+@@ -2927 +2926 @@
+-        sage: g = strongly_regular_graph_lazy(539,250,105); g                           # needs sage.combinat sage.modules
++        sage: g = strongly_regular_graph_lazy(539,250,105); g                           # needs database_graphs sage.combinat sage.modules
+@@ -2931 +2930 @@
+-        sage: g[0](*g[1:])                                                              # needs sage.combinat sage.modules
++        sage: g[0](*g[1:])                                                              # needs database_graphs sage.combinat sage.modules
+@@ -3049 +3048 @@
+-        sage: small_feasible = apparently_feasible_parameters(20); small_feasible
++        sage: small_feasible = apparently_feasible_parameters(20); small_feasible       # random
+@@ -3062 +3061 @@
+-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs sage.libs.pari
++        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs database_graphs sage.libs.pari
+@@ -3070 +3069 @@
+-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs sage.libs.pari
++        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs database_graphs sage.libs.pari

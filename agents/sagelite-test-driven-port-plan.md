@@ -66144,6 +66144,57 @@ checkout and its intentional changes remain untouched. A future scheduled
 pass can audit another stale graph/backend dependency guard or select the next
 persisted runtime cluster.
 
+Strongly-regular database dependency and corpus-promotion pass on 2026-07-22
+UTC:
+
+The broad `sage.graphs` guard on `sage/graphs/strongly_regular_db.pyx` hid
+substantial runnable coverage behind four narrower optional boundaries. The
+first historical replay with the graph feature selected recorded 160 passed,
+28 failed, and 179 skipped rows. The failures split into 14
+`database_graphs` rows, including state-dependent followups; nine
+Singular-backed orthogonal-array rows; two GAP-backed unitary-polar rows; two
+PARI finite-field rows; and one nondeterministic set-order mismatch.
+
+The source patch now gives each affected setup and dependent prompt its exact
+`database_graphs`, `sage.libs.singular`, `sage.libs.gap`, or `sage.libs.pari`
+metadata, and marks the set-valued feasibility display as `# random`. The
+obsolete file-wide graph guard is removed. A controlled replay retaining the
+broad guard with `sage.graphs` selected and a default-profile replay after
+removing only that guard both record:
+
+```text
+strongly_regular_db.pyx: 161 passed, 0 failed, 206 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both runner-version-133 dashboards have no block failures or file-level
+errors and a 100% pass rate across active rows. Their 161 active rows have
+identical block order, source hashes, statuses, and comparator modes. The 31
+actual-output differences are accepted function-address values covered by
+the existing ellipses. The active coverage includes arithmetic feasibility
+and eigenvalue tests, parameter recognizers, constructor promises, cached
+classifiers, and graph constructions that stay within the delivered graph
+runtime. The 206 retained skips preserve the narrower database, Singular,
+GAP, PARI, finite-field, module, combinatorics, and deferred-test boundaries.
+
+`sage/graphs/strongly_regular_db.pyx` is now part of the curated pure-math
+corpus, raising it to 1,185 non-comment entries with no duplicates. Validation
+includes the initial failure-cluster dashboard, guarded and default complete
+module replays, saved block- and file-failure, lifecycle, and skip queries,
+SQLite integrity, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior guarded source with
+byte-for-byte source comparison, accumulated-patch structure, and
+`git diff --check`. The accumulated source patch now has 1,675 sections
+(1,160 `diff --git` and 515 legacy sections) and 4,909 hunks. Authoritative
+databases, worker state, patch logs, comparison data, and runtime-tested
+source are under `/tmp/cowasm-sagelite-strongly-regular.cLHw1I/`. The already
+packaged side module made this a source-only metadata cleanup with no native
+WASM rebuild, Electron manifest change, or resource restaging. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another stale graph/backend dependency guard
+or select the next persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
