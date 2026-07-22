@@ -30310,3 +30310,80 @@ diff --git a/src/sage/categories/category_with_axiom.py b/src/sage/categories/ca
 @@ -369 +369 @@
 -    sage: C.Green?             # not tested
 +    sage: C.Green?             # needs IPython
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -7326 +7326 @@
+-            sage: G.is_prime()
++            sage: G.is_prime()  # needs sage.groups
+@@ -7482 +7482 @@
+-            sage: graphs.BullGraph().modular_decomposition()
++            sage: graphs.BullGraph().modular_decomposition()  # needs sage.groups
+@@ -7487 +7487 @@
+-            sage: graphs.PetersenGraph().modular_decomposition()
++            sage: graphs.PetersenGraph().modular_decomposition()  # needs sage.groups
+@@ -7494 +7494 @@
+-            sage: G.modular_decomposition()
++            sage: G.modular_decomposition()  # needs sage.groups
+@@ -7508 +7508 @@
+-            sage: g.modular_decomposition()
++            sage: g.modular_decomposition()  # needs sage.groups
+@@ -7513 +7513 @@
+-            sage: graphs.TuranGraph(11, 3).modular_decomposition()
++            sage: graphs.TuranGraph(11, 3).modular_decomposition()  # needs sage.groups
+@@ -7520 +7520 @@
+-            sage: g.modular_decomposition(style='tree')
++            sage: g.modular_decomposition(style='tree')  # needs sage.groups
+@@ -7522 +7522 @@
+-            sage: ascii_art(g.modular_decomposition(algorithm="habib_maurer",style='tree'))
++            sage: ascii_art(g.modular_decomposition(algorithm="habib_maurer",style='tree'))  # needs sage.groups
+@@ -7558 +7558 @@
+-            sage: graphs.EmptyGraph().modular_decomposition()
++            sage: graphs.EmptyGraph().modular_decomposition()  # needs sage.groups
+@@ -7560 +7560 @@
+-            sage: graphs.EmptyGraph().modular_decomposition(style='tree')
++            sage: graphs.EmptyGraph().modular_decomposition(style='tree')  # needs sage.groups
+@@ -7565 +7565 @@
+-            sage: Graph(1).modular_decomposition()
++            sage: Graph(1).modular_decomposition()  # needs sage.groups
+@@ -7567 +7567 @@
+-            sage: Graph(1).modular_decomposition(style='tree')
++            sage: Graph(1).modular_decomposition(style='tree')  # needs sage.groups
+@@ -7572,2 +7572,2 @@
+-            sage: md = Graph({(1,2):[(2,3)],(2,3):[(1,2)]}).modular_decomposition()
+-            sage: md[0]
++            sage: md = Graph({(1,2):[(2,3)],(2,3):[(1,2)]}).modular_decomposition()  # needs sage.groups
++            sage: md[0]  # needs sage.groups
+@@ -7575 +7575 @@
+-            sage: sorted(md[1])
++            sage: sorted(md[1])  # needs sage.groups
+@@ -7580 +7580 @@
+-            sage: graphs.PathGraph(2).modular_decomposition(style='xyz')
++            sage: graphs.PathGraph(2).modular_decomposition(style='xyz')  # needs sage.groups
+@@ -7591 +7591 @@
+-            sage: G1.modular_decomposition(algorithm="habib_maurer")
++            sage: G1.modular_decomposition(algorithm="habib_maurer")  # needs sage.groups
+@@ -7593 +7593 @@
+-            sage: G2.modular_decomposition(algorithm="habib_maurer")
++            sage: G2.modular_decomposition(algorithm="habib_maurer")  # needs sage.groups
+@@ -7595 +7595 @@
+-            sage: G1.modular_decomposition(algorithm="corneil_habib_paul_tedder")
++            sage: G1.modular_decomposition(algorithm="corneil_habib_paul_tedder")  # needs sage.groups
+@@ -7597 +7597 @@
+-            sage: G2.modular_decomposition(algorithm="corneil_habib_paul_tedder")
++            sage: G2.modular_decomposition(algorithm="corneil_habib_paul_tedder")  # needs sage.groups
+@@ -7603 +7603 @@
+-            sage: G.modular_decomposition(algorithm="habib_maurer",style='tree')
++            sage: G.modular_decomposition(algorithm="habib_maurer",style='tree')  # needs sage.groups
+@@ -7893 +7893 @@
+-            sage: graphs.PetersenGraph().is_prime()
++            sage: graphs.PetersenGraph().is_prime()  # needs sage.groups
+@@ -7895 +7895 @@
+-            sage: graphs.BullGraph().is_prime()
++            sage: graphs.BullGraph().is_prime()  # needs sage.groups
+@@ -7900 +7900 @@
+-            sage: (graphs.PetersenGraph() + graphs.BullGraph()).is_prime()
++            sage: (graphs.PetersenGraph() + graphs.BullGraph()).is_prime()  # needs sage.groups
+@@ -7905 +7905 @@
+-            sage: graphs.EmptyGraph().is_prime()
++            sage: graphs.EmptyGraph().is_prime()  # needs sage.groups

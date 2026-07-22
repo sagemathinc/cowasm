@@ -63226,6 +63226,58 @@ marker frontier is now exhausted, so the next scheduled pass should select a
 persisted backend/runtime failure cluster or a different concentrated deferred
 family.
 
+Graph modular-decomposition group dependency pass on 2026-07-22 UTC:
+
+The largest persisted `sage/graphs/graph.py` cluster now carries explicit
+`sage.groups` dependency metadata. Every affected call imports the compiled
+modular-decomposition extension, whose module initialization requires
+`sage.groups.perm_gps.permgroup_element`; that permutation-group backend is not
+packaged in the current stripped browser profile. The annotations cover the
+`is_module` prime check, all modular-decomposition examples, their two `md`
+dependent assertions, the unknown-style diagnostic, and the `is_prime`
+examples.
+
+The retained runner-version-131 results record:
+
+```text
+complete graph.py before:       867 passed, 156 failed, 303 skipped
+focused dependency rows:          0 passed,   0 failed,  25 skipped
+complete graph.py final:        867 passed, 131 failed, 328 skipped
+selected group-backed row:        0 passed,   1 failed,   0 skipped
+removed group/cascade failures:              25
+new failures:                                 0
+```
+
+The removed rows comprise 22 direct missing-module failures, the two dependent
+`md` name failures, and the unknown-style expectation mismatch that was masked
+by the same import-time boundary. Explicitly selecting `sage.groups` at the
+representative Bull-graph row reaches the original
+`ModuleNotFoundError: No module named
+'sage.groups.perm_gps.permgroup_element'`. The final dashboard contains 27
+`optional:sage.groups` skips including two pre-existing graph examples. Its
+largest remaining cluster is now the 21-row missing `sage.graphs.planarity`
+boundary.
+
+The authoritative before, focused, selected-feature, and complete SQLite
+databases, worker state, proposed source, and exact source reconstruction are
+under `/tmp/cowasm-sagelite-graph-groups.nB0MGw/`. Every retained database has
+a closed lifecycle and reports `PRAGMA integrity_check = ok`; the complete
+dashboard has no file-level errors.
+
+Validation includes the 25-line default replay, explicitly selected
+representative replay, complete-file before/after failure-set comparison, saved
+block- and file-failure cluster queries, SQLite lifecycle, tag, and integrity
+checks, Python syntax, exact zero-fuzz application of the final patch section
+to the previously validated source reconstruction, byte-for-byte comparison
+with the tested source, accumulated-patch structure, and `git diff --check`.
+The accumulated patch now has 1,611 source sections (1,095 `diff --git` and 516
+legacy sections) and 4,671 hunks. This is source-only doctest dependency
+metadata; it needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. The next scheduled pass can address the
+isolated `sage.graphs.planarity` cluster or another persisted graph backend
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
