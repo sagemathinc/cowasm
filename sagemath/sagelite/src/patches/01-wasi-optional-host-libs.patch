@@ -31633,3 +31633,10 @@ diff --git a/src/sage/graphs/partial_cube.py b/src/sage/graphs/partial_cube.py
 -# sage.doctest: needs sage.graphs
  r"""
  Partial cubes
+diff --git a/src/sage/game_theory/matching_game.py b/src/sage/game_theory/matching_game.py
+--- a/src/sage/game_theory/matching_game.py
++++ b/src/sage/game_theory/matching_game.py
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ """
+ Matching games

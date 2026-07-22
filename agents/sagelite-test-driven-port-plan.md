@@ -64804,6 +64804,48 @@ its intentional changes remain untouched. A future scheduled pass can audit
 another stale file-wide graph dependency or select the next persisted
 backend/runtime cluster.
 
+Graph matching-game dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/game_theory/matching_game.py` is removed now that the stripped graph
+runtime executes the module's stable-marriage implementation directly. A
+complete historical replay with `sage.graphs` selected recorded 301 passed,
+0 failed, and 3 skipped blocks. Removing the broad guard and replaying the
+exact source under the default node profile records the identical result:
+
+```text
+matching_game.py:       301 passed, 0 failed, 3 skipped
+optional:sage.plot:       0 passed, 0 failed, 3 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+The active rows cover preference construction, validation, equality and
+display, bipartite graph conversion, the extended Gale-Shapley algorithm,
+stable matching enumeration, and stability checks. The three remaining skips
+preserve the existing narrower plotting dependency; they are no longer hidden
+behind the broad graph feature. Both retained runner-version-132 dashboards
+have no block failures or file-level errors and a 100% pass rate across active
+rows.
+
+`sage/game_theory/matching_game.py` is now part of the curated pure-math
+corpus, raising it to 1,154 non-comment entries with no duplicates. Validation
+includes historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact application of
+the complete accumulated patch to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`, byte-for-byte comparison with the
+runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,642 sections (1,127
+`diff --git` and 515 legacy sections) and 4,822 hunks. Authoritative databases,
+worker state, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-next-graph.ullzUW/`. This source-only dependency cleanup
+and corpus promotion needs no native WASM rebuild, Electron manifest change,
+or resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+next stale dependency guard exposed by the expanded graph runtime or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
