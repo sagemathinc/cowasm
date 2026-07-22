@@ -63622,6 +63622,57 @@ developer Sagelite checkout and its intentional changes remain untouched. The
 next scheduled pass can address the isolated convexity-properties cluster or
 another persisted runtime boundary.
 
+Graph convexity runtime delivery pass on 2026-07-22 UTC:
+
+The isolated `sage.graphs.convexity_properties` cluster was another WASI
+build-partition omission rather than an unavailable browser dependency. The
+Cython extension uses the already packaged base graph, all-pairs-distance,
+binary-matrix, and generic MIP backends, but the WASI graph partition still
+routed it through the disabled Cliquer and planarity dependency bucket. The
+base extension set now includes `convexity_properties`, so Meson builds,
+installs, audits, and packages the side module without either unrelated native
+library.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:       919 passed, 17 failed, 390 skipped
+focused convexity rows:                5 passed,  0 failed,   0 skipped
+complete graph.py final:             924 passed, 12 failed, 390 skipped
+removed convexity/cascade failures:               5
+new failure lines:                                0
+```
+
+The removed set contains all three direct missing-module failures and the two
+dependent `CP` name failures. An exact block-key comparison against the GLPK
+dashboard finds no new failure line. Both final SQLite databases have closed
+lifecycles and report `PRAGMA integrity_check = ok`; the complete dashboard has
+no file-level error.
+
+The standalone Node smoke now constructs Petersen-graph convexity properties
+and checks both documented hulls. Electron manifest schema 193 advances the
+mirrored contract to `graph-convexity-delivery-v155`; both staged and relocated
+Electron smokes execute the same hull assertions. The final manifest records
+568 side modules and 737 required-resource paths and hashes, including
+`convexity_properties.cpython-314-wasm32-wasi.so`.
+
+The authoritative clean pinned source reconstruction, full native build,
+standalone and Electron resources, focused and complete SQLite databases, and
+worker state are under
+`/tmp/cowasm-sagelite-convexity.5AP6Un/`. Validation includes zero-reject
+application of the accumulated patch to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`, all native Cython compile/link
+targets, installed and Electron side-module audits, the complete standalone
+Node/WASI/doctest/schema-193 and Electron relocation ladder, focused and
+complete graph replays, historical failure-set comparison, saved
+failure-cluster and lifecycle queries, SQLite integrity, shell and JavaScript
+syntax, and `git diff --check`. The accumulated source patch remains at 1,616
+sections (1,101 `diff --git` and 515 legacy sections) and 4,732 hunks because
+this correction refines an existing Meson hunk. The external developer
+Sagelite checkout and its intentional changes remain untouched. The next
+scheduled pass can select one of the remaining persisted graph runtime
+clusters, such as the two-row `cysignals.alarm` or `nauty_geng` boundaries.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -1502,6 +1502,16 @@ values = p.get_values(x)
 assert values[0] == 1.0 and values[1] == 0.0
 `);
     console.log("sagelite-electron-ok GLPK MIP delivery smoke");
+    console.log("sagelite-electron-start graph convexity delivery smoke");
+    await python.exec(String.raw`
+from sage.all import graphs
+
+g = graphs.PetersenGraph()
+convexity = g.convexity_properties()
+assert convexity.hull([1, 3]) == [1, 2, 3]
+assert convexity.hull([3, 7]) == [2, 3, 7]
+`);
+    console.log("sagelite-electron-ok graph convexity delivery smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

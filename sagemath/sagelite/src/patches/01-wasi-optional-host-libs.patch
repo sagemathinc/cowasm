@@ -2190,7 +2190,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  foreach name, pyx : extension_data
 +  graph_extension_link_args = []
 +  graph_extension_dependencies = [py_dep, cysignals, flint, gmp]
-+  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly' or name == 'strongly_regular_db'
++  if name == 'generic_graph_pyx' or name == 'views' or name == 'connectivity' or name == 'convexity_properties' or name == 'distances_all_pairs' or name == 'independent_sets' or name == 'line_graph' or name == 'weakly_chordal' or name == 'asteroidal_triples' or name == 'comparability' or name == 'hyperbolicity' or name == 'isoperimetric_inequalities' or name == 'spanning_tree' or name == 'matchpoly' or name == 'chrompoly' or name == 'strongly_regular_db'
 +    graph_extension_link_args = cowasm_graph_libcxx_link_args
 +  elif name != 'graph_generators_pyx'
 +    graph_extension_dependencies += [cliquer, planarity]
