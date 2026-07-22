@@ -31647,3 +31647,14 @@ diff --git a/src/sage/combinat/graph_path.py b/src/sage/combinat/graph_path.py
 -# sage.doctest: needs sage.graphs
  r"""
  Paths in directed acyclic graphs
+diff --git a/src/sage/graphs/morphisms.py b/src/sage/graphs/morphisms.py
+--- a/src/sage/graphs/morphisms.py
++++ b/src/sage/graphs/morphisms.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+@@ -387,3 +386,3 @@
+         sage: g = graphs.CycleGraph(9)
+-        sage: g.chromatic_number()
++        sage: g.chromatic_number()                                                       # needs sage.graphs.cliquer
+         3

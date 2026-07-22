@@ -1084,6 +1084,7 @@ src/sage/graphs/graph_editor.py
 src/sage/graphs/cycle_enumeration.py
 src/sage/graphs/lovasz_theta.py
 src/sage/graphs/partial_cube.py
+src/sage/graphs/morphisms.py
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
