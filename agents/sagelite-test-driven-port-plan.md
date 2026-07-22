@@ -65587,6 +65587,59 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can address the five-row spanning-tree cluster or select
 another persisted graph/backend cluster.
 
+Spanning-tree dependency, startup-namespace, and corpus-promotion pass on
+2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/spanning_tree.pyx` is removed now that the stripped graph runtime
+executes the native spanning-tree algorithms directly. The five historical
+failures collapsed to one startup-parity gap: upstream `sage.all` exposes the
+lightweight `DisjointSet` constructor through `sage.sets.all`, while the
+stripped WASI startup surface did not. The WASI `sage.all` patch and common
+doctest namespace now expose `DisjointSet`, and the doctest runner advances to
+version 133.
+
+A complete historical replay with `sage.graphs` selected and a default-profile
+replay of the narrowed source record:
+
+```text
+historical: spanning_tree.pyx: 161 passed, 5 failed, 21 skipped
+default:    spanning_tree.pyx: 166 passed, 0 failed, 21 skipped
+optional:networkx:               0 passed, 0 failed,  9 skipped
+long time:                       0 passed, 0 failed,  9 skipped
+optional:sage.modules:           0 passed, 0 failed,  2 skipped
+optional:sage.plot:              0 passed, 0 failed,  1 skipped
+run lifecycle:                   passed and closed (default)
+SQLite integrity:                ok
+```
+
+The active rows cover Kruskal, filter-Kruskal, Boruvka, and Prim variants;
+weighted and unweighted graphs; disconnected, looped, and multiedge cases;
+random spanning trees; spanning-tree enumeration and counting; and input and
+weight validation. The final runner-version-133 dashboard has no block
+failures or file-level errors and a 100% pass rate across active rows. The
+remaining skips preserve their narrower NetworkX, modules, plotting, and
+long-time metadata; they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/spanning_tree.pyx` is now part of the curated pure-math corpus,
+raising it to 1,173 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and file-
+failure, lifecycle, and skip queries, SQLite integrity, a copy-on-write
+resource-bundle REPL probe of the patched `sage.all` startup export, Node
+syntax and Python source compilation, corpus uniqueness and make-target dry
+run, exact zero-fuzz application of the two new final patch sections to the
+prior guarded sources, byte-for-byte comparison with the runtime-tested
+sources, accumulated-patch syntax and structure, and `git diff --check`. The
+accumulated source patch now has 1,662 sections (1,147 `diff --git` and 515
+legacy sections) and 4,852 hunks. Authoritative databases, worker state,
+runtime-tested sources, copy-on-write resources, and patch logs are under
+`/tmp/cowasm-sagelite-spanning.XihHsH/`. This source-level namespace and
+dependency cleanup needs no native WASM rebuild or permanent resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future scheduled pass can audit the stale
+`sage.graphs` guard on `sage/graphs/base/static_sparse_backend.pyx` or select
+another persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

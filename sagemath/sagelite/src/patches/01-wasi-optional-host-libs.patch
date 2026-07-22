@@ -31859,3 +31859,21 @@ diff --git a/src/sage/graphs/domination.py b/src/sage/graphs/domination.py
 +        [[(0, 0), (0, 1), (0, 2)], [(0, 0), (0, 2), (1, 1)], [(0, 0), (1, 2)], [(0, 1), (1, 0), (1, 2)], [(0, 1), (1, 1)], [(0, 2), (1, 0)], [(1, 0), (1, 1), (1, 2)]]
 +        sage: sorted(sorted(S) for S in G.minimal_dominating_sets(k=2))
 +        [[(0, 0), (0, 2)], [(0, 0), (1, 0)], [(0, 0), (1, 2)], [(0, 1)], [(0, 2), (1, 0)], [(0, 2), (1, 2)], [(1, 0), (1, 2)], [(1, 1)]]
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -421,6 +421,7 @@
+     from sage.schemes.generic.spec import Spec
+     from sage.schemes.product_projective.space import ProductProjectiveSpaces
+     from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace
++    from sage.sets.disjoint_set import DisjointSet
+     from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+     from sage.sets.family import Family
+     from sage.sets.positive_integers import PositiveIntegers
+diff --git a/src/sage/graphs/spanning_tree.pyx b/src/sage/graphs/spanning_tree.pyx
+--- a/src/sage/graphs/spanning_tree.pyx
++++ b/src/sage/graphs/spanning_tree.pyx
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ Spanning trees
