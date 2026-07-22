@@ -65721,6 +65721,53 @@ changes remain untouched. A future scheduled pass can audit the next stale
 dependency guard exposed by the expanded graph runtime or select another
 persisted graph/backend cluster.
 
+Dense-graph dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/base/dense_graph.pyx` is removed now that the stripped graph
+runtime exercises the compiled mutable dense-graph implementation directly.
+A complete historical replay with `sage.graphs` selected and a default-profile
+replay of the exact same source with only that guard removed record identical
+active results:
+
+```text
+dense_graph.pyx: 100 passed, 0 failed, 1 skipped
+long time:         0 passed, 0 failed, 1 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+The active rows cover graph allocation and growth, vertex and edge mutation,
+directed and undirected adjacency, loops, relabeling, bitset-backed neighbor
+iteration, degree and size calculations, and copy behavior. Both retained
+runner-version-133 dashboards have no block failures or file-level errors and
+a 100% pass rate across active rows. The one adjacency-sequence stress example
+preserves its existing `long time` metadata; it is no longer hidden behind the
+broad graph feature.
+
+`sage/graphs/base/dense_graph.pyx` is now part of the curated pure-math corpus,
+raising it to 1,176 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and file-
+failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness and
+make-target dry run, exact zero-fuzz application of the new final patch section
+to the prior guarded source, byte-for-byte comparison with the runtime-tested
+source, accumulated-patch syntax and structure, and `git diff --check`. The
+accumulated source patch now has 1,665 sections (1,150 `diff --git` and 515
+legacy sections) and 4,855 hunks. Authoritative databases, worker state, and
+the runtime-tested source are under
+`/tmp/cowasm-sagelite-static-graph.qxgqLC/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or permanent
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched.
+
+The same pass stopped a bounded historical
+`sage/graphs/base/static_sparse_graph.pyx` replay after more than two minutes
+of sustained CPU time at the untagged 201-by-201 characteristic-polynomial
+example on source line 1170. Its interrupted lifecycle database and state
+breadcrumb are retained beside the dense-graph dashboards. A future scheduled
+pass can classify that performance/metadata cluster or audit another stale
+graph/backend dependency guard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
