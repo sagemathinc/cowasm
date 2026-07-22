@@ -1081,6 +1081,7 @@ src/sage/graphs/cycle_enumeration.py
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
+src/sage/graphs/graph_decompositions/bandwidth.pyx
 src/sage/graphs/graph_decompositions/rankwidth.pyx
 src/sage/groups/perm_gps/partn_ref/refinement_sets.pyx
 src/sage/plot/arc.py

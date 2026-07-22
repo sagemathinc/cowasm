@@ -64597,6 +64597,48 @@ its intentional changes remain untouched. A future scheduled pass can audit
 another stale file-wide graph dependency or select the next persisted
 backend/runtime cluster.
 
+Graph bandwidth dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/graph_decompositions/bandwidth.pyx` is removed now that the
+stripped graph runtime executes the module's exact bandwidth algorithm
+directly. A complete historical replay with `sage.graphs` selected confirms
+that all 12 active rows pass; the default replay of the reconstructed source
+records:
+
+```text
+bandwidth.pyx:           12 passed, 0 failed, 2 skipped
+optional:sage.modules: 0 passed, 0 failed, 2 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The two remaining skips are adjacency-matrix display examples with the
+existing narrower `sage.modules` metadata; the historical dashboard also
+inherits `sage.graphs` from the guard being audited. The active rows cover
+Petersen and Chvatal graph bandwidths, disconnected and trivial graphs, and
+the directed- and weighted-graph validation paths. Both retained runner-
+version-132 dashboards have no block failures or file-level errors and a 100%
+pass rate across active rows.
+
+`sage/graphs/graph_decompositions/bandwidth.pyx` is now part of the curated
+pure-math corpus, raising it to 1,149 non-comment entries with no duplicates.
+Validation includes historical and default focused replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, corpus uniqueness
+and make-target dry run, exact zero-fuzz application of the complete
+accumulated patch to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`, byte-for-byte comparison with the
+runtime-tested source, accumulated-patch structure, and `git diff --check`.
+The accumulated source patch now has 1,637 sections (1,122 `diff --git` and
+515 legacy sections) and 4,817 hunks. Authoritative databases, worker state,
+patch logs, and source reconstruction are under
+`/tmp/cowasm-sagelite-next-graph.xfTgaK/`. This source-only dependency cleanup
+and corpus promotion needs no native WASM rebuild, Electron manifest change,
+or resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit
+another stale file-wide graph dependency or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
