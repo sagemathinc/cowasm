@@ -1488,6 +1488,20 @@ x = etb.var('x')
 assert str(etb.call(sin, x)) == 'sin(v_0)'
 `);
     console.log("sagelite-electron-ok symbolic function identity smoke");
+    console.log("sagelite-electron-start GLPK MIP delivery smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.numerical.mip import MixedIntegerLinearProgram
+
+p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
+x = p.new_variable(binary=True)
+p.set_objective(3*x[0] + 2*x[1])
+p.add_constraint(2*x[0] + x[1], max=2)
+assert p.solve() == 3.0
+values = p.get_values(x)
+assert values[0] == 1.0 and values[1] == 0.0
+`);
+    console.log("sagelite-electron-ok GLPK MIP delivery smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

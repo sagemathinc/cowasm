@@ -79,7 +79,7 @@ env \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
   CPPFLAGS="-I$gmp_dir/include" \
-  CFLAGS="-Oz -fvisibility-main ${sjlj_flags[*]}" \
+  CFLAGS="-Oz -fPIC -fvisibility-main ${sjlj_flags[*]}" \
   LDFLAGS="-L$gmp_dir/lib ${sjlj_flags[*]} ${standalone_ldlibs[*]}" \
   LIBS="-lgmp" \
   COWASM_TOOLCHAIN=wasi-sdk \
@@ -96,6 +96,12 @@ env \
 
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
+
+if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$dist_dir/lib/libglpk.a" |
+    grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+  echo "glpk wasi-sdk archive contains non-PIC memory relocations" >&2
+  exit 1
+fi
 
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "${sjlj_flags[@]}" \

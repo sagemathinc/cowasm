@@ -2826,16 +2826,6 @@ diff -urN a/src/sage/meson.build b/src/sage/meson.build
    disabler: true,
  )
  conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
-diff -urN a/src/sage/numerical/backends/meson.build b/src/sage/numerical/backends/meson.build
---- a/src/sage/numerical/backends/meson.build
-+++ b/src/sage/numerical/backends/meson.build
-@@ -1,5 +1,5 @@
- # Cannot be found via pkg-config
--glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
-+glpk = cc.find_library('glpk', required: not is_windows and not is_wasi, disabler: true)
-
- py.install_sources(
-   '__init__.py',
 diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 --- a/src/sage/rings/all.py
 +++ b/src/sage/rings/all.py

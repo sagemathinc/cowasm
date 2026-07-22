@@ -1602,6 +1602,9 @@ importers:
       '@cowasm/cpython':
         specifier: workspace:*
         version: link:../../python/cpython
+      '@cowasm/glpk':
+        specifier: workspace:*
+        version: link:../glpk
       '@cowasm/gmp':
         specifier: workspace:*
         version: link:../gmp

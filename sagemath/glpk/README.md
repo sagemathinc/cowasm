@@ -7,4 +7,6 @@ optimization, and PPL can use the installed GLPK port for MIP checks.
 The standalone smoke verifies that the pinned wasi-sdk setjmp support is
 available, builds the static GLPK archive against GMP, and links a C probe that
 checks simplex, exact LP, integer optimization, and graph routines under the
-WASI runner.
+WASI runner. The installed archive is position-independent and audited for
+absolute WASM memory relocations so it can also be linked into dynamic Python
+side modules.

@@ -63562,6 +63562,66 @@ change, or resource restaging. The external developer Sagelite checkout and
 its intentional changes remain untouched. The next scheduled pass can address
 the numerical-backend graph cluster or another persisted runtime boundary.
 
+GLPK-backed graph optimization runtime delivery pass on 2026-07-22 UTC:
+
+The leading `sage.numerical.backends.generic_backend` graph cluster was a
+WASI packaging and archive-contract gap, not an intentionally unavailable
+browser dependency. CoWasm already carried a validated WASI GLPK port, but
+Sagelite's source patch disabled Meson's GLPK discovery on WASI and the GLPK
+archive was built without position-independent code. The standalone archive
+worked in executables but failed when linked into Python side modules with
+`R_WASM_MEMORY_ADDR_SLEB` relocations.
+
+Sagelite now depends explicitly on the CoWasm GLPK package, puts its headers
+and archive on the cross-file include and link paths, and keeps upstream
+Meson GLPK discovery enabled. The GLPK package now builds with `-fPIC` and
+audits its installed archive for absolute WASM memory relocations before
+running the existing simplex, exact-LP, integer-optimization, and max-flow
+probe. This delivers the generic, GLPK, exact-GLPK, graph-GLPK, and associated
+numerical backend side modules in the Node and Electron resource profiles.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:       901 passed, 35 failed, 390 skipped
+focused numerical-backend rows:      18 passed,  0 failed,   0 skipped
+complete graph.py final:            919 passed, 17 failed, 390 skipped
+removed MIP/cascade failures:                   18
+new failure lines:                               0
+```
+
+The removed set comprises all six direct missing-generic-backend failures and
+the 12 dependent name, output, minor-map, and validation failures. It restores
+the Petersen independent-representative coloring, ordinary and induced graph
+minor examples, and the projective-planarity forbidden-minor map. The final
+dashboard's leading direct missing-module cluster is now the three-row
+`sage.graphs.convexity_properties` boundary.
+
+The standalone build passes direct WASI GLPK MIP optimization, Node graph
+optimization, installed side-module audit, schema-192 manifest validation,
+and staged plus relocated Electron GLPK MIP probes. The Electron manifest
+advances its mirrored contract to `glpk-mip-delivery-v154` and records 567
+side modules plus 736 required-resource paths and hashes.
+
+The authoritative clean pinned source clone, historical archive-only source,
+focused and complete SQLite databases, and worker state are under
+`/tmp/cowasm-sagelite-glpk.TkBUTR/`. The normal package build logs and staged
+resources are under `sagemath/sagelite/dist/wasi-sdk/`. Both retained SQLite
+databases have closed lifecycles and report `PRAGMA integrity_check = ok`.
+
+Validation includes the GLPK standalone build and non-PIC relocation audit,
+zero-reject application of the accumulated patch to clean pinned Sagelite
+`f575cf6224f`, Meson discovery of GLPK, Cython generation, all 1,036 native
+compile/link targets, installed and Electron side-module audits, the complete
+standalone Node/WASI/doctest/Electron relocation ladder, focused graph replay,
+complete-file failure-set comparison, saved failure-cluster and lifecycle
+queries, SQLite integrity, patch and shell syntax, JavaScript syntax, and
+`git diff --check`. The accumulated source patch now has 1,616 sections
+(1,101 `diff --git` and 515 legacy sections) and 4,732 hunks. The external
+developer Sagelite checkout and its intentional changes remain untouched. The
+next scheduled pass can address the isolated convexity-properties cluster or
+another persisted runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

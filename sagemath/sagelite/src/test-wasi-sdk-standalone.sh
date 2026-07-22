@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 25 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK" >&2
+if [ "$#" -ne 26 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK" >&2
   exit 2
 fi
 
@@ -32,6 +32,7 @@ cypari2_wasi_sdk="$(cd "${22}" && pwd)"
 libbraiding_wasi_sdk="$(cd "${23}" && pwd)"
 rw_wasi_sdk="$(cd "${24}" && pwd)"
 iml_wasi_sdk="$(cd "${25}" && pwd)"
+glpk_wasi_sdk="$(cd "${26}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -451,10 +452,10 @@ cpu = 'wasm32'
 endian = 'little'
 
 [built-in options]
-c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
-cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
+c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
+cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
+c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
+cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
 
 [properties]
 cowasm_libcxx = '$libcxx_wasi_sdk/libcxx.so'
@@ -2064,6 +2065,32 @@ assert G.spanning_trees_count() == 1
 assert G.rank_decomposition()[0] == 1
 print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
+run_wasi_sdk_python_import \
+  "GLPK mixed-integer delivery smoke" \
+  "import sage.all
+from sage.numerical.mip import MixedIntegerLinearProgram
+p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
+x = p.new_variable(binary=True)
+p.set_objective(3*x[0] + 2*x[1])
+p.add_constraint(2*x[0] + x[1], max=2)
+assert p.solve() == 3.0
+values = p.get_values(x)
+assert values[0] == 1.0 and values[1] == 0.0
+print('sagelite-wasi-sdk-ok GLPK mixed-integer delivery smoke')"
+
+run_node_import \
+  "GLPK graph optimization smoke" \
+  "from sage.all import graphs
+g = 3 * graphs.PetersenGraph()
+n = g.order() // 3
+family = [[i, i + n, i + 2*n] for i in range(n)]
+representatives = g.independent_set_of_representatives(family)
+assert representatives is not None and len(representatives) == n
+for color in range(3):
+    color_class = [v % n for v in representatives if v // n == color]
+    assert g.subgraph(color_class).size() == 0
+print('sagelite-node-ok GLPK graph optimization smoke')"
+
 run_node_import \
   "high-byte string literal delivery smoke" \
   "from sage.misc.sage_input import sage_input
@@ -2074,7 +2101,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=191
+electron_manifest_schema_version=192
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2120,6 +2147,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sparse-fre
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-symbolic-function-identity-v151"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-random-gnp-generator-v152"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-gap-free-graph-ordering-v153"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-glpk-mip-delivery-v154"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

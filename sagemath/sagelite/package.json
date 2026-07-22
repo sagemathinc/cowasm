@@ -43,6 +43,7 @@
   "devDependencies": {
     "@cowasm/boost-cropped": "workspace:*",
     "@cowasm/cpython": "workspace:*",
+    "@cowasm/glpk": "workspace:*",
     "@cowasm/gmp": "workspace:*",
     "@cowasm/gsl": "workspace:*",
     "@cowasm/libcxx": "workspace:*",

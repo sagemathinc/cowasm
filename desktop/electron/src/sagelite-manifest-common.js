@@ -301,7 +301,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 191,
+  schemaVersion: 192,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -358,6 +358,8 @@ expectedSageliteManifest.smokeContract +=
   "-random-gnp-generator-v152";
 expectedSageliteManifest.smokeContract +=
   "-gap-free-graph-ordering-v153";
+expectedSageliteManifest.smokeContract +=
+  "-glpk-mip-delivery-v154";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
