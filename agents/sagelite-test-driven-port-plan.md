@@ -65768,6 +65768,56 @@ breadcrumb are retained beside the dense-graph dashboards. A future scheduled
 pass can classify that performance/metadata cluster or audit another stale
 graph/backend dependency guard.
 
+Static-sparse-graph dependency, performance-metadata, and corpus-promotion pass
+on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/base/static_sparse_graph.pyx` is removed now that the stripped
+graph runtime exercises the compiled static sparse-graph implementation
+directly. A focused 30-second replay confirms that the 201-by-201 sparse-matrix
+characteristic-polynomial construction remains inside `charpoly()` until the
+worker timeout, rather than trapping or producing a semantic failure. That
+construction and its dependent display are now explicitly tagged `# long
+time`, matching the existing metadata on the module's other large stress
+examples.
+
+A complete default-profile replay of the narrowed source records:
+
+```text
+static_sparse_graph.pyx: 100 passed, 0 failed, 13 skipped
+long time:                 0 passed, 0 failed,  4 skipped
+optional:networkx:         0 passed, 0 failed,  2 skipped
+other optional rows:       0 passed, 0 failed,  7 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+The active rows cover static sparse graph construction, adjacency and degree
+iteration, relabeling and graph conversion, triangle counting, strongly
+connected components, and spectral-radius calculations on practical graph
+sizes. The runner-version-133 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows. The retained skips preserve
+their narrower NetworkX, modules, number-field, symbolic, and long-time
+metadata; they are no longer hidden behind the broad graph feature.
+
+`sage/graphs/base/static_sparse_graph.pyx` is now part of the curated pure-math
+corpus, raising it to 1,177 non-comment entries with no duplicates. Validation
+includes the focused timeout classification and complete default module
+replay, saved block- and file-failure, lifecycle, and skip queries, SQLite
+integrity, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior guarded source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,666 sections (1,151 `diff --git` and 515 legacy sections) and 4,857
+hunks. Authoritative databases, worker state, and the runtime-tested source are
+under `/tmp/cowasm-sagelite-static-sparse-promote.0Mk2Yl/`, with the focused
+timeout dashboard under `/tmp/cowasm-sagelite-static-sparse-probe.1litmG/`.
+This source-only dependency and performance-metadata cleanup needs no native
+WASM rebuild, Electron manifest change, or permanent resource restaging. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit another stale graph/backend
+dependency guard or select a persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

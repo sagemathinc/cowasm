@@ -1076,6 +1076,7 @@ src/sage/graphs/base/overview.py
 src/sage/graphs/base/dense_graph.pyx
 src/sage/graphs/base/static_dense_graph.pyx
 src/sage/graphs/base/static_sparse_backend.pyx
+src/sage/graphs/base/static_sparse_graph.pyx
 src/sage/graphs/cographs.py
 src/sage/graphs/digraph_generators.py
 src/sage/graphs/line_graph.pyx
