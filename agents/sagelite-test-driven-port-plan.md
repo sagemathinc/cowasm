@@ -66285,6 +66285,63 @@ The external developer Sagelite checkout and its intentional changes remain
 untouched. A future scheduled pass can audit another stale graph generator
 dependency guard or select the next persisted runtime cluster.
 
+Random-graph generator dependency and startup-namespace pass on 2026-07-22
+UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/generators/random.py` initially hid 128 runnable doctests. A
+complete historical replay with that broad feature selected recorded 128
+passed, 15 failed, and 82 skipped rows. The failures separated cleanly into
+seven Cliquer-backed clique-number or treewidth checks, three Planarity-backed
+recognition checks, two symbolic interval-graph rows, two untagged binary-tree
+rows, and one missing standard `graph_classes` startup name.
+
+The exact backend-dependent prompts now carry
+`sage.graphs.cliquer`, `sage.graphs.planarity`, `sage.symbolic`, or
+`sage.combinat` metadata, and the obsolete file-wide graph guard is removed.
+The stripped Sage startup namespace now also exposes `graph_classes` from
+`sage.graphs.all`; a focused explicit-import probe confirmed that the packaged
+runtime already supports the affected block-graph membership check. Because
+that namespace change affects doctest semantics, the runner metadata version
+is raised from 133 to 134.
+
+A controlled runner-version-134 replay retaining the broad guard with
+`sage.graphs` selected and a default-profile replay of the exact same source
+after removing only that guard both record:
+
+```text
+random.py: 129 passed, 0 failed, 96 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards have no block failures or file-level errors and a 100% pass
+rate across active rows. All 225 block rows have identical order, source,
+expected output, status, and comparator metadata. The 24 actual-output
+differences are accepted traceback headers containing the two intentionally
+different temporary doctest filenames. The 96 retained skips preserve their
+narrower NetworkX, NumPy, SciPy, combinatorics, Cliquer, plotting, Planarity,
+symbolic, module, and deferred-test boundaries.
+
+`sage/graphs/generators/random.py` is now part of the curated pure-math corpus,
+raising it to 1,188 non-comment entries with no duplicates. Validation includes
+the initial failure-cluster dashboard, the focused `graph_classes` import and
+membership probe, guarded and default complete module replays, saved block-
+and file-failure and lifecycle queries, SQLite integrity, Node syntax, corpus
+uniqueness and make-target dry run, exact zero-fuzz application of the new
+final patch section to the prior guarded source with byte-for-byte source
+comparison, accumulated-patch syntax and structure, and `git diff --check`.
+The accumulated source patch now has 1,678 sections (1,163 `diff --git` and
+515 legacy sections) and 4,931 hunks. Authoritative databases, worker state,
+comparison data, and runtime-tested sources are under
+`/tmp/cowasm-sagelite-random-generator.tpkOX8/`; the exact patch-replay tree is
+under `/tmp/cowasm-sagelite-random-replay-final.eYGa4n/`. This source and startup-
+namespace cleanup needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+remaining `basic.py` or `distance_regular.pyx` graph-generator guard, or select
+another persisted graph/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

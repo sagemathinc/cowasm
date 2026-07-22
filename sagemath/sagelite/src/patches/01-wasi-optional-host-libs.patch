@@ -32178,3 +32178,49 @@ diff --git a/src/sage/graphs/generators/chessboard.py b/src/sage/graphs/generato
 +++ b/src/sage/graphs/generators/chessboard.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs
+diff --git a/src/sage/graphs/generators/random.py b/src/sage/graphs/generators/random.py
+--- a/src/sage/graphs/generators/random.py
++++ b/src/sage/graphs/generators/random.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -644 +643 @@
+-        sage: g.clique_number() == g.chromatic_number()
++        sage: g.clique_number() == g.chromatic_number()                                # needs sage.graphs.cliquer
+@@ -898 +897 @@
+-        sage: g.clique_number() == g.chromatic_number()
++        sage: g.clique_number() == g.chromatic_number()                                # needs sage.graphs.cliquer
+@@ -949,2 +948,2 @@
+-        sage: G = RandomProperIntervalGraph(10)
+-        sage: G.is_interval()
++        sage: G = RandomProperIntervalGraph(10)                                        # needs sage.symbolic
++        sage: G.is_interval()                                                           # needs sage.symbolic
+@@ -1546 +1545 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()                                                             # needs sage.graphs.cliquer
+@@ -1567 +1566 @@
+-        sage: G.treewidth()
++        sage: G.treewidth()                                                             # needs sage.graphs.cliquer
+@@ -1636 +1635 @@
+-        sage: g.treewidth()
++        sage: g.treewidth()                                                             # needs sage.graphs.cliquer
+@@ -1676 +1675 @@
+-        sage: G.treewidth()
++        sage: G.treewidth()                                                             # needs sage.graphs.cliquer
+@@ -1847 +1846 @@
+-        sage: g.clique_number() == g.chromatic_number()
++        sage: g.clique_number() == g.chromatic_number()                                # needs sage.graphs.cliquer
+@@ -2170 +2169 @@
+-        sage: G.is_planar()
++        sage: G.is_planar()                                                             # needs sage.graphs.planarity
+@@ -2195 +2194 @@
+-        sage: for i in range(10):
++        sage: for i in range(10):                                                       # needs sage.graphs.planarity
+@@ -2280 +2279 @@
+-        sage: print(blossoming_contour(BinaryTrees(1).an_element()))
++        sage: print(blossoming_contour(BinaryTrees(1).an_element()))                    # needs sage.combinat
+@@ -2298 +2297 @@
+-        sage: blossoming_contour(BinaryTrees(0).an_element())
++        sage: blossoming_contour(BinaryTrees(0).an_element())                           # needs sage.combinat
+@@ -2385 +2384 @@
+-        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)
++        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)                    # needs sage.graphs.planarity
