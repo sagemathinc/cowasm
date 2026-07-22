@@ -63278,6 +63278,55 @@ intentional changes remain untouched. The next scheduled pass can address the
 isolated `sage.graphs.planarity` cluster or another persisted graph backend
 boundary.
 
+Graph planarity dependency pass on 2026-07-22 UTC:
+
+The next persisted `sage/graphs/graph.py` cluster now carries explicit
+`sage.graphs.planarity` dependency metadata. The annotations cover the cactus,
+apex, apex-vertex, polyhedral, face-selection, and inscribability examples that
+reach the compiled planarity extension. They also cover the two dependent face
+mutation rows and the inscribability exception expectation that the same
+missing import masked.
+
+The retained runner-version-131 results record:
+
+```text
+complete graph.py before:       867 passed, 131 failed, 328 skipped
+focused dependency rows:          0 passed,   0 failed,  24 skipped
+complete graph.py final:        867 passed, 107 failed, 352 skipped
+selected planarity-backed row:    0 passed,   1 failed,   0 skipped
+removed planarity/cascades:                  24
+new failures:                                0
+```
+
+The removed rows comprise 21 direct missing-module failures, two dependent
+`f`/`face` name failures, and the exception-output mismatch in
+`is_inscribable`. Explicitly selecting `sage.graphs.planarity` at the
+representative cube-polyhedral row reaches the original
+`ModuleNotFoundError: No module named 'sage.graphs.planarity'`. The final
+dashboard contains exactly 24 `optional:sage.graphs.planarity` skips. Its
+largest remaining cluster is now the 13-row unavailable
+`clique_number` import from `sage.graphs.cliquer`.
+
+The authoritative focused, selected-feature, and complete SQLite databases,
+worker state, proposed source, and exact source reconstruction are under
+`/tmp/cowasm-sagelite-graph-planarity.zYRDpz/`. Every retained database has a
+closed lifecycle and reports `PRAGMA integrity_check = ok`; the complete
+dashboard has no file-level errors.
+
+Validation includes the 24-line default replay, explicitly selected
+representative replay, complete-file before/after failure-set comparison,
+saved block- and file-failure cluster queries, SQLite lifecycle, tag, and
+integrity checks, Python syntax, exact zero-fuzz application of the final patch
+section to the previously validated source reconstruction, byte-for-byte
+comparison with the tested source, accumulated-patch structure, and
+`git diff --check`. The accumulated patch now has 1,612 source sections (1,096
+`diff --git` and 516 legacy sections) and 4,693 hunks. This is source-only
+doctest dependency metadata; it needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. The next scheduled pass can address
+the isolated `sage.graphs.cliquer` cluster or another persisted graph backend
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
