@@ -42,6 +42,7 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
 const expectedSageliteRequiredToolPaths = Object.freeze([
   "bin/genbgL",
   "bin/geng",
+  "bin/genktreeg",
   "sagelite-manifest-common.cjs",
   "sagelite-electron-smoke.cjs",
 ]);
@@ -303,7 +304,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 197,
+  schemaVersion: 198,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -372,6 +373,8 @@ expectedSageliteManifest.smokeContract +=
   "-nauty-doctest-reopen-v158";
 expectedSageliteManifest.smokeContract +=
   "-nauty-large-output-delivery-v159";
+expectedSageliteManifest.smokeContract +=
+  "-nauty-genktreeg-delivery-v160";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

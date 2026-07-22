@@ -31289,3 +31289,56 @@ diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generat
 @@ -1192 +1192 @@
 -            sage: next(graphs.nauty_genbg("1 63", debug=False))  # known bug
 +            sage: next(graphs.nauty_genbg("1 63", debug=False))
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -1290,17 +1290,15 @@
+
+         A `k`-tree is a maximal graph with treewidth `k`::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genktreeg("10 -k4")
+             sage: G = next(gen); G
+             Graph on 10 vertices
+-            sage: G.treewidth()
++            sage: G.treewidth()  # needs sage.graphs.cliquer
+             4
+
+         A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
+         :oeis:`A054581`::
+
+-            sage: # needs nauty
+             sage: gen = graphs.nauty_genktreeg("6")
+             sage: len(list(gen))
+             5
+@@ -1318,15 +1316,14 @@
+         the first returned value might be an empty string if ``debug`` is
+         ``True``::
+
+-            sage: gen = graphs.nauty_genktreeg("7", debug=True)                         # needs nauty
+-            sage: print(next(gen))                                                      # needs nauty
++            sage: gen = graphs.nauty_genktreeg("7", debug=True)
++            sage: print(next(gen))
+             >A ...genktreeg k=2 n=7
+
+         TESTS:
+
+         Wrong input::
+
+-            sage: # needs nauty
+             sage: list(graphs.nauty_genktreeg("4 -k5", debug=True))
+             ['>E genktreeg: n cannot be less than k\n']
+             sage: list(graphs.nauty_genktreeg("10 -k 4", debug=True))
+@@ -1339,9 +1336,9 @@
+         import shlex
+
+         from sage.features.nauty import NautyExecutable
+-        geng_path = NautyExecutable("genktreeg").absolute_filename()
+-        with subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
+-                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++        genktreeg_path = NautyExecutable("genktreeg").absolute_filename()
++        genktreeg_argv = [genktreeg_path, *shlex.split(str(options))]
++        with subprocess.Popen(genktreeg_argv, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True,
+                               encoding='latin-1') as sp:
+             msg = sp.stderr.readline()

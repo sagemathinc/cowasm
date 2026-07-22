@@ -64108,6 +64108,66 @@ checkout and its intentional changes remain untouched. A future pass can
 deliver more nauty-family commands or continue with the next runtime-backed
 graph cluster.
 
+Graph nauty k-tree generator delivery pass on 2026-07-22 UTC:
+
+The remaining nauty-family cluster in `sage/graphs/graph_generators.py` is now
+backed by the already-built `genktreeg` WASI command. The standalone resource
+bundle stages the executable beside `geng` and `genbgL`, treats it as a hashed
+mandatory tool, and advances the Electron manifest to schema 198 and
+`nauty-genktreeg-delivery-v160`. The nauty package regression independently
+generates and counts all 39 two-trees on eight vertices.
+
+`GraphGenerators.nauty_genktreeg()` now passes an argv array to `Popen`
+instead of using `shell=True` with an unused stdin pipe. This follows the raw-
+WASI subprocess contract already used by `nauty_geng` and `nauty_genbg`, and
+also normalizes Sage integer-like option values through `str()` before
+`shlex.split()`.
+
+Reopening the 14 persisted `optional:nauty` rows exposed one masked inner
+dependency: `G.treewidth()` calls the unavailable
+`sage.graphs.cliquer.clique_number` extension. Only that consumer now carries
+`# needs sage.graphs.cliquer`; the graph construction feeding it remains
+active. The other 13 rows pass, including 6-, 7-, and 8-vertex enumeration,
+debug output, invalid-parameter diagnostics, and generator state. The retained
+runner-version-132 dashboard records:
+
+```text
+pre-large-output complete dashboard: 121 passed, 0 failed, 105 skipped
+current complete graph_generators.py: 135 passed, 0 failed,  91 skipped
+reopened genktreeg rows:               13 passed, 0 failed,   1 cliquer skip
+remaining optional:nauty rows:          0
+```
+
+The cumulative comparison also includes the immediately preceding
+`genbgL 1 63` known-bug reopening, which contributes the other newly passing
+row relative to that older complete dashboard. Explicitly selecting
+`sage.graphs.cliquer` restores the precise missing `clique_number` import.
+The final database has a closed passing lifecycle, no block or file failures,
+and `PRAGMA integrity_check = ok`.
+
+The durable Electron smoke now exercises five generated six-vertex k-trees.
+A focused schema-198 Electron-shaped probe additionally checks all 39
+eight-vertex k-trees, debug mode, and invalid-input output. The complete smoke
+against the retained older resource tree reached its already documented stale
+graph-convexity extension before the nauty section; the focused probe is the
+authoritative relocated-runtime result for this tool-only resource update.
+
+Validation includes the clean nauty configure/build/install regression,
+focused and complete doctest replays, the selected Cliquer boundary, SQLite
+lifecycle and integrity queries, all three Electron manifest/forge/runtime
+contract programs and TypeScript compilation, schema-198 manifest validation,
+the focused relocated Electron-shaped runtime probe, shell/JavaScript/Python
+syntax, the Sagelite make-target dry run, exact accumulated-patch application
+to clean pinned Sagelite `f575cf6224f749763d7c875229cbd684e5939e58`,
+byte-for-byte comparison with the tested `graph_generators.py`, and
+`git diff --check`. The accumulated source patch now has 1,628 sections
+(1,113 `diff --git` and 515 legacy sections) and 4,800 hunks. Authoritative
+SQLite databases, worker state, source reconstruction, resource relocation,
+and logs are under `/tmp/cowasm-sagelite-genktree-delivery.H0PnFn/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future pass can deliver another nauty-family adapter or select the
+next persisted graph/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

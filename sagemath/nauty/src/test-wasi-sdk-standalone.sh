@@ -77,6 +77,8 @@ grep -F "  0 : 1 2 3;" "$show_log"
 large_bipartite_file="$probe_dir/bipartite-1-63.g6"
 large_bipartite_log="$probe_dir/genbgL-1-63.log"
 large_bipartite_count_log="$probe_dir/genbgL-1-63-count.log"
+ktree_file="$probe_dir/ktree-8.g6"
+ktree_count_log="$probe_dir/ktree-8-count.log"
 
 cowasm_clang_standalone_run_wasi \
   "$bin_dir" "$dist_dir/bin/genbgL" 1 63 \
@@ -88,4 +90,13 @@ cowasm_clang_standalone_run_wasi \
 grep -F "64 graphs generated" "$large_bipartite_log"
 grep -F "64 graphs altogether" "$large_bipartite_count_log"
 
-echo "nauty-ok library geng genbgL countg showg"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/genktreeg" 8 \
+  >"$ktree_file"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/countg" \
+  <"$ktree_file" >"$ktree_count_log"
+
+grep -F "39 graphs altogether" "$ktree_count_log"
+
+echo "nauty-ok library geng genbgL genktreeg countg showg"
