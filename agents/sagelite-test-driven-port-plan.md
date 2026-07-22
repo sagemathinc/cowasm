@@ -63173,6 +63173,59 @@ developer Sagelite checkout and its intentional changes remain untouched.  The
 next scheduled pass can audit another concentrated deferred-marker cluster or
 select a persisted backend/runtime failure.
 
+Remaining Sage-shell inspection dependency pass on 2026-07-22 UTC:
+
+The seven remaining generic deferrals that use Sage/IPython inspection or tab-
+completion syntax now state their actual `IPython` dependency.  They cover
+`sage.knots.knotinfo?`, the combinatorics quick-reference `<tab>` example,
+`hsv_to_rgb??`, the graph and digraph generator help prompts, `GraphQuery?`,
+and the category-with-axiom `C.Green?` example.  Four rows retain their existing
+outer `sage.plot`, `sage.graphs`, or `sage.groups` dependency as well; selecting
+those outer features confirmed that IPython syntax was the masked inner
+boundary.
+
+The retained runner-version-131 results record:
+
+```text
+historical target rows:            0 passed, 7 SyntaxError failures
+category setup before its target:            1 additional NameError
+default focused target rows:       0 passed, 0 failed, 7 optional skips
+IPython-selected target rows:      0 passed, 7 SyntaxError failures
+seven-file complete before:    1,207 passed, 156 failed, 330 skipped
+seven-file complete final:     1,207 passed, 156 failed, 330 skipped
+```
+
+The complete dashboards contain the same 1,693 blocks and have byte-identical
+failure sets.  Their 156 failures all belong to the pre-existing `graph.py`
+backend and namespace frontier; the other six files are clean in the supported
+default profile.  The three edited prompts collected individually in a normal
+complete run move from `deferred:not tested` to `optional:ipython`; focused
+line replays preserve precise metadata for the four prompts whose outer file-
+level dependency otherwise collapses collection.  A scan of the patched source
+now finds no remaining obvious `?`, `??`, or `<tab>` Sage-shell prompts carrying
+the generic `# not tested` marker.
+
+The authoritative historical, outer-feature-selected, default, IPython-
+selected, and complete SQLite databases, worker state, proposed sources, and
+exact final-section reconstruction are under
+`/tmp/cowasm-sagelite-inspection-cluster.2bsEvW/`.  All 27 databases have closed
+lifecycles and `PRAGMA integrity_check = ok`.
+
+Validation includes historical and selected-feature exact-line replays, all
+seven default exact-line replays, the seven-file complete before/after failure-
+set comparison, SQLite lifecycle, tag, failure, and integrity checks, Python
+syntax, exact zero-fuzz application of the new patch sections to the previously
+validated pinned source reconstruction, byte-for-byte comparison with the
+tested sources, accumulated-patch structure, and `git diff --check`.  The
+accumulated patch now has 1,610 source sections (1,094 `diff --git` and 516
+legacy sections) and 4,647 hunks.  This is source-only doctest dependency
+metadata; it needs no native WASM rebuild, Electron manifest change, or
+resource restaging.  The external developer Sagelite checkout and its
+intentional changes remain untouched.  The obvious Sage-shell inspection
+marker frontier is now exhausted, so the next scheduled pass should select a
+persisted backend/runtime failure cluster or a different concentrated deferred
+family.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

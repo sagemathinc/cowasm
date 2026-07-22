@@ -30268,3 +30268,45 @@ diff --git a/src/sage/categories/primer.py b/src/sage/categories/primer.py
 @@ -1624 +1624 @@
 -    sage: C??                               # not tested
 +    sage: C??                               # needs IPython
+diff --git a/src/sage/knots/knotinfo.py b/src/sage/knots/knotinfo.py
+--- a/src/sage/knots/knotinfo.py
++++ b/src/sage/knots/knotinfo.py
+@@ -483 +483 @@
+-        sage: sage.knots.knotinfo?         # not tested
++        sage: sage.knots.knotinfo?         # needs IPython
+diff --git a/src/sage/combinat/quickref.py b/src/sage/combinat/quickref.py
+--- a/src/sage/combinat/quickref.py
++++ b/src/sage/combinat/quickref.py
+@@ -16 +16 @@
+-    sage: S = Subsets([1,2,3,4]); S.list(); S.<tab>                       # not tested
++    sage: S = Subsets([1,2,3,4]); S.list(); S.<tab>                       # needs IPython
+diff --git a/src/sage/plot/colors.py b/src/sage/plot/colors.py
+--- a/src/sage/plot/colors.py
++++ b/src/sage/plot/colors.py
+@@ -1130 +1130 @@
+-            sage: hsv_to_rgb??                       # not tested
++            sage: hsv_to_rgb??                       # needs IPython
+diff --git a/src/sage/graphs/digraph_generators.py b/src/sage/graphs/digraph_generators.py
+--- a/src/sage/graphs/digraph_generators.py
++++ b/src/sage/graphs/digraph_generators.py
+@@ -1940 +1940 @@
+-            sage: digraphs?  # not tested
++            sage: digraphs?  # needs IPython
+diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generators.py
+--- a/src/sage/graphs/graph_generators.py
++++ b/src/sage/graphs/graph_generators.py
+@@ -815 +815 @@
+-            sage: graphs? # not tested
++            sage: graphs? # needs IPython
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -332 +332 @@
+-    sage: GraphQuery?    # not tested
++    sage: GraphQuery?    # needs IPython
+diff --git a/src/sage/categories/category_with_axiom.py b/src/sage/categories/category_with_axiom.py
+--- a/src/sage/categories/category_with_axiom.py
++++ b/src/sage/categories/category_with_axiom.py
+@@ -369 +369 @@
+-    sage: C.Green?             # not tested
++    sage: C.Green?             # needs IPython
