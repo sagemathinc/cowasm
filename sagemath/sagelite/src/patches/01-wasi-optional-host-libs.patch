@@ -30212,3 +30212,9 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 +++ b/src/sage/modules/free_module.py
 @@ -5294,0 +5295 @@
 +            sage: # needs scipy
+diff --git a/src/sage/misc/trace.py b/src/sage/misc/trace.py
+--- a/src/sage/misc/trace.py
++++ b/src/sage/misc/trace.py
+@@ -28 +28 @@
+-        sage: trace("factor(100)")             # not tested
++        sage: trace("factor(100)")             # needs IPython

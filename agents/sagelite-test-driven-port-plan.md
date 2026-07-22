@@ -63046,6 +63046,46 @@ external developer Sagelite checkout and its intentional changes remain
 untouched.  The browser-profile `free_module.py` dashboard is now clean, so
 the next scheduled pass can select another persisted backend/runtime cluster.
 
+Trace debugger IPython dependency pass on 2026-07-22 UTC:
+
+The generic deferred marker on `sage.misc.trace.trace("factor(100)")` now
+states its actual runtime dependency.  The helper imports
+`IPython.core.debugger.Pdb` when invoked, while the stripped browser profile
+intentionally does not package IPython.  Forcing the historical
+`# not tested` row therefore raised `ModuleNotFoundError: No module named
+'IPython'`; the row now carries `# needs IPython` and is queryable with the
+other optional interactive-shell boundaries.
+
+The retained runner-version-131 results record:
+
+```text
+historical forced row:       0 passed, 1 failed, 0 skipped (IPython)
+default exact-line replay:   0 passed, 0 failed, 1 optional skip
+IPython-selected replay:     0 passed, 1 failed, 0 skipped (IPython)
+complete trace.py replay:    4 passed, 0 failed, 8 skipped
+```
+
+The authoritative SQLite databases, worker state, and exact source
+reconstruction are under `/tmp/cowasm-sagelite-trace-audit.PcuN9h/`.  Every
+database has a closed lifecycle and reports `PRAGMA integrity_check = ok`.
+The default and complete dashboards record the row as
+`optional:ipython`; explicitly selecting IPython preserves the precise
+missing-package diagnostic instead of hiding a runnable defect.
+
+Validation includes the historical forced replay, default and selected-feature
+exact-line replays, the complete module replay, empty saved block- and
+file-failure cluster queries for the final dashboard, SQLite lifecycle and
+integrity checks, Python syntax, exact zero-fuzz application of the final patch
+section to the previously validated pinned source reconstruction, byte-for-byte
+comparison with the tested source, accumulated-patch structure, and
+`git diff --check`.  The accumulated patch now has 1,601 source sections
+(1,085 `diff --git` and 516 legacy sections) and 4,626 hunks.  This is
+source-only doctest dependency metadata; it needs no native WASM rebuild,
+Electron manifest change, or resource restaging.  The external developer
+Sagelite checkout and its intentional changes remain untouched.  The next
+scheduled pass can audit another default-profile deferred marker or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
