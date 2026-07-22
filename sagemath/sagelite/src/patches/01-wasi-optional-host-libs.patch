@@ -31755,3 +31755,17 @@ diff --git a/src/sage/graphs/graph_decompositions/clique_separators.pyx b/src/sa
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  # distutils: language = c++
+diff --git a/src/sage/graphs/generators/intersection.py b/src/sage/graphs/generators/intersection.py
+--- a/src/sage/graphs/generators/intersection.py
++++ b/src/sage/graphs/generators/intersection.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+@@ -76,6 +75,6 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
+         sage: intervals = [ (1,2), (1,2), (1,2), (2,3), (3,4) ]
+         sage: g = graphs.IntervalGraph(intervals,True)
+-        sage: g.clique_maximum()
++        sage: g.clique_maximum()  # needs sage.graphs.cliquer
+         [0, 1, 2, 3]
+         sage: g.get_vertices()
+         {0: (1, 2), 1: (1, 2), 2: (1, 2), 3: (2, 3), 4: (3, 4)}

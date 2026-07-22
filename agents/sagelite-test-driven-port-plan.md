@@ -65410,6 +65410,49 @@ its intentional changes remain untouched. A future scheduled pass can audit
 the next stale dependency guard exposed by the expanded graph runtime or
 select another persisted backend/runtime cluster.
 
+Intersection-graph generator dependency and corpus-promotion pass on
+2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/generators/intersection.py` is removed now that the stripped graph
+runtime executes its native interval, tolerance, permutation, and
+intersection-graph constructors directly. The one unavailable active example,
+`g.clique_maximum()`, now retains the precise `sage.graphs.cliquer` dependency
+instead of hiding the rest of the module behind the broad graph feature. A
+complete historical replay with `sage.graphs` selected and a default-profile
+replay of the exact same source with the narrower metadata record:
+
+```text
+historical: intersection.py: 60 passed, 1 failed, 11 skipped
+default:    intersection.py: 60 passed, 0 failed, 12 skipped
+run lifecycle:               passed and closed (default)
+SQLite integrity:           ok
+```
+
+The historical failure is the expected unavailable `sage.graphs.cliquer`
+import at `intersection.py:78`; every other active row remains clean. The
+default runner-version-132 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows. Its remaining skips preserve
+the new Cliquer dependency and the existing narrower schemes, modules, number
+field, and GAP metadata.
+
+`sage/graphs/generators/intersection.py` is now part of the curated pure-math
+corpus, raising it to 1,169 non-comment entries with no duplicates. Validation
+includes the historical and default complete module replays, saved block- and
+file-failure, lifecycle, and skip queries, SQLite integrity, Python source
+compilation, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior guarded source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,657 sections (1,142 `diff --git` and 515 legacy sections) and 4,841
+hunks. Authoritative databases, worker state, and runtime-tested sources are
+under `/tmp/cowasm-sagelite-intersection.AFr8xG/`. This source-only dependency
+cleanup and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or permanent resource restaging. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future scheduled
+pass can audit the next stale dependency guard exposed by the expanded graph
+runtime or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
