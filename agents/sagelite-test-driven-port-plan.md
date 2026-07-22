@@ -63847,6 +63847,55 @@ SQLite lifecycle and integrity checks, manifest contract mirroring, and
 scheduled pass can design the relocatable WASM subprocess contract required for
 `nauty_geng`, which is now the only remaining `graph.py` failure cluster.
 
+Graph nauty dependency classification pass on 2026-07-22 UTC:
+
+The two top-level graph-enumeration examples in `sage/graphs/graph.py` now
+carry Sage's established `nauty` dependency metadata, as does the dependent
+isomorphism assertion whose `g` value is produced by the unbounded enumeration.
+This closes the default browser-profile dashboard without pretending that
+copying CoWasm's raw `geng` WASM executable into the resource manifest would
+make it usable through Python's host-backed `subprocess.Popen` path.
+
+Focused runner-version-132 replays record:
+
+```text
+default line 224:                 0 passed, 0 failed, 1 nauty skip
+default line 242:                 0 passed, 0 failed, 1 nauty skip
+default line 245 with setup:      0 passed, 0 failed, 2 nauty skips
+selected nauty line 224:          0 passed, 1 failed, 0 skipped
+```
+
+Explicitly selecting `nauty` restores the precise
+`FeatureNotPresentError: nauty_geng is not available` diagnostic with
+`Executable 'geng' not found on PATH`. Combining the checked three-row source
+delta with the immediately preceding version-matched graph-LaTeX dashboard
+gives the default-profile result `927 passed, 0 failed, 399 skipped`; the three
+previous failures become exactly three `optional:nauty` rows.
+
+A complete compatibility replay was also run against the older installed
+resource bundle still present in `sagemath/sagelite/dist/wasi-sdk`. That bundle
+predates several of the immediately preceding graph runtime deliveries, so its
+absolute result is intentionally not the version-matched final dashboard. It
+records `921 passed, 6 failed, 399 skipped`, with no new failure key and only
+the already documented stale Matplotlib and convexity-extension rows remaining.
+The complete and selected-feature databases have closed lifecycles and report
+`PRAGMA integrity_check = ok`.
+
+The authoritative clean pinned source reconstruction, full-patch log, focused,
+selected-feature, compatibility baseline, and complete SQLite databases are
+under `/tmp/cowasm-sagelite-nauty-*`. Validation includes default and
+selected-feature focused replays, complete-file failure-set comparison, SQLite
+lifecycle, tag, and integrity queries, Python source syntax, accumulated-patch
+syntax, exact zero-fuzz application to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`, and `git diff --check`. The
+accumulated source patch now has 1,622 source sections (1,107 `diff --git` and
+515 legacy sections) and 4,752 hunks. This is source-only dependency metadata;
+it needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future delivery pass can add a relocatable WASM
+process contract with pipe and wait-status semantics, then reopen these rows
+with `--optional=nauty`.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

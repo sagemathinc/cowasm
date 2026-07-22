@@ -30651,6 +30651,18 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 --- a/src/sage/graphs/graph.py
 +++ b/src/sage/graphs/graph.py
+@@ -224 +224 @@
+-    sage: for g in graphs(4):
++    sage: for g in graphs(4):                                                         # needs nauty
+@@ -242 +242 @@
+-    sage: for g in graphs():
++    sage: for g in graphs():                                                          # needs nauty
+@@ -245 +245 @@
+-    sage: g.is_isomorphic(graphs.CompleteGraph(4))
++    sage: g.is_isomorphic(graphs.CompleteGraph(4))                                   # needs nauty
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
 @@ -3441 +3441 @@
 -            sage: G.chromatic_number(algorithm='parallel')
 +            sage: G.chromatic_number(algorithm='parallel')                            # needs cysignals.alarm
