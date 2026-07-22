@@ -140,6 +140,35 @@ with open(${JSON.stringify(input)}) as wasm_stdin:
   }
 });
 
+test("subprocess passes piped stdin to a raw WASI command", async () => {
+  const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
+  const fixture = join(fixtureDir, "stdin-echo.wasm");
+  try {
+    writeFileSync(fixture, WASI_SUBPROCESS_STDIN_ECHO_FIXTURE);
+    chmodSync(fixture, 0o755);
+
+    const { exec, repr } = python;
+    exec(`
+import subprocess
+wasm_pipe_stdin = subprocess.Popen(
+    [${JSON.stringify(fixture)}],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
+)
+wasm_pipe_stdout, wasm_pipe_stderr = wasm_pipe_stdin.communicate("pipe-stdin\\n")
+`);
+    expect(
+      repr(
+        "(wasm_pipe_stdin.returncode, wasm_pipe_stdout, wasm_pipe_stderr)"
+      )
+    ).toBe("(0, 'pipe-stdin\\n', '')");
+  } finally {
+    rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
+
 test("subprocess streams raw WASI output before process exit", async () => {
   const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
   const fixture = join(fixtureDir, "stream.wasm");

@@ -64336,6 +64336,56 @@ and its intentional changes remain untouched. A future runtime pass can add
 piped-stdin streaming and signal delivery for worker-backed synthetic
 processes, or continue with the next persisted graph/backend cluster.
 
+Graph raw-WASI piped-stdin delivery pass on 2026-07-22 UTC:
+
+Worker-backed raw-WASI subprocesses now accept `stdin=PIPE` in addition to
+streaming captured stdout and stderr. `python_wasm_fork_exec` selects the
+worker whenever any standard descriptor is a parent-owned pipe, so it returns
+the synthetic PID before Python writes the child's input. The worker has its
+own atomic sleep primitive for `wasi-js` polling while the pipe is temporarily
+empty. Runtimes without Node worker support retain the previous native
+execution-format fallback for piped input, while inherited and regular-file
+stdin keep the synchronous raw-WASI path where appropriate.
+
+The `python-wasm` subprocess fixture now launches a raw-WASI echo command with
+all three standard streams piped and verifies `Popen.communicate()` input,
+stdout, stderr, and zero wait status. The focused subprocess file passes all
+8 tests. The complete kernel suite passes 3 tests in 2 suites, and the final
+complete Python-WASM replay passes all 58 tests in 16 suites. An earlier full
+replay had one timing-sensitive `noStdio` interrupt-output miss; the test
+passed immediately in isolation and in the final complete replay.
+
+`DiGraphGenerators.nauty_directg()` now uses `stdin=subprocess.PIPE` again and
+sends its graph6 input through `communicate(input=...)`, removing the seekable
+temporary-file workaround introduced before asynchronous child transport was
+available. Against a schema-202 relocated resource tree, the complete module
+dashboard records:
+
+```text
+digraph_generators.py: 121 passed, 0 failed, 48 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The focused Electron-shaped directed-nauty probe also passes all tournament,
+orientation, acyclic-orientation, and poset assertions while loading the
+updated source from that relocated tree. The Electron manifest advances to
+schema 202 and `raw-wasi-piped-stdin-v164`; all three manifest, forge-resource,
+and runtime contract programs pass with Electron TypeScript compilation.
+
+Validation also includes shell and JavaScript syntax, Python source
+compilation, standalone and corpus make-target dry runs, corpus uniqueness,
+saved SQLite failure/lifecycle queries, exact forward and reverse application
+of the new final source section, byte-for-byte comparison with the tested
+`digraph_generators.py`, accumulated-patch structure, and `git diff --check`.
+The accumulated source patch now has 1,632 sections (1,117 `diff --git` and
+515 legacy sections) and 4,811 hunks. The authoritative relocated resources,
+SQLite database, source snapshots, and dry-run logs are under
+`/tmp/cowasm-sagelite-piped-stdin-runtime.wSrsmA/` and
+`/tmp/cowasm-sagelite-piped-stdin-source.jeVuPW/`. A future runtime pass can
+add signal delivery for worker-backed synthetic processes or continue with the
+next persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

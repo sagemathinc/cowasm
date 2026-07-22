@@ -279,6 +279,7 @@ const bindingsModule = require(workerData.wasiBindingsModule);
 const WASI = WASIModule.default || WASIModule;
 const nodeBindings = bindingsModule.default || bindingsModule;
 const completion = new Int32Array(workerData.completion);
+const sleepArray = new Int32Array(new SharedArrayBuffer(4));
 let status = 1;
 try {
   const bindings = {
@@ -295,6 +296,9 @@ try {
     bindings,
     args: workerData.argv,
     env: workerData.env,
+    sleep: (milliseconds) => {
+      Atomics.wait(sleepArray, 0, 0, Math.max(1, milliseconds));
+    },
   });
   for (let childFd = 0; childFd < 3; childFd++) {
     const file = childWasi.FD_MAP.get(childFd);
@@ -614,37 +618,36 @@ try {
       try {
         // Native fork/exec cannot launch a raw WASI command. Run commands with
         // the WASM magic directly through a fresh wasi-js instance and retain
-        // the completed status behind a synthetic pid for waitpid(). This is
-        // deliberately synchronous, so inherited or regular-file stdin works
-        // but piped stdin (identified by its parent write descriptor) needs an
-        // asynchronous process transport and continues to use the native path.
-        if (p2cwrite < 0) {
-          const executable = execArray.find((path) => {
-            try {
-              return fs.existsSync(path) && isWasm(path);
-            } catch (_err) {
-              return false;
+        // the completed status behind a synthetic pid for waitpid().
+        const executable = execArray.find((path) => {
+          try {
+            return fs.existsSync(path) && isWasm(path);
+          } catch (_err) {
+            return false;
+          }
+        });
+        if (executable != null) {
+          // A worker-backed child can read and write real pipes while Python
+          // communicates concurrently. In particular, stdin=PIPE requires
+          // fork/exec to return before the parent can supply the child's input.
+          if (p2cwrite >= 0 || c2pread >= 0 || errread >= 0) {
+            const pid = runWasiExecutableInWorker({
+              executable,
+              argv,
+              envp,
+              stdinFd: p2cread,
+              stdoutFd: c2pwrite,
+              stderrFd: errwrite,
+            });
+            if (pid != null) {
+              log("started streaming WASI subprocess", { pid, executable });
+              return pid;
             }
-          });
-          if (executable != null) {
-            // A worker-backed child can write to real pipes while Python reads
-            // them, preserving Popen's incremental stdout/stderr behavior. In
-            // particular, callers may consume one result and close the child
-            // without forcing an unbounded WASI command to finish first.
-            if (c2pread >= 0 || errread >= 0) {
-              const pid = runWasiExecutableInWorker({
-                executable,
-                argv,
-                envp,
-                stdinFd: p2cread,
-                stdoutFd: c2pwrite,
-                stderrFd: errwrite,
-              });
-              if (pid != null) {
-                log("started streaming WASI subprocess", { pid, executable });
-                return pid;
-              }
-            }
+          }
+          // A synchronous child cannot consume piped input because the parent
+          // only writes after fork/exec returns. If worker threads are absent,
+          // preserve the native fallback and its execution-format diagnostic.
+          if (p2cwrite < 0) {
             // The child runs synchronously, so Python cannot consume a capture
             // pipe until this call returns. Redirect captured output through
             // anonymous seekable files to avoid deadlocking when a raw WASI

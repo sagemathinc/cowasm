@@ -308,7 +308,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 201,
+  schemaVersion: 202,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -385,6 +385,8 @@ expectedSageliteManifest.smokeContract +=
   "-nauty-directed-generators-delivery-v162";
 expectedSageliteManifest.smokeContract +=
   "-raw-wasi-subprocess-streaming-v163";
+expectedSageliteManifest.smokeContract +=
+  "-raw-wasi-piped-stdin-v164";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
