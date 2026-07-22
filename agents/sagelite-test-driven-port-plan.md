@@ -64763,6 +64763,47 @@ its intentional changes remain untouched. A future scheduled pass can audit
 another stale file-wide graph dependency or select the next persisted
 backend/runtime cluster.
 
+Graph partial-cube dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/partial_cube.py` is removed now that the stripped graph runtime
+executes the module's recognition algorithm directly. A complete historical
+replay with `sage.graphs` selected recorded 9 passed, 0 failed, and 5 skipped
+blocks. Removing the broad guard and replaying the exact source under the
+default node profile records the identical result:
+
+```text
+partial_cube.py:          9 passed, 0 failed, 5 skipped
+optional:sage.combinat: 0 passed, 0 failed, 5 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+The active rows cover Petersen-graph rejection, prism recognition,
+certificate construction, loops, multiedges, disconnected graphs, and empty
+and single-vertex inputs. The five remaining skips preserve the existing
+narrower `sage.combinat` metadata on De Bruijn digraph traversal examples;
+they are no longer hidden behind the broad graph feature. The retained
+runner-version-132 dashboard has no block failures or file-level errors and a
+100% pass rate across active rows.
+
+`sage/graphs/partial_cube.py` is now part of the curated pure-math corpus,
+raising it to 1,153 non-comment entries with no duplicates. Validation includes
+historical and default complete module replays, saved block- and file-failure,
+lifecycle, and skip queries, SQLite integrity, Python source compilation,
+corpus uniqueness and make-target dry run, zero-fuzz application of the new
+final patch section to the prior validated source, byte-for-byte comparison
+with the runtime-tested source, accumulated-patch syntax and structure, and
+`git diff --check`. The accumulated source patch now has 1,641 sections (1,126
+`diff --git` and 515 legacy sections) and 4,821 hunks. Authoritative databases,
+worker state, and the runtime-tested source are under
+`/tmp/cowasm-sagelite-partial-cube.ZsoKUJ/`. This source-only dependency
+cleanup and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+another stale file-wide graph dependency or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
