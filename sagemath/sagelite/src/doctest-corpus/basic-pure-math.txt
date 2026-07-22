@@ -1099,6 +1099,7 @@ src/sage/graphs/tutte_polynomial.py
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/generators/intersection.py
+src/sage/graphs/generators/platonic_solids.py
 src/sage/graphs/pq_trees.py
 src/sage/graphs/graph_decompositions/bandwidth.pyx
 src/sage/graphs/graph_decompositions/rankwidth.pyx

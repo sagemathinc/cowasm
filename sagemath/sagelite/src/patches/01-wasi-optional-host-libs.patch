@@ -31775,3 +31775,45 @@ diff --git a/src/sage/graphs/graph_decompositions/graph_products.pyx b/src/sage/
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/generators/platonic_solids.py b/src/sage/graphs/generators/platonic_solids.py
+--- a/src/sage/graphs/generators/platonic_solids.py
++++ b/src/sage/graphs/generators/platonic_solids.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+@@ -114,7 +113,7 @@ def HexahedralGraph(immutable=False):
+         ....:     for m in range(3):
+         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+         ....:     j.append(n)
+-        sage: G = graphics_array(j)
++        sage: G = graphics_array(j)             # needs sage.plot
+         sage: G.show()                          # long time
+     """
+     adj = {0: [1, 3, 4], 1: [2, 5], 2: [3, 6], 3: [7], 4: [5, 7], 5: [6], 6: [7]}
+@@ -172,7 +171,7 @@ def OctahedralGraph(immutable=False):
+         ....:     for m in range(3):
+         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+         ....:     j.append(n)
+-        sage: G = graphics_array(j)
++        sage: G = graphics_array(j)             # needs sage.plot
+         sage: G.show()                          # long time
+     """
+     adj = {0: [1, 2, 3, 4], 1: [2, 3, 5], 2: [4, 5], 3: [4, 5], 4: [5]}
+@@ -222,7 +221,7 @@ def IcosahedralGraph(immutable=False):
+         ....:     for m in range(3):
+         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+         ....:     j.append(n)
+-        sage: G = graphics_array(j)
++        sage: G = graphics_array(j)             # needs sage.plot
+         sage: G.show()                          # long time
+     """
+     adj = {0: [1, 5, 7, 8, 11], 1: [2, 5, 6, 8], 2: [3, 6, 8, 9],
+@@ -272,7 +271,7 @@ def DodecahedralGraph(immutable=False):
+         ....:     for m in range(3):
+         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+         ....:     j.append(n)
+-        sage: G = graphics_array(j)
++        sage: G = graphics_array(j)             # needs sage.plot
+         sage: G.show()                          # long time
+     """
+     adj = {0: [1, 10, 19], 1: [2, 8], 2: [3, 6], 3: [4, 19], 4: [5, 17],

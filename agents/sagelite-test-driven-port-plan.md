@@ -65495,6 +65495,50 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the next stale dependency guard exposed by the
 expanded graph runtime or select another persisted backend/runtime cluster.
 
+Platonic-solid generator dependency and corpus-promotion pass on 2026-07-22
+UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/generators/platonic_solids.py` is removed now that the stripped
+graph runtime constructs the five Platonic-solid graphs directly. Four
+graphics-array examples retain the precise `sage.plot` dependency that their
+use of `graphics_array` requires. A complete historical replay with
+`sage.graphs` selected and a default-profile replay of the narrowed source
+record:
+
+```text
+historical: platonic_solids.py:  21 passed, 4 failed, 19 skipped
+default:    platonic_solids.py:  21 passed, 0 failed, 23 skipped
+skips with sage.plot metadata:  18
+run lifecycle:                  passed and closed (default)
+SQLite integrity:               ok
+```
+
+The four historical failures are the expected missing `graphics_array` name
+in the hexahedral, octahedral, icosahedral, and dodecahedral display examples.
+The default runner-version-132 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows. Its active rows cover the
+tetrahedral, hexahedral, octahedral, icosahedral, and dodecahedral graph
+constructors plus repeated layout and plotting-object construction; the
+remaining skips preserve the narrower plotting and NetworkX metadata.
+
+`sage/graphs/generators/platonic_solids.py` is now part of the curated
+pure-math corpus, raising it to 1,171 non-comment entries with no duplicates.
+Validation includes the historical and default complete module replays, saved
+block- and file-failure, lifecycle, and skip queries, SQLite integrity, Python
+source compilation, corpus uniqueness and make-target dry run, exact zero-fuzz
+application of the new final patch section to the prior guarded source,
+byte-for-byte comparison with the runtime-tested source, accumulated-patch
+syntax and structure, and `git diff --check`. The accumulated source patch now
+has 1,659 sections (1,144 `diff --git` and 515 legacy sections) and 4,847
+hunks. Authoritative databases, worker state, and runtime-tested sources are
+under `/tmp/cowasm-sagelite-platonic-promote.JH8ZOJ/`. This source-only
+dependency cleanup and corpus promotion needs no native WASM rebuild,
+Electron manifest change, or permanent resource restaging. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit the next stale dependency guard exposed by the
+expanded graph runtime or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
