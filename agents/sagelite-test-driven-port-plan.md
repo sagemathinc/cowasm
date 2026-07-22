@@ -64722,6 +64722,47 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit another stale file-wide graph dependency or select
 the next persisted backend/runtime cluster.
 
+Graph Lovász-theta dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/lovasz_theta.py` is removed now that the stripped graph runtime
+can execute the module's ordinary empty-graph path directly. A complete
+historical replay with `sage.graphs` selected recorded 3 passed, 0 failed, and
+2 skipped blocks. Removing the broad guard and replaying the exact source under
+the default node profile records the identical result:
+
+```text
+lovasz_theta.py: 3 passed, 0 failed, 2 skipped
+optional:csdp:   0 passed, 0 failed, 2 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+The active rows cover construction of the Petersen and empty graphs plus the
+zero value for the empty graph. The two numerical solver calls, including the
+5-cycle example, preserve their existing narrower `csdp` metadata, so the
+default profile does not attempt the unavailable external semidefinite-program
+executable.
+The retained runner-version-132 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows.
+
+`sage/graphs/lovasz_theta.py` is now part of the curated pure-math corpus,
+raising it to 1,152 non-comment entries with no duplicates. Validation includes
+historical and default complete module replays, saved block- and file-failure,
+lifecycle, and skip queries, SQLite integrity, corpus uniqueness and make-target
+dry run, zero-fuzz application of the new final patch section to the prior
+validated source, byte-for-byte comparison with the runtime-tested source,
+accumulated-patch syntax and structure, and `git diff --check`. The accumulated
+source patch now has 1,640 sections (1,125 `diff --git` and 515 legacy sections)
+and 4,820 hunks. Authoritative databases, worker state, and the runtime-tested
+source are under `/tmp/cowasm-sagelite-lovasz-historical.bWe9zD/` and
+`/tmp/cowasm-sagelite-lovasz-current.5wtt64/`. This source-only dependency
+cleanup and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. A future scheduled pass can audit
+another stale file-wide graph dependency or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
