@@ -63508,6 +63508,60 @@ checkout and its intentional changes remain untouched. The next scheduled pass
 can address the isolated Symmetrica graph boundary or another persisted runtime
 cluster.
 
+Graph Symmetrica dependency pass on 2026-07-22 UTC:
+
+The isolated symmetric-function cluster in `sage/graphs/graph.py` now carries
+explicit `sage.libs.symmetrica` dependency metadata. The annotations cover the
+nine direct missing-module failures in the chromatic symmetric and
+quasisymmetric examples, plus six dependent name and conversion assertions
+whose setup objects could not be constructed after the same import boundary.
+Independently runnable graph setup rows remain active in the default profile.
+
+The traceback confirms that the graph algorithms do not call Symmetrica
+directly: importing Sage's symmetric-function package eagerly imports its
+Symmetrica-backed bases, even when the requested result is a powersum or
+quasisymmetric object. The current stripped browser profile deliberately does
+not package that native backend, and its other call sites already use the same
+dependency feature.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:       901 passed, 50 failed, 375 skipped
+focused Symmetrica rows:              0 passed,  0 failed,  15 skipped
+selected Symmetrica-backed row:       0 passed,  1 failed,   0 skipped
+complete graph.py final:            901 passed, 35 failed, 390 skipped
+removed Symmetrica/cascade failures:            15
+new failure lines:                               0
+```
+
+Explicitly selecting `sage.libs.symmetrica` at the representative triangle
+row restores the precise `ModuleNotFoundError: No module named
+'sage.libs.symmetrica.symmetrica'`. The final complete dashboard contains
+exactly 15 `optional:sage.libs.symmetrica` skips and no remaining Symmetrica
+failures. Its leading direct missing-module cluster is now the six-row
+`sage.numerical.backends.generic_backend` boundary.
+
+The authoritative focused, selected-feature, and complete SQLite databases,
+worker state, proposed source, full-patch dry-run log, and exact final-section
+reconstruction are under
+`/tmp/cowasm-sagelite-graph-symmetrica.0BT4J4/`. Every database has a closed
+lifecycle and reports `PRAGMA integrity_check = ok`; the complete dashboard has
+no file-level error.
+
+Validation includes the 15-line default replay, explicitly selected
+representative replay, complete-file failure-line comparison, saved block- and
+file-failure cluster queries, SQLite lifecycle, tag, and integrity checks,
+Python syntax, exact zero-fuzz application of the final patch section to the
+previously validated source, a zero-reject sequential dry-run against clean
+pinned Sagelite `f575cf6224f`, accumulated-patch structure, and
+`git diff --check`. The accumulated patch now has 1,617 source sections (1,101
+`diff --git` and 516 legacy sections) and 4,733 hunks. This is source-only
+doctest dependency metadata; it needs no native WASM rebuild, Electron manifest
+change, or resource restaging. The external developer Sagelite checkout and
+its intentional changes remain untouched. The next scheduled pass can address
+the numerical-backend graph cluster or another persisted runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

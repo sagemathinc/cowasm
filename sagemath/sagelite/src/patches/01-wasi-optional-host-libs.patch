@@ -30621,3 +30621,49 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 @@ -6534 +6534 @@
 -           sage: for i in range(20):
 +           sage: for i in range(20):                                                    # needs sage.graphs.cliquer
+diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
+--- a/src/sage/graphs/graph.py
++++ b/src/sage/graphs/graph.py
+@@ -3665 +3665 @@
+-            sage: XG = G.chromatic_symmetric_function()
++            sage: XG = G.chromatic_symmetric_function()                               # needs sage.libs.symmetrica
+@@ -3668 +3668 @@
+-            sage: XG1 = G1.chromatic_symmetric_function()
++            sage: XG1 = G1.chromatic_symmetric_function()                             # needs sage.libs.symmetrica
+@@ -3671 +3671 @@
+-            sage: XG2 = G2.chromatic_symmetric_function()
++            sage: XG2 = G2.chromatic_symmetric_function()                             # needs sage.libs.symmetrica
+@@ -3674,2 +3674,2 @@
+-            sage: XG3 = G3.chromatic_symmetric_function()
+-            sage: XG == XG1 + XG2 - XG3
++            sage: XG3 = G3.chromatic_symmetric_function()                             # needs sage.libs.symmetrica
++            sage: XG == XG1 + XG2 - XG3                                               # needs sage.libs.symmetrica
+@@ -3682 +3682 @@
+-            sage: m = SymmetricFunctions(ZZ).m()
++            sage: m = SymmetricFunctions(ZZ).m()                                      # needs sage.libs.symmetrica
+@@ -3684 +3684 @@
+-            sage: m(K5.chromatic_symmetric_function())
++            sage: m(K5.chromatic_symmetric_function())                                # needs sage.libs.symmetrica
+@@ -3686 +3686 @@
+-            sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))
++            sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))   # needs sage.libs.symmetrica
+@@ -3691 +3691 @@
+-            sage: Graph([]).chromatic_symmetric_function() == 1
++            sage: Graph([]).chromatic_symmetric_function() == 1                       # needs sage.libs.symmetrica
+@@ -3694,2 +3694,2 @@
+-            sage: e = SymmetricFunctions(ZZ).e()
+-            sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())
++            sage: e = SymmetricFunctions(ZZ).e()                                      # needs sage.libs.symmetrica
++            sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())            # needs sage.libs.symmetrica
+@@ -3774 +3774 @@
+-            sage: G.chromatic_quasisymmetric_function()
++            sage: G.chromatic_quasisymmetric_function()                               # needs sage.libs.symmetrica
+@@ -3777 +3777 @@
+-            sage: XG = G.chromatic_quasisymmetric_function(); XG
++            sage: XG = G.chromatic_quasisymmetric_function(); XG                      # needs sage.libs.symmetrica
+@@ -3781 +3781 @@
+-            sage: XG.to_symmetric_function()
++            sage: XG.to_symmetric_function()                                          # needs sage.libs.symmetrica
+@@ -3785 +3785 @@
+-            sage: G.chromatic_quasisymmetric_function()
++            sage: G.chromatic_quasisymmetric_function()                               # needs sage.libs.symmetrica
