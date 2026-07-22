@@ -64469,6 +64469,46 @@ change, or resource restaging. A future scheduled pass can audit another
 stale file-wide graph dependency or select the next persisted backend/runtime
 cluster.
 
+Graph-input dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/graph_input.py` is removed now that the stripped graph runtime
+can import and execute its graph parsing and construction helpers directly.
+A complete historical replay with `sage.graphs` selected recorded 43 passed,
+0 failed, and 85 skipped blocks. Applying the final source delta and replaying
+the default node profile records the same result:
+
+```text
+graph_input.py:       43 passed, 0 failed, 85 skipped
+optional:networkx:     0 passed, 0 failed, 68 skipped
+optional:sage.modules: 0 passed, 0 failed, 17 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The retained runner-version-132 dashboard has no block failures or file-level
+errors and a 100% pass rate across active rows. The remaining skips preserve
+the file's existing narrower NetworkX and Sage-module dependency metadata;
+they are no longer hidden behind the broader graph feature.
+
+`sage/graphs/graph_input.py` is now part of the curated pure-math corpus,
+raising it to 1,146 non-comment entries with no duplicates. Validation includes
+the historical and default focused replays, saved block- and file-failure and
+run-lifecycle queries, SQLite integrity, corpus uniqueness and make-target dry
+run, Python source compilation, exact zero-fuzz application of the complete
+accumulated patch to clean pinned Sagelite
+`f575cf6224f749763d7c875229cbd684e5939e58`, byte-for-byte comparison with the
+runtime-tested source, and `git diff --check`. The accumulated source patch now
+has 1,634 sections (1,119 `diff --git` and 515 legacy sections) and 4,814
+hunks. Authoritative databases, worker state, logs, and source reconstructions
+are under `/tmp/cowasm-sagelite-graph-input-replay.03xfuK/`,
+`/tmp/cowasm-sagelite-graph-input-final.SfWdfA/`, and
+`/tmp/cowasm-sagelite-graph-input-patch.crhjTy/`. This source-only dependency
+cleanup and corpus promotion needs no native WASM rebuild, Electron manifest
+change, or resource restaging. A future scheduled pass can audit another stale
+file-wide graph dependency or select the next persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
