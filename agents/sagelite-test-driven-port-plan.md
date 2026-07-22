@@ -63380,6 +63380,68 @@ Sagelite checkout and its intentional changes remain untouched. The next
 scheduled pass can address either tied 11-row graph backend boundary or another
 persisted runtime cluster.
 
+Graph random-generator runtime delivery pass on 2026-07-22 UTC:
+
+The persisted `sage.graphs.graph_generators_pyx` cluster was a WASI build-
+partition defect, not an inherently unavailable browser backend. The Cython
+module implements `RandomGNP` using Sage's existing random state and graph
+types, but the WASI Meson rules grouped it with extensions that require the
+unavailable Cliquer and planarity libraries. The graph extension partition now
+keeps `graph_generators_pyx` on its actual base dependency set, so Meson builds,
+installs, audits, and packages the side module.
+
+The standalone graph smoke now imports the compiled module directly and checks
+deterministic seeded generation through both the direct and `graphs.RandomGNP`
+surfaces. Electron manifest schema 191 retains its shape and advances the
+mirrored smoke contract to `random-gnp-generator-v152`. The complete build also
+exposed a stale standalone assertion: the current doctest fixture contains 74
+relative block keys after earlier fixture growth, while the check still
+expected 72. The invariant now checks all 74 recorded keys.
+
+The retained runner-version-131 results record:
+
+```text
+historical complete graph.py:       867 passed, 85 failed, 374 skipped
+focused restored generator rows:     10 passed,  1 failed,   0 skipped
+focused final generator rows:        10 passed,  0 failed,   1 skipped
+selected inner Cliquer row:            0 passed,  1 failed,   0 skipped
+complete graph.py final:             881 passed, 70 failed, 375 skipped
+removed generator/cascade failures:              15
+new failures:                                     0
+```
+
+Ten of the eleven direct historical `graph_generators_pyx` rows now pass. The
+remaining multiline random-GNP vertex-cover example proceeds through graph
+construction and exposes its actual inner `sage.graphs.cliquer` dependency, so
+that row now carries the same explicit Cliquer metadata as the adjacent tree
+case. Selecting Cliquer restores the precise `ImportError` for unavailable
+`max_clique`. The complete comparison removes all 11 direct missing-module
+failures plus the four dependent `G1`/`G2` and native-clique rows, with no new
+failures. The largest remaining complete-file cluster is the separate 11-row
+`sage.libs.gap.libgap` boundary.
+
+The authoritative compiled target, standalone install and Electron resources,
+historical and final focused databases, selected-feature database, complete
+dashboard, pinned source reconstruction, patch logs, and worker state are under
+`/tmp/cowasm-sagelite-graph-generators.YZCvNy/`. The final manifest records 556
+side modules and 725 required-resource hashes; it includes the compiled
+`graph_generators_pyx.cpython-314-wasm32-wasi.so`. Every retained final database
+reports `PRAGMA integrity_check = ok`, and the supported focused run has a
+closed passing lifecycle.
+
+Validation includes patch and shell syntax, JavaScript manifest-validator
+syntax, zero-reject application to pinned clean Sagelite `f575cf6224f`, exact
+source comparisons for `meson.build` and `graph.py`, native Cython compile and
+WASM link, the complete standalone build/install/import/doctest ladder, schema-
+191 contract validation, staged and relocated Electron resource smokes, focused
+default and selected-feature replays, complete-file failure-set comparison,
+saved failure-cluster queries, SQLite lifecycle and integrity checks, and
+`git diff --check`. The accumulated source patch now has 1,614 sections (1,098
+`diff --git` and 516 legacy sections) and 4,716 hunks. The external developer
+Sagelite checkout and its intentional changes remain untouched. The next
+scheduled pass can address the leading `sage.libs.gap.libgap` graph boundary or
+another persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

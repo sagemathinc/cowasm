@@ -2027,8 +2027,14 @@ run_node_import \
   "import sage.rings.all
 from sage.all import BipartiteGraph, DiGraph, digraphs, graphs
 from sage.graphs.graph import Graph
+from sage.graphs.graph_generators_pyx import RandomGNP
 assert graphs.PathGraph(3).order() == 3
 assert digraphs.Complete(3).order() == 3
+random_graph = RandomGNP(12, .25, seed=0)
+assert random_graph.order() == 12
+assert random_graph.size() > 0
+assert random_graph.edges(sort=True, labels=False) == RandomGNP(12, .25, seed=0).edges(sort=True, labels=False)
+assert graphs.RandomGNP(12, .25, seed=0).edges(sort=True, labels=False) == random_graph.edges(sort=True, labels=False)
 G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
 assert DiGraph(G).order() == 3
@@ -2098,6 +2104,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-ma
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-matrix-elementary-divisors-v149"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sparse-free-module-basis-matrix-v150"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-symbolic-function-identity-v151"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-random-gnp-generator-v152"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2849,7 +2856,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "72" ]; then
+if [ "$doctest_block_key_count" != "74" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
