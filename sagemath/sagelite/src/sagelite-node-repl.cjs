@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 130;
+const doctestRunnerVersion = 131;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1165,9 +1165,12 @@ def __cowasm_doctest_displayhook(value):
         module_name = type(value).__module__
         if module_name and module_name not in ("builtins", "__main__"):
             type_name = module_name + "." + type_name
+        exception_text = "".join(
+            traceback.format_exception_only(type(exc), exc)
+        ).strip()
         sys.stdout.write(
             f"<repr(<{type_name} at 0x{id(value):x}>) failed: "
-            f"{type(exc).__name__}: {exc}>\\n"
+            f"{exception_text}>\\n"
         )
     if value is not None and __cowasm_active_displayhook_globals is not None:
         __cowasm_active_displayhook_globals["_"] = value

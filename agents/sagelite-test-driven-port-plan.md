@@ -62999,6 +62999,53 @@ Electron manifest change, or production resource restaging.  The external
 developer Sagelite checkout and its intentional changes remain untouched.  The
 next scheduled pass can address the isolated exception-representation mismatch.
 
+Free-module empty-exception display pass on 2026-07-22 UTC:
+
+The last `sage/modules/free_module.py` failure was a doctest-runner display
+defect rather than a Sage source or mathematical-runtime mismatch.  The
+runner's fallback for an object whose `repr(...)` raises always inserted
+`": "` after the exception class.  An empty `NotImplementedError()` therefore
+became `NotImplementedError: `, while Sage's ordinary display formatter and
+CPython's `traceback.format_exception_only(...)` correctly produce
+`NotImplementedError` with no trailing separator.
+
+Runner version 131 now formats the caught exception with
+`traceback.format_exception_only(...)`, matching Sage for both empty and
+message-bearing exceptions.  The standalone doctest fixture covers both
+forms so later display-hook changes cannot silently restore the extra colon.
+
+The retained before/after results record:
+
+```text
+complete module before:                 1,433 passed, 1 failed, 156 skipped
+focused free-module row:                    1 passed, 0 failed,   0 skipped
+focused empty/message repr fixture:         4 passed, 0 failed,   0 skipped
+complete module final:                  1,434 passed, 0 failed, 156 skipped
+standalone default fixture:                60 passed, 0 failed,  14 skipped
+standalone optional-feature fixture:       65 passed, 0 failed,   9 skipped
+standalone deferred-feature fixture:       61 passed, 1 expected failure,
+                                            12 skipped
+```
+
+The complete runner-131 dashboard contains all 1,590 blocks with a closed
+passing lifecycle, no block failures, no file errors, empty saved block- and
+file-failure cluster queries, and `PRAGMA integrity_check = ok`.  The
+intentionally enabled known-bug standalone profile retains its one expected
+failure and also passes integrity validation.
+
+The authoritative runner-131 SQLite databases, worker state, extracted
+standalone fixture, focused reproducer, and historical runner-130 comparison
+are under `/tmp/cowasm-sagelite-free-module-repr.WFT70T/`.  Validation includes
+the exact source-line replay, the two-form display regression, all three
+standalone fixture profiles and their aggregate counts, the complete
+`free_module.py` before/after comparison, SQLite lifecycle, failure, and
+integrity checks, Node and shell syntax, and `git diff --check`.  This is a
+doctest-runner and regression change; it needs no Sagelite source patch,
+native WASM rebuild, Electron manifest change, or resource restaging.  The
+external developer Sagelite checkout and its intentional changes remain
+untouched.  The browser-profile `free_module.py` dashboard is now clean, so
+the next scheduled pass can select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
