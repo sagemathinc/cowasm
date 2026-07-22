@@ -95,9 +95,15 @@ export default function fork_exec(context) {
     return data.real;
   }
 
-  function completedWasmProcesses(): Map<number, number> {
+  // Completed synchronous children store an encoded wait status. Streaming
+  // children store [done, wait status] in shared memory until waitpid reaps
+  // them.
+  function completedWasmProcesses(): Map<number, number | Int32Array> {
     if (!(context.state.completedWasmProcesses instanceof Map)) {
-      context.state.completedWasmProcesses = new Map<number, number>();
+      context.state.completedWasmProcesses = new Map<
+        number,
+        number | Int32Array
+      >();
     }
     return context.state.completedWasmProcesses;
   }
@@ -197,6 +203,167 @@ export default function fork_exec(context) {
           native_fs.closeSync(realFd);
         } catch (_err) {}
       }
+    }
+  }
+
+  function runWasiExecutableInWorker({
+    executable,
+    argv,
+    envp,
+    stdinFd,
+    stdoutFd,
+    stderrFd,
+  }: {
+    executable: string;
+    argv: string[];
+    envp: string[];
+    stdinFd: number;
+    stdoutFd: number;
+    stderrFd: number;
+  }): number | undefined {
+    if (native_fs == null || posix.dup == null) {
+      return undefined;
+    }
+    try {
+      if (!native_fs.existsSync(executable)) {
+        return undefined;
+      }
+    } catch (_err) {
+      return undefined;
+    }
+
+    let workerThreads;
+    let wasiModule: string;
+    let wasiBindingsModule: string;
+    try {
+      // Keep the Node-only worker dependency out of the browser bundle. Raw
+      // WASI subprocess streaming is available when the kernel has native
+      // descriptors; other environments retain the synchronous fallback.
+      const nodeRequire = eval("require");
+      workerThreads = nodeRequire("worker_threads");
+      wasiModule = nodeRequire.resolve("wasi-js");
+      wasiBindingsModule = nodeRequire.resolve("wasi-js/dist/bindings/node");
+    } catch (_err) {
+      return undefined;
+    }
+
+    const parentFds = [
+      stdinFd < 0 ? 0 : stdinFd,
+      stdoutFd < 0 ? 1 : stdoutFd,
+      stderrFd < 0 ? 2 : stderrFd,
+    ];
+    const childRealFds: number[] = [];
+    try {
+      for (const parentFd of parentFds) {
+        const parentFile = wasi.FD_MAP.get(parentFd);
+        if (parentFile == null) {
+          throw Error(`invalid WASI subprocess descriptor ${parentFd}`);
+        }
+        childRealFds.push(posix.dup(parentFile.real));
+      }
+    } catch (err) {
+      for (const fd of childRealFds) {
+        try {
+          native_fs.closeSync(fd);
+        } catch (_closeErr) {}
+      }
+      throw err;
+    }
+
+    const completion = new Int32Array(new SharedArrayBuffer(8));
+    const workerSource = String.raw`
+const { workerData } = require("worker_threads");
+const fs = require("fs");
+const WASIModule = require(workerData.wasiModule);
+const bindingsModule = require(workerData.wasiBindingsModule);
+const WASI = WASIModule.default || WASIModule;
+const nodeBindings = bindingsModule.default || bindingsModule;
+const completion = new Int32Array(workerData.completion);
+let status = 1;
+try {
+  const bindings = {
+    ...nodeBindings,
+    exit: (code) => {
+      throw { cowasmWasiProcessExit: true, code };
+    },
+    kill: (signal) => {
+      throw { cowasmWasiProcessSignal: true, signal };
+    },
+  };
+  const childWasi = new WASI({
+    preopens: { "/": "/" },
+    bindings,
+    args: workerData.argv,
+    env: workerData.env,
+  });
+  for (let childFd = 0; childFd < 3; childFd++) {
+    const file = childWasi.FD_MAP.get(childFd);
+    childWasi.FD_MAP.set(childFd, {
+      ...file,
+      real: workerData.realFds[childFd],
+    });
+  }
+  try {
+    const binary = new Uint8Array(fs.readFileSync(workerData.executable));
+    const module = new WebAssembly.Module(binary);
+    const instance = new WebAssembly.Instance(module, childWasi.getImports(module));
+    try {
+      childWasi.start(instance);
+      status = 0;
+    } catch (err) {
+      if (err && err.cowasmWasiProcessExit) {
+        status = err.code || 0;
+      } else if (err && err.cowasmWasiProcessSignal) {
+        status = 128;
+      } else {
+        throw err;
+      }
+    }
+  } finally {
+    const realFds = new Set();
+    for (const file of childWasi.FD_MAP.values()) {
+      realFds.add(file.real);
+    }
+    for (const fd of realFds) {
+      try { fs.closeSync(fd); } catch (_err) {}
+    }
+  }
+} catch (err) {
+  const detail = err && err.stack ? err.stack : String(err);
+  try { fs.writeSync(workerData.realFds[2], detail + "\n"); } catch (_err) {}
+  status = 1;
+} finally {
+  Atomics.store(completion, 1, (status & 0xff) << 8);
+  Atomics.store(completion, 0, 1);
+  Atomics.notify(completion, 0);
+}
+`;
+
+    const pid = allocateWasmPid();
+    try {
+      const worker = new workerThreads.Worker(workerSource, {
+        eval: true,
+        trackUnmanagedFds: false,
+        workerData: {
+          executable,
+          argv,
+          env: envObject(envp),
+          realFds: childRealFds,
+          completion: completion.buffer,
+          wasiModule,
+          wasiBindingsModule,
+        },
+      });
+      worker.unref();
+      completedWasmProcesses().set(pid, completion);
+      return pid;
+    } catch (err) {
+      for (const fd of childRealFds) {
+        try {
+          native_fs.closeSync(fd);
+        } catch (_closeErr) {}
+      }
+      throw err;
     }
   }
 
@@ -460,6 +627,24 @@ export default function fork_exec(context) {
             }
           });
           if (executable != null) {
+            // A worker-backed child can write to real pipes while Python reads
+            // them, preserving Popen's incremental stdout/stderr behavior. In
+            // particular, callers may consume one result and close the child
+            // without forcing an unbounded WASI command to finish first.
+            if (c2pread >= 0 || errread >= 0) {
+              const pid = runWasiExecutableInWorker({
+                executable,
+                argv,
+                envp,
+                stdinFd: p2cread,
+                stdoutFd: c2pwrite,
+                stderrFd: errwrite,
+              });
+              if (pid != null) {
+                log("started streaming WASI subprocess", { pid, executable });
+                return pid;
+              }
+            }
             // The child runs synchronously, so Python cannot consume a capture
             // pipe until this call returns. Redirect captured output through
             // anonymous seekable files to avoid deadlocking when a raw WASI

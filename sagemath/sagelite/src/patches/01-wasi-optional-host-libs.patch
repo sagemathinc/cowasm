@@ -31370,14 +31370,14 @@ diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/t
 @@ -1096,8 +1096,8 @@ def nauty_gentreeg(options='', debug=False, immutable=False):
      import subprocess
      from sage.features.nauty import NautyExecutable
-    gen_path = NautyExecutable("gentreeg").absolute_filename()
+     gen_path = NautyExecutable("gentreeg").absolute_filename()
 -    with subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
 -                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
 +    gen_argv = [gen_path, *shlex.split(str(options))]
 +    with subprocess.Popen(gen_argv, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, close_fds=True,
                            encoding='latin-1') as sp:
-        msg = sp.stderr.readline()
+         msg = sp.stderr.readline()
 diff --git a/src/sage/graphs/digraph_generators.py b/src/sage/graphs/digraph_generators.py
 --- a/src/sage/graphs/digraph_generators.py
 +++ b/src/sage/graphs/digraph_generators.py
@@ -31479,3 +31479,15 @@ diff --git a/src/sage/graphs/digraph_generators.py b/src/sage/graphs/digraph_gen
                                stderr=subprocess.PIPE, close_fds=True,
                                encoding='latin-1') as sp:
              msg = sp.stderr.readline()
+diff --git a/src/sage/graphs/generators/trees.pyx b/src/sage/graphs/generators/trees.pyx
+--- a/src/sage/graphs/generators/trees.pyx
++++ b/src/sage/graphs/generators/trees.pyx
+@@ -44,7 +44,7 @@ Note that nauty's gentreeg can only be used to generate trees with
+     ValueError: wrong format of parameter options
+     sage: next(graphs.nauty_gentreeg("1"))
+     Graph on 1 vertex
+-    sage: next(graphs.nauty_gentreeg("128"))  # known bug
++    sage: next(graphs.nauty_gentreeg("128"))
+     Graph on 128 vertices
+     sage: next(graphs.nauty_gentreeg("129"))
+     Traceback (most recent call last):

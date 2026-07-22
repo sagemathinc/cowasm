@@ -1533,6 +1533,8 @@ assert all(graph.order() == 6 for graph in ktrees)
 trees = list(graphs.nauty_gentreeg("10"))
 assert len(trees) == 106
 assert all(graph.order() == 10 and graph.is_tree() for graph in trees)
+large_tree = next(graphs.nauty_gentreeg("128"))
+assert large_tree.order() == 128 and large_tree.is_tree()
 tournaments = list(digraphs.tournaments_nauty(5))
 assert len(tournaments) == 12
 assert all(graph.is_tournament() for graph in tournaments)

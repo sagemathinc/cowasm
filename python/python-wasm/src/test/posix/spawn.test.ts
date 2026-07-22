@@ -18,6 +18,14 @@ const WASI_SUBPROCESS_STDIN_ECHO_FIXTURE = Buffer.from(
   "base64"
 );
 
+// Writes lines forever until its stdout reader closes the pipe. This catches
+// regressions where fork/exec runs a raw WASI child to completion before
+// returning its synthetic pid to Popen.
+const WASI_SUBPROCESS_STREAM_FIXTURE = Buffer.from(
+  "AGFzbQEAAAABEANgBH9/f38Bf2ABfwBgAAACRgIWd2FzaV9zbmFwc2hvdF9wcmV2aWV3MQhmZF93cml0ZQAAFndhc2lfc25hcHNob3RfcHJldmlldzEJcHJvY19leGl0AAEDAgECBQMBAAEHEwIGbWVtb3J5AgAGX3N0YXJ0AAIKLgEsAQF/QQBBEDYCAEEEQQw2AgADQEEBQQBBAUEIEAAhACAABEBBABABCwwACwsLEgEAQRALDHN0cmVhbS1saW5lCg==",
+  "base64"
+);
+
 let python: Awaited<ReturnType<typeof syncPython>>;
 
 beforeAll(async () => {
@@ -127,6 +135,36 @@ with open(${JSON.stringify(input)}) as wasm_stdin:
         "(wasm_file_stdin.returncode, wasm_file_stdin.stdout, wasm_file_stdin.stderr)"
       )
     ).toBe("(0, 'file-stdin\\n', '')");
+  } finally {
+    rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
+
+test("subprocess streams raw WASI output before process exit", async () => {
+  const fixtureDir = mkdtempSync(join(tmpdir(), "cowasm-wasi-subprocess-"));
+  const fixture = join(fixtureDir, "stream.wasm");
+  try {
+    writeFileSync(fixture, WASI_SUBPROCESS_STREAM_FIXTURE);
+    chmodSync(fixture, 0o755);
+
+    const { exec, repr } = python;
+    exec(`
+import subprocess
+wasm_stream = subprocess.Popen(
+    [${JSON.stringify(fixture)}],
+    text=True,
+    stdout=subprocess.PIPE,
+)
+wasm_stream_first = wasm_stream.stdout.readline()
+wasm_stream_running = wasm_stream.poll() is None
+wasm_stream.stdout.close()
+wasm_stream_returncode = wasm_stream.wait()
+`);
+    expect(
+      repr(
+        "(wasm_stream_first, wasm_stream_running, wasm_stream_returncode)"
+      )
+    ).toBe("('stream-line\\n', True, 0)");
   } finally {
     rmSync(fixtureDir, { recursive: true, force: true });
   }

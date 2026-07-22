@@ -64283,6 +64283,59 @@ resource relocation, logs, and the focused Electron-shaped probe are under
 true asynchronous raw-WASI stdin/stdout streaming and reopen the 128-vertex
 first-tree example, or continue with the next persisted graph/runtime cluster.
 
+Graph raw-WASI subprocess streaming delivery pass on 2026-07-22 UTC:
+
+Pipe-producing raw-WASI commands now run in a dedicated Node worker instead of
+being forced to complete synchronously inside `_posixsubprocess.fork_exec`.
+The parent duplicates the selected standard descriptors into the worker and
+returns a synthetic PID immediately. A shared atomic completion record gives
+`waitpid()` both nonblocking `WNOHANG` polling and blocking wait semantics.
+Commands with inherited or regular-file descriptors and no captured output
+retain the existing synchronous fallback, as do runtimes without Node worker
+support.
+
+The `python-wasm` subprocess suite now includes a raw-WASI fixture that writes
+lines indefinitely. Python reads the first line while `Popen.poll()` still
+reports a live child, closes the pipe, and reaps a clean zero status. This
+locks in the incremental behavior separately from the existing exit-status,
+128-KiB capture, and regular-file stdin fixtures. The complete kernel suite
+passes 3 tests in 2 suites, and the complete Python-WASM suite passes all 57
+tests in 16 suites.
+
+The retained schema-200 Sagelite resource tree then reopens the exact deferred
+tree-generator boundary:
+
+```text
+trees.pyx:47:        1 passed, 0 failed, 0 skipped
+actual output:         Graph on 128 vertices
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The temporary `# known bug` marker is removed from
+`next(graphs.nauty_gentreeg("128"))`. An Electron-shaped async-worker probe
+constructs that 128-vertex tree, verifies its order and tree predicate, and
+exits successfully from the relocated resource root. The durable Electron
+smoke now contains the same assertion. The manifest contract advances to
+schema 201 and `raw-wasi-subprocess-streaming-v163`; all three Electron
+manifest, forge-resource, and runtime contract programs pass.
+
+Validation also includes kernel, Python-WASM, and Electron TypeScript
+compilation; shell and JavaScript syntax; Sagelite standalone and corpus
+make-target dry runs; accumulated-patch syntax; `git diff --check`; SQLite
+lifecycle and integrity queries; and exact zero-fuzz forward/reverse
+application of the new final source section with byte-for-byte comparison to
+the runtime-tested `trees.pyx`. The pass also repairs lost leading context
+spaces in the immediately preceding `nauty_gentreeg` patch hunk so that
+adapter delta applies cleanly. The accumulated source patch now has 1,631
+sections (1,116 `diff --git` and 515 legacy sections) and 4,810 hunks. Focused
+databases, worker state, final-section reconstruction, and dry-run logs are
+under `/tmp/cowasm-sagelite-gentree-stream*` and
+`/tmp/cowasm-sagelite-streaming-*`. The external developer Sagelite checkout
+and its intentional changes remain untouched. A future runtime pass can add
+piped-stdin streaming and signal delivery for worker-backed synthetic
+processes, or continue with the next persisted graph/backend cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
