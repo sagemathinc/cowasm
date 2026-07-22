@@ -31730,3 +31730,9 @@ diff --git a/src/sage/graphs/weakly_chordal.pyx b/src/sage/graphs/weakly_chordal
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/graphs/comparability.pyx b/src/sage/graphs/comparability.pyx
+--- a/src/sage/graphs/comparability.pyx
++++ b/src/sage/graphs/comparability.pyx
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

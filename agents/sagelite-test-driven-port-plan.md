@@ -65245,6 +65245,50 @@ checkout and its intentional changes remain untouched. A future scheduled pass
 can audit the next stale dependency guard exposed by the expanded graph runtime
 or select another persisted backend/runtime cluster.
 
+Comparability-graph dependency and corpus-promotion pass on 2026-07-22 UTC:
+
+The obsolete file-wide `sage.graphs` dependency on
+`sage/graphs/comparability.pyx` is removed now that the stripped graph runtime
+executes the native comparability and permutation-graph algorithms directly.
+A complete historical replay with `sage.graphs` selected and a default-profile
+replay of the exact same source with only that guard removed record identical
+results:
+
+```text
+comparability.pyx:          45 passed, 0 failed, 13 skipped
+optional:sage.numerical.mip: 0 passed, 0 failed,  6 skipped
+optional:sage.combinat:      0 passed, 0 failed,  5 skipped
+optional:sage.plot:          0 passed, 0 failed,  1 skipped
+optional:networkx:           0 passed, 0 failed,  1 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+The active rows cover greedy comparability recognition and certificates,
+permutation-graph construction and recognition, transitive orientations, and
+directed transitivity checks. The retained runner-version-132 dashboards have
+no block failures or file-level errors and a 100% pass rate across active rows.
+The remaining skips preserve their narrower mixed-integer-programming,
+combinatorics, plotting, and NetworkX metadata; they are no longer hidden
+behind the broad graph feature.
+
+`sage/graphs/comparability.pyx` is now part of the curated pure-math corpus,
+raising it to 1,165 non-comment entries with no duplicates. Validation includes
+the historical and default complete module replays, saved block- and file-
+failure and lifecycle queries, SQLite integrity, corpus uniqueness and make-
+target dry run, exact zero-fuzz application of the new final patch section to
+the guarded source, byte-for-byte comparison with the runtime-tested source,
+accumulated-patch syntax and structure, and `git diff --check`. The accumulated
+source patch now has 1,653 sections (1,138 `diff --git` and 515 legacy sections)
+and 4,836 hunks. Authoritative databases, worker state, runtime-tested sources,
+and patch logs are under `/tmp/cowasm-sagelite-comparability.aG4FRQ/`. This
+source-only dependency cleanup and corpus promotion needs no native WASM
+rebuild, Electron manifest change, or permanent resource restaging. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit the next stale dependency guard
+exposed by the expanded graph runtime or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

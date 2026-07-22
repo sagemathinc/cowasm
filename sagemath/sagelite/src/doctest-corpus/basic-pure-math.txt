@@ -1093,6 +1093,7 @@ src/sage/graphs/orientations.py
 src/sage/graphs/traversals.pyx
 src/sage/graphs/independent_sets.pyx
 src/sage/graphs/weakly_chordal.pyx
+src/sage/graphs/comparability.pyx
 src/sage/graphs/generators/trees.pyx
 src/sage/graphs/generators/world_map.py
 src/sage/graphs/pq_trees.py
