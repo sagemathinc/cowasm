@@ -63896,6 +63896,56 @@ changes remain untouched. A future delivery pass can add a relocatable WASM
 process contract with pipe and wait-status semantics, then reopen these rows
 with `--optional=nauty`.
 
+Graph-generators corpus promotion and nauty dependency pass on 2026-07-22 UTC:
+
+The obsolete file-level `sage.graphs` dependency on
+`sage/graphs/graph_generators.py` is removed now that the stripped WASI graph
+runtime can import and execute the module directly. A complete feature-selected
+historical replay showed that all 39 non-skipped failures belonged to the
+already documented nauty subprocess boundary: 33 direct missing `geng` or
+`genbgL` executable errors, four subprocess-diagnostic mismatches, and two
+dependent iterator-state failures. The affected default edge-augmentation,
+`nauty_geng`, and `nauty_genbg` examples now carry the established `nauty`
+dependency metadata, including contiguous setup and consumer prompts whose
+generator construction is intentionally lazy.
+
+The retained runner-version-132 results record:
+
+```text
+historical sage.graphs-selected replay: 83 passed, 39 failed, 104 skipped
+default profile final:                  65 passed,  0 failed, 161 skipped
+selected nauty representative:           0 passed,  1 failed,   0 skipped
+newly scoped nauty rows:                            57
+```
+
+The final dashboard contains 71 `optional:nauty` skips, including 14 that were
+already tagged in the module. Explicitly selecting `nauty` at the first
+enumeration row restores the precise `FeatureNotPresentError: nauty_geng is
+not available` diagnostic with `Executable 'geng' not found on PATH`. The
+default dashboard has a closed passing lifecycle, no block or file failures,
+an empty saved failure-cluster result, and `PRAGMA integrity_check = ok`.
+
+`sage/graphs/graph_generators.py` is now part of the curated pure-math corpus,
+raising it to 1,142 non-comment entries. The authoritative historical,
+default, and selected-feature SQLite databases, worker state, exact final
+patch section, and source reconstructions are under
+`/tmp/cowasm-sagelite-graph-generators.Tq91zT/` and the associated
+`/tmp/cowasm-sagelite-graph-generators-*` source directories.
+
+Validation includes the complete historical and final module replays, the
+selected-feature exact-line replay, saved block- and file-failure queries,
+SQLite lifecycle and integrity checks, Python syntax, exact zero-fuzz
+application of the new section after the two preceding graph-generator
+sections from pinned Sagelite `f575cf6224f`, byte-for-byte comparison with the
+tested source, corpus uniqueness, accumulated-patch structure, and
+`git diff --check`. The accumulated source patch now has 1,623 source sections
+(1,108 `diff --git` and 515 legacy sections) and 4,771 hunks. This is source
+doctest metadata and corpus coverage only; it needs no native WASM rebuild,
+Electron manifest change, or resource restaging. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+delivery pass can reopen the nauty rows after implementing the relocatable
+WASM subprocess contract with pipes and wait-status semantics.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
