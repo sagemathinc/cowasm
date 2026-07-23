@@ -32,6 +32,7 @@ const expectedSageliteRuntimeDependencyPaths = Object.freeze([
 const expectedSageliteNativeLibraryPaths = Object.freeze([
   "deps/libcxx/libcxx.so",
   "deps/primecountpy/primecountpy/libcxx.so",
+  "site-packages/sage/graphs/graph_decompositions/libcxx.so",
   "site-packages/sage/graphs/libcxx.so",
   "site-packages/sage/libs/libcxx.so",
   "site-packages/sage/libs/linbox/libcxx.so",
@@ -411,6 +412,8 @@ expectedSageliteManifest.smokeContract +=
   "-graph-genus-extension-delivery-v172";
 expectedSageliteManifest.smokeContract +=
   "-bliss-canonical-labeling-v173";
+expectedSageliteManifest.smokeContract +=
+  "-tdlib-tree-decomposition-v174";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

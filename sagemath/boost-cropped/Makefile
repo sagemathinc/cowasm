@@ -20,8 +20,12 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
 
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build ${SRC}/patches/01-flat-tree-merge.patch
+	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-flat-tree-merge.patch
+	touch ${BUILD_WASI_SDK}/.patched
+
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} || status=$$?; \

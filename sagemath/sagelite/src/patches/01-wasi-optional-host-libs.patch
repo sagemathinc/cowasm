@@ -32629,3 +32629,29 @@ diff --git a/src/sage/graphs/graph_decompositions/modular_decomposition.pyx b/sr
 -        raise TypeError("type of perm is not supported for relabeling")
 +        else:
 +            raise TypeError("type of perm is not supported for relabeling")
+diff --git a/src/sage/graphs/graph_decompositions/tdlib.pyx b/src/sage/graphs/graph_decompositions/tdlib.pyx
+--- a/src/sage/graphs/graph_decompositions/tdlib.pyx
++++ b/src/sage/graphs/graph_decompositions/tdlib.pyx
+@@ -3 +2,0 @@
+-# sage.doctest: needs sage.graphs tdlib
+@@ -129 +127,0 @@
+-        sage: # optional - tdlib
+@@ -133 +131 @@
+-        sage: T.show(vertex_size=2000)
++        sage: T.show(vertex_size=2000)  # needs sage.plot
+@@ -137 +134,0 @@
+-        sage: # optional - tdlib
+@@ -178 +174,0 @@
+-        sage: # optional - tdlib
+diff --git a/src/sage/graphs/graph_decompositions/meson.build b/src/sage/graphs/graph_decompositions/meson.build
+--- a/src/sage/graphs/graph_decompositions/meson.build
++++ b/src/sage/graphs/graph_decompositions/meson.build
+@@ -1 +1 @@
+-if cc.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
++if cpp.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
+@@ -82 +82 @@
+-  override_options: ['cython_language=cpp'],
++  override_options: ['cython_language=cpp', 'cpp_std=c++11'],
+@@ -85 +85 @@
+-  dependencies: [py_dep, cysignals, tdlib],
++  dependencies: [py_dep, cysignals, tdlib, cowasm_graph_libcxx_dependency],

@@ -67323,6 +67323,74 @@ external developer Sagelite checkout and its intentional changes remain
 untouched. A future scheduled pass can audit TDLib or another remaining graph
 backend boundary.
 
+TDLib exact-tree-decomposition delivery and corpus-promotion pass on
+2026-07-23 UTC:
+
+The standalone TDLib package already installed and tested its header-only
+implementation, but Sagelite hard-disabled the corresponding extension and
+did not supply the package include directory. A controlled runner-version-137
+replay with the historical broad features selected initially recorded four
+passed and nine failed blocks. Three direct
+`ModuleNotFoundError: sage.graphs.graph_decompositions.tdlib` rows caused all
+six cascading missing-name failures.
+
+Sagelite now treats the TDLib headers as an explicit standalone prerequisite,
+adds their include directory to its WASI C++ configuration, enables the Meson
+feature, and links the generated side module to `libcxx.so`. The Meson header
+probe now correctly uses the C++ compiler instead of the C compiler, and the
+TDLib target honors its upstream `-std=c++11` contract instead of inheriting
+Sage's C++17 default.
+
+Compiling that target exposed a known Boost 1.66 `flat_tree` merge defect:
+the internal `merge_unique` and `merge_equal` fallbacks called a nonexistent
+`insert` member. The cropped-Boost package now carries the corresponding
+`insert_unique`/`insert_equal` correction and its standalone smoke exercises
+a real `flat_set::merge`, reporting `flat-merge=3`.
+
+The obsolete file-wide `sage.graphs tdlib` guard and the three stale
+`optional - tdlib` directives are removed. The one visualization-only example
+now carries the narrow `sage.plot` dependency. The final default-profile
+dashboard records:
+
+```text
+tdlib.pyx:    12 passed, 0 failed, 1 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The only skip is `T.show(...)`; all exact-decomposition and width checks are
+active in the default node profile. Saved block- and file-failure cluster
+queries are empty, and the active-row pass rate is 100%.
+
+The installed `tdlib.cpython-314-wasm32-wasi.so` has a `dylink.0` section,
+exports `PyInit_tdlib`, and loads through the staged `libcxx.so`. The installed
+Node smoke computes exact width one for a seven-vertex path and width two for
+a seven-cycle. Electron resources include the graph-decomposition-local
+`libcxx.so`, and the manifest smoke contract advances to version 174.
+
+`sage/graphs/graph_decompositions/tdlib.pyx` is now part of the curated
+pure-math corpus, raising it to 1,207 non-comment entries with no duplicates.
+Validation includes the initial and final focused dashboards; saved failure,
+skip, lifecycle, latest-run, and SQLite-integrity queries; the cropped-Boost
+compile/runtime smoke; WASI side-module section and export checks; shell and
+JavaScript syntax; Electron manifest, forge-resource, and runtime tests;
+corpus uniqueness; accumulated-patch syntax; exact zero-fuzz application from
+the pristine pinned Sagelite checkout with byte-for-byte target comparison;
+and a clean standalone reconstruction/compile followed by the complete resumed
+runtime ladder. The standalone harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,639 sections (1,171 `diff --git` and
+468 legacy sections) and 5,020 hunks. Focused dashboards and worker state are
+under `/tmp/cowasm-sagelite-tdlib-audit.MXtrlz/`; the final exact target replay
+is under `/tmp/cowasm-sagelite-tdlib-final-replay.XZmEAI/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another stale graph dependency guard or select
+a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

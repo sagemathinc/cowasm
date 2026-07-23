@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 29 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK BLISS_WASI_SDK" >&2
+if [ "$#" -ne 30 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK BLISS_WASI_SDK TDLIB_WASI_SDK" >&2
   exit 2
 fi
 
@@ -36,6 +36,7 @@ glpk_wasi_sdk="$(cd "${26}" && pwd)"
 nauty_wasi_sdk="$(cd "${27}" && pwd)"
 planarity_wasi_sdk="$(cd "${28}" && pwd)"
 bliss_wasi_sdk="$(cd "${29}" && pwd)"
+tdlib_wasi_sdk="$(cd "${30}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -457,7 +458,7 @@ endian = 'little'
 
 [built-in options]
 c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include', '-I$bliss_wasi_sdk/include']
+cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include', '-I$bliss_wasi_sdk/include', '-I$tdlib_wasi_sdk/include']
 c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib', '-L$bliss_wasi_sdk/lib']
 cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib', '-L$bliss_wasi_sdk/lib']
 
@@ -490,7 +491,7 @@ else
       -Dmcqd=disabled \
       -Drankwidth=enabled \
       -Dsirocco=disabled \
-      -Dtdlib=disabled \
+      -Dtdlib=enabled \
       >"$log_file" 2>&1
   meson_status=$?
   set -e
@@ -2116,6 +2117,16 @@ assert canonical_form(petersen) == canonical_form(relabeled)
 print('sagelite-node-ok Bliss canonical labeling backend smoke')"
 
 run_node_import \
+  "TDLib exact tree decomposition backend smoke" \
+  "from sage.all import graphs
+from sage.graphs.graph_decompositions.tdlib import get_width, treedecomposition_exact
+path_decomposition = treedecomposition_exact(graphs.PathGraph(7))
+cycle_decomposition = treedecomposition_exact(graphs.CycleGraph(7))
+assert get_width(path_decomposition) == 1
+assert get_width(cycle_decomposition) == 2
+print('sagelite-node-ok TDLib exact tree decomposition backend smoke')"
+
+run_node_import \
   "Gabow edge connectivity smoke" \
   "from sage.all import digraphs
 from sage.graphs.edge_connectivity import GabowEdgeConnectivity
@@ -2271,6 +2282,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-modular-decomposition-lazy-groups-v171"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-genus-extension-delivery-v172"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-canonical-labeling-v173"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

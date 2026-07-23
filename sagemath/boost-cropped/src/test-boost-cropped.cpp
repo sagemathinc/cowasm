@@ -2,6 +2,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/preprocessor/stringize.hpp>
@@ -65,8 +66,20 @@ int main() {
   bool graph_ok = component_count == 2 && components[0] == components[2] &&
                   components[0] != components[3] && components[3] == components[4];
 
+  boost::container::flat_set<int> merged_values;
+  merged_values.insert(1);
+  merged_values.insert(3);
+  boost::container::flat_set<int> source_values;
+  source_values.insert(2);
+  source_values.insert(3);
+  merged_values.merge(source_values);
+  bool flat_merge_ok = merged_values.size() == 3 &&
+                       merged_values.count(1) == 1 &&
+                       merged_values.count(2) == 1 &&
+                       merged_values.count(3) == 1;
+
   if (bits.count() != 2 || ptr->refs != 1 || seed == 0 || !big_ok ||
-      !rational_ok || !graph_ok) {
+      !rational_ok || !graph_ok || !flat_merge_ok) {
     return 1;
   }
 
@@ -76,6 +89,7 @@ int main() {
             << " big-low=" << low_word
             << " ratio=" << ratio.numerator() << "/" << ratio.denominator()
             << " components=" << component_count
+            << " flat-merge=" << merged_values.size()
             << " token=" << BOOST_PP_STRINGIZE(cowasm) << std::endl;
   return 0;
 }

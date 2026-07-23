@@ -1131,6 +1131,7 @@ src/sage/graphs/pq_trees.py
 src/sage/graphs/graph_decompositions/bandwidth.pyx
 src/sage/graphs/graph_decompositions/cutwidth.pyx
 src/sage/graphs/graph_decompositions/tree_decomposition.pyx
+src/sage/graphs/graph_decompositions/tdlib.pyx
 src/sage/graphs/graph_decompositions/vertex_separation.pyx
 src/sage/graphs/hyperbolicity.pyx
 src/sage/graphs/isgci.py
