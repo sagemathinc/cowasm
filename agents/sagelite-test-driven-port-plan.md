@@ -67909,6 +67909,72 @@ untouched. Five narrow planarity annotations remain across the basic and
 random graph generators and the matching-covered-graph module for future
 focused audits.
 
+Generator and matching-covered planarity reopening pass on 2026-07-23 UTC:
+
+The delivered planarity extension makes the final five
+`sage.graphs.planarity` dependency annotations in the accumulated Sagelite
+source patch stale. They cover one planarity check in the basic graph
+generators, three planarity checks in the random graph generators, and the
+planarity clause of a matching-covered brace example. A fresh pre-change
+default dashboard recorded:
+
+```text
+generators/basic.py:       137 passed, 0 failed, 121 skipped
+generators/random.py:      136 passed, 0 failed,  89 skipped
+matching_covered_graph.py: 748 passed, 0 failed,  87 skipped
+total:                    1021 passed, 0 failed, 297 skipped
+```
+
+A controlled runner-version-139 replay with `sage.graphs.planarity`
+explicitly selected records 1,026 passed, zero failed, and 292 skipped blocks.
+Removing the five annotations leaves the ordinary default profile with the
+same aggregate and per-file totals:
+
+```text
+generators/basic.py:       138 passed, 0 failed, 120 skipped
+generators/random.py:      139 passed, 0 failed,  86 skipped
+matching_covered_graph.py: 749 passed, 0 failed,  86 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+All three dashboards contain 1,318 block rows. Comparing the pre-change and
+final dashboards shows exactly five status changes, all from
+`optional:sage.graphs.planarity` skipped to passed. Controlled and final
+statuses, expected output, actual output, skip reasons, and failure details
+agree for every row. The five expected tag differences are the removed
+planarity annotations. Removing the inline annotation from the random
+triangulation loop also lets the final runner persist and execute its
+continuation body as a random-output check; removing the standalone annotation
+from the matching-covered module shifts later source lines and their
+line-derived block keys by one. Saved block- and file-failure queries are
+empty, and the active-row pass rate is 100%.
+
+All three modules were already part of the 1,210-entry curated pure-math
+corpus, which still has no duplicate entries. This is source-only metadata
+cleanup: no native WASM rebuild, Electron manifest change, runner-version
+bump, corpus-list change, or resource restaging is required. No
+`sage.graphs.planarity` annotations remain in the accumulated patch or the
+three runtime-tested sources.
+
+Validation includes the controlled, pre-change default, and final default
+three-file dashboards; saved failure, lifecycle, latest-run, and skip queries;
+SQLite integrity and row-level comparisons; corpus uniqueness and make-target
+dry run; accumulated-patch syntax; zero-fuzz sequential application of all six
+serialized target-file patch sections from pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of all
+three reconstructed targets with the runtime-tested sources; and
+`git diff --check`.
+
+The accumulated source patch remains at 1,683 serialized file sections (1,170
+`diff --git` and 513 legacy sections) and now has 4,910 hunks. Dashboards and
+worker state are under
+`/tmp/cowasm-sagelite-planarity-followup.VYR8xF/`; the exact target replay is
+under `/tmp/cowasm-sagelite-planarity-target-replay.4zE9Ku/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can select another persisted graph backend/runtime
+cluster or audit a different stale dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

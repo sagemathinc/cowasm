@@ -19675,14 +19675,6 @@ diff --git a/src/sage/graphs/matching_covered_graph.py b/src/sage/graphs/matchin
              sage: M = graphs.MurtyGraph()
              sage: G = MatchingCoveredGraph(M)
              sage: F = [None, 'edge', None]
-@@ -2541,6 +2542,7 @@
-             sage: K = graphs.CompleteBipartiteGraph(3, 3)
-             sage: J = graphs.HeawoodGraph()
-             sage: H = MatchingCoveredGraph(J)
-+            sage: # needs sage.graphs.planarity
-             sage: H.is_brace() and not H.is_planar() and \
-             ....: H.is_regular(k=3) and H.girth() == 6
-             True
 @@ -2915,6 +2917,7 @@
          Each of Petersen graph, Bicorn graph, Tricorn graph, Cubeplex graph,
          Twinplex graph, Wagner graph is a brick::
@@ -32040,21 +32032,12 @@ diff --git a/src/sage/graphs/generators/random.py b/src/sage/graphs/generators/r
 -        sage: G.is_interval()
 +        sage: G = RandomProperIntervalGraph(10)                                        # needs sage.symbolic
 +        sage: G.is_interval()                                                           # needs sage.symbolic
-@@ -2170 +2169 @@
--        sage: G.is_planar()
-+        sage: G.is_planar()                                                             # needs sage.graphs.planarity
-@@ -2195 +2194 @@
--        sage: for i in range(10):
-+        sage: for i in range(10):                                                       # needs sage.graphs.planarity
 @@ -2280 +2279 @@
 -        sage: print(blossoming_contour(BinaryTrees(1).an_element()))
 +        sage: print(blossoming_contour(BinaryTrees(1).an_element()))                    # needs sage.combinat
 @@ -2298 +2297 @@
 -        sage: blossoming_contour(BinaryTrees(0).an_element())
 +        sage: blossoming_contour(BinaryTrees(0).an_element())                           # needs sage.combinat
-@@ -2385 +2384 @@
--        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)
-+        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)                    # needs sage.graphs.planarity
 diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/basic.py
 --- a/src/sage/graphs/generators/basic.py
 +++ b/src/sage/graphs/generators/basic.py
@@ -32073,9 +32056,6 @@ diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/ba
 @@ -89 +88 @@
 -        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
 +        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly                           # needs sage.libs.flint
-@@ -130 +129 @@
--        sage: G.is_planar()
-+        sage: G.is_planar()                                                            # needs sage.graphs.planarity
 diff --git a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
