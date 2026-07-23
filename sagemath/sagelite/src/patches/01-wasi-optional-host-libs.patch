@@ -17617,13 +17617,6 @@ diff --git a/src/sage/geometry/hyperbolic_space/hyperbolic_coercion.py b/src/sag
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.geometry.hyperbolic_space sage.symbolic
  """
-diff --git a/src/sage/graphs/graph_decompositions/slice_decomposition.pyx b/src/sage/graphs/graph_decompositions/slice_decomposition.pyx
---- a/src/sage/graphs/graph_decompositions/slice_decomposition.pyx
-+++ b/src/sage/graphs/graph_decompositions/slice_decomposition.pyx
-@@ -2,2 +2,3 @@
- # distutils: extra_compile_args = -std=c++11
-+# sage.doctest: needs sage.graphs
- r"""
 diff --git a/src/sage/manifolds/differentiable/de_rham_cohomology.py b/src/sage/manifolds/differentiable/de_rham_cohomology.py
 --- a/src/sage/manifolds/differentiable/de_rham_cohomology.py
 +++ b/src/sage/manifolds/differentiable/de_rham_cohomology.py

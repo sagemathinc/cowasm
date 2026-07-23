@@ -67190,6 +67190,48 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another stale graph dependency guard or
 select a persisted backend/runtime cluster.
 
+Slice-decomposition dependency and corpus-promotion pass on 2026-07-23 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_decompositions/slice_decomposition.pyx` hid the delivered
+extended-LexBFS and slice-decomposition implementation. A controlled
+runner-version-137 replay with the broad graph feature selected records:
+
+```text
+slice_decomposition.pyx: 139 passed, 0 failed, 1 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+Removing only the broad guard leaves the default node profile with the same
+139 passed, zero failed, and one skipped result. Both dashboards contain 140
+block rows and have empty saved block- and file-failure queries. Their block
+order, source, source hashes, expected and actual output, statuses, comparator
+modes, and failure metadata agree exactly; source locations differ only by the
+expected one-line guard removal. All tag rows differ only by dropping the
+inherited `sage.graphs` feature. The retained skip is the upstream
+`# not tested` visualization helper, while the 139 active rows exercise
+extended LexBFS, slice construction and validation, graph conversion,
+comparability and cocomparability checks, and immutable, dense, sparse, and
+degenerate graph cases.
+
+`sage/graphs/graph_decompositions/slice_decomposition.pyx` is now part of the
+curated pure-math corpus, raising it to 1,205 non-comment entries with no
+duplicates. Validation includes the controlled and default complete-module
+dashboards; saved block-failure, file-error, skip, lifecycle, and latest-run
+queries; exact row-level SQLite comparison and integrity checks; corpus
+uniqueness and make-target dry run; accumulated-patch syntax; byte-for-byte
+comparison of the now-unmodified module with the pristine pinned Sagelite
+source; and `git diff --check`. The accumulated source patch now contains
+1,169 `diff --git` sections and 5,002 hunks. The controlled database is
+`/tmp/cowasm-sagelite-slice-guarded.sqlite3`; the default database and worker
+state are under `/tmp/cowasm-sagelite-slice-default.Ngu62K/`. This source-only
+dependency cleanup needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. A future scheduled pass can audit the
+adjacent TDLib and Bliss boundaries or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
