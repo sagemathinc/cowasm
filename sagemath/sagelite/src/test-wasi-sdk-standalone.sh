@@ -2181,6 +2181,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-s
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-piped-stdin-v164"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-subprocess-signals-v165"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-doctest-mode-v166"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-name-v167"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

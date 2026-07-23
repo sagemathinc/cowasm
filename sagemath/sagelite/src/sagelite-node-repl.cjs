@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 136;
+const doctestRunnerVersion = 137;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2198,6 +2198,10 @@ __cowasm_tested_module_global_exclusions = {
 
 
 def __cowasm_seed_tested_module_doctest_globals(namespace, module_name):
+    if module_name == "sage.graphs.graph_coloring":
+        namespace.setdefault(
+            "graph_coloring", importlib.import_module(module_name)
+        )
     if module_name == "sage.rings.cfinite_sequence":
         try:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

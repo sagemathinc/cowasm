@@ -66776,6 +66776,64 @@ checkout and its intentional changes remain untouched. A future scheduled
 pass can audit the remaining graph-coloring, graph database, or another
 persisted backend/runtime cluster.
 
+Graph-coloring dependency and corpus-promotion pass on 2026-07-23 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_coloring.pyx` hid 106 runnable graph-core doctests. A fresh
+runner-version-136 replay with the broad feature selected recorded 105 passed,
+three failed, and 53 skipped blocks. Two failures were the untagged
+`chromatic_number` examples that call the unavailable Cliquer-backed
+`Graph.clique_number()`. The third was an upstream startup-namespace parity
+gap: the module's issue-33554 regression check refers to the
+`graph_coloring` module object exposed by native `sage.all`, while the
+Sagelite worker seeded the tested module's members but not that module name.
+
+The two chromatic-number prompts now carry the narrow
+`sage.graphs.cliquer` dependency. The doctest worker seeds the tested
+`sage.graphs.graph_coloring` module under its upstream startup name, and
+runner version 137 records:
+
+```text
+graph_coloring.pyx: 106 passed, 0 failed, 55 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+A controlled replay retaining the broad guard with `sage.graphs` selected and
+a default-profile replay after removing it both contain 161 block rows with
+no block failures or file-level errors. Their source, source hashes, expected
+output, comparator modes, statuses, actual output, and failure metadata are
+identical. Source locations differ only by the expected one-line offset, and
+tag metadata differs only by the removed inherited graph feature. The 55
+retained skips preserve 39 mixed-integer-programming rows, eight plotting
+rows, three NetworkX rows, two Cliquer rows, two FLINT rows, and one deferred
+known-bug row.
+
+`sage/graphs/graph_coloring.pyx` is now part of the curated pure-math corpus,
+raising it to 1,197 non-comment entries with no duplicates. The Electron
+resource smoke contract advances to version 167 so rebuilt bundles are paired
+with the tested-module namespace behavior. Validation includes the initial
+failure-cluster dashboard, controlled and default complete-module replays, a
+post-rebuild default replay, saved block- and file-failure and skip queries,
+exact row-level SQLite comparison, SQLite integrity, JavaScript and shell
+syntax, corpus uniqueness and make-target dry run, accumulated-patch syntax,
+exact zero-fuzz application of both accumulated target sections from pristine
+Sagelite with byte-for-byte source comparison, Electron manifest and runtime
+tests, a clean full standalone rebuild, and `git diff --check`. The standalone
+harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,687 sections (1,172 `diff --git` and
+515 legacy sections) and 5,004 hunks. Authoritative databases, worker state,
+the pristine build source, and the exact target replay are under
+`/tmp/cowasm-sagelite-graph-coloring.YA0Phr/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit `sage/graphs/graph_database.py`, another remaining
+file-wide graph guard, or another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
