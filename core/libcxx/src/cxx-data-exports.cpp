@@ -6,6 +6,7 @@
   }
 
 CXX_DATA_EXPORT(cowasm_ZTISt9bad_alloc, _ZTISt9bad_alloc)
+CXX_DATA_EXPORT(cowasm_ZTISt9exception, _ZTISt9exception)
 CXX_DATA_EXPORT(cowasm_ZTISt11logic_error, _ZTISt11logic_error)
 CXX_DATA_EXPORT(cowasm_ZTISt12domain_error, _ZTISt12domain_error)
 CXX_DATA_EXPORT(cowasm_ZTISt12length_error, _ZTISt12length_error)
@@ -17,9 +18,11 @@ CXX_DATA_EXPORT(cowasm_ZTISt14overflow_error, _ZTISt14overflow_error)
 CXX_DATA_EXPORT(cowasm_ZTISt15underflow_error, _ZTISt15underflow_error)
 CXX_DATA_EXPORT(cowasm_ZTISt20bad_array_new_length, _ZTISt20bad_array_new_length)
 CXX_DATA_EXPORT(cowasm_ZTINSt3__217__assoc_sub_stateE, _ZTINSt3__217__assoc_sub_stateE)
+CXX_DATA_EXPORT(cowasm_ZTINSt3__217bad_function_callE, _ZTINSt3__217bad_function_callE)
 CXX_DATA_EXPORT(cowasm_ZTIPKc, _ZTIPKc)
 
 CXX_DATA_EXPORT(cowasm_ZTVSt9bad_alloc, _ZTVSt9bad_alloc)
+CXX_DATA_EXPORT(cowasm_ZTVSt9exception, _ZTVSt9exception)
 CXX_DATA_EXPORT(cowasm_ZTVSt11logic_error, _ZTVSt11logic_error)
 CXX_DATA_EXPORT(cowasm_ZTVSt12domain_error, _ZTVSt12domain_error)
 CXX_DATA_EXPORT(cowasm_ZTVSt12length_error, _ZTVSt12length_error)
@@ -31,6 +34,7 @@ CXX_DATA_EXPORT(cowasm_ZTVSt14overflow_error, _ZTVSt14overflow_error)
 CXX_DATA_EXPORT(cowasm_ZTVSt15underflow_error, _ZTVSt15underflow_error)
 CXX_DATA_EXPORT(cowasm_ZTVSt20bad_array_new_length, _ZTVSt20bad_array_new_length)
 CXX_DATA_EXPORT(cowasm_ZTVNSt3__217__assoc_sub_stateE, _ZTVNSt3__217__assoc_sub_stateE)
+CXX_DATA_EXPORT(cowasm_ZTVNSt3__217bad_function_callE, _ZTVNSt3__217bad_function_callE)
 
 CXX_DATA_EXPORT(cowasm_ZSt7nothrow, _ZSt7nothrow)
 CXX_DATA_EXPORT(cowasm_ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE, _ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE)

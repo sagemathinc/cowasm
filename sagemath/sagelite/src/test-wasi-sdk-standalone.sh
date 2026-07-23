@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 28 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK" >&2
+if [ "$#" -ne 29 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK BLISS_WASI_SDK" >&2
   exit 2
 fi
 
@@ -35,6 +35,7 @@ iml_wasi_sdk="$(cd "${25}" && pwd)"
 glpk_wasi_sdk="$(cd "${26}" && pwd)"
 nauty_wasi_sdk="$(cd "${27}" && pwd)"
 planarity_wasi_sdk="$(cd "${28}" && pwd)"
+bliss_wasi_sdk="$(cd "${29}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -456,9 +457,9 @@ endian = 'little'
 
 [built-in options]
 c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
-c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
-cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib']
+cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$glpk_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$libbraiding_wasi_sdk/include', '-I$rw_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include', '-I$bliss_wasi_sdk/include']
+c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib', '-L$bliss_wasi_sdk/lib']
+cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib', '-L$glpk_wasi_sdk/lib', '-L$libbraiding_wasi_sdk/lib', '-L$rw_wasi_sdk/lib', '-L$iml_wasi_sdk/lib', '-L$bliss_wasi_sdk/lib']
 
 [properties]
 cowasm_libcxx = '$libcxx_wasi_sdk/libcxx.so'
@@ -480,7 +481,7 @@ else
       --prefix "$dist_dir" \
       --default-library=static \
       -Dbuild-docs=false \
-      -Dbliss=disabled \
+      -Dbliss=enabled \
       -Dbrial=disabled \
       -Dcoxeter3=disabled \
       -Declib=disabled \
@@ -2104,6 +2105,17 @@ assert simple_connected_graph_genus(graphs.CompleteGraph(5)) == 1
 print('sagelite-node-ok graph genus extension delivery smoke')"
 
 run_node_import \
+  "Bliss canonical labeling backend smoke" \
+  "from sage.all import Graph, graphs
+from sage.graphs.bliss import canonical_form
+petersen = graphs.PetersenGraph()
+canonical = canonical_form(petersen, return_graph=True)
+assert canonical.is_isomorphic(petersen)
+relabeled = Graph([(vertex + 10, neighbor + 10) for vertex, neighbor in petersen.edge_iterator(labels=False)])
+assert canonical_form(petersen) == canonical_form(relabeled)
+print('sagelite-node-ok Bliss canonical labeling backend smoke')"
+
+run_node_import \
   "Gabow edge connectivity smoke" \
   "from sage.all import digraphs
 from sage.graphs.edge_connectivity import GabowEdgeConnectivity
@@ -2258,6 +2270,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-data
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169-edge-connectivity-v170"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-modular-decomposition-lazy-groups-v171"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-genus-extension-delivery-v172"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-canonical-labeling-v173"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

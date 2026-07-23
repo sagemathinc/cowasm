@@ -105,7 +105,9 @@ test -s "$dist_dir/libcxx.so"
 "$objdump" -h "$dist_dir/libcxx.so" | grep 'dylink.0'
 for export in \
   __WASM_EXPORT___ZSt7nothrow \
+  __WASM_EXPORT___ZTISt9exception \
   __WASM_EXPORT___ZTIPKc \
+  __WASM_EXPORT___ZTINSt3__217bad_function_callE \
   __WASM_EXPORT___ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ifstreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTTNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
@@ -113,6 +115,8 @@ for export in \
   __WASM_EXPORT___ZTVN10__cxxabiv117__class_type_infoE \
   __WASM_EXPORT___ZTVN10__cxxabiv120__si_class_type_infoE \
   __WASM_EXPORT___ZTVN10__cxxabiv121__vmi_class_type_infoE \
+  __WASM_EXPORT___ZTVSt9exception \
+  __WASM_EXPORT___ZTVNSt3__217bad_function_callE \
   __WASM_EXPORT___ZTVNSt3__213basic_istreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTVNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
   __WASM_EXPORT___ZTVNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE \

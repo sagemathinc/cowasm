@@ -67232,6 +67232,97 @@ intentional changes remain untouched. A future scheduled pass can audit the
 adjacent TDLib and Bliss boundaries or select another persisted
 backend/runtime cluster.
 
+Bliss canonical-labeling delivery and corpus-promotion pass on 2026-07-23 UTC:
+
+The standalone Bliss package existed, but Sagelite disabled its Meson feature
+and did not deliver `sage.graphs.bliss`. A controlled runner-version-137 replay
+with the graph and Bliss features selected initially recorded:
+
+```text
+bliss.pyx:     43 passed, 52 failed, 0 skipped
+run lifecycle: failed and closed
+SQLite integrity: ok
+```
+
+Three direct missing-`sage.graphs.bliss` rows caused the canonical-form and
+automorphism-group missing-name cascades. Linking the extension exposed two
+WASI-specific native contracts. First, the Bliss archive had been compiled
+without PIC and therefore could not be consumed by a Python side module.
+Second, the extension's libc++ exception and `bad_function_call` type
+information required the same explicit CoWasm data-export wrappers as the
+other libc++ vtables and RTTI objects. The Bliss port now builds a
+position-independent archive and its package smoke links and audits a
+`dylink.0` side module. The libc++ shared library now exports wrappers for
+`_ZTISt9exception`, `_ZTVSt9exception`,
+`_ZTINSt3__217bad_function_callE`, and
+`_ZTVNSt3__217bad_function_callE`.
+
+Sagelite now enables Bliss, supplies its headers and library search path, and
+links `libcxx.so` after `libbliss.a` through an ordered Meson dependency. The
+installed `bliss.cpython-314-wasm32-wasi.so` has a `dylink.0` section, exports
+`PyInit_bliss`, and declares exactly one needed dynamic library,
+`libcxx.so`. After that delivery, the controlled module replay improved to 68
+passed and 27 failed blocks. Nineteen direct
+`sage.libs.gap.libgap` failures and eight cascades all came from the
+automorphism-group examples. Those examples now carry the narrow GAP
+dependency in addition to their existing Bliss annotation, while canonical
+labeling remains runnable.
+
+The final controlled and default profiles, before and after the clean rebuild,
+record:
+
+```text
+controlled Bliss profile: 43 passed, 0 failed, 52 skipped
+default node profile:       8 passed, 0 failed, 87 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+All 52 controlled skips have the precise
+`optional:bliss,sage.libs.gap` reason. The default skips split into 52
+Bliss-plus-GAP rows, 33 Bliss rows, and two pre-existing duplicate-Bliss
+annotations. There are no malformed dependency tokens, saved block failures,
+or file errors. The pre- and post-rebuild default rows agree exactly. Four
+controlled expected-exception rows differ only in Cython traceback-internal
+source display after the clean recompilation; their sources, expectations,
+statuses, tags, skip metadata, and exception results remain the same.
+
+The truly clean rebuild also exposed a stale-tree validation mistake from the
+modular-decomposition pass: two generic `complex_roots.py` fallback hunks had
+been removed as though pinned Sagelite already contained them, but the pinned
+source does not. The previous resumed runtime masked the omission. Restoring
+the certified derivative-GCD square-free fallback and NumPy root-seed fallback
+makes the clean installed `generic complex root delivery smoke` pass again.
+
+`sage/graphs/bliss.pyx` is now part of the curated pure-math corpus, raising it
+to 1,206 non-comment entries with no duplicates. The installed Node smoke
+constructs a Petersen graph, checks that its Bliss canonical form is
+isomorphic, and verifies canonical-form invariance under relabeling. The
+Electron resource smoke contract advances to version 173.
+
+Validation includes the initial, post-extension, scoped, default, and
+post-rebuild dashboards; saved failure, skip, lifecycle, malformed-tag, and
+SQLite-integrity queries; row-level pre/post comparisons; libc++ export
+checks; Bliss executable, PIC archive, and side-module smokes; installed WASI
+side-module section/export/dependency audits; shell and JavaScript syntax;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; exact
+target replay from pristine pinned Sagelite; `git diff --check`; and a complete
+clean standalone runtime ladder using the harness's supported four-worker
+Cython generation mode. The standalone harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,637 sections (1,169 `diff --git` and
+468 legacy sections) and 5,012 hunks. Focused dashboards and worker state are
+under `/tmp/cowasm-sagelite-bliss-audit.NzsTOB/`; the final exact target replay
+is under `/tmp/cowasm-sagelite-bliss-replay.pS8hOr/`; and the clean pinned
+source is under `/tmp/cowasm-sagelite-planarity-pristine.cWOh1i/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit TDLib or another remaining graph
+backend boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

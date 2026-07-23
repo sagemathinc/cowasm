@@ -7,6 +7,7 @@ TARBALL = ${UPSTREAM}/bliss-${VERSION}.zip
 TARBALL_SHA256 = acc8b98034f30fad24c897f365abd866c13d9f1bb207e398d0caf136875972a4
 BUILD_WASI_SDK = ${BUILD}/wasi-sdk
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+LIBCXX_WASI_SDK = ${CWD}/../../core/libcxx/dist/wasi-sdk
 
 all: test-wasi-sdk-standalone
 
@@ -20,8 +21,11 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rmdir ${BUILD_WASI_SDK}/bliss-${VERSION}
 	touch ${BUILD_WASI_SDK}/.build
 
+${LIBCXX_WASI_SDK}/libcxx.so:
+	$(MAKE) -C ${CWD}/../../core/libcxx test-wasi-sdk-standalone
+
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build ${LIBCXX_WASI_SDK}/libcxx.so
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} || status=$$?; \

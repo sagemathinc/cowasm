@@ -67,6 +67,7 @@ for source in "${sources[@]}"; do
     -std=c++11 \
     -Oz \
     -DNDEBUG \
+    -fPIC \
     -I"$build_dir/src" \
     -c "src/$source" \
     -o "$object"
@@ -110,6 +111,22 @@ env PATH="$host_path" COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/bliss-test" |
   grep -F "bliss-ok c4-group=8"
+
+# A standalone executable accepts non-PIC archive relocations that wasm-ld must
+# reject when the same archive is linked into Sagelite's Python side module.
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  --experimental-pic \
+  -shared \
+  -fPIC \
+  "$probe_dir/test-bliss.o" \
+  "$dist_dir/lib/libbliss.a" \
+  "$repo_dir/core/libcxx/dist/wasi-sdk/libcxx.so" \
+  -o "$probe_dir/bliss-test.so"
+
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$probe_dir/bliss-test.so" |
+  grep -F 'dylink.0'
+"$bin_dir/wasi-sdk-llvm-strings-next" "$probe_dir/bliss-test.so" |
+  grep -F 'libcxx.so'
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bliss" -version |
   grep -F "bliss version 0.77"

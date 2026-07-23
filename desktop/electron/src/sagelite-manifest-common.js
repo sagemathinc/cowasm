@@ -409,6 +409,8 @@ expectedSageliteManifest.smokeContract +=
   "-modular-decomposition-lazy-groups-v171";
 expectedSageliteManifest.smokeContract +=
   "-graph-genus-extension-delivery-v172";
+expectedSageliteManifest.smokeContract +=
+  "-bliss-canonical-labeling-v173";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
