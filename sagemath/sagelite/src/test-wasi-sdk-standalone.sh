@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 30 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK BLISS_WASI_SDK TDLIB_WASI_SDK" >&2
+if [ "$#" -ne 31 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK BLISS_WASI_SDK TDLIB_WASI_SDK CLIQUER_WASI_SDK" >&2
   exit 2
 fi
 
@@ -37,6 +37,7 @@ nauty_wasi_sdk="$(cd "${27}" && pwd)"
 planarity_wasi_sdk="$(cd "${28}" && pwd)"
 bliss_wasi_sdk="$(cd "${29}" && pwd)"
 tdlib_wasi_sdk="$(cd "${30}" && pwd)"
+cliquer_wasi_sdk="$(cd "${31}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -430,6 +431,7 @@ for pkg_dir in \
   "$repo_dir/sagemath/givaro/dist/wasi-sdk" \
   "$repo_dir/sagemath/linbox/dist/wasi-sdk" \
   "$planarity_wasi_sdk" \
+  "$cliquer_wasi_sdk" \
   "$repo_dir/core/zlib/dist/wasi-sdk" \
   "$repo_dir/core/libpng/dist/wasi-sdk"
 do
@@ -2109,6 +2111,22 @@ assert canonical_form(petersen) == canonical_form(relabeled)
 print('sagelite-node-ok Bliss canonical labeling backend smoke')"
 
 run_node_import \
+  "Cliquer exact clique-search backend smoke" \
+  "from sage.all import graphs
+from sage.graphs.cliquer import all_cliques, clique_number, max_clique
+petersen = graphs.PetersenGraph()
+assert clique_number(petersen) == 2
+assert len(max_clique(petersen)) == 2
+assert list(all_cliques(graphs.CompleteGraph(4), 3, 3)) == [
+    [1, 2, 3],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 3],
+]
+assert petersen.clique_number() == 2
+print('sagelite-node-ok Cliquer exact clique-search backend smoke')"
+
+run_node_import \
   "TDLib exact tree decomposition backend smoke" \
   "from sage.all import graphs
 from sage.graphs.graph_decompositions.tdlib import get_width, treedecomposition_exact
@@ -2276,6 +2294,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-genu
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-canonical-labeling-v173"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-exact-clique-search-v176"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

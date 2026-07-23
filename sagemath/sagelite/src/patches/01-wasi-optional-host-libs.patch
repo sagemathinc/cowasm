@@ -2129,15 +2129,6 @@ diff -urN a/src/sage/rings/rational_field.py b/src/sage/rings/rational_field.py
 diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
 --- a/src/sage/graphs/meson.build
 +++ b/src/sage/graphs/meson.build
-@@ -9,7 +9,7 @@
- cliquer = dependency('libcliquer', required: false, disabler: true)
- if not cliquer.found()
-   # fallback for older versions without pkg-config
--  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
-+  cliquer = cc.find_library('cliquer', required: not is_windows and not is_wasi, disabler: true)
- endif
-
- planarity = dependency('libplanarity', required: false, disabler: true)
 @@ -17,7 +17,7 @@
    # fallback for older versions without pkg-config
    planarity = cc.find_library(
@@ -2230,8 +2221,8 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
      matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
 -    from sage.graphs.cliquer import all_max_clique as cliques_maximum
 -    from sage.graphs.cliquer import all_cliques
-+    cliques_maximum = LazyImport('sage.graphs._cliquer_unavailable', 'all_max_clique', at_startup=True)
-+    all_cliques = LazyImport('sage.graphs._cliquer_unavailable', 'all_cliques', at_startup=True)
++    cliques_maximum = LazyImport('sage.graphs.cliquer', 'all_max_clique', at_startup=True)
++    all_cliques = LazyImport('sage.graphs.cliquer', 'all_cliques', at_startup=True)
      from sage.graphs.spanning_tree import random_spanning_tree
      from sage.graphs.spanning_tree import spanning_trees
      from sage.graphs.graph_decompositions.graph_products import is_cartesian_product
@@ -15519,12 +15510,6 @@ diff --git a/src/sage/interfaces/rubik.py b/src/sage/interfaces/rubik.py
 +++ b/src/sage/interfaces/rubik.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs subprocess
- r"""
-diff --git a/src/sage/graphs/cliquer.pyx b/src/sage/graphs/cliquer.pyx
---- a/src/sage/graphs/cliquer.pyx
-+++ b/src/sage/graphs/cliquer.pyx
-@@ -1,1 +1,2 @@
-+# sage.doctest: needs sage.graphs
  r"""
 diff --git a/src/sage/graphs/isoperimetric_inequalities.pyx b/src/sage/graphs/isoperimetric_inequalities.pyx
 --- a/src/sage/graphs/isoperimetric_inequalities.pyx

@@ -67503,6 +67503,83 @@ external developer Sagelite checkout and its intentional changes remain
 untouched. A future scheduled pass can audit another stale graph/backend guard
 or select the next persisted runtime cluster.
 
+Cliquer exact-clique delivery and corpus-promotion pass on 2026-07-23 UTC:
+
+The standalone Cliquer package already passed its native clique-search smoke,
+but Sagelite did not discover or build `sage.graphs.cliquer`. A controlled
+runner-version-138 replay with the historical broad graph feature selected
+initially recorded:
+
+```text
+cliquer.pyx: 14 passed, 18 failed, 2 skipped
+run lifecycle: failed and closed
+SQLite integrity: ok
+```
+
+The direct failures were missing `max_clique`, `all_max_clique`,
+`all_cliques`, and `clique_number` entry points; the remaining failures
+cascaded through `Graph` methods that had been redirected to the
+`sage.graphs._cliquer_unavailable` placeholder.
+
+The Cliquer package now builds a position-independent archive from explicitly
+clean objects, installs `libcliquer.pc`, and audits both its standalone runtime
+API and consumption by a `dylink.0` side module. The forced clean is material:
+the first clean Sagelite link correctly rejected the pre-existing non-PIC
+archive with `R_WASM_MEMORY_ADDR_*` relocations, while the clean `-fPIC`
+rebuild linked the extension without errors.
+
+Sagelite now treats Cliquer as an explicit standalone prerequisite, discovers
+it through pkg-config, and delivers the generated extension. The graph class
+uses lazy imports of the real Cliquer module instead of either the old
+fail-closed placeholder or upstream's eager class imports. This keeps
+`import sage.all` working in the lower-level `python-wasi-sdk` loader while
+loading the backend on the first clique operation. The installed Node smoke
+checks clique number, maximum clique, bounded clique enumeration, and the
+`Graph.clique_number()` method.
+
+The obsolete file-wide `sage.graphs` guard is removed from `cliquer.pyx`.
+The final default-profile runner-version-139 dashboard records:
+
+```text
+cliquer.pyx: 32 passed, 0 failed, 2 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The two skips are the intended `sage.plot` display examples. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%. The
+installed `cliquer.cpython-314-wasm32-wasi.so` has a `dylink.0` section,
+exports `PyInit_cliquer`, and records no needed dynamic libraries.
+
+`sage/graphs/cliquer.pyx` is now part of the curated pure-math corpus, raising
+it to 1,210 non-comment entries with no duplicates. The Electron smoke
+contract advances to version 176; the regenerated manifest records 759
+required resources, 578 side modules, and nine native-library paths.
+
+Validation includes the initial failure-cluster dashboard; the clean Cliquer
+archive runtime and side-module smokes; a clean pinned-source Sagelite
+reconstruction and native build; lower-level WASI startup validation; the
+complete resumed standalone Node, doctest, Electron, resource, relocation,
+and packaged-runtime ladder; the final focused dashboard and saved failure,
+skip, lifecycle, latest-run, and SQLite-integrity queries; installed side
+module section/export/dependency audits; shell and JavaScript syntax; corpus
+uniqueness; accumulated-patch syntax; exact accumulated-patch replay from the
+pinned Sagelite commit with byte-for-byte graph Meson, graph class, and
+Cliquer source comparisons; and `git diff --check`. The completed harness
+ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,641 sections and 5,023 hunks. Focused
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-cliquer-audit.ypGVmP/`; the exact replay is under
+`/tmp/cowasm-sagelite-cliquer-replay.6RKnMY/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can reopen the Cliquer-tagged graph algorithms now backed by
+the delivered module, or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

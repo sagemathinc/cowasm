@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 138;
+const doctestRunnerVersion = 139;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {

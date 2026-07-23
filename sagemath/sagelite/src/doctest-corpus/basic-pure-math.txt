@@ -1115,6 +1115,7 @@ src/sage/graphs/orientations.py
 src/sage/graphs/spanning_tree.pyx
 src/sage/graphs/matchpoly.pyx
 src/sage/graphs/chrompoly.pyx
+src/sage/graphs/cliquer.pyx
 src/sage/graphs/traversals.pyx
 src/sage/graphs/independent_sets.pyx
 src/sage/graphs/weakly_chordal.pyx

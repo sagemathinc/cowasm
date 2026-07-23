@@ -417,6 +417,8 @@ expectedSageliteManifest.smokeContract +=
   "-tdlib-tree-decomposition-v174";
 expectedSageliteManifest.smokeContract +=
   "-flint-integer-polynomial-delivery-v175";
+expectedSageliteManifest.smokeContract +=
+  "-cliquer-exact-clique-search-v176";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
