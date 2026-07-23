@@ -66717,6 +66717,65 @@ its intentional changes remain untouched. A future scheduled pass can audit
 the remaining delivered graph modules or select another persisted
 backend/runtime cluster.
 
+Connectivity doctest-mode and corpus-promotion pass on 2026-07-23 UTC:
+
+The previously persisted `sage/graphs/connectivity.pyx` startup cluster has
+collapsed now that the core graph extension and namespace are delivered. A
+fresh runner-version-135 replay recorded 641 passed, one failed, and 47
+skipped blocks instead of the historical 9 passed and 633 failed. The only
+remaining failure was the directed Boost edge-connectivity example: Sagelite
+printed Sage's `StopgapWarning` before the correct result, while Sage's native
+doctest initializer suppresses stopgap warnings by setting
+`sage.doctest.DOCTEST_MODE` before importing the tested runtime.
+
+The Sagelite doctest worker now sets that upstream mode flag before importing
+`sage.all`, and runner version 136 records:
+
+```text
+connectivity.pyx: 642 passed, 0 failed, 47 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The before/after dashboards both contain 689 block rows. Their block order,
+source, source hashes, expected output, comparator modes, tags, skip reasons,
+and line metadata are identical; the directed Boost row at source line 1866
+is the sole status change. Its actual output changes only by removing the
+doctest-suppressed stopgap diagnostic. The 47 retained skips preserve 39
+mixed-integer-programming rows, including two long-time rows, four plotting
+rows, two NetworkX rows, and two runtime Cython-compilation rows.
+
+The standalone doctest fixture now asserts both that doctest mode is active
+and that a stopgap call emits no warning, and its expected totals are updated
+to 76 blocks with 62 passed and 14 skipped. Its selected-optional replay now
+records 67 passed and nine skipped rows, while the deferred replay records 63
+passed, one failed, and 12 skipped rows. The Electron resource smoke contract
+advances independently to version 166 in both the resource builder and shared
+manifest validator so rebuilt resource bundles cannot retain the older runner
+behavior.
+
+`sage/graphs/connectivity.pyx` is now part of the curated pure-math corpus,
+raising it to 1,196 non-comment entries with no duplicates. Focused validation
+includes the failing and passing complete-module dashboards, saved block- and
+file-failure, lifecycle, latest-run, and skip queries, exact row-level SQLite
+comparison, SQLite integrity, JavaScript and shell syntax, corpus uniqueness,
+the make-target dry run, Electron manifest/runtime tests, a clean full
+standalone rebuild, and `git diff --check`. The clean build applied the full
+5,001-hunk accumulated patch, generated all 521 Cython sources without a
+retry, linked all 1,052 initial Meson targets, and ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+Authoritative databases and worker state are under
+`/tmp/cowasm-sagelite-connectivity.wpyMVi/`; the pristine pinned Sagelite
+checkout used for clean standalone validation is under
+`/tmp/cowasm-sagelite-pristine.IdrGZg/`. The external developer Sagelite
+checkout and its intentional changes remain untouched. A future scheduled
+pass can audit the remaining graph-coloring, graph database, or another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

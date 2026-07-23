@@ -389,6 +389,8 @@ expectedSageliteManifest.smokeContract +=
   "-raw-wasi-piped-stdin-v164";
 expectedSageliteManifest.smokeContract +=
   "-raw-wasi-subprocess-signals-v165";
+expectedSageliteManifest.smokeContract +=
+  "-doctest-mode-v166";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

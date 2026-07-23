@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 135;
+const doctestRunnerVersion = 136;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1049,6 +1049,8 @@ warnings.filterwarnings(
     category=UserWarning,
 )
 
+import sage.doctest as __cowasm_sage_doctest
+__cowasm_sage_doctest.DOCTEST_MODE = True
 from sage.all import *
 from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 from sage.repl.display.fancy_repr import (
