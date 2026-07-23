@@ -68075,6 +68075,52 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another narrow broad-graph annotation or
 select a persisted backend/runtime cluster.
 
+Yang-Baxter graph dependency reopening and corpus-promotion pass on
+2026-07-23 UTC:
+
+The delivered graph runtime makes the file-wide `sage.graphs` dependency
+annotation in `sage/combinat/yang_baxter_graph.py` stale. A fresh pre-change
+default dashboard recorded zero passed blocks, zero failures, and one
+file-wide skip. A controlled runner-version-139 replay with `sage.graphs`
+explicitly selected recorded:
+
+```text
+yang_baxter_graph.py: 151 passed, 0 failed, 45 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Removing the broad annotation leaves the ordinary default profile with the
+same 151 passed, zero failed, and 45 skipped result. The controlled and final
+dashboards each contain 196 block rows and agree exactly on source, expected
+output, actual output, status, expected kind, and failure metadata. All rows
+shift upward by the expected one source line. Their tag differences are
+exactly the removed inherited graph feature, while the final dashboard
+retains 33 `sage.combinat`, seven `sage.groups`, three `sage.plot`, and two
+combined groups/plot skips. Saved block- and file-failure queries are empty,
+and the active-row pass rate is 100%.
+
+`sage/combinat/yang_baxter_graph.py` is now part of the curated pure-math
+corpus, raising it to 1,211 non-comment entries with no duplicates. This is a
+source-only dependency cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, or resource restaging is required. Removing the
+now-empty patch section restores the runtime-tested module byte-for-byte to
+the source at pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+Validation includes the controlled, pre-change default, and final default
+complete-module dashboards; saved failure, lifecycle, latest-run, and skip
+queries; SQLite integrity and exact row-level comparison; corpus uniqueness
+and make-target dry run; accumulated-patch syntax; pinned-source target
+comparison; and `git diff --check`.
+
+The accumulated source patch now has 1,680 serialized file sections (1,167
+`diff --git` and 513 legacy sections) and 4,897 hunks. Dashboards and worker
+state are under `/tmp/cowasm-sagelite-yang-baxter.0N2qJa/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another stale file-wide graph dependency or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
