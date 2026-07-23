@@ -67760,6 +67760,54 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the remaining graph-method Cliquer
 annotations.
 
+Graph-method Cliquer reopening pass on 2026-07-23 UTC:
+
+The delivered Cliquer extension makes the 25 remaining narrow dependency
+annotations in `sage/graphs/graph.py` stale. They cover the introductory graph
+enumeration example, chromatic-number and coloring methods, maximum-clique and
+clique-number methods, independent sets, vertex covers, and randomized
+cross-checks. A controlled runner-version-139 replay with
+`sage.graphs.cliquer` explicitly selected records:
+
+```text
+graph.py:           953 passed, 0 failed, 373 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The fresh pre-change default profile recorded 928 passed, zero failed, and 398
+skipped blocks. Removing the 25 Cliquer annotations reopens exactly those 25
+checks and leaves the final default profile with the same 953 passed, zero
+failed, and 373 skipped result as the controlled profile. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%.
+
+Both successful dashboards contain 1,326 block rows. Expected output, expected
+kind, status, skip reason, and failure metadata agree across all rows. Six
+multiline blocks now preserve their continuation bodies in persisted source
+and therefore receive new block keys instead of retaining only their formerly
+dependency-annotated headers. The only other actual-output differences are an
+address-bearing object representation and a randomized LaTeX graph example;
+both runs pass their expected comparators.
+
+This is source-only metadata cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, corpus-list change, or resource restaging is
+required. The curated corpus remains at 1,210 entries with no duplicates.
+Validation includes the controlled, pre-change default, and final default
+complete-file dashboards; saved failure, lifecycle, latest-run, and skip
+queries; SQLite integrity and row-level comparisons; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; full zero-fuzz application from
+the pristine pinned Sagelite commit; byte-for-byte comparison of the replayed
+target with the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,684 serialized file sections (1,171
+`diff --git` and 513 legacy sections) and 4,937 hunks. Dashboards and worker
+state are under
+`/tmp/cowasm-sagelite-graph-cliquer.H8FwSl/`; the exact full-patch replay is
+under `/tmp/cowasm-sagelite-graph-cliquer-replay.wmuOGx/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. One
+narrow Cliquer annotation remains on the nauty `k`-tree generator's treewidth
+check, which a future scheduled pass can audit separately.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

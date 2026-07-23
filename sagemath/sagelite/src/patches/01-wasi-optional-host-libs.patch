@@ -30472,75 +30472,6 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 @@ -7864 +7864 @@
 -            sage: G.is_inscribable()
 +            sage: G.is_inscribable()  # needs sage.graphs.planarity
-diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
---- a/src/sage/graphs/graph.py
-+++ b/src/sage/graphs/graph.py
-@@ -3435 +3435 @@
--            sage: G.chromatic_number(algorithm='DLX')
-+            sage: G.chromatic_number(algorithm='DLX')                                  # needs sage.graphs.cliquer
-@@ -3437 +3437 @@
--            sage: G.chromatic_number(algorithm='MILP')
-+            sage: G.chromatic_number(algorithm='MILP')                                 # needs sage.graphs.cliquer
-@@ -3451 +3451 @@
--            sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i
-+            sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i   # needs sage.graphs.cliquer
-@@ -3458 +3458 @@
--            sage: all(graphs.CompleteGraph(i).chromatic_number() == i for i in range(10))
-+            sage: all(graphs.CompleteGraph(i).chromatic_number() == i for i in range(10))  # needs sage.graphs.cliquer
-@@ -3464 +3464 @@
--            sage: all(graphs.KneserGraph(i,2).chromatic_number() == i-2 for i in range(4,6))
-+            sage: all(graphs.KneserGraph(i,2).chromatic_number() == i-2 for i in range(4,6))  # needs sage.graphs.cliquer
-@@ -3470 +3470 @@
--            sage: graphs.FlowerSnark().line_graph().chromatic_number()
-+            sage: graphs.FlowerSnark().line_graph().chromatic_number()                  # needs sage.graphs.cliquer
-@@ -3569 +3569 @@
--            sage: P = G.coloring(algorithm='MILP')
-+            sage: P = G.coloring(algorithm='MILP')                                     # needs sage.graphs.cliquer
-@@ -3573 +3573 @@
--            sage: are_equal_colorings(P, [[1, 2, 3], [0, 5, 6], [4]])
-+            sage: are_equal_colorings(P, [[1, 2, 3], [0, 5, 6], [4]])                  # needs sage.graphs.cliquer
-@@ -3575 +3575 @@
--            sage: are_equal_colorings(P, Q)
-+            sage: are_equal_colorings(P, Q)                                             # needs sage.graphs.cliquer
-@@ -3578 +3578 @@
--            sage: G.plot(partition=P)
-+            sage: G.plot(partition=P)                                                   # needs sage.graphs.cliquer
-@@ -3580 +3580 @@
--            sage: G.coloring(hex_colors=True, algorithm='MILP')
-+            sage: G.coloring(hex_colors=True, algorithm='MILP')                        # needs sage.graphs.cliquer
-@@ -6046 +6046 @@
--            sage: C.clique_maximum()
-+            sage: C.clique_maximum()                                                    # needs sage.graphs.cliquer
-@@ -6049 +6049 @@
--            sage: C.clique_maximum()
-+            sage: C.clique_maximum()                                                    # needs sage.graphs.cliquer
-@@ -6134 +6134 @@
--            sage: C.clique_number()
-+            sage: C.clique_number()                                                     # needs sage.graphs.cliquer
-@@ -6138 +6138 @@
--            sage: G.clique_number()
-+            sage: G.clique_number()                                                     # needs sage.graphs.cliquer
-@@ -6143 +6143 @@
--            sage: all(graphs.CompleteGraph(i).clique_number() == i for i in range(1,15))
-+            sage: all(graphs.CompleteGraph(i).clique_number() == i for i in range(1,15))  # needs sage.graphs.cliquer
-@@ -6148 +6148 @@
--            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1
-+            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1                  # needs sage.graphs.cliquer
-@@ -6154 +6154 @@
--            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i
-+            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i  # needs sage.graphs.cliquer
-@@ -6407 +6407 @@
--            sage: C.independent_set()
-+            sage: C.independent_set()                                                   # needs sage.graphs.cliquer
-@@ -6497 +6497 @@
--           sage: g.vertex_cover(value_only=True)
-+           sage: g.vertex_cover(value_only=True)                                        # needs sage.graphs.cliquer
-@@ -6511 +6511 @@
--           sage: vc2 = g.vertex_cover(algorithm='Cliquer')
-+           sage: vc2 = g.vertex_cover(algorithm='Cliquer')                              # needs sage.graphs.cliquer
-@@ -6518 +6518 @@
--           sage: for i in range(20):
-+           sage: for i in range(20):                                                    # needs sage.graphs.cliquer
 diff --git a/src/sage/matrix/matrix_mod2_dense.pyx b/src/sage/matrix/matrix_mod2_dense.pyx
 --- a/src/sage/matrix/matrix_mod2_dense.pyx
 +++ b/src/sage/matrix/matrix_mod2_dense.pyx
@@ -30627,12 +30558,6 @@ diff --git a/src/sage/graphs/generators/smallgraphs.py b/src/sage/graphs/generat
 +        else:
 +            g._circle_embedding(o[0], center=(0, 0), radius=1)
 +            g._circle_embedding(o[1], center=(0, 0), radius=.6, shift=-.5)
-diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
---- a/src/sage/graphs/graph.py
-+++ b/src/sage/graphs/graph.py
-@@ -6534 +6534 @@
--           sage: for i in range(20):
-+           sage: for i in range(20):                                                    # needs sage.graphs.cliquer
 diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
 --- a/src/sage/graphs/graph.py
 +++ b/src/sage/graphs/graph.py
@@ -31096,11 +31021,11 @@ diff --git a/src/sage/graphs/graph.py b/src/sage/graphs/graph.py
  three::
 
 -    sage: for g in graphs():                                                          # needs nauty
-+    sage: for g in graphs():  # needs sage.graphs.cliquer
++    sage: for g in graphs():
      ....:     if g.chromatic_number() > 3:
      ....:         break
 -    sage: g.is_isomorphic(graphs.CompleteGraph(4))                                   # needs nauty
-+    sage: g.is_isomorphic(graphs.CompleteGraph(4))  # needs sage.graphs.cliquer
++    sage: g.is_isomorphic(graphs.CompleteGraph(4))
      True
 
  For some commonly used graphs to play with, type::
