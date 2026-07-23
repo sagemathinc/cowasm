@@ -31675,11 +31675,6 @@ diff --git a/src/sage/graphs/morphisms.py b/src/sage/graphs/morphisms.py
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
-@@ -387,3 +386,3 @@
-         sage: g = graphs.CycleGraph(9)
--        sage: g.chromatic_number()
-+        sage: g.chromatic_number()                                                       # needs sage.graphs.cliquer
-         3
 diff --git a/src/sage/graphs/orientations.py b/src/sage/graphs/orientations.py
 --- a/src/sage/graphs/orientations.py
 +++ b/src/sage/graphs/orientations.py
@@ -31783,14 +31778,6 @@ diff --git a/src/sage/graphs/generators/intersection.py b/src/sage/graphs/genera
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
-@@ -76,6 +75,6 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
-         sage: intervals = [ (1,2), (1,2), (1,2), (2,3), (3,4) ]
-         sage: g = graphs.IntervalGraph(intervals,True)
--        sage: g.clique_maximum()
-+        sage: g.clique_maximum()  # needs sage.graphs.cliquer
-         [0, 1, 2, 3]
-         sage: g.get_vertices()
-         {0: (1, 2), 1: (1, 2), 2: (1, 2), 3: (2, 3), 4: (3, 4)}
 diff --git a/src/sage/graphs/graph_decompositions/graph_products.pyx b/src/sage/graphs/graph_decompositions/graph_products.pyx
 --- a/src/sage/graphs/graph_decompositions/graph_products.pyx
 +++ b/src/sage/graphs/graph_decompositions/graph_products.pyx
@@ -32243,9 +32230,6 @@ diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/ba
 +++ b/src/sage/graphs/generators/basic.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs sage.plot
-@@ -63 +62 @@
--        sage: g.chromatic_number()
-+        sage: g.chromatic_number()                                                     # needs sage.graphs.cliquer
 @@ -73,3 +72,3 @@
 -        sage: chrompoly = g.chromatic_polynomial()
 -        sage: x = chrompoly.parent()('x')
@@ -32262,12 +32246,6 @@ diff --git a/src/sage/graphs/generators/basic.py b/src/sage/graphs/generators/ba
 @@ -130 +129 @@
 -        sage: G.is_planar()
 +        sage: G.is_planar()                                                            # needs sage.graphs.planarity
-@@ -150 +149 @@
--        sage: G.chromatic_number()
-+        sage: G.chromatic_number()                                                     # needs sage.graphs.cliquer
-@@ -736 +735 @@
--        sage: g.chromatic_number()
-+        sage: g.chromatic_number()                                                     # needs sage.graphs.cliquer
 diff --git a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
@@ -32528,12 +32506,6 @@ diff --git a/src/sage/graphs/graph_coloring.pyx b/src/sage/graphs/graph_coloring
 +++ b/src/sage/graphs/graph_coloring.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs
-@@ -431 +430 @@
--        sage: chromatic_number(G)
-+        sage: chromatic_number(G)                                                     # needs sage.graphs.cliquer
-@@ -435 +434 @@
--        sage: G.chromatic_number()
-+        sage: G.chromatic_number()                                                    # needs sage.graphs.cliquer
 diff --git a/src/sage/databases/sql_db.py b/src/sage/databases/sql_db.py
 --- a/src/sage/databases/sql_db.py
 +++ b/src/sage/databases/sql_db.py
@@ -32658,9 +32630,3 @@ diff --git a/src/sage/graphs/chrompoly.pyx b/src/sage/graphs/chrompoly.pyx
 +++ b/src/sage/graphs/chrompoly.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint sage.graphs
-@@ -109 +108 @@
--        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
-+        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()          # needs sage.graphs.cliquer
-@@ -114 +113 @@
--        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
-+        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()          # needs sage.graphs.cliquer

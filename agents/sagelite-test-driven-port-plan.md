@@ -67580,6 +67580,51 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can reopen the Cliquer-tagged graph algorithms now backed by
 the delivered module, or select another persisted backend/runtime cluster.
 
+Cliquer consumer reopening pass on 2026-07-23 UTC:
+
+The delivered Cliquer extension makes nine narrow dependency annotations stale
+across five already-curated graph modules. A controlled runner-version-139
+replay with `sage.graphs.cliquer` explicitly selected executes all nine
+historically gated examples successfully:
+
+```text
+chrompoly.pyx:              45 passed, 0 failed,   2 skipped
+graph_coloring.pyx:        108 passed, 0 failed,  53 skipped
+morphisms.py:               81 passed, 0 failed,   5 skipped
+generators/intersection.py: 61 passed, 0 failed,  11 skipped
+generators/basic.py:       137 passed, 0 failed, 121 skipped
+total:                     432 passed, 0 failed, 192 skipped
+```
+
+The accumulated WASI source patch no longer adds Cliquer dependency metadata
+to the two chromatic-polynomial checks, two graph-coloring checks, one graph
+morphism check, one interval-graph maximum-clique check, and three basic graph
+generator chromatic-number checks. A default-profile replay of the resulting
+source records the same per-file and aggregate totals. Both dashboards contain
+624 block rows; their expected output, actual output, statuses, and failure
+metadata agree exactly. The only row-level metadata changes are the nine
+removed Cliquer tags.
+
+The default dashboard is closed and passed, SQLite integrity is `ok`, and the
+saved block- and file-failure queries are empty. The remaining 192 skips retain
+their narrower plotting, NetworkX, mixed-integer-programming, FLINT, NumPy,
+planarity, symbolic, and other existing dependency metadata. This is a
+source-only reopening pass: it needs no native WASM rebuild, Electron manifest
+change, corpus-list change, or resource restaging.
+
+Validation includes the controlled and default five-file dashboards, saved
+failure, lifecycle, and skip queries, exact row-level SQLite result comparison,
+SQLite integrity, accumulated-patch syntax, confirmation that the focused
+runtime source contains none of the nine annotations, and `git diff --check`.
+The accumulated source patch remains at 1,641 sections (1,173 `diff --git` and
+468 legacy sections) and now has 5,014 hunks. Authoritative dashboards and
+worker state are under
+`/tmp/cowasm-sagelite-cliquer-consumers.Ul5lG7/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the larger Cliquer-tagged tree-decomposition or
+random-generator cluster, or select another persisted backend/runtime
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
