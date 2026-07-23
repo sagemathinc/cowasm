@@ -67860,6 +67860,55 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can select another persisted backend/runtime cluster or audit a
 different stale graph dependency boundary.
 
+Graph-method planarity reopening pass on 2026-07-23 UTC:
+
+The delivered planarity extension makes the 24 remaining
+`sage.graphs.planarity` dependency annotations in
+`sage/graphs/graph.py` stale. They cover cactus recognition, apex-graph
+recognition and vertex enumeration, polyhedral recognition, planar faces,
+and the planar prerequisite of an inscribability check. A fresh pre-change
+default dashboard recorded 953 passed, zero failed, and 373 skipped blocks.
+A controlled runner-version-139 replay with `sage.graphs.planarity`
+explicitly selected recorded:
+
+```text
+graph.py:           977 passed, 0 failed, 349 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+Removing the 24 annotations leaves the final default profile with the same
+977 passed, zero failed, and 349 skipped result as the controlled profile.
+All three dashboards contain 1,326 block rows. Comparing the pre-change and
+final dashboards shows exactly 24 status changes, all from
+`optional:sage.graphs.planarity` skipped to passed. Controlled and final
+source, expected output, status, expected kind, skip reason, failure metadata,
+and block keys agree for every row; only a randomized LaTeX graph and an
+address-bearing backend representation differ in actual output, and both
+pass their expected comparators. Saved block- and file-failure queries are
+empty, and the active-row pass rate is 100%.
+
+The module was already part of the 1,210-entry curated pure-math corpus,
+which still has no duplicate entries. This is source-only metadata cleanup:
+no native WASM rebuild, Electron manifest change, runner-version bump,
+corpus-list change, or resource restaging is required. Validation includes
+the controlled, pre-change default, and final default complete-file
+dashboards; saved failure, lifecycle, latest-run, and skip queries; SQLite
+integrity and row-level comparisons; corpus uniqueness and make-target dry
+run; accumulated-patch syntax; zero-fuzz application of all nine remaining
+`graph.py` patch sections from pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with byte-for-byte target
+comparison; and `git diff --check`.
+
+The accumulated source patch now has 1,683 serialized file sections (1,170
+`diff --git` and 513 legacy sections) and 4,915 hunks. Dashboards and worker
+state are under `/tmp/cowasm-sagelite-planarity.ancv0p/`; the exact target
+replay is under `/tmp/cowasm-sagelite-planarity-target2.labvfV/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. Five narrow planarity annotations remain across the basic and
+random graph generators and the matching-covered-graph module for future
+focused audits.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
