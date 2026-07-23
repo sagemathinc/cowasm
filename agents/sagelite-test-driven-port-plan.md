@@ -68026,6 +68026,55 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit the remaining broad graph annotations in a
 small focused module or select another persisted backend/runtime cluster.
 
+PQ-tree interval-graph dependency reopening pass on 2026-07-23 UTC:
+
+The delivered graph runtime makes the final broad `sage.graphs` dependency
+annotation in `sage/graphs/pq_trees.py` stale. The annotation guarded an
+interval-graph regression example in the `PQ` constructor documentation. A
+focused runner-version-139 replay with `sage.graphs` explicitly selected
+passes the example at source line 299. A fresh pre-change default dashboard
+recorded 89 passed, zero failed, and one skipped block, while a controlled
+complete-module replay recorded:
+
+```text
+pq_trees.py:       90 passed, 0 failed, 0 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Removing the annotation leaves the ordinary default profile with the same 90
+passed, zero failed, and zero skipped result. The pre-change, controlled, and
+final dashboards each contain 90 block rows. Comparing the pre-change and
+final dashboards shows exactly one status change, at source line 299, from
+`optional:sage.graphs` skipped to passed. Controlled and final expected
+output, actual output, status, expected kind, skip reason, and failure
+metadata agree for every row. The only controlled-to-final source metadata
+difference is the removed graph tag on that block. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%.
+
+The module was already part of the 1,210-entry curated pure-math corpus,
+which still has no duplicate entries. This is source-only metadata cleanup:
+no native WASM rebuild, Electron manifest change, runner-version bump,
+corpus-list change, or resource restaging is required. Removing the now-empty
+`pq_trees.py` patch section restores that source file byte-for-byte to pinned
+upstream.
+
+Validation includes the selected-line, controlled, pre-change default, and
+final default dashboards; saved failure, lifecycle, latest-run, and skip
+queries; SQLite integrity and row-level comparisons; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; confirmation that no
+`pq_trees.py` patch section remains; and byte-for-byte comparison of the
+runtime-tested source with the target archived from pinned Sagelite package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The accumulated source patch now has 1,681 serialized file sections (1,168
+`diff --git` and 513 legacy sections) and 4,898 hunks. Dashboards and worker
+state are under `/tmp/cowasm-sagelite-pq-trees.8f3R0K/`; the exact pinned
+target is under `/tmp/cowasm-sagelite-pq-trees-replay.dpYfK6/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another narrow broad-graph annotation or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

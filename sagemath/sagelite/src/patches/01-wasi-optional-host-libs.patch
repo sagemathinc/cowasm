@@ -16565,12 +16565,6 @@ diff --git a/src/sage/tests/books/computational_mathematics_with_sagemath/linalg
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.matrix.matrix_mpolynomial_dense
  """
-diff --git a/src/sage/graphs/pq_trees.py b/src/sage/graphs/pq_trees.py
---- a/src/sage/graphs/pq_trees.py
-+++ b/src/sage/graphs/pq_trees.py
-@@ -299,1 +299,1 @@
--            sage: Graph('GvGNp?').is_interval()
-+            sage: Graph('GvGNp?').is_interval()  # needs sage.graphs
 diff --git a/src/sage/groups/matrix_gps/group_element.pyx b/src/sage/groups/matrix_gps/group_element.pyx
 --- a/src/sage/groups/matrix_gps/group_element.pyx
 +++ b/src/sage/groups/matrix_gps/group_element.pyx
