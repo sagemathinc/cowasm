@@ -1090,6 +1090,7 @@ src/sage/graphs/hypergraph_generators.py
 src/sage/graphs/graph_generators.py
 src/sage/graphs/graph_generators_pyx.pyx
 src/sage/graphs/generic_graph_pyx.pyx
+src/sage/graphs/genus.pyx
 src/sage/graphs/centrality.pyx
 src/sage/graphs/convexity_properties.pyx
 src/sage/graphs/connectivity.pyx

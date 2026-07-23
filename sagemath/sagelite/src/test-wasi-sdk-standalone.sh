@@ -2096,6 +2096,14 @@ assert obstruction is not None
 print('sagelite-node-ok planarity backend delivery smoke')"
 
 run_node_import \
+  "graph genus extension delivery smoke" \
+  "from sage.all import graphs
+from sage.graphs.genus import simple_connected_graph_genus
+assert simple_connected_graph_genus(graphs.CycleGraph(5)) == 0
+assert simple_connected_graph_genus(graphs.CompleteGraph(5)) == 1
+print('sagelite-node-ok graph genus extension delivery smoke')"
+
+run_node_import \
   "Gabow edge connectivity smoke" \
   "from sage.all import digraphs
 from sage.graphs.edge_connectivity import GabowEdgeConnectivity
@@ -2249,6 +2257,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-mod
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-database-resource-v168"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169-edge-connectivity-v170"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-modular-decomposition-lazy-groups-v171"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-genus-extension-delivery-v172"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

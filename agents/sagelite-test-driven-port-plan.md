@@ -67126,6 +67126,70 @@ changes remain untouched. A future scheduled pass can deliver the missing
 `sage.graphs.genus` extension or audit another persisted graph/backend
 cluster.
 
+Graph-genus extension delivery and corpus-promotion pass on 2026-07-23 UTC:
+
+The file-wide `sage.graphs` guard on `sage/graphs/genus.pyx` hid one native
+extension delivery gap. A controlled runner-version-137 replay with the broad
+graph feature selected initially recorded 17 passed, 34 failed, and one
+skipped block. Six direct `ModuleNotFoundError` rows for
+`sage.graphs.genus` caused ten missing-module-attribute failures and the
+remaining cascading missing-name failures.
+
+The extension source itself does not use Cliquer or libplanarity, but the
+Sagelite Meson fallback attached both optional dependencies to every
+unclassified C graph extension. Because Cliquer is intentionally unavailable
+in the WASI profile, Meson disabled the otherwise self-contained genus target.
+The dependency map now leaves both `graph_generators_pyx` and `genus` on the
+common Python/cysignals/FLINT/GMP dependency set. The resulting
+`genus.cpython-314-wasm32-wasi.so` has a `dylink.0` section, exports
+`PyInit_genus`, and records no `needed_dynlibs`.
+
+With the extension delivered, the controlled replay, the default-profile
+guard-removal replay, and the clean post-rebuild replay each record:
+
+```text
+genus.pyx:    51 passed, 0 failed, 1 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The retained skip is the intended long-time complete-graph backtracking
+example. All three successful databases contain 52 block rows and have empty
+saved block- and file-failure queries. Comparing the controlled and default
+rows by block index shows identical source, source hashes, expected and actual
+output, statuses, comparator modes, skip reasons, and failure metadata; source
+locations shift only by the removed first-line guard, and all 51 active rows
+drop the inherited `sage.graphs` tag. The pre- and post-rebuild default rows
+agree exactly on all compared fields and source locations.
+
+`sage/graphs/genus.pyx` is now part of the curated pure-math corpus, raising it
+to 1,204 non-comment entries with no duplicates. The installed Node smoke
+computes genus zero for a five-cycle and genus one for `K_5`. The Electron
+resource smoke contract advances to version 172 and the regenerated,
+hash-checked side-module inventory includes the genus extension.
+
+Validation includes the initial failure-cluster dashboard; controlled,
+default, and post-rebuild focused dashboards; saved failure, skip, lifecycle,
+latest-run, and SQLite-integrity queries; exact row-level comparisons; WASI
+side-module section/export/dependency audits; shell and JavaScript syntax;
+corpus uniqueness and make-target dry run; patch syntax; a zero-fuzz
+target-only replay from pristine Sagelite with byte-for-byte comparison to the
+runtime-tested genus and graph Meson sources; Electron manifest, forge
+resource, and runtime tests; `git diff --check`; and a complete resumed
+standalone runtime ladder. The standalone harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,638 sections (1,170 `diff --git` and
+468 legacy sections) and 5,003 hunks. Focused dashboards and worker state are
+under `/tmp/cowasm-sagelite-genus-audit.1sRw4f/`, and the exact target replay
+is under `/tmp/cowasm-sagelite-genus-target-replay.0tGtkI/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another stale graph dependency guard or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
