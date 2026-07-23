@@ -67625,6 +67625,52 @@ scheduled pass can audit the larger Cliquer-tagged tree-decomposition or
 random-generator cluster, or select another persisted backend/runtime
 boundary.
 
+Tree-decomposition Cliquer reopening pass on 2026-07-23 UTC:
+
+The delivered Cliquer extension makes the 53 remaining narrow dependency
+annotations in
+`sage/graphs/graph_decompositions/tree_decomposition.pyx` stale. A controlled
+runner-version-139 replay with `sage.graphs.cliquer` explicitly selected
+records:
+
+```text
+tree_decomposition.pyx: 269 passed, 0 failed, 4 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The pre-change default profile recorded 216 passed, zero failed, and 57
+skipped blocks. Removing the Cliquer annotations reopens all 53 blocks and
+leaves the default profile with the same 269 passed, zero failed, and four
+skipped result as the controlled profile. The four retained skips are the
+existing TDLib-specific examples. Saved block- and file-failure queries are
+empty, and the active-row pass rate is 100%.
+
+Both successful dashboards contain 273 block rows. Expected output, actual
+output, status, expected-kind, and failure metadata agree for every row. The
+only source-shape differences beyond removal of the Cliquer suffixes are two
+multiline `for` blocks whose persisted source now correctly includes the
+continuation body instead of only the dependency-annotated loop header.
+
+The module was already part of the curated pure-math corpus, so this pass
+needs no corpus-list change. It is also source-only metadata cleanup: no
+native WASM rebuild, Electron manifest change, runner-version bump, or
+resource restaging is required. Validation includes the controlled,
+pre-change default, and final default dashboards; saved failure, skip,
+lifecycle, and latest-run queries; SQLite integrity and row-level comparison;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; full
+zero-fuzz application from the pristine pinned Sagelite commit; byte-for-byte
+comparison of the replayed target with both the runtime-tested source and the
+pinned upstream module; and `git diff --check`.
+
+The accumulated source patch remains at 1,641 sections (1,173 `diff --git`
+and 468 legacy sections) and now has 4,976 hunks. Dashboards and worker state
+are under `/tmp/cowasm-sagelite-tree-decomposition.wHRhXV/`; the exact
+full-patch replay is under `/tmp/cowasm-sagelite-tree-replay.TlUdR7/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit the remaining random-generator,
+distance-regular, or graph-method Cliquer annotations.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
