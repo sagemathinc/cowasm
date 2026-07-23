@@ -32660,3 +32660,22 @@ diff --git a/src/sage/graphs/matchpoly.pyx b/src/sage/graphs/matchpoly.pyx
 +++ b/src/sage/graphs/matchpoly.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint sage.graphs
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -1916,4 +1915,0 @@
+-                        if sys.platform == 'wasi':
+-                            raise NotImplementedError(
+-                                "FLINT integer polynomial implementation is not available on WASI yet"
+-                            )
+diff --git a/src/sage/graphs/chrompoly.pyx b/src/sage/graphs/chrompoly.pyx
+--- a/src/sage/graphs/chrompoly.pyx
++++ b/src/sage/graphs/chrompoly.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint sage.graphs
+@@ -109 +108 @@
+-        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
++        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()          # needs sage.graphs.cliquer
+@@ -114 +113 @@
+-        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
++        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()          # needs sage.graphs.cliquer

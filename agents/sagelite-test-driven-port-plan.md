@@ -67432,6 +67432,77 @@ intentional changes remain untouched. The adjacent
 `sage/graphs/chrompoly.pyx` controlled probe remains a genuine backend/runtime
 cluster with 8 passed, 37 failed, and 2 skipped rows for a future pass.
 
+FLINT integer-polynomial delivery and chromatic-polynomial corpus-promotion
+pass on 2026-07-23 UTC:
+
+The retained controlled `sage/graphs/chrompoly.pyx` probe initially recorded
+8 passed, 37 failed, and 2 skipped blocks. Nineteen direct failures came from
+the intentionally installed placeholder for
+`sage.rings.polynomial.polynomial_integer_dense_flint`; the remaining
+missing-name, cache, and output failures cascaded from that import boundary.
+
+The quarantine is stale under the current runtime. The previously disabled
+side module imports after ordinary Sage ring initialization, constructs
+explicit FLINT integer polynomial rings, performs arithmetic and
+factorization, and supports both chromatic-polynomial implementations. The
+standalone installer now delivers that extension and its adjacent
+`libcxx.so`. The rational and modular FLINT polynomial extensions remain
+quarantined and continue to fail closed. Explicit
+`PolynomialRing(ZZ, ..., implementation='FLINT')` is enabled on WASI, while
+the generic integer-polynomial implementation remains the default to avoid
+silently widening unrelated runtime behavior.
+
+The obsolete file-wide `sage.libs.flint sage.graphs` guard is removed from
+`chrompoly.pyx`. Its two comparisons against `G.chromatic_number()` now carry
+the narrower `sage.graphs.cliquer` dependency because the chromatic-number
+implementation calls the unavailable Cliquer backend. Controlled historical,
+default-profile, and post-rebuild dashboards each record:
+
+```text
+chrompoly.pyx: 43 passed, 0 failed, 4 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The four skips are the two existing long-time LCF-graph examples and the two
+Cliquer-backed comparisons. The controlled and default dashboards have
+identical active source, expected output, actual output, status, and comparator
+metadata across all 43 passing rows. The post-rebuild dashboard has empty
+saved block- and file-failure queries and a 100% active-row pass rate.
+
+`sage/graphs/chrompoly.pyx` is now part of the curated pure-math corpus,
+raising it to 1,209 non-comment entries with no duplicates. Doctest runner
+metadata advances to version 138. The Electron resource contract advances to
+schema 204 and smoke version 175; the rebuilt manifest records 758 required
+resources, 577 side modules, and nine native-library paths, including the
+integer-FLINT extension and polynomial-local `libcxx.so`.
+
+Validation includes the initial failure-cluster dashboard; direct native
+module import, arithmetic, factorization, and graph-polynomial probes;
+controlled, default, and post-rebuild complete-module dashboards; saved
+failure, skip, lifecycle, latest-run, and SQLite-integrity queries; active-row
+and pre/post comparisons; side-module section and initializer-export audits;
+shell and JavaScript syntax; Electron manifest, forge-resource, runtime, and
+full packaged smoke tests; corpus uniqueness and make-target dry run; exact
+accumulated-patch replay from pristine pinned Sagelite with byte-for-byte
+target comparison; and `git diff --check`. The resumed standalone harness
+completed after a clean 1,050-target native rebuild with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,642 sections (1,174 `diff --git` and
+468 legacy sections) and 5,025 hunks. Default, controlled, and post-rebuild
+dashboards are under
+`/tmp/cowasm-sagelite-chrompoly-final.i4uU6N/`,
+`/tmp/cowasm-sagelite-chrompoly-controlled.CQCUY8/`, and
+`/tmp/cowasm-sagelite-chrompoly-post-rebuild.ppo853/`; the final exact target
+replay is under `/tmp/cowasm-sagelite-chrompoly-final-replay.QcQTTk/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit another stale graph/backend guard
+or select the next persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

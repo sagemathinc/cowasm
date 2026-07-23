@@ -614,10 +614,6 @@ PY
 }
 
 disable_wasi_side_module \
-  "sage/rings/polynomial/polynomial_integer_dense_flint" \
-  "sage.rings.polynomial.polynomial_integer_dense_flint" \
-  "FLINT integer polynomial side module is disabled on CoWasm WASI until its initializer no longer terminates the Node.js worker"
-disable_wasi_side_module \
   "sage/rings/polynomial/polynomial_rational_flint" \
   "sage.rings.polynomial.polynomial_rational_flint" \
   "FLINT rational polynomial side module is disabled on CoWasm WASI until its initializer no longer terminates the Node.js worker"
@@ -1939,17 +1935,17 @@ phi5 = cyclotomic_polynomial(5, 'x')
 assert phi5.degree() == 4
 assert phi5(1) == 5
 print('sagelite-node-ok functional helper smoke')"
-run_node_import "explicit FLINT polynomial rejection" "from sage.all import ZZ, PolynomialRing
-try:
-    PolynomialRing(ZZ, 'x', implementation='FLINT')
-except NotImplementedError as err:
-    assert 'WASI' in str(err)
-else:
-    raise AssertionError('explicit FLINT polynomial implementation should be rejected on WASI')
-print('sagelite-node-ok explicit FLINT polynomial rejection')"
+run_node_import "explicit FLINT integer polynomial delivery" "from sage.all import ZZ, PolynomialRing
+R = PolynomialRing(ZZ, 'x', implementation='FLINT')
+x = R.gen()
+assert type(x).__module__ == 'sage.rings.polynomial.polynomial_integer_dense_flint'
+assert (x + 1) * (x - 1) == x**2 - 1
+assert (x**10 - 1).factor().value() == x**10 - 1
+print('sagelite-node-ok explicit FLINT integer polynomial delivery')"
 
-run_node_import "FLINT polynomial imports fail closed" "modules = [
-    'sage.rings.polynomial.polynomial_integer_dense_flint',
+run_node_import "unsupported FLINT polynomial imports fail closed" "import sage.all
+import sage.rings.polynomial.polynomial_integer_dense_flint
+modules = [
     'sage.rings.polynomial.polynomial_rational_flint',
     'sage.rings.polynomial.polynomial_zmod_flint',
 ]
@@ -1960,7 +1956,7 @@ for module in modules:
         assert 'disabled on CoWasm WASI' in str(err)
     else:
         raise AssertionError(f'{module} should fail closed on WASI')
-print('sagelite-node-ok FLINT polynomial imports fail closed')"
+print('sagelite-node-ok unsupported FLINT polynomial imports fail closed')"
 
 run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari, PariError, objtogen
 from cypari2 import _pari_runtime_probe as pari_probe
@@ -2075,12 +2071,8 @@ G = Graph([(1, 2), (2, 3)])
 assert G.is_connected()
 assert DiGraph(G).order() == 3
 assert BipartiteGraph(graphs.CycleGraph(4)).order() == 4
-try:
-    G.chromatic_polynomial()
-except ImportError as err:
-    assert 'FLINT integer polynomial side module is disabled on CoWasm WASI' in str(err)
-else:
-    raise AssertionError('chromatic_polynomial unexpectedly bypassed the FLINT boundary')
+assert str(G.chromatic_polynomial()) == 'x^3 - 2*x^2 + x'
+assert str(G.chromatic_polynomial(algorithm='Python')) == 'x^3 - 2*x^2 + x'
 assert str(G.matching_polynomial()) == 'x^3 - 2*x'
 assert G.spanning_trees_count() == 1
 assert G.rank_decomposition()[0] == 1
@@ -2217,7 +2209,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=203
+electron_manifest_schema_version=204
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2283,6 +2275,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-modular-de
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-genus-extension-delivery-v172"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-canonical-labeling-v173"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2481,7 +2474,7 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/laurent_polynomial_ring_base.py"
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py"
-  "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py"
+  "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/polynomial_ring.py"
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
   "site-packages/sage/rings/polynomial/polynomial_rational_flint.py"

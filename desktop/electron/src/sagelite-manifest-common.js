@@ -38,6 +38,7 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
   "site-packages/sage/libs/linbox/libcxx.so",
   "site-packages/sage/libs/ntl/libcxx.so",
   "site-packages/sage/rings/finite_rings/libcxx.so",
+  "site-packages/sage/rings/polynomial/libcxx.so",
 ]);
 
 const expectedSageliteRequiredToolPaths = Object.freeze([
@@ -147,7 +148,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/polynomial/laurent_polynomial_ring_base.py",
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py",
-  "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py",
+  "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_ring.py",
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py",
   "site-packages/sage/rings/polynomial/polynomial_rational_flint.py",
@@ -315,7 +316,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 203,
+  schemaVersion: 204,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -414,6 +415,8 @@ expectedSageliteManifest.smokeContract +=
   "-bliss-canonical-labeling-v173";
 expectedSageliteManifest.smokeContract +=
   "-tdlib-tree-decomposition-v174";
+expectedSageliteManifest.smokeContract +=
+  "-flint-integer-polynomial-delivery-v175";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

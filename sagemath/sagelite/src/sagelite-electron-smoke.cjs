@@ -238,14 +238,13 @@ y = ZZx.gen()
 assert (y + 2) * (y + 3) == y**2 + 5*y + 6
 assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
-try:
-    PolynomialRing(ZZ, 'x', implementation='FLINT')
-except NotImplementedError as err:
-    assert 'WASI' in str(err)
-else:
-    raise AssertionError('explicit FLINT polynomial implementation should be rejected on WASI')
+ZZx_flint = PolynomialRing(ZZ, 'x', implementation='FLINT')
+xf = ZZx_flint.gen()
+assert type(xf).__module__ == 'sage.rings.polynomial.polynomial_integer_dense_flint'
+assert (xf + 1) * (xf - 1) == xf**2 - 1
+assert (xf**10 - 1).factor().value() == xf**10 - 1
+import sage.rings.polynomial.polynomial_integer_dense_flint
 for module in [
-    'sage.rings.polynomial.polynomial_integer_dense_flint',
     'sage.rings.polynomial.polynomial_rational_flint',
     'sage.rings.polynomial.polynomial_zmod_flint',
 ]:
