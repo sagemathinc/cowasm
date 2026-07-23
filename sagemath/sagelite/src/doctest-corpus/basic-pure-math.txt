@@ -1131,6 +1131,7 @@ src/sage/graphs/graph_decompositions/cutwidth.pyx
 src/sage/graphs/graph_decompositions/tree_decomposition.pyx
 src/sage/graphs/graph_decompositions/vertex_separation.pyx
 src/sage/graphs/hyperbolicity.pyx
+src/sage/graphs/isgci.py
 src/sage/graphs/isoperimetric_inequalities.pyx
 src/sage/graphs/graph_decompositions/rankwidth.pyx
 src/sage/graphs/graph_decompositions/graph_products.pyx

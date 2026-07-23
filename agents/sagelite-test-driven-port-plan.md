@@ -67082,6 +67082,50 @@ external developer Sagelite checkout remains untouched. A future scheduled
 pass can audit `sage/graphs/genus.pyx`, `sage/graphs/isgci.py`, or another
 remaining backend/runtime dependency cluster.
 
+ISGCI dependency and corpus-promotion pass on 2026-07-23 UTC:
+
+The obsolete file-wide `sage.graphs` guard on `sage/graphs/isgci.py` hid the
+delivered graph-class database interface. A two-file historical-profile probe
+separated this clean source from the adjacent genus cluster: ISGCI recorded 83
+passed, zero failed, and three skipped blocks, while `genus.pyx` retained 34
+failures rooted in its unavailable extension module.
+
+Removing only the ISGCI guard leaves the default runner-version-137 profile
+with:
+
+```text
+isgci.py:      83 passed, 0 failed, 3 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The historical and default results both contain 86 ISGCI blocks. Their source,
+source hashes, expected output, actual output, statuses, and failure metadata
+are identical. Source locations differ only by the removed first line. Tag
+metadata differs only by removal of the inherited broad graph feature, and the
+two internet skips consequently retain the narrower `optional:internet`
+reason. The third skip remains the existing long-time database-load example.
+The 83 active rows exercise predefined graph classes, inclusion and recognition
+queries, descriptions, local database parsing, and class metadata.
+
+`sage/graphs/isgci.py` is now part of the curated pure-math corpus, raising it
+to 1,203 non-comment entries with no duplicates. Validation includes the
+historical and default focused dashboard rows, saved block- and file-failure,
+skip, lifecycle, and latest-run queries, exact row-level SQLite comparison,
+SQLite integrity, corpus uniqueness and make-target dry run, patch syntax,
+complete zero-fuzz application of the accumulated patch from the pristine
+pinned Sagelite commit, byte-for-byte comparison of the reconstructed target
+with the runtime-tested source, and `git diff --check`. The accumulated source
+patch now has 1,639 sections (1,171 `diff --git` and 468 legacy sections) and
+5,004 hunks. Dashboards and worker state are under
+`/tmp/cowasm-sagelite-next-cluster.KI7zHT/`; the exact patch replay is under
+`/tmp/cowasm-sagelite-isgci-replay.znxv5Z/`. This source-only dependency
+cleanup needs no native WASM rebuild, Electron manifest change, or resource
+restaging. The external developer Sagelite checkout and its intentional
+changes remain untouched. A future scheduled pass can deliver the missing
+`sage.graphs.genus` extension or audit another persisted graph/backend
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
