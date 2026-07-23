@@ -34,7 +34,7 @@ env \
   AR="$bin_dir/cowasm-ar" \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
-  CFLAGS="-Oz -D_WASI_EMULATED_PROCESS_CLOCKS" \
+  CFLAGS="-Oz -fPIC -D_WASI_EMULATED_PROCESS_CLOCKS" \
   LDFLAGS="${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -62,6 +62,23 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/planarity-test" |
   grep "planarity-ok cycle5=planar k5=nonplanar k33=nonplanar"
+
+# Keep the archive linkable into Python and other WASI side modules. A normal
+# executable link does not reject the non-PIC function-table relocations that
+# wasm-ld must reject in a shared object.
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  --experimental-pic \
+  -shared \
+  -fPIC \
+  "$src_dir/test-planarity.c" \
+  -I"$dist_dir/include" \
+  -L"$dist_dir/lib" \
+  -lplanarity \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/planarity-test.so"
+
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$probe_dir/planarity-test.so" |
+  grep -F 'dylink.0'
 
 sample_dir="$dist_dir/share/doc/planarity/samples"
 cowasm_clang_standalone_run_wasi \

@@ -8,4 +8,6 @@ This package builds a wasi-sdk standalone `planarity` command plus the static
 `libplanarity.a` archive. The smoke test links a C probe against the installed
 library, checks planar and nonplanar graph classification, runs upstream's
 installed sample regression suite under the WASI runner, and verifies that the
-command-line tool can write a planar embedding for a sample graph.
+command-line tool can write a planar embedding for a sample graph. It also
+links the installed archive into a PIC shared object so the package remains
+usable from Python and other WASI side modules.

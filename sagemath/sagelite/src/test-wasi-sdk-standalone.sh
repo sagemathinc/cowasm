@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 27 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK" >&2
+if [ "$#" -ne 28 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK LRCALC_PYTHON_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK LIBBRAIDING_WASI_SDK RW_WASI_SDK IML_WASI_SDK GLPK_WASI_SDK NAUTY_WASI_SDK PLANARITY_WASI_SDK" >&2
   exit 2
 fi
 
@@ -34,6 +34,7 @@ rw_wasi_sdk="$(cd "${24}" && pwd)"
 iml_wasi_sdk="$(cd "${25}" && pwd)"
 glpk_wasi_sdk="$(cd "${26}" && pwd)"
 nauty_wasi_sdk="$(cd "${27}" && pwd)"
+planarity_wasi_sdk="$(cd "${28}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -426,6 +427,7 @@ for pkg_dir in \
   "$repo_dir/sagemath/fflas-ffpack/dist/wasi-sdk" \
   "$repo_dir/sagemath/givaro/dist/wasi-sdk" \
   "$repo_dir/sagemath/linbox/dist/wasi-sdk" \
+  "$planarity_wasi_sdk" \
   "$repo_dir/core/zlib/dist/wasi-sdk" \
   "$repo_dir/core/libpng/dist/wasi-sdk"
 do
@@ -2083,6 +2085,17 @@ assert G.rank_decomposition()[0] == 1
 print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
 run_node_import \
+  "planarity backend delivery smoke" \
+  "from sage.all import graphs
+cycle = graphs.CycleGraph(5)
+assert cycle.is_planar(set_embedding=True)
+assert set(cycle._embedding) == set(cycle)
+planar, obstruction = graphs.CompleteBipartiteGraph(3, 3).is_planar(kuratowski=True)
+assert not planar
+assert obstruction is not None
+print('sagelite-node-ok planarity backend delivery smoke')"
+
+run_node_import \
   "in-memory graph database smoke" \
   "import sage.all
 from sage.graphs.graph_database import GraphDatabase, GraphQuery
@@ -2210,6 +2223,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-s
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-doctest-mode-v166"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-name-v167"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-database-resource-v168"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

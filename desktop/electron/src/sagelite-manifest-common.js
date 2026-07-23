@@ -401,6 +401,8 @@ expectedSageliteManifest.smokeContract +=
   "-tested-module-name-v167";
 expectedSageliteManifest.smokeContract +=
   "-graph-database-resource-v168";
+expectedSageliteManifest.smokeContract +=
+  "-planarity-backend-delivery-v169";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

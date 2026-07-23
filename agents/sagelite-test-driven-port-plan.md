@@ -66891,6 +66891,77 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit another stale graph/backend dependency guard or
 select a persisted runtime cluster.
 
+Planarity-backend delivery and graph corpus-promotion pass on 2026-07-23 UTC:
+
+The file-wide `sage.graphs` guards on `sage/graphs/planarity.pyx` and
+`sage/graphs/schnyder.py` hid a coherent missing-backend cluster. A controlled
+runner-version-137 replay with the broad graph feature selected initially
+recorded 71 passed, 31 failed, and one skipped block. The root failure was the
+absent `sage.graphs.planarity` extension: nine direct import failures led to
+11 missing-embedding errors and then to downstream Schnyder realizer and
+drawing mismatches.
+
+CoWasm already carried the upstream planarity C library, so this pass delivers
+that package to Sagelite's Meson build through its pkg-config directory and
+makes the archive an explicit standalone prerequisite. The graph extension
+dependency map now links `planarity` only to the planarity extension, `cliquer`
+only to the Cliquer extension, and both libraries only where the remaining
+graph extensions need them. This avoids making one optional backend a
+precondition for compiling the other. A clean link exposed non-PIC function
+table relocations in the existing planarity archive; its WASI build now uses
+`-fPIC`, and its standalone check links the archive into a shared object and
+verifies the resulting `dylink.0` section.
+
+After backend delivery, both the controlled broad-guard replay and the
+default-profile replay with the guards removed record:
+
+```text
+planarity.pyx: 13 passed, 0 failed, 6 skipped
+schnyder.py: 102 passed, 0 failed, 1 skipped
+total: 115 passed, 0 failed, 7 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The retained skips are six long/NetworkX planarity examples and one plotting
+example. Both databases contain 122 block rows and have no saved block or
+file-level failures. Status, source, source hashes, expected output, comparator
+modes, and failure metadata agree exactly. Source locations differ only by
+the removed first-line guards; tag and skip-reason differences are only the
+removed inherited `sage.graphs` feature. Two successful Schnyder `_realizer`
+actual-output strings differ only in process-local `TreeNode` addresses.
+
+Both modules are now in the curated pure-math corpus, raising it to 1,200
+non-comment entries with no duplicates. The installed Node smoke exercises a
+planar cycle with embedding construction and a nonplanar `K3,3` with
+Kuratowski-certificate construction. The Electron resource smoke contract
+advances to version 169.
+
+Validation includes the initial failure-cluster dashboard; controlled and
+default complete-module replays; saved failure, skip, lifecycle, and
+latest-run queries; row-level SQLite comparison and integrity checks; the
+planarity static and shared-library smoke; shell and JavaScript syntax; corpus
+uniqueness and make-target dry run; accumulated-patch syntax; an isolated
+zero-fuzz Meson replay with byte-for-byte comparison to the runtime-tested
+source; Electron manifest checks; and a complete resumed standalone runtime
+ladder. The standalone harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,641 sections (1,172 `diff --git` and
+469 legacy sections) and 5,007 hunks. Initial, guarded, and default doctest
+evidence is under `/tmp/cowasm-sagelite-schnyder-audit.Eyskcq/`,
+`/tmp/cowasm-sagelite-planarity-guarded.5JUk86/`, and
+`/tmp/cowasm-sagelite-planarity-default.rMi2Z1/`. The clean pinned checkout is
+under `/tmp/cowasm-sagelite-planarity-pristine.cWOh1i/`, and the exact Meson
+target replay is under `/tmp/cowasm-sagelite-meson-replay.yNv7Vk/`. The
+external developer Sagelite checkout and its intentional changes remain
+untouched. A future scheduled pass can audit
+`sage/graphs/edge_connectivity.pyx` or another remaining
+`sage.graphs.planarity` dependency cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
