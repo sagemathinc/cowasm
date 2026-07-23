@@ -67019,8 +67019,68 @@ are under `/tmp/cowasm-sagelite-edge-connectivity.NP83gt/`; the pinned clean
 source used for the standalone rebuild is under
 `/tmp/cowasm-sagelite-planarity-pristine.cWOh1i/`. The external developer
 Sagelite checkout and its intentional changes remain untouched. A future
-scheduled pass can audit `sage/graphs/cycle_enumeration.py` or another
-remaining stale graph dependency guard.
+scheduled pass can audit another remaining stale graph dependency guard.
+
+Modular-decomposition lazy-group dependency and corpus-promotion pass on
+2026-07-23 UTC:
+
+The file-wide `sage.graphs` guard on
+`sage/graphs/graph_decompositions/modular_decomposition.pyx` hid a graph-core
+algorithm because the extension imported `PermutationGroupElement`
+unconditionally at module startup. A controlled runner-version-137 replay
+with the broad graph feature selected initially recorded 21 passed, 145
+failed, and two skipped blocks. Thirty-six direct `ModuleNotFoundError` rows
+for `sage.groups.perm_gps.permgroup_element` caused the remaining 109
+cascading missing-name and output failures.
+
+The permutation-group type import is now deferred to the one `relabel_tree`
+branch that needs it. Dictionary, list, tuple, and callable relabeling remain
+usable without the undelivered group package, while actual permutation-group
+objects retain the upstream zero-based relabeling behavior when that package
+is present. The random proper-interval graph comparison now carries the same
+narrow `sage.symbolic` dependency as its generator. The default node profile
+and the clean rebuilt runtime both record:
+
+```text
+modular_decomposition.pyx: 165 passed, 0 failed, 3 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The three retained skips are one long random reconstruction, one
+permutation-group-only random permutation check, and one symbolic
+proper-interval graph comparison. Saved block- and file-failure cluster
+queries are empty, and all 165 active rows pass. An installed Node smoke
+initializes through `sage.all`, constructs a nested modular-decomposition
+tree, and verifies callable relabeling without importing permutation groups.
+The Electron resource contract advances to version 171.
+
+`sage/graphs/graph_decompositions/modular_decomposition.pyx` is now part of
+the curated pure-math corpus, raising it to 1,202 non-comment entries with no
+duplicates. The clean rebuild also exposed two obsolete accumulated-patch
+fragments whose changes are already present in pinned Sagelite: five
+`integer_ring.pyx` symbolic tags and the two generic `complex_roots.py`
+fallback hunks. Removing those redundant fragments restores clean sequential
+patch application from the pinned checkout.
+
+Validation includes the initial failure-cluster dashboard; pre- and
+post-rebuild default dashboards; saved block-failure, file-error, skip,
+lifecycle, and SQLite integrity queries; focused runtime smoke execution;
+patch syntax; shell and JavaScript syntax; corpus uniqueness and make-target
+dry run; `git diff --check`; and a complete standalone runtime ladder. The
+standalone harness generated 523 Cython sources, compiled and installed the
+runtime, and ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,640 sections (1,172 `diff --git` and
+468 legacy sections) and 5,005 hunks. Focused dashboards and worker state are
+under `/tmp/cowasm-sagelite-modular-decomposition-audit.dwjcol/`. The
+external developer Sagelite checkout remains untouched. A future scheduled
+pass can audit `sage/graphs/genus.pyx`, `sage/graphs/isgci.py`, or another
+remaining backend/runtime dependency cluster.
 
 ## Phase 6: TypeScript/NPM Direction
 

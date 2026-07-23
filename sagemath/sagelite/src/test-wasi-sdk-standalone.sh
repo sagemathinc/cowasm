@@ -2104,6 +2104,22 @@ assert GabowEdgeConnectivity(complete).edge_connectivity() == 4
 print('sagelite-node-ok Gabow edge connectivity smoke')"
 
 run_node_import \
+  "modular decomposition without permutation groups smoke" \
+  "import sage.all
+from sage.graphs.graph_decompositions.modular_decomposition import (
+    NodeType,
+    nested_tuple_to_tree,
+    relabel_tree,
+    tree_to_nested_tuple,
+)
+tree = nested_tuple_to_tree((NodeType.SERIES, 1, 2, (NodeType.PARALLEL, 3, 4)))
+relabeled = relabel_tree(tree, lambda vertex: vertex + 4)
+assert tree_to_nested_tuple(relabeled) == (
+    NodeType.SERIES, [5, 6, (NodeType.PARALLEL, [7, 8])]
+)
+print('sagelite-node-ok modular decomposition without permutation groups smoke')"
+
+run_node_import \
   "in-memory graph database smoke" \
   "import sage.all
 from sage.graphs.graph_database import GraphDatabase, GraphQuery
@@ -2232,6 +2248,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-doctest-mo
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-name-v167"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-database-resource-v168"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169-edge-connectivity-v170"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-modular-decomposition-lazy-groups-v171"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

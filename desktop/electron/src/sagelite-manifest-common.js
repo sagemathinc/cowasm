@@ -405,6 +405,8 @@ expectedSageliteManifest.smokeContract +=
   "-planarity-backend-delivery-v169";
 expectedSageliteManifest.smokeContract +=
   "-edge-connectivity-v170";
+expectedSageliteManifest.smokeContract +=
+  "-modular-decomposition-lazy-groups-v171";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

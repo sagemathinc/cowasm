@@ -166,24 +166,6 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
 @@ -3181,1 +3219,2 @@
 +        sage: # needs sage.libs.singular
          sage: S.<u,v> = R.quotient(x^2 + y^2)
-diff -urN -U0 a/src/sage/rings/integer_ring.pyx b/src/sage/rings/integer_ring.pyx
---- a/src/sage/rings/integer_ring.pyx
-+++ b/src/sage/rings/integer_ring.pyx
-@@ -386 +386 @@
--            sage: ZZ[sqrt(2), sqrt(3)]
-+            sage: ZZ[sqrt(2), sqrt(3)]                                                  # needs sage.symbolic
-@@ -389 +389 @@
--            sage: R = ZZ[sqrt(5) + 1]; R
-+            sage: R = ZZ[sqrt(5) + 1]; R                                                 # needs sage.symbolic
-@@ -392 +392 @@
--            sage: R.is_maximal()
-+            sage: R.is_maximal()                                                        # needs sage.symbolic
-@@ -394 +394 @@
--            sage: R = ZZ[(1 + sqrt(5))/2]; R
-+            sage: R = ZZ[(1 + sqrt(5))/2]; R                                             # needs sage.symbolic
-@@ -397 +397 @@
--            sage: R.is_maximal()
-+            sage: R.is_maximal()                                                        # needs sage.symbolic
 diff --git a/src/sage/rings/real_mpfr.pyx b/src/sage/rings/real_mpfr.pyx
 --- a/src/sage/rings/real_mpfr.pyx
 +++ b/src/sage/rings/real_mpfr.pyx
@@ -13881,26 +13863,6 @@ diff --git a/src/sage/rings/polynomial/complex_roots.py b/src/sage/rings/polynom
 @@ -255 +255 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
 -        sage: len(complex_roots(f))
 +        sage: len(complex_roots(f))  # needs sage.libs.pari
-@@ -263 +263,10 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
--        factors = p.squarefree_decomposition()
-+        try:
-+            factors = p.squarefree_decomposition()
-+        except NotImplementedError:
-+            # Generic polynomial backends may provide gcd and exact division
-+            # without a full square-free decomposition implementation.  A
-+            # constant gcd with the derivative is enough to certify that no
-+            # multiplicities need to be recovered.
-+            if p.gcd(p.derivative()).degree() != 0:
-+                raise
-+            factors = [(p, 1)]
-@@ -275 +284,6 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
--            rts = cfac.roots(multiplicities=False)
-+            try:
-+                rts = cfac.roots(multiplicities=False)
-+            except NotImplementedError:
-+                # NumPy roots are only starting approximations here; the
-+                # interval refinement below still certifies every result.
-+                rts = cfac.roots(multiplicities=False, algorithm='numpy')
 diff --git a/src/sage/graphs/hypergraph_generators.py b/src/sage/graphs/hypergraph_generators.py
 --- a/src/sage/graphs/hypergraph_generators.py
 +++ b/src/sage/graphs/hypergraph_generators.py
@@ -32533,3 +32495,46 @@ diff --git a/src/sage/graphs/graph_database.py b/src/sage/graphs/graph_database.
 +            with gzip.open(dump_location, 'rt', encoding='utf-8') as dump:
 +                sql_script = dump.read()
 +        SQLDatabase.__init__(self, dblocation, _sql_script=sql_script)
+diff --git a/src/sage/graphs/graph_decompositions/modular_decomposition.pyx b/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
+--- a/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
++++ b/src/sage/graphs/graph_decompositions/modular_decomposition.pyx
+@@ -3 +2,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -38 +36,0 @@
+-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+@@ -658 +656 @@
+-        sage: check_algos_are_equivalent(5,\
++        sage: check_algos_are_equivalent(5,\                                          # needs sage.symbolic
+@@ -1227,8 +1225,14 @@
+-    elif isinstance(perm, PermutationGroupElement):
+-        n = len(get_vertices(root))
+-        ddict = {}
+-        for i in range(1, n):
+-            ddict[i] = perm(i) % n
+-        if n > 0:
+-            ddict[0] = perm(n) % n
+-        perm = ddict
++    else:
++        try:
++            from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
++        except ModuleNotFoundError:
++            PermutationGroupElement = ()
++
++        if isinstance(perm, PermutationGroupElement):
++            n = len(get_vertices(root))
++            ddict = {}
++            for i in range(1, n):
++                ddict[i] = perm(i) % n
++            if n > 0:
++                ddict[0] = perm(n) % n
++            perm = ddict
+@@ -1236,2 +1240,2 @@
+-    elif callable(perm):
+-        perm = {i: perm(i) for i in get_vertices(root)}
++        elif callable(perm):
++            perm = {i: perm(i) for i in get_vertices(root)}
+@@ -1239,2 +1243,2 @@
+-    else:
+-        raise TypeError("type of perm is not supported for relabeling")
++        else:
++            raise TypeError("type of perm is not supported for relabeling")
