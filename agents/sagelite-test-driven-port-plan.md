@@ -67808,6 +67808,58 @@ developer Sagelite checkout and its intentional changes remain untouched. One
 narrow Cliquer annotation remains on the nauty `k`-tree generator's treewidth
 check, which a future scheduled pass can audit separately.
 
+Nauty `k`-tree Cliquer reopening pass on 2026-07-23 UTC:
+
+The delivered Cliquer extension makes the final narrow
+`sage.graphs.cliquer` dependency annotation in the Sagelite source patch
+stale. The guarded `G.treewidth()` example consumes a graph produced by the
+already-delivered `genktreeg` subprocess and now computes the expected exact
+width without any additional native runtime work. A stateful selected-line
+replay first recorded one passed block with no failures or skips.
+
+The fresh pre-change default complete-module dashboard recorded 135 passed,
+zero failed, and 91 skipped blocks. A controlled runner-version-139 replay
+with `sage.graphs.cliquer` selected recorded:
+
+```text
+graph_generators.py: 136 passed, 0 failed, 90 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+Removing the annotation leaves the final default profile with the same 136
+passed, zero failed, and 90 skipped result as the controlled profile. Both
+successful dashboards contain 226 block rows and agree exactly on source,
+expected output, actual output, status, and failure metadata. The only
+controlled-to-final metadata difference is the removed Cliquer tag. Comparing
+the pre-change default and final dashboards shows exactly one status change:
+block 95 at source line 1296 moves from
+`optional:sage.graphs.cliquer` skipped to passed.
+
+The module was already part of the 1,210-entry curated pure-math corpus, which
+still has no duplicate entries. This is source-only metadata cleanup: no
+native WASM rebuild, Electron manifest change, runner-version bump,
+corpus-list change, or resource restaging is required. No
+`# needs sage.graphs.cliquer` annotations remain in the accumulated patch or
+runtime-tested source.
+
+Validation includes the selected-line, controlled, pre-change default, and
+final default dashboards; saved block- and file-failure, lifecycle,
+latest-run, and skip queries; SQLite integrity and exact row-level
+comparisons; corpus uniqueness and make-target dry run; accumulated-patch
+syntax; zero-fuzz application of all seven graph-generator patch sections
+from pinned Sagelite commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`
+with byte-for-byte target comparison; and `git diff --check`.
+
+The accumulated source patch remains at 1,684 serialized file sections (1,171
+`diff --git` and 513 legacy sections) and 4,937 hunks. Dashboards and worker
+state are under
+`/tmp/cowasm-sagelite-genktree-cliquer.qV2yko/`; the exact target replay is
+under `/tmp/cowasm-sagelite-genktree-target.oLwCDs/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can select another persisted backend/runtime cluster or audit a
+different stale graph dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

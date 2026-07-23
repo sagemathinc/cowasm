@@ -31247,8 +31247,7 @@ diff --git a/src/sage/graphs/graph_generators.py b/src/sage/graphs/graph_generat
              sage: gen = graphs.nauty_genktreeg("10 -k4")
              sage: G = next(gen); G
              Graph on 10 vertices
--            sage: G.treewidth()
-+            sage: G.treewidth()  # needs sage.graphs.cliquer
+             sage: G.treewidth()
              4
 
          A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
