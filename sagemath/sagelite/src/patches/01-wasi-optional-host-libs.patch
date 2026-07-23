@@ -32655,3 +32655,8 @@ diff --git a/src/sage/graphs/graph_decompositions/meson.build b/src/sage/graphs/
 @@ -85 +85 @@
 -  dependencies: [py_dep, cysignals, tdlib],
 +  dependencies: [py_dep, cysignals, tdlib, cowasm_graph_libcxx_dependency],
+diff --git a/src/sage/graphs/matchpoly.pyx b/src/sage/graphs/matchpoly.pyx
+--- a/src/sage/graphs/matchpoly.pyx
++++ b/src/sage/graphs/matchpoly.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint sage.graphs

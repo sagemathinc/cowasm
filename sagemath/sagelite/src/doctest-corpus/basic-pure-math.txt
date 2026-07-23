@@ -1113,6 +1113,7 @@ src/sage/graphs/partial_cube.py
 src/sage/graphs/morphisms.py
 src/sage/graphs/orientations.py
 src/sage/graphs/spanning_tree.pyx
+src/sage/graphs/matchpoly.pyx
 src/sage/graphs/traversals.pyx
 src/sage/graphs/independent_sets.pyx
 src/sage/graphs/weakly_chordal.pyx

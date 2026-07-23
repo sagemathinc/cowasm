@@ -67391,6 +67391,47 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another stale graph dependency guard or select
 a persisted backend/runtime cluster.
 
+Matching-polynomial dependency and corpus-promotion pass on 2026-07-23 UTC:
+
+The file-wide `sage.libs.flint sage.graphs` guard on
+`sage/graphs/matchpoly.pyx` hid a delivered FLINT-backed graph algorithm. A
+controlled runner-version-137 replay with both historical features selected
+records:
+
+```text
+matchpoly.pyx: 56 passed, 0 failed, 5 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Removing the obsolete directive entirely leaves the default node profile with
+the same 56 passed, zero failed, and five skipped result. Both dashboards
+contain 61 block rows and have empty saved block- and file-failure queries.
+Their block order, source, source hashes, expected and actual output, statuses,
+comparator modes, and failure metadata agree exactly; source locations differ
+only by the expected one-line guard removal. Tag differences consist only of
+the removed inherited FLINT/graph features and the `optional` marker induced
+by those features. The five retained skips are two long-time recursive graph
+checks and three symbolic Hermite-polynomial comparisons.
+
+`sage/graphs/matchpoly.pyx` is now part of the curated pure-math corpus,
+raising it to 1,208 non-comment entries with no duplicates. Validation
+includes the controlled and default complete-module dashboards; saved
+block-failure, file-error, skip, lifecycle, and latest-run queries; exact
+row-level SQLite comparison and integrity checks; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; zero-fuzz application of the
+new target section from the pinned Sagelite commit with byte-for-byte
+comparison to the runtime-tested source; and `git diff --check`. The
+accumulated source patch now has 1,640 sections (1,172 `diff --git` and 468
+legacy sections) and 5,021 hunks. Focused dashboards and worker state are
+under `/tmp/cowasm-sagelite-next-graph.Sx94j9/`; the exact target replay is
+under `/tmp/cowasm-sagelite-matchpoly-target.SjBldY/`. This source-only
+dependency cleanup needs no native WASM rebuild, Electron manifest change, or
+resource restaging. The external developer Sagelite checkout and its
+intentional changes remain untouched. The adjacent
+`sage/graphs/chrompoly.pyx` controlled probe remains a genuine backend/runtime
+cluster with 8 passed, 37 failed, and 2 skipped rows for a future pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
