@@ -32121,3 +32121,12 @@ diff --git a/src/sage/graphs/chrompoly.pyx b/src/sage/graphs/chrompoly.pyx
 +++ b/src/sage/graphs/chrompoly.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint sage.graphs
+diff --git a/src/sage/groups/matrix_gps/coxeter_group.py b/src/sage/groups/matrix_gps/coxeter_group.py
+--- a/src/sage/groups/matrix_gps/coxeter_group.py
++++ b/src/sage/groups/matrix_gps/coxeter_group.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ """
+@@ -132 +131,2 @@
++        sage: m = matrix([[1,3,3,3], [3,1,3,2], [3,3,1,2], [3,2,2,1]])
+         sage: W = CoxeterGroup(m, base_ring=RR, index_set=['a','b','c','d'])

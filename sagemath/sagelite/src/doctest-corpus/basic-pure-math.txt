@@ -1214,3 +1214,4 @@ src/sage/typeset/character_art_factory.py
 src/sage/typeset/unicode_characters.py
 src/sage/typeset/symbols.py
 src/sage/typeset/unicode_art.py
+src/sage/groups/matrix_gps/coxeter_group.py

@@ -68121,6 +68121,73 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another stale file-wide graph dependency or
 select a persisted backend/runtime cluster.
 
+Matrix Coxeter-group namespace and graph-dependency reopening pass on
+2026-07-23 UTC:
+
+The active file-wide `sage.graphs` dependency on
+`sage/groups/matrix_gps/coxeter_group.py` initially hid a compact startup
+namespace cluster. A runner-version-139 controlled replay with
+`sage.graphs` selected recorded 3 passed, 74 failed, and 60 skipped blocks.
+Thirty-one primary failures reported that the public `CoxeterGroup`
+constructor was undefined, and most remaining failures were dependent
+missing-name cascades.
+
+The doctest runner now seeds
+`sage.combinat.root_system.coxeter_group.CoxeterGroup` only while testing the
+matrix Coxeter-group module. That scoped seed raises the controlled result to
+73 passed, four failed, and 60 skipped. The four remaining rows all reused
+the matrix `m` from an earlier contiguous setup that the browser profile
+correctly skips with its GAP and number-field block. The WASI source patch
+therefore repeats that outputless matrix setup in the later independent
+base-ring paragraph. The fixed controlled run and ordinary unguarded
+runner-version-140 run both record:
+
+```text
+coxeter_group.py: 78 passed, 0 failed, 60 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The controlled and final dashboards each contain 138 block rows and agree on
+every source, expected output, actual output, status, expected kind, and
+failure field. Every final source line is one above its controlled counterpart
+because the broad file directive was removed while the repeated setup remains
+in both sources. The 138 tag differences are exactly the removed inherited
+graph feature. Fifty-nine narrower skipped rows shed that graph component
+from their skip reason, while the one `long time` row keeps its unchanged
+reason. The final 60 skips preserve 30 GAP/number-field, ten number-field,
+seven combinatorics, six number-field/symbolic, four symbolic, two
+number-field/GAP, and one long-time blocks. Saved block- and file-failure
+queries are empty, and the active-row pass rate is 100%.
+
+The standalone suite now retains an exact-line Coxeter constructor smoke for
+this scoped seed. A fresh resume-mode build with four Cython generation jobs
+completed configure, compile, install, Node import, Electron resource,
+relocation, follow-up, and doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+`sage/groups/matrix_gps/coxeter_group.py` is now part of the curated
+pure-math corpus, raising it to 1,212 non-comment entries with no duplicates.
+Validation also includes the focused exact-line and complete-module
+runner-version-140 dashboards, saved lifecycle/latest-run/failure queries,
+SQLite integrity for every transition database, Node and shell syntax,
+make-target dry run, accumulated-patch syntax, zero-fuzz application of the
+new target section to pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, byte-for-byte comparison with
+the runtime-tested source, and `git diff --check`.
+
+The accumulated source patch now has 1,681 serialized file sections (1,168
+`diff --git` and 513 legacy sections) and 4,899 hunks. SQLite dashboards and
+worker state are under
+`/tmp/cowasm-sagelite-coxeter-group.PjPoQz/`; exact target replay is under
+`/tmp/cowasm-sagelite-coxeter-group-replay2.XvD64A/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another active file-wide graph boundary or select a
+different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

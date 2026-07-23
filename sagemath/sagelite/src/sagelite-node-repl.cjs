@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 139;
+const doctestRunnerVersion = 140;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2202,6 +2202,12 @@ def __cowasm_seed_tested_module_doctest_globals(namespace, module_name):
         namespace.setdefault(
             "graph_coloring", importlib.import_module(module_name)
         )
+    if module_name == "sage.groups.matrix_gps.coxeter_group":
+        try:
+            from sage.combinat.root_system.coxeter_group import CoxeterGroup
+        except BaseException:
+            return
+        namespace.setdefault("CoxeterGroup", CoxeterGroup)
     if module_name == "sage.rings.cfinite_sequence":
         try:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
