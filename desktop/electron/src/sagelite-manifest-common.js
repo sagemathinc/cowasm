@@ -298,6 +298,12 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "deps/numpy/numpy/core/multiarray.pyc",
   "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so",
   "deps/cython/Cython/__init__.pyc",
+  "site-packages/sagelite_database_graphs/__init__.py",
+  "site-packages/sagelite_database_graphs/data/graphs/brouwer_srg_database.json",
+  "site-packages/sagelite_database_graphs/data/graphs/graphs.db",
+  "site-packages/sagelite_database_graphs/data/graphs/graphs.sql.gz",
+  "site-packages/sagelite_database_graphs/data/graphs/isgci_sage.xml",
+  "site-packages/sagelite_database_graphs/data/graphs/smallgraphs.txt",
   "python.wasm",
   ...expectedSageliteRequiredToolPaths,
 ]);
@@ -393,6 +399,8 @@ expectedSageliteManifest.smokeContract +=
   "-doctest-mode-v166";
 expectedSageliteManifest.smokeContract +=
   "-tested-module-name-v167";
+expectedSageliteManifest.smokeContract +=
+  "-graph-database-resource-v168";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

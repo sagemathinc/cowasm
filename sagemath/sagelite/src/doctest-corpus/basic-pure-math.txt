@@ -1094,6 +1094,7 @@ src/sage/graphs/centrality.pyx
 src/sage/graphs/convexity_properties.pyx
 src/sage/graphs/connectivity.pyx
 src/sage/graphs/graph_coloring.pyx
+src/sage/graphs/graph_database.py
 src/sage/graphs/strongly_regular_db.pyx
 src/sage/graphs/bipartite_graph.py
 src/sage/graphs/graph_input.py

@@ -567,6 +567,22 @@ if [ ! -d "$installed_site_packages/sage" ]; then
   record_blocker "sagelite-blocked: meson install did not create a Sage package under $installed_site_packages."
 fi
 
+graph_database_companion_source="$build_dir/companion-packages/sagelite-database-graphs/src/sagelite_database_graphs"
+graph_database_companion_target="$installed_site_packages/sagelite_database_graphs"
+graph_database_source_db="$graph_database_companion_source/data/graphs/graphs.db"
+if [ ! -s "$graph_database_companion_source/__init__.py" ] ||
+    [ ! -s "$graph_database_source_db" ]; then
+  record_blocker "sagelite-blocked: graph database companion package is incomplete."
+fi
+rm -rf "$graph_database_companion_target"
+mkdir -p "$graph_database_companion_target"
+cp -a "$graph_database_companion_source/." "$graph_database_companion_target/"
+sqlite3 "$graph_database_source_db" .dump |
+  gzip -9 >"$graph_database_companion_target/data/graphs/graphs.sql.gz"
+if [ ! -s "$graph_database_companion_target/data/graphs/graphs.sql.gz" ]; then
+  record_blocker "sagelite-blocked: compressed graph database SQL dump is empty."
+fi
+
 disabled_side_modules_dir="$dist_dir/disabled-side-modules"
 mkdir -p "$disabled_side_modules_dir"
 
@@ -2066,6 +2082,17 @@ assert G.spanning_trees_count() == 1
 assert G.rank_decomposition()[0] == 1
 print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
+run_node_import \
+  "in-memory graph database smoke" \
+  "import sage.all
+from sage.graphs.graph_database import GraphDatabase, GraphQuery
+database = GraphDatabase()
+assert sorted(database.get_skeleton()) == ['aut_grp', 'degrees', 'graph_data', 'misc', 'spectrum']
+query = GraphQuery(database, display_cols=['graph6'], num_vertices=3)
+assert query.number_of() == 4
+assert [graph.graph6_string() for graph in query] == ['B?', 'BG', 'BW', 'Bw']
+print('sagelite-node-ok in-memory graph database smoke')"
+
 run_wasi_sdk_python_import \
   "GLPK mixed-integer delivery smoke" \
   "import sage.all
@@ -2182,6 +2209,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-p
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-subprocess-signals-v165"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-doctest-mode-v166"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-name-v167"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-database-resource-v168"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2534,6 +2562,12 @@ electron_required_paths=(
   "deps/numpy/numpy/core/multiarray.pyc"
   "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so"
   "deps/cython/Cython/__init__.pyc"
+  "site-packages/sagelite_database_graphs/__init__.py"
+  "site-packages/sagelite_database_graphs/data/graphs/brouwer_srg_database.json"
+  "site-packages/sagelite_database_graphs/data/graphs/graphs.db"
+  "site-packages/sagelite_database_graphs/data/graphs/graphs.sql.gz"
+  "site-packages/sagelite_database_graphs/data/graphs/isgci_sage.xml"
+  "site-packages/sagelite_database_graphs/data/graphs/smallgraphs.txt"
   "sagelite-manifest-common.cjs"
   "sagelite-electron-smoke.cjs"
 )

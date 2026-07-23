@@ -32520,3 +32520,40 @@ diff --git a/src/sage/graphs/graph_coloring.pyx b/src/sage/graphs/graph_coloring
 @@ -435 +434 @@
 -        sage: G.chromatic_number()
 +        sage: G.chromatic_number()                                                    # needs sage.graphs.cliquer
+diff --git a/src/sage/databases/sql_db.py b/src/sage/databases/sql_db.py
+--- a/src/sage/databases/sql_db.py
++++ b/src/sage/databases/sql_db.py
+@@ -899 +899,2 @@
+-    def __init__(self, filename=None, read_only=None, skeleton=None):
++    def __init__(self, filename=None, read_only=None, skeleton=None,
++                 _sql_script=None):
+@@ -1085,2 +1086,7 @@
+-        self.__connection__ = sqlite.connect(self.__dblocation__,
+-            check_same_thread=False)
++        if _sql_script is None:
++            self.__connection__ = sqlite.connect(self.__dblocation__,
++                check_same_thread=False)
++        else:
++            self.__connection__ = sqlite.connect(':memory:',
++                check_same_thread=False)
++            self.__connection__.executescript(_sql_script)
+diff --git a/src/sage/graphs/graph_database.py b/src/sage/graphs/graph_database.py
+--- a/src/sage/graphs/graph_database.py
++++ b/src/sage/graphs/graph_database.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
+@@ -46,0 +46,2 @@
++import gzip
++import os
+@@ -47,0 +49 @@
++import sys
+@@ -998 +1000,8 @@
+-        SQLDatabase.__init__(self, dblocation)
++        sql_script = None
++        if sys.platform == 'wasi':
++            dump_location = os.path.join(
++                os.path.dirname(dblocation), 'graphs.sql.gz'
++            )
++            with gzip.open(dump_location, 'rt', encoding='utf-8') as dump:
++                sql_script = dump.read()
++        SQLDatabase.__init__(self, dblocation, _sql_script=sql_script)

@@ -66834,6 +66834,63 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit `sage/graphs/graph_database.py`, another remaining
 file-wide graph guard, or another persisted backend/runtime cluster.
 
+Graph-database resource and corpus-promotion pass on 2026-07-23 UTC:
+
+The obsolete file-wide `sage.graphs` guard on
+`sage/graphs/graph_database.py` hid the delivered graph-query API, but simply
+removing it exposed a WASI SQLite filesystem boundary. The graph database
+companion package now installs alongside Sage in standalone and Electron
+resources, and the build generates a compressed SQL dump from its canonical
+`graphs.db`. On WASI, `GraphDatabase` loads that dump into an in-memory SQLite
+connection; native platforms retain the existing file-backed path.
+
+The installed runtime smoke initializes through the public `sage.all` startup
+surface, verifies the five-table database skeleton, and confirms that a
+three-vertex `GraphQuery` returns the four canonical graph6 rows. The SQL dump
+round-trip reports SQLite integrity `ok`, preserves 1,252 rows in each of
+`aut_grp`, `degrees`, `graph_data`, `misc`, and `spectrum`, and produces the
+same normalized dump as the source database. The Electron resource contract
+advances to version 168 and requires the companion package's Python module,
+five data files, and compressed SQL dump.
+
+Runner version 137 records:
+
+```text
+graph_database.py: 62 passed, 0 failed, 4 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The four retained skips preserve three symbolic display/interactive rows and
+one plotting row. There are no block failures or file-level errors, and the
+active-row pass rate is 100%. `sage/graphs/graph_database.py` is now part of
+the curated pure-math corpus, raising it to 1,198 non-comment entries with no
+duplicates.
+
+Validation includes the focused module dashboard and saved failure, skip,
+lifecycle, and latest-run queries; SQL dump round-trip and integrity checks;
+shell and JavaScript syntax; corpus uniqueness; accumulated-patch syntax;
+zero-fuzz sequential application of all `sql_db.py` and `graph_database.py`
+patch sections from pristine pinned Sagelite with byte-for-byte comparison to
+the runtime-tested source; a complete standalone rebuild; Electron resource
+and relocation checks; and `git diff --check`. The standalone harness ended
+with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,689 sections (1,174 `diff --git` and
+515 legacy sections) and 5,010 hunks. The focused dashboard and worker state
+are under `/tmp/cowasm-sagelite-graph-database-promote.7shgwU/`; the exact
+target replay is under
+`/tmp/cowasm-sagelite-graph-database-replay2.65K5u0/`, and the independent SQL
+round-trip is under
+`/tmp/cowasm-sagelite-graph-db-roundtrip.0Y9sMk/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another stale graph/backend dependency guard or
+select a persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
