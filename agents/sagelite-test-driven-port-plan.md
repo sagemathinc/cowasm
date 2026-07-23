@@ -67975,6 +67975,57 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can select another persisted graph backend/runtime
 cluster or audit a different stale dependency boundary.
 
+Cograph dependency reopening pass on 2026-07-23 UTC:
+
+The now-delivered graph runtime makes all 17 broad `sage.graphs` dependency
+annotations in `sage/graphs/cographs.py` stale. The annotations covered cotree
+generation, graph conversion, mutability, invalid-input handling, and the
+module's indirect helper doctests. A fresh pre-change default dashboard
+recorded 27 passed, zero failed, and 17 skipped blocks.
+
+A controlled runner-version-139 replay with `sage.graphs` explicitly selected
+records:
+
+```text
+cographs.py:       44 passed, 0 failed, 0 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Removing the annotations leaves the ordinary default profile with the same
+44 passed, zero failed, and zero skipped result. All three dashboards contain
+44 block rows. Comparing the pre-change and final dashboards shows exactly 17
+status changes, all from `optional:sage.graphs` skipped to passed. Controlled
+and final expected output, actual output, status, expected kind, and failure
+metadata agree for every row. Twelve source and block-key differences retain
+upstream's `# indirect doctest` marker after the combined dependency comment is
+removed; the controlled runner had stripped the complete combined comment.
+The only tag differences are the 17 removed graph annotations. Saved block-
+and file-failure queries are empty, and the active-row pass rate is 100%.
+
+The module was already part of the 1,210-entry curated pure-math corpus, which
+still has no duplicate entries. This is source-only metadata cleanup: no
+native WASM rebuild, Electron manifest change, runner-version bump,
+corpus-list change, or resource restaging is required. Removing the now-empty
+`cographs.py` patch section restores that source file byte-for-byte to pinned
+upstream.
+
+Validation includes the controlled, pre-change default, and final default
+complete-file dashboards; saved failure, lifecycle, latest-run, and skip
+queries; SQLite integrity and row-level comparisons; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; full zero-fuzz application from
+pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+replayed target with the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,682 serialized file sections (1,169
+`diff --git` and 513 legacy sections) and 4,899 hunks. Dashboards and worker
+state are under `/tmp/cowasm-sagelite-cographs.ZLG5ve/`; the exact full-patch
+replay is under `/tmp/cowasm-sagelite-cographs-replay.ULB6SE/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit the remaining broad graph annotations in a
+small focused module or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
