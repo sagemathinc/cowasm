@@ -2096,6 +2096,14 @@ assert obstruction is not None
 print('sagelite-node-ok planarity backend delivery smoke')"
 
 run_node_import \
+  "Gabow edge connectivity smoke" \
+  "from sage.all import digraphs
+from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+complete = digraphs.Complete(5)
+assert GabowEdgeConnectivity(complete).edge_connectivity() == 4
+print('sagelite-node-ok Gabow edge connectivity smoke')"
+
+run_node_import \
   "in-memory graph database smoke" \
   "import sage.all
 from sage.graphs.graph_database import GraphDatabase, GraphQuery
@@ -2223,7 +2231,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-raw-wasi-s
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-doctest-mode-v166"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-name-v167"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-graph-database-resource-v168"
-electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-planarity-backend-delivery-v169-edge-connectivity-v170"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

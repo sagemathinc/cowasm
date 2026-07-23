@@ -66962,6 +66962,66 @@ untouched. A future scheduled pass can audit
 `sage/graphs/edge_connectivity.pyx` or another remaining
 `sage.graphs.planarity` dependency cluster.
 
+Edge-connectivity graph corpus-promotion pass on 2026-07-23 UTC:
+
+The file-wide `sage.graphs networkx` guard on
+`sage/graphs/edge_connectivity.pyx` hid the delivered Gabow
+edge-connectivity implementation. A controlled runner-version-137 replay with
+both broad features selected recorded:
+
+```text
+edge_connectivity.pyx: 107 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The only actual optional dependency is already tagged on the module's random
+NetworkX examples. Removing the broad guard leaves the default node profile
+with:
+
+```text
+edge_connectivity.pyx: 98 passed, 0 failed, 9 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+All nine skips are the intended `optional:networkx` rows. The controlled and
+default databases both contain 107 blocks, have no saved block failures or
+file-level errors, and agree exactly on source, source hashes, expected
+output, comparator modes, actual output, statuses, and failure metadata for
+all 98 active default-profile rows. A post-rebuild replay preserves the same
+98/0/9 result and row metadata; three successful exception examples update
+only their traceback-internal Cython source line by the expected one-line
+guard removal.
+
+`sage/graphs/edge_connectivity.pyx` is now part of the curated pure-math
+corpus, raising it to 1,201 non-comment entries with no duplicates. The
+installed Node smoke exercises `GabowEdgeConnectivity` on the complete
+five-vertex digraph and verifies edge connectivity four. The Electron
+resource smoke contract advances to version 170.
+
+Validation includes the controlled, default, and post-rebuild focused
+dashboards; saved block-failure, file-error, skip, lifecycle, and latest-run
+queries; row-level SQLite comparisons and integrity checks; patch syntax;
+shell and JavaScript syntax; corpus uniqueness and make-target dry run;
+byte-for-byte comparison of the now-unmodified module between pristine pinned
+Sagelite and the runtime-tested source; the installed Node smoke; a complete
+clean standalone rebuild from pinned Sagelite; and the Electron manifest,
+forge-resource, and runtime tests. The standalone harness ended with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The accumulated source patch now has 1,640 sections (1,171 `diff --git` and
+469 legacy sections) and 5,006 hunks. The focused databases and worker state
+are under `/tmp/cowasm-sagelite-edge-connectivity.NP83gt/`; the pinned clean
+source used for the standalone rebuild is under
+`/tmp/cowasm-sagelite-planarity-pristine.cWOh1i/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit `sage/graphs/cycle_enumeration.py` or another
+remaining stale graph dependency guard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

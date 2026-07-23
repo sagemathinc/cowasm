@@ -17003,13 +17003,6 @@ diff --git a/src/sage/graphs/cycle_enumeration.py b/src/sage/graphs/cycle_enumer
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.graphs
  r"""
-diff --git a/src/sage/graphs/edge_connectivity.pyx b/src/sage/graphs/edge_connectivity.pyx
---- a/src/sage/graphs/edge_connectivity.pyx
-+++ b/src/sage/graphs/edge_connectivity.pyx
-@@ -1,2 +1,3 @@
- # distutils: language = c++
-+# sage.doctest: needs sage.graphs networkx
- r"""
 diff --git a/src/sage/interfaces/mupad.py b/src/sage/interfaces/mupad.py
 --- a/src/sage/interfaces/mupad.py
 +++ b/src/sage/interfaces/mupad.py

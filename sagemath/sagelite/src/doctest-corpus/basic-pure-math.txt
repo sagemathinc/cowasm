@@ -1093,6 +1093,7 @@ src/sage/graphs/generic_graph_pyx.pyx
 src/sage/graphs/centrality.pyx
 src/sage/graphs/convexity_properties.pyx
 src/sage/graphs/connectivity.pyx
+src/sage/graphs/edge_connectivity.pyx
 src/sage/graphs/graph_coloring.pyx
 src/sage/graphs/graph_database.py
 src/sage/graphs/planarity.pyx
