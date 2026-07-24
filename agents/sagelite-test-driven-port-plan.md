@@ -70187,6 +70187,77 @@ dashboard is under `/tmp/cowasm-sagelite-affine-postbuild.FR0Ikk/`. A future
 scheduled pass can reopen another compact stale dependency guard or select the
 next persisted backend/runtime cluster.
 
+Classical Lie algebra guard reopening and native subspace-coercion pass on
+2026-07-24 UTC:
+
+A runner-version-148 controlled replay of the historical file-wide
+`sage.algebras.lie_algebras sage.graphs` guard recorded:
+
+```text
+classical_lie_algebra.py: 276 passed, 2 failed, 13 skipped
+```
+
+The graph and Lie-algebra features were not the active boundaries. One failure
+was the expected GAP comparison in `_test_structure_coeffs()`, which imports
+`sage.libs.gap.libgap`. The other was a backend-independent failure in
+`TestSuite(L)._test_grading`: a bracket vector was mathematically in the
+expected homogeneous component, but ambient free-module coercion did not
+recognize the native `FreeModule_submodule_with_basis_pid` subspace class.
+
+`FreeModule_ambient._coerce_map_from_()` now gives that native subspace class
+the same direct ambient coercion used for `Submodule_free_ambient`. A focused
+regression records the actual native class shape and the resulting coercion.
+The controlled replay then left only the GAP comparison failure. The broad
+classical-module guard is removed, and that single example now carries a
+focused `sage.libs.gap` directive.
+
+The ordinary rebuilt browser profile records:
+
+```text
+classical_lie_algebra.py: 277 passed, 0 failed, 14 skipped
+skip groups:                13 long time
+                             1 sage.libs.gap
+free-module focused line:    1 passed, 0 failed, 0 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+The post-build classical dashboard contains 291 ordered rows and has a 100%
+non-skipped pass rate. The patched build sources, clean sequential replay, and
+rebuilt Electron-resource copies of both changed files agree byte for byte.
+
+`sage/algebras/lie_algebras/classical_lie_algebra.py` is now part of the
+curated pure-math corpus, raising it to 1,245 non-comment entries with no
+duplicates.
+
+A four-worker clean pinned-source standalone build completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+It generated all 527 Cython extension sources, compiled and linked all 1,064
+Meson targets, installed and audited 523 Sagelite side modules, passed all
+seven direct-WASI markers and all 87 Node semantic markers, staged and audited
+578 Electron resource side modules, and passed the 79-block primary doctest
+smoke with 62 passes, zero failures, and 17 expected skips. Electron relocation
+and the complete synthetic runner-regression ladder also passed.
+
+Validation additionally includes clean accumulated-patch application against
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte target replay; controlled, default, and post-build SQLite
+dashboards; focused free-module regression runs; corpus uniqueness and
+make-target dry run; patch syntax; and `git diff --check`. The external
+developer Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,719 serialized file sections (1,206
+`diff --git` and 513 legacy sections) and 4,986 hunks. Focused dashboards,
+clean-build logs, and post-build results are under
+`/tmp/cowasm-sagelite-classical-lie.MC0THA/`; the exact clean sequential replay
+is under `/tmp/cowasm-sagelite-classical-final-replay.MFzzbD/`. A future
+scheduled pass can reopen another compact stale dependency guard or select the
+next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -32600,3 +32600,42 @@ diff --git a/src/sage/algebras/lie_algebras/affine_lie_algebra.py b/src/sage/alg
 +            sage: # needs sage.libs.gap
 @@ -1013,0 +1024 @@
 +                sage: # needs sage.libs.gap
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -5601,6 +5601,17 @@
+             sage: M = QQ^3 / [[1,2,3]]
+             sage: V = QQ^2
+             sage: V.coerce_map_from(M)
++
++        Native free-module subspaces use a direct ambient coercion even when
++        they do not inherit from ``Submodule_free_ambient``::
++
++            sage: V = QQ^3
++            sage: W = V.subspace([[1, 2, 3]])
++            sage: from sage.modules.submodule import Submodule_free_ambient
++            sage: isinstance(W, Submodule_free_ambient)
++            False
++            sage: V._coerce_map_from_(W) is True
++            True
+         """
+         from sage.modules.quotient_module import FreeModule_ambient_field_quotient
+         from sage.modules.submodule import Submodule_free_ambient
+@@ -5615,7 +5626,8 @@
+                 # complexity of this is quadratic in space and time,
+                 # since it constructs a matrix.
+                 return True
+-        elif isinstance(M, Submodule_free_ambient):
++        elif isinstance(M, (Submodule_free_ambient,
++                            FreeModule_submodule_with_basis_pid)):
+             if (self.base_ring().has_coerce_map_from(M.base_ring()) and
+                     self.rank() == M.degree()):
+                 return True
+diff --git a/src/sage/algebras/lie_algebras/classical_lie_algebra.py b/src/sage/algebras/lie_algebras/classical_lie_algebra.py
+--- a/src/sage/algebras/lie_algebras/classical_lie_algebra.py
++++ b/src/sage/algebras/lie_algebras/classical_lie_algebra.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+@@ -1876 +1875 @@
+-            sage: L._test_structure_coeffs()
++            sage: L._test_structure_coeffs()  # needs sage.libs.gap
