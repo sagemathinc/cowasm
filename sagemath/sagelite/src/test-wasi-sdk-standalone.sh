@@ -2082,7 +2082,8 @@ print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
 run_node_import \
   "simplicial complex catalog startup smoke" \
-  "from sage.all import MomentAngleComplex, SimplicialComplex, simplicial_complexes
+  "from sage.all import MomentAngleComplex, Simplex, SimplicialComplex, simplicial_complexes
+assert Simplex((0, 1)).dimension() == 1
 assert SimplicialComplex([[0, 1]]).dimension() == 1
 assert simplicial_complexes.Sphere(2).dimension() == 2
 assert str(simplicial_complexes.SurfaceOfGenus(3)) == 'Triangulation of an orientable surface of genus 3'

@@ -69667,6 +69667,87 @@ dashboards and worker state are under
 pass can audit the analogous explanatory graph guard on
 `sage/homology/chains.py` or return to a persisted backend/runtime cluster.
 
+Homology chains startup-parity and corpus-promotion pass on 2026-07-24 UTC:
+
+The explanatory file-wide `sage.graphs` annotation on
+`sage/homology/chains.py` initially hid 136 extracted blocks. Reopening the
+historical source with `--optional=sage.graphs` exposed 37 failures:
+35 cascading `NameError` results rooted at the missing common-namespace
+constructor `Simplex`, plus two dependent exception-output mismatches. The
+topology catalog and chain/cochain backends themselves were already working.
+
+Sagelite now imports `Simplex` beside `SimplicialComplex` in the common
+doctest namespace and exposes both from the WASI `sage.all` startup surface.
+Runner version 148 records this namespace behavior, and the standalone
+simplicial-complex startup smoke verifies the public import. With that fix,
+the controlled historical replay records:
+
+```text
+chains.py:       136 passed, 0 failed, 0 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+Removing the stale file-wide graph guard leaves the ordinary default profile
+with the same 136 passes, zero failures, and zero skips. The controlled and
+default dashboards contain 136 ordered rows and agree exactly on source,
+source hash, expected and actual output, status, expected kind, skip reason,
+and failure metadata. Every default source range is one line earlier. All tag
+and block-key differences are the expected removal of the inherited
+`optional,needs:sage.graphs` metadata. Saved block-, file-failure-, and
+skip-cluster queries are empty, and active-row coverage is 100%.
+
+The installed Electron-resource copy agrees byte for byte with the patched
+build and exact replay sources. Its complete-module dashboard also records
+136 passes, zero failures, and zero skips. All persisted fields agree with the
+pre-install default dashboard except one passing traceback's actual text,
+whose installed source location is line 587 instead of the stale pre-rebuild
+resource's line 588; this is the expected one-line shift after removing the
+guard.
+
+`sage/homology/chains.py` is now part of the curated pure-math corpus, raising
+it to 1,235 non-comment entries with no duplicates.
+
+A clean pinned-source standalone build generated all 525 Cython extension
+sources, compiled and linked all 1,064 Meson targets, installed and audited
+523 Sagelite side modules, and reached the initial direct-WASI import ladder.
+Its first `import sage.all` probe hit the previously observed transient
+function-signature mismatch. Twelve consecutive fresh-process probes with
+the exact staged `PYTHONPATH` then passed.
+
+A stable-artifact resume of the standalone script completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The resume rebuilt 1,052 invalidated Meson targets after the direct-WASI
+runtime refresh, passed all seven direct-WASI markers and all 85 current Node
+semantic markers, staged and audited 578 Electron resource side modules, and
+passed the 79-block primary doctest smoke with 62 passes, zero failures, and
+17 expected skips. Electron resource relocation and the later runner
+regression probes also passed. The two one-shot harness failures do not
+reproduce from stable installed artifacts and require no source or loader
+change in this pass.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; indexed SQLite row comparison; Node and Bash syntax; corpus
+uniqueness and make-target dry run; accumulated-patch syntax; exact
+zero-fuzz target replay against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison among
+the replayed, runtime-tested, staged, and installed target sources; and
+`git diff --check`. The external developer Sagelite checkout and its
+intentional changes remain untouched.
+
+The accumulated source patch now has 1,705 serialized file sections (1,192
+`diff --git` and 513 legacy sections) and 4,932 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-chains.mLLKb1/`; the clean pinned source and exact target
+replay are under `/tmp/cowasm-sagelite-chains-replay.YVOdnf/`. A future
+scheduled pass can return to a persisted backend/runtime failure cluster or
+audit another stale dependency boundary outside the now-reopened homology
+batch.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

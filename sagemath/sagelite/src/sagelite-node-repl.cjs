@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 147;
+const doctestRunnerVersion = 148;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1444,7 +1444,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.graphs.bipartite_graph", ("BipartiteGraph",)),
         ("sage.graphs.graph_database", ("GraphDatabase", "GenericGraphQuery", "GraphQuery", "graph_db_info")),
         ("sage.graphs.all", ("graphs", "digraphs", "graph_classes")),
-        ("sage.topology.simplicial_complex", ("SimplicialComplex",)),
+        ("sage.topology.simplicial_complex", ("Simplex", "SimplicialComplex")),
         ("sage.topology.moment_angle_complex", ("MomentAngleComplex",)),
         ("sage.topology.delta_complex", ("delta_complexes",)),
         ("sage.topology.cubical_complex", ("cubical_complexes",)),
