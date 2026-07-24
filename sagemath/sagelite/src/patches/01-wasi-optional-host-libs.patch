@@ -32300,3 +32300,9 @@ diff --git a/src/sage/homology/homology_morphism.py b/src/sage/homology/homology
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
  r"""
+diff --git a/src/sage/homology/homology_vector_space_with_basis.py b/src/sage/homology/homology_vector_space_with_basis.py
+--- a/src/sage/homology/homology_vector_space_with_basis.py
++++ b/src/sage/homology/homology_vector_space_with_basis.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
+ """

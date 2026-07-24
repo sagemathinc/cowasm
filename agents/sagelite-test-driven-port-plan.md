@@ -69592,6 +69592,81 @@ successful run and remain ignored. A future scheduled pass can return to
 another persisted backend/runtime failure cluster or audit the next stale
 dependency boundary.
 
+Homology vector-space graph-guard reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+The explanatory file-wide `sage.graphs` annotation on
+`sage/homology/homology_vector_space_with_basis.py` marked all 291 extracted
+blocks optional even though the catalogs and topology backends used by its
+active examples are now available. A runner-version-147 controlled replay
+with `--optional=sage.graphs` recorded:
+
+```text
+homology_vector_space_with_basis.py: 207 passed, 0 failed, 84 skipped
+run lifecycle:                       passed and closed
+SQLite integrity:                    ok
+```
+
+The 84 skips are narrower explicit annotations: 83 blocks require
+`sage.groups` (seven of those are also long-time), and one additional block is
+long-time. Removing the stale file-wide guard leaves the ordinary default
+profile with the same 207 passes, zero failures, and 84 classified skips.
+
+The controlled and default dashboards contain 291 ordered rows and agree
+exactly on source, source hash, expected and actual output, status, expected
+kind, and failure metadata. Every default source range is one line earlier.
+The tag and skip-reason changes are precisely the removal of inherited
+`optional,needs:sage.graphs` metadata while preserving the explicit
+`sage.groups` and long-time classifications. Both lifecycles are closed, both
+databases pass `PRAGMA integrity_check`, and saved block- and file-failure
+queries are empty.
+
+The installed Electron-resource copy agrees byte for byte with the patched
+build and exact replay sources. Its complete-module dashboard also records
+291 rows, 207 passes, zero failures, and 84 skips with the same source,
+expected result, status, expected kind, tags, skip reasons, and failure
+metadata. One passing traceback's persisted actual text points to line 1106
+instead of the pre-rebuild runtime's line 1107, the expected one-line source
+shift after refreshing the installed module.
+
+`sage/homology/homology_vector_space_with_basis.py` is now part of the curated
+pure-math corpus, raising it to 1,234 non-comment entries with no duplicates.
+
+A fresh reconstructed standalone build, resumed with four Cython-generation
+and Meson-compile jobs after an intentionally stopped single-job generation,
+completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run generated all 525 Cython extension sources, installed and audited 523
+Sagelite side modules, passed all 87 Node semantic markers, staged and audited
+578 Electron resource side modules, and passed the 79-block primary doctest
+smoke with 62 passes, zero failures, and 17 expected skips. Electron resource
+relocation and the later runner regression probes also passed.
+
+The external developer checkout already contains the exact generic
+complex-root fallback represented by its accumulated patch hunk. That one
+pre-applied overlap was confined to reconstructed build state; the exact
+target section for this homology file applies with zero fuzz against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` and reproduces the
+runtime-tested file byte for byte. The external checkout and its intentional
+changes remain untouched.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; indexed SQLite row comparison; corpus uniqueness and make-target dry
+run; accumulated-patch syntax; byte-for-byte comparison among exact replay,
+patched build, and installed target sources; and `git diff --check`.
+
+The accumulated source patch now has 1,704 serialized file sections (1,191
+`diff --git` and 513 legacy sections) and 4,931 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-homology-vector.vZGml1/`; exact target replay is under
+`/tmp/cowasm-sagelite-homology-vector-replay.LC0Afn/`. A future scheduled
+pass can audit the analogous explanatory graph guard on
+`sage/homology/chains.py` or return to a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
