@@ -137,6 +137,7 @@ src/sage/algebras/lie_algebras/bgg_resolution.py
 src/sage/algebras/lie_algebras/examples.py
 src/sage/algebras/lie_algebras/free_lie_algebra.py
 src/sage/algebras/lie_algebras/heisenberg.py
+src/sage/algebras/lie_algebras/lie_algebra_element.pyx
 src/sage/algebras/lie_algebras/morphism.py
 src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
 src/sage/algebras/lie_algebras/onsager.py

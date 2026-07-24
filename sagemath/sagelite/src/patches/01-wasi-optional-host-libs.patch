@@ -32460,3 +32460,71 @@ diff --git a/src/sage/algebras/lie_algebras/bgg_resolution.py b/src/sage/algebra
          {0: [1],
           1: [s1, s2],
           2: [s1*s2, s2*s1],
+diff --git a/src/sage/algebras/free_algebra.py b/src/sage/algebras/free_algebra.py
+--- a/src/sage/algebras/free_algebra.py
++++ b/src/sage/algebras/free_algebra.py
+@@ -997 +997,9 @@
+-                dmat[v2_ind, v1_ind] = polynomial_ring(d_poly)
++                try:
++                    dmat[v2_ind, v1_ind] = polynomial_ring(d_poly)
++                except TypeError:
++                    # The generic polydict implementation has no coercion
++                    # from a free-algebra element.  Evaluate its monomials
++                    # explicitly in the commutative generators instead.
++                    gens = polynomial_ring.gens()
++                    dmat[v2_ind, v1_ind] = polynomial_ring.sum(
++                        c * m(*gens) for m, c in d_poly)
+diff --git a/src/sage/algebras/lie_algebras/lie_algebra_element.pyx b/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
+--- a/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
++++ b/src/sage/algebras/lie_algebras/lie_algebra_element.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+@@ -43 +42 @@
+-            sage: y*x
++            sage: y*x  # needs sage.rings.polynomial.plural
+@@ -61 +60 @@
+-            sage: y * x.lift()
++            sage: y * x.lift()  # needs sage.rings.polynomial.plural
+@@ -63 +62 @@
+-            sage: y.lift() * x
++            sage: y.lift() * x  # needs sage.rings.polynomial.plural
+@@ -147 +146 @@
+-            sage: x.lift().parent() == L.universal_enveloping_algebra()
++            sage: x.lift().parent() == L.universal_enveloping_algebra()  # needs sage.rings.polynomial.plural
+@@ -156 +155 @@
+-            sage: x.lift()
++            sage: x.lift()  # needs sage.rings.polynomial.plural
+@@ -158 +157 @@
+-            sage: y.lift()
++            sage: y.lift()  # needs sage.rings.polynomial.plural
+@@ -160 +159 @@
+-            sage: x * y
++            sage: x * y  # needs sage.rings.polynomial.plural
+@@ -162 +161 @@
+-            sage: y * x
++            sage: y * x  # needs sage.rings.polynomial.plural
+@@ -259,2 +258,2 @@
+-        sage: s = SymmetricFunctions(QQ).s()
+-        sage: L = LieAlgebra(associative=s)
++        sage: s = SymmetricFunctions(QQ).s()  # needs sage.combinat.sf
++        sage: L = LieAlgebra(associative=s)  # needs sage.combinat.sf
+@@ -262,2 +261,2 @@
+-        sage: x = L.basis()[P]
+-        sage: ascii_art(x)
++        sage: x = L.basis()[P]  # needs sage.combinat.sf
++        sage: ascii_art(x)  # needs sage.combinat.sf
+@@ -269 +268 @@
+-        sage: unicode_art(x)
++        sage: unicode_art(x)  # needs sage.combinat.sf
+@@ -329,0 +329 @@
++            sage: # needs sage.groups
+@@ -354,0 +355 @@
++            sage: # needs sage.groups
+@@ -482,0 +484 @@
++            sage: # needs sage.groups
+@@ -907 +909 @@
+-            sage: l = elt.lift(); l
++            sage: l = elt.lift(); l  # needs sage.rings.polynomial.plural
+@@ -909 +911 @@
+-            sage: l.parent()
++            sage: l.parent()  # needs sage.rings.polynomial.plural

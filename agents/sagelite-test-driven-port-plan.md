@@ -69956,6 +69956,85 @@ replay is under `/tmp/cowasm-sagelite-bgg-replay-checked.Vhl8UX/`. A future
 scheduled pass can audit another stale dependency guard or choose the next
 compact backend/runtime cluster.
 
+Lie-algebra element guard reopening and free-algebra relation conversion pass on
+2026-07-24 UTC:
+
+A runner-version-148 controlled replay of the historical file-wide
+`sage.algebras.lie_algebras sage.graphs` guard recorded:
+
+```text
+lie_algebra_element.pyx: 425 passed, 39 failed, 0 skipped
+```
+
+The graph feature was not the active boundary. Nine primary failures occurred
+while universal-enveloping-algebra construction converted the lower-order part
+of a free-algebra relation into the generic commutative-polynomial fallback.
+That conversion raised a misleading rational-coercion `TypeError` before the
+runtime could reach the unavailable noncommutative `plural` backend. The
+remaining primary failures were SymmetricFunctions and symmetric-group/group-
+algebra startup surfaces; most other rows were dependent state failures.
+
+`FreeAlgebra_generic.g_algebra` now catches the missing generic-polydict
+coercion and explicitly evaluates each free monoid term in the commutative
+polynomial generators. The controlled failure therefore reaches the true
+`sage.rings.polynomial.plural` import boundary. The stale file-wide guard is
+removed, and only the affected examples carry focused
+`sage.rings.polynomial.plural`, `sage.combinat.sf`, or `sage.groups` metadata.
+
+The rebuilt default browser profile records:
+
+```text
+lie_algebra_element.pyx: 425 passed, 0 failed, 39 skipped
+skip groups:              24 sage.groups
+                           10 sage.rings.polynomial.plural
+                            5 sage.combinat.sf
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The post-build dashboard contains 464 ordered rows, has a 100% non-skipped
+pass rate, and leaves the saved block- and file-failure cluster queries empty.
+The rebuilt Electron-resource sources agree byte for byte with the patched
+build sources. The pre-build default and installed-resource dashboards also
+recorded 425 passes, zero failures, and 39 skips with exact row-level semantic
+agreement.
+
+`sage/algebras/lie_algebras/lie_algebra_element.pyx` is now part of the curated
+pure-math corpus, raising it to 1,242 non-comment entries with no duplicates.
+
+The first standalone staging attempt reproduced the known rejection caused by
+the external developer checkout's intentional `complex_roots.py` change. A
+clean shared clone at the pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` was used for the resumed build;
+the external checkout and its matrix, integer-ring, complex-root, and SQLite
+changes remain untouched. The four-worker standalone run completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+It generated all 527 Cython extension sources, compiled and linked all 1,064
+Meson targets, installed and audited 523 Sagelite side modules, passed all
+seven direct-WASI markers and all 87 Node semantic markers, staged and audited
+578 Electron resource side modules, and passed the 79-block primary doctest
+smoke with 62 passes, zero failures, and 17 expected skips. Electron relocation
+and the later focused runner regressions also passed.
+
+Validation additionally includes clean accumulated-patch application and
+byte-for-byte target replay, Python compilation of the free-algebra change,
+focused controlled/default/rebuilt-resource SQLite dashboards, saved
+lifecycle/failure/skip/integrity queries, corpus uniqueness and make-target dry
+run, and `git diff --check`.
+
+The accumulated source patch now has 1,714 serialized file sections (1,201
+`diff --git` and 513 legacy sections) and 4,966 hunks. Focused dashboards and
+worker state are under `/tmp/cowasm-sagelite-lie-element.uSpGug/`; the exact
+clean replay is under `/tmp/cowasm-sagelite-lie-zero-replay2.C3rAfj/`, and the
+standalone source clone is under
+`/tmp/cowasm-sagelite-clean-source.GzEG6X/`. A future scheduled pass can audit
+another stale dependency guard or select the next compact backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
