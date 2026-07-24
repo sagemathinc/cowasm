@@ -32528,3 +32528,8 @@ diff --git a/src/sage/algebras/lie_algebras/lie_algebra_element.pyx b/src/sage/a
 @@ -909 +911 @@
 -            sage: l.parent()
 +            sage: l.parent()  # needs sage.rings.polynomial.plural
+diff --git a/src/sage/algebras/lie_algebras/virasoro.py b/src/sage/algebras/lie_algebras/virasoro.py
+--- a/src/sage/algebras/lie_algebras/virasoro.py
++++ b/src/sage/algebras/lie_algebras/virasoro.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs sage.algebras.lie_algebras

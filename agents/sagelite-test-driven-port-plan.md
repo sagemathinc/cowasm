@@ -70035,6 +70035,80 @@ standalone source clone is under
 another stale dependency guard or select the next compact backend/runtime
 cluster.
 
+Virasoro guard reopening and corpus-promotion pass on 2026-07-24 UTC:
+
+A two-file runner-version-148 controlled probe selected the inherited
+Lie-algebra and graph features on two remaining guarded modules:
+
+```text
+virasoro.py:           191 passed,  0 failed, 0 skipped
+affine_lie_algebra.py: 118 passed, 63 failed, 2 skipped
+```
+
+The Virasoro algebra, Witt algebra, and charged free-boson examples therefore
+do not require the historical file-wide `sage.graphs` or
+`sage.algebras.lie_algebras` annotation. The affine module still has a real
+failure cluster and remains guarded for a future focused pass.
+
+Removing only the Virasoro guard leaves the ordinary default browser profile
+with:
+
+```text
+virasoro.py:       191 passed, 0 failed, 0 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The controlled and default dashboards agree on all 191 source hashes, sources,
+expected and actual outputs, statuses, expected kinds, skip reasons, and
+failure metadata. Every default source range is one line earlier, and the only
+tag difference is the expected removal of the inherited
+`optional,needs:sage.graphs,needs:sage.algebras.lie_algebras` metadata.
+Saved block-failure, file-error, and skip queries are empty.
+
+The rebuilt Electron-resource source agrees byte for byte with the patched
+build and clean sequential replay sources. Its complete-module dashboard also
+records 191 passes, zero failures, and zero skips; indexed comparison with the
+default dashboard finds no range or semantic differences.
+
+`sage/algebras/lie_algebras/virasoro.py` is now part of the curated pure-math
+corpus, raising it to 1,243 non-comment entries with no duplicates.
+
+A clean pinned-source standalone build used four Cython-generation and Meson
+compile jobs. The first installed direct-WASI stage reproduced the known
+transient `import sage.all` signature mismatch, including after a refreshed
+make-level resume. Three consecutive fresh-process probes against that exact
+stage then passed, and a direct resume-mode harness run completed the full
+ladder with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The completed run generated and linked all 527 Cython extensions, installed
+and audited 523 Sagelite side modules, passed all seven direct-WASI markers and
+all 87 Node semantic markers, staged and audited 578 Electron resource side
+modules, and passed the 79-block primary doctest smoke with 62 passes, zero
+failures, and 17 expected skips. Electron relocation and the later synthetic
+and installed-source doctest regressions also passed. No source or loader
+change was warranted for the discarded transient direct-WASI staging state.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; controlled/default/installed SQLite row comparison; corpus uniqueness
+and make-target dry run; accumulated-patch syntax and clean sequential
+application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte target comparison;
+and `git diff --check`.
+
+The accumulated source patch now has 1,715 serialized file sections (1,202
+`diff --git` and 513 legacy sections) and 4,967 hunks. Focused dashboards,
+worker state, direct-WASI probes, and the standalone log are under
+`/tmp/cowasm-sagelite-next-guard.2KtMAE/`; the clean sequential replay is under
+`/tmp/cowasm-sagelite-virasoro-replay.A5nU7F/`, and the standalone source is
+under `/tmp/cowasm-sagelite-virasoro-source/`. A future scheduled pass can
+isolate the persisted affine-Lie-algebra failure cluster or audit another
+compact stale dependency guard.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
