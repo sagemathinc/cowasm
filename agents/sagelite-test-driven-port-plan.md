@@ -68930,6 +68930,57 @@ run; those generated artifacts remain ignored. A future scheduled pass can
 return to a persisted backend/runtime failure cluster or audit another compact
 stale topology dependency boundary.
 
+Delta-complex dependency reopening and corpus-promotion pass on 2026-07-24
+UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/delta_complex.py` hid 167 extracted blocks. The reconstructed
+pre-change default dashboard recorded zero passes, zero failures, and one
+file-wide skip. Selecting the inherited graph feature against runner version
+144 reopened the complete module and recorded:
+
+```text
+delta_complex.py: 105 passed, 0 failed, 62 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+No backend, namespace, or output failure remained. Removing the stale
+file-wide directive leaves the ordinary default profile with the same 105
+passing examples and zero failures. The retained skips all include the
+narrower `sage.modules` dependency; one also requires
+`sage.rings.finite_rings`, and one is additionally classified as long-time.
+Saved block- and file-failure queries are empty, and the active-row pass rate
+is 100%.
+
+The controlled and final dashboards contain 167 ordered rows and agree exactly
+on source, source hash, expected output, actual output, status, expected kind,
+and failure metadata. Every final source range is one line earlier. All 167
+tag differences and 62 skip-reason differences are the corresponding removal
+of the inherited graph feature.
+
+`sage/topology/delta_complex.py` is now part of the curated pure-math corpus,
+raising it to 1,225 non-comment entries with no duplicates. This is
+source-only dependency cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, or resource restaging is required.
+
+Validation includes the reconstructed pre-change default dashboard; the
+controlled and final default complete-module dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and exact indexed
+row comparison; corpus uniqueness and make-target dry run; exact zero-fuzz
+replay of the target patch section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,695 serialized file sections (1,182
+`diff --git` and 513 legacy sections) and 4,921 hunks. SQLite dashboards and
+worker state are under `/tmp/cowasm-sagelite-delta-complex.MiMdpa/`; exact
+target replay state is under
+`/tmp/cowasm-sagelite-delta-complex-replay.TqFBCV/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the adjacent cubical-complex boundary or select a
+persisted backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
