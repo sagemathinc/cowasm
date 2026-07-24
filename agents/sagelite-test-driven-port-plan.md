@@ -68981,6 +68981,55 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit the adjacent cubical-complex boundary or select a
 persisted backend/runtime failure cluster.
 
+Cubical-complex dependency reopening and corpus-promotion pass on 2026-07-24
+UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/cubical_complex.py` hid 254 extracted blocks. The pre-change
+default dashboard recorded zero passes, zero failures, and one file-wide skip.
+Selecting the inherited graph feature against runner version 144 reopened the
+complete module and recorded:
+
+```text
+cubical_complex.py: 219 passed, 0 failed, 35 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+No backend, namespace, or output failure remained. Removing the stale
+file-wide directive leaves the ordinary default profile with the same 219
+passing examples and zero failures. The retained skips are 34
+`optional:sage.modules` rows and one long-time row. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%.
+
+The controlled and final dashboards contain 254 ordered rows and agree exactly
+on source, source hash, expected output, actual output, status, expected kind,
+and failure metadata. Every final source range is one line earlier. All 254
+tag differences, plus 34 skip-reason differences, are the corresponding
+removal of the inherited graph feature.
+
+`sage/topology/cubical_complex.py` is now part of the curated pure-math corpus,
+raising it to 1,226 non-comment entries with no duplicates. This is
+source-only dependency cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default dashboard; the controlled and final
+default complete-module dashboards; saved lifecycle/latest-run/failure/skip
+queries; SQLite integrity and exact indexed row comparison; corpus uniqueness
+and make-target dry run; accumulated-patch syntax; exact zero-fuzz replay of
+the target patch section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,696 serialized file sections (1,183
+`diff --git` and 513 legacy sections) and 4,922 hunks. SQLite dashboards and
+worker state are under `/tmp/cowasm-sagelite-cubical-complex.7QMAjb/`; exact
+target replay state is under
+`/tmp/cowasm-sagelite-cubical-complex-replay.JoRApS/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another remaining file-wide topology guard or select
+a persisted backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

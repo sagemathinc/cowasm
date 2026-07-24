@@ -1228,3 +1228,4 @@ src/sage/topology/simplicial_complex_morphism.py
 src/sage/topology/moment_angle_complex.py
 src/sage/topology/cell_complex.py
 src/sage/topology/delta_complex.py
+src/sage/topology/cubical_complex.py
