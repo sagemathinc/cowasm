@@ -32644,3 +32644,11 @@ diff --git a/src/sage/algebras/lie_algebras/representation.py b/src/sage/algebra
 +++ b/src/sage/algebras/lie_algebras/representation.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.rings.finite_rings
+diff --git a/src/sage/algebras/lie_algebras/bgg_dual_module.py b/src/sage/algebras/lie_algebras/bgg_dual_module.py
+--- a/src/sage/algebras/lie_algebras/bgg_dual_module.py
++++ b/src/sage/algebras/lie_algebras/bgg_dual_module.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs sage.algebras.lie_algebras sage.rings.number_field
+@@ -1175 +1174 @@
+-            sage: L.bgg_resolution()
++            sage: L.bgg_resolution()  # needs sage.libs.gap

@@ -70310,6 +70310,62 @@ replay is under `/tmp/cowasm-sagelite-representation-target.v9g5Bj/`. A future
 scheduled pass can classify the single BGG-dual GAP boundary, isolate the
 single PBW cypari2 boundary, or select another persisted runtime cluster.
 
+BGG-dual GAP-boundary classification and corpus-promotion pass on
+2026-07-24 UTC:
+
+The runner-version-148 controlled dashboard from the preceding Lie-algebra
+guard audit selected the historical file-wide
+`sage.graphs sage.algebras.lie_algebras sage.rings.number_field` annotation
+and recorded:
+
+```text
+bgg_dual_module.py: 258 passed, 1 failed, 6 skipped
+```
+
+The six skips are independent long-time examples. The only active failure was
+`FiniteDimensionalSimpleModule.bgg_resolution()`, whose Weyl-group import
+reached the unavailable `sage.libs.gap.libgap` backend. The graph,
+Lie-algebra, and number-field features were not active boundaries elsewhere
+in the module.
+
+The stale file-wide guard is removed, and only the
+`L.bgg_resolution()` example now carries focused `sage.libs.gap` metadata.
+The ordinary default node profile records:
+
+```text
+bgg_dual_module.py: 258 passed, 0 failed, 7 skipped
+skip groups:          6 long time
+                      1 sage.libs.gap
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The dashboard contains 265 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. The 264 unaffected rows agree
+with the controlled dashboard on source hashes, source, expected and actual
+output, status, expected kind, skip reason, and failure metadata; their source
+ranges are uniformly one line earlier after removing the header. The remaining
+row is the intended transition from a libGAP import failure to an explicit
+`optional:sage.libs.gap` skip.
+
+`sage/algebras/lie_algebras/bgg_dual_module.py` is now part of the curated
+pure-math corpus, raising it to 1,247 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; patch syntax; corpus uniqueness and make-target dry run; exact
+two-section, zero-fuzz replay against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with the
+runtime-tested source; and `git diff --check`. This change affects only source
+doctest metadata, so the immediately preceding fully green standalone build
+remains the compiled-runtime baseline.
+
+The accumulated source patch now has 1,721 serialized file sections (1,208
+`diff --git` and 513 legacy sections) and 4,989 hunks. The default dashboard
+and worker state are under `/tmp/cowasm-sagelite-bgg-dual.FzdXOZ/`; exact
+target replay is under `/tmp/cowasm-sagelite-bgg-dual-target.azOvBV/`. A future
+scheduled pass can isolate the single PBW cypari2 boundary or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
