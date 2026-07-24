@@ -1231,3 +1231,4 @@ src/sage/topology/delta_complex.py
 src/sage/topology/cubical_complex.py
 src/sage/topology/simplicial_set_morphism.py
 src/sage/topology/simplicial_set_constructions.py
+src/sage/topology/simplicial_set.py
