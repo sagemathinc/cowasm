@@ -69748,6 +69748,66 @@ scheduled pass can return to a persisted backend/runtime failure cluster or
 audit another stale dependency boundary outside the now-reopened homology
 batch.
 
+Lie-algebra graph-guard reopening and corpus-promotion pass on 2026-07-24 UTC:
+
+Four file-wide `sage.graphs` annotations remained on Lie-algebra modules whose
+active examples no longer require that dependency:
+
+```text
+sage/algebras/lie_algebras/heisenberg.py
+sage/algebras/lie_algebras/onsager.py
+sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
+sage/algebras/lie_algebras/symplectic_derivation.py
+```
+
+A runner-version-148 controlled replay with `--optional=sage.graphs` recorded
+473 passes, zero failures, and one existing long-time skip across the four
+modules. Removing the stale guards leaves the ordinary default profile with
+the same result. The controlled and default dashboards contain 474 ordered
+rows and agree on source, expected and actual output, status, expected kind,
+skip reason, and failure metadata. Every default source range is one line
+earlier; all tag and block-key changes are the expected removal of inherited
+`optional,needs:sage.graphs` metadata.
+
+The installed Electron-resource copies agree byte for byte with the patched
+build sources. Their complete-module dashboard also records 473 passes, zero
+failures, and one skip, with exact row-level agreement on source, expected and
+actual output, status, tags, skip reason, and failure metadata. The default
+and installed databases are closed and pass `PRAGMA integrity_check`.
+
+All four modules are now part of the curated pure-math corpus, raising it to
+1,239 non-comment entries with no duplicates.
+
+A clean pinned-source standalone build completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run generated all 527 Cython extension sources, compiled and linked all
+1,064 Meson targets, installed and audited 523 Sagelite side modules, passed
+all six direct-WASI markers and all 86 Node semantic markers, staged and
+audited 578 Electron resource side modules, and passed the 79-block primary
+doctest smoke with 62 passes, zero failures, and 17 expected skips. Electron
+resource relocation and the later runner regression probes also passed.
+
+Validation additionally includes saved SQLite summaries; indexed controlled,
+default, and installed row comparison; corpus uniqueness and make-target dry
+run; accumulated-patch syntax and clean pinned-source application; exact
+zero-fuzz replay of the four target sections; byte-for-byte comparison among
+the replayed, runtime-tested, and installed target sources; and `git diff
+--check`. The external developer Sagelite checkout and its intentional changes
+remain untouched.
+
+The accumulated source patch now has 1,709 serialized file sections (1,196
+`diff --git` and 513 legacy sections) and 4,936 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-cellular-basis.htPvR4/`; the clean pinned Git source is
+under `/tmp/cowasm-sagelite-lie-git.Lc7iUk/`, and the exact target replay is
+under `/tmp/cowasm-sagelite-lie-target.kpcfjc/`. A future scheduled pass can
+audit another stale dependency boundary or return to a persisted
+backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -134,10 +134,14 @@ src/sage/algebras/steenrod/steenrod_algebra.py
 src/sage/algebras/lie_algebras/abelian.py
 src/sage/algebras/lie_algebras/bch.py
 src/sage/algebras/lie_algebras/free_lie_algebra.py
+src/sage/algebras/lie_algebras/heisenberg.py
 src/sage/algebras/lie_algebras/morphism.py
 src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
+src/sage/algebras/lie_algebras/onsager.py
 src/sage/algebras/lie_algebras/quotient.py
+src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
 src/sage/algebras/lie_algebras/structure_coefficients.py
+src/sage/algebras/lie_algebras/symplectic_derivation.py
 src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/affine_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/bosonic_ghosts_lie_conformal_algebra.py
