@@ -1223,3 +1223,4 @@ src/sage/topology/simplicial_set_catalog.py
 src/sage/topology/simplicial_set_examples.py
 src/sage/topology/simplicial_complex_homset.py
 src/sage/topology/simplicial_complex_examples.py
+src/sage/topology/filtered_simplicial_complex.py

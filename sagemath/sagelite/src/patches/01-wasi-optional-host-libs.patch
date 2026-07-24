@@ -32212,3 +32212,12 @@ diff --git a/src/sage/topology/simplicial_complex_examples.py b/src/sage/topolog
 -        sage: matching([1, 2], [3, 4])
 +        sage: matching([1, 2], [3, 4])  # random
          [{(1, 3), (2, 4)}, {(1, 4), (2, 3)}]
+diff --git a/src/sage/topology/filtered_simplicial_complex.py b/src/sage/topology/filtered_simplicial_complex.py
+--- a/src/sage/topology/filtered_simplicial_complex.py
++++ b/src/sage/topology/filtered_simplicial_complex.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+@@ -524 +523 @@
+-            sage: int_list2[1]
++            sage: int_list2[1]                                                  # needs sage.modules
