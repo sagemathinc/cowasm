@@ -32227,3 +32227,9 @@ diff --git a/src/sage/topology/simplicial_complex_morphism.py b/src/sage/topolog
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/topology/moment_angle_complex.py b/src/sage/topology/moment_angle_complex.py
+--- a/src/sage/topology/moment_angle_complex.py
++++ b/src/sage/topology/moment_angle_complex.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs sage.topology
+ """

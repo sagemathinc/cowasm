@@ -68768,6 +68768,61 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another compact stale topology boundary or
 select a different persisted backend/runtime cluster.
 
+Moment-angle-complex dependency reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs sage.topology` annotation on
+`sage/topology/moment_angle_complex.py` hid a compact, substantive topology
+boundary with 112 extracted blocks. A reconstructed pre-change default
+dashboard recorded zero passes, zero failures, and one file-wide skip.
+Selecting both inherited features against the current runtime reopened the
+module and recorded:
+
+```text
+moment_angle_complex.py: 77 passed, 0 failed, 35 skipped
+run lifecycle:           passed and closed
+SQLite integrity:       ok
+```
+
+No underlying backend, namespace, or output failure remained. Removing the
+stale file-wide directive leaves the ordinary default profile with the same
+77 passing examples and zero failures. The retained skips are 34
+`optional:sage.modules` rows and one long-time row. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%.
+
+The controlled and final dashboards contain 112 rows and agree exactly on
+source, source hash, expected output, actual output, status, expected kind,
+and failure metadata. Every final source range is one line earlier. All 112
+tag differences, plus 34 skip-reason differences, are the corresponding
+removal of the inherited graph and topology features.
+
+`sage/topology/moment_angle_complex.py` is now part of the curated pure-math
+corpus, raising it to 1,223 non-comment entries with no duplicates. This is
+source-only dependency cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, or resource restaging is required.
+
+Validation includes the reconstructed pre-change default dashboard; the
+controlled and final default complete-module dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and exact row
+comparison; corpus uniqueness and make-target dry run; exact zero-fuzz replay
+of both target patch sections against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,693 serialized file sections
+(1,180 `diff --git` and 513 legacy sections) and 4,919 hunks. SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-cell-complex.3Uu1lj/`; reconstructed baseline and exact
+target replay state are under
+`/tmp/cowasm-sagelite-moment-angle-replay.ajyHKS/`. The external developer
+Sagelite checkout and its intentional changes remain untouched.
+
+A preliminary controlled audit of the adjacent
+`sage/topology/cell_complex.py` boundary recorded 74 passes, 28 failures, and
+61 skips. Its failures cluster entirely around the missing
+`delta_complexes` and `cubical_complexes` startup aliases plus dependent
+setup-name fallout, giving a focused next step for a future scheduled pass.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
