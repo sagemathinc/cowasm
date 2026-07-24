@@ -69808,6 +69808,82 @@ under `/tmp/cowasm-sagelite-lie-target.kpcfjc/`. A future scheduled pass can
 audit another stale dependency boundary or return to a persisted
 backend/runtime failure cluster.
 
+Generic-polynomial sign formatting and Lie-algebra catalog reopening pass on
+2026-07-24 UTC:
+
+A controlled replay of two remaining graph-guarded Lie-algebra modules
+separated a broad dependency boundary from a focused near-miss:
+
+```text
+bgg_resolution.py: 19 passed, 16 failed, 0 skipped
+examples.py:       99 passed,  1 failed, 0 skipped
+```
+
+The BGG failures still begin at the unavailable `sage.libs.gap.libgap`
+boundary and cascade through dependent state. The sole catalog failure was
+instead a generic multivariate-polynomial display mismatch. Its structure
+coefficient was mathematically correct, but the fallback printed
+`(-c)*Y + (-d)*Z` rather than Sage's `-c*Y - d*Z`.
+
+The shared `repr_lincomb` formatter now consults a polynomial-like
+coefficient's ordered leading coefficient when the coefficient itself does not
+compare as negative. This preserves unordered coefficients such as complex
+scalars while giving the generic polynomial fallback the same extracted-sign
+behavior as the specialized polynomial implementation. Source regressions
+cover two negative monomial coefficients and a negative-leading multi-term
+coefficient.
+
+Runner-version-148 controlled, default, and rebuilt-resource dashboards now
+record:
+
+```text
+sage/misc/repr.py:                         30 passed, 0 failed, 7 skipped
+sage/algebras/lie_algebras/examples.py:   100 passed, 0 failed, 0 skipped
+combined:                                 130 passed, 0 failed, 7 skipped
+```
+
+The controlled and default databases each contain 137 ordered rows. They
+agree exactly on source, expected and actual output, status, expected kind,
+skip reason, and failure metadata. The catalog's default source ranges are one
+line earlier, and its only tag differences are the expected removal of the
+inherited `optional,needs:sage.graphs` metadata. The rebuilt installed-resource
+dashboard agrees with the default database on all 137 semantic rows. All
+three lifecycles are closed, all databases pass `PRAGMA integrity_check`, and
+the saved block- and file-failure queries are empty.
+
+`sage/algebras/lie_algebras/examples.py` is now part of the curated pure-math
+corpus, raising it to 1,240 non-comment entries with no duplicates.
+
+A clean pinned-source standalone build completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run generated all 527 Cython extension sources, compiled and linked all
+1,064 Meson targets, installed and audited 523 Sagelite side modules, passed
+all seven direct-WASI markers and all 87 Node semantic markers, staged and
+audited 578 Electron resource side modules, and passed the 79-block primary
+doctest smoke with 62 passes, zero failures, and 17 expected skips. Electron
+resource relocation and the later runner regression probes also passed.
+
+Validation additionally includes indexed controlled/default/installed SQLite
+comparison; saved lifecycle, summary, failure, and integrity queries; generic
+formatter source doctests; corpus uniqueness and make-target dry run; patch
+syntax; clean accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison among
+the replayed, runtime-tested, and installed sources; and `git diff --check`.
+The external developer Sagelite checkout and its intentional changes remain
+untouched.
+
+The accumulated source patch now has 1,711 serialized file sections (1,198
+`diff --git` and 513 legacy sections) and 4,939 hunks. Focused dashboards,
+worker state, and the standalone log are under
+`/tmp/cowasm-sagelite-next-cluster.3ugJly/`; the exact final replay is under
+`/tmp/cowasm-sagelite-repr-replay-final.apXMWB/`. A future scheduled pass can
+address the persisted BGG/libGAP boundary or select another compact
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

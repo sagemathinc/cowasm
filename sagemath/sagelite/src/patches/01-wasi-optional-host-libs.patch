@@ -32336,3 +32336,33 @@ diff --git a/src/sage/algebras/lie_algebras/symplectic_derivation.py b/src/sage/
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/misc/repr.py b/src/sage/misc/repr.py
+--- a/src/sage/misc/repr.py
++++ b/src/sage/misc/repr.py
+@@ -83 +83,10 @@
++    Generic multivariate polynomials use term-order comparison, so consult
++    their leading coefficient when deciding whether to extract a minus sign::
++
++        sage: R.<a,b,c,d> = PolynomialRing(QQ, implementation='generic')
++        sage: repr_lincomb([('Y', -c), ('Z', -d)])
++        '-c*Y - d*Z'
++        sage: repr_lincomb([('Y', -c + d)])
++        '-(c-d)*Y'
++
+     Examples for ``scalar_mult``::
+@@ -169 +178,9 @@
++            if not negative:
++                try:
++                    if c.leading_coefficient() < 0:
++                        negative = True
++                except (AttributeError, NotImplementedError, TypeError):
++                    # Polynomial-like coefficients may expose an ordered
++                    # leading coefficient even when they are not ordered.
++                    pass
+             if negative:
+diff --git a/src/sage/algebras/lie_algebras/examples.py b/src/sage/algebras/lie_algebras/examples.py
+--- a/src/sage/algebras/lie_algebras/examples.py
++++ b/src/sage/algebras/lie_algebras/examples.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ """
