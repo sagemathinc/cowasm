@@ -32366,3 +32366,97 @@ diff --git a/src/sage/algebras/lie_algebras/examples.py b/src/sage/algebras/lie_
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  """
+diff --git a/src/sage/algebras/lie_algebras/bgg_resolution.py b/src/sage/algebras/lie_algebras/bgg_resolution.py
+--- a/src/sage/algebras/lie_algebras/bgg_resolution.py
++++ b/src/sage/algebras/lie_algebras/bgg_resolution.py
+@@ -1,3 +1,2 @@
+-# sage.doctest: needs sage.graphs
+ r"""
+ BGG Resolutions
+@@ -51,8 +50,8 @@
+         sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+         sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+         sage: L = g.simple_module(La[1] + 4*La[2])
+-        sage: res = L.bgg_resolution()
+-        sage: ascii_art(res)
++        sage: res = L.bgg_resolution()  # needs sage.libs.gap
++        sage: ascii_art(res)  # needs sage.libs.gap
+                                 [ 1 -1]       [1]
+                     [1 1]       [-1  1]       [1]
+          0 <-- C_0 <------ C_1 <-------- C_2 <---- C_3 <-- 0
+@@ -60,10 +59,10 @@
+         sage: g = LieAlgebra(QQ, cartan_type=['D', 4])
+         sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+         sage: L = g.simple_module(La[1] + La[2] + 3*La[3])
+-        sage: res = L.bgg_resolution()
+-        sage: w0 = WeylGroup(g.cartan_type(), prefix='s').long_element()
++        sage: res = L.bgg_resolution()  # needs sage.libs.gap
++        sage: w0 = WeylGroup(g.cartan_type(), prefix='s').long_element()  # needs sage.libs.gap
+         sage: all(res.differential(i) * res.differential(i+1) == 0
+-        ....:     for i in range(w0.length()))
++        ....:     for i in range(w0.length()))  # needs sage.libs.gap
+         True
+     """
+     def __init__(self, L):
+@@ -75,8 +74,8 @@
+             sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
+             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+             sage: L = g.simple_module(La[1] + La[2])
+-            sage: res = L.bgg_resolution()
+-            sage: TestSuite(res).run()
++            sage: res = L.bgg_resolution()  # needs sage.libs.gap
++            sage: TestSuite(res).run()  # needs sage.libs.gap
+         """
+         from sage.combinat.root_system.weyl_group import WeylGroup
+         ct = L.lie_algebra().cartan_type()
+@@ -101,7 +100,7 @@
+             sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
+             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+             sage: L = g.simple_module(La[1])
+-            sage: L.bgg_resolution()
++            sage: L.bgg_resolution()  # needs sage.libs.gap
+             BGG resolution of Simple module with highest weight Lambda[1]
+              of Lie algebra of ['B', 2] in the Chevalley basis
+         """
+@@ -116,8 +115,8 @@
+             sage: g = LieAlgebra(QQ, cartan_type=['C', 2])
+             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+             sage: L = g.simple_module(La[1] + La[2])
+-            sage: res = L.bgg_resolution()
+-            sage: res.simple_module() is L
++            sage: res = L.bgg_resolution()  # needs sage.libs.gap
++            sage: res.simple_module() is L  # needs sage.libs.gap
+             True
+         """
+         return self._simple
+@@ -133,8 +132,8 @@
+             sage: g = LieAlgebra(QQ, cartan_type=['G', 2])
+             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+             sage: L = g.simple_module(La[1])
+-            sage: res = L.bgg_resolution()
+-            sage: [sorted(res.module_order(i)) for i in range(7)]
++            sage: res = L.bgg_resolution()  # needs sage.libs.gap
++            sage: [sorted(res.module_order(i)) for i in range(7)]  # needs sage.libs.gap
+             [[1],
+              [s2, s1],
+              [s2*s1, s1*s2],
+@@ -170,7 +169,7 @@
+         sage: from sage.algebras.lie_algebras.bgg_resolution import build_differentials
+-        sage: W = WeylGroup(['B', 2], prefix='s')
+-        sage: D, O = build_differentials(W)
+-        sage: D
++        sage: W = WeylGroup(['B', 2], prefix='s')  # needs sage.libs.gap
++        sage: D, O = build_differentials(W)  # needs sage.libs.gap
++        sage: D  # needs sage.libs.gap
+         {0: [],
+          1: [ 1 -1],
+          2: [1 1]
+@@ -180,7 +179,7 @@
+          4: [1]
+             [1],
+          5: []}
+-        sage: O
++        sage: O  # needs sage.libs.gap
+         {0: [1],
+          1: [s1, s2],
+          2: [s1*s2, s2*s1],

@@ -69884,6 +69884,78 @@ worker state, and the standalone log are under
 address the persisted BGG/libGAP boundary or select another compact
 backend/runtime cluster.
 
+BGG-resolution GAP-boundary classification and corpus-promotion pass on
+2026-07-24 UTC:
+
+A runner-version-148 controlled replay of the historical file-wide
+`sage.graphs` guard reproduced the persisted cluster:
+
+```text
+bgg_resolution.py: 19 passed, 16 failed, 0 skipped
+```
+
+Six failures occurred while `BGGResolution` constructed its Weyl group through
+the unavailable `sage.libs.gap.libgap` backend. The remaining failures were
+dependent display, differential, module-order, or missing-`WeylGroup` state
+after those setup examples failed. The graph feature itself was not the active
+boundary.
+
+The stale file-wide graph guard is now removed. The 16 GAP-backed and dependent
+examples carry focused `# needs sage.libs.gap` metadata, leaving their
+Lie-algebra, weight-lattice, and module setup prompts as ordinary active
+coverage. The default browser profile now records:
+
+```text
+bgg_resolution.py: 19 passed, 0 failed, 16 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+All skips group under `optional:sage.libs.gap`; the non-skipped pass rate is
+100%, and the saved block- and file-failure queries are empty. The rebuilt
+Electron-resource source agrees byte for byte with the patched build source.
+Its complete-module dashboard also records 35 rows, 19 passes, zero failures,
+and 16 skips. Indexed comparison of the default and installed dashboards finds
+no differences in source range, source hash, source, expected or actual output,
+status, expected kind, tags, skip reason, or failure metadata.
+
+`sage/algebras/lie_algebras/bgg_resolution.py` is now part of the curated
+pure-math corpus, raising it to 1,241 non-comment entries with no duplicates.
+
+A clean pinned-source replay applies the accumulated patch against Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58` and reproduces the
+runtime-tested BGG source byte for byte. The external developer checkout's
+pre-applied generic complex-root fallback produced its known patch rejection
+during the first standalone staging attempt; the staged file matched the clean
+replay exactly, so validation resumed from that stable artifact without
+modifying the external checkout.
+
+The four-job standalone resume completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run generated all 527 Cython extension sources, compiled and linked all
+1,064 Meson targets, installed and audited 523 Sagelite side modules, passed
+all seven direct-WASI markers and all 87 Node semantic markers, staged and
+audited 578 Electron resource side modules, and passed the 79-block primary
+doctest smoke with 62 passes, zero failures, and 17 expected skips. Electron
+resource relocation and the later runner regression probes also passed.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; default/installed SQLite row comparison; corpus uniqueness and
+make-target dry run; accumulated-patch syntax and clean application; exact
+target replay; byte-for-byte patched-build/installed-source comparison; and
+`git diff --check`.
+
+The accumulated source patch now has 1,712 serialized file sections (1,199
+`diff --git` and 513 legacy sections) and 4,948 hunks. Focused dashboards and
+worker state are under `/tmp/cowasm-sagelite-bgg.8QPSjY/`; the exact clean
+replay is under `/tmp/cowasm-sagelite-bgg-replay-checked.Vhl8UX/`. A future
+scheduled pass can audit another stale dependency guard or choose the next
+compact backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
