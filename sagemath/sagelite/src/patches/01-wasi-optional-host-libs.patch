@@ -32201,3 +32201,14 @@ diff --git a/src/sage/topology/simplicial_complex_homset.py b/src/sage/topology/
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/topology/simplicial_complex_examples.py b/src/sage/topology/simplicial_complex_examples.py
+--- a/src/sage/topology/simplicial_complex_examples.py
++++ b/src/sage/topology/simplicial_complex_examples.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ """
+@@ -167,3 +166,3 @@
+         sage: from sage.topology.simplicial_complex_examples import matching
+-        sage: matching([1, 2], [3, 4])
++        sage: matching([1, 2], [3, 4])  # random
+         [{(1, 3), (2, 4)}, {(1, 4), (2, 3)}]

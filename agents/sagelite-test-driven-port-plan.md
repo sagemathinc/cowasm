@@ -68605,6 +68605,62 @@ state are under
 audit the adjacent simplicial-complex examples boundary or select a different
 persisted backend/runtime cluster.
 
+Simplicial-complex examples graph-dependency reopening and corpus-promotion
+pass on 2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_complex_examples.py` was the adjacent topology
+boundary identified by the preceding homset pass. A fresh runner-version-143
+default dashboard recorded zero passes, zero failures, and one file-wide
+skip. Selecting the inherited graph feature reopened 157 examples and
+recorded 92 passes, one failure, and 64 narrower skips.
+
+The sole failure was an output-order mismatch in `matching([1, 2], [3, 4])`.
+Expected and actual were lists containing mathematically equal sets; only the
+iteration order of two tuples inside the first set differed. Marking that
+single display `# random` preserves execution while avoiding an invalid
+ordering assertion. A post-fix controlled replay with the historical graph
+directive retained then recorded 93 passes, zero failures, and 64 skips.
+Removing the stale file-wide directive leaves the ordinary default profile
+with the same result:
+
+```text
+simplicial_complex_examples.py: 93 passed, 0 failed, 64 skipped
+run lifecycle:                   passed and closed
+SQLite integrity:               ok
+```
+
+The retained skips remain classified by the narrower `sage.modules`,
+`sage.groups`, `sage.combinat`, and `sage.libs.pari` dependencies, long-time
+metadata, or the existing `not tested` deferral. Saved block- and file-failure
+queries are empty, and the active-row pass rate is 100%. The controlled and
+final dashboards contain 157 rows and agree exactly on source, source hash,
+expected output, actual output, status, expected kind, and failure metadata.
+Every final source range is one line earlier. All 157 tag and block-key
+differences, plus 54 skip-reason differences, are the corresponding removal
+of the inherited graph feature and source-line shift.
+
+`sage/topology/simplicial_complex_examples.py` is now part of the curated
+pure-math corpus, raising it to 1,220 non-comment entries with no duplicates.
+This is source-only dependency cleanup: no native WASM rebuild, Electron
+manifest change, runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default and controlled failure dashboards;
+the post-fix controlled and final default complete-module dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and exact row
+comparison; corpus uniqueness and make-target dry run; accumulated-patch
+syntax; exact replay of the target patch section against pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison
+with the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,690 serialized file sections
+(1,177 `diff --git` and 513 legacy sections) and 4,915 hunks. SQLite
+dashboards, worker state, controlled source, and patch replay state are under
+`/tmp/cowasm-sagelite-simplicial-examples.yW6jQQ/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another compact stale topology boundary or select a
+different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
