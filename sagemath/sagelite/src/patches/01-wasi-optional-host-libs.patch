@@ -32288,3 +32288,9 @@ diff --git a/src/sage/homology/chain_complex_homspace.py b/src/sage/homology/cha
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
  r"""
+diff --git a/src/sage/homology/algebraic_topological_model.py b/src/sage/homology/algebraic_topological_model.py
+--- a/src/sage/homology/algebraic_topological_model.py
++++ b/src/sage/homology/algebraic_topological_model.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

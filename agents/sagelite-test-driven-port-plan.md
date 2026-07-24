@@ -69427,6 +69427,78 @@ scheduled pass can audit the adjacent
 `sage/homology/algebraic_topological_model.py` graph guard or return to a
 persisted backend/runtime failure cluster.
 
+Algebraic-topological-model graph-guard reopening and corpus-promotion pass
+on 2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/homology/algebraic_topological_model.py` hid 44 extracted blocks even
+though the topology catalogs and chain-complex backends used by those examples
+are now available in the node profile. A runner-version-147 controlled replay
+with `--optional=sage.graphs` recorded:
+
+```text
+algebraic_topological_model.py: 44 passed, 0 failed, 0 skipped
+run lifecycle:                  passed and closed
+SQLite integrity:               ok
+```
+
+No backend, namespace, output, or file-level failure remained. Removing the
+stale file-wide directive leaves the ordinary default profile with the same
+44 passes, zero failures, and zero skips.
+
+The controlled and default dashboards contain 44 ordered rows and agree
+exactly on source, source hash, expected output, actual output, status,
+expected kind, skip reason, and failure metadata. Every default source range
+is one line earlier. All 44 tag and block-key differences are the expected
+removal of the inherited `optional,needs:sage.graphs` metadata and the
+corresponding source-line shift. Saved block-, file-failure-, and skip-cluster
+queries are empty, and active-row coverage is 100%.
+
+A post-install complete-module dashboard records the same 44 passes, zero
+failures, and zero skips. Its source ranges, source text and hashes, expected
+and actual output, status, expected kind, tags, skip reasons, and failure
+metadata agree exactly with the pre-install default dashboard. Its 44 block
+keys differ only in the expected source-root prefix:
+`src/sage/homology/...` in the patched build tree versus
+`sage/homology/...` in installed Electron resources.
+
+`sage/homology/algebraic_topological_model.py` is now part of the curated
+pure-math corpus, raising it to 1,232 non-comment entries with no duplicates.
+
+A fresh-tree resume-mode standalone build completed Cython generation,
+four-job compile, install, Node import, Electron resource staging, relocation,
+follow-up, and doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+That validation generated all 525 Cython extension sources, passed all 87
+Node semantic markers, audited 578 staged Electron resource side modules, and
+passed the 79-block primary doctest smoke with 62 passes, zero failures, and
+17 expected skips. The fresh reconstruction copied the external developer
+checkout's intentional `complex_roots.py` change; its matching accumulated
+patch hunk was therefore already present. The generated reject was confined
+to the build tree, the installed generic-complex-root smoke passed, and the
+external checkout remained untouched.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; SQLite integrity and indexed row comparison; Node and Bash syntax;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; exact
+zero-fuzz replay of the target source section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison among
+the replayed, runtime-tested, and installed target sources; and
+`git diff --check`.
+
+The accumulated source patch now has 1,702 serialized file sections (1,189
+`diff --git` and 513 legacy sections) and 4,929 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-algebraic-model.kufFrF/`; exact target replay is under
+`/tmp/cowasm-sagelite-algebraic-model-replay.pKVVg6/`. A future scheduled
+pass can audit the remaining explanatory graph guard on
+`sage/homology/homology_morphism.py` or return to a persisted backend/runtime
+failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

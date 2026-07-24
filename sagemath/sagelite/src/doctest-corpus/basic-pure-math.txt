@@ -938,6 +938,7 @@ src/sage/modular/modsym/manin_symbol_list.py
 src/sage/modular/modsym/p1list.pyx
 src/sage/modular/modsym/relation_matrix_pyx.pyx
 src/sage/modular/pollack_stevens/sigma0.py
+src/sage/homology/algebraic_topological_model.py
 src/sage/homology/chain_complex_morphism.py
 src/sage/homology/chain_complex_homspace.py
 src/sage/homology/chain_homotopy.py
