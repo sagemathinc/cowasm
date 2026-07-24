@@ -69239,6 +69239,100 @@ The adjacent `sage/topology/simplicial_complex.py` controlled probe recorded
 scheduled pass can isolate that namespace boundary and then reconsider the
 file-wide graph guard.
 
+Simplicial-complex namespace reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_complex.py` hid 683 extracted blocks. A fresh
+runner-version-145 controlled replay recorded 561 passes, one failure, and 121
+narrower skips. The sole failure was the public startup name used by the
+module's explicit-construction example:
+
+```text
+simplicial_complex.py:5109
+Z = MomentAngleComplex(K); Z
+NameError: name 'MomentAngleComplex' is not defined
+```
+
+The underlying moment-angle implementation already imported and constructed
+the Klein-bottle example successfully. The failure was a stripped-startup
+surface gap: upstream `sage.all` receives `MomentAngleComplex` through
+`sage.topology.all`, while the focused WASI startup surface exposed only the
+simplicial-complex and catalog names.
+
+Runner version 146 now seeds `MomentAngleComplex` from
+`sage.topology.moment_angle_complex` in isolated doctest workers. The WASI
+`sage.all` patch exposes the same name through a lazy import. The standalone
+suite retains both an installed `from sage.all import MomentAngleComplex`
+construction assertion and a focused two-line doctest regression that selects
+the `K = simplicial_complexes.KleinBottle()` setup and the later explicit
+constructor target.
+
+With the historical graph directive still present, a controlled
+runner-version-146 replay recorded 562 passes, zero failures, and 121 skips.
+Removing the stale file-wide directive leaves the ordinary default profile
+with:
+
+```text
+simplicial_complex.py: 562 passed, 0 failed, 121 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The retained skips are 70 `sage.modules`, 27 `sage.groups`, six
+`sage.combinat`, four `sage.numerical.mip`, five combined
+`sage.numerical.mip`/long-time, two `sage.libs.singular`, one
+`sage.rings.finite_rings`, one combined `sage.rings.finite_rings`/long-time,
+and five plain long-time rows. Saved block- and file-failure queries are
+empty, and active-row coverage is 100%.
+
+The controlled and final dashboards each contain 683 ordered rows and agree
+exactly on source, source hash, expected output, actual output, status,
+expected kind, and failure metadata. Every final source range is one line
+earlier. All 683 tag and block-key differences, plus 116 skip-reason
+differences, are the corresponding removal of the inherited graph feature;
+the five plain long-time skips retain their existing skip reason.
+
+A post-install complete-module dashboard records the same 562 passes, zero
+failures, and 121 skips. Its source, expected output, status, expected kind,
+tags, skip reasons, block keys, and failure metadata agree exactly with the
+pre-install final dashboard. Sixteen accepted exception tracebacks differ
+only because their installed-source frame line numbers move one line earlier
+after resource restaging.
+
+`sage/topology/simplicial_complex.py` is now part of the curated pure-math
+corpus, raising it to 1,230 non-comment entries with no duplicates.
+
+A resume-mode standalone build completed Cython generation, compile, install,
+Node import, Electron resource staging, relocation, follow-up, and doctest
+probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+That validation passed all 87 Node semantic markers, audited 523 installed
+Sagelite side modules and 578 staged Electron resource side modules, and
+passed the new two-block focused moment-angle doctest smoke.
+
+Validation also includes the pre-fix focused and complete controlled
+dashboards; the post-fix controlled, final, and post-install complete-module
+dashboards; saved lifecycle/latest-run/failure/skip queries; SQLite integrity
+and indexed row comparison; Node and Bash syntax; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; zero-fuzz reverse-and-forward
+replay of the expanded `sage.all` section; exact zero-fuzz replay of the
+target source section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested sources; and `git diff --check`.
+
+The accumulated source patch now has 1,700 serialized file sections (1,187
+`diff --git` and 513 legacy sections) and 4,927 hunks. SQLite dashboards,
+worker state, controlled source, and target-section replay state are under
+`/tmp/cowasm-sagelite-simplicial-complex.PjCcNk/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit another stale topology dependency boundary or return
+to a persisted backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

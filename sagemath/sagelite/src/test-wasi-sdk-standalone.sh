@@ -2082,10 +2082,11 @@ print('sagelite-node-ok basic graph polynomial and GAP-free ordering smoke')"
 
 run_node_import \
   "simplicial complex catalog startup smoke" \
-  "from sage.all import SimplicialComplex, simplicial_complexes
+  "from sage.all import MomentAngleComplex, SimplicialComplex, simplicial_complexes
 assert SimplicialComplex([[0, 1]]).dimension() == 1
 assert simplicial_complexes.Sphere(2).dimension() == 2
 assert str(simplicial_complexes.SurfaceOfGenus(3)) == 'Triangulation of an orientable surface of genus 3'
+assert str(MomentAngleComplex(simplicial_complexes.KleinBottle())).startswith('Moment-angle complex of Simplicial complex')
 print('sagelite-node-ok simplicial complex catalog startup smoke')"
 
 run_node_import \
@@ -3802,6 +3803,39 @@ if [ "$doctest_simplicial_homset_count" != "1" ]; then
   cat "$doctest_simplicial_homset_log" >&2
   sqlite3 "$doctest_simplicial_homset_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t simplicial homset smoke did not seed the startup constructor."
+fi
+doctest_simplicial_complex_moment_angle_db="$probe_dir/sagelite-doctest-simplicial-complex-moment-angle.sqlite3"
+doctest_simplicial_complex_moment_angle_log="$dist_dir/doctest-simplicial-complex-moment-angle.log"
+doctest_simplicial_complex_moment_angle_file="$build_dir/src/sage/topology/simplicial_complex.py"
+doctest_simplicial_complex_moment_angle_setup_line="$(grep -nF 'sage: K = simplicial_complexes.KleinBottle()' "$doctest_simplicial_complex_moment_angle_file" | tail -n 1 | cut -d: -f1)"
+doctest_simplicial_complex_moment_angle_line="$(grep -nF 'sage: Z = MomentAngleComplex(K); Z' "$doctest_simplicial_complex_moment_angle_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_simplicial_complex_moment_angle_setup_line" \
+      --line "$doctest_simplicial_complex_moment_angle_line" \
+      --sqlite "$doctest_simplicial_complex_moment_angle_db" \
+      "$doctest_simplicial_complex_moment_angle_file" \
+      >"$doctest_simplicial_complex_moment_angle_log" 2>&1
+doctest_simplicial_complex_moment_angle_status=$?
+set -e
+if [ "$doctest_simplicial_complex_moment_angle_status" -eq 124 ]; then
+  tail -120 "$doctest_simplicial_complex_moment_angle_log" >&2
+  record_blocker "sagelite-blocked: sage -t simplicial-complex moment-angle smoke timed out after $node_import_timeout; see $doctest_simplicial_complex_moment_angle_log for the first runtime blocker."
+fi
+if [ "$doctest_simplicial_complex_moment_angle_status" -ne 0 ]; then
+  tail -120 "$doctest_simplicial_complex_moment_angle_log" >&2
+  sqlite3 "$doctest_simplicial_complex_moment_angle_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t simplicial-complex moment-angle smoke failed; see $doctest_simplicial_complex_moment_angle_log for the first runtime blocker."
+fi
+doctest_simplicial_complex_moment_angle_count="$(sqlite3 "$doctest_simplicial_complex_moment_angle_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_simplicial_complex_moment_angle_line and source like 'Z = MomentAngleComplex(K)%';")"
+if [ "$doctest_simplicial_complex_moment_angle_count" != "1" ]; then
+  cat "$doctest_simplicial_complex_moment_angle_log" >&2
+  sqlite3 "$doctest_simplicial_complex_moment_angle_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t simplicial-complex moment-angle smoke did not seed the public constructor."
 fi
 doctest_simplicial_set_catalog_db="$probe_dir/sagelite-doctest-simplicial-set-catalog.sqlite3"
 doctest_simplicial_set_catalog_log="$dist_dir/doctest-simplicial-set-catalog.log"
