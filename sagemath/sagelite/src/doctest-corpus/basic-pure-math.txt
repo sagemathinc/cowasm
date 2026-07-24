@@ -1221,3 +1221,4 @@ src/sage/categories/finite_crystals.py
 src/sage/topology/simplicial_complex_catalog.py
 src/sage/topology/simplicial_set_catalog.py
 src/sage/topology/simplicial_set_examples.py
+src/sage/topology/simplicial_complex_homset.py

@@ -68535,6 +68535,76 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can audit another stale broad topology boundary or
 select a different persisted backend/runtime cluster.
 
+Simplicial-complex homset startup and graph-dependency reopening pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_complex_homset.py` was the smallest remaining broad
+topology boundary: 41 prompts in a 177-line module with no narrower dependency
+tags. A fresh runner-version-142 default dashboard recorded zero passes, zero
+failures, and one file-wide skip. Selecting the inherited graph feature
+recorded 34 passes and seven failures. Two setup prompts could not resolve
+Sage's public `SimplicialComplex` constructor, and the remaining five failures
+were direct `T` and `G` state cascades.
+
+The stripped WASI `sage.all` startup now exports `SimplicialComplex` through a
+lazy import, and isolated doctest namespaces seed the same constructor while
+backfilling `sage.all` for older installed resource trees. Runner version 143
+records that namespace behavior. A post-fix controlled replay with the
+historical graph directive retained then recorded 41 passes and no failures.
+Removing the stale file-wide directive leaves the ordinary default profile
+with:
+
+```text
+simplicial_complex_homset.py: 41 passed, 0 failed, 0 skipped
+run lifecycle:                  passed and closed
+SQLite integrity:              ok
+```
+
+The controlled and final dashboards contain 41 rows and agree exactly on
+source, source hash, expected output, actual output, status, expected kind,
+skip reason, and failure metadata. Every final source range is one line
+earlier. All 41 tag and block-key differences are the corresponding removal
+of the inherited graph feature and source-line shift. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%. A
+complete post-install module dashboard records the same 41 passing rows with
+no semantic difference from the pre-install final dashboard.
+
+The standalone suite now retains both an installed
+`from sage.all import SimplicialComplex` startup smoke and an exact-line
+doctest smoke for `SimplicialComplex([[0], [1]], immutable=True)`. A clean
+pinned-source build with four Cython generation and four Meson compile jobs
+completed configure, compile, install, Node import, Electron resources,
+relocation, follow-up, and doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The clean build used a `/tmp` clone at Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`, because the external developer
+checkout contains unrelated intentional changes, including an overlapping
+`complex_roots.py` edit. The external checkout and those changes remain
+untouched.
+
+`sage/topology/simplicial_complex_homset.py` is now part of the curated
+pure-math corpus, raising it to 1,219 non-comment entries with no duplicates.
+Validation also includes the pre-change default and controlled failure
+dashboards; post-fix controlled, final, and post-install complete-module
+dashboards; saved lifecycle/latest-run/failure queries; SQLite integrity and
+exact row comparison; Node and shell syntax; corpus make-target dry run;
+accumulated-patch syntax; zero-fuzz reverse-and-forward replay of both changed
+target sections to byte-identical runtime-tested sources; zero-fuzz replay of
+the homset section against the pinned Sagelite source; and `git diff --check`.
+
+The accumulated source patch now has 1,689 serialized file sections
+(1,176 `diff --git` and 513 legacy sections) and 4,913 hunks. SQLite
+dashboards, controlled source, clean pinned clone, and exact target replay
+state are under
+`/tmp/cowasm-sagelite-simplicial-homset.3TMVZk/`. A future scheduled pass can
+audit the adjacent simplicial-complex examples boundary or select a different
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
