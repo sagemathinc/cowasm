@@ -68899,6 +68899,37 @@ developer Sagelite checkout and its intentional changes remain untouched. A
 future scheduled pass can isolate the refreshed direct-WASI `sage.all`
 signature mismatch or audit another compact stale topology boundary.
 
+Direct-WASI refreshed-stage blocker closure pass on 2026-07-24 UTC:
+
+The direct `python-wasi-sdk` `import sage.all` signature mismatch recorded by
+the generic cell-complex pass is no longer reproducible. Twelve consecutive
+fresh-process probes with the standalone harness's exact installed
+`PYTHONPATH` completed normally against the previously failing stage. An
+independent resume-mode harness run then restaged the package from the clean
+Meson build and passed the direct-WASI import plus every later direct-WASI
+semantic probe.
+
+The complete resumed standalone ladder finished with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+That run reused the pinned-source Meson build, compiled and installed the
+stage, audited 578 Electron resource side modules, passed all 87 Node import
+and semantic markers, passed the synthetic and installed-source doctest
+regression matrix, and completed the packaged Electron and relocated-resource
+smokes. In particular, it retained and passed the new native cell-complex
+catalog import and exact-line `delta_complexes.Sphere(3).dimension()` checks.
+
+No source, loader, patch, manifest, or runner-version change was needed. The
+original mismatch belonged to the discarded transient staging/runtime state,
+not to a deterministic Sage import boundary. The standalone status and logs
+under `sagemath/sagelite/dist/wasi-sdk/` now record the successful refreshed
+run; those generated artifacts remain ignored. A future scheduled pass can
+return to a persisted backend/runtime failure cluster or audit another compact
+stale topology dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
