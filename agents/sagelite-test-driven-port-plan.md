@@ -69333,6 +69333,100 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit another stale topology dependency boundary or return
 to a persisted backend/runtime failure cluster.
 
+Explanatory-directive runner fix and chain-complex homspace corpus-promotion
+pass on 2026-07-24 UTC:
+
+The file-wide graph dependency on
+`sage/homology/chain_complex_homspace.py` was a promising adjacent stale
+boundary after the topology promotions, but the first selected-feature probe
+did not reopen the module. Runner version 146 interpreted the explanatory
+prose in:
+
+```text
+# sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
+```
+
+as additional required features named `(because`, `all`, `doctests`, `use`,
+and `simplicialcomplex)`. The resulting SQLite file-skip row could not be
+selected by `--optional=sage.graphs`, even though `sage.graphs` was the only
+real dependency.
+
+Runner version 147 now stops the feature list before parenthesized
+explanatory prose. The standalone file-directive smoke retains the
+parenthetical form so the regression fails if prose is serialized as feature
+metadata again. A separate synthetic fixture confirms both sides of the
+selection contract:
+
+```text
+default profile:                 0 passed, 0 failed, 1 skipped
+--optional=cowasm_file_header:   1 passed, 0 failed, 0 skipped
+```
+
+The default row records only `needs:cowasm_file_header` and
+`optional:cowasm_file_header`; its skip reason is exactly
+`optional:cowasm_file_header`.
+
+With runner 147 and the historical graph directive still present, selecting
+`sage.graphs` reopens the complete homspace module:
+
+```text
+chain_complex_homspace.py: 35 passed, 0 failed, 0 skipped
+```
+
+No backend, namespace, or output failure remains. Removing the stale
+file-wide directive leaves the ordinary default profile with the same result:
+
+```text
+chain_complex_homspace.py: 35 passed, 0 failed, 0 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The controlled and final dashboards contain 35 ordered rows and agree exactly
+on source, source hash, expected output, actual output, status, expected kind,
+and failure metadata. Every final source range is one line earlier. All 35 tag
+differences are the expected removal of the inherited graph feature. Saved
+block-, file-failure, and skip queries are empty, and active-row coverage is
+100%.
+
+A post-install complete-module dashboard records the same 35 passes, zero
+failures, and zero skips. All persisted source, hash, expected, actual, status,
+tag, and failure-metadata fields agree exactly with the pre-install final
+dashboard.
+
+`sage/homology/chain_complex_homspace.py` is now part of the curated
+pure-math corpus, raising it to 1,231 non-comment entries with no duplicates.
+
+A resume-mode standalone build completed Meson setup, Cython generation,
+compile, install, Node import, Electron resource staging, relocation,
+follow-up, and doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+That validation passed all 87 Node semantic markers, audited 578 staged
+Electron resource side modules, and passed the 79-block primary doctest smoke
+with 62 passes, zero failures, and 17 expected skips. The updated explanatory
+file-directive smoke and the default/selected synthetic dashboards also pass.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; SQLite integrity and indexed row comparison; Node and Bash syntax;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; exact
+zero-fuzz replay of the target source section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,701 serialized file sections (1,188
+`diff --git` and 513 legacy sections) and 4,928 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-homology-frontier.53BRg0/`; exact target replay is under
+`/tmp/cowasm-sagelite-chain-homspace-replay.1xjsTw/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the adjacent
+`sage/homology/algebraic_topological_model.py` graph guard or return to a
+persisted backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -939,6 +939,7 @@ src/sage/modular/modsym/p1list.pyx
 src/sage/modular/modsym/relation_matrix_pyx.pyx
 src/sage/modular/pollack_stevens/sigma0.py
 src/sage/homology/chain_complex_morphism.py
+src/sage/homology/chain_complex_homspace.py
 src/sage/homology/chain_homotopy.py
 src/sage/homology/homology_group.py
 src/sage/homology/koszul_complex.py

@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 146;
+const doctestRunnerVersion = 147;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1794,6 +1794,7 @@ def __cowasm_optional_feature_tags(source):
         kind = match.group(1).lower()
         feature_tail = (match.group("features") or "").strip()
         feature_tail = re.sub(r"^[-:]\\s*", "", feature_tail)
+        feature_tail = re.split(r"\\s+\\(", feature_tail, maxsplit=1)[0]
         for feature in re.split(r"[\\s,]+", feature_tail):
             feature = feature.strip().strip(";.")
             if feature:

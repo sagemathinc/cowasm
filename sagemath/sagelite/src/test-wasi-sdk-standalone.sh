@@ -3156,7 +3156,7 @@ doctest_file_directive_file="$probe_dir/sagelite-doctest-file-directive.py"
 doctest_file_directive_db="$probe_dir/sagelite-doctest-file-directive.sqlite3"
 doctest_file_directive_log="$dist_dir/doctest-file-directive.log"
 cat >"$doctest_file_directive_file" <<'PY'
-# sage.doctest: needs cowasm_file_header
+# sage.doctest: needs cowasm_file_header (because this fixture tests explanatory prose)
 r"""
 EXAMPLES::
 
