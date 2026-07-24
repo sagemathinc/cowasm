@@ -69561,6 +69561,37 @@ state are under
 pass can investigate the refreshed direct-WASI `sage.all` signature mismatch
 or return to another persisted backend/runtime failure cluster.
 
+Direct-WASI homology-stage blocker closure pass on 2026-07-24 UTC:
+
+The direct `python-wasi-sdk` `import sage.all` signature mismatch recorded by
+the homology-morphism pass is not reproducible in the installed stage. Twelve
+consecutive fresh-process probes with the standalone harness's exact staged
+`PYTHONPATH` completed normally and printed the expected import marker.
+
+An independent resume-mode standalone run then refreshed the direct-WASI
+CPython image, restaged Sagelite from the clean Meson build, and completed the
+entire validation ladder with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The run compiled and linked all 1,052 resumed Meson targets, installed and
+audited 523 Sagelite side modules, passed all seven direct-WASI markers and all
+87 Node semantic markers, staged and audited 578 Electron resource side
+modules, and passed the 79-block primary doctest smoke with 62 passes, zero
+failures, and 17 expected skips. The packaged Electron and relocated-resource
+smokes and the later synthetic and installed-source doctest regressions also
+completed.
+
+No source, loader, patch, manifest, or runner-version change is warranted:
+the original one-shot mismatch belonged to discarded transient staging/runtime
+state rather than a deterministic Sage import boundary. The regenerated
+standalone status and logs under `sagemath/sagelite/dist/wasi-sdk/` record the
+successful run and remain ignored. A future scheduled pass can return to
+another persisted backend/runtime failure cluster or audit the next stale
+dependency boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
