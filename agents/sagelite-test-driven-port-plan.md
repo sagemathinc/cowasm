@@ -68823,6 +68823,82 @@ A preliminary controlled audit of the adjacent
 `delta_complexes` and `cubical_complexes` startup aliases plus dependent
 setup-name fallout, giving a focused next step for a future scheduled pass.
 
+Generic cell-complex catalog namespace reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/cell_complex.py` hid 163 extracted examples. The preceding
+runner-version-143 controlled dashboard with the inherited graph feature
+selected recorded 74 passes, 28 failures, and 61 narrower skips. All 28
+failures were missing `delta_complexes` or `cubical_complexes` names and
+dependent setup-state fallout.
+
+The isolated doctest namespace now seeds both public topology catalogs from
+their native modules while backfilling `sage.all` only after ordinary Sage
+startup has completed. Runner version 144 records that behavior. An attempted
+alternative that exposed both catalogs as `sage.all` lazy imports was rejected
+to avoid broadening core startup for a doctest-only namespace gap. Keeping the
+catalogs in the isolated namespace preserves ordinary Sage doctest semantics
+without adding another startup dependency boundary.
+
+Removing the stale file directive leaves the default profile with:
+
+```text
+cell_complex.py: 102 passed, 0 failed, 61 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+The retained skips are classified by the narrower `sage.modules`,
+`sage.groups`, and `sage.symbolic` dependencies, including their combinations.
+Saved block- and file-failure queries are empty, and the active-row pass rate
+is 100%. The controlled and final dashboards contain the same 163 ordered
+blocks and agree on every source, source hash, and expected output. Every final
+source range is one line earlier. The 74 previously passing rows remain
+passing, all 28 former failures now pass, and all 61 skipped rows remain
+skipped; their tag and skip-reason changes are the expected removal of the
+inherited graph feature.
+
+The standalone suite now retains a native-module import smoke for both
+catalogs and an exact-line doctest smoke for
+`delta_complexes.Sphere(3).dimension()`. A clean pinned-source rebuild with
+four Cython generation and four Meson compile jobs applied the full patch,
+configured, generated all 527 Cython modules, compiled and linked all 1,064
+initial Meson targets, installed the package, and passed the Node
+`import sage.all` probe. The equivalent new catalog import smoke passes
+against that fresh installed stage.
+
+The refreshed standalone run is presently blocked before Electron resource
+staging by a direct `python-wasi-sdk` function-signature mismatch during
+`import sage.all`. Removing the rejected catalog lazy imports and rerunning a
+1,052-target resume build reproduces the same direct-WASI blocker, while the
+Node `sage.all` and native catalog imports pass. This is therefore recorded as
+a separate refreshed CPython/direct-WASI runtime cluster rather than part of
+the namespace fix. The focused runner-version-144 dashboard used the prior
+known-good Electron resource bundle before the clean standalone rebuild
+replaced the staging directory.
+
+`sage/topology/cell_complex.py` is now part of the curated pure-math corpus,
+raising it to 1,224 non-comment entries with no duplicates. Validation also
+includes the controlled and final complete-module dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and indexed row
+comparison; the manual fresh-stage Node catalog import; Node and shell syntax;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; and
+zero-fuzz replay of the target section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+The accumulated source patch now has 1,694 serialized file sections (1,181
+`diff --git` and 513 legacy sections) and 4,920 hunks. SQLite dashboards and
+worker state are under
+`/tmp/cowasm-sagelite-cell-complex.3Uu1lj/` and
+`/tmp/cowasm-sagelite-cell-complex-final.GtZqcd/`; exact target replay is under
+`/tmp/cowasm-sagelite-cell-complex-sections.WjL1wT/`, and the clean build
+source is under
+`/tmp/cowasm-sagelite-cell-complex-build-source.lYiefB/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can isolate the refreshed direct-WASI `sage.all`
+signature mismatch or audit another compact stale topology boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

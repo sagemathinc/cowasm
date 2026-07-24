@@ -2097,6 +2097,14 @@ assert eta.codomain().dimension() == 2
 print('sagelite-node-ok simplicial set catalog startup smoke')"
 
 run_node_import \
+  "cell complex catalog import smoke" \
+  "from sage.topology.cubical_complex import cubical_complexes
+from sage.topology.delta_complex import delta_complexes
+assert delta_complexes.Sphere(3).dimension() == 3
+assert cubical_complexes.Torus().dimension() == 2
+print('sagelite-node-ok cell complex catalog import smoke')"
+
+run_node_import \
   "planarity backend delivery smoke" \
   "from sage.all import graphs
 cycle = graphs.CycleGraph(5)
@@ -3818,6 +3826,37 @@ if [ "$doctest_simplicial_set_catalog_count" != "1" ]; then
   cat "$doctest_simplicial_set_catalog_log" >&2
   sqlite3 "$doctest_simplicial_set_catalog_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t simplicial set catalog smoke did not seed the startup catalog alias."
+fi
+doctest_cell_complex_db="$probe_dir/sagelite-doctest-cell-complex.sqlite3"
+doctest_cell_complex_log="$dist_dir/doctest-cell-complex.log"
+doctest_cell_complex_file="$build_dir/src/sage/topology/cell_complex.py"
+doctest_cell_complex_line="$(grep -nF 'sage: delta_complexes.Sphere(3).dimension()' "$doctest_cell_complex_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_cell_complex_line" \
+      --sqlite "$doctest_cell_complex_db" \
+      "$doctest_cell_complex_file" \
+      >"$doctest_cell_complex_log" 2>&1
+doctest_cell_complex_status=$?
+set -e
+if [ "$doctest_cell_complex_status" -eq 124 ]; then
+  tail -120 "$doctest_cell_complex_log" >&2
+  record_blocker "sagelite-blocked: sage -t cell complex smoke timed out after $node_import_timeout; see $doctest_cell_complex_log for the first runtime blocker."
+fi
+if [ "$doctest_cell_complex_status" -ne 0 ]; then
+  tail -120 "$doctest_cell_complex_log" >&2
+  sqlite3 "$doctest_cell_complex_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t cell complex smoke failed; see $doctest_cell_complex_log for the first runtime blocker."
+fi
+doctest_cell_complex_count="$(sqlite3 "$doctest_cell_complex_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_cell_complex_line and source like 'delta_complexes.Sphere(3).dimension()%';")"
+if [ "$doctest_cell_complex_count" != "1" ]; then
+  cat "$doctest_cell_complex_log" >&2
+  sqlite3 "$doctest_cell_complex_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t cell complex smoke did not seed the startup catalog aliases."
 fi
 doctest_sandpile_import_db="$probe_dir/sagelite-doctest-sandpile-import.sqlite3"
 doctest_sandpile_import_log="$dist_dir/doctest-sandpile-import.log"

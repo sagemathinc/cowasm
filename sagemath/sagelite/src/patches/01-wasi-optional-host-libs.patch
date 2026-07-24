@@ -32233,3 +32233,9 @@ diff --git a/src/sage/topology/moment_angle_complex.py b/src/sage/topology/momen
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs sage.topology
  """
+diff --git a/src/sage/topology/cell_complex.py b/src/sage/topology/cell_complex.py
+--- a/src/sage/topology/cell_complex.py
++++ b/src/sage/topology/cell_complex.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
