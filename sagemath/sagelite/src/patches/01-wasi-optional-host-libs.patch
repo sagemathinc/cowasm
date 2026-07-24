@@ -32533,3 +32533,70 @@ diff --git a/src/sage/algebras/lie_algebras/virasoro.py b/src/sage/algebras/lie_
 +++ b/src/sage/algebras/lie_algebras/virasoro.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs sage.algebras.lie_algebras
+diff --git a/src/sage/categories/homsets.py b/src/sage/categories/homsets.py
+--- a/src/sage/categories/homsets.py
++++ b/src/sage/categories/homsets.py
+@@ -121,6 +121,23 @@
+             [Category of homsets of modules with basis over Rational Field]
+             sage: H.element_class
+             <class 'sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.Homsets.element_class'>
++
++        When a base is itself a category, that structural graph can be
++        incomplete even though the corresponding dynamic classes retain the
++        correct inheritance relation.  Use that relation as a fallback::
++
++            sage: from sage.categories.lie_algebras import LieAlgebras
++            sage: from sage.matrix.matrix_space import MatrixSpace
++            sage: D = LieAlgebras(QQ).FiniteDimensional().WithBasis()
++            sage: C = D._meet_(MatrixSpace(QQ, 5).category())
++            sage: V = C.full_super_categories()[1]
++            sage: A, B = [cat.Homsets() for cat in V.full_super_categories()]
++            sage: A in B._set_of_super_categories
++            False
++            sage: issubclass(A.subcategory_class, B.subcategory_class)
++            True
++            sage: HomsetsCategory.default_super_categories(V)
++            Category of homsets of modules with basis over (number fields and quotient fields and metric spaces)
+         """
+         if category.full_super_categories():
+             categories = tuple(getattr(cat, cls._functor_category)()
+@@ -128,7 +145,9 @@
+             categories = tuple(
+                 category for category in categories
+                 if not any(other is not category
+-                           and category in other._set_of_super_categories
++                           and (category in other._set_of_super_categories
++                                or issubclass(other.subcategory_class,
++                                              category.subcategory_class))
+                            for other in categories)
+             )
+             return Category.join(categories)
+diff --git a/src/sage/algebras/lie_algebras/affine_lie_algebra.py b/src/sage/algebras/lie_algebras/affine_lie_algebra.py
+--- a/src/sage/algebras/lie_algebras/affine_lie_algebra.py
++++ b/src/sage/algebras/lie_algebras/affine_lie_algebra.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+@@ -86,0 +86 @@
++            sage: # needs sage.libs.gap
+@@ -154,0 +155 @@
++            sage: # needs sage.libs.gap
+@@ -355,0 +357 @@
++            sage: # needs sage.libs.gap
+@@ -451,0 +454 @@
++            sage: # needs sage.libs.gap
+@@ -680,0 +684 @@
++            sage: # needs sage.libs.gap
+@@ -815,0 +820 @@
++            sage: # needs sage.libs.gap
+@@ -833,0 +839 @@
++            sage: # needs sage.libs.gap
+@@ -858,0 +865 @@
++            sage: # needs sage.libs.gap
+@@ -876,0 +884 @@
++            sage: # needs sage.libs.gap
+@@ -889,0 +898 @@
++            sage: # needs sage.libs.gap
+@@ -950,0 +960 @@
++            sage: # needs sage.libs.gap
+@@ -1013,0 +1024 @@
++                sage: # needs sage.libs.gap

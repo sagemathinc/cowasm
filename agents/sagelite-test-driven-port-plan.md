@@ -70109,6 +70109,84 @@ under `/tmp/cowasm-sagelite-virasoro-source/`. A future scheduled pass can
 isolate the persisted affine-Lie-algebra failure cluster or audit another
 compact stale dependency guard.
 
+Affine Lie algebra guard reopening and Homset category follow-up on
+2026-07-24 UTC:
+
+The persisted runner-version-148 diagnostic for
+`sage/algebras/lie_algebras/affine_lie_algebra.py` recorded 118 passes, 63
+failures, and two long-time skips under the historical file-wide
+`sage.algebras.lie_algebras sage.graphs` feature selection. Twenty primary
+failures were twisted-affine constructors reaching
+`sage.libs.gap.libgap`; another 40 failed rows and four apparent passes
+depended on those unsuccessful setup prompts. The latter passes reused stale
+untwisted values from earlier docstrings and were not valid coverage.
+
+The remaining three-row failure group was independent of GAP. Running the
+earlier `TestSuite(asl)` example before the matrix `so(5)` construction
+materialized Homset categories in an order where a category over a categorical
+base had an incomplete structural supercategory graph. The earlier Homset
+reduction therefore retained both a module Homset class and its
+module-with-basis subclass as join bases, producing an inconsistent dynamic
+class MRO. `HomsetsCategory.default_super_categories()` now falls back to the
+already-materialized dynamic-class inheritance relation when the structural
+graph misses that redundancy. A focused regression covers this categorical-
+base shape, and the complete Homset module records 70 passes with no failures
+or skips.
+
+The stale affine file guard is removed. Twelve contiguous twisted-affine
+example groups now carry focused `sage.libs.gap` directives, including all
+dependent prompts so skipped setup cannot manufacture stale-variable passes.
+The ordinary rebuilt browser profile records:
+
+```text
+affine_lie_algebra.py: 117 passed, 0 failed, 66 skipped
+skip group:             66 sage.libs.gap
+homsets.py:             70 passed, 0 failed,  0 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The combined post-build dashboard has 253 ordered rows, 187 passes, zero
+failures, and 66 skips. Its saved block- and file-failure queries are empty,
+and indexed comparison with the clean replay finds no differences in source
+range, source hash, source, expected or actual output, status, expected kind,
+tags, skip reason, or failure metadata. The rebuilt Electron-resource copies
+of both changed sources agree byte for byte with the patched build and clean
+replay sources.
+
+`sage/algebras/lie_algebras/affine_lie_algebra.py` is now part of the curated
+pure-math corpus, raising it to 1,244 non-comment entries with no duplicates.
+
+A four-worker clean pinned-source standalone build completed with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+It generated all 527 Cython extension sources, compiled and linked all 1,064
+Meson targets, installed and audited 523 Sagelite side modules, passed all
+seven direct-WASI markers and all 87 Node semantic markers, staged and audited
+578 Electron resource side modules, and passed the 79-block primary doctest
+smoke with 62 passes, zero failures, and 17 expected skips. Electron resource
+relocation and the later runner regression probes also passed.
+
+Validation additionally includes Python compilation; saved
+lifecycle/failure/skip/integrity queries; indexed live/replay SQLite
+comparison; corpus uniqueness and make-target dry run; accumulated-patch
+syntax and clean application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte target replay; and
+`git diff --check`. The external developer Sagelite checkout remains
+untouched.
+
+The accumulated source patch now has 1,717 serialized file sections (1,204
+`diff --git` and 513 legacy sections) and 4,982 hunks. Focused pre-build
+dashboards are under `/tmp/cowasm-sagelite-affine-final.McDRZ7/` and
+`/tmp/cowasm-sagelite-homsets-final.NPeBjL/`; the exact clean replay is under
+`/tmp/cowasm-sagelite-affine-replay.1dj81p/`, and the rebuilt-resource
+dashboard is under `/tmp/cowasm-sagelite-affine-postbuild.FR0Ikk/`. A future
+scheduled pass can reopen another compact stale dependency guard or select the
+next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

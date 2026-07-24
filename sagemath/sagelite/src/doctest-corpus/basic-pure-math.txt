@@ -132,6 +132,7 @@ src/sage/algebras/steenrod/steenrod_algebra_misc.py
 src/sage/algebras/steenrod/steenrod_algebra_mult.py
 src/sage/algebras/steenrod/steenrod_algebra.py
 src/sage/algebras/lie_algebras/abelian.py
+src/sage/algebras/lie_algebras/affine_lie_algebra.py
 src/sage/algebras/lie_algebras/bch.py
 src/sage/algebras/lie_algebras/bgg_resolution.py
 src/sage/algebras/lie_algebras/examples.py
