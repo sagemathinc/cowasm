@@ -32251,3 +32251,9 @@ diff --git a/src/sage/topology/cubical_complex.py b/src/sage/topology/cubical_co
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/topology/simplicial_set_morphism.py b/src/sage/topology/simplicial_set_morphism.py
+--- a/src/sage/topology/simplicial_set_morphism.py
++++ b/src/sage/topology/simplicial_set_morphism.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""
