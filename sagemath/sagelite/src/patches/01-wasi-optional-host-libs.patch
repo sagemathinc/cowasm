@@ -32161,3 +32161,9 @@ diff --git a/src/sage/sandpiles/examples.py b/src/sage/sandpiles/examples.py
 @@ -145 +144 @@
 -            sage: f.group_order() == fibonacci(20)
 +            sage: f.group_order() == fibonacci(20)  # needs sage.libs.pari
+diff --git a/src/sage/categories/finite_crystals.py b/src/sage/categories/finite_crystals.py
+--- a/src/sage/categories/finite_crystals.py
++++ b/src/sage/categories/finite_crystals.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.combinat sage.graphs
+ r"""

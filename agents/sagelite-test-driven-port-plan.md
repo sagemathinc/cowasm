@@ -68301,6 +68301,56 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit the next compact file-wide graph boundary or select
 a different persisted backend/runtime cluster.
 
+Finite-crystals combinatorics and graph dependency reopening and
+corpus-promotion pass on 2026-07-24 UTC:
+
+The file-wide `sage.combinat sage.graphs` dependency annotation on
+`sage/categories/finite_crystals.py` was the smallest previously unmentioned
+active broad-graph boundary with runnable prompts. A fresh default
+runner-version-140 dashboard recorded zero passes, zero failures, and one
+file-wide skip. A controlled replay with both inherited features explicitly
+selected recorded:
+
+```text
+finite_crystals.py: 10 passed, 0 failed, 0 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The ten active examples exercise the finite-crystals category, its crystal
+example, parent and element test suites, finite-enumerated-set relationship,
+and tensor-product category. Removing the broad directive leaves the ordinary
+default profile with the same ten passes and no failures or skips. The
+controlled and final dashboards contain ten block rows and agree exactly on
+source, source hash, expected output, actual output, status, expected kind,
+skip reason, and failure metadata. Every final source range is one line above
+its controlled counterpart. All ten tag and block-key differences are the
+corresponding removal of the inherited `sage.combinat` and `sage.graphs`
+features and source-line shift. Saved block- and file-failure queries are
+empty, and the active-row pass rate is 100%.
+
+`sage/categories/finite_crystals.py` is now part of the curated pure-math
+corpus, raising it to 1,215 non-comment entries with no duplicates. This is
+source-only dependency cleanup: no native WASM rebuild, Electron manifest
+change, runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default, controlled, and final default
+complete-module dashboards; saved lifecycle/latest-run/failure queries;
+SQLite integrity and exact row-level comparison; corpus uniqueness and
+make-target dry run; accumulated-patch syntax; zero-fuzz application of the
+new target patch section to pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,684 serialized file sections
+(1,171 `diff --git` and 513 legacy sections) and 4,907 hunks. SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-finite-crystals.Xj1436/`; exact target replay is under
+`/tmp/cowasm-sagelite-finite-crystals-replay.PYOMqS/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the next compact stale dependency boundary or select
+a different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

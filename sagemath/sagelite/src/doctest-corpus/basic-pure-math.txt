@@ -1217,3 +1217,4 @@ src/sage/typeset/unicode_art.py
 src/sage/groups/matrix_gps/coxeter_group.py
 src/sage/sandpiles/examples.py
 src/sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py
+src/sage/categories/finite_crystals.py
