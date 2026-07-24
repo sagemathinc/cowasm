@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 140;
+const doctestRunnerVersion = 141;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1508,6 +1508,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
             import sage.all as sage_all
             if not hasattr(sage_all, "graphs_list"):
                 setattr(sage_all, "graphs_list", graphs_list)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
+        import sage.topology.simplicial_complex_catalog as simplicial_complexes
+        namespace.setdefault("simplicial_complexes", simplicial_complexes)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "simplicial_complexes"):
+                setattr(sage_all, "simplicial_complexes", simplicial_complexes)
         except BaseException:
             pass
     except BaseException:
