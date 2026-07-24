@@ -943,6 +943,7 @@ src/sage/homology/chain_complex_morphism.py
 src/sage/homology/chain_complex_homspace.py
 src/sage/homology/chain_homotopy.py
 src/sage/homology/homology_group.py
+src/sage/homology/homology_morphism.py
 src/sage/homology/koszul_complex.py
 src/sage/homology/matrix_utils.py
 src/sage/knots/gauss_code.py

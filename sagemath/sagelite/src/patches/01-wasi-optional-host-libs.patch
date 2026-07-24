@@ -32294,3 +32294,9 @@ diff --git a/src/sage/homology/algebraic_topological_model.py b/src/sage/homolog
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  r"""
+diff --git a/src/sage/homology/homology_morphism.py b/src/sage/homology/homology_morphism.py
+--- a/src/sage/homology/homology_morphism.py
++++ b/src/sage/homology/homology_morphism.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
+ r"""

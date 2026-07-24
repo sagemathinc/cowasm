@@ -69499,6 +69499,68 @@ pass can audit the remaining explanatory graph guard on
 `sage/homology/homology_morphism.py` or return to a persisted backend/runtime
 failure cluster.
 
+Homology-morphism graph-guard reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+The explanatory file-wide `sage.graphs` annotation on
+`sage/homology/homology_morphism.py` hid 100 extracted blocks even though the
+simplicial-complex catalogs and induced-homology backends used by the examples
+are now available in the node profile. A runner-version-147 controlled replay
+with `--optional=sage.graphs` recorded:
+
+```text
+homology_morphism.py: 100 passed, 0 failed, 0 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+No backend, namespace, output, or file-level failure remained. Removing the
+stale file-wide directive leaves the ordinary default profile with the same
+100 passes, zero failures, and zero skips.
+
+The controlled and default dashboards contain 100 ordered rows and agree
+exactly on source, source hash, expected output, actual output, status,
+expected kind, and failure metadata. Every default source range is one line
+earlier. All 100 tag differences are the expected removal of the inherited
+`optional,needs:sage.graphs` metadata. Saved block-, file-failure-, and
+skip-cluster queries are empty, active-row coverage is 100%, both lifecycles
+are closed, and both databases report `PRAGMA integrity_check = ok`.
+
+`sage/homology/homology_morphism.py` is now part of the curated pure-math
+corpus, raising it to 1,233 non-comment entries with no duplicates.
+
+A clean pinned-source standalone build applied all accumulated patch sections
+with no rejects, generated all 525 Cython extension sources, compiled and
+linked all 1,064 Meson targets, installed 523 audited side modules, and passed
+the initial Node imports through `import sage.all`. The build-tree, exact
+replay, and installed copies of `homology_morphism.py` agree byte for byte.
+
+The broader standalone ladder did not reach Electron resource staging: its
+direct-WASI `python-wasi-sdk` probe trapped with a function-signature mismatch
+while importing `sage.all`. The Node doctest profile used by this promotion
+does not reproduce that blocker, and the same clean build had already passed
+the complete 100-block dashboard. The status is retained as
+`sagelite-blocked: python-wasi-sdk import failed at import sage.all`; a future
+runtime-focused pass should classify that direct-WASI ABI regression before
+claiming a fully green standalone gate.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; exact SQLite row comparison; corpus uniqueness and make-target dry
+run; accumulated-patch syntax; zero-reject application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison among the replayed, runtime-tested, and installed target sources;
+and `git diff --check`. The external developer Sagelite checkout and its
+intentional changes remain untouched.
+
+The accumulated source patch now has 1,703 serialized file sections (1,190
+`diff --git` and 513 legacy sections) and 4,930 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-homology-morphism.wSv4Tj/`; exact replay and clean source
+state are under
+`/tmp/cowasm-sagelite-homology-morphism-replay.7kYJ3v/`. A future scheduled
+pass can investigate the refreshed direct-WASI `sage.all` signature mismatch
+or return to another persisted backend/runtime failure cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
