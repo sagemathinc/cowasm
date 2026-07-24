@@ -3710,6 +3710,37 @@ if [ "$doctest_coxeter_namespace_count" != "1" ]; then
   sqlite3 "$doctest_coxeter_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t Coxeter namespace smoke did not seed the module's public constructor."
 fi
+doctest_sandpile_import_db="$probe_dir/sagelite-doctest-sandpile-import.sqlite3"
+doctest_sandpile_import_log="$dist_dir/doctest-sandpile-import.log"
+doctest_sandpile_import_file="$build_dir/src/sage/sandpiles/examples.py"
+doctest_sandpile_import_line="$(grep -nF 'sage: s = sandpiles.Complete(4)' "$doctest_sandpile_import_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_sandpile_import_line" \
+      --sqlite "$doctest_sandpile_import_db" \
+      "$doctest_sandpile_import_file" \
+      >"$doctest_sandpile_import_log" 2>&1
+doctest_sandpile_import_status=$?
+set -e
+if [ "$doctest_sandpile_import_status" -eq 124 ]; then
+  tail -120 "$doctest_sandpile_import_log" >&2
+  record_blocker "sagelite-blocked: sage -t sandpile import smoke timed out after $node_import_timeout; see $doctest_sandpile_import_log for the first runtime blocker."
+fi
+if [ "$doctest_sandpile_import_status" -ne 0 ]; then
+  tail -120 "$doctest_sandpile_import_log" >&2
+  sqlite3 "$doctest_sandpile_import_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t sandpile import smoke failed; see $doctest_sandpile_import_log for the first runtime blocker."
+fi
+doctest_sandpile_import_count="$(sqlite3 "$doctest_sandpile_import_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_sandpile_import_line and source like 's = sandpiles.Complete(4)%';")"
+if [ "$doctest_sandpile_import_count" != "1" ]; then
+  cat "$doctest_sandpile_import_log" >&2
+  sqlite3 "$doctest_sandpile_import_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t sandpile import smoke did not load the IPython-free examples catalog."
+fi
 doctest_module_global_exclusion_db="$probe_dir/sagelite-doctest-module-global-exclusion.sqlite3"
 doctest_module_global_exclusion_log="$dist_dir/doctest-module-global-exclusion.log"
 doctest_module_global_exclusion_file="$build_dir/src/sage/misc/dev_tools.py"

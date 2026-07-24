@@ -68188,6 +68188,70 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit another active file-wide graph boundary or select a
 different persisted backend/runtime cluster.
 
+Sandpile examples import-boundary and graph-dependency reopening pass on
+2026-07-24 UTC:
+
+The active file-wide `sage.graphs` dependency on
+`sage/sandpiles/examples.py` initially hid a compact 24-block module. A
+runner-version-140 controlled replay with `sage.graphs` selected recorded
+zero passes and 24 failures. The primary `sandpiles` name was absent because
+importing `sage.sandpiles.sandpile` first required the intentionally absent
+IPython package only to register two interactive pretty-printers. Resolving
+that import exposed a second eager dependency on the `pexpect`-backed Singular
+interface and then the unavailable symbolic expression extension.
+
+The WASI source patch now supplies a no-op `pretty.for_type(...)` registration
+fallback when IPython is absent and makes the Singular interface plus the
+`I`, `pi`, and `SR` symbolic names lazy. Their mathematical call sites still
+resolve the real implementations on demand, while ordinary sandpile
+construction no longer imports unrelated optional front ends. With those
+import boundaries fixed, 22 examples pass. The remaining two compare fan
+group orders with the PARI-backed default `fibonacci(...)` implementation and
+are now explicitly tagged `# needs sage.libs.pari`.
+
+Removing the broad graph directive leaves the ordinary default profile with:
+
+```text
+examples.py:       22 passed, 0 failed, 2 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Both retained skips record `optional:sage.libs.pari`; saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%.
+`sage/sandpiles/examples.py` is now part of the curated pure-math corpus,
+raising it to 1,213 non-comment entries with no duplicates.
+
+The standalone suite now retains an exact-line
+`sandpiles.Complete(4)` import smoke. A fresh source reconstruction followed
+by a resume-mode build with four Cython generation jobs completed configure,
+compile, install, Node import, Electron resource, relocation, follow-up, and
+doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+Validation also includes the historical controlled failure dashboard, each
+intermediate import-boundary dashboard, the final complete-module dashboard,
+saved lifecycle/failure/skip queries, SQLite integrity, corpus uniqueness and
+make-target dry run, shell syntax, accumulated-patch syntax, and
+`git diff --check`. The two new patch sections apply with zero fuzz to the
+pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58` and reproduce both runtime-tested
+sources byte-for-byte. The standard full patch replay encountered only the
+external developer checkout's intentional, already-applied
+`complex_roots.py` fallback; its target was verified before the generated
+reject was discarded, and the checkout itself was not modified.
+
+The accumulated source patch now has 1,683 serialized file sections (1,170
+`diff --git` and 513 legacy sections) and 4,907 hunks. SQLite dashboards and
+worker state are under `/tmp/cowasm-sagelite-sandpiles.X6QrE4/`; exact
+new-section replay is under
+`/tmp/cowasm-sagelite-sandpiles-section.HSYwQd/`. A future scheduled pass can
+audit another narrow broad-graph dependency or select a different persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
