@@ -32170,11 +32170,18 @@ diff --git a/src/sage/categories/finite_crystals.py b/src/sage/categories/finite
 diff --git a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -396,0 +397 @@
+@@ -396,0 +397,2 @@
 +    lazy_import('sage.topology', 'simplicial_complex_catalog', 'simplicial_complexes')
++    lazy_import('sage.topology', 'simplicial_set_catalog', 'simplicial_sets')
 diff --git a/src/sage/topology/simplicial_complex_catalog.py b/src/sage/topology/simplicial_complex_catalog.py
 --- a/src/sage/topology/simplicial_complex_catalog.py
 +++ b/src/sage/topology/simplicial_complex_catalog.py
 @@ -1,2 +1 @@
 -# sage.doctest: needs sage.graphs
  """
+diff --git a/src/sage/topology/simplicial_set_catalog.py b/src/sage/topology/simplicial_set_catalog.py
+--- a/src/sage/topology/simplicial_set_catalog.py
++++ b/src/sage/topology/simplicial_set_catalog.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

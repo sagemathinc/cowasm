@@ -68413,6 +68413,72 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit the adjacent simplicial-set catalog boundary or
 select a different persisted backend/runtime cluster.
 
+Simplicial-set catalog startup and graph-dependency reopening pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_set_catalog.py` was the compact boundary adjacent to
+the newly reopened simplicial-complex catalog. A fresh runner-version-141
+default dashboard recorded zero passes, zero failures, and one file-wide skip.
+Selecting the inherited graph feature exposed three active failures: the first
+was a missing `simplicial_sets` startup alias, while the next two were state
+cascades through Sage's unrelated preexisting `eta` function. The three
+examples with narrower group or module dependencies remained correctly
+skipped.
+
+The WASI `sage.all` startup now exposes the simplicial-set catalog through a
+lazy import, and isolated doctest namespaces seed the same alias while
+backfilling `sage.all` for older installed resource trees. Runner version 142
+records that namespace behavior. With the historical graph directive still
+present, a controlled replay then recorded three passes, zero failures, and
+three skips. Removing the stale file-wide directive leaves the ordinary
+default profile with:
+
+```text
+simplicial_set_catalog.py: 3 passed, 0 failed, 3 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The retained skips record `optional:sage.groups`,
+`optional:sage.groups,sage.modules`, and `optional:sage.modules`; saved block-
+and file-failure queries are empty, and the active-row pass rate is 100%. The
+controlled and final dashboards contain six rows and agree exactly on source,
+source hash, expected output, actual output, status, expected kind, and failure
+metadata. Every final source range is one line earlier. The tag, skip-reason,
+and block-key differences are exactly the removed inherited graph feature and
+source-line shift.
+
+The standalone suite now retains both an installed
+`from sage.all import simplicial_sets` startup smoke for the Hopf map and an
+exact-line doctest smoke for `simplicial_sets.HopfMap()`. A resume-mode build
+with four Cython generation jobs completed configure, compile, install, Node
+import, Electron resources, relocation, follow-up, and doctest probes with:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+`sage/topology/simplicial_set_catalog.py` is now part of the curated pure-math
+corpus, raising it to 1,217 non-comment entries with no duplicates. Validation
+also includes the pre-change default and controlled failure dashboards;
+post-fix controlled, final, and post-install complete-module dashboards; saved
+lifecycle/failure/skip queries; SQLite integrity and exact row comparison;
+Node and shell syntax; corpus make-target dry run; accumulated-patch syntax;
+zero-fuzz replay of the expanded `sage.all` section to a byte-identical source;
+zero-fuzz replay of the catalog target section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; and `git diff --check`.
+
+The accumulated source patch now has 1,687 serialized file sections
+(1,174 `diff --git` and 513 legacy sections) and 4,910 hunks. SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-simplicial-set.1LIsk3/`; exact patch replay state is under
+`/tmp/cowasm-sagelite-simplicial-set-section.cMsX48/` and
+`/tmp/cowasm-sagelite-simplicial-set-replay.iBVYsb/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the adjacent simplicial-set examples boundary or
+select a different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

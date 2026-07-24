@@ -2088,6 +2088,14 @@ assert str(simplicial_complexes.SurfaceOfGenus(3)) == 'Triangulation of an orien
 print('sagelite-node-ok simplicial complex catalog startup smoke')"
 
 run_node_import \
+  "simplicial set catalog startup smoke" \
+  "from sage.all import simplicial_sets
+eta = simplicial_sets.HopfMap()
+assert eta.domain().dimension() == 3
+assert eta.codomain().dimension() == 2
+print('sagelite-node-ok simplicial set catalog startup smoke')"
+
+run_node_import \
   "planarity backend delivery smoke" \
   "from sage.all import graphs
 cycle = graphs.CycleGraph(5)
@@ -3747,6 +3755,37 @@ if [ "$doctest_simplicial_catalog_count" != "1" ]; then
   cat "$doctest_simplicial_catalog_log" >&2
   sqlite3 "$doctest_simplicial_catalog_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t simplicial catalog smoke did not seed the startup catalog alias."
+fi
+doctest_simplicial_set_catalog_db="$probe_dir/sagelite-doctest-simplicial-set-catalog.sqlite3"
+doctest_simplicial_set_catalog_log="$dist_dir/doctest-simplicial-set-catalog.log"
+doctest_simplicial_set_catalog_file="$build_dir/src/sage/topology/simplicial_set_catalog.py"
+doctest_simplicial_set_catalog_line="$(grep -nF 'sage: eta = simplicial_sets.HopfMap()' "$doctest_simplicial_set_catalog_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_simplicial_set_catalog_line" \
+      --sqlite "$doctest_simplicial_set_catalog_db" \
+      "$doctest_simplicial_set_catalog_file" \
+      >"$doctest_simplicial_set_catalog_log" 2>&1
+doctest_simplicial_set_catalog_status=$?
+set -e
+if [ "$doctest_simplicial_set_catalog_status" -eq 124 ]; then
+  tail -120 "$doctest_simplicial_set_catalog_log" >&2
+  record_blocker "sagelite-blocked: sage -t simplicial set catalog smoke timed out after $node_import_timeout; see $doctest_simplicial_set_catalog_log for the first runtime blocker."
+fi
+if [ "$doctest_simplicial_set_catalog_status" -ne 0 ]; then
+  tail -120 "$doctest_simplicial_set_catalog_log" >&2
+  sqlite3 "$doctest_simplicial_set_catalog_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t simplicial set catalog smoke failed; see $doctest_simplicial_set_catalog_log for the first runtime blocker."
+fi
+doctest_simplicial_set_catalog_count="$(sqlite3 "$doctest_simplicial_set_catalog_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_simplicial_set_catalog_line and source like 'eta = simplicial_sets.HopfMap()%';")"
+if [ "$doctest_simplicial_set_catalog_count" != "1" ]; then
+  cat "$doctest_simplicial_set_catalog_log" >&2
+  sqlite3 "$doctest_simplicial_set_catalog_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t simplicial set catalog smoke did not seed the startup catalog alias."
 fi
 doctest_sandpile_import_db="$probe_dir/sagelite-doctest-sandpile-import.sqlite3"
 doctest_sandpile_import_log="$dist_dir/doctest-sandpile-import.log"
