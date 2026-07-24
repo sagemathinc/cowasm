@@ -2972,6 +2972,13 @@ EXAMPLES::
     sage: cowasm_propagated_setup + 2
     42
     sage: # needs cowasm_smoke
+    sage: cowasm_nested_directive_setup = 40
+    sage: print("nested first line\nnested second line")  # needs cowasm_companion
+    nested first line
+    nested second line
+    sage: cowasm_nested_directive_setup + 2
+    42
+    sage: # needs cowasm_smoke
     sage: cowasm_composed_directive_setup = 40
     sage: # known bug
     sage: cowasm_composed_directive_setup + 2
@@ -3009,7 +3016,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|76|62|0|14" ]; then
+if [ "$doctest_smoke_counts" != "passed|79|62|0|17" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -3103,7 +3110,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "76" ]; then
+if [ "$doctest_block_key_count" != "79" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -4125,6 +4132,12 @@ if [ "$doctest_propagated_after_output_count" != "1" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not propagate standalone needs metadata past skipped output."
 fi
+doctest_propagated_after_inline_skip_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and source = 'cowasm_nested_directive_setup + 2' || char(10) and skip_reason = 'optional:cowasm_smoke' and tags like '%needs:cowasm_smoke%' and tags not like '%needs:cowasm_companion%';")"
+if [ "$doctest_propagated_after_inline_skip_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not propagate standalone needs metadata past multi-line skipped inline output."
+fi
 doctest_composed_directive_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and source = 'cowasm_composed_directive_setup + 2' || char(10) and skip_reason = 'deferred:known bug' and tags like '%needs:cowasm_smoke%' and tags like '%deferred:known bug%';")"
 if [ "$doctest_composed_directive_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2
@@ -4139,9 +4152,9 @@ if [ "$doctest_deferred_count" != "6" ]; then
 fi
 doctest_skip_reason_clusters="$(sqlite3 "$doctest_smoke_db" <"$src_dir/doctest-sql/skips-by-reason.sql")"
 for expected_skip_reason in \
-  'optional:cowasm_smoke|skip|optional,needs:cowasm_smoke|4' \
+  'optional:cowasm_smoke|skip|optional,needs:cowasm_smoke|6' \
   'optional:cowasm_smoke|skip|optional,optional:cowasm_smoke|1' \
-  'optional:cowasm_smoke,cowasm_companion|skip|optional,needs:cowasm_smoke,needs:cowasm_companion|1' \
+  'optional:cowasm_smoke,cowasm_companion|skip|optional,needs:cowasm_smoke,needs:cowasm_companion|2' \
   'optional:magma|skip|optional,optional:magma|1' \
   'long time|skip|long time|1' \
   'deferred:known bug|skip|deferred,deferred:known bug|2' \
@@ -6747,7 +6760,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|76|67|0|9" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|79|69|0|10" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -6797,7 +6810,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|76|63|1|12" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|79|63|1|15" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"

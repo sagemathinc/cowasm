@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 144;
+const doctestRunnerVersion = 145;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1859,20 +1859,25 @@ def __cowasm_convert_prompts(text):
     standalone_directives = {}
     inline_directives = {}
     inline_sources = {}
+    suppressed_inline_physical_ends = {}
     active_directive_source = None
     suppress_skipped_inline_block = False
+    suppressed_inline_block_lineno = None
     for lineno, line in enumerate(text.splitlines(True), start=1):
         line = __cowasm_restore_collapsed_continuation_prompts(line)
         prompt = re.match(r"^(\\s*)sage:( ?)(.*?)(\\r?\\n?)$", line)
         if suppress_skipped_inline_block and not prompt:
             if not line.strip():
                 suppress_skipped_inline_block = False
+                suppressed_inline_block_lineno = None
                 out.append(line)
             else:
+                suppressed_inline_physical_ends[suppressed_inline_block_lineno] = lineno
                 out.append("\\n")
             continue
         if prompt:
             suppress_skipped_inline_block = False
+            suppressed_inline_block_lineno = None
         if prompt:
             source = prompt.group(3)
             if __cowasm_directive_only_source(source):
@@ -1889,6 +1894,8 @@ def __cowasm_convert_prompts(text):
                         source[: source.index(inline_directive_source)].rstrip()
                     )
                     if __cowasm_should_skip(inline_directive_source):
+                        suppressed_inline_block_lineno = lineno
+                        suppressed_inline_physical_ends[lineno] = lineno
                         line = (
                             prompt.group(1)
                             + "sage:"
@@ -1916,7 +1923,13 @@ def __cowasm_convert_prompts(text):
         line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
         line = re.sub(r"(?m)^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         out.append(line)
-    return "".join(out), standalone_directives, inline_directives, inline_sources
+    return (
+        "".join(out),
+        standalone_directives,
+        inline_directives,
+        inline_sources,
+        suppressed_inline_physical_ends,
+    )
 
 
 def __cowasm_restore_collapsed_continuation_prompts(line):
@@ -2897,7 +2910,13 @@ def __cowasm_run_file(filename):
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_restore_protected_namespace(namespace, protected_namespace)
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
-            converted, standalone_directives, inline_directives, inline_sources = __cowasm_convert_prompts(docstring)
+            (
+                converted,
+                standalone_directives,
+                inline_directives,
+                inline_sources,
+                suppressed_inline_physical_ends,
+            ) = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(
                 converted,
                 namespace if namespace is not None else pending_namespace,
@@ -2927,6 +2946,12 @@ def __cowasm_run_file(filename):
                         candidate_relative_physical_end = (
                             candidate.lineno
                             + max(candidate_physical_line_count, 1)
+                        )
+                        candidate_relative_physical_end = (
+                            suppressed_inline_physical_ends.get(
+                                candidate.lineno + 1,
+                                candidate_relative_physical_end,
+                            )
                         )
                     example_locations.append({
                         "example": candidate,
@@ -2980,6 +3005,13 @@ def __cowasm_run_file(filename):
                         len(example.source.splitlines()) + len(example.want.splitlines())
                     )
                     physical_end_line = start_line + max(physical_line_count, 1) - 1
+                    suppressed_inline_physical_end = (
+                        suppressed_inline_physical_ends.get(example.lineno + 1)
+                    )
+                    if suppressed_inline_physical_end is not None:
+                        physical_end_line = (
+                            test.lineno + suppressed_inline_physical_end
+                        )
                 if (
                     active_directive_source
                     and previous_physical_end_line is not None

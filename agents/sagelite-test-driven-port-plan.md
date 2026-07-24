@@ -69080,6 +69080,102 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit another remaining file-wide topology guard or select
 a persisted backend/runtime failure cluster.
 
+Simplicial-set constructions runner-fix and corpus-promotion pass on
+2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_set_constructions.py` hid 488 extracted blocks.
+Selecting that inherited feature against runner version 144 exposed one
+failure amid 337 passes and 150 narrower skips:
+
+```text
+simplicial_set_constructions.py:865
+Y = B.product(S2)
+NameError: name 'B' is not defined
+```
+
+This was a doctest-runner state-propagation defect rather than a missing Sage
+dependency. An outer standalone `# needs sage.groups` directive covered the
+setup for `B`. A later inline `# needs sage.modules` example was skipped and
+had multi-line expected output. The runner replaced that output while parsing
+the skipped block but did not retain its physical end line, so its
+contiguity-gap check incorrectly expired the outer group directive before the
+next prompt.
+
+Runner version 145 now records the physical end of suppressed inline expected
+output and uses it for standalone-directive continuity and focused-line setup
+discovery. The standalone smoke includes the corresponding three-block
+regression: an outer required feature, an intervening inline conjunctive
+feature with two expected-output lines, and a final prompt that must retain
+only the outer feature. The synthetic focused dashboards record:
+
+```text
+default profile:                 0 passed, 0 failed, 3 skipped
+--optional=cowasm_smoke:         2 passed, 0 failed, 1 skipped
+```
+
+With runner 145, the still-guarded complete module then recorded 337 passed,
+zero failed, and 151 skipped blocks. Removing the stale file-wide graph
+directive leaves the ordinary default profile with exactly the same semantic
+result:
+
+```text
+simplicial_set_constructions.py: 337 passed, 0 failed, 151 skipped
+run lifecycle:                    passed and closed
+SQLite integrity:                 ok
+```
+
+The retained skips are 121 `optional:sage.groups` rows, 18
+`optional:sage.modules` rows, and 12 rows requiring both features. Saved block-
+and file-failure queries are empty, and active-row coverage is 100%.
+
+The controlled and final runner-145 dashboards each contain 488 ordered rows.
+They have zero differences in source, source hash, expected output, actual
+output, status, expected kind, or failure metadata. Every final source range
+is one line earlier. All 488 tag differences and 151 skip-reason differences
+are the removal of the inherited graph feature.
+
+`sage/topology/simplicial_set_constructions.py` is now part of the curated
+pure-math corpus, raising it to 1,228 non-comment entries with no duplicates.
+The runner change is runtime-wide, but the Sage source promotion itself
+requires no native-module or Electron-manifest change.
+
+A clean pinned-source standalone build and a resume validation both completed.
+The final retained status is:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+That validation passed all 87 Node semantic markers, audited 578 staged
+Electron resource side modules, passed the updated 79-block primary doctest
+smoke and its default/optional/deferred aggregate checks, and completed the
+packaged Electron and relocated-resource probes.
+
+The first `make`-driven attempt reconstructed from the intentionally dirty
+external developer checkout and stopped on its pre-existing
+`complex_roots.py` divergence. The external checkout was not modified. Exact
+replay and the complete standalone ladder instead used a clean `/tmp`
+reconstruction from pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`.
+
+Validation also includes the pre-fix failure dashboard; the controlled and
+final complete-module dashboards; the standalone synthetic default and
+selected-feature dashboards; saved lifecycle/latest-run/failure/skip queries;
+SQLite integrity and exact indexed row comparison; Node and Bash syntax;
+corpus uniqueness and make-target dry run; accumulated-patch syntax; exact
+replay against the pinned source; and `git diff --check`.
+
+The accumulated source patch now has 1,698 serialized file sections (1,185
+`diff --git` and 513 legacy sections) and 4,924 hunks. Focused SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-sset-constructions.HppY3j/`; the clean replay and full
+standalone build are under
+`/tmp/cowasm-sagelite-sset-constructions-replay.MKefrI/`. A future scheduled
+pass can audit the remaining file-wide guards on `simplicial_set.py` or
+`simplicial_complex.py`, or return to a persisted backend/runtime failure
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
