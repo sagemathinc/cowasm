@@ -70258,6 +70258,58 @@ is under `/tmp/cowasm-sagelite-classical-final-replay.MFzzbD/`. A future
 scheduled pass can reopen another compact stale dependency guard or select the
 next persisted backend/runtime cluster.
 
+Lie algebra representation guard reopening and corpus-promotion pass on
+2026-07-24 UTC:
+
+A runner-version-148 controlled dashboard selected the historical feature
+guards on the six remaining annotated Lie-algebra modules. Five modules still
+exposed real focused clusters, while
+`sage/algebras/lie_algebras/representation.py` recorded:
+
+```text
+representation.py: 182 passed, 0 failed, 0 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The representation, tensor-product representation, and trivial-representation
+examples therefore no longer require the file-wide
+`sage.algebras.lie_algebras sage.graphs sage.rings.finite_rings` annotation.
+Removing that stale guard leaves the ordinary default node profile with the
+same 182 passes, zero failures, and zero skips. Saved block-failure,
+file-error, and skip queries are empty, and the non-skipped pass rate is 100%.
+
+The controlled and default dashboards contain the same 182 ordered sources,
+source hashes, expected outputs, statuses, expected kinds, skip reasons, and
+failure metadata. Every default source range is one line earlier, and the
+only nondeterministic actual-output difference is the process-local address
+in one accepted lambda representation. The remaining tag and block-key
+changes are the expected removal of the inherited file-wide metadata.
+
+The controlled sample also preserves the next compact clusters: the PBW module
+has one focused cypari2 object-model failure, and the BGG dual module has one
+focused `sage.libs.gap.libgap` failure. The other sampled modules retain
+larger symbolic or PARI/cypari2 clusters, so their guards remain in place.
+
+`sage/algebras/lie_algebras/representation.py` is now part of the curated
+pure-math corpus, raising it to 1,246 non-comment entries with no duplicates.
+
+Validation includes saved lifecycle/latest-run/failure/skip queries; SQLite
+integrity and controlled/default row comparison; accumulated-patch syntax;
+corpus uniqueness and make-target dry run; exact two-section, zero-fuzz replay
+of the representation patch against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with the
+runtime-tested source; and `git diff --check`. The change affects only source
+doctest metadata, so the immediately preceding fully green standalone build
+remains the compiled-runtime baseline rather than being repeated.
+
+The accumulated source patch now has 1,720 serialized file sections (1,207
+`diff --git` and 513 legacy sections) and 4,987 hunks. Focused dashboards and
+worker state are under `/tmp/cowasm-sagelite-lie-guards.yz3717/`; exact target
+replay is under `/tmp/cowasm-sagelite-representation-target.v9g5Bj/`. A future
+scheduled pass can classify the single BGG-dual GAP boundary, isolate the
+single PBW cypari2 boundary, or select another persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

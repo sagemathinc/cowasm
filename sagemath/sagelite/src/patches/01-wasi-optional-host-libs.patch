@@ -32639,3 +32639,8 @@ diff --git a/src/sage/algebras/lie_algebras/classical_lie_algebra.py b/src/sage/
 @@ -1876 +1875 @@
 -            sage: L._test_structure_coeffs()
 +            sage: L._test_structure_coeffs()  # needs sage.libs.gap
+diff --git a/src/sage/algebras/lie_algebras/representation.py b/src/sage/algebras/lie_algebras/representation.py
+--- a/src/sage/algebras/lie_algebras/representation.py
++++ b/src/sage/algebras/lie_algebras/representation.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.rings.finite_rings
