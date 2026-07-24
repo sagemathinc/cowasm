@@ -32221,3 +32221,9 @@ diff --git a/src/sage/topology/filtered_simplicial_complex.py b/src/sage/topolog
 @@ -524 +523 @@
 -            sage: int_list2[1]
 +            sage: int_list2[1]                                                  # needs sage.modules
+diff --git a/src/sage/topology/simplicial_complex_morphism.py b/src/sage/topology/simplicial_complex_morphism.py
+--- a/src/sage/topology/simplicial_complex_morphism.py
++++ b/src/sage/topology/simplicial_complex_morphism.py
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.graphs
+ r"""

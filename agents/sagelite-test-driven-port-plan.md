@@ -68717,6 +68717,57 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit `sage/topology/simplicial_complex_morphism.py` or
 select a different persisted backend/runtime cluster.
 
+Simplicial-complex morphism graph-dependency reopening and corpus-promotion
+pass on 2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_complex_morphism.py` hid a compact, substantive
+topology boundary with 218 extracted blocks. A fresh runner-version-143
+default dashboard recorded zero passes, zero failures, and one file-wide
+skip. Selecting the inherited graph feature reopened the module and recorded
+188 passes, zero failures, and 30 narrower skips.
+
+No underlying backend or namespace failure remained. Removing the stale
+file-wide directive leaves the ordinary default profile with:
+
+```text
+simplicial_complex_morphism.py: 188 passed, 0 failed, 30 skipped
+run lifecycle:                   passed and closed
+SQLite integrity:               ok
+```
+
+All retained skips are classified by `sage.modules`. Saved block- and
+file-failure queries are empty, and the active-row pass rate is 100%. The
+controlled and final dashboards contain 218 rows with identical block order,
+source, source hash, expected output, status, expected kind, and failure
+metadata. Every final source range is one line earlier. All 218 tag and
+block-key differences, plus 30 skip-reason differences, are the corresponding
+removal of the inherited graph feature and source-line shift. One passing
+ellipsis display varies only in the iteration order of two tuples inside a
+set between the isolated processes; both actual values satisfy the same
+order-insensitive expected output.
+
+`sage/topology/simplicial_complex_morphism.py` is now part of the curated
+pure-math corpus, raising it to 1,222 non-comment entries with no duplicates.
+This is source-only dependency cleanup: no native WASM rebuild, Electron
+manifest change, runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default and controlled dashboards; the
+final default complete-module dashboard; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and indexed row
+comparison; corpus uniqueness and make-target dry run; exact zero-fuzz replay
+of the target patch section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,692 serialized file sections
+(1,179 `diff --git` and 513 legacy sections) and 4,918 hunks. SQLite
+dashboards, worker state, controlled results, and exact pinned-source replay
+state are under `/tmp/cowasm-sagelite-morphism.EMQDHp/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another compact stale topology boundary or
+select a different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
