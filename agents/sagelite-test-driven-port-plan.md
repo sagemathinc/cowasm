@@ -68252,6 +68252,55 @@ new-section replay is under
 audit another narrow broad-graph dependency or select a different persisted
 backend/runtime cluster.
 
+Judson graph-actions exercise dependency reopening and corpus-promotion pass
+on 2026-07-24 UTC:
+
+The delivered graph runtime makes the file-wide `sage.graphs` dependency
+annotation on
+`sage/tests/books/judson_abstract_algebra/actions-sage-exercises.py` stale.
+A fresh pre-change default dashboard recorded zero passes, zero failures, and
+one file-wide skip. A runner-version-140 controlled replay with
+`sage.graphs` explicitly selected recorded:
+
+```text
+actions-sage-exercises.py: 5 passed, 0 failed, 0 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The active examples include both `Graph(...)` and `graphs.CycleGraph(...)`
+construction plus the two historical plotting checks. Removing the broad
+directive leaves the ordinary default profile with the same five passes and
+no failures or skips. The controlled and final dashboards each contain five
+block rows and agree exactly on source, expected output, actual output,
+status, expected kind, skip reason, and failure metadata. Every final source
+line is one above its controlled counterpart because the file directive was
+removed; the five tag and block-key differences are the corresponding
+inherited-feature and line-number changes. Saved block- and file-failure
+queries are empty, and the active-row pass rate is 100%.
+
+The exercise module is now part of the curated pure-math corpus, raising it
+to 1,214 non-comment entries with no duplicates. This is source-only
+dependency cleanup: no native WASM rebuild, Electron manifest change,
+runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default, controlled, and final default
+complete-file dashboards; saved lifecycle/latest-run/failure queries; SQLite
+integrity and exact row-level comparison; corpus uniqueness and make-target
+dry run; accumulated-patch syntax; zero-fuzz application of the target patch
+section to pinned Sagelite package commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch remains at 1,683 serialized file sections
+(1,170 `diff --git` and 513 legacy sections) and now has 4,906 hunks. SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-judson-actions.1Ej5Nx/`; exact target replay is under
+`/tmp/cowasm-sagelite-judson-actions-replay.MnJxtg/`. The external developer
+Sagelite checkout and its intentional changes remain untouched. A future
+scheduled pass can audit the next compact file-wide graph boundary or select
+a different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
