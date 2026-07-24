@@ -68479,6 +68479,62 @@ Sagelite checkout and its intentional changes remain untouched. A future
 scheduled pass can audit the adjacent simplicial-set examples boundary or
 select a different persisted backend/runtime cluster.
 
+Simplicial-set examples graph-dependency reopening and corpus-promotion pass
+on 2026-07-24 UTC:
+
+The file-wide `sage.graphs` annotation on
+`sage/topology/simplicial_set_examples.py` was the next compact boundary
+adjacent to the reopened simplicial-set catalog. A fresh runner-version-142
+default dashboard recorded zero passes, zero failures, and one file-wide
+skip. Selecting the inherited graph feature reopened 113 examples and
+recorded 54 passes, four failures, and 55 narrower skips.
+
+The four failures were one state cascade in the final
+`PresentationComplex(...)` test block. Its `FreeGroup(2)` setup lacked the
+`# needs sage.groups` annotation already used by the two preceding
+presentation-complex blocks. Adding that narrow requirement leaves a
+post-fix controlled replay with 54 passes, zero failures, and 59 skips.
+Removing the stale file-wide graph directive leaves the ordinary default
+profile with the same result:
+
+```text
+simplicial_set_examples.py: 54 passed, 0 failed, 59 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+The retained skips are all classified by `sage.groups`, `sage.modules`, or
+`pyparsing`, including their combinations. Saved block- and file-failure
+queries are empty, and the active-row pass rate is 100%. The post-fix
+controlled and final dashboards contain 113 rows and agree exactly on source,
+source hash, expected output, actual output, status, expected kind, and
+failure metadata. Every final source range is one line earlier. All 113 tag
+differences and 59 skip-reason differences are the corresponding removal of
+the inherited graph feature.
+
+`sage/topology/simplicial_set_examples.py` is now part of the curated
+pure-math corpus, raising it to 1,218 non-comment entries with no duplicates.
+This is source-only dependency cleanup: no native WASM rebuild, Electron
+manifest change, runner-version bump, or resource restaging is required.
+
+Validation includes the pre-change default and controlled failure dashboards;
+the post-fix controlled and final default complete-module dashboards; saved
+lifecycle/latest-run/failure queries; SQLite integrity and exact row
+comparison; corpus uniqueness and make-target dry run; zero-fuzz and
+zero-offset replay of the target patch section against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with
+the runtime-tested source; and `git diff --check`.
+
+The accumulated source patch now has 1,688 serialized file sections
+(1,175 `diff --git` and 513 legacy sections) and 4,912 hunks. SQLite
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-simplicial-set-examples.fbEffg/`; exact target replay
+state is under
+`/tmp/cowasm-sagelite-simplicial-set-examples-section.wbwNNC/`. The external
+developer Sagelite checkout and its intentional changes remain untouched. A
+future scheduled pass can audit another stale broad topology boundary or
+select a different persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
