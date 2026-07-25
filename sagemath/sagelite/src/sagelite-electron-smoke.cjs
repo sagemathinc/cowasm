@@ -932,6 +932,7 @@ assert reverse is list.reverse
     await python.exec(String.raw`
 from sage.all import GF, PolynomialRing, polygen
 from sage.libs.ntl import all as ntl
+from sage.rings.finite_rings import element_ntl_gf2e
 
 context = ntl.GF2EContext(ntl.GF2X([1, 1, 0, 1, 1, 0, 0, 0, 1]))
 value = ntl.GF2E([1, 0, 1, 0, 1], context)

@@ -2670,7 +2670,7 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
 diff -urN a/src/sage/rings/finite_rings/meson.build b/src/sage/rings/finite_rings/meson.build
 --- a/src/sage/rings/finite_rings/meson.build
 +++ b/src/sage/rings/finite_rings/meson.build
-@@ -74,6 +74,14 @@
+@@ -74,6 +74,18 @@
    'hom_finite_field_givaro': files('hom_finite_field_givaro.pyx'),
  }
 
@@ -2683,12 +2683,17 @@ diff -urN a/src/sage/rings/finite_rings/meson.build b/src/sage/rings/finite_ring
 +endif
 +
  foreach name, pyx : extension_data_cpp
++  deps = [py_dep, cypari2, cysignals, givaro, gmp, m, ntl]
++  if name == 'element_ntl_gf2e'
++    deps += [gf2x]
++  endif
    py.extension_module(
      name,
-@@ -90,5 +98,6 @@
+@@ -90,5 +102,6 @@
        inc_rings_finite,
      ],
-     dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl],
+-    dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl],
++    dependencies: deps,
 +    link_args: cowasm_libcxx_link_args,
    )
  endforeach

@@ -72899,6 +72899,71 @@ pinned-source reconstruction, patch logs, and focused make state are under
 pass can audit another compact stale category guard or select a persisted
 backend/runtime cluster.
 
+Finite-ring NTL GF2X link-contract pass on 2026-07-25 UTC:
+
+A feature-selected replay of
+`sage/rings/finite_rings/finite_field_ntl_gf2e.py` reproduced the persisted
+file-level loader cluster before its first block:
+
+```text
+active example: sage.rings.finite_rings.finite_field_ntl_gf2e.late_import()
+failure:        LinkError: gf2x_mul function import requires a callable
+```
+
+The finite-ring `element_ntl_gf2e` side module linked NTL but not NTL's GF2X
+dependency. Its WASM metadata therefore imported `gf2x_mul` while declaring
+only `libcxx.so` as a needed dynamic library. The adjacent coherent NTL
+wrappers already link GF2X statically and export the same symbol family.
+
+The accumulated WASI Meson patch now adds `gf2x` only to the
+`element_ntl_gf2e` extension dependencies. An exact isolated Cython/C++/WASM
+rebuild confirms that the resulting side module has no `gf2x_*` imports and
+exports `gf2x_mul`, its pool helpers, and the related GF2X entry points. The
+rebuilt module was installed into the ignored local Electron resource bundle,
+and its required-resource hash was refreshed.
+
+The focused historical reproducer now records:
+
+```text
+finite_field_ntl_gf2e.py --line 30: 1 passed, 0 failed, 0 skipped
+run lifecycle:                           passed and closed
+SQLite integrity:                        ok
+```
+
+A complete feature-selected replay gets through that import and advances to
+`P.<x> = PolynomialRing(k)` at source line 117. It then reaches a distinct
+split-module NTL context-state trap in `ntl_ZZ_pEContext`, so the file-wide
+NTL guard remains in place and the file is not promoted to the curated corpus.
+This separates the closed GF2X delivery bug from the next actionable backend
+cluster instead of hiding either one behind dependency metadata.
+
+The standalone and Electron-shaped NTL GF2X regression smokes now import
+`sage.rings.finite_rings.element_ntl_gf2e`, preventing a future package from
+regressing to an NTL-only finite-ring link. The Electron manifest advances to
+schema 205 and smoke contract `ntl-gf2e-link-delivery-v177`. The complete
+Electron-shaped packaged smoke passes with 578 side modules and 759 required
+resource hashes.
+
+Validation includes Meson configuration and exact one-target compilation;
+WASM import/export inspection; the focused SQLite replay and saved lifecycle
+and failure queries; the full-file next-cluster replay; the complete
+Electron-shaped smoke; manifest parity, forge-resource, and runtime tests;
+shell and JavaScript syntax checks; accumulated-patch syntax; complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; and
+`git diff --check`.
+
+The source patch remains at 1,753 serialized target sections (1,240
+`diff --git` and 513 header-only legacy sections) and 5,233 hunks because
+this pass strengthens an existing finite-ring Meson hunk. Dashboards, worker
+state, the preserved original and rebuilt side modules, build logs, and the
+Electron smoke log are under
+`/tmp/cowasm-sagelite-finite-permutation-audit.JZMZvV/`; the final clean
+pinned-source replay is under
+`/tmp/cowasm-sagelite-ntl-gf2e-link-replay-final.AntMaL/`. A future scheduled
+pass can address the newly isolated `ntl_ZZ_pEContext` state trap at line 117
+or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
