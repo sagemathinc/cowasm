@@ -72556,6 +72556,73 @@ permutation-group backend. A future scheduled pass can audit the adjacent
 `fields.py` category guard or select another persisted backend/runtime
 cluster.
 
+Field-category finite-ring/NTL guard reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+The adjacent `sage/categories/fields.py` file carried a historical file-wide
+`sage.rings.finite_rings,sage.libs.ntl` annotation. A runner-version-153
+controlled replay selected those features and recorded:
+
+```text
+fields.py:        102 passed, 0 failed, 70 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The active examples cover the field category and coercion, rational and
+finite-field construction, fraction fields, polynomial gcd/xgcd and
+squarefree decomposition, characteristic and prime subfields, divisibility,
+factorization, and unit inversion. The remaining skips already carry narrower
+metadata for real MPFR fields, PARI, number fields, libGAP, p-adics, or finite
+rings, so the old NTL guard no longer describes the executable boundary.
+
+Removing the stale file-wide annotation leaves both the ordinary default
+profile and the strict focused make target against a complete clean
+pinned-source reconstruction with:
+
+```text
+fields.py:        99 passed, 0 failed, 73 skipped
+skip groups:         25 optional:sage.rings.real_mpfr
+                     22 optional:sage.libs.pari
+                     15 optional:sage.rings.number_field
+                      4 optional:sage.libs.gap
+                      4 optional:sage.rings.padics
+                      3 optional:sage.rings.finite_rings
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 172 ordered block rows and agree byte for byte
+on every stable persisted block field. Saved block-failure and file-error
+queries are empty, and active-row coverage is 100%.
+
+`sage/categories/fields.py` is now part of the curated pure-math corpus,
+raising it to 1,286 non-comment entries with no duplicates. This pass changes
+only doctest dependency metadata and corpus membership; the installed runtime
+already supplies the validated field-category behavior, so no native rebuild
+or Electron manifest update is required.
+
+Validation includes the controlled, ordinary default, and focused make
+dashboards; saved lifecycle/latest-run, failure-cluster, and skip queries;
+SQLite integrity and ordered row comparison; corpus uniqueness; accumulated-
+patch syntax; complete accumulated-patch application against pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58` with no rejects;
+byte-for-byte comparison of the reconstructed target with the runtime-tested
+source; full schema-204 manifest hash validation with 578 side modules and 759
+required resources; and `git diff --check`.
+
+Removing the obsolete target section leaves the accumulated source patch with
+1,752 serialized target sections (1,239 `diff --git` and 513 header-only
+legacy sections) and 5,226 hunks. Dashboards, worker state, patch logs, the
+failed first staging copy, and the clean pinned-source replay are under
+`/tmp/cowasm-sagelite-fields-audit.YoPnga/`. The first focused make invocation
+refreshed staging from the external developer checkout and encountered its
+unrelated `complex_roots.py` change. Staging was reconstructed from a clean
+archive at the pinned commit, the complete accumulated patch then applied
+without rejects, and the focused make target passed; the external checkout
+remains untouched. A future scheduled pass can audit another compact stale
+category guard or select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
