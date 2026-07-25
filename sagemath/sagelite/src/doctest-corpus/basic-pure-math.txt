@@ -1312,3 +1312,4 @@ src/sage/rings/padics/qadic_flint_CA.pyx
 src/sage/rings/padics/qadic_flint_CR.pyx
 src/sage/rings/padics/qadic_flint_FM.pyx
 src/sage/rings/padics/qadic_flint_FP.pyx
+src/sage/rings/padics/relaxed_template.pxi
