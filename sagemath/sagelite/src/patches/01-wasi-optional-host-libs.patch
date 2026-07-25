@@ -33843,3 +33843,11 @@ diff --git a/src/sage/rings/finite_rings/homset.py b/src/sage/rings/finite_rings
 -            sage: End(K).index(g) == 3
 +            sage: g = End(K)[3]                                                      # needs sage.libs.pari
 +            sage: End(K).index(g) == 3                                               # needs sage.libs.pari
+diff --git a/src/sage/rings/finite_rings/galois_group.py b/src/sage/rings/finite_rings/galois_group.py
+--- a/src/sage/rings/finite_rings/galois_group.py
++++ b/src/sage/rings/finite_rings/galois_group.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.modules sage.rings.finite_rings
+@@ -33,1 +32,1 @@
+-            sage: g(a) == a^(3^4)
++            sage: g(a) == a^(3^4)                                                # needs sage.libs.pari

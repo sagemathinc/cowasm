@@ -73308,6 +73308,69 @@ dashboards plus the clean reconstruction are under
 audit another compact stale finite-ring guard or select the next persisted
 backend/runtime cluster.
 
+Finite-field Galois-group guard reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+`sage/rings/finite_rings/galois_group.py` was the smallest remaining
+finite-ring module with a historical file-wide dependency annotation. A
+runner-version-153 controlled replay selected both declared features and
+recorded:
+
+```text
+galois_group.py: 18 passed, 1 failed, 1 skipped
+run lifecycle:   failed and closed
+SQLite integrity: ok
+```
+
+The 18 passing examples showed that the broad `sage.modules` and
+`sage.rings.finite_rings` guard was stale. The one active failure was the
+odd-characteristic `GF(3^6)` Frobenius-action example, which routes through
+the focused cypari2 `Gen.fffrobenius` object-model boundary and raises the
+expected CoWasm `NotImplementedError`. The existing permutation-construction
+example was already narrowly tagged for GAP.
+
+The accumulated WASI patch now removes the obsolete file guard and marks only
+the Frobenius-action comparison with `# needs sage.libs.pari`. The ordinary
+default profile, a clean pinned-source replay, and the strict focused make
+target then each record:
+
+```text
+galois_group.py: 18 passed, 0 failed, 2 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+The two final dashboards contain 20 ordered block rows and agree byte for
+byte on every persisted stable block field and raw actual output. Their only
+skips are the focused PARI and GAP rows, saved block-failure and file-error
+queries are empty, and active-row coverage is 100%.
+
+`sage/rings/finite_rings/galois_group.py` is now part of the curated pure-math
+corpus, raising it to 1,294 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+runtime already supplies the 18 reopened examples, so no native rebuild or
+Electron manifest update is required.
+
+Validation includes the controlled and ordinary default replays; the strict
+focused make dashboard against a complete clean pinned-source reconstruction;
+saved lifecycle, failure-cluster, and skip queries; SQLite integrity and
+ordered row comparison; Python compilation; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; Electron manifest, forge-resource, and runtime
+tests; and `git diff --check`. The external developer checkout's unrelated
+matrix, integer-ring, complex-roots, and SQLite changes remain untouched.
+
+Adding the focused Galois-group section raises the accumulated patch to 1,763
+serialized target sections (1,250 `diff --git` and 513 header-only legacy
+sections) and 5,255 hunks. Controlled, ordinary, clean-replay, focused-make,
+and query dashboards plus patch logs are under
+`/tmp/cowasm-sagelite-finite-galois-audit.755TUH/`. A future scheduled pass
+can audit the broader adjacent `hom_finite_field.pyx` guard or select the next
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

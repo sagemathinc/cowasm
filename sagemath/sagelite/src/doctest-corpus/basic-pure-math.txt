@@ -1296,3 +1296,4 @@ src/sage/topology/simplicial_complex.py
 src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
 src/sage/rings/finite_rings/maps_finite_field.py
 src/sage/rings/finite_rings/homset.py
+src/sage/rings/finite_rings/galois_group.py
