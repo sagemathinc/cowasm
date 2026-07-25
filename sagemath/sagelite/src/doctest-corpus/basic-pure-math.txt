@@ -313,6 +313,7 @@ src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
 src/sage/libs/ntl/ntl_ZZ_pEX.pyx
 src/sage/libs/ntl/ntl_lzz_p.pyx
 src/sage/libs/ntl/ntl_lzz_pContext.pyx
+src/sage/libs/ntl/ntl_lzz_pX.pyx
 src/sage/geometry/abc.pyx
 src/sage/geometry/hasse_diagram.py
 src/sage/geometry/linear_expression.py

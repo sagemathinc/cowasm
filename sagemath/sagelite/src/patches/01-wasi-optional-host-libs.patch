@@ -17589,14 +17589,6 @@ diff --git a/src/sage/groups/perm_gps/cubegroup.py b/src/sage/groups/perm_gps/cu
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.gap sage.plot.plot3d
  r"""
-diff --git a/src/sage/libs/ntl/ntl_lzz_pX.pyx b/src/sage/libs/ntl/ntl_lzz_pX.pyx
---- a/src/sage/libs/ntl/ntl_lzz_pX.pyx
-+++ b/src/sage/libs/ntl/ntl_lzz_pX.pyx
-@@ -4,3 +4,4 @@
- # distutils: library_dirs = NTL_LIBDIR
- # distutils: extra_link_args = NTL_LIBEXTRA
-+# sage.doctest: needs sage.libs.ntl
- # distutils: language = c++
 diff --git a/src/sage/algebras/letterplace/free_algebra_letterplace.pyx b/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
 --- a/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
 +++ b/src/sage/algebras/letterplace/free_algebra_letterplace.pyx
@@ -33510,3 +33502,112 @@ diff --git a/src/sage/libs/ntl/ntl_GF2EX.pyx b/src/sage/libs/ntl/ntl_GF2EX.pyx
 @@ -136 +140 @@ cdef class ntl_GF2EX():
 -        self.c.restore_c()
 +        restore_GF2EX_context(self.c)
+diff --git a/src/sage/libs/ntl/ntl_lzz_pX.pyx b/src/sage/libs/ntl/ntl_lzz_pX.pyx
+--- a/src/sage/libs/ntl/ntl_lzz_pX.pyx
++++ b/src/sage/libs/ntl/ntl_lzz_pX.pyx
+@@ -46,0 +47,6 @@ ZZ_sage = IntegerRing()
++
++cdef inline void restore_zz_pX_context(ntl_zz_pContext_class c) noexcept:
++    cdef zz_pContext_c local_context = zz_pContext_c(c.p)
++    local_context.restore()
++
++
+@@ -166 +172 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -209 +215 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -230 +236 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -269 +275 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -291 +297 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -312 +318 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -349 +355 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -380 +386 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -400 +406 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -427 +433 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -444 +450 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -461 +467 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -476 +482 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -491 +497 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -506 +512 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -522 +528 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -544 +550 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -570 +576 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -593 +599 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -609 +615 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -625 +631 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -639 +645 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -667 +673 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -690 +696 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -712 +718 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -743 +749 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -767 +773 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -783 +789 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -804 +810 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -827 +833 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -847 +853 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -863 +869 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
+@@ -884 +890 @@ cdef class ntl_zz_pX():
+-        self.c.restore_c()
++        restore_zz_pX_context(self.c)
