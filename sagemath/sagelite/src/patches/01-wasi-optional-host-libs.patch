@@ -33088,3 +33088,11 @@ diff --git a/src/sage/categories/lattice_posets.py b/src/sage/categories/lattice
 +++ b/src/sage/categories/lattice_posets.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs
+diff --git a/src/sage/categories/quotient_fields.py b/src/sage/categories/quotient_fields.py
+--- a/src/sage/categories/quotient_fields.py
++++ b/src/sage/categories/quotient_fields.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.fraction_field
+@@ -622 +621 @@
+-                sage: (1/(x+y)).derivative(x,y)
++                sage: (1/(x+y)).derivative(x,y)                  # known bug

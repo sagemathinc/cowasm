@@ -71445,6 +71445,79 @@ replay, focused make dashboards, and patch log are under
 can audit another compact category guard or select a persisted backend/runtime
 cluster.
 
+Quotient-field category guard-reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A preliminary controlled audit confirmed that the compact
+`sage/categories/groupoid.py` guard should remain in place: reopening it
+produced nine failures and no active passes because every example either
+requires unavailable permutation-group startup constructors or directly
+reaches `sage.libs.gap.libgap`.
+
+A runner-version-150 controlled audit then removed the historical file-wide
+`sage.rings.fraction_field` annotation from
+`sage/categories/quotient_fields.py`. The earlier 2026-07-07 timeout boundary
+is now stale: the reopened file completed in under 25 seconds and initially
+recorded:
+
+```text
+quotient_fields.py: 58 passed, 1 failed, 98 skipped
+```
+
+The only failure was a deterministic display-normalization difference for the
+mixed derivative of `1/(x+y)`. The installed runtime returns the mathematically
+equivalent
+`1/(1/2*x^3 + 3/2*x^2*y + 3/2*x*y^2 + 1/2*y^3)` instead of the expected
+`2/(x^3 + 3*x^2*y + 3*x*y^2 + y^3)`. That one example now carries a focused
+`known bug` marker rather than suppressing the entire category module.
+
+The final controlled audit and the focused make target against a clean
+pinned-source replay each record:
+
+```text
+quotient_fields.py: 58 passed, 0 failed, 99 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+The skip groups are 50 `sage.libs.pari`, 20 `sage.rings.number_field`, 17
+combined PARI/number-field, six number-field/symbolic, four
+number-field/real-MPFR, one finite-ring, and one `known bug` row. Both final
+dashboards contain 157 ordered block rows, have a 100% non-skipped pass rate,
+and agree on every stable persisted field. Saved block- and file-failure
+queries are empty.
+
+`sage/categories/quotient_fields.py` is now part of the curated pure-math
+corpus, raising it to 1,268 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete default-patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+replayed target with the runtime-tested controlled source; and
+`git diff --check`.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied `complex_roots.py`
+overlap. The external checkout and its unrelated changes remain untouched.
+The generated source staging tree was restored from a clean pinned archive,
+the accumulated patch was reapplied without rejects, and the focused make
+target then passed. The installed Electron resource bundle was not rebuilt or
+removed.
+
+The accumulated source patch adds one `diff --git` section and two hunks. It
+now has 1,744 serialized target sections (1,231 `diff --git` and 513
+header-only legacy sections) and 5,109 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-quotient-fields-audit.A1ZJKV/`; the clean pinned-source
+replay and patch log are under
+`/tmp/cowasm-sagelite-quotient-fields-replay.FJ4VaG/`; and the failed
+developer-checkout staging copy is retained under
+`/tmp/cowasm-sagelite-quotient-fields-failed-build.N81PXt/`. A future
+scheduled pass can audit another stale category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
