@@ -72623,6 +72623,71 @@ without rejects, and the focused make target passed; the external checkout
 remains untouched. A future scheduled pass can audit another compact stale
 category guard or select a persisted backend/runtime cluster.
 
+Commutative-ring category guard reopening and PARI-boundary classification
+pass on 2026-07-25 UTC:
+
+The adjacent `sage/categories/commutative_rings.py` file carried a historical
+file-wide `sage.rings.number_field` annotation. A runner-version-153
+controlled replay selected that feature and recorded:
+
+```text
+commutative_rings.py: 71 passed, 1 failed, 114 skipped
+failure cluster:       1 maximal-order PARI-path AttributeError
+run lifecycle:         failed and closed
+SQLite integrity:      ok
+```
+
+The 71 selected passes cover the commutative-ring category, polynomial Krull
+dimensions, number-field and finite-field extension helpers, derivations,
+cyclotomic cosets, square tests, and ring-element methods. The sole failure was
+`K.maximal_order()`: integral-basis construction enters
+`_pari_integral_basis()` and the browser runtime's incomplete PARI-backed
+number-field path. Its following `R.krull_dimension()` was a stale-state pass
+against the earlier nonmaximal order after the assignment failed.
+
+The stale file-wide guard is removed. A focused standalone `sage.libs.pari`
+directive now covers the maximal-order construction and its dependent
+dimension check while preserving the earlier number-field order setup. The
+ordinary default profile and the strict focused make target against a complete
+clean pinned-source reconstruction each record:
+
+```text
+commutative_rings.py: 66 passed, 0 failed, 120 skipped
+focused new skip:       2 optional:sage.rings.number_field,sage.libs.pari
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Both final dashboards contain 186 ordered block rows and agree byte for byte
+on every stable persisted block field and raw actual output. Saved block-
+failure and file-error queries are empty, and active-row coverage is 100%.
+
+`sage/categories/commutative_rings.py` is now part of the curated pure-math
+corpus, raising it to 1,287 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+runtime already supplies the validated active behavior, so no native rebuild
+or Electron manifest update is required.
+
+Validation includes the controlled, ordinary default, and focused make
+dashboards; saved lifecycle/latest-run, failure-cluster, and skip queries;
+SQLite integrity and ordered row comparison; Python compilation; corpus
+uniqueness and full-target dry run; accumulated-patch syntax; complete
+accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; full schema-204 resource-
+manifest validation with 578 side modules and 759 required-resource hashes;
+and `git diff --check`. The external developer checkout remains untouched.
+
+Replacing the obsolete file-header hunk with the focused PARI hunk leaves the
+accumulated source patch at 1,752 serialized target sections (1,239
+`diff --git` and 513 header-only legacy sections) and 5,226 hunks. Controlled,
+default, and focused-make dashboards plus worker state are under
+`/tmp/cowasm-sagelite-commutative-rings.KET4KS/`; the clean pinned-source
+replay and patch log are under
+`/tmp/cowasm-sagelite-commutative-replay.FWuVa6/`. A future scheduled pass can
+audit the broader `rings.py` category guard or select another compact
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
