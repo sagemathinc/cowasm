@@ -657,6 +657,7 @@ src/sage/categories/morphism.pyx
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
+src/sage/categories/rings.py
 src/sage/categories/domains.py
 src/sage/categories/integral_domains.py
 src/sage/categories/gcd_domains.py

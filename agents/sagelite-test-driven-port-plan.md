@@ -72688,6 +72688,85 @@ replay and patch log are under
 audit the broader `rings.py` category guard or select another compact
 persisted backend/runtime cluster.
 
+Ring-category guard reopening and focused PARI/Singular classification pass
+on 2026-07-25 UTC:
+
+The broader `sage/categories/rings.py` file carried a historical file-wide
+`sage.rings.number_field,sage.rings.finite_rings` annotation. A
+runner-version-153 controlled replay selected both features and recorded:
+
+```text
+rings.py:          189 passed, 5 failed, 142 skipped
+failure clusters:    2 maximal-order PARI-path rows
+                     2 prime-field zeta PARI-path rows
+                     1 multivariate nilradical Singular-wrapper row
+run lifecycle:     failed and closed
+SQLite integrity:  ok
+```
+
+The maximal-order assignment reaches the incomplete PARI-backed number-field
+object model, and its dependent `S.is_integrally_closed()` example then lacks
+the failed assignment. The `GF(7).zeta()` assignment reaches the focused
+cypari2 object-model boundary, and its dependent multiplicative-order example
+likewise lacks `a`. The multivariate nilradical calls the Singular-backed
+radical wrapper; because Singular is unavailable, its stacked option
+decorator is the fallback `MethodDecorator` and has no bound ideal instance.
+
+Removing only the file guard exposed the same maximal-order pair and
+nilradical row in the ordinary profile while the existing finite-ring
+directive continued to skip the prime-field zeta pair:
+
+```text
+rings.py:          170 passed, 3 failed, 163 skipped
+```
+
+The stale file-wide guard is removed. A standalone `sage.libs.pari` directive
+now covers maximal-order construction and its dependent check. The two
+prime-field zeta rows carry the additional focused `sage.libs.pari` feature
+without suppressing the later working `GF(49)` examples, and the nilradical
+row carries `sage.libs.singular`.
+
+The final ordinary profile and strict focused make target against a clean
+pinned-source reconstruction each record:
+
+```text
+rings.py:          170 passed, 0 failed, 166 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The final two-feature replay records `189 passed, 0 failed, 147 skipped`, and
+a finite-ring-only replay records `180 passed, 0 failed, 156 skipped`. This
+confirms that the four PARI-bound rows remain deferred while the later
+finite-field root-of-unity examples are active. The direct and make
+dashboards each contain 336 ordered block rows and agree byte for byte on
+every persisted stable block field and raw actual output. Saved block-failure
+and file-error queries are empty, and active-row coverage is 100%.
+
+`sage/categories/rings.py` is now part of the curated pure-math corpus,
+raising it to 1,288 non-comment entries with no duplicates. This pass changes
+only doctest dependency metadata and corpus membership; the installed runtime
+already supplies the validated active behavior, so no native rebuild or
+Electron manifest update is required.
+
+Validation includes the controlled, ordinary default, finite-ring-only, and
+focused make dashboards; saved lifecycle/latest-run, failure-cluster, and
+skip queries; SQLite integrity and ordered row comparison; Python
+compilation; corpus uniqueness and full-target dry run; accumulated-patch
+syntax and complete supported-pipeline application against clean pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; full schema-204 resource-manifest hash validation
+with 578 side modules and 759 required resources; and `git diff --check`.
+The external developer checkout and its unrelated changes remain untouched.
+
+Replacing the obsolete one-hunk file guard with three focused hunks leaves
+the accumulated source patch at 1,752 serialized target sections and raises
+it to 5,228 hunks. Dashboards, worker state, clean pinned-source clones,
+patch logs, and focused make logs are under
+`/tmp/cowasm-sagelite-rings-audit.rCdZiO/`. A future scheduled pass can audit
+another compact stale category guard or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
