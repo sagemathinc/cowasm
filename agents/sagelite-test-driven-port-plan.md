@@ -71759,6 +71759,74 @@ replay and patch log are under
 pass can audit the neighboring highest-weight crystal guard or select another
 persisted backend/runtime cluster.
 
+Highest-weight crystal guard-reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-151 controlled audit removed the historical file-wide
+`sage.combinat sage.graphs` annotation from
+`sage/categories/highest_weight_crystals.py`. The initial reopened run
+recorded:
+
+```text
+highest_weight_crystals.py: 170 passed, 3 failed, 5 skipped
+```
+
+All three failures belonged to one localized Weyl-group sequence in
+`string_parameters()`: the first default reduced-word calculation reached the
+unavailable `sage.libs.gap.libgap` backend, the explicit `WeylGroup`
+construction had no usable startup name without that backend, and the final
+comparison depended on the missing reduced word. Those three prompts now
+carry focused inline `sage.libs.gap` metadata. The intervening pure-Python
+`f_word` definition remains active rather than being hidden by a standalone
+or file-wide directive.
+
+The final controlled audit and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+highest_weight_crystals.py: 170 passed, 0 failed, 8 skipped
+skip groups:                  3 optional:sage.libs.gap
+                              3 long time
+                              2 deferred:not tested
+run lifecycle:                passed and closed
+SQLite integrity:             ok
+```
+
+Both final dashboards contain 178 ordered block rows, have a 100%
+non-skipped pass rate, and agree on every stable persisted block field.
+Saved block-failure and file-error queries are empty.
+
+`sage/categories/highest_weight_crystals.py` is now part of the curated
+pure-math corpus, raising it to 1,273 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete accumulated-patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed target with the runtime-tested controlled source;
+and `git diff --check`. The installed schema-204 Electron resource manifest
+remains intact with 578 side modules and 759 required-resource hashes.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied source overlap. The
+external checkout and its unrelated changes remain untouched. The generated
+source staging tree was reconstructed from a clean detached archive at the
+pinned commit, the complete accumulated patch was applied without rejects,
+and the focused make target then passed. The failed staging copy is retained
+under
+`/tmp/cowasm-sagelite-highest-weight-crystals-audit.edXOeJ/failed-build/`.
+
+The accumulated source patch adds one `diff --git` section and two hunks. It
+now has 1,750 serialized target sections (1,237 `diff --git` and 513
+header-only legacy sections) and 5,121 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-highest-weight-crystals-audit.edXOeJ/`; the clean
+pinned-source replay and patch log are under
+`/tmp/cowasm-sagelite-highest-weight-crystals-replay-final.CYugKR/`. A future
+scheduled pass can audit another compact stale crystal-category guard or
+select a persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
