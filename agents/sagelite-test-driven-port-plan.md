@@ -73863,6 +73863,71 @@ clean-reconstruction, and patch-replay evidence is under
 audit another compact NTL or finite-ring guard or select the next persisted
 backend/runtime cluster.
 
+Relative ramified p-adic guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/padics/relative_ramified_CR.pyx` carried a historical file-wide
+NTL annotation even though NTL and the relevant p-adic runtime are now shipped
+in the browser package. A runner-version-154 controlled replay selected NTL
+and recorded:
+
+```text
+relative_ramified_CR.pyx: 0 passed, 9 failed, 0 skipped
+run lifecycle:            failed and closed
+SQLite integrity:         ok
+```
+
+The first example failed while constructing `Zq(125)` because the intentional
+WASI generic `ZZ[]` default produced a `Polynomial_generic_dense` defining
+polynomial where `PowComputer_flint_maker` requires
+`Polynomial_integer_dense_flint`; the remaining failures were namespace
+cascades. The accumulated WASI patch now keeps the generic integer-polynomial
+backend as the global default but explicitly converts the defining polynomial
+to the already shipped FLINT backend at the p-adic extension boundary. With
+that runtime fix in place, the patch removes the obsolete file-wide NTL guard.
+
+The ordinary packaged-resource replay and the strict focused make target
+against a fresh complete pinned-source reconstruction each record:
+
+```text
+relative_ramified_CR.pyx: 9 passed, 0 failed, 0 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+Saved failure and file-error queries are empty, active-row coverage is 100%,
+and the packaged and strict-make databases agree across every stable field for
+all nine block rows.
+
+`sage/rings/padics/relative_ramified_CR.pyx` is now part of the curated
+pure-math corpus, raising it to 1,302 non-comment entries with no duplicates or
+missing paths. The standalone suite adds a permanent relative ramified
+extension construction smoke, advances the Electron resource manifest to
+schema 210, and appends
+`flint-padic-defining-polynomial-v182` to the packaged-runtime contract.
+
+Validation includes the controlled failure reproduction; ordinary packaged
+and strict focused-make dashboards; saved lifecycle/failure queries; SQLite
+integrity and exact stable-row comparison; corpus uniqueness and path
+existence; shell and Node syntax checks; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. A complete resumed
+standalone validation rebuilt and installed the native modules, passed all
+Node import smokes including the new p-adic case, accepted the schema-210
+Electron manifest, passed the doctest/database matrix, and passed the relocated
+resource probes. The external developer checkout and its unrelated matrix,
+integer-ring, complex-roots, and SQLite changes remain untouched.
+
+Adding the focused p-adic runtime conversion and removing the stale guard
+raises the accumulated patch to 1,774 serialized target sections (1,261
+`diff --git` and 513 header-only legacy sections) and 5,297 hunks. Controlled,
+packaged, strict-make, query, clean-reconstruction, standalone, and patch-replay
+evidence is under
+`/tmp/cowasm-sagelite-relative-ramified-cr.faaPOO/`. A future scheduled pass can
+audit another compact finite-ring or NTL guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

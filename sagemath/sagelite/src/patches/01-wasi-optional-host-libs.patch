@@ -34192,3 +34192,23 @@ diff --git a/src/sage/rings/polynomial/polynomial_zz_pex.pyx b/src/sage/rings/po
 @@ -306 +305 @@ cdef class Polynomial_ZZ_pEX(Polynomial):
 -            sage: r == prod(u - v for (u,eu) in f.roots() for (v,ev) in g.roots())
 +            sage: r == prod(u - v for (u,eu) in f.roots() for (v,ev) in g.roots())    # needs sage.libs.pari
+diff --git a/src/sage/rings/padics/padic_extension_leaves.py b/src/sage/rings/padics/padic_extension_leaves.py
+--- a/src/sage/rings/padics/padic_extension_leaves.py
++++ b/src/sage/rings/padics/padic_extension_leaves.py
+@@ -94 +94 @@ def _make_integral_poly(exact_modulus, p, prec):
+-        return exact_modulus.change_ring(ZZ)
++        integral = exact_modulus.change_ring(ZZ)
+@@ -96 +96,7 @@ def _make_integral_poly(exact_modulus, p, prec):
+-        return exact_modulus.change_ring(Zmod(p**prec)).change_ring(ZZ)
++        integral = exact_modulus.change_ring(Zmod(p**prec)).change_ring(ZZ)
++    import sys
++    if sys.platform == 'wasi':
++        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
++        ring = PolynomialRing(ZZ, integral.variable_name(), implementation='FLINT')
++        return ring(integral)
++    return integral
+diff --git a/src/sage/rings/padics/relative_ramified_CR.pyx b/src/sage/rings/padics/relative_ramified_CR.pyx
+--- a/src/sage/rings/padics/relative_ramified_CR.pyx
++++ b/src/sage/rings/padics/relative_ramified_CR.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.ntl
