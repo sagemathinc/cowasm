@@ -74248,6 +74248,74 @@ clean-reconstruction, failed-section-order, and patch-replay evidence is under
 audit another compact p-adic dependency guard or select the next persisted
 backend/runtime cluster.
 
+P-adic Frobenius morphism NTL-context restoration and guard-reopening pass on
+2026-07-25 UTC:
+
+`sage/rings/padics/morphism.pyx` carried a historical file-wide NTL guard even
+though NTL and the q-adic extension stack are now shipped in the browser
+package. A runner-version-154 feature-selected baseline reached the first
+ramified-extension setup and recorded:
+
+```text
+morphism.pyx before: 0 passed, 1 failed, 0 skipped
+active line:         L.<pi> = K.extension(x^2 - 5)
+failure cluster:     NTL ZZ_p polynomial conversion trap
+```
+
+The `padic_ZZ_pX_CR_element` side module invoked its local NTL
+`ZZX_to_ZZ_pX(...)` conversion after asking the separately linked
+`pow_computer_ext` side module to restore a precision context. Because each
+WASM side module carries its own NTL static state, that cross-module restore
+did not initialize the conversion module's local `ZZ_p` modulus. The
+accumulated WASI patch now reconstructs the local `ZZ_pContext` from the
+cached Sage context immediately before both relative-only and
+absolute-plus-relative `ZZX` conversion paths.
+
+A focused Cython generation, C++ compilation, and WASM side-module link
+validated the changed `padic_ZZ_pX_CR_element` extension. A copy-on-write
+resource replay with the rebuilt module and refreshed manifest integrity hash,
+the ordinary browser-profile replay, and the strict focused make target
+against a complete clean pinned-source reconstruction each record:
+
+```text
+morphism.pyx: 66 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure, file-error, and skip queries are empty for the passing
+dashboards, with 100% active-row coverage. The ordinary and strict-make
+dashboards agree across every stable field for all 66 ordered rows after
+normalizing the one intentional `# random` hash result. The stale file-wide
+guard is removed, and `sage/rings/padics/morphism.pyx` is now part of the
+curated pure-math corpus, raising it to 1,311 non-comment entries with no
+duplicates or missing paths.
+
+Validation includes the initial focused failure dashboard; final
+feature-selected, ordinary, and strict focused-make dashboards; focused native
+Cython/C++/WASM rebuilding; copy-on-write resource-manifest integrity; saved
+lifecycle, latest-run, failure, and skip queries; SQLite integrity and
+normalized exact stable-row comparison; corpus uniqueness, path existence,
+and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested sources; rejection of a second
+forward patch application; and `git diff --check`. The first attempted
+resource clone exposed a cross-filesystem hard-link limitation, and the
+fallback symlink farm was correctly rejected by the Electron resource
+contract; the successful replay used a complete ordinary `/tmp` resource
+copy. The shipped module was already part of the Electron resource contract,
+so the durable source repair needs no manifest schema update.
+
+The runtime repair plus guard removal raise the accumulated patch to 1,786
+serialized target sections (1,273 `diff --git` and 513 header-only legacy
+sections) and 5,314 hunks. Baseline, native-build, resource, controlled,
+ordinary, strict-make, query, clean-reconstruction, failed-copy, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-morphism.gVug2D/`. A future scheduled pass can
+audit another compact p-adic NTL guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

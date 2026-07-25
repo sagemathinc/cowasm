@@ -34278,3 +34278,20 @@ diff --git a/src/sage/rings/padics/relaxed_template.pxi b/src/sage/rings/padics/
 +++ b/src/sage/rings/padics/relaxed_template.pxi
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx b/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
+--- a/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
++++ b/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
+@@ -216,0 +217,4 @@
++cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++
+@@ -1006,0 +1011 @@
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec + self.ordp))
+@@ -1040,0 +1046 @@
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec + self.ordp))
+diff --git a/src/sage/rings/padics/morphism.pyx b/src/sage/rings/padics/morphism.pyx
+--- a/src/sage/rings/padics/morphism.pyx
++++ b/src/sage/rings/padics/morphism.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.ntl
