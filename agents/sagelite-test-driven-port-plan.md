@@ -72127,6 +72127,51 @@ pinned-source replay is under
 can audit the now-adjacent guarded `ntl_ZZ_pE.pyx` wrapper or select another
 persisted NTL backend/runtime cluster.
 
+NTL extension-element guard-reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+The adjacent `sage/libs/ntl/ntl_ZZ_pE.pyx` wrapper already contained the same
+side-module-local prime-field and extension-field context reconstruction used
+to restore extension-element arithmetic. A runner-version-153 controlled
+replay selected the historical file feature and recorded:
+
+```text
+ntl_ZZ_pE.pyx: 27 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The file-wide `sage.libs.ntl` annotation was therefore stale. Removing it
+leaves both an ordinary default-profile replay and the strict focused make
+target against a complete clean pinned-source reconstruction with the same
+27 passes, zero failures, and zero skips. The final default and make
+dashboards agree on every ordered stable block and file field. Saved
+block-failure and file-error queries are empty.
+
+`sage/libs/ntl/ntl_ZZ_pE.pyx` is now part of the curated pure-math corpus,
+raising it to 1,279 non-comment entries with no duplicates. This pass changes
+only doctest dependency metadata and corpus membership: the installed
+extension-element side module already supplies the validated runtime behavior,
+so no native rebuild or Electron manifest update is required.
+
+Validation includes the controlled feature replay; ordinary default and
+focused make dashboards; saved lifecycle/latest-run and failure-cluster
+queries; SQLite integrity and ordered row comparison; corpus uniqueness;
+accumulated-patch syntax; complete sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` with no rejects;
+byte-for-byte comparison of the independently replayed target with the
+runtime-tested clean source; full schema-204 manifest hash validation with 578
+side modules and 759 required resources; and `git diff --check`.
+
+Removing the obsolete target section leaves the accumulated source patch with
+1,753 serialized target sections (1,240 `diff --git` and 513 header-only
+legacy sections) and 5,170 hunks. Dashboards, worker state, the prior staging
+copy, and patch logs are under
+`/tmp/cowasm-sagelite-ntl-zpe-audit.9bmfx0/`; the clean pinned-source replay is
+under `/tmp/cowasm-sagelite-ntl-zpe-replay.F1pIgh/`. A future scheduled pass
+can audit another guarded NTL wrapper or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

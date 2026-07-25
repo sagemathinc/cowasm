@@ -327,15 +327,6 @@ diff -urN -U0 a/src/sage/libs/linkages/padics/unram_shared.pxi b/src/sage/libs/l
 +++ b/src/sage/libs/linkages/padics/unram_shared.pxi
 @@ -1,0 +1 @@
 +# sage.doctest: needs sage.libs.ntl
-diff --git a/src/sage/libs/ntl/ntl_ZZ_pE.pyx b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
---- a/src/sage/libs/ntl/ntl_ZZ_pE.pyx
-+++ b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
-@@ -3,4 +3,5 @@
- # distutils: include_dirs = NTL_INCDIR
- # distutils: library_dirs = NTL_LIBDIR
- # distutils: extra_link_args = NTL_LIBEXTRA
-+# sage.doctest: needs sage.libs.ntl
- # distutils: language = c++
 diff --git a/src/sage/libs/ntl/ntl_GF2EX.pyx b/src/sage/libs/ntl/ntl_GF2EX.pyx
 --- a/src/sage/libs/ntl/ntl_GF2EX.pyx
 +++ b/src/sage/libs/ntl/ntl_GF2EX.pyx
