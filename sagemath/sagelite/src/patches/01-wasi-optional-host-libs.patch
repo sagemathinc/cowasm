@@ -32895,3 +32895,45 @@ diff --git a/src/sage/categories/examples/algebras_with_basis.py b/src/sage/cate
 @@ -91 +89 @@
 -            sage: A.algebra_generators()                                                # needs sage.modules
 +            sage: A.algebra_generators()
+diff --git a/src/sage/categories/examples/filtered_modules_with_basis.py b/src/sage/categories/examples/filtered_modules_with_basis.py
+--- a/src/sage/categories/examples/filtered_modules_with_basis.py
++++ b/src/sage/categories/examples/filtered_modules_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat
+@@ -37 +36 @@
+-          sage: A = ModulesWithBasis(QQ).Filtered().example()                           # needs sage.modules
++          sage: A = ModulesWithBasis(QQ).Filtered().example()
+@@ -47 +46 @@
+-          sage: [m for m in A.basis(4)]                                                 # needs sage.modules
++          sage: [m for m in A.basis(4)]
+@@ -61 +60 @@
+-          sage: A.degree_on_basis(Partition([4,3]))                                     # needs sage.modules
++          sage: A.degree_on_basis(Partition([4,3]))
+@@ -63 +62 @@
+-          sage: A._repr_term(Partition([4,3]))                                          # needs sage.modules
++          sage: A._repr_term(Partition([4,3]))
+@@ -77 +76 @@
+-          sage: p = A.monomial(Partition([3,2,1])); p                                   # needs sage.modules
++          sage: p = A.monomial(Partition([3,2,1])); p
+@@ -79 +78 @@
+-          sage: p.is_homogeneous()                                                      # needs sage.modules
++          sage: p.is_homogeneous()
+@@ -81 +80 @@
+-          sage: p.degree()                                                              # needs sage.modules
++          sage: p.degree()
+@@ -88 +87 @@
+-            sage: A = ModulesWithBasis(QQ).Filtered().example(); A                      # needs sage.modules
++            sage: A = ModulesWithBasis(QQ).Filtered().example(); A
+@@ -90 +89 @@
+-            sage: TestSuite(A).run()                                                    # needs sage.modules
++            sage: TestSuite(A).run()
+@@ -114 +112,0 @@
+-            sage: # needs sage.modules
+@@ -131 +129 @@
+-            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest         # needs sage.modules
++            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest
+@@ -146,2 +144,2 @@
+-            sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
+-            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
++            sage: A = ModulesWithBasis(QQ).Filtered().example()
++            sage: A._repr_term(Partition((4,2,1)))
