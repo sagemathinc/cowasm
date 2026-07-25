@@ -70485,6 +70485,68 @@ patch replay and its matching dashboard are under
 classify the compact Verma-module PARI boundary or isolate the larger
 center-UEA cluster.
 
+Verma-module PARI-boundary classification and corpus-promotion pass on
+2026-07-25 UTC:
+
+The runner-version-148 controlled dashboard from the preceding Lie-algebra
+guard audit selected the historical file-wide
+`sage.algebras.lie_algebras sage.graphs` annotation and recorded:
+
+```text
+verma_module.py: 417 passed, 4 failed, 1 skipped
+```
+
+The existing long-time skip is independent. The two primary failures were the
+type-C3 and type-F4 `VermaModuleHomset.singular_vector()` examples. Their
+finite Coxeter-group construction creates a quadratic number field, asks PARI
+to count real polynomial roots, and reaches the intentionally unsupported
+cypari2 object-model conversion path. The other two failures were dependent
+`v.degree()` checks after those singular-vector assignments failed. The graph
+and broad Lie-algebra features were not active boundaries elsewhere in the
+module.
+
+The stale file-wide guard is removed. The two singular-vector calls and their
+two dependent degree checks now carry focused `sage.libs.pari` metadata, so
+valid setup and the module's other Lie-algebra coverage remain active without
+allowing stale `v` state to manufacture passes. The ordinary default node
+profile records:
+
+```text
+verma_module.py: 417 passed, 0 failed, 5 skipped
+skip groups:         4 sage.libs.pari
+                     1 long time
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+The dashboard contains 422 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. Exactly four rows transition
+from failure to focused skip; the other 418 rows preserve their source hashes,
+source, expected and actual output, status, expected kind, skip reason, and
+failure metadata, apart from the uniform one-line shift and removal of the
+inherited file-wide tags.
+
+`sage/algebras/lie_algebras/verma_module.py` is now part of the curated
+pure-math corpus, raising it to 1,250 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+target replay; an exact 422-row live/replay SQLite comparison; and
+`git diff --check`. This change affects only source doctest metadata, so the
+preceding fully green standalone build remains the compiled-runtime baseline.
+The external developer Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,724 serialized file sections (1,211
+`diff --git` and 513 legacy sections) and 5,000 hunks. The controlled
+dashboard is under `/tmp/cowasm-sagelite-next-lie.7YCeou/`; the default and
+exact-replay dashboards are under `/tmp/cowasm-sagelite-verma.TY5N7A/`, and
+the clean pinned-source replay is under
+`/tmp/cowasm-sagelite-verma-replay.Efuhjg/`. A future scheduled pass can
+isolate the larger center-UEA PARI/state-dependency cluster or select another
+persisted runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

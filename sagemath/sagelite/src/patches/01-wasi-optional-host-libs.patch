@@ -32671,3 +32671,20 @@ diff --git a/src/sage/algebras/lie_algebras/subalgebra.py b/src/sage/algebras/li
 +        sage: # needs sage.symbolic
 @@ -104,0 +106 @@
 +        sage: # needs sage.symbolic
+diff --git a/src/sage/algebras/lie_algebras/verma_module.py b/src/sage/algebras/lie_algebras/verma_module.py
+--- a/src/sage/algebras/lie_algebras/verma_module.py
++++ b/src/sage/algebras/lie_algebras/verma_module.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+@@ -1356 +1355 @@
+-            sage: v = H.singular_vector(); v
++            sage: v = H.singular_vector(); v  # needs sage.libs.pari
+@@ -1359 +1358 @@
+-            sage: v.degree() == Mp.highest_weight()
++            sage: v.degree() == Mp.highest_weight()  # needs sage.libs.pari
+@@ -1371 +1370 @@
+-            sage: v = H.singular_vector()
++            sage: v = H.singular_vector()  # needs sage.libs.pari
+@@ -1376 +1375 @@
+-            sage: v.degree() == Mp.highest_weight()
++            sage: v.degree() == Mp.highest_weight()  # needs sage.libs.pari
