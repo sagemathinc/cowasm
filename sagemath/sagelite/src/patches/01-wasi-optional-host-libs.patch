@@ -32995,3 +32995,37 @@ diff --git a/src/sage/categories/examples/crystals.py b/src/sage/categories/exam
 +++ b/src/sage/categories/examples/crystals.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.graphs
+diff --git a/src/sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py b/src/sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py
+--- a/src/sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py
++++ b/src/sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.modules
+@@ -12,0 +12 @@
++from sage.misc.lazy_attribute import lazy_attribute
+@@ -86,0 +87,2 @@
++            sage: '_lift_uea' in L.__dict__
++            False
+@@ -97,0 +100,8 @@
++    @lazy_attribute
++    def _lift_uea(self):
++        """
++        Return the canonical lift into the universal enveloping algebra.
++
++        Construct this lazily so basic Lie algebra operations do not require
++        the optional noncommutative polynomial backend.
++        """
+@@ -99,2 +109,3 @@
+-        self._lift_uea = LiftMorphism(self, self._construct_UEA())
+-        self._lift_uea.register_as_coercion()
++        lift = LiftMorphism(self, self._construct_UEA())
++        lift.register_as_coercion()
++        return lift
+@@ -150 +161 @@
+-            sage: L.lift(a)
++            sage: L.lift(a)                                      # needs sage.rings.polynomial.plural
+@@ -152 +163 @@
+-            sage: L.lift(b).parent() is L.universal_enveloping_algebra()
++            sage: L.lift(b).parent() is L.universal_enveloping_algebra()  # needs sage.rings.polynomial.plural
+@@ -173 +184 @@
+-            sage: L.universal_enveloping_algebra()
++            sage: L.universal_enveloping_algebra()                # needs sage.rings.polynomial.plural

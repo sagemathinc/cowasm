@@ -71189,6 +71189,72 @@ complete pinned-source replay and patch log are under
 can audit another compact stale category dependency guard or select a
 persisted backend/runtime cluster.
 
+Finite-dimensional Lie example lazy-UEA and guard-reopening pass on
+2026-07-25 UTC:
+
+A runner-version-148 controlled audit enabled the remaining file-wide
+`sage.modules` annotation on
+`finite_dimensional_lie_algebras_with_basis.py` and initially recorded:
+
+```text
+3 passed, 92 failed, 1 skipped
+```
+
+The primary failures were not missing module or finite-dimensional Lie
+semantics. `AbelianLieAlgebra.__init__` eagerly constructed its universal
+enveloping algebra, so every otherwise independent example reached the
+unavailable noncommutative `sage.rings.polynomial.plural` backend. Most of the
+92 failures were dependent missing-name cascades after that constructor
+failed.
+
+The example now creates its canonical UEA lift through a `lazy_attribute`,
+matching the lazy contract already used by the general Lie-algebra category.
+An active regression checks that construction leaves `_lift_uea` absent from
+the instance dictionary. The three examples that genuinely request the UEA
+or its lift now carry focused `sage.rings.polynomial.plural` metadata, and the
+stale file-wide modules guard is removed.
+
+The default browser profile, complete installed-resource source, and focused
+make target against the clean pinned-source replay each record:
+
+```text
+finite_dimensional_lie_algebras_with_basis.py:
+    93 passed, 0 failed, 4 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Three skips group under `optional:sage.rings.polynomial.plural`; the fourth is
+the existing `sage.combinat,sage.libs.singular` element-lift boundary. All 97
+ordered rows agree across the default, focused, and installed dashboards on
+every stable persisted field. Installed block keys differ only because they
+embed the installed resource path. Saved block- and file-failure queries are
+empty, and active-row coverage is 100%.
+
+The example is now part of the curated pure-math corpus, raising it to 1,264
+non-comment entries with no duplicates.
+
+Validation additionally includes Python compilation; source/install
+byte-for-byte comparison; saved lifecycle/latest-run/failure/skip queries;
+corpus uniqueness and make-target dry run; patch syntax; exact zero-fuzz
+target replay; and complete accumulated-patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` with no rejects.
+A make dependency refresh against the external developer checkout reproduced
+its known pre-applied `complex_roots.py` overlap, while the target file still
+matched the clean replay exactly. The external checkout and its unrelated
+local changes remain untouched; this source-level pass uses the preceding
+green installed runtime as its compiled baseline.
+
+The accumulated source patch adds one `diff --git` section and eight hunks. It
+now has 1,738 serialized sections (1,225 `diff --git` and 513 legacy
+sections) and 5,097 hunks. Focused dashboards and worker state are under
+`/tmp/cowasm-sagelite-fdlie-audit.tKdiFN/`; the final exact and complete
+pinned-source replays are under
+`/tmp/cowasm-sagelite-fdlie-exact-checked.swFIho/` and
+`/tmp/cowasm-sagelite-fdlie-full-checked.dKSYjy/`. A future scheduled pass can
+audit the remaining PARI-guarded `sets_cat.py` example or select another
+compact persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

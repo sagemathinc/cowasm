@@ -586,6 +586,7 @@ src/sage/categories/examples/cw_complexes.py
 src/sage/categories/examples/facade_sets.py
 src/sage/categories/examples/finite_coxeter_groups.py
 src/sage/categories/examples/finite_dimensional_algebras_with_basis.py
+src/sage/categories/examples/finite_dimensional_lie_algebras_with_basis.py
 src/sage/categories/examples/finite_enumerated_sets.py
 src/sage/categories/examples/finite_monoids.py
 src/sage/categories/examples/finite_semigroups.py
