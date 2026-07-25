@@ -71897,6 +71897,75 @@ pinned-source replay and patch log are under the directory named in
 future scheduled pass can audit the broader base crystal-category guard or
 select another persisted backend/runtime cluster.
 
+Base-crystal guard-reopening and startup-namespace pass on 2026-07-25 UTC:
+
+A runner-version-153 controlled audit removed the historical file-wide
+`sage.graphs sage.combinat` annotation from
+`sage/categories/crystals.py`. The initial reopened run recorded:
+
+```text
+crystals.py: 487 passed, 11 failed, 7 skipped
+failures:       5 missing HighestWeightCrystals startup names
+                3 dependent category rows
+                1 missing CartanMatrix startup name
+                1 dependent weight-lattice display row
+                1 unavailable 3D plotting backend
+```
+
+Both lightweight constructors were already importable in the browser profile.
+The runner now seeds `HighestWeightCrystals` and `CartanMatrix`, and the WASI
+`sage.all` branch exports them for interactive startup parity. The one
+`plot3d()` example that imports the unavailable RDF interpreter through the 3D
+plotting stack now carries focused `sage.plot.plot3d` metadata.
+
+The stale file-wide guard is removed without changing any other executable
+example. The controlled audit and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+crystals.py: 497 passed, 0 failed, 8 skipped
+skip groups:   6 deferred:not tested graph views
+               1 optional:sage.plot.plot3d
+               1 optional:sage.symbolic
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 505 ordered block rows and have a 100%
+non-skipped pass rate. All source, source-hash, expected-output, status,
+failure, tag, and skip fields agree. The accepted actual output also agrees
+for 503 rows; two ellipsis-matched TikZ graph rows have expected
+layout-coordinate variation between processes. Saved block-failure and
+file-error queries are empty.
+
+`sage/categories/crystals.py` is now part of the curated pure-math corpus,
+raising it to 1,275 non-comment entries with no duplicates.
+
+Validation includes Node syntax checking; Python compilation; saved
+lifecycle/latest-run, failure-cluster, and skip queries; corpus uniqueness;
+focused make-target execution and dry run; accumulated-patch syntax; complete
+accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed `crystals.py` and `all.py` targets with the
+runtime-tested controlled source; schema-204 manifest inspection with 578 side
+modules and 759 required-resource hashes; and `git diff --check`.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied `complex_roots.py`
+overlap. The external checkout and its unrelated changes remain untouched.
+The failed staging copy is retained under
+`/tmp/cowasm-sagelite-crystals-audit.QDXsCh/failed-build/`; generated source
+staging was reconstructed from a clean archive at the pinned commit, and the
+complete accumulated patch and focused make target then passed.
+
+The accumulated source patch adds two `diff --git` sections and four hunks. It
+now has 1,754 serialized target sections (1,241 `diff --git` and 513
+header-only legacy sections) and 5,131 hunks. Controlled and focused
+dashboards, worker state, the clean patch log, and comparison sources are
+under `/tmp/cowasm-sagelite-crystals-audit.QDXsCh/`. A future scheduled pass
+can audit another compact stale crystal-category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

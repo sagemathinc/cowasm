@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 152;
+const doctestRunnerVersion = 153;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1402,6 +1402,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.graded_hopf_algebras_with_basis", ("GradedHopfAlgebrasWithBasis",)),
         ("sage.categories.category", ("Category",)),
         ("sage.categories.group_algebras", ("GroupAlgebras",)),
+        ("sage.categories.highest_weight_crystals", ("HighestWeightCrystals",)),
         ("sage.categories.hopf_algebras", ("HopfAlgebras",)),
         ("sage.categories.hopf_algebras_with_basis", ("HopfAlgebrasWithBasis",)),
         ("sage.categories.left_modules", ("LeftModules",)),
@@ -1435,6 +1436,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.unique_factorization_domains", ("UniqueFactorizationDomains",)),
         ("sage.categories.finite_monoids", ("FiniteMonoids",)),
         ("sage.categories.finite_semigroups", ("FiniteSemigroups",)),
+        ("sage.combinat.root_system.cartan_matrix", ("CartanMatrix",)),
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
