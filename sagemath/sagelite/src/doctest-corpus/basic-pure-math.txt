@@ -1301,3 +1301,4 @@ src/sage/rings/finite_rings/hom_finite_field.pyx
 src/sage/rings/finite_rings/element_base.pyx
 src/sage/rings/finite_rings/element_givaro.pyx
 src/sage/rings/finite_rings/finite_field_givaro.py
+src/sage/rings/finite_rings/hom_finite_field_givaro.pyx

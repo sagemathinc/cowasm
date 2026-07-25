@@ -73677,6 +73677,67 @@ evidence is under
 audit the adjacent `hom_finite_field_givaro.pyx` guard or select the next
 persisted backend/runtime cluster.
 
+Givaro finite-field homomorphism guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/finite_rings/hom_finite_field_givaro.pyx` carried the adjacent
+historical file-wide NTL annotation even though Givaro, NTL, and the generic
+finite-field homomorphism support are now installed in the browser runtime. A
+runner-version-154 controlled replay selected the broad feature and recorded:
+
+```text
+hom_finite_field_givaro.pyx: 44 passed, 0 failed, 0 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+All 44 examples pass through the shipped Givaro backend, including embeddings,
+sections, Frobenius endomorphisms, fixed fields, random-element arithmetic, and
+the intended large-field fallback to the generic finite-field morphism. The
+accumulated WASI patch now removes the obsolete file annotation without adding
+any narrower dependency or deferred-test metadata.
+
+A complete clean pinned-source reconstruction and the strict focused make
+target each record the same result:
+
+```text
+hom_finite_field_givaro.pyx: 44 passed, 0 failed, 0 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the clean-source and strict-make dashboards agree on all 44
+persisted stable block fields. Before the patch, the ordinary default profile
+recorded the file-wide dependency directive as one skipped unit with no active
+coverage.
+
+`sage/rings/finite_rings/hom_finite_field_givaro.pyx` is now part of the
+curated pure-math corpus, raising it to 1,299 non-comment entries with no
+duplicates or missing paths. This pass changes only doctest dependency
+metadata and corpus membership; the installed native runtime already supplies
+all reopened behavior, so no native WASM rebuild or Electron resource-contract
+update is required.
+
+Validation includes the controlled feature-selected replay; the pre-patch
+default-profile guard check; ordinary clean-source and strict focused-make
+dashboards; saved lifecycle/latest-run/failure/skip queries; SQLite integrity
+and ordered stable-row comparison; corpus uniqueness and path existence;
+accumulated-patch syntax and complete supported-pipeline application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated matrix, integer-ring, complex-roots, and SQLite
+changes remain untouched.
+
+Removing the stale Givaro-homomorphism guard raises the accumulated patch to
+1,770 serialized target sections (1,257 `diff --git` and 513 header-only
+legacy sections) and 5,287 hunks. Controlled, pre-patch, clean-source,
+strict-make, query, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-hom-givaro.FTgxau/`. A future scheduled pass can audit
+the next compact finite-ring guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
