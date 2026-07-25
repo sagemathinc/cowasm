@@ -72435,6 +72435,60 @@ under `/tmp/cowasm-sagelite-ntl-mat-gf2e-replay.Llapus/`. A future scheduled
 pass can audit another guarded NTL wrapper or select a persisted backend/runtime
 cluster.
 
+NTL integer-matrix guard-reopening and corpus-promotion pass on 2026-07-25
+UTC:
+
+A runner-version-153 controlled replay selected the historical
+`sage.libs.ntl,sage.matrix.matrix_integer_dense` file feature on
+`sage/libs/ntl/ntl_mat_ZZ.pyx` and recorded:
+
+```text
+ntl_mat_ZZ.pyx: 119 passed, 0 failed, 1 skipped
+run lifecycle:  passed and closed
+SQLite integrity: ok
+```
+
+The only skip is the existing long-time HNF timing example. The integer-matrix
+wrapper, dense-matrix conversions, arithmetic, determinant, charpoly,
+minimal-polynomial, HNF, LLL, and serialization examples otherwise complete
+without reaching an unavailable backend. The file-wide NTL/dense-matrix guard
+was therefore stale.
+
+Removing the guard leaves the ordinary default profile and the strict focused
+make target against a complete clean pinned-source reconstruction with the
+same 119 passes, zero failures, and one skip. Both final dashboards contain
+120 ordered block rows and agree on every stable persisted block and file
+field. Their only raw output differences are three examples already tagged
+`# random`: a generated matrix coefficient and two timing values. Saved
+block-failure and file-error queries are empty, and active-row coverage is
+100%.
+
+`sage/libs/ntl/ntl_mat_ZZ.pyx` is now part of the curated pure-math corpus,
+raising it to 1,284 non-comment entries with no duplicates. This pass changes
+only doctest dependency metadata and corpus membership: the installed integer
+matrix side module already supplies the validated runtime behavior, so no
+native rebuild or Electron manifest update is required.
+
+Validation includes the controlled feature replay; ordinary default and
+focused make dashboards; saved lifecycle/latest-run, failure-cluster, and skip
+queries; SQLite integrity and ordered stable-row comparison; corpus
+uniqueness; accumulated-patch syntax; complete accumulated-patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+application; byte-for-byte comparison of the replayed target with the
+runtime-tested source; schema-204 resource-manifest validation with 578 side
+modules and 759 required-resource hashes; and `git diff --check`.
+
+Removing the obsolete target section leaves the accumulated source patch with
+1,753 serialized target sections (1,240 `diff --git` and 513 header-only
+legacy sections) and 5,223 hunks. Controlled and default dashboards are
+`/tmp/cowasm-sagelite-ntl-mat-zz-pre.sqlite3` and
+`/tmp/cowasm-sagelite-ntl-mat-zz-default.sqlite3`; the focused make dashboard,
+clean pinned-source replay, second-application log, and worker state are under
+`/tmp/cowasm-sagelite-ntl-mat-zz-audit.epcDsy/`. A future scheduled pass can
+audit another compact stale dependency guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
