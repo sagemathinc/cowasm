@@ -607,6 +607,7 @@ src/sage/categories/examples/posets.py
 src/sage/categories/examples/semigroups.py
 src/sage/categories/examples/semigroups_cython.pyx
 src/sage/categories/examples/semirings.py
+src/sage/categories/examples/sets_cat.py
 src/sage/categories/examples/sets_with_grading.py
 src/sage/categories/examples/with_realizations.py
 src/sage/categories/facade_sets.py

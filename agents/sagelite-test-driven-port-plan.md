@@ -71255,6 +71255,66 @@ pinned-source replays are under
 audit the remaining PARI-guarded `sets_cat.py` example or select another
 compact persisted backend/runtime cluster.
 
+Set-category example PARI-guard reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-148 controlled audit removed the historical file-wide
+`sage.libs.pari` annotation from
+`sage/categories/examples/sets_cat.py` and initially recorded:
+
+```text
+152 passed, 3 failed, 0 skipped
+```
+
+None of the 155 examples reached PARI. The only failures were the three
+`timeit(...)` rows in the facade-prime-set discussion, each of which reached
+the unavailable IPython timing backend. Those three random-output examples
+now carry focused `IPython` metadata, and the stale file-wide PARI guard is
+removed without changing the executable examples.
+
+The controlled source, the default patched build source, and the focused make
+target each record:
+
+```text
+sets_cat.py:    152 passed, 0 failed, 3 skipped
+skip group:       3 optional:ipython
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+All 155 ordered block rows agree between the controlled and make-target
+dashboards on every stable persisted field. Saved block- and file-failure
+queries are empty, and active-row coverage is 100%.
+
+`sage/categories/examples/sets_cat.py` is now part of the curated pure-math
+corpus, raising it to 1,265 non-comment entries with no duplicates.
+
+Validation additionally includes Python compilation; saved
+lifecycle/latest-run/failure/skip queries; corpus uniqueness and make-target
+dry run; accumulated-patch syntax; complete accumulated-patch application
+with default patch compatibility against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+target comparison; manifest schema-204 validation of 578 side modules and 759
+required-resource hashes; and `git diff --check`. The external developer
+Sagelite checkout and its unrelated changes remain untouched.
+
+The source refresh needed for the make-target validation was rebuilt from the
+clean pinned checkout. Its clean target also removed the generated runtime
+bundle, which was restored byte for byte from the latest validated workspace
+snapshot before the focused replay; its retained status is still
+`sagelite-ok meson configure compile install node import electron resources
+smoke relocated followups recorded`.
+
+The accumulated source patch adds one `diff --git` section and four hunks. It
+now has 1,739 serialized target sections (1,226 `diff --git` and 513
+header-only legacy sections) and 5,101 hunks. Focused dashboards, worker
+state, and controlled source are under
+`/tmp/cowasm-sagelite-sets-example-audit.R2C3wz/`; clean pinned-source
+replays and patch logs are under
+`/tmp/cowasm-sagelite-sets-example-replay.R2C3wz/`. A future scheduled pass
+can audit another compact stale dependency guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

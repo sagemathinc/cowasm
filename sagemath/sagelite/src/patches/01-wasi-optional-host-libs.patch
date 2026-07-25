@@ -33029,3 +33029,17 @@ diff --git a/src/sage/categories/examples/finite_dimensional_lie_algebras_with_b
 @@ -173 +184 @@
 -            sage: L.universal_enveloping_algebra()
 +            sage: L.universal_enveloping_algebra()                # needs sage.rings.polynomial.plural
+diff --git a/src/sage/categories/examples/sets_cat.py b/src/sage/categories/examples/sets_cat.py
+--- a/src/sage/categories/examples/sets_cat.py
++++ b/src/sage/categories/examples/sets_cat.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.pari
+@@ -603 +602 @@
+-        sage: timeit("pf.is_prime()") #    random
++        sage: timeit("pf.is_prime()") # random                                      # needs IPython
+@@ -611 +610 @@
+-        sage: timeit("pw.is_prime()")    # random
++        sage: timeit("pw.is_prime()")    # random                                    # needs IPython
+@@ -615 +614 @@
+-        sage: timeit("pw.is_prime()")    # random
++        sage: timeit("pw.is_prime()")    # random                                    # needs IPython
