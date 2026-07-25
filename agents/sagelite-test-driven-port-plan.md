@@ -74316,6 +74316,82 @@ patch-replay evidence is under
 audit another compact p-adic NTL guard or select the next persisted
 backend/runtime cluster.
 
+Generic p-adic extension guard reopening and focused dependency
+classification pass on 2026-07-25 UTC:
+
+`sage/rings/padics/padic_extension_generic.py` carried the next historical
+file-wide NTL annotation even though NTL and the generic q-adic and ramified
+extension stacks are now shipped in the browser package. A runner-version-154
+feature-selected replay against the current rebuilt q-adic FLINT and
+side-module-local NTL-context artifacts recorded:
+
+```text
+padic_extension_generic.py before: 203 passed, 5 failed, 0 skipped
+run lifecycle:                     failed and closed
+SQLite integrity:                  ok
+```
+
+Three failures were narrow PARI-owned number-field and order paths: maximal
+order construction plus its dependent conversion row, and exact-order
+construction through the focused cypari2 object-model boundary. The other two
+rows were the same deterministic implementation-display difference:
+the delivered generic sparse polynomial omits an inexact zero
+`O(5^6)*x^4` term from both `defining_polynomial()` and its `modulus()` alias,
+while all nonzero coefficients and exact-polynomial results agree.
+
+The accumulated WASI patch now removes the obsolete broad NTL guard, marks the
+three number-field/order rows with `# needs sage.libs.pari`, and records the
+two sparse-zero display rows as deferred `# known bug` coverage. The ordinary
+default browser profile and the strict focused make target against a complete
+clean pinned-source reconstruction each record:
+
+```text
+padic_extension_generic.py: 203 passed, 0 failed, 5 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+Both dashboards contain 208 ordered block rows. Their only skips are the three
+focused PARI rows and two deferred display-parity rows; saved block-failure and
+file-error queries are empty, and active-row coverage is 100%. After
+normalizing the resource-root prefixes embedded in two expected exception
+tracebacks, the dashboards agree byte for byte across every persisted stable
+field and raw actual output.
+
+`sage/rings/padics/padic_extension_generic.py` is now part of the curated
+pure-math corpus, raising it to 1,312 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and
+corpus membership. It intentionally composes the two native repairs from the
+immediately preceding q-adic FLINT and p-adic morphism passes; no additional
+native rebuild or Electron resource-contract update is required.
+
+Validation includes the current-native feature-selected baseline; ordinary
+and strict focused-make dashboards; saved lifecycle/latest-run, failure, and
+skip queries; SQLite integrity and normalized exact stable-row comparison;
+Python compilation; corpus uniqueness, path existence, and full-target dry
+run; accumulated-patch syntax and complete sequential application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; Electron manifest, forge-resource, and runtime
+tests; and `git diff --check`.
+
+The first probe used the repository's older packaged native bundle and
+correctly reproduced the already-fixed local NTL-context trap. A second probe
+used the prior morphism bundle but exposed its older q-adic pow-computer
+artifact. The final copy-on-write resource bundle composes both previously
+validated rebuilt side modules and refreshes its integrity hash, separating
+those packaging-state artifacts from the five genuine source-level rows.
+
+Removing the stale generic-extension guard raises the accumulated patch to
+1,787 serialized target sections (1,274 `diff --git` and 513 header-only
+legacy sections) and 5,319 hunks. Baseline, combined-resource, ordinary,
+strict-make, query, clean-reconstruction, manifest-test, and patch-replay
+evidence is under
+`/tmp/cowasm-sagelite-padic-extension-generic.5cvT8z/`. A future scheduled
+pass can audit the larger adjacent `padic_generic_element.pyx` guard or select
+the next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

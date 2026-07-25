@@ -34295,3 +34295,22 @@ diff --git a/src/sage/rings/padics/morphism.pyx b/src/sage/rings/padics/morphism
 +++ b/src/sage/rings/padics/morphism.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.ntl
+diff --git a/src/sage/rings/padics/padic_extension_generic.py b/src/sage/rings/padics/padic_extension_generic.py
+--- a/src/sage/rings/padics/padic_extension_generic.py
++++ b/src/sage/rings/padics/padic_extension_generic.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.ntl
+@@ -212,2 +211,2 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: OK = K.maximal_order()
+-            sage: R(OK.gen(1))
++            sage: OK = K.maximal_order()  # needs sage.libs.pari
++            sage: R(OK.gen(1))  # needs sage.libs.pari
+@@ -330 +329 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: W.defining_polynomial()
++            sage: W.defining_polynomial()  # known bug
+@@ -387 +386 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: W.exact_ring()
++            sage: W.exact_ring()  # needs sage.libs.pari
+@@ -416 +415 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: W.modulus()
++            sage: W.modulus()  # known bug
