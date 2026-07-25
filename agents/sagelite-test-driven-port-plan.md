@@ -70729,6 +70729,66 @@ classify the larger guarded
 `sage/categories/examples/hopf_algebras_with_basis.py` cluster or select
 another persisted backend/runtime boundary.
 
+Hopf-algebra example GAP-boundary classification and corpus-promotion pass on
+2026-07-25 UTC:
+
+The runner-version-148 controlled audit enabled the historical file-wide
+`sage.groups sage.modules` annotation and reproduced the persisted cluster:
+
+```text
+hopf_algebras_with_basis.py: 1 passed, 22 failed, 0 skipped
+failure classes:             7 ModuleNotFoundError
+                            15 NameError
+```
+
+Seven group-algebra setup prompts reached
+`sage.groups.perm_gps.permgroup`, whose import requires the intentionally
+unavailable `sage.libs.gap.libgap` extension. The other failures were
+downstream missing-name errors after those setups failed, including the first
+direct `DihedralGroup` use; importing the named permutation-group constructor
+directly confirms that it reaches the same GAP boundary. The module and
+`MyGroupAlgebra` class themselves import successfully without the former broad
+group and module guards.
+
+The stale file-wide annotation is removed. A standalone `sage.libs.gap`
+directive now covers each stateful group-algebra example, while the isolated
+indirect example carries the same dependency inline. This preserves the first
+class-import prompt as active coverage and prevents failed setup state from
+creating artificial dependent rows. The ordinary default node profile records:
+
+```text
+hopf_algebras_with_basis.py: 1 passed, 0 failed, 22 skipped
+skip group:                  22 sage.libs.gap
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The dashboard contains 23 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty, and all unavailable
+group-algebra operations retain precise browser-profile metadata.
+
+`sage/categories/examples/hopf_algebras_with_basis.py` is now part of the
+curated pure-math corpus, raising it to 1,256 non-comment entries with no
+duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; byte-for-byte target replay; matching live/replay
+file and 23-row block payloads across every stable persisted field; and
+`git diff --check`. This change affects only source doctest metadata, so the
+preceding fully green standalone build remains the compiled-runtime baseline.
+The external developer Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,730 serialized file sections (1,217
+`diff --git` and 513 legacy sections) and 5,028 hunks. The controlled and
+default dashboards are under `/tmp/cowasm-sagelite-hopf.T8PK5K/`; the clean
+sequential replay and exactly matching dashboard are under
+`/tmp/cowasm-sagelite-hopf-replay-final.JcPyf3/`. A future scheduled pass can
+audit another compact stale category dependency guard or select the next
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

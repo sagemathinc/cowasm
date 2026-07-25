@@ -590,6 +590,7 @@ src/sage/categories/examples/finite_weyl_groups.py
 src/sage/categories/examples/filtered_algebras_with_basis.py
 src/sage/categories/examples/graphs.py
 src/sage/categories/examples/graded_connected_hopf_algebras_with_basis.py
+src/sage/categories/examples/hopf_algebras_with_basis.py
 src/sage/categories/examples/infinite_enumerated_sets.py
 src/sage/categories/examples/lie_algebras_with_basis.py
 src/sage/categories/examples/magmas.py

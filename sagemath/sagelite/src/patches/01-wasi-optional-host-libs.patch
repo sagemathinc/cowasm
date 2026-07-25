@@ -32751,3 +32751,25 @@ diff --git a/src/sage/categories/bialgebras.py b/src/sage/categories/bialgebras.
                  False
 -                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.modules
 +                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.libs.symmetrica
+diff --git a/src/sage/categories/examples/hopf_algebras_with_basis.py b/src/sage/categories/examples/hopf_algebras_with_basis.py
+--- a/src/sage/categories/examples/hopf_algebras_with_basis.py
++++ b/src/sage/categories/examples/hopf_algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.groups sage.modules
+@@ -30,0 +30 @@
++            sage: # needs sage.libs.gap
+@@ -44 +44 @@
+-            sage: HopfAlgebrasWithBasis(QQ).example() # indirect doctest
++            sage: HopfAlgebrasWithBasis(QQ).example() # indirect doctest               # needs sage.libs.gap
+@@ -56,0 +57 @@
++            sage: # needs sage.libs.gap
+@@ -74,0 +76 @@
++            sage: # needs sage.libs.gap
+@@ -92,0 +95 @@
++            sage: # needs sage.libs.gap
+@@ -107,0 +111 @@
++            sage: # needs sage.libs.gap
+@@ -123,0 +128 @@
++            sage: # needs sage.libs.gap
+@@ -138,0 +144 @@
++            sage: # needs sage.libs.gap
