@@ -32652,3 +32652,11 @@ diff --git a/src/sage/algebras/lie_algebras/bgg_dual_module.py b/src/sage/algebr
 @@ -1175 +1174 @@
 -            sage: L.bgg_resolution()
 +            sage: L.bgg_resolution()  # needs sage.libs.gap
+diff --git a/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py b/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py
+--- a/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py
++++ b/src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs
+@@ -581 +580 @@
+-            sage: U.center()
++            sage: U.center()  # needs sage.libs.pari

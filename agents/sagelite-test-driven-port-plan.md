@@ -70366,6 +70366,63 @@ target replay is under `/tmp/cowasm-sagelite-bgg-dual-target.azOvBV/`. A future
 scheduled pass can isolate the single PBW cypari2 boundary or select another
 persisted backend/runtime cluster.
 
+PBW PARI-boundary classification and corpus-promotion pass on
+2026-07-24 UTC:
+
+A runner-version-148 controlled replay selected the historical file-wide
+`sage.algebras.lie_algebras sage.graphs` annotation and recorded:
+
+```text
+poincare_birkhoff_witt.py: 170 passed, 1 failed, 5 skipped
+```
+
+The five skips are independent long-time examples. The only active failure
+was the type-A2 `U.center()` example. Constructing its simple Lie center asks
+the finite Coxeter group for its degrees, exactifies algebraic roots through
+`qqbar.do_polred()`, and reaches the intentionally unsupported
+`cypari2.Gen.polredbest()` object-model path. The graph and broad Lie-algebra
+features were not active boundaries elsewhere in the module; in particular,
+the adjacent Heisenberg center example passes.
+
+The stale file-wide guard is removed, and only the PARI-backed center example
+now carries focused `sage.libs.pari` metadata. The ordinary default node
+profile records:
+
+```text
+poincare_birkhoff_witt.py: 170 passed, 0 failed, 6 skipped
+skip groups:                 5 long time
+                             1 sage.libs.pari
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+The dashboard contains 176 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. The 175 unaffected rows agree
+with the controlled dashboard on source hashes, source, expected and actual
+output, status, expected kind, skip reason, and failure metadata; their source
+ranges are uniformly one line earlier after removing the header. The remaining
+row is the intended transition from a focused cypari2 `NotImplementedError` to
+an explicit `optional:sage.libs.pari` skip.
+
+`sage/algebras/lie_algebras/poincare_birkhoff_witt.py` is now part of the
+curated pure-math corpus, raising it to 1,248 non-comment entries with no
+duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; patch syntax; corpus uniqueness and make-target dry run; exact
+two-section, zero-fuzz replay against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison with the
+runtime-tested source; and `git diff --check`. This change affects only source
+doctest metadata, so the immediately preceding fully green standalone build
+remains the compiled-runtime baseline.
+
+The accumulated source patch now has 1,722 serialized file sections (1,209
+`diff --git` and 513 legacy sections) and 4,991 hunks. The controlled/default
+dashboards and worker state are under `/tmp/cowasm-sagelite-pbw.l2CSNK/`;
+exact target replay is under `/tmp/cowasm-sagelite-pbw-replay.QqTvVe/`. A
+future scheduled pass can audit another compact stale dependency guard or
+select the next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

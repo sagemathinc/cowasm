@@ -144,6 +144,7 @@ src/sage/algebras/lie_algebras/lie_algebra_element.pyx
 src/sage/algebras/lie_algebras/morphism.py
 src/sage/algebras/lie_algebras/nilpotent_lie_algebra.py
 src/sage/algebras/lie_algebras/onsager.py
+src/sage/algebras/lie_algebras/poincare_birkhoff_witt.py
 src/sage/algebras/lie_algebras/quotient.py
 src/sage/algebras/lie_algebras/rank_two_heisenberg_virasoro.py
 src/sage/algebras/lie_algebras/representation.py
