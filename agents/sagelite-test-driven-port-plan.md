@@ -72964,6 +72964,83 @@ pinned-source replay is under
 pass can address the newly isolated `ntl_ZZ_pEContext` state trap at line 117
 or select another persisted backend/runtime cluster.
 
+NTL extension-context and finite-field PARI-state pass on 2026-07-25 UTC:
+
+The newly isolated `finite_field_ntl_gf2e.py:117` cluster came from the same
+split-side-module NTL state model as the earlier extension-element and
+extension-polynomial repairs. `ntl_ZZ_pEContext` restored the prime modulus
+through the separate `ntl_ZZ_pContext` side module, then constructed and
+restored extension state against its own statically linked NTL copy. That
+local copy therefore had no installed prime-field modulus and trapped in
+`ZZ_p::DoInstall()` while `PolynomialRing(k)` initialized supporting
+polynomial state.
+
+The accumulated WASI patch now reconstructs and restores the prime-field
+context inside `ntl_ZZ_pEContext` before constructing or restoring its local
+extension context. It also continues restoring the public
+`ntl_ZZ_pContext` copy, preserving the wrapper's documented
+`_assert_is_current_modulus()` diagnostics. The exact rebuilt context wrapper
+passes its complete module audit:
+
+```text
+ntl_ZZ_pEContext.pyx: 29 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Enabling the NTL backend explicitly advanced the finite-field audit to its
+PARI conversion example, where `element_ntl_gf2e` reached an uninitialized
+module-local PARI stack and failed in `err_recover`. That side module now
+initializes its statically linked PARI copy under WASI, following the existing
+`convert_gmp` and `element_pari_ffelt` pattern. A focused final probe records:
+
+```text
+GF(2^20, implementation="ntl"): constructed successfully
+PolynomialRing(K), (a + 1)*t:   passed
+K(pari('Mod(1,2)*a^20')):       passed
+focused probe:                  5 passed, 0 failed, 0 skipped
+run lifecycle:                  passed and closed
+SQLite integrity:               ok
+```
+
+The ordinary WASI finite-field factory policy still leaves NTL disabled as an
+implicit default. A controlled full guarded replay now runs to completion
+instead of trapping and records `53 passed, 8 failed, 0 skipped`; those eight
+rows are the expected default-backend/output-policy differences rather than a
+file-level runtime failure. The file-wide `sage.libs.ntl` guard therefore
+remains, and `finite_field_ntl_gf2e.py` is not promoted to the curated corpus
+in this pass.
+
+The standalone and Electron-shaped NTL GF2X smokes now construct an explicit
+NTL finite field, create a polynomial ring over it, multiply by its generator,
+and convert a PARI polynomial into the NTL field. The Electron manifest
+advances to schema 206 and smoke contract
+`ntl-gf2e-context-pari-v178`. The complete Electron-shaped packaged smoke
+passes with 578 side modules and 759 required-resource hashes.
+
+Validation includes exact isolated Cython/C++/WASM builds of
+`ntl_ZZ_pEContext` and `element_ntl_gf2e`; focused and complete SQLite
+replays; saved lifecycle and failure queries; SQLite integrity; the complete
+Electron-shaped packaged smoke; manifest parity, forge-resource, and runtime
+tests; shell and JavaScript syntax checks; full manifest hash validation;
+accumulated-patch syntax; complete supported-pipeline application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested sources; rejection of a second
+forward patch application; and `git diff --check`.
+
+The accumulated source patch now has 1,755 serialized target sections (1,242
+`diff --git` and 513 header-only legacy sections) and 5,238 hunks. Focused
+dashboards, worker state, preserved modules, build logs, and the final
+Electron smoke log are under
+`/tmp/cowasm-sagelite-ntl-context-local.PDwmDy/`; the exact build tree is
+under `/tmp/cowasm-sagelite-finite-permutation-audit.JZMZvV/`, and the final
+clean pinned-source replay is under
+`/tmp/cowasm-sagelite-ntl-context-replay-final.AF5W6K/`. A future scheduled
+pass can decide whether to make the repaired NTL backend an implicit WASI
+default and address its remaining construction/random-polynomial/PARI-object
+model rows, or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -17979,6 +17979,40 @@ diff --git a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx b/src/sage/rings/f
  # distutils: language = c++
 +# sage.doctest: needs sage.libs.ntl gf2x
  r"""
+diff --git a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+--- a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
++++ b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+@@ -48,1 +48,5 @@
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
+ from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx b/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
+@@ -26,2 +26,3 @@
+ from sage.ext.cplusplus cimport ccrepr
+ from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
++from sage.libs.ntl.types cimport ZZ_pContext_c
+@@ -33,1 +34,8 @@
++cdef inline void restore_ZZ_pE_context(ntl_ZZ_pEContext_class context) noexcept:
++    context.pc.restore_c()
++    cdef ZZ_pContext_c prime_context = ZZ_pContext_c(context.pc.p.x)
++    prime_context.restore()
++    context.x.restore()
++
++
+ cdef class ntl_ZZ_pEContext_class():
+@@ -58,2 +66,4 @@
+         self.pc = f.c
+         self.pc.restore_c()
++        cdef ZZ_pContext_c prime_context = ZZ_pContext_c(self.pc.p.x)
++        prime_context.restore()
+@@ -134,2 +144,1 @@
+-        self.pc.restore_c()
+-        self.x.restore()
++        restore_ZZ_pE_context(self)
 diff --git a/src/sage/quivers/ar_quiver.py b/src/sage/quivers/ar_quiver.py
 --- a/src/sage/quivers/ar_quiver.py
 +++ b/src/sage/quivers/ar_quiver.py

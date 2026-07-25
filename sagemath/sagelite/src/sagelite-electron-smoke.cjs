@@ -930,7 +930,7 @@ assert reverse is list.reverse
     console.log("sagelite-electron-ok CPython static-type getattr smoke");
     console.log("sagelite-electron-start NTL GF2X delivery smoke");
     await python.exec(String.raw`
-from sage.all import GF, PolynomialRing, polygen
+from sage.all import GF, PolynomialRing, pari, polygen
 from sage.libs.ntl import all as ntl
 from sage.rings.finite_rings import element_ntl_gf2e
 
@@ -946,6 +946,12 @@ assert repr(generic) == '[1 0 1 0 0 1]'
 assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
 extension_value = GF(2**8, 'a').gen()**20
 assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
+K = GF(2**20, 'a', implementation='ntl')
+a = K.gen()
+T = PolynomialRing(K, 't')
+t = T.gen()
+assert repr((a + 1) * t) == '(a + 1)*t'
+assert repr(K(pari('Mod(1,2)*a^20'))) == 'a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1'
 `);
     console.log("sagelite-electron-ok NTL GF2X delivery smoke");
     console.log("sagelite-electron-start generic linear group delivery smoke");

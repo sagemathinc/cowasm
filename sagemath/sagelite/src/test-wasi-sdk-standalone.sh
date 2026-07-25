@@ -1433,7 +1433,7 @@ with redirect_stdout(StringIO()):
     reverse = getattr_debug(list, 'reverse')
 assert reverse is list.reverse
 print('sagelite-node-ok CPython static-type getattr smoke')"
-run_node_import "NTL GF2X delivery smoke" "from sage.all import GF, PolynomialRing, polygen
+run_node_import "NTL GF2X delivery smoke" "from sage.all import GF, PolynomialRing, pari, polygen
 from sage.libs.ntl import all as ntl
 from sage.rings.finite_rings import element_ntl_gf2e
 context = ntl.GF2EContext(ntl.GF2X([1, 1, 0, 1, 1, 0, 0, 0, 1]))
@@ -1448,6 +1448,12 @@ assert repr(generic) == '[1 0 1 0 0 1]'
 assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
 extension_value = GF(2**8, 'a').gen()**20
 assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
+K = GF(2**20, 'a', implementation='ntl')
+a = K.gen()
+T = PolynomialRing(K, 't')
+t = T.gen()
+assert repr((a + 1) * t) == '(a + 1)*t'
+assert repr(K(pari('Mod(1,2)*a^20'))) == 'a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1'
 print('sagelite-node-ok NTL GF2X delivery smoke')"
 run_node_import "generic linear group delivery smoke" "from sage.all import GL, SL, ZZ, Integers
 from sage.matrix.constructor import matrix
@@ -2254,7 +2260,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=205
+electron_manifest_schema_version=206
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2322,7 +2328,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-cano
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-exact-clique-search-v176"
-electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
