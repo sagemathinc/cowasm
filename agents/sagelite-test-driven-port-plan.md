@@ -73446,6 +73446,77 @@ focused-make, query, and clean-reconstruction evidence is under
 audit another compact stale finite-ring guard or select the next persisted
 backend/runtime cluster.
 
+Finite-field element-base guard reopening and focused backend classification
+pass on 2026-07-25 UTC:
+
+`sage/rings/finite_rings/element_base.pyx` carried the next compact broad
+`sage.rings.finite_rings` file annotation. A runner-version-154 controlled
+replay selected that feature and recorded:
+
+```text
+element_base.pyx: 226 passed, 26 failed, 14 skipped
+run lifecycle:    failed and closed
+SQLite integrity: ok
+```
+
+The broad guard was stale for 226 examples. The 26 active failures separated
+into narrow boundaries: 22 PARI object-model, representation, characteristic
+polynomial, trace, or high-degree random-field rows; five unitary-group rows
+requiring the groups/GAP stack; one deterministic NTL root-order mismatch; and
+one implementation-specific exception-text mismatch. Cascading missing-name
+rows were tagged together with their failing setup. A repeated whole-file
+replay also exposed an intermittent worker exit in the random degree-111-to-998
+odd-characteristic PARI-field stress block; three fresh focused reruns passed,
+confirming accumulated-state sensitivity rather than a deterministic
+arithmetic mismatch, so only that three-prompt full-PARI block is deferred.
+
+The accumulated WASI patch now removes the obsolete file guard, marks the
+focused PARI and groups/GAP rows with explicit dependency metadata, and records
+the two implementation-parity rows as deferred known bugs. A follow-up selected
+feature audit showed that all three pre-existing `sage.libs.ntl` rows pass with
+the shipped default NTL backend, so their stale inline guards are also removed.
+The ordinary default profile and the strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+element_base.pyx: 226 passed, 0 failed, 40 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The final skips comprise 25 focused PARI rows, five groups/GAP rows, four
+LinBox rows, two matrix-module rows, two deferred implementation-parity rows,
+one long random stress row, and one optional Cunningham-table row. Saved
+block-failure and file-error queries are empty, and active-row coverage is
+100%.
+
+`sage/rings/finite_rings/element_base.pyx` is now part of the curated
+pure-math corpus, raising it to 1,296 non-comment entries with no duplicates or
+missing paths. This pass changes only doctest dependency metadata and corpus
+membership; the installed native runtime already supplies the reopened
+element-base behavior, so no native WASM rebuild or Electron manifest update
+is required.
+
+Validation includes the controlled baseline; focused NTL and repeated random
+line reruns; ordinary default and strict focused-make dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and exact ordered
+row comparison; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete supported-pipeline application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; Electron manifest, forge-resource, and runtime
+tests; and `git diff --check`. The external developer checkout and its
+unrelated changes remain untouched.
+
+Adding the focused element-base section raises the accumulated patch to 1,765
+serialized target sections (1,252 `diff --git` and 513 header-only legacy
+sections) and 5,277 hunks. Controlled, focused-line, default, focused-make,
+query, and clean-reconstruction evidence is under
+`/tmp/cowasm-sagelite-element-base.Ry5BlL/`. A future scheduled pass can audit
+the adjacent `element_givaro.pyx` guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
