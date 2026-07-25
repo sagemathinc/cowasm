@@ -74533,6 +74533,63 @@ clean-reconstruction, and patch-replay evidence is under
 audit the adjacent guarded `pow_computer_relative.pyx` module or select the
 next persisted backend/runtime cluster.
 
+Relative p-adic pow-computer guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/padics/pow_computer_relative.pyx` retained the adjacent historical
+file-wide p-adic, FLINT, and NTL annotation after the browser package gained
+all three dependencies and the recent q-adic and module-local NTL repairs
+stabilized the relative extension stack. A runner-version-154
+feature-selected replay against the current composed native resource bundle
+records:
+
+```text
+pow_computer_relative.pyx: 97 passed, 0 failed, 0 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The accumulated WASI patch therefore removes the obsolete file-wide guard
+without adding new dependency metadata. The ordinary default browser profile
+and the strict focused make target against a complete clean pinned-source
+reconstruction each record:
+
+```text
+pow_computer_relative.pyx: 95 passed, 0 failed, 2 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The two remaining skips are the upstream block-level
+`# needs sage.libs.flint` type checks at lines 53 and 194; they are not hidden
+by a file directive and both pass in the controlled feature-selected replay.
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the ordinary and strict-make dashboards agree across every stable
+field for all 97 ordered rows.
+
+`sage/rings/padics/pow_computer_relative.pyx` is now part of the curated
+pure-math corpus, raising it to 1,315 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and
+corpus membership. The installed native runtime already supplies the working
+relative pow-computer module, so no native WASM rebuild, standalone smoke
+change, or Electron resource-contract update is required.
+
+Validation includes the controlled feature-selected replay; ordinary packaged
+and strict focused-make dashboards; saved lifecycle/latest-run, failure, and
+skip queries; SQLite integrity and exact stable-row comparison; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete supported-pipeline application against clean pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target used by both default-profile paths;
+rejection of a second forward patch application; and `git diff --check`.
+
+Removing the stale guard raises the accumulated patch to 1,792 serialized
+target sections (1,279 `diff --git` and 513 header-only legacy sections) and
+5,417 hunks. Controlled, ordinary, strict-make, query,
+clean-reconstruction, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-pow-computer-relative.rmfzfm/`. A future scheduled pass
+can audit the remaining guarded `relative_extension_leaves.py` module or
+select the next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
