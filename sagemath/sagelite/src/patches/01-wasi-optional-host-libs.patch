@@ -33813,3 +33813,8 @@ diff --git a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -1,1 +1,0 @@
 -# sage.doctest: needs sage.rings.finite_rings
+diff --git a/src/sage/rings/finite_rings/maps_finite_field.py b/src/sage/rings/finite_rings/maps_finite_field.py
+--- a/src/sage/rings/finite_rings/maps_finite_field.py
++++ b/src/sage/rings/finite_rings/maps_finite_field.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.rings.finite_rings

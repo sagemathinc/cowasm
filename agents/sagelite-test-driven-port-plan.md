@@ -73178,6 +73178,71 @@ source replay and make reconstruction are under
 pass can audit another compact stale finite-ring or NTL dependency guard, or
 select the next persisted backend/runtime cluster.
 
+Finite-field structure-map guard reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+The repaired default finite-field stack made the historical file-wide
+`sage.rings.finite_rings` annotation on
+`sage/rings/finite_rings/maps_finite_field.py` worth retesting. This
+supersedes the skipped-only result from the 2026-07-07 low-prompt frontier
+audit, which predated default NTL finite fields and the recent module-local
+context, PARI, and random-state repairs.
+
+A runner-version-153 controlled replay selected the finite-ring feature and
+recorded:
+
+```text
+maps_finite_field.py: 31 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The active examples cover finite-field/vector-space isomorphism construction
+and display, injectivity and surjectivity, zero and basis-vector conversion in
+both directions, and extension-field generator coordinates. Removing only the
+file guard leaves the ordinary default node profile with the same 31 passes
+and no skips or failures.
+
+The accumulated WASI patch now removes the obsolete header. The ordinary
+default replay and strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+maps_finite_field.py: 31 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Both final dashboards contain 31 ordered block rows and agree byte for byte on
+every persisted stable block field and raw actual output. Saved block-failure
+and file-error queries are empty, and active-row coverage is 100%.
+
+`sage/rings/finite_rings/maps_finite_field.py` is now part of the curated
+pure-math corpus, raising it to 1,292 non-comment entries with no duplicates.
+This pass changes only doctest dependency metadata and corpus membership; the
+installed runtime already supplies the validated finite-field structure-map
+behavior, so no native rebuild or Electron manifest update is required.
+
+Validation includes the controlled and ordinary default replays; the strict
+focused make dashboard; saved lifecycle/latest-run and failure-cluster
+queries; SQLite integrity and ordered row comparison; Python compilation;
+corpus uniqueness, path existence, and full-target dry run; accumulated-patch
+syntax and complete supported-pipeline application against clean pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target with the runtime-tested unguarded
+source; Electron manifest, forge-resource, and runtime tests; full schema-207
+manifest hash validation with 578 side modules and 759 required resources;
+and `git diff --check`. The external developer checkout and its unrelated
+changes remain untouched.
+
+Adding the one header-removal hunk raises the accumulated patch to 1,761
+serialized target sections (1,248 `diff --git` and 513 header-only legacy
+sections) and 5,248 hunks. Controlled, ordinary, and focused-make dashboards,
+the focused corpus, clean pinned clone, and patched make reconstruction are
+under `/tmp/cowasm-sagelite-maps-finite-field.R6lgja/`. A future scheduled
+pass can audit the adjacent compact `homset.py` finite-ring guard or select the
+next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
