@@ -74392,6 +74392,93 @@ evidence is under
 pass can audit the larger adjacent `padic_generic_element.pyx` guard or select
 the next persisted backend/runtime cluster.
 
+Generic p-adic element module-local NTL-context and numeric-log pass on
+2026-07-25 UTC:
+
+`sage/rings/padics/padic_generic_element.pyx` carried the next historical
+file-wide NTL guard. A runner-version-154 feature-selected baseline reached
+the first complete-extension example and trapped while converting a `ZZX`
+polynomial in the capped-absolute `padic_ZZ_pX_CA_element` side module:
+
+```text
+active line: W.<w> = R.ext(f)
+native trap: NTL::conv(ZZ_pX&, ZZX const&)
+```
+
+The same separately linked static-state boundary previously found in the
+relative and floating-point extension modules was present here. Asking a
+pow-computer side module to restore its NTL context does not initialize the
+conversion module's own `ZZ_p` modulus. The accumulated WASI patch now
+reconstructs and restores a module-local `ZZ_pContext` from the cached Sage
+context immediately before both capped-absolute conversion paths. A focused
+replay then reached the analogous floating-point path, so
+`padic_ZZ_pX_FM_element` now performs the same local restore before its
+conversion.
+
+Focused Cython generation, C++ compilation, and WASM side-module links
+validated both native changes. Copy-on-write resource bundles carried the
+rebuilt modules with refreshed integrity hashes, and focused doctest rows for
+both formerly trapping extension constructions pass.
+
+The first full native-fixed replay recorded 719 passes and 83 ordinary
+failures. Fifteen failures came from numeric precision helpers importing
+symbolic logarithms that are not part of the browser profile. The generic
+element implementation now uses exact integer logarithms for Artin--Hasse
+coefficient bounds and MPFR real logarithms for `_polylog_c`, `_findprec`,
+`_polylog_res_1`, and the public polylogarithm precision bounds. Focused
+replays of each helper and public path pass, and the next full replay improved
+to 734 passes and 68 failures.
+
+The remaining rows were classified narrowly rather than retaining the broad
+NTL guard: 56 direct or cascading number-field, PARI object-model, and
+finite-field factorization paths need `sage.libs.pari`; 14 deliberately
+expensive high-degree or high-precision logarithm rows are long tests; 15
+deterministic minimal-polynomial/free-module, multiplicative-order, and
+display-parity rows are deferred known bugs; and one pre-existing row remains
+not tested. The ordinary browser-profile replay and strict focused make target
+against a complete clean pinned-source reconstruction both record:
+
+```text
+padic_generic_element.pyx: 734 passed, 0 failed, 86 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+Both dashboards contain 820 ordered rows and agree exactly across every
+persisted stable field; non-random actual output also agrees exactly. Saved
+block-failure and file-error queries are empty. The stale file-wide guard is
+removed, and `sage/rings/padics/padic_generic_element.pyx` is now part of the
+curated pure-math corpus, raising it to 1,313 non-comment entries.
+
+The standalone contract gains a focused capped-absolute and floating-point
+extension-construction plus numeric-log smoke. The Electron resource schema
+is 211 and the smoke contract ends in
+`padic-local-ntl-context-numeric-log-v183`. Validation includes the controlled
+native traps; focused native rebuilds and focused helper replays; final
+ordinary and strict-make dashboards; the corrected standalone smoke
+assertions; SQLite integrity, saved failure queries, and exact normalized
+dashboard comparison; shell and JavaScript syntax checks; the Electron forge
+resource test; accumulated-patch sequential application against clean pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte comparison of all three reconstructed targets with the
+runtime-tested sources; rejection of a second forward patch application; and
+`git diff --check`.
+
+The repository build tree was regenerated once because the newly changed
+accumulated patch made its patch stamp stale. That regeneration correctly
+stopped at unrelated pre-existing conflicts in the external developer
+checkout; the strict validation therefore used the complete clean
+reconstruction and an explicit copy-on-write resource root. The external
+checkout remains untouched.
+
+This pass raises the accumulated patch to 1,790 serialized target sections
+(1,277 `diff --git` and 513 header-only legacy sections) and 5,415 hunks.
+Baseline, native-build, focused, resource, ordinary, strict-make, query,
+clean-reconstruction, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-generic-element.7JmL9h/`. A future scheduled pass
+can audit the next historical p-adic guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
