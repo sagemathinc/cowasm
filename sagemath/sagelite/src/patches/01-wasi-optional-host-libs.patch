@@ -32937,3 +32937,51 @@ diff --git a/src/sage/categories/examples/filtered_modules_with_basis.py b/src/s
 -            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
 +            sage: A = ModulesWithBasis(QQ).Filtered().example()
 +            sage: A._repr_term(Partition((4,2,1)))
+diff --git a/src/sage/categories/examples/graded_modules_with_basis.py b/src/sage/categories/examples/graded_modules_with_basis.py
+--- a/src/sage/categories/examples/graded_modules_with_basis.py
++++ b/src/sage/categories/examples/graded_modules_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat
+@@ -38 +37 @@
+-          sage: A = GradedModulesWithBasis(QQ).example()                                # needs sage.modules
++          sage: A = GradedModulesWithBasis(QQ).example()
+@@ -48 +47 @@
+-          sage: A.basis(2)                                                              # needs sage.modules
++          sage: A.basis(2)
+@@ -50 +49 @@
+-          sage: A.basis(6)[Partition([3,2,1])]                                          # needs sage.modules
++          sage: A.basis(6)[Partition([3,2,1])]
+@@ -61 +60 @@
+-          sage: [m for m in A.basis(4)]                                                 # needs sage.modules
++          sage: [m for m in A.basis(4)]
+@@ -75 +74 @@
+-          sage: A.degree_on_basis(Partition([4,3]))                                     # needs sage.modules
++          sage: A.degree_on_basis(Partition([4,3]))
+@@ -77 +76 @@
+-          sage: A._repr_term(Partition([4,3]))                                          # needs sage.modules
++          sage: A._repr_term(Partition([4,3]))
+@@ -91 +90 @@
+-          sage: p = A.monomial(Partition([3,2,1])); p                                   # needs sage.modules
++          sage: p = A.monomial(Partition([3,2,1])); p
+@@ -93 +92 @@
+-          sage: p.is_homogeneous()                                                      # needs sage.modules
++          sage: p.is_homogeneous()
+@@ -95 +94 @@
+-          sage: p.degree()                                                              # needs sage.modules
++          sage: p.degree()
+@@ -102 +101 @@
+-            sage: A = GradedModulesWithBasis(QQ).example(); A                           # needs sage.modules
++            sage: A = GradedModulesWithBasis(QQ).example(); A
+@@ -104 +103 @@
+-            sage: TestSuite(A).run()                                                    # needs sage.modules
++            sage: TestSuite(A).run()
+@@ -128 +126,0 @@
+-            sage: # needs sage.modules
+@@ -145 +143 @@
+-            sage: GradedModulesWithBasis(QQ).example()  # indirect doctest              # needs sage.modules
++            sage: GradedModulesWithBasis(QQ).example()  # indirect doctest
+@@ -160,2 +158,2 @@
+-            sage: A = GradedModulesWithBasis(QQ).example()                              # needs sage.modules
+-            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
++            sage: A = GradedModulesWithBasis(QQ).example()
++            sage: A._repr_term(Partition((4,2,1)))
