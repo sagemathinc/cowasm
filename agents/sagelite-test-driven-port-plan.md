@@ -72172,6 +72172,66 @@ under `/tmp/cowasm-sagelite-ntl-zpe-replay.F1pIgh/`. A future scheduled pass
 can audit another guarded NTL wrapper or select a persisted backend/runtime
 cluster.
 
+NTL GF(2) extension-polynomial local-context restoration pass on
+2026-07-25 UTC:
+
+Reopening the adjacent guarded `sage/libs/ntl/ntl_GF2EX.pyx` wrapper reproduced
+the split-side-module context cluster at its first constructor:
+
+```text
+ntl_GF2EX.pyx: 0 passed, 1 failed, 0 skipped
+active example: ntl.GF2EX(ctx, '[[1 0] [2 1]]')
+failure:        RuntimeError: unreachable
+top NTL path:   NTL::BlockConstruct -> NTL::Vec<NTL::GF2E>::SetLength
+```
+
+The wrapper's calls to `ntl_GF2EContext.restore_c()` execute in the separate
+context side module and therefore restore a different statically linked copy
+of NTL's GF2E state. The accumulated WASI patch now reconstructs that state
+inside `ntl_GF2EX` with `GF2E_init(context.m.x)` before construction,
+allocation, comparison, and destruction.
+
+An exact isolated Meson Cython/C++/WASM rebuild of
+`ntl_GF2EX.cpython-314-wasm32-wasi.so` passed. The rebuilt side module was
+installed into the ignored local Electron resource bundle and its manifest
+hash refreshed without changing the manifest shape. The controlled feature
+replay, ordinary default-profile replay, and strict focused make target against
+a complete clean pinned-source reconstruction now record:
+
+```text
+ntl_GF2EX.pyx: 31 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The default and make dashboards each contain 31 ordered block rows and agree
+on every stable persisted block and file field. Saved block-failure,
+file-error, and skip queries are empty. The obsolete file-wide
+`sage.libs.ntl` annotation is removed, and
+`sage/libs/ntl/ntl_GF2EX.pyx` is now part of the curated pure-math corpus,
+raising it to 1,280 non-comment entries with no duplicates.
+
+Validation includes the preserved pre-fix feature replay; exact focused Meson
+compilation; controlled, ordinary default, and focused make dashboards; saved
+lifecycle/latest-run and failure-cluster queries; SQLite integrity and ordered
+row comparison; corpus uniqueness; accumulated-patch syntax; complete
+sequential patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed target with the runtime-tested source; full
+schema-204 manifest hash validation with 578 side modules and 759 required
+resources; and `git diff --check`.
+
+Replacing the obsolete guard section with the runtime restoration leaves the
+accumulated source patch at 1,753 serialized target sections (1,240
+`diff --git` and 513 header-only legacy sections) and raises it to 5,177
+hunks. Dashboards, the original side module, worker state, and patch log are
+under `/tmp/cowasm-sagelite-ntl-gf2ex-audit.vuPhsQ/`; the clean pinned-source
+replay is under `/tmp/cowasm-sagelite-ntl-gf2ex-replay.qSpkpW/`. The first
+focused make invocation intentionally exposed the manifest validator's
+no-symlink resource-root rule; the final target used the real validated
+resource root and passed. A future scheduled pass can audit the guarded
+`ntl_lzz_pX.pyx`, `ntl_ZZ_pX.pyx`, or `ntl_mat_GF2E.pyx` wrapper.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
