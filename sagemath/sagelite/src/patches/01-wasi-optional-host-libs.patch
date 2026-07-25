@@ -33691,3 +33691,18 @@ diff --git a/src/sage/libs/ntl/ntl_mat_GF2E.pyx b/src/sage/libs/ntl/ntl_mat_GF2E
 @@ -534 +544 @@
 -            sage: m._sage_()
 +            sage: m._sage_()  # needs sage.matrix.matrix_gf2e_dense sage.rings.finite_rings
+diff --git a/src/sage/categories/finite_posets.py b/src/sage/categories/finite_posets.py
+--- a/src/sage/categories/finite_posets.py
++++ b/src/sage/categories/finite_posets.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.combinat sage.graphs
+@@ -687,1 +686,2 @@
+-                sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))            # needs sage.modules
++                sage: # needs sage.modules
++                sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))
+@@ -698,1 +698,2 @@
+-                sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))            # needs sage.modules
++                sage: # needs sage.modules
++                sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))
+@@ -709,0 +712,1 @@
++                sage: # needs sage.modules

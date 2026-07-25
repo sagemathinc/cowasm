@@ -72767,6 +72767,76 @@ patch logs, and focused make logs are under
 another compact stale category guard or select a persisted backend/runtime
 cluster.
 
+Finite-poset category guard reopening and module-boundary classification pass
+on 2026-07-25 UTC:
+
+The adjacent `sage/categories/finite_posets.py` file carried a historical
+file-wide `sage.combinat,sage.graphs` annotation. A runner-version-153
+controlled replay selected those features and recorded:
+
+```text
+finite_posets.py: 249 passed, 9 failed, 70 skipped
+failure clusters:   7 stale-state output mismatches
+                    2 stale-state TypeErrors
+run lifecycle:    failed and closed
+SQLite integrity: ok
+```
+
+All nine failures belonged to the birational free-labelling examples. Two
+product-poset setup rows already carried inline `sage.modules` metadata and
+were skipped, but their following stateful rows remained active and reused an
+older three-element `P`. The later comma-separated-label examples likewise
+depended on the skipped four-element product setup. These were dependency-
+scope artifacts rather than graph or combinatorics runtime failures.
+
+The stale file-wide guard is removed. The two product-poset setup annotations
+are now standalone `sage.modules` directives covering their contiguous
+dependent examples, and the later comma-separated-label subsection has the
+same focused directive. The ordinary default profile and strict focused make
+target against a complete clean pinned-source reconstruction each record:
+
+```text
+finite_posets.py: 244 passed, 0 failed, 84 skipped
+skip groups:         73 optional:sage.modules
+                      8 optional:sage.modules,sage.plot
+                      3 optional:sage.modules,sage.modules
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Both final dashboards contain 328 ordered block rows and agree byte for byte
+on every stable persisted block field and raw actual output. Saved block-
+failure and file-error queries are empty, and active-row coverage is 100%.
+
+`sage/categories/finite_posets.py` is now part of the curated pure-math
+corpus, raising it to 1,289 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+runtime already supplies the validated finite-poset behavior, so no native
+rebuild or Electron manifest update is required.
+
+Validation includes the controlled, ordinary default, and focused make
+dashboards; saved lifecycle/latest-run, failure-cluster, and skip queries;
+SQLite integrity and ordered stable-row comparison; Python compilation;
+corpus uniqueness and full-target dry run; accumulated-patch syntax and
+complete supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+application; byte-for-byte comparison of the reconstructed target with the
+runtime-tested source; full schema-204 resource-manifest validation with 578
+side modules and 759 required-resource hashes; and `git diff --check`. The
+external developer checkout and its unrelated changes remain untouched.
+
+Adding the new four-hunk target section leaves the accumulated source patch
+at 1,753 serialized target sections (1,240 `diff --git` and 513 header-only
+legacy sections) and raises it to 5,232 hunks. Dashboards, worker state, clean
+and diagnostic source reconstructions, patch logs, ordered comparisons, and
+focused make logs are under
+`/tmp/cowasm-sagelite-finite-groups-audit.15TOxF/`. The same audit confirmed
+that the compact `finite_groups.py` and `coxeter_group_algebras.py` guards
+remain live: their focused replays recorded respectively `18 passed, 16
+failed, 5 skipped` and `6 passed, 31 failed, 2 skipped`. A future scheduled
+pass can audit the finite-ring guard on `drinfeld_modules.py` or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
