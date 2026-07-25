@@ -73803,6 +73803,66 @@ strict-make, query, and patch-replay evidence is under
 another compact finite-ring/NTL guard or select the next persisted
 backend/runtime cluster.
 
+NTL extension-polynomial guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/polynomial/polynomial_zz_pex.pyx` carried a historical file-wide
+NTL and finite-ring annotation even though its direct NTL link and split-module
+context restoration were repaired and packaged in earlier passes. A
+runner-version-154 controlled replay selected both features and recorded:
+
+```text
+polynomial_zz_pex.pyx: 153 passed, 1 failed, 1 skipped
+run lifecycle:          failed and closed
+SQLite integrity:       ok
+```
+
+The sole active failure was the resultant cross-check that factors two
+extension-field polynomials through `f.roots()` and `g.roots()`. The
+specialized NTL resultant itself passed, but the comparison reached the
+PARI-backed finite-field factorization path and raised `PariError: PARI error
+7`. The accumulated WASI patch now removes the broad file guard and marks only
+that comparison with `# needs sage.libs.pari`.
+
+The ordinary default profile and the strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+polynomial_zz_pex.pyx: 153 passed, 0 failed, 2 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The final skips are the focused PARI factorization comparison and one existing
+symbolic-ring conversion check. Saved block-failure and file-error queries are
+empty, active-row coverage is 100%, and the direct and strict-make dashboards
+contain the same 155 ordered block rows, stable metadata, and raw output.
+
+`sage/rings/polynomial/polynomial_zz_pex.pyx` is now part of the curated
+pure-math corpus, raising it to 1,301 non-comment entries with no duplicates or
+missing paths. This pass changes only doctest dependency metadata and corpus
+membership; the installed native runtime already supplies the 153 reopened
+examples, so no native WASM rebuild or Electron resource-contract update is
+required.
+
+Validation includes the controlled feature-selected replay; ordinary default
+and strict focused-make dashboards; saved lifecycle/failure/skip queries;
+SQLite integrity and exact ordered row comparison; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated matrix, integer-ring, complex-roots, and SQLite
+changes remain untouched.
+
+Removing the stale extension-polynomial guard raises the accumulated patch to
+1,772 serialized target sections (1,259 `diff --git` and 513 header-only
+legacy sections) and 5,294 hunks. Controlled, default, strict-make, query,
+clean-reconstruction, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-polynomial-zz-pex.58b98E/`. A future scheduled pass can
+audit another compact NTL or finite-ring guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
