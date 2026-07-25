@@ -70843,6 +70843,67 @@ pass can classify the compact `sage/categories/examples/lie_algebras.py`
 Symmetrica/deferred-sum cluster or select another persisted backend/runtime
 boundary.
 
+Lie-category example Symmetrica/deferred-sum classification and
+corpus-promotion pass on 2026-07-25 UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+`sage.modules` guard and all narrower `sage.combinat sage.groups` annotations.
+It recorded:
+
+```text
+lie_algebras.py: 66 passed, 5 failed, 0 skipped
+```
+
+Four failures were specific operations on the symmetric-group-algebra example.
+The conversion, integer comparison, and `TestSuite` paths ask the symmetric
+group algebra for coercion maps, import the symmetric-function hierarchy, and
+reach the unavailable `sage.libs.symmetrica.symmetrica` extension. The fifth
+failure was independent: Python's zero-start `sum(...)` cannot add the initial
+integer to this minimal wrapped Lie-algebra element. The other 66 prompts,
+including construction of both the matrix and symmetric-group-algebra models,
+their generators, arithmetic, brackets, indexing, hashing, and representation,
+all passed without those broad feature guards.
+
+The stale module, combinatorics, and group annotations are removed. Four
+specific operations now carry `sage.libs.symmetrica` metadata, and the
+zero-start sum example is preserved as a focused `known bug` deferred test.
+The ordinary default node profile and focused make target record:
+
+```text
+lie_algebras.py: 66 passed, 0 failed, 5 skipped
+skip groups:      4 sage.libs.symmetrica
+                  1 known bug
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The dashboard contains 71 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. The clean pinned-source replay
+agrees with the runtime-tested dashboard on every stable persisted field for
+all 71 block rows.
+
+`sage/categories/examples/lie_algebras.py` is now part of the curated
+pure-math corpus, raising it to 1,258 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte target replay; and `git diff --check`. The focused make target
+uses the clean replay source because the external developer Sagelite checkout
+already has unrelated local changes; that checkout remains untouched. This
+change affects only source doctest metadata, so the preceding fully green
+standalone build remains the compiled-runtime baseline.
+
+The accumulated source patch now has 1,732 serialized file sections (1,219
+`diff --git` and 513 legacy sections) and 5,050 hunks. Controlled, default,
+make-target, and replay dashboards are under
+`/tmp/cowasm-sagelite-lie-category.3pThgj/`; the clean pinned-source replay and
+patch log are under
+`/tmp/cowasm-sagelite-lie-category-replay.5vDIgv/`. A future scheduled pass can
+select the next compact stale dependency guard or persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

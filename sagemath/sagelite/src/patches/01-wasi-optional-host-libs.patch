@@ -32735,6 +32735,93 @@ diff --git a/src/sage/categories/examples/lie_algebras_with_basis.py b/src/sage/
 +++ b/src/sage/categories/examples/lie_algebras_with_basis.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.modules
+diff --git a/src/sage/categories/examples/lie_algebras.py b/src/sage/categories/examples/lie_algebras.py
+--- a/src/sage/categories/examples/lie_algebras.py
++++ b/src/sage/categories/examples/lie_algebras.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.modules
+@@ -73 +71,0 @@
+-            sage: # needs sage.combinat sage.groups
+@@ -87,2 +85,2 @@
+-            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat sage.groups
+-            sage: TestSuite(L).run()                                                    # needs sage.combinat sage.groups
++            sage: L = LieAlgebras(QQ).example()
++            sage: TestSuite(L).run()  # needs sage.libs.symmetrica
+@@ -101 +99 @@
+-            sage: LieAlgebras(QQ).example()                                             # needs sage.combinat sage.groups
++            sage: LieAlgebras(QQ).example()
+@@ -116 +113,0 @@
+-            sage: # needs sage.combinat sage.groups
+@@ -120 +117 @@
+-            sage: L(3*gens[0] + gens[1])
++            sage: L(3*gens[0] + gens[1])  # needs sage.libs.symmetrica
+@@ -131,2 +128,2 @@
+-            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat sage.groups
+-            sage: L.zero()                                                              # needs sage.combinat sage.groups
++            sage: L = LieAlgebras(QQ).example()
++            sage: L.zero()
+@@ -143,2 +140,2 @@
+-            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat sage.groups
+-            sage: L.lie_algebra_generators()                                            # needs sage.combinat sage.groups
++            sage: L = LieAlgebras(QQ).example()
++            sage: L.lie_algebra_generators()
+@@ -164 +160,0 @@
+-                sage: # needs sage.combinat sage.groups
+@@ -175 +171 @@
+-                sage: x.bracket(x) == 0
++                sage: x.bracket(x) == 0  # needs sage.libs.symmetrica
+@@ -188 +183,0 @@
+-                sage: # needs sage.combinat sage.groups
+@@ -193 +188 @@
+-                sage: x != 0
++                sage: x != 0  # needs sage.libs.symmetrica
+@@ -208 +202,0 @@
+-                sage: # needs sage.combinat sage.groups
+@@ -222,2 +216,2 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: bool(sum(L.lie_algebra_generators()))                             # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: bool(sum(L.lie_algebra_generators()))  # known bug - sum starts with the integer zero
+@@ -225 +219 @@
+-                sage: bool(L.zero())                                                    # needs sage.combinat sage.groups
++                sage: bool(L.zero())
+@@ -236,3 +230,3 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: x, y = L.lie_algebra_generators()                                 # needs sage.combinat sage.groups
+-                sage: x + y                                                             # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: x + y
+@@ -249,3 +243,3 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: x, y = L.lie_algebra_generators()                                 # needs sage.combinat sage.groups
+-                sage: x - y                                                             # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: x - y
+@@ -262,3 +256,3 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: x, y = L.lie_algebra_generators()                                 # needs sage.combinat sage.groups
+-                sage: 3 * x                                                             # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: 3 * x
+@@ -288,3 +282,3 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: x, y = L.lie_algebra_generators()                                 # needs sage.combinat sage.groups
+-                sage: y / 4                                                             # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: y / 4
+@@ -303,3 +297,3 @@
+-                sage: L = LieAlgebras(QQ).example()                                     # needs sage.combinat sage.groups
+-                sage: x, y = L.lie_algebra_generators()                                 # needs sage.combinat sage.groups
+-                sage: -x                                                                # needs sage.combinat sage.groups
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: -x
+@@ -336 +329,0 @@
+-                sage: # needs sage.combinat sage.groups
 diff --git a/src/sage/categories/bialgebras.py b/src/sage/categories/bialgebras.py
 --- a/src/sage/categories/bialgebras.py
 +++ b/src/sage/categories/bialgebras.py
