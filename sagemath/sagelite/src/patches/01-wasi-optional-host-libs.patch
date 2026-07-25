@@ -32865,3 +32865,33 @@ diff --git a/src/sage/categories/examples/with_realizations.py b/src/sage/catego
 +++ b/src/sage/categories/examples/with_realizations.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.modules
+diff --git a/src/sage/categories/examples/algebras_with_basis.py b/src/sage/categories/examples/algebras_with_basis.py
+--- a/src/sage/categories/examples/algebras_with_basis.py
++++ b/src/sage/categories/examples/algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat
+@@ -30 +29 @@
+-            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
++            sage: A = AlgebrasWithBasis(QQ).example(); A
+@@ -32 +31 @@
+-            sage: TestSuite(A).run()                                                    # needs sage.modules
++            sage: TestSuite(A).run()
+@@ -43 +42 @@
+-            sage: AlgebrasWithBasis(QQ).example()  # indirect doctest                   # needs sage.modules
++            sage: AlgebrasWithBasis(QQ).example()  # indirect doctest
+@@ -56,2 +55,2 @@
+-            sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
+-            sage: A.one_basis()                                                         # needs sage.modules
++            sage: A = AlgebrasWithBasis(QQ).example()
++            sage: A.one_basis()
+@@ -59 +58 @@
+-            sage: A.one()                                                               # needs sage.modules
++            sage: A.one()
+@@ -71 +69,0 @@
+-            sage: # needs sage.modules
+@@ -89 +87 @@
+-            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
++            sage: A = AlgebrasWithBasis(QQ).example(); A
+@@ -91 +89 @@
+-            sage: A.algebra_generators()                                                # needs sage.modules
++            sage: A.algebra_generators()

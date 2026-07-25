@@ -578,6 +578,7 @@ src/sage/categories/dedekind_domains.py
 src/sage/categories/euclidean_domains.py
 src/sage/categories/principal_ideal_domains.py
 src/sage/categories/unique_factorization_domains.py
+src/sage/categories/examples/algebras_with_basis.py
 src/sage/categories/examples/commutative_additive_monoids.py
 src/sage/categories/examples/commutative_additive_semigroups.py
 src/sage/categories/examples/cw_complexes.py

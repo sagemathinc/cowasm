@@ -70904,6 +70904,63 @@ patch log are under
 select the next compact stale dependency guard or persisted backend/runtime
 cluster.
 
+Algebra-with-basis example guard-reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+`sage.combinat` annotation and the narrower `sage.modules` annotations. It
+recorded:
+
+```text
+algebras_with_basis.py: 13 passed, 0 failed, 0 skipped
+```
+
+The free-algebra example now imports and exercises its construction,
+representation, category test suite, identity basis and element, product on
+basis, generators, and noncommutative arithmetic without reaching an
+unavailable browser-profile dependency. The file-wide and per-example guards
+were therefore stale after combinatorial free-module and module-with-basis
+support landed.
+
+The broad guard and all narrower module annotations are removed without
+changing the executable examples. The ordinary default node profile and
+focused make target both record:
+
+```text
+algebras_with_basis.py: 13 passed, 0 failed, 0 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The dashboard contains 13 ordered rows and has a 100% pass rate. Saved
+block-failure, file-error, and skip queries are empty. The controlled and
+default dashboards agree on names, expected and actual output, statuses, and
+failure metadata; the only semantic-source difference is removal of the
+`# indirect doctest` annotation from the persisted source display. The default
+and clean pinned-source replay dashboards agree on every persisted block field
+apart from durations and database-local identifiers.
+
+`sage/categories/examples/algebras_with_basis.py` is now part of the curated
+pure-math corpus, raising it to 1,259 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; byte-for-byte target replay; focused make-target
+execution against that replay; and `git diff --check`. The external developer
+Sagelite checkout remains untouched. This change affects only source doctest
+metadata, so the preceding fully green standalone build remains the
+compiled-runtime baseline.
+
+The accumulated source patch now has 1,688 serialized file sections (1,220
+`diff --git` and 468 legacy sections) and 5,059 hunks. Controlled and default
+dashboards are under `/tmp/cowasm-sagelite-algebras-basis.Cln7Pa/`; the clean
+pinned-source replay and patch log are under
+`/tmp/cowasm-sagelite-algebras-basis-replay.FBFdlH/`. A future scheduled pass
+can audit the neighboring filtered or graded module-with-basis example guards,
+or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
