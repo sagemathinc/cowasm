@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 148;
+const doctestRunnerVersion = 149;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1350,6 +1350,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.algebras", ("Algebras",)),
         ("sage.categories.algebra_ideals", ("AlgebraIdeals",)),
         ("sage.categories.bialgebras", ("Bialgebras",)),
+        ("sage.categories.bialgebras_with_basis", ("BialgebrasWithBasis",)),
         ("sage.categories.bimodules", ("Bimodules",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
         ("sage.categories.coalgebras_with_basis", ("CoalgebrasWithBasis",)),

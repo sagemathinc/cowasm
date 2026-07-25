@@ -560,6 +560,7 @@ src/sage/categories/category_singleton.pyx
 src/sage/categories/category_cy_helper.pyx
 src/sage/categories/chain_complexes.py
 src/sage/categories/covariant_functorial_construction.py
+src/sage/categories/coalgebras.py
 src/sage/categories/coalgebras_with_basis.py
 src/sage/categories/commutative_algebra_ideals.py
 src/sage/categories/commutative_algebras.py

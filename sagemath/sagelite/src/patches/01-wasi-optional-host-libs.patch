@@ -33043,3 +33043,25 @@ diff --git a/src/sage/categories/examples/sets_cat.py b/src/sage/categories/exam
 @@ -615 +614 @@
 -        sage: timeit("pw.is_prime()")    # random
 +        sage: timeit("pw.is_prime()")    # random                                    # needs IPython
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -263,6 +263,7 @@
+     from sage.categories.algebras import Algebras
+     from sage.categories.algebras_with_basis import AlgebrasWithBasis
+     from sage.categories.bialgebras import Bialgebras
++    from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
+     from sage.categories.bimodules import Bimodules
+     from sage.categories.cartesian_product import cartesian_product
+     from sage.categories.chain_complexes import ChainComplexes
+diff --git a/src/sage/categories/coalgebras.py b/src/sage/categories/coalgebras.py
+--- a/src/sage/categories/coalgebras.py
++++ b/src/sage/categories/coalgebras.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.combinat
+ r"""
+ Coalgebras
+ """
+@@ -192 +191 @@
+-                sage: Coalgebras(QQ).TensorProducts().super_categories()
++                sage: Coalgebras(QQ).TensorProducts().super_categories()                # known bug

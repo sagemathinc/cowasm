@@ -71315,6 +71315,64 @@ replays and patch logs are under
 can audit another compact stale dependency guard or select a persisted
 backend/runtime cluster.
 
+Coalgebra category guard-reopening and startup-namespace pass on 2026-07-25
+UTC:
+
+A runner-version-149 controlled audit removed the historical file-wide
+`sage.combinat` annotation from `sage/categories/coalgebras.py`. The
+unmodified default profile recorded one file-level skip; the first controlled
+run exposed useful core coverage and a compact three-row cluster:
+
+```text
+coalgebras.py: 18 passed, 3 failed, 49 skipped
+failures:       2 missing BialgebrasWithBasis startup names
+                1 deterministic tensor-category display-order mismatch
+```
+
+The lightweight `BialgebrasWithBasis` category constructor now joins the
+common Sagelite doctest namespace and the WASI `sage.all` startup surface.
+The deterministic display-order drift remains preserved as one focused
+`known bug` deferred example rather than suppressing the whole module. The
+ordinary default profile and focused make target against the clean pinned
+source replay each record:
+
+```text
+coalgebras.py: 20 passed, 0 failed, 50 skipped
+skip groups:   26 sage.modules
+               16 sage.groups,sage.modules
+                7 lrcalc_python/sage.modules variants
+                1 known bug
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 70 ordered block rows, have a 100% non-skipped
+pass rate, and agree on every stable persisted block field apart from
+source-root-derived keys, durations, and database-local identifiers. Saved
+block- and file-failure queries are empty.
+
+`sage/categories/coalgebras.py` is now part of the curated pure-math corpus,
+raising it to 1,266 non-comment entries with no duplicates.
+
+Validation additionally includes JavaScript and Python syntax checks;
+saved lifecycle/latest-run/failure/skip queries; corpus uniqueness and
+focused make-target dry run; accumulated-patch syntax; complete default-patch
+application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; and byte-for-byte comparison of
+the replayed `coalgebras.py` and `all.py` targets with the runtime-tested
+source. The external developer checkout remains untouched, and the shared
+generated build bundle remains intact without a make-driven reconstruction.
+
+The accumulated source patch adds two `diff --git` sections and three hunks.
+It now has 1,741 serialized target sections (1,228 `diff --git` and 513
+header-only legacy sections) and 5,104 hunks. Controlled dashboards are under
+`/tmp/cowasm-sagelite-coalgebras-audit.3Xf6e7/`; the focused make dashboard is
+under `/tmp/cowasm-sagelite-coalgebras-make.bAwKIy/`; and the clean pinned
+source replay and patch log are under
+`/tmp/cowasm-sagelite-coalgebras-complete-replay.QYkCZO/`. A future scheduled
+pass can audit another compact category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
