@@ -699,6 +699,7 @@ src/sage/categories/number_fields.py
 src/sage/categories/objects.py
 src/sage/categories/ore_modules.py
 src/sage/categories/partially_ordered_monoids.py
+src/sage/categories/posets.py
 src/sage/categories/permutation_groups.py
 src/sage/categories/pointed_sets.py
 src/sage/categories/polyhedra.py

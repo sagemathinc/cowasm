@@ -71966,6 +71966,55 @@ under `/tmp/cowasm-sagelite-crystals-audit.QDXsCh/`. A future scheduled pass
 can audit another compact stale crystal-category guard or select a persisted
 backend/runtime cluster.
 
+Poset-category guard-reopening and corpus-promotion pass on 2026-07-25 UTC:
+
+The pinned crystal-category guard family is now exhausted: every
+crystal-category module carrying the historical
+`sage.combinat`/`sage.graphs` file directive has been reopened and promoted.
+The next compact category audit therefore revisited
+`sage/categories/posets.py`, whose earlier skipped-only classification
+predated the recent graph and lattice-poset runtime passes.
+
+A runner-version-153 controlled audit removed the historical file-wide
+`sage.graphs, sage.combinat` annotation. The file needed no startup-namespace,
+runtime, or focused skip change. The isolated controlled source and the
+focused make target against a complete clean pinned-source replay each
+record:
+
+```text
+posets.py:        150 passed, 0 failed, 6 skipped
+skip groups:        4 deferred:not implemented
+                    2 optional:sage.modules
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both dashboards contain 156 ordered block rows, have a 100% non-skipped pass
+rate, and agree on every stable persisted block field. Saved block-failure
+and file-error queries are empty.
+
+`sage/categories/posets.py` is now part of the curated pure-math corpus,
+raising it to 1,276 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete sequential patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed target with the runtime-tested controlled source;
+ordered SQLite field comparison; and `git diff --check`. The installed
+schema-204 Electron resource manifest remains intact with 578 side modules
+and 759 required-resource hashes.
+
+The accumulated source patch adds one `diff --git` section and one hunk. It
+now has 1,755 serialized target sections (1,242 `diff --git` and 513
+header-only legacy sections) and 5,132 hunks. Controlled and focused
+dashboards and worker state are under
+`/tmp/cowasm-sagelite-posets-audit.LDHATt/`; the clean pinned-source replay is
+under `/tmp/cowasm-sagelite-posets-replay.Q4HUPx/`. A future scheduled pass
+can audit another stale category guard or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
