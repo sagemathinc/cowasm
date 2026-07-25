@@ -72359,6 +72359,82 @@ pinned-source replay is under
 audit the guarded `ntl_mat_GF2E.pyx` wrapper or select another persisted NTL
 backend/runtime cluster.
 
+NTL GF(2) extension-matrix local-context and display-state restoration pass on
+2026-07-25 UTC:
+
+Reopening the guarded `sage/libs/ntl/ntl_mat_GF2E.pyx` wrapper reproduced the
+split-side-module context cluster at the first matrix allocation:
+
+```text
+ntl_mat_GF2E.pyx: 0 passed, 1 failed, 0 skipped
+active example:   ntl.mat_GF2E(ctx, 5,5, [0..24])
+failure:          RuntimeError: unreachable
+top NTL path:     NTL::TerminalError -> NTL::BlockConstruct
+                  -> NTL::Vec<NTL::GF2E>::SetLength
+```
+
+The wrapper's calls to `ntl_GF2EContext.restore_c()` execute in the separate
+context side module and therefore restore a different statically linked copy
+of NTL's GF2E state. The accumulated WASI patch now reconstructs the context
+inside `ntl_mat_GF2E` with `GF2E_init(context.m.x)` before allocation,
+comparison, element assignment, and destruction.
+
+The continued replay exposed a second split-side-module state boundary:
+`ntl.GF2XHexOutput(...)` changes the GF2X wrapper's NTL display flag, while
+matrix representations use the matrix side module's own copy. Matrix
+representation now synchronizes its local `GF2X::HexOutput` flag from the
+public Python getter, preserving both hexadecimal and coefficient-list output
+semantics.
+
+Two matrix-conversion examples reach the separately guarded
+`matrix_gf2e_dense`/finite-ring integration surface and fail through its
+unavailable finite-field cache. Those examples now carry focused dependency
+metadata instead of suppressing the remaining wrapper coverage. An exact
+isolated Meson Cython/C++/WASM rebuild of
+`ntl_mat_GF2E.cpython-314-wasm32-wasi.so` passed, and the rebuilt module was
+installed into the ignored Electron resource bundle with its manifest hash
+refreshed.
+
+The ordinary default-profile replay and focused make target against the
+pinned-source reconstruction each record:
+
+```text
+ntl_mat_GF2E.pyx: 130 passed, 0 failed, 4 skipped
+skip groups:        2 long time
+                    2 optional matrix_gf2e_dense/finite rings
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 134 ordered block rows and agree on every stable
+persisted block and file field; the sole raw `actual` difference is the
+intentionally unchecked random matrix-element list. Saved block-failure and
+file-error queries are empty, and active-row coverage is 100%.
+
+The obsolete file-wide `sage.libs.ntl` annotation is removed, and
+`sage/libs/ntl/ntl_mat_GF2E.pyx` is now part of the curated pure-math corpus,
+raising it to 1,283 non-comment entries with no duplicates.
+
+Validation includes the preserved pre-fix feature replay; exact focused Meson
+compilation; ordinary default and focused make dashboards; saved
+lifecycle/latest-run, failure-cluster, and skip queries; SQLite integrity and
+ordered stable-row comparison; corpus uniqueness; accumulated-patch syntax;
+an exact pinned-source target replay; byte-for-byte comparison of the replayed
+target with the runtime-tested source; full schema-204 manifest hash
+validation with 578 side modules and 759 required resources; and
+`git diff --check`. The external developer checkout and its unrelated changes
+remain untouched.
+
+Replacing the obsolete guard with local runtime restoration leaves the
+accumulated source patch at 1,754 serialized target sections (1,241
+`diff --git` and 513 header-only legacy sections) and raises it to 5,224
+hunks. Dashboards, worker state, the original and rebuilt side modules, exact
+build log, patch logs, and focused make state are under
+`/tmp/cowasm-sagelite-ntl-mat-gf2e-audit.DfScxS/`; the pinned-source replay is
+under `/tmp/cowasm-sagelite-ntl-mat-gf2e-replay.Llapus/`. A future scheduled
+pass can audit another guarded NTL wrapper or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
