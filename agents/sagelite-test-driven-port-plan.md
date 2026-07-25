@@ -74719,6 +74719,78 @@ is under `/tmp/cowasm-sagelite-generic-nodes.GjzFea/`. A future scheduled pass
 can audit another guarded p-adic parent/element module or select the next
 persisted backend/runtime cluster.
 
+Generic p-adic parent guard reopening and focused root-dependency
+classification pass on 2026-07-25 UTC:
+
+`sage/rings/padics/padic_generic.py` retained a historical file-wide
+`sage.rings.padics` annotation after the browser package gained the p-adic
+parent and extension stack. The repository's older packaged resource copy
+still lacks the previously rebuilt capped-relative conversion module, so an
+initial probe there reproduced the already-known module-local NTL context
+trap. The authoritative runner-version-154 replay used the current composed
+native resource bundle and recorded:
+
+```text
+padic_generic.py before: 220 passed, 20 failed, 0 skipped
+run lifecycle:           failed and closed
+SQLite integrity:        ok
+```
+
+The broad guard was stale for 220 examples. The 20 active failures separated
+cleanly into optional backend boundaries: ten direct or cascading polynomial
+factor/root rows require the external Singular interface, seven root-of-unity
+and square-root rows require the broader cypari2/PARI object model, and two
+pure-Sage root rows require the polyhedron/PPL stack. The remaining row
+returned a different valid primitive root with the correct order and
+multiplicative order, so its deterministic implementation-specific
+representative is deferred as a known bug.
+
+The accumulated WASI patch now removes the file-wide p-adic guard and gives
+those 20 rows focused Singular, PARI, polyhedron, or deferred metadata. The
+corrected feature-selected replay, ordinary default browser profile, and
+strict focused make target against a complete clean pinned-source
+reconstruction each record:
+
+```text
+padic_generic.py: 220 passed, 0 failed, 20 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The final skips comprise ten Singular rows, seven PARI rows, two polyhedron
+rows, and one deferred implementation-parity row. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the ordinary
+and strict-make dashboards agree across all 240 ordered stable rows after
+normalizing source/resource-root prefixes in persisted block keys and expected
+tracebacks.
+
+`sage/rings/padics/padic_generic.py` is now part of the curated pure-math
+corpus, raising it to 1,318 non-comment entries with no duplicates or missing
+paths. This pass changes only doctest dependency metadata and corpus
+membership; the current composed native bundle already supplies the passing
+p-adic parent behavior, so no new native WASM rebuild, standalone smoke
+change, or Electron resource-contract update is required.
+
+Validation includes the composed-resource baseline; corrected
+feature-selected and ordinary dashboards; strict focused-make validation;
+saved lifecycle/latest-run, failure, and skip queries; SQLite integrity and
+normalized exact row comparison; Python compilation; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated changes remain untouched.
+
+Removing the stale guard and classifying the focused root boundaries raise the
+accumulated patch to 1,795 serialized target sections (1,282 `diff --git` and
+513 header-only legacy sections) and 5,440 hunks. Baseline, classified,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-generic.fnd068/`. A future scheduled pass can audit
+the adjacent guarded `local_generic.py` parent module or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

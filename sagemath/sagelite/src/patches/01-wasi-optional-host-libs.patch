@@ -34655,3 +34655,67 @@ diff --git a/src/sage/rings/padics/generic_nodes.py b/src/sage/rings/padics/gene
 @@ -648 +647 @@
 -            sage: x2 + y2                                                               # needs sage.rings.padics
 +            sage: x2 + y2                                                               # needs sage.geometry.polyhedron
+diff --git a/src/sage/rings/padics/padic_generic.py b/src/sage/rings/padics/padic_generic.py
+--- a/src/sage/rings/padics/padic_generic.py
++++ b/src/sage/rings/padics/padic_generic.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics
+@@ -608,2 +607,2 @@
+-            sage: F = list(Qp(19)['x'](cyclotomic_polynomial(5)).factor())[0][0]
+-            sage: L = Qp(19).extension(F, names='a'); L
++            sage: F = list(Qp(19)['x'](cyclotomic_polynomial(5)).factor())[0][0]  # needs sage.libs.singular
++            sage: L = Qp(19).extension(F, names='a'); L  # needs sage.libs.singular
+@@ -1211 +1210 @@
+-            sage: zeta = L.primitive_root_of_unity(); zeta  # indirect doctest
++            sage: zeta = L.primitive_root_of_unity(); zeta  # indirect doctest  # needs sage.libs.pari
+@@ -1213 +1212 @@
+-            sage: zeta.parent() is L
++            sage: zeta.parent() is L  # needs sage.libs.pari
+@@ -1284 +1283 @@
+-            sage: zeta = R.primitive_root_of_unity(); zeta
++            sage: zeta = R.primitive_root_of_unity(); zeta  # needs sage.libs.pari
+@@ -1286 +1285 @@
+-            sage: zeta == R.teichmuller(2)
++            sage: zeta == R.teichmuller(2)  # needs sage.libs.pari
+@@ -1295 +1294 @@
+-            sage: zeta
++            sage: zeta  # known bug
+@@ -1352 +1351 @@
+-            sage: roots = R.roots_of_unity(); roots
++            sage: roots = R.roots_of_unity(); roots  # needs sage.libs.pari
+@@ -1358 +1357 @@
+-            sage: R.roots_of_unity(10)
++            sage: R.roots_of_unity(10)  # needs sage.libs.pari
+@@ -1451 +1450 @@
+-            sage: P.roots()
++            sage: P.roots()  # needs sage.libs.singular
+@@ -1453 +1452 @@
+-            sage: P.roots(multiplicities=False)
++            sage: P.roots(multiplicities=False)  # needs sage.libs.singular
+@@ -1459 +1458 @@
+-            sage: A(7).square_root(all=True)
++            sage: A(7).square_root(all=True)  # needs sage.libs.pari
+@@ -1465 +1464 @@
+-            sage: P.roots(multiplicities=False)
++            sage: P.roots(multiplicities=False)  # needs sage.libs.singular
+@@ -1475 +1474 @@
+-            sage: [ root.add_bigoh(9) for root in P.roots(multiplicities=False) ]
++            sage: [ root.add_bigoh(9) for root in P.roots(multiplicities=False) ]  # needs sage.libs.singular
+@@ -1487 +1486 @@
+-            sage: P.roots(multiplicities=False, algorithm='sage')
++            sage: P.roots(multiplicities=False, algorithm='sage')  # needs sage.geometry.polyhedron
+@@ -1497 +1496 @@
+-            sage: P.roots(algorithm='sage')
++            sage: P.roots(algorithm='sage')  # needs sage.geometry.polyhedron
+@@ -1511 +1510 @@
+-            sage: P.roots()
++            sage: P.roots()  # needs sage.libs.singular
+@@ -1516 +1515 @@
+-            sage: P.roots(B)
++            sage: P.roots(B)  # needs sage.libs.singular
+@@ -1533 +1532 @@
+-            sage: E.roots(C)
++            sage: E.roots(C)  # needs sage.libs.singular
+@@ -1537 +1536 @@
+-            sage: P.roots()
++            sage: P.roots()  # needs sage.libs.singular

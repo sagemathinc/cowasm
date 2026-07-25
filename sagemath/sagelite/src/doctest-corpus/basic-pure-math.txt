@@ -1320,3 +1320,4 @@ src/sage/rings/padics/pow_computer_flint.pyx
 src/sage/rings/padics/pow_computer_relative.pyx
 src/sage/rings/padics/relative_extension_leaves.py
 src/sage/rings/padics/generic_nodes.py
+src/sage/rings/padics/padic_generic.py
