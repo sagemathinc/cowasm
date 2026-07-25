@@ -33611,3 +33611,30 @@ diff --git a/src/sage/libs/ntl/ntl_lzz_pX.pyx b/src/sage/libs/ntl/ntl_lzz_pX.pyx
 @@ -884 +890 @@ cdef class ntl_zz_pX():
 -        self.c.restore_c()
 +        restore_zz_pX_context(self.c)
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pX.pyx b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+--- a/src/sage/libs/ntl/ntl_ZZ_pX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pX.pyx
+@@ -1,2 +1 @@
+-# sage.doctest: needs sage.libs.ntl
+ # distutils: libraries = NTL_LIBRARIES gmp m
+@@ -446,6 +445,11 @@ cdef class ntl_ZZ_pX():
+         """
+         if self.c is not other.c:
+             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
++        cdef ZZ_c inverse
++        cdef ZZ_c leading = ZZ_p_rep(ZZ_pX_LeadCoeff(other.x))
++        if ZZ_InvModStatus(inverse, leading, self.c.p.x):
++            from sage.libs.ntl.error import NTLError
++            raise NTLError("ZZ_p: division by non-invertible element")
+         cdef ntl_ZZ_pX r = self._new()
+         sig_on()
+         #self.c.restore_c() # restored in _new()
+@@ -981,7 +985,7 @@ cdef class ntl_ZZ_pX():
+             sage: ntl.ZZ_pX([-1,0,0,0,0,1],5).factor()
+             [([4 1], 5)]
+             sage: ls = ntl.ZZ_pX([-1,0,0,0,1],5).factor()
+-            sage: ls
++            sage: ls  # random
+             [([4 1], 1), ([2 1], 1), ([1 1], 1), ([3 1], 1)]
+             sage: prod( [ x[0] for x in ls ] )
+             [4 0 0 0 1]

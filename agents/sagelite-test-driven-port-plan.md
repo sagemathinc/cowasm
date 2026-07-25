@@ -72290,6 +72290,75 @@ build log, clean patch log, and ordered row comparisons are under
 `/tmp/cowasm-sagelite-ntl-lzz-px-audit.VRTTld/`. A future scheduled pass can
 audit the guarded `ntl_ZZ_pX.pyx` or `ntl_mat_GF2E.pyx` wrapper.
 
+NTL large-modulus polynomial terminal-error recovery pass on
+2026-07-25 UTC:
+
+Reopening the guarded `sage/libs/ntl/ntl_ZZ_pX.pyx` wrapper reproduced its
+historical terminal-error cluster at the documented composite-modulus
+remainder example:
+
+```text
+ntl_ZZ_pX.pyx: 0 passed, 1 failed, 0 skipped
+active example: f % g
+expected:       NTLError: ZZ_p: division by non-invertible element
+failure:        RuntimeError: unreachable
+top NTL path:   NTL::TerminalError -> NTL::InvModError -> NTL::PlainRem
+```
+
+NTL is built without C++ exceptions and calls `abort()` after invoking its
+error callback. Native Sage recovers that path through signal handling, but
+WASM lowers the abort to an unrecoverable trap. The accumulated WASI patch now
+checks the divisor's leading coefficient with `ZZ_InvModStatus` before calling
+`ZZ_pX_rem` and raises the documented `NTLError` at Python level when it is
+not invertible. This preserves the successful NTL path while avoiding the
+terminal runtime path.
+
+The continued full-file replay exposed one independent order-only mismatch in
+the factorization example. Its own documentation says the roots are returned
+in random order, so the displayed `ls` example is now marked `# random`; the
+subsequent product assertion continues to verify the factorization.
+
+An exact focused Meson Cython/C++/WASM rebuild of
+`ntl_ZZ_pX.cpython-314-wasm32-wasi.so` passed. The rebuilt side module was
+installed into the ignored local Electron resource bundle and its manifest
+hash refreshed without changing the manifest shape. The ordinary
+default-profile replay and strict focused make target against a complete
+clean pinned-source reconstruction now record:
+
+```text
+ntl_ZZ_pX.pyx: 279 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The final dashboards each contain 279 ordered block rows and agree on all
+stable persisted block and file fields; the intentionally unchecked random
+output differs only in factor order. Saved block-failure and file-error
+queries are empty. The obsolete file-wide `sage.libs.ntl` annotation is
+removed, and `sage/libs/ntl/ntl_ZZ_pX.pyx` is now part of the curated
+pure-math corpus, raising it to 1,282 non-comment entries with no duplicates.
+
+Validation includes the preserved pre-fix feature replay; exact focused Meson
+compilation from the final source; ordinary default and focused make
+dashboards; saved lifecycle/latest-run and failure-cluster queries; SQLite
+integrity and ordered stable-row comparison; corpus uniqueness; accumulated-
+patch syntax; complete zero-fuzz accumulated-patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` with no rejects;
+byte-for-byte comparison of both independently replayed targets with the
+runtime-tested source; full schema-204 manifest hash validation with 578 side
+modules and 759 required resources; and `git diff --check`.
+
+Removing the obsolete guard and adding terminal-error recovery leaves the
+accumulated source patch at 1,754 serialized target sections (1,241
+`diff --git` and 513 header-only legacy sections) and raises it to 5,213
+hunks. Dashboards, worker state, the original and rebuilt side modules, exact
+build logs, patch logs, and clean make reconstruction are under
+`/tmp/cowasm-sagelite-ntl-zz-px-audit.Pvjxlb/`; the independent clean
+pinned-source replay is under
+`/tmp/cowasm-sagelite-ntl-zz-px-replay.eMUGXt/`. A future scheduled pass can
+audit the guarded `ntl_mat_GF2E.pyx` wrapper or select another persisted NTL
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
