@@ -550,6 +550,7 @@ src/sage/categories/algebras.py
 src/sage/categories/algebras_with_basis.py
 src/sage/categories/aperiodic_semigroups.py
 src/sage/categories/associative_algebras.py
+src/sage/categories/bialgebras.py
 src/sage/categories/bialgebras_with_basis.py
 src/sage/categories/bimodules.py
 src/sage/categories/cartesian_product.py

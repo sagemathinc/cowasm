@@ -32735,3 +32735,19 @@ diff --git a/src/sage/categories/examples/lie_algebras_with_basis.py b/src/sage/
 +++ b/src/sage/categories/examples/lie_algebras_with_basis.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.modules
+diff --git a/src/sage/categories/bialgebras.py b/src/sage/categories/bialgebras.py
+--- a/src/sage/categories/bialgebras.py
++++ b/src/sage/categories/bialgebras.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat
+@@ -67 +66 @@
+-                sage: # needs sage.modules
++                sage: # needs sage.libs.symmetrica
+@@ -87,4 +86,4 @@
+-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
+-                sage: s([5]).is_grouplike()                                             # needs lrcalc_python sage.modules
++                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.libs.symmetrica
++                sage: s([5]).is_grouplike()                                             # needs lrcalc_python sage.libs.symmetrica
+                 False
+-                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.modules
++                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.libs.symmetrica

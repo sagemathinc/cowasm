@@ -70670,6 +70670,65 @@ replay dashboards plus patch logs are under
 classify the compact bialgebra cluster or select another persisted
 backend/runtime boundary.
 
+Bialgebra Symmetrica-boundary classification and corpus-promotion pass on
+2026-07-25 UTC:
+
+The runner-version-148 controlled audit enabled the historical file-wide
+`sage.combinat` guard together with the narrower `sage.modules` examples and
+recorded:
+
+```text
+bialgebras.py: 5 passed, 4 failed, 3 skipped
+```
+
+All four failures came from the `is_primitive()` and `is_grouplike()` examples.
+Three reported that `SymmetricFunctions` was absent from the intentionally
+reduced WASI `sage.all` namespace, while the fourth was a dependent missing
+`p` assignment. Importing `SymmetricFunctions` directly showed the real
+boundary: `sage.combinat.sf.sf` imports
+`sage.libs.symmetrica.symmetrica`, whose compiled extension is not part of the
+browser profile.
+
+The stale file-wide combinatorics guard is removed. The standalone
+`sage.modules` directive and three inline module tags on the symmetric-function
+examples now name `sage.libs.symmetrica`; existing `lrcalc_python` tags remain
+where those examples also need LRCalc. The ordinary default node profile
+records:
+
+```text
+bialgebras.py: 5 passed, 0 failed, 7 skipped
+skip groups:   4 sage.libs.symmetrica
+               3 sage.libs.symmetrica plus lrcalc_python
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The dashboard contains 12 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. The five core category
+examples now provide active coverage, while all seven unavailable
+symmetric-function prompts retain explicit dependency metadata.
+
+`sage/categories/bialgebras.py` is now part of the curated pure-math corpus,
+raising it to 1,255 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; byte-for-byte target replay; matching live/replay
+file and 12-row block payloads across every stable persisted field; and
+`git diff --check`. This change affects only source doctest metadata, so the
+preceding fully green standalone build remains the compiled-runtime baseline.
+The external developer Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,729 serialized file sections (1,216
+`diff --git` and 513 legacy sections) and 5,019 hunks. Controlled, default,
+and exact-replay dashboards plus patch logs are under
+`/tmp/cowasm-sagelite-bialgebras.G6fqHU/`. A future scheduled pass can
+classify the larger guarded
+`sage/categories/examples/hopf_algebras_with_basis.py` cluster or select
+another persisted backend/runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
