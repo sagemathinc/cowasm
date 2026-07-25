@@ -34719,3 +34719,11 @@ diff --git a/src/sage/rings/padics/padic_generic.py b/src/sage/rings/padics/padi
 @@ -1537 +1536 @@
 -            sage: P.roots()
 +            sage: P.roots()  # needs sage.libs.singular
+diff --git a/src/sage/rings/padics/local_generic.py b/src/sage/rings/padics/local_generic.py
+--- a/src/sage/rings/padics/local_generic.py
++++ b/src/sage/rings/padics/local_generic.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics
+@@ -1281 +1280 @@
+-            sage: M.smith_form(transformation=False)  # indirect doctest
++            sage: M.smith_form(transformation=False)  # indirect doctest       # needs sage.geometry.polyhedron
