@@ -74590,6 +74590,62 @@ clean-reconstruction, and patch-replay evidence is under
 can audit the remaining guarded `relative_extension_leaves.py` module or
 select the next persisted backend/runtime cluster.
 
+Relative p-adic extension-leaves guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/padics/relative_extension_leaves.py` retained the last adjacent
+historical file-wide p-adic, FLINT, and NTL annotation after the browser
+package gained all three dependencies and the recent q-adic, relative
+pow-computer, and module-local NTL repairs stabilized its extension stack. A
+runner-version-154 feature-selected replay against the current composed native
+resource bundle records:
+
+```text
+relative_extension_leaves.py: 87 passed, 0 failed, 6 skipped
+run lifecycle:                 passed and closed
+SQLite integrity:              ok
+```
+
+The six skips are the file's explicit `# long time` TestSuite rows, not
+dependency deferrals. The accumulated WASI patch therefore removes the
+obsolete file-wide guard without adding narrower dependency metadata. The
+ordinary default browser profile and the strict focused make target against a
+complete clean pinned-source reconstruction each record the same result:
+
+```text
+relative_extension_leaves.py: 87 passed, 0 failed, 6 skipped
+run lifecycle:                 passed and closed
+SQLite integrity:              ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the ordinary and strict-make dashboards agree across every
+persisted stable field for all 93 ordered rows after normalizing their source-
+root and resource-root prefixes.
+
+`sage/rings/padics/relative_extension_leaves.py` is now part of the curated
+pure-math corpus, raising it to 1,316 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and
+corpus membership. The installed native runtime already supplies the working
+relative extension stack, so no native WASM rebuild, standalone smoke change,
+or Electron resource-contract update is required.
+
+Validation includes the controlled feature-selected replay; ordinary packaged
+and strict focused-make dashboards; saved lifecycle/latest-run, failure, and
+skip queries; SQLite integrity and normalized stable-row comparison; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete supported-pipeline application against clean pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target used by both default-profile paths;
+rejection of a second forward patch application; and `git diff --check`.
+
+Removing the stale guard raises the accumulated patch to 1,793 serialized
+target sections (1,280 `diff --git` and 513 header-only legacy sections) and
+5,418 hunks. Controlled, ordinary, strict-make, query,
+clean-reconstruction, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-relative-extension-leaves.03bb4D/`. A future scheduled
+pass can audit the next historical p-adic dependency guard or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
