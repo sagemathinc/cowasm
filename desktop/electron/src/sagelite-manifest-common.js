@@ -316,7 +316,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 207,
+  schemaVersion: 208,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -422,7 +422,7 @@ expectedSageliteManifest.smokeContract +=
 expectedSageliteManifest.smokeContract +=
   "-ntl-gf2e-link-delivery-v177";
 expectedSageliteManifest.smokeContract +=
-  "-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179";
+  "-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179-givaro-default-backend-v180";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

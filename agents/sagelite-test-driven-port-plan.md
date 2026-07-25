@@ -73517,6 +73517,85 @@ query, and clean-reconstruction evidence is under
 the adjacent `element_givaro.pyx` guard or select the next persisted
 backend/runtime cluster.
 
+Finite-field Givaro guard reopening and default-backend restoration pass on
+2026-07-25 UTC:
+
+`sage/rings/finite_rings/element_givaro.pyx` carried the adjacent historical
+file-wide finite-ring and NTL annotation even though the Givaro side module is
+now part of the browser runtime. A runner-version-154 controlled replay selected
+those features and recorded:
+
+```text
+element_givaro.pyx: 246 passed, 3 failed, 6 skipped
+run lifecycle:      failed and closed
+SQLite integrity:   ok
+```
+
+The broad guard was stale for 246 examples. The three active failures were
+narrow browser-profile boundaries: one polynomial-class display specific to
+the FLINT implementation and two conversions through the unavailable GAP and
+libGAP stack. The accumulated WASI patch now removes the broad file annotation
+and marks only those three rows with focused FLINT or GAP dependency metadata.
+
+The audit also exposed that WASI's finite-field constructor deliberately set
+`FiniteField_givaro` to `None`, so implicit odd-characteristic extension fields
+continued to bypass the installed Givaro backend. The constructor now imports
+Givaro under WASI when available, matching normal Sage backend selection while
+retaining its guarded ImportError fallback. Standalone and Electron-shaped
+smokes assert that `GF(25)` selects `FiniteField_givaro`, exercise its
+polynomial/coercion behavior, and keep the renamed PARI FFELT conversion
+regression independent by requesting `implementation='pari_ffelt'` explicitly.
+The Electron resource contract advances to schema 208 and
+`givaro-default-backend-v180`.
+
+The complete standalone rerun uncovered one stale harness aggregate left by the
+recent ordinary-tuple pretty-printer fixture expansion: the fixture already
+records 80 correct relative block keys, but the stable-key assertion still
+expected 79. The assertion now expects all 80 rows. No runner behavior or
+persisted key format changes.
+
+The ordinary default profile, a complete clean pinned-source reconstruction,
+and the strict focused make target each record:
+
+```text
+element_givaro.pyx: 246 passed, 0 failed, 9 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The final skips comprise six existing Magma rows, two focused GAP rows, and one
+focused FLINT row. Saved block-failure and file-error queries are empty, and
+active-row coverage is 100%. The default, clean-source, and strict-make
+dashboards each contain 255 ordered block rows and agree on every persisted
+stable field. Raw output differs only for the declared `# random` modulus
+example, whose output is intentionally accepted without comparison.
+
+`sage/rings/finite_rings/element_givaro.pyx` is now part of the curated
+pure-math corpus, raising it to 1,297 non-comment entries with no duplicates or
+missing paths.
+
+Validation includes the controlled feature-selected baseline; ordinary
+default, clean-source, and strict focused-make dashboards; saved
+lifecycle/latest-run/failure/skip queries; SQLite integrity and ordered stable
+row comparison; the complete standalone Meson build, Node import, schema-208
+Electron resource, relocated-resource, doctest-runner, and follow-up-recording
+smokes; corpus uniqueness and path existence; shell and JavaScript syntax
+checks; accumulated-patch syntax and complete supported-pipeline application
+against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested source; rejection of a second
+forward patch application; manifest loading; and `git diff --check`. The
+external developer checkout and its unrelated matrix, integer-ring,
+complex-roots, and SQLite changes remain untouched.
+
+Adding the constructor and Givaro sections raises the accumulated patch to
+1,767 serialized target sections (1,254 `diff --git` and 513 header-only
+legacy sections) and 5,282 hunks. Controlled, default, clean, focused-make,
+query, patch-replay, and standalone evidence is under
+`/tmp/cowasm-sagelite-element-givaro.Yco13K/`. A future scheduled pass can
+audit the adjacent `finite_field_givaro.pyx` guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

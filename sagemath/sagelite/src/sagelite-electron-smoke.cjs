@@ -501,6 +501,8 @@ u = S5.gen()
 assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
 assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 F25 = GF(25, 'a')
+from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
+assert isinstance(F25, FiniteField_givaro)
 a = F25.gen()
 S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
@@ -510,11 +512,10 @@ K25 = S25.fraction_field()
 try:
     F25(K25.gen())
 except TypeError as error:
-    assert str(error) == 'no coercion defined'
+    assert str(error) == 'unable to coerce ' + repr(type(K25.gen()))
 else:
     raise AssertionError('unsupported coercion unexpectedly succeeded')
-F11 = GF(11)
-K = F11.extension(4, 'z')
+K = GF(11**4, 'z', implementation='pari_ffelt')
 z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'

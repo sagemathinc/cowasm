@@ -1299,3 +1299,4 @@ src/sage/rings/finite_rings/homset.py
 src/sage/rings/finite_rings/galois_group.py
 src/sage/rings/finite_rings/hom_finite_field.pyx
 src/sage/rings/finite_rings/element_base.pyx
+src/sage/rings/finite_rings/element_givaro.pyx

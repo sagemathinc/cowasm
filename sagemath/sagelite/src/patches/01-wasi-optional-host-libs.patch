@@ -34044,3 +34044,26 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
 @@ -1226 +1225 @@
 -            sage: k._cache.fetch_int(2^33 + 2 + 1)                                      # needs sage.libs.ntl
 +            sage: k._cache.fetch_int(2^33 + 2 + 1)
+diff --git a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -181,1 +181,4 @@
+-    FiniteField_givaro = None
++    try:
++        from .finite_field_givaro import FiniteField_givaro
++    except ImportError:
++        FiniteField_givaro = None
+diff --git a/src/sage/rings/finite_rings/element_givaro.pyx b/src/sage/rings/finite_rings/element_givaro.pyx
+--- a/src/sage/rings/finite_rings/element_givaro.pyx
++++ b/src/sage/rings/finite_rings/element_givaro.pyx
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.rings.finite_rings sage.libs.ntl
+@@ -1542,1 +1541,1 @@
+-            sage: type(f)
++            sage: type(f)                                                         # needs sage.libs.flint
+@@ -1667,1 +1666,1 @@
+-            sage: S(gap('Z(25)^3'))
++            sage: S(gap('Z(25)^3'))                                              # needs sage.libs.gap
+@@ -1669,1 +1668,1 @@
+-            sage: S(libgap.Z(25)^3)
++            sage: S(libgap.Z(25)^3)                                              # needs sage.libs.gap

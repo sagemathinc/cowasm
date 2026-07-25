@@ -1387,6 +1387,8 @@ u = S5.gen()
 assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
 assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 F25 = GF(25, 'a')
+from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
+assert isinstance(F25, FiniteField_givaro)
 a = F25.gen()
 S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
@@ -1396,11 +1398,10 @@ K25 = S25.fraction_field()
 try:
     F25(K25.gen())
 except TypeError as error:
-    assert str(error) == 'no coercion defined'
+    assert str(error) == 'unable to coerce ' + repr(type(K25.gen()))
 else:
     raise AssertionError('unsupported coercion unexpectedly succeeded')
-F11 = GF(11)
-K = F11.extension(4, 'z')
+K = GF(11**4, 'z', implementation='pari_ffelt')
 z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
@@ -2268,7 +2269,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=207
+electron_manifest_schema_version=208
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2336,7 +2337,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-cano
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-exact-clique-search-v176"
-electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179-givaro-default-backend-v180"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3132,7 +3133,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "79" ]; then
+if [ "$doctest_block_key_count" != "80" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
