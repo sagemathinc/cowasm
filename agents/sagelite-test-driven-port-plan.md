@@ -74646,6 +74646,79 @@ clean-reconstruction, and patch-replay evidence is under
 pass can audit the next historical p-adic dependency guard or select another
 persisted backend/runtime cluster.
 
+Generic p-adic nodes guard reopening and dependency-tag correction pass on
+2026-07-25 UTC:
+
+`sage/rings/padics/generic_nodes.py` retained a historical file-wide p-adic,
+FLINT, and NTL annotation after all three dependencies became available in
+the browser package. A runner-version-154 feature-selected replay against the
+current packaged native resources reached the module's lattice-precision
+coverage and recorded:
+
+```text
+generic_nodes.py before: 248 passed, 1 failed, 6 skipped
+run lifecycle:           failed and closed
+SQLite integrity:        ok
+```
+
+The sole active failure was a dependency-tag propagation error, not a runtime
+defect. The state-setting
+`x2,y2 = R2.convert_multiple(x,y)` row already required
+`sage.geometry.polyhedron`, so it was skipped in this focused profile, but the
+following `x2 + y2` assertion was tagged only with `sage.rings.padics` and
+therefore observed the earlier separately converted values. The accumulated
+WASI patch now gives that dependent assertion the same focused polyhedron
+requirement and removes the obsolete file-wide guard.
+
+The corrected feature-selected replay records:
+
+```text
+generic_nodes.py: 248 passed, 0 failed, 7 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The ordinary default browser profile and the strict focused make target
+against a complete clean pinned-source reconstruction each record:
+
+```text
+generic_nodes.py: 213 passed, 0 failed, 42 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The default-profile skips are 32 FLINT-tagged rows, including two random
+output rows, seven polyhedron-tagged rows, and three NTL-tagged rows. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the ordinary and strict-make dashboards agree across every persisted
+stable field and raw actual output for all 255 ordered rows.
+
+`sage/rings/padics/generic_nodes.py` is now part of the curated pure-math
+corpus, raising it to 1,317 non-comment entries with no duplicates or missing
+paths. This pass changes only doctest dependency metadata and corpus
+membership. The installed native runtime already supplies the passing
+generic-node behavior, so no native WASM rebuild, standalone smoke change, or
+Electron resource-contract update is required.
+
+Validation includes the initial feature-selected failure dashboard; corrected
+feature-selected, ordinary packaged, and strict focused-make dashboards;
+saved lifecycle/latest-run, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; Python compilation; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated changes remain untouched.
+
+Removing the stale guard and correcting the dependent row raise the
+accumulated patch to 1,794 serialized target sections (1,281 `diff --git` and
+513 header-only legacy sections) and 5,420 hunks. Baseline, controlled,
+ordinary, strict-make, query, clean-reconstruction, and patch-replay evidence
+is under `/tmp/cowasm-sagelite-generic-nodes.GjzFea/`. A future scheduled pass
+can audit another guarded p-adic parent/element module or select the next
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

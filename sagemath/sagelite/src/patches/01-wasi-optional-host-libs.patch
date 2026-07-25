@@ -34647,3 +34647,11 @@ diff --git a/src/sage/rings/padics/relative_extension_leaves.py b/src/sage/rings
 +++ b/src/sage/rings/padics/relative_extension_leaves.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+diff --git a/src/sage/rings/padics/generic_nodes.py b/src/sage/rings/padics/generic_nodes.py
+--- a/src/sage/rings/padics/generic_nodes.py
++++ b/src/sage/rings/padics/generic_nodes.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+@@ -648 +647 @@
+-            sage: x2 + y2                                                               # needs sage.rings.padics
++            sage: x2 + y2                                                               # needs sage.geometry.polyhedron
