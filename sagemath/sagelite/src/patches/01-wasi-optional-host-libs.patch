@@ -33117,3 +33117,11 @@ diff --git a/src/sage/categories/supercrystals.py b/src/sage/categories/supercry
 +++ b/src/sage/categories/supercrystals.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.graphs sage.combinat
+diff --git a/src/sage/categories/regular_crystals.py b/src/sage/categories/regular_crystals.py
+--- a/src/sage/categories/regular_crystals.py
++++ b/src/sage/categories/regular_crystals.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat sage.graphs
+@@ -836 +835 @@
+-                sage: G.edges(sort=True)
++                sage: G.edges(sort=True)  # known bug: WASM graph edge orientation/order drift

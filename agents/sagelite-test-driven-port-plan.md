@@ -71637,6 +71637,69 @@ replay and patch log are under
 can audit another compact stale category guard or select a persisted
 backend/runtime cluster.
 
+Regular-crystal guard-reopening and corpus-promotion pass on 2026-07-25 UTC:
+
+A runner-version-151 controlled audit removed the historical file-wide
+`sage.combinat sage.graphs` annotation from
+`sage/categories/regular_crystals.py`. The standard `crystals` catalog
+exposed by the preceding supercrystal passes was sufficient for nearly all
+previously hidden coverage. The initial reopened run recorded:
+
+```text
+regular_crystals.py: 117 passed, 1 failed, 9 skipped
+```
+
+The only failure was a deterministic graph display difference in the larger
+dual-equivalence-class example. The runtime reports the same six labeled
+undirected edges with different endpoint orientation and sort order. That one
+example now carries a focused `known bug` marker rather than suppressing the
+entire category module.
+
+The final controlled audit and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+regular_crystals.py: 117 passed, 0 failed, 10 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+The skip groups are nine existing `sage.modules` examples and the one focused
+graph display drift. Both final dashboards contain 127 ordered block rows,
+have a 100% non-skipped pass rate, and agree on every stable persisted block
+field. Saved block-failure and file-error queries are empty.
+
+`sage/categories/regular_crystals.py` is now part of the curated pure-math
+corpus, raising it to 1,271 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete sequential patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed target with the runtime-tested controlled source;
+and `git diff --check`. The installed schema-204 Electron resource manifest
+remains intact with 578 side modules and 759 required-resource hashes.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied `complex_roots.py`
+overlap. The external checkout and its unrelated changes remain untouched.
+The generated source staging tree was reconstructed from the clean pinned
+replay, the complete accumulated patch had already applied without rejects,
+and the focused make target then passed. The failed staging copy is retained
+under
+`/tmp/cowasm-sagelite-regular-crystals-audit.oa8V34/failed-build/`.
+
+The accumulated source patch adds one `diff --git` section and two hunks. It
+now has 1,748 serialized target sections (1,235 `diff --git` and 513
+header-only legacy sections) and 5,114 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-regular-crystals-audit.oa8V34/`; the clean pinned-source
+replay and patch log are under
+`/tmp/cowasm-sagelite-regular-crystals-replay.evwVhn/`. A future scheduled
+pass can audit another compact stale category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
