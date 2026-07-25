@@ -307,6 +307,7 @@ src/sage/libs/ntl/ntl_ZZ.pyx
 src/sage/libs/ntl/ntl_ZZX.pyx
 src/sage/libs/ntl/ntl_ZZ_p.pyx
 src/sage/libs/ntl/ntl_ZZ_pContext.pyx
+src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
 src/sage/libs/ntl/ntl_lzz_p.pyx
 src/sage/libs/ntl/ntl_lzz_pContext.pyx
 src/sage/geometry/abc.pyx

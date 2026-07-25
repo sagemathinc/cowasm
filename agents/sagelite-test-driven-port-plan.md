@@ -72015,6 +72015,57 @@ under `/tmp/cowasm-sagelite-posets-replay.Q4HUPx/`. A future scheduled pass
 can audit another stale category guard or select a persisted backend/runtime
 cluster.
 
+NTL extension-field context backend reopening pass on 2026-07-25 UTC:
+
+The persisted `ntl_ZZ_pEContext.pyx` `RuntimeError: unreachable` cluster
+predated the local prime-field and extension-field restoration added to
+`ntl_ZZ_pE.pyx`. A runner-version-153 controlled replay selected only the
+historical `sage.libs.ntl` file feature and now records:
+
+```text
+ntl_ZZ_pEContext.pyx: 29 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The old file-wide NTL annotation is therefore stale. Removing it from the
+accumulated WASI patch leaves the ordinary default profile and a focused make
+target against a complete clean pinned-source replay with the same 29 passes,
+zero failures, and zero skips. The direct default and make dashboards agree
+byte for byte on every ordered stable block field. Saved block- and
+file-failure queries are empty, and active-row coverage is 100%.
+
+`sage/libs/ntl/ntl_ZZ_pEContext.pyx` is now part of the curated pure-math
+corpus, raising it to 1,277 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata: the already-installed NTL extension
+binary supplies the runtime behavior, so no native rebuild or Electron
+manifest update is required.
+
+Validation includes the controlled, ordinary default, and focused make
+dashboards; saved lifecycle/latest-run and failure-cluster queries; SQLite
+integrity and ordered row comparison; corpus uniqueness; accumulated-patch
+syntax; complete accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; manifest
+schema-204 inspection with 578 side modules and 759 required-resource hashes;
+and `git diff --check`.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied `complex_roots.py`
+overlap. The external checkout and its unrelated changes remain untouched.
+The failed staging copy is retained under
+`/tmp/cowasm-sagelite-ntl-zp-context-audit.Dme4uk/failed-build/`; generated
+source staging was reconstructed from a clean archive at the pinned commit,
+the complete accumulated patch was reapplied without rejects, and the focused
+make target then passed.
+
+Removing the obsolete target section leaves the accumulated source patch with
+1,754 serialized target sections (1,241 `diff --git` and 513 header-only
+legacy sections) and 5,131 hunks. Dashboards, worker state, clean patch log,
+and ordered row comparisons are under
+`/tmp/cowasm-sagelite-ntl-zp-context-audit.Dme4uk/`. A future scheduled pass
+can audit the adjacent guarded `ntl_ZZ_pEX.pyx` backend or select another
+persisted runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -344,14 +344,6 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
  # distutils: extra_link_args = NTL_LIBEXTRA
 +# sage.doctest: needs sage.libs.ntl
  # distutils: language = c++
-diff --git a/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx b/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
---- a/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
-+++ b/src/sage/libs/ntl/ntl_ZZ_pEContext.pyx
-@@ -4,3 +4,4 @@
- # distutils: library_dirs = NTL_LIBDIR
- # distutils: extra_link_args = NTL_LIBEXTRA
-+# sage.doctest: needs sage.libs.ntl
- # distutils: language = c++
 diff --git a/src/sage/libs/ntl/ntl_GF2EX.pyx b/src/sage/libs/ntl/ntl_GF2EX.pyx
 --- a/src/sage/libs/ntl/ntl_GF2EX.pyx
 +++ b/src/sage/libs/ntl/ntl_GF2EX.pyx
