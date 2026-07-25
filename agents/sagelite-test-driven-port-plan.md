@@ -70423,6 +70423,68 @@ exact target replay is under `/tmp/cowasm-sagelite-pbw-replay.QqTvVe/`. A
 future scheduled pass can audit another compact stale dependency guard or
 select the next persisted backend/runtime cluster.
 
+Lie subalgebra symbolic-boundary classification and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-148 audit selected the three remaining file-wide dependency
+guards in the Lie-algebra directory:
+
+```text
+subalgebra.py:  244 passed,  4 failed, 0 skipped
+verma_module.py: 417 passed,  4 failed, 1 skipped
+center_uea.py:    144 passed, 37 failed, 3 skipped
+```
+
+`subalgebra.py` was the compact boundary. Its graph annotation was stale, and
+its four reported failures came from the unavailable symbolic startup names
+`SR` and `var` plus dependent-name fallout. The apparent passes between those
+failures were not all valid independent coverage: skipped or failed symbolic
+setup could reuse the rational `L`, `X`, `Y`, and `Z` values from the preceding
+docstring group.
+
+The broad file-wide guard is removed. Three standalone `sage.symbolic`
+directives now cover all 12 prompts in the three contiguous symbolic examples,
+including setup, dependent calculations, and the alternate-order reduction.
+The ordinary default node profile records:
+
+```text
+subalgebra.py: 236 passed, 0 failed, 12 skipped
+skip group:     12 sage.symbolic
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The default dashboard contains 248 ordered rows and has a 100% non-skipped
+pass rate. Compared with the historical controlled dashboard, exactly the 12
+symbolic rows change status; all 236 active rows agree on source hash, source,
+expected and actual output, status, expected kind, and failure metadata. Saved
+block- and file-failure queries are empty.
+
+The audit leaves two durable follow-ups. `verma_module.py` has two primary
+singular-vector failures in the focused cypari2/PARI object-model path plus two
+dependent-name failures. `center_uea.py` retains a broader 37-row center
+construction and state-dependency cluster, also led by unsupported PARI
+object-model behavior.
+
+`sage/algebras/lie_algebras/subalgebra.py` is now part of the curated pure-math
+corpus, raising it to 1,249 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+target replay; an exact 248-row live/replay SQLite comparison; and
+`git diff --check`. This change affects only source doctest metadata, so the
+preceding fully green standalone build remains the compiled-runtime baseline.
+
+The accumulated source patch now has 1,723 serialized file sections (1,210
+`diff --git` and 513 legacy sections) and 4,995 hunks. Initial audit and
+default dashboards are under `/tmp/cowasm-sagelite-next-lie.7YCeou/`; clean
+patch replay and its matching dashboard are under
+`/tmp/cowasm-sagelite-subalgebra-replay.xS9vGv/`. A future scheduled pass can
+classify the compact Verma-module PARI boundary or isolate the larger
+center-UEA cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
