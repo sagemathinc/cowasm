@@ -136,6 +136,7 @@ src/sage/algebras/lie_algebras/affine_lie_algebra.py
 src/sage/algebras/lie_algebras/bch.py
 src/sage/algebras/lie_algebras/bgg_dual_module.py
 src/sage/algebras/lie_algebras/bgg_resolution.py
+src/sage/algebras/lie_algebras/center_uea.py
 src/sage/algebras/lie_algebras/classical_lie_algebra.py
 src/sage/algebras/lie_algebras/examples.py
 src/sage/algebras/lie_algebras/free_lie_algebra.py

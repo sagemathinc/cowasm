@@ -70547,6 +70547,67 @@ the clean pinned-source replay is under
 isolate the larger center-UEA PARI/state-dependency cluster or select another
 persisted runtime boundary.
 
+Center-UEA PARI-boundary classification and corpus-promotion pass on
+2026-07-25 UTC:
+
+The runner-version-148 controlled dashboard selected the historical file-wide
+`sage.algebras.lie_algebras sage.graphs sage.libs.pari` annotation and
+recorded:
+
+```text
+center_uea.py: 144 passed, 37 failed, 3 skipped
+```
+
+All 37 failures belonged to 12 characteristic-zero simple-Lie center groups.
+Their `U.center()` construction asks a finite Coxeter group for its degrees,
+exactifies algebraic roots through the quadratic-number-field and qqbar paths,
+and reaches the intentionally unsupported cypari2/PARI object model. Three
+apparently passing dependent prompts reused stale `I` or iterator state from
+earlier docstrings after their center setup failed; the three existing
+long-time prompts belonged to the same unavailable groups. The broad graph
+and Lie-algebra guards were not active boundaries for the remaining examples.
+
+The stale file-wide guard is removed. Eleven standalone `sage.libs.pari`
+directives now cover the failing center construction and every dependent
+prompt while preserving the valid Lie-algebra and PBW setup. The adjacent
+`D_4` example uses two inline directives so metadata does not leak into the
+independent finite-field Heisenberg example that follows without prose. The
+ordinary default node profile records:
+
+```text
+center_uea.py: 141 passed, 0 failed, 43 skipped
+skip group:     43 sage.libs.pari
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+The dashboard contains 184 ordered rows and has a 100% non-skipped pass rate.
+Saved block- and file-failure queries are empty. The 43 focused skips replace
+37 failures, three long-time skips, and three stale-state passes; all 141
+remaining active prompts retain real browser-profile coverage.
+
+`sage/algebras/lie_algebras/center_uea.py` is now part of the curated
+pure-math corpus, raising it to 1,251 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+target replay; live/replay SQLite comparison; and `git diff --check`. This
+change affects only source doctest metadata, so the preceding fully green
+standalone build remains the compiled-runtime baseline. The external developer
+Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,725 serialized file sections (1,212
+`diff --git` and 513 legacy sections) and 5,013 hunks. The controlled
+dashboard is under `/tmp/cowasm-sagelite-next-lie.7YCeou/`; the default
+dashboard and worker state are under
+`/tmp/cowasm-sagelite-center-uea-final.u1Vs4C/`; the clean sequential replay
+and its exactly matching 184-row dashboard are under
+`/tmp/cowasm-sagelite-center-replay.3W4N9r/`. A future scheduled pass can audit
+another compact stale dependency guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

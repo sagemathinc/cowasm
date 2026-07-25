@@ -32688,3 +32688,35 @@ diff --git a/src/sage/algebras/lie_algebras/verma_module.py b/src/sage/algebras/
 @@ -1376 +1375 @@
 -            sage: v.degree() == Mp.highest_weight()
 +            sage: v.degree() == Mp.highest_weight()  # needs sage.libs.pari
+diff --git a/src/sage/algebras/lie_algebras/center_uea.py b/src/sage/algebras/lie_algebras/center_uea.py
+--- a/src/sage/algebras/lie_algebras/center_uea.py
++++ b/src/sage/algebras/lie_algebras/center_uea.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.algebras.lie_algebras sage.graphs sage.libs.pari
+@@ -238,0 +238 @@
++            sage: # needs sage.libs.pari
+@@ -393,0 +394 @@
++            sage: # needs sage.libs.pari
+@@ -411,0 +413 @@
++            sage: # needs sage.libs.pari
+@@ -446,0 +449 @@
++        sage: # needs sage.libs.pari
+@@ -509,2 +512,2 @@
+-            sage: Z = U.center()
+-            sage: TestSuite(Z).run()
++            sage: Z = U.center()  # needs sage.libs.pari
++            sage: TestSuite(Z).run()  # needs sage.libs.pari
+@@ -547,0 +551 @@
++            sage: # needs sage.libs.pari
+@@ -576,0 +581 @@
++            sage: # needs sage.libs.pari
+@@ -612,0 +618 @@
++            sage: # needs sage.libs.pari
+@@ -630,0 +637 @@
++            sage: # needs sage.libs.pari
+@@ -660,0 +668 @@
++            sage: # needs sage.libs.pari
+@@ -675,0 +684 @@
++            sage: # needs sage.libs.pari
+@@ -732,0 +742 @@
++            sage: # needs sage.libs.pari
