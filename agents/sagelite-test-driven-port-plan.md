@@ -73987,6 +73987,69 @@ clean-reconstruction, failed-refresh, and patch-replay evidence is under
 can audit another compact FLINT/NTL p-adic guard or select the next persisted
 backend/runtime cluster.
 
+Relative ramified capped-absolute guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/padics/relative_ramified_CA.pyx` carried the same historical
+file-wide FLINT annotation as the adjacent floating-point implementation even
+though FLINT and the relative capped-absolute p-adic backend are now shipped in
+the browser package. A runner-version-154 controlled replay selected FLINT and
+recorded:
+
+```text
+relative_ramified_CA.pyx: 9 passed, 0 failed, 0 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+The accumulated WASI patch therefore removes the stale guard without adding
+any narrower dependency metadata. The ordinary packaged-resource replay and
+the strict focused make target against a complete clean pinned-source
+reconstruction each also record:
+
+```text
+relative_ramified_CA.pyx: 9 passed, 0 failed, 0 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+Saved block-failure, file-error, and skip queries are empty, active-row
+coverage is 100%, and the ordinary and strict-make dashboards agree exactly
+across every stable field for all nine ordered block rows. The controlled
+pre-edit dashboard retains source lines offset by one because it includes the
+removed file directive; its sources, expected results, actual results, and
+statuses otherwise reproduce the same coverage.
+
+`sage/rings/padics/relative_ramified_CA.pyx` is now part of the curated
+pure-math corpus, raising it to 1,304 non-comment entries with no duplicates or
+missing paths. This pass changes only doctest dependency metadata and corpus
+membership; the installed native runtime already supplies all nine reopened
+examples, so no native WASM rebuild or Electron resource-contract update is
+required.
+
+Validation includes the controlled feature-selected replay; ordinary packaged
+and strict focused-make dashboards; saved lifecycle, latest-run, failure, and
+skip queries; SQLite integrity and exact post-edit stable-row comparison;
+corpus uniqueness, path existence, and full-target dry run; accumulated-patch
+syntax and complete supported-pipeline application against clean pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target with the runtime-tested source;
+rejection of a second forward patch application; and `git diff --check`. An
+initial strict-make invocation passed `BUILD` through the environment, which
+the package Makefile intentionally overrides, and stopped after refreshing the
+generated tree from an archive export without Git metadata. The successful
+rerun used an explicit command-line build root and detached local clone, and
+the shared generated tree was restored byte-for-byte from that validated clean
+reconstruction. The external developer checkout and its unrelated matrix,
+integer-ring, complex-roots, and SQLite changes remain untouched.
+
+Removing the stale capped-absolute guard raises the accumulated patch to 1,776
+serialized target sections (1,263 `diff --git` and 513 header-only legacy
+sections) and 5,299 hunks. Controlled, ordinary, strict-make, query,
+clean-reconstruction, failed-archive, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-relative-ramified-ca.8NJ9ed/`. A future scheduled pass
+can audit the adjacent compact fixed-modulus FLINT guard or select the next
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

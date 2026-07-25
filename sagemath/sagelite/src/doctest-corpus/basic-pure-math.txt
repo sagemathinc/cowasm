@@ -1306,3 +1306,4 @@ src/sage/rings/finite_rings/element_ntl_gf2e.pyx
 src/sage/rings/polynomial/polynomial_zz_pex.pyx
 src/sage/rings/padics/relative_ramified_CR.pyx
 src/sage/rings/padics/relative_ramified_FP.pyx
+src/sage/rings/padics/relative_ramified_CA.pyx
