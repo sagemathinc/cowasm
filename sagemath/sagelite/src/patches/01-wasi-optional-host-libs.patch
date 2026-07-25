@@ -33096,3 +33096,19 @@ diff --git a/src/sage/categories/quotient_fields.py b/src/sage/categories/quotie
 @@ -622 +621 @@
 -                sage: (1/(x+y)).derivative(x,y)
 +                sage: (1/(x+y)).derivative(x,y)                  # known bug
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -347,6 +347,7 @@
+     import sage.algebras.catalog as algebras
+     import sage.coding.codes_catalog as codes
+     from sage.crypto import mq
++    from sage.combinat.crystals.all import crystals
+     import sage.combinat.designs.design_catalog as designs
+     import sage.combinat.path_tableaux.catalog as path_tableaux
+     from sage.combinat.species.all import species
+diff --git a/src/sage/categories/regular_supercrystals.py b/src/sage/categories/regular_supercrystals.py
+--- a/src/sage/categories/regular_supercrystals.py
++++ b/src/sage/categories/regular_supercrystals.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat sage.graphs

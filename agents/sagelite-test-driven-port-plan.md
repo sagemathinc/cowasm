@@ -71518,6 +71518,69 @@ developer-checkout staging copy is retained under
 scheduled pass can audit another stale category guard or select a persisted
 backend/runtime cluster.
 
+Regular-supercrystal startup-catalog and guard-reopening pass on 2026-07-25
+UTC:
+
+A runner-version-150 controlled audit removed the historical file-wide
+`sage.combinat sage.graphs` annotation from
+`sage/categories/regular_supercrystals.py` and initially recorded:
+
+```text
+regular_supercrystals.py: 15 passed, 12 failed, 0 skipped
+failures:                   3 missing crystals startup names
+                            9 dependent missing B, C, or c assignments
+```
+
+The catalog implementation itself was already available in the browser
+profile. Importing `crystals` from `sage.combinat.crystals.all` made all 27
+examples pass. The reduced WASI `sage.all` surface and the runner's focused
+common-doctest imports now expose that standard catalog, and runner version
+151 records the namespace-semantics change.
+
+The stale file-wide dependency guard is removed without changing any
+executable example. The controlled source and the focused make target against
+a complete clean pinned-source replay each record:
+
+```text
+regular_supercrystals.py: 27 passed, 0 failed, 0 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+Both dashboards contain 27 ordered rows, have a 100% pass rate, and agree on
+every stable persisted block field apart from source-root-derived keys,
+durations, and database-local identifiers. Saved block-failure, file-error,
+and skip queries are empty.
+
+`sage/categories/regular_supercrystals.py` is now part of the curated
+pure-math corpus, raising it to 1,269 non-comment entries with no duplicates.
+
+Validation includes JavaScript and Python syntax checks; saved
+lifecycle/latest-run/failure/skip queries; corpus uniqueness; focused
+make-target execution; accumulated-patch syntax; complete sequential patch
+application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; and byte-for-byte
+comparison of the replayed `regular_supercrystals.py` and `all.py` targets
+with the focused make staging source. The make replay reconstructed staging
+from a clean detached local clone in `/tmp`, so the external developer
+checkout and its unrelated changes remain untouched. The installed
+schema-204 Electron resource manifest remains intact with 578 side modules
+and 759 required-resource hashes; this Python-source and runner-namespace
+change uses the preceding green standalone build as its compiled-runtime
+baseline.
+
+The accumulated source patch adds two `diff --git` sections and two hunks. It
+now has 1,746 serialized target sections (1,233 `diff --git` and 513
+header-only legacy sections) and 5,111 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-regular-supercrystals-audit.jNt6we/`; the compact
+two-file replay is under
+`/tmp/cowasm-sagelite-regular-supercrystals-replay.aNQ7Yd/`; and the complete
+sequential patch replay is under
+`/tmp/cowasm-sagelite-regular-supercrystals-clean.zcP2kR/`. A future
+scheduled pass can audit the neighboring compact supercrystal guard or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
