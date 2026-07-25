@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 153;
+const doctestRunnerVersion = 154;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1033,6 +1033,7 @@ import builtins
 import doctest
 import hashlib
 import importlib
+import io
 import json
 import math
 import os
@@ -1057,6 +1058,9 @@ from sage.repl.display.fancy_repr import (
     LargeMatrixHelpRepr as __CowasmLargeMatrixHelpRepr,
     SomeIPythonRepr as __CowasmSomeIPythonRepr,
     TallListRepr as __CowasmTallListRepr,
+)
+from sage.repl.display.pretty_print import (
+    SagePrettyPrinter as __CowasmSagePrettyPrinter,
 )
 from sage.misc.html import HtmlFragment as __CowasmHtmlFragment
 from sage.structure.element import Matrix as __CowasmMatrix
@@ -1133,6 +1137,14 @@ def __cowasm_doctest_display_large_matrix(value):
     return True
 
 
+def __cowasm_doctest_pretty(value):
+    stream = io.StringIO()
+    printer = __CowasmSagePrettyPrinter(stream, 79, "\\n")
+    printer.pretty(value)
+    printer.flush()
+    return stream.getvalue()
+
+
 def __cowasm_doctest_displayhook(value):
     try:
         if isinstance(value, __CowasmSequence):
@@ -1150,12 +1162,9 @@ def __cowasm_doctest_displayhook(value):
         elif isinstance(value, (list, tuple)):
             from sage.repl.display.fancy_repr import TallListRepr
             formatted = TallListRepr().format_string(value)
-            if formatted != "--- object not handled by representer ---":
-                sys.stdout.write(formatted + "\\n")
-            elif __cowasm_displayhook_delegate is not None:
-                __cowasm_displayhook_delegate(value)
-            else:
-                sys.__displayhook__(value)
+            if formatted == "--- object not handled by representer ---":
+                formatted = __cowasm_doctest_pretty(value)
+            sys.stdout.write(formatted + "\\n")
         elif __cowasm_doctest_display_large_matrix(value):
             pass
         elif __cowasm_displayhook_delegate is not None:

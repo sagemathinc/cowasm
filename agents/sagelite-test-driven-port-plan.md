@@ -73371,6 +73371,81 @@ and query dashboards plus patch logs are under
 can audit the broader adjacent `hom_finite_field.pyx` guard or select the next
 persisted backend/runtime cluster.
 
+Finite-field generic-homomorphism guard reopening and tuple display parity
+pass on 2026-07-25 UTC:
+
+`sage/rings/finite_rings/hom_finite_field.pyx` carried the adjacent historical
+file-wide finite-ring dependency annotation. A runner-version-153 controlled
+replay selected that feature and recorded:
+
+```text
+hom_finite_field.pyx: 192 passed, 9 failed, 0 skipped
+run lifecycle:        failed and closed
+SQLite integrity:     ok
+```
+
+Eight failures were genuine narrow browser-profile boundaries. Five generic
+embedding/section checks expose incomplete odd-characteristic PARI finite-field
+root and image behavior, two Frobenius copy/TestSuite rows reach the unported
+cypari2 `Gen.fffrobenius` object model, and one input-validation example uses
+the PARI fallback where upstream's default Givaro element raises a different
+exception class. The accumulated WASI patch now removes the broad file guard,
+marks the seven full-PARI rows with `# needs sage.libs.pari`, and records the
+implementation-specific exception mismatch as a deferred `# known bug`.
+
+The ninth failure exposed a reusable doctest-runner display gap rather than a
+finite-field bug. `TallListRepr` intentionally declines ordinary tuples, after
+which the runner delegated to Python's one-line `repr`; the wide
+`embed.__reduce__()` result therefore lost Sage's expected multiline layout.
+Runner version 154 now sends declined list/tuple values through Sage's existing
+lightweight `SagePrettyPrinter`. The exact persisted reduction row passes, and
+the standalone doctest fixture permanently covers a wide ordinary tuple with a
+nested sorted dictionary.
+
+The ordinary default profile, a complete clean pinned-source reconstruction,
+and the strict focused make target each record:
+
+```text
+hom_finite_field.pyx: 193 passed, 0 failed, 8 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The final dashboards contain 201 block rows. Their only skips are the seven
+focused PARI rows and the one deferred exception-parity row; saved block- and
+file-failure queries are empty, and active-row coverage is 100%.
+
+`sage/rings/finite_rings/hom_finite_field.pyx` is now part of the curated
+pure-math corpus, raising it to 1,295 non-comment entries with no duplicates or
+missing paths. This pass changes runner display behavior, doctest dependency
+metadata, and corpus membership; the installed native runtime already supplies
+the 193 reopened examples, so no native WASM rebuild or Electron manifest
+update is required.
+
+Validation includes the controlled and ordinary replays; the exact tuple
+regression; all three extracted standalone doctest fixture modes with their
+updated 80-block aggregate assertions; the strict focused make dashboard
+against a complete clean pinned-source reconstruction; saved lifecycle,
+failure-cluster, and skip queries; SQLite integrity; corpus uniqueness and path
+existence; runner source checking and standalone shell syntax checking;
+accumulated-patch syntax and complete supported-pipeline application against
+clean pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte comparison of the reconstructed target with the runtime-tested
+source; rejection of a second forward patch application; Electron manifest,
+forge-resource, and runtime tests; and `git diff --check`. The ordinary make
+reconstruction from the external developer checkout stopped on its pre-existing
+`complex_roots.py` change, while the clean-source make replay passed; the
+checkout's unrelated matrix, integer-ring, complex-roots, and SQLite changes
+remain untouched.
+
+Adding the focused generic-homomorphism section raises the accumulated patch to
+1,764 serialized target sections (1,251 `diff --git` and 513 header-only legacy
+sections) and 5,264 hunks. Controlled, default, focused-line, full smoke,
+focused-make, query, and clean-reconstruction evidence is under
+`/tmp/cowasm-sagelite-hom-finite-field.g5WbsK/`. A future scheduled pass can
+audit another compact stale finite-ring guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
