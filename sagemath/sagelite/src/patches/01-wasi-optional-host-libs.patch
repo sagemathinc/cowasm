@@ -16341,9 +16341,21 @@ diff --git a/src/sage/algebras/schur_algebra.py b/src/sage/algebras/schur_algebr
 diff --git a/src/sage/categories/finite_fields.py b/src/sage/categories/finite_fields.py
 --- a/src/sage/categories/finite_fields.py
 +++ b/src/sage/categories/finite_fields.py
-@@ -1,1 +1,2 @@
-+# sage.doctest: needs sage.libs.ntl
- r"""
+@@ -140 +140 @@
+-                sage: k.zeta()
++                sage: k.zeta()                                             # needs sage.libs.pari
+@@ -142 +142 @@
+-                sage: k.zeta().multiplicative_order()
++                sage: k.zeta().multiplicative_order()                      # needs sage.libs.pari
+@@ -144 +144 @@
+-                sage: k.zeta(3)
++                sage: k.zeta(3)                                            # needs sage.libs.pari
+@@ -146 +146 @@
+-                sage: k.zeta(3).multiplicative_order()
++                sage: k.zeta(3).multiplicative_order()                     # needs sage.libs.pari
+@@ -216 +216 @@
+-                sage: k._element_of_factored_order(factor(1912))
++                sage: k._element_of_factored_order(factor(1912))           # needs sage.libs.pari
 diff --git a/src/sage/geometry/toric_lattice_element.pyx b/src/sage/geometry/toric_lattice_element.pyx
 --- a/src/sage/geometry/toric_lattice_element.pyx
 +++ b/src/sage/geometry/toric_lattice_element.pyx

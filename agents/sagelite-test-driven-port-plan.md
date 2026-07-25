@@ -72489,6 +72489,73 @@ clean pinned-source replay, second-application log, and worker state are under
 audit another compact stale dependency guard or select a persisted
 backend/runtime cluster.
 
+Finite-field category NTL-guard reopening and PARI-boundary classification
+pass on 2026-07-25 UTC:
+
+The recent NTL wrapper recovery series made the historical file-wide
+`sage.libs.ntl` annotation on `sage/categories/finite_fields.py` worth
+retesting. A runner-version-153 controlled replay selected that feature and
+recorded:
+
+```text
+finite_fields.py: 69 passed, 5 failed, 2 skipped
+failure cluster:   5 focused cypari2/PARI object-model NotImplementedError
+run lifecycle:     failed and closed
+SQLite integrity:  ok
+```
+
+The 69 active passes cover the finite-field category, membership and coercion,
+prime and extension-field roots of unity, large extension-field construction,
+quadratic nonresidues, Tonelli and Cipolla square roots, and quotient-field
+paths. The five failures are narrower than the old NTL guard: four prime-field
+`zeta()` examples and one factored-order helper reach the intentionally
+unsupported cypari2 object-model path. The two existing skips require the
+separate finite-ring feature.
+
+The stale file-wide guard is removed, and only those five examples now carry
+focused `sage.libs.pari` metadata. The ordinary default profile and the strict
+focused make target against a complete clean pinned-source reconstruction each
+record:
+
+```text
+finite_fields.py: 69 passed, 0 failed, 7 skipped
+skip groups:         5 optional:sage.libs.pari
+                     2 optional:sage.rings.finite_rings
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Both final dashboards contain 76 ordered block rows and agree byte for byte on
+every persisted stable block field. Saved block-failure and file-error queries
+are empty, and active-row coverage is 100%.
+
+`sage/categories/finite_fields.py` is now part of the curated pure-math
+corpus, raising it to 1,285 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+NTL and finite-field runtime already supplies the validated active behavior,
+so no native rebuild or Electron manifest update is required.
+
+Validation includes the controlled, ordinary default, and focused make
+dashboards; saved lifecycle/latest-run, failure-cluster, and skip queries;
+SQLite integrity and ordered row comparison; corpus uniqueness; accumulated-
+patch syntax; complete zero-fuzz accumulated-patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; byte-for-byte comparison of the replayed target
+with the runtime-tested source; full schema-204 manifest hash validation with
+578 side modules and 759 required resources; and `git diff --check`.
+
+Replacing the obsolete one-hunk guard with five focused PARI tags leaves the
+accumulated source patch at 1,753 serialized target sections (1,240
+`diff --git` and 513 header-only legacy sections) and raises it to 5,227
+hunks. Dashboards, worker state, patch logs, the clean pinned-source replay,
+and ordered comparisons are under
+`/tmp/cowasm-sagelite-groupoid-audit.3f8XKx/`. The initial nine-row
+`groupoid.py` probe in the same directory confirmed that its group guard is
+still live because every executable example reaches the unavailable libGAP
+permutation-group backend. A future scheduled pass can audit the adjacent
+`fields.py` category guard or select another persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
