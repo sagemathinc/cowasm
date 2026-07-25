@@ -72066,6 +72066,67 @@ and ordered row comparisons are under
 can audit the adjacent guarded `ntl_ZZ_pEX.pyx` backend or select another
 persisted runtime cluster.
 
+NTL extension-polynomial local-context restoration pass on 2026-07-25 UTC:
+
+Reopening the adjacent guarded `sage/libs/ntl/ntl_ZZ_pEX.pyx` wrapper against
+the previously installed runtime reproduced the persisted backend cluster at
+the first polynomial addition example:
+
+```text
+ntl_ZZ_pEX.pyx: 0 passed, 1 failed, 0 skipped
+active example:  f + g
+failure:         RuntimeError: unreachable
+top NTL path:    NTL::BlockConstruct -> NTL::add(ZZ_pX) -> NTL::add(ZZ_pEX)
+```
+
+The wrapper's calls to `ntl_ZZ_pEContext.restore_c()` execute in the distinct
+`ntl_ZZ_pEContext` side module, so they restore that module's statically linked
+copy of NTL globals rather than the copy used by `ntl_ZZ_pEX`. The accumulated
+WASI patch now reconstructs the prime-field and extension-field NTL contexts
+inside `ntl_ZZ_pEX` and uses that local helper before every NTL operation. This
+extends the same split-side-module context pattern already used by
+`ntl_ZZ_pE`.
+
+An isolated exact Meson Cython/C++/WASM build of
+`ntl_ZZ_pEX.cpython-314-wasm32-wasi.so` passed. The rebuilt module was
+installed into the ignored local Electron resource bundle, and its manifest
+hash was refreshed without changing the manifest shape. The ordinary installed
+runtime replay and the strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+ntl_ZZ_pEX.pyx: 304 passed, 0 failed, 0 skipped
+run lifecycle:  passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 304 ordered block rows, have a 100% non-skipped
+pass rate, and agree byte for byte on every stable persisted block field.
+Saved block-failure and file-error queries are empty.
+
+The obsolete file-wide `sage.libs.ntl` annotation is removed, and
+`sage/libs/ntl/ntl_ZZ_pEX.pyx` is now part of the curated pure-math corpus,
+raising it to 1,278 non-comment entries with no duplicates.
+
+Validation includes the preserved pre-fix feature replay; exact focused Meson
+compilation; installed-runtime and focused make dashboards; saved
+lifecycle/latest-run and failure-cluster queries; SQLite integrity and ordered
+row comparison; corpus uniqueness; accumulated-patch syntax; complete
+accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the reconstructed target with the runtime-tested source; full
+schema-204 manifest hash validation with 578 side modules and 759 required
+resources; and `git diff --check`.
+
+The accumulated source patch retains 1,754 serialized target sections (1,241
+`diff --git` and 513 header-only legacy sections) and now has 5,171 hunks.
+Dashboards, the isolated build cache, the original side module, and comparison
+rows are under `/tmp/cowasm-sagelite-ntl-zpex-audit.8BUjIO/`; the final clean
+pinned-source replay is under
+`/tmp/cowasm-sagelite-ntl-zpex-replay-final.3CiV3D/`. A future scheduled pass
+can audit the now-adjacent guarded `ntl_ZZ_pE.pyx` wrapper or select another
+persisted NTL backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

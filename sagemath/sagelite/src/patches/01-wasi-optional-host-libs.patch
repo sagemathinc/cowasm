@@ -336,14 +336,6 @@ diff --git a/src/sage/libs/ntl/ntl_ZZ_pE.pyx b/src/sage/libs/ntl/ntl_ZZ_pE.pyx
  # distutils: extra_link_args = NTL_LIBEXTRA
 +# sage.doctest: needs sage.libs.ntl
  # distutils: language = c++
-diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
---- a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
-+++ b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
-@@ -4,3 +4,4 @@
- # distutils: library_dirs = NTL_LIBDIR
- # distutils: extra_link_args = NTL_LIBEXTRA
-+# sage.doctest: needs sage.libs.ntl
- # distutils: language = c++
 diff --git a/src/sage/libs/ntl/ntl_GF2EX.pyx b/src/sage/libs/ntl/ntl_GF2EX.pyx
 --- a/src/sage/libs/ntl/ntl_GF2EX.pyx
 +++ b/src/sage/libs/ntl/ntl_GF2EX.pyx
@@ -33374,3 +33366,135 @@ diff --git a/src/sage/categories/posets.py b/src/sage/categories/posets.py
  r"""
  Posets
  """
+diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
+index 9aa36ce..c731fe0 100644
+--- a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
+@@ -38,0 +39 @@ from cpython.object cimport Py_EQ, Py_NE
++from sage.libs.ntl.types cimport ZZ_pContext_c, ZZ_pEContext_c
+@@ -44,0 +46,8 @@ from sage.arith.power cimport generic_power_pos
++
++cdef inline void restore_ZZ_pEX_context(ntl_ZZ_pEContext_class context) noexcept:
++    cdef ZZ_pContext_c prime_context = ZZ_pContext_c(context.pc.p.x)
++    prime_context.restore()
++    cdef ZZ_pEContext_c extension_context = ZZ_pEContext_c(context.f.x)
++    extension_context.restore()
++
++
+@@ -92 +101 @@ cdef class ntl_ZZ_pEX():
+-                    self.c.restore_c()
++                    restore_ZZ_pEX_context(self.c)
+@@ -134 +143 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -138 +147 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -169 +178 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -193 +202 @@ cdef class ntl_ZZ_pEX():
+-        #self.c.restore_c() ## _new() restores
++        #restore_ZZ_pEX_context(self.c) ## _new() restores
+@@ -232 +241 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -254 +263 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -276 +285 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -298 +307 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new restores the context
++        # restore_ZZ_pEX_context(self.c) # _new restores the context
+@@ -321 +330 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new restores the context
++        # restore_ZZ_pEX_context(self.c) # _new restores the context
+@@ -350 +359 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() restores the context
++        # restore_ZZ_pEX_context(self.c) # _new() restores the context
+@@ -379 +388 @@ cdef class ntl_ZZ_pEX():
+-        #self.c.restore_c() # _new restores context
++        #restore_ZZ_pEX_context(self.c) # _new restores context
+@@ -412 +421 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() restores the context
++        # restore_ZZ_pEX_context(self.c) # _new() restores the context
+@@ -443 +452 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() restores the context
++        # restore_ZZ_pEX_context(self.c) # _new() restores the context
+@@ -461 +470 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() restores the context
++        # restore_ZZ_pEX_context(self.c) # _new() restores the context
+@@ -489 +498 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -515 +524 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -544 +553 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -563 +572 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -582 +591 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -607 +616 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() calls restore
++        # restore_ZZ_pEX_context(self.c) # _new() calls restore
+@@ -636 +645 @@ cdef class ntl_ZZ_pEX():
+-        cE.restore_c()
++        restore_ZZ_pEX_context(cE)
+@@ -666 +675 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() calls restore
++        # restore_ZZ_pEX_context(self.c) # _new() calls restore
+@@ -695 +704 @@ cdef class ntl_ZZ_pEX():
+-        # self.c.restore_c() # _new() calls restore
++        # restore_ZZ_pEX_context(self.c) # _new() calls restore
+@@ -725 +734 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -754 +763 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -779 +788 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -795 +804 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -813 +822 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -831 +840 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1039 +1048 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1062 +1071 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1091 +1100 @@ cdef class ntl_ZZ_pEX():
+-    #    self.c.restore_c()
++    #    restore_ZZ_pEX_context(self.c)
+@@ -1117 +1126 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1140 +1149 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1164 +1173 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1189 +1198 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1211 +1220 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
+@@ -1234 +1243 @@ cdef class ntl_ZZ_pEX():
+-        self.c.restore_c()
++        restore_ZZ_pEX_context(self.c)
