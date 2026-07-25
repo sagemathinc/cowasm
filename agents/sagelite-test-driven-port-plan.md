@@ -73596,6 +73596,87 @@ query, patch-replay, and standalone evidence is under
 audit the adjacent `finite_field_givaro.pyx` guard or select the next persisted
 backend/runtime cluster.
 
+Givaro finite-field guard reopening and construction-key parity pass on
+2026-07-25 UTC:
+
+`sage/rings/finite_rings/finite_field_givaro.py` carried the next historical
+file-wide NTL annotation even though the preceding pass restored Givaro as the
+default small-extension-field backend. A runner-version-154 controlled replay
+selected the broad feature and reached a PARI-to-Givaro conversion at line 326,
+where the unported PARI error-recovery ABI trapped before block rows could be
+committed. After classifying that contiguous PARI conversion block, the first
+complete default replay recorded:
+
+```text
+finite_field_givaro.py: 104 passed, 9 failed, 9 skipped
+run lifecycle:          failed and closed
+SQLite integrity:       ok
+```
+
+Eight failures were narrow optional boundaries: seven cascading rows from the
+unavailable GAP interface and one `_pari_modulus()` row requiring the broader
+cypari2 object model. The accumulated WASI patch now removes the broad file
+guard, marks the complete PARI conversion and modulus rows with
+`# needs sage.libs.pari`, and marks the contiguous GAP setup and result rows
+with `# needs sage.libs.gap`.
+
+The ninth failure exposed a default-backend constructor bug rather than an
+optional dependency. On WASI, an implicitly generated Givaro modulus was keyed
+with `check_irreducible=False`, while the field's
+`AlgebraicExtensionFunctor` reconstructed the identical explicit modulus with
+`check_irreducible=True`. The two otherwise identical factory keys created
+distinct finite-field parents, so the ordinary `TestSuite(GF(2^3, 'a'))`
+construction check failed. Now that Givaro and its polynomial backend are
+installed, WASI retains normal irreducibility checking for Givaro just as it
+already did for NTL. The reconstruction functor consequently returns the
+cached parent. Standalone and Electron-shaped finite-field smokes permanently
+assert that identity, and the Electron resource contract advances to schema
+209 and `givaro-construction-key-v181`.
+
+The ordinary default profile, a complete clean pinned-source reconstruction,
+the strict focused make target, and the final packaged-resource make target
+each record:
+
+```text
+finite_field_givaro.py: 102 passed, 0 failed, 20 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The final 20 skips comprise ten focused PARI rows and ten focused GAP rows.
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the clean-source and packaged dashboards agree on all 122 persisted
+stable block fields.
+
+`sage/rings/finite_rings/finite_field_givaro.py` is now part of the curated
+pure-math corpus, raising it to 1,298 non-comment entries with no duplicates or
+missing paths.
+
+Validation includes the controlled crash baseline; focused construction
+rerun; ordinary default, clean-source, strict focused-make, and final packaged
+dashboards; saved lifecycle/failure/skip queries; SQLite integrity and ordered
+stable-row comparison; corpus uniqueness and path existence; shell and
+JavaScript syntax checks; accumulated-patch syntax and complete supported
+pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested sources; rejection of a second
+forward patch application; the complete standalone Meson build with four
+Cython generator jobs; schema-209 Electron resource and relocated-resource
+smokes; doctest follow-up recording; and `git diff --check`. The ordinary make
+reconstruction from the external developer checkout stopped on its
+pre-existing `complex_roots.py` change, while the clean-source reconstruction
+and full standalone build passed; the checkout's unrelated matrix,
+integer-ring, complex-roots, and SQLite changes remain untouched.
+
+Adding the constructor-key and focused Givaro-file sections raises the
+accumulated patch to 1,769 serialized target sections (1,256 `diff --git` and
+513 header-only legacy sections) and 5,286 hunks. Controlled, focused,
+default, clean-source, strict-make, packaged-make, query, and patch-replay
+evidence is under
+`/tmp/cowasm-sagelite-finite-field-givaro.MXNLxo/`. A future scheduled pass can
+audit the adjacent `hom_finite_field_givaro.pyx` guard or select the next
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

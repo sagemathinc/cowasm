@@ -1389,6 +1389,8 @@ assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 F25 = GF(25, 'a')
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 assert isinstance(F25, FiniteField_givaro)
+F25_functor, F25_base = F25.construction()
+assert F25_functor(F25_base) is F25
 a = F25.gen()
 S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
@@ -2269,7 +2271,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=208
+electron_manifest_schema_version=209
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2337,7 +2339,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-cano
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-exact-clique-search-v176"
-electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179-givaro-default-backend-v180"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179-givaro-default-backend-v180-givaro-construction-key-v181"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

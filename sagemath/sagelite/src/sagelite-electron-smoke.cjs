@@ -503,6 +503,8 @@ assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 F25 = GF(25, 'a')
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 assert isinstance(F25, FiniteField_givaro)
+F25_functor, F25_base = F25.construction()
+assert F25_functor(F25_base) is F25
 a = F25.gen()
 S25 = PolynomialRing(F25, 'w')
 w = S25.gen()

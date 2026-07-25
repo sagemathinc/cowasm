@@ -34067,3 +34067,95 @@ diff --git a/src/sage/rings/finite_rings/element_givaro.pyx b/src/sage/rings/fin
 @@ -1669,1 +1668,1 @@
 -            sage: S(libgap.Z(25)^3)
 +            sage: S(libgap.Z(25)^3)                                              # needs sage.libs.gap
+diff --git a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -736,7 +736,7 @@
+                 R = PolynomialRing(FiniteField(p), 'x')
+                 if modulus is None:
+                     modulus = R.irreducible_element(n)
+-                    if sys.platform == 'wasi' and implementation != 'ntl':
++                    if sys.platform == 'wasi' and implementation not in ('givaro', 'ntl'):
+                         check_irreducible = False
+                 if isinstance(modulus, str):
+                     # A string specifies an algorithm to find a suitable modulus.
+diff --git a/src/sage/rings/finite_rings/finite_field_givaro.py b/src/sage/rings/finite_rings/finite_field_givaro.py
+--- a/src/sage/rings/finite_rings/finite_field_givaro.py
++++ b/src/sage/rings/finite_rings/finite_field_givaro.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.libs.ntl
+ """
+ Givaro finite fields
+
+@@ -318,43 +317,43 @@
+         PARI elements are interpreted as finite field elements; this PARI
+         flexibility is (absurdly!) liberal::
+
+-            sage: k.<a> = GF(2^8)
+-            sage: k(pari('Mod(1,2)'))
++            sage: k.<a> = GF(2^8)                                             # needs sage.libs.pari
++            sage: k(pari('Mod(1,2)'))                                         # needs sage.libs.pari
+             1
+-            sage: k(pari('Mod(2,3)'))
++            sage: k(pari('Mod(2,3)'))                                         # needs sage.libs.pari
+             a
+-            sage: k(pari('Mod(1,3)*a^20'))
++            sage: k(pari('Mod(1,3)*a^20'))                                    # needs sage.libs.pari
+             a^7 + a^5 + a^4 + a^2
+-            sage: k(pari('O(x)'))
++            sage: k(pari('O(x)'))                                             # needs sage.libs.pari
+             Traceback (most recent call last):
+             ...
+             TypeError: unable to convert PARI t_SER to Finite Field in a of size 2^8
+
+         We can coerce from PARI finite field implementations::
+
+-            sage: K.<a> = GF(3^10, implementation="givaro")
+-            sage: a^20
++            sage: K.<a> = GF(3^10, implementation="givaro")                    # needs sage.libs.pari
++            sage: a^20                                                         # needs sage.libs.pari
+             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
+-            sage: M.<c> = GF(3^10, implementation="pari_ffelt")
+-            sage: K(c^20)
++            sage: M.<c> = GF(3^10, implementation="pari_ffelt")                # needs sage.libs.pari
++            sage: K(c^20)                                                      # needs sage.libs.pari
+             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
+
+         GAP elements need to be finite field elements::
+
+-            sage: x = gap('Z(13)')
+-            sage: F = FiniteField(13, implementation='givaro')
+-            sage: F(x)
++            sage: x = gap('Z(13)')                                             # needs sage.libs.gap
++            sage: F = FiniteField(13, implementation='givaro')                 # needs sage.libs.gap
++            sage: F(x)                                                         # needs sage.libs.gap
+             2
+-            sage: F(gap('0*Z(13)'))
++            sage: F(gap('0*Z(13)'))                                            # needs sage.libs.gap
+             0
+-            sage: F = FiniteField(13^2, 'a', implementation='givaro')
+-            sage: x = gap('Z(13)')
+-            sage: F(x)
++            sage: F = FiniteField(13^2, 'a', implementation='givaro')          # needs sage.libs.gap
++            sage: x = gap('Z(13)')                                             # needs sage.libs.gap
++            sage: F(x)                                                         # needs sage.libs.gap
+             2
+-            sage: x = gap('Z(13^2)^3')
+-            sage: F(x)
++            sage: x = gap('Z(13^2)^3')                                         # needs sage.libs.gap
++            sage: F(x)                                                         # needs sage.libs.gap
+             12*a + 11
+-            sage: F.multiplicative_generator()^3
++            sage: F.multiplicative_generator()^3                               # needs sage.libs.gap
+             12*a + 11
+
+             sage: k.<a> = GF(29^3)
+@@ -498,7 +497,7 @@
+
+         EXAMPLES::
+
+-            sage: GF(3^4,'a')._pari_modulus()
++            sage: GF(3^4,'a')._pari_modulus()                                  # needs sage.libs.pari
+             Mod(1, 3)*a^4 + Mod(2, 3)*a^3 + Mod(2, 3)
+         """
+         f = pari(str(self.modulus()))
