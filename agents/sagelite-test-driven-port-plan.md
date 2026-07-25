@@ -73117,6 +73117,67 @@ is under `/tmp/cowasm-sagelite-ntl-default-final.E7a4XW/`. A future scheduled
 pass can audit another remaining compact stale dependency guard or select the
 next persisted backend/runtime cluster.
 
+Finite-field constructor guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/finite_rings/finite_field_constructor.py` remained in the curated
+corpus behind a historical file-wide `sage.rings.finite_rings` annotation. A
+runner-version-153 controlled replay selected that feature and recorded:
+
+```text
+finite_field_constructor.py: 38 passed, 0 failed, 110 skipped
+run lifecycle:                passed and closed
+SQLite integrity:             ok
+```
+
+Removing only the file guard leaves the ordinary default node profile with
+the same 38 active passes. The 110 remaining rows already have focused
+metadata: 46 NTL rows, 37 PARI rows, 20 LinBox rows, three long-time rows, two
+combined PARI/symbolic rows, and one row each for FLINT and symbolic support.
+The controlled and unguarded runs agree on every active source, expected
+output, and actual output; removing the guard also removes the now-redundant
+finite-ring feature from the persisted skip reasons.
+
+The accumulated WASI patch now removes the obsolete header. The ordinary
+default replay and strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+finite_field_constructor.py: 38 passed, 0 failed, 110 skipped
+run lifecycle:                passed and closed
+SQLite integrity:             ok
+```
+
+The two final dashboards contain 148 ordered block rows and agree byte for
+byte on every persisted block field and raw actual output. Saved block-failure
+and file-error queries are empty, and active-row coverage is 100%.
+
+The file was already a curated-corpus entry, so the corpus remains at 1,291
+non-comment entries with no duplicates; this pass converts that entry from
+file-wide skipped coverage into 38 active blocks. The installed runtime
+already supplies the validated finite-field constructor behavior, so no
+native rebuild or Electron manifest update is required.
+
+Validation includes the controlled and ordinary default replays; the strict
+focused make dashboard; saved lifecycle/latest-run, failure-cluster, and skip
+queries; SQLite integrity and ordered row comparison; Python compilation;
+corpus uniqueness, path existence, and full-target dry run; accumulated-patch
+syntax and complete supported-pipeline application against clean pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target with the runtime-tested unguarded
+source; rejection of a second forward patch application; Electron manifest,
+forge-resource, and runtime tests; and `git diff --check`. The external
+developer checkout and its unrelated changes remain untouched.
+
+Adding the one header-removal hunk raises the accumulated patch to 1,760
+serialized target sections (1,247 `diff --git` and 513 header-only legacy
+sections) and 5,247 hunks. Dashboards, worker state, ordered comparisons, and
+the focused make database are under
+`/tmp/cowasm-sagelite-finite-constructor-audit.TWbyal/`; the clean pinned
+source replay and make reconstruction are under
+`/tmp/cowasm-sagelite-finite-constructor-replay.gRCPe3/`. A future scheduled
+pass can audit another compact stale finite-ring or NTL dependency guard, or
+select the next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

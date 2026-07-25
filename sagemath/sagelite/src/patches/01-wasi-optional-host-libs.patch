@@ -33808,3 +33808,8 @@ diff --git a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py b/src/sage/rin
 +++ b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
 @@ -1,1 +1,0 @@
 -# sage.doctest: needs sage.libs.ntl
+diff --git a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.rings.finite_rings
