@@ -72837,6 +72837,68 @@ failed, 5 skipped` and `6 passed, 31 failed, 2 skipped`. A future scheduled
 pass can audit the finite-ring guard on `drinfeld_modules.py` or select
 another persisted backend/runtime cluster.
 
+Drinfeld-module category finite-ring guard reopening pass on 2026-07-25 UTC:
+
+`sage/categories/drinfeld_modules.py` carried a historical file-wide
+`sage.rings.finite_rings` annotation. A runner-version-153 controlled replay
+selected that feature and completed the full category file:
+
+```text
+drinfeld_modules.py: 235 passed, 0 failed, 0 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+Removing only the file guard leaves the ordinary default node profile with
+the same 235 passes and no skips. This covers the category construction,
+accepted and rejected base morphisms, finite-field characteristics, Ore
+polynomial setup, object construction, category accessors, and homset/endset
+helpers without exposing a narrower unavailable backend boundary. The
+finite-ring guard was therefore stale.
+
+The accumulated WASI patch now removes that obsolete header. The ordinary
+default replay and strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+drinfeld_modules.py: 235 passed, 0 failed, 0 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+Both final dashboards contain 235 ordered block rows and agree on every
+persisted deterministic block field and output. Their sole raw `actual`
+difference is the intentionally unchecked random Drinfeld-module
+representation at source line 155. Saved block-failure and file-error queries
+are empty, and active-row coverage is 100%.
+
+`sage/categories/drinfeld_modules.py` is now part of the curated pure-math
+corpus, raising it to 1,290 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+runtime already supplies the validated category behavior, so no native
+rebuild or Electron manifest update is required.
+
+Validation includes the controlled and ordinary default replays; the strict
+focused make dashboard; saved lifecycle/latest-run and failure-cluster
+queries; SQLite integrity and ordered deterministic-row comparison; Python
+compilation; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete supported-pipeline application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+application; byte-for-byte comparison of the reconstructed target with the
+runtime-tested unguarded source; full schema-204 resource-manifest hash
+validation with 578 side modules and 759 required-resource hashes; and
+`git diff --check`. The external developer checkout and its unrelated changes
+remain untouched.
+
+Adding the one header-removal hunk keeps the accumulated source patch at 1,753
+serialized target sections (1,240 `diff --git` and 513 header-only legacy
+sections) and raises it to 5,233 hunks. Dashboards, worker state, the clean
+pinned-source reconstruction, patch logs, and focused make state are under
+`/tmp/cowasm-sagelite-drinfeld-category-audit.H6e6wK/`. A future scheduled
+pass can audit another compact stale category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -26731,6 +26731,8 @@ diff --git a/src/sage/rings/polynomial/infinite_polynomial_element.py b/src/sage
 diff --git a/src/sage/categories/drinfeld_modules.py b/src/sage/categories/drinfeld_modules.py
 --- a/src/sage/categories/drinfeld_modules.py
 +++ b/src/sage/categories/drinfeld_modules.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.rings.finite_rings
 @@ -22,4 +22,6 @@
  from sage.categories.objects import Objects
  from sage.categories.category_types import Category_over_base_ring
