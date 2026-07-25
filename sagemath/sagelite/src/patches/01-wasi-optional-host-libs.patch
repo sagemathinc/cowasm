@@ -32985,3 +32985,8 @@ diff --git a/src/sage/categories/examples/graded_modules_with_basis.py b/src/sag
 -            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
 +            sage: A = GradedModulesWithBasis(QQ).example()
 +            sage: A._repr_term(Partition((4,2,1)))
+diff --git a/src/sage/categories/examples/finite_coxeter_groups.py b/src/sage/categories/examples/finite_coxeter_groups.py
+--- a/src/sage/categories/examples/finite_coxeter_groups.py
++++ b/src/sage/categories/examples/finite_coxeter_groups.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat sage.groups

@@ -71076,6 +71076,63 @@ and patch log are under
 can audit the finite-dimensional algebra/module-with-basis example guards or
 select another persisted backend/runtime cluster.
 
+Finite-Coxeter-group example guard-reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+`sage.combinat sage.groups` annotation. The unmodified default profile
+recorded only the file-level dependency skip; the controlled source recorded:
+
+```text
+finite_coxeter_groups.py: 36 passed, 0 failed, 0 skipped
+```
+
+The minimal dihedral-group implementation now imports and exercises its
+construction, representation, category test suite, simple reflections,
+iteration and longest element, Cayley graph and edges, containment, identity,
+Coxeter degrees and matrix, descents, and reflection-powered arithmetic
+without reaching an unavailable browser-profile dependency. The broad
+combinatorics/groups guard was therefore stale for this self-contained
+example.
+
+The guard is removed without changing the executable examples. The ordinary
+default node profile and focused make target against the clean pinned-source
+replay both record:
+
+```text
+finite_coxeter_groups.py: 36 passed, 0 failed, 0 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+Each dashboard has 36 ordered rows and a 100% pass rate. Saved block-failure,
+file-error, and skip queries are empty. The controlled, default replay, and
+focused make-target dashboards agree on every persisted block field apart
+from durations and database-local identifiers.
+
+`sage/categories/examples/finite_coxeter_groups.py` is now part of the
+curated pure-math corpus, raising it to 1,262 non-comment entries with no
+duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; clean sequential patch application against pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a
+second forward application; byte-for-byte target replay; focused make-target
+execution against that replay; and `git diff --check`. The external developer
+Sagelite checkout remains untouched. This change affects only source doctest
+metadata, so the preceding fully green standalone build remains the
+compiled-runtime baseline.
+
+The accumulated source patch now has 1,691 serialized file sections (1,223
+`diff --git` and 468 legacy sections) and 5,088 hunks. Controlled, default
+replay, and make-target dashboards are under
+`/tmp/cowasm-sagelite-finite-coxeter.U9N2bg/`; the clean pinned-source replay
+and patch log are under
+`/tmp/cowasm-sagelite-finite-coxeter-replay.U5ofsm/`. A future scheduled pass
+can classify the compact crystal example graph boundary or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
