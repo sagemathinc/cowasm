@@ -32720,3 +32720,18 @@ diff --git a/src/sage/algebras/lie_algebras/center_uea.py b/src/sage/algebras/li
 +            sage: # needs sage.libs.pari
 @@ -732,0 +742 @@
 +            sage: # needs sage.libs.pari
+diff --git a/src/sage/categories/examples/finite_dimensional_algebras_with_basis.py b/src/sage/categories/examples/finite_dimensional_algebras_with_basis.py
+--- a/src/sage/categories/examples/finite_dimensional_algebras_with_basis.py
++++ b/src/sage/categories/examples/finite_dimensional_algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.modules
+diff --git a/src/sage/categories/examples/graded_connected_hopf_algebras_with_basis.py b/src/sage/categories/examples/graded_connected_hopf_algebras_with_basis.py
+--- a/src/sage/categories/examples/graded_connected_hopf_algebras_with_basis.py
++++ b/src/sage/categories/examples/graded_connected_hopf_algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.modules
+diff --git a/src/sage/categories/examples/lie_algebras_with_basis.py b/src/sage/categories/examples/lie_algebras_with_basis.py
+--- a/src/sage/categories/examples/lie_algebras_with_basis.py
++++ b/src/sage/categories/examples/lie_algebras_with_basis.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat sage.modules

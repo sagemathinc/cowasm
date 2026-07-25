@@ -70608,6 +70608,68 @@ and its exactly matching 184-row dashboard are under
 another compact stale dependency guard or select the next persisted
 backend/runtime cluster.
 
+Category-example dependency reopening and corpus-promotion pass on 2026-07-25
+UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+features on eight small category modules. Six examples were completely clean:
+
+```text
+algebras_with_basis.py:                            13 passed, 0 failed
+filtered_modules_with_basis.py:                    16 passed, 0 failed
+finite_dimensional_algebras_with_basis.py:         17 passed, 0 failed
+graded_connected_hopf_algebras_with_basis.py:      14 passed, 0 failed
+graded_modules_with_basis.py:                      18 passed, 0 failed
+lie_algebras_with_basis.py:                        28 passed, 0 failed
+```
+
+Removing all six broad guards in a prototype showed that the first, second,
+and fifth files still consist entirely of narrower inline optional examples,
+so their guards remain unchanged rather than adding skipped-only corpus rows.
+The other three modules now run without optional features: their former
+`sage.modules` or `sage.combinat sage.modules` file-wide guards were stale
+after the corresponding combinatorial free-module and Lie-algebra support was
+delivered.
+
+The ordinary default node profile records:
+
+```text
+finite_dimensional_algebras_with_basis.py:    17 passed, 0 failed, 0 skipped
+graded_connected_hopf_algebras_with_basis.py: 14 passed, 0 failed, 0 skipped
+lie_algebras_with_basis.py:                   28 passed, 0 failed, 0 skipped
+run lifecycle:                                passed and closed
+SQLite integrity:                             ok
+```
+
+The dashboard contains 59 ordered rows and has a 100% non-skipped pass rate.
+Saved block-failure, file-error, and skip queries are empty. All 59 row
+payloads agree with the controlled dashboard, with the expected one-line
+source-range shift and removal of the inherited file-wide tags. The live and
+clean pinned-source replay dashboards agree on every persisted block field.
+
+The three modules are now part of the curated pure-math corpus, raising it to
+1,254 non-comment entries with no duplicates. The neighboring
+`sage/categories/bialgebras.py` audit retains a compact four-failure cluster,
+and `sage/categories/examples/hopf_algebras_with_basis.py` retains a larger
+22-failure cluster, so neither broad guard was changed.
+
+Validation additionally includes accumulated-patch syntax; Python compilation;
+corpus uniqueness and make-target dry run; clean sequential patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+application; byte-for-byte target replay; exact controlled/live/replay SQLite
+comparison; and `git diff --check`. These changes affect only source doctest
+metadata, so the preceding fully green standalone build remains the
+compiled-runtime baseline. The external developer Sagelite checkout remains
+untouched.
+
+The accumulated source patch now has 1,728 serialized file sections (1,215
+`diff --git` and 513 legacy sections) and 5,016 hunks. Controlled, live, and
+replay dashboards plus patch logs are under
+`/tmp/cowasm-sagelite-guard-audit.ICJHDJ/`. A future scheduled pass can
+classify the compact bialgebra cluster or select another persisted
+backend/runtime boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
