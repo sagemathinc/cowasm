@@ -70789,6 +70789,60 @@ sequential replay and exactly matching dashboard are under
 audit another compact stale category dependency guard or select the next
 persisted backend/runtime cluster.
 
+Multiple-realization category-example reopening and corpus-promotion pass on
+2026-07-25 UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+`sage.combinat sage.modules` annotation and recorded:
+
+```text
+with_realizations.py: 90 passed, 0 failed, 0 skipped
+```
+
+The module imports and exercises its subset algebra, three bases, conversions,
+coercions, mixed arithmetic, morphisms, and realization-category helpers
+without reaching an unavailable browser-profile dependency. It has no narrower
+inline optional tags. The old file-wide annotation was therefore stale after
+the combinatorial free-module and module-with-basis support landed.
+
+The broad guard is removed without changing source examples or runtime code.
+The ordinary default node profile and focused make target both record:
+
+```text
+with_realizations.py: 90 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The dashboard contains 90 ordered rows and has a 100% non-skipped pass rate.
+Saved block-failure, file-error, and skip queries are empty. The controlled
+and default dashboards preserve every stable block payload; only the expected
+one-line source-range and block-key shift plus removal of the inherited
+file-wide tags differ. The default and clean pinned-source replay dashboards
+agree on every stable persisted block field.
+
+`sage/categories/examples/with_realizations.py` is now part of the curated
+pure-math corpus, raising it to 1,257 non-comment entries with no duplicates.
+
+Validation additionally includes accumulated-patch syntax; Python compilation;
+corpus uniqueness and make-target dry run; clean sequential patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+application; byte-for-byte target replay; saved lifecycle/latest-run queries;
+and `git diff --check`. This change affects only source doctest metadata, so
+the preceding fully green standalone build remains the compiled-runtime
+baseline. The external developer Sagelite checkout remains untouched.
+
+The accumulated source patch now has 1,731 serialized file sections (1,218
+`diff --git` and 513 legacy sections) and 5,029 hunks. Controlled, default, and
+make-target dashboards are under
+`/tmp/cowasm-sagelite-category-audit.jycmSe/`; the clean sequential replay and
+exactly matching dashboard are under
+`/tmp/cowasm-sagelite-with-realizations-replay.Z6mI3Y/`. A future scheduled
+pass can classify the compact `sage/categories/examples/lie_algebras.py`
+Symmetrica/deferred-sum cluster or select another persisted backend/runtime
+boundary.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

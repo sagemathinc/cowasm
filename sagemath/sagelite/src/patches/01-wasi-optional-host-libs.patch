@@ -32773,3 +32773,8 @@ diff --git a/src/sage/categories/examples/hopf_algebras_with_basis.py b/src/sage
 +            sage: # needs sage.libs.gap
 @@ -138,0 +144 @@
 +            sage: # needs sage.libs.gap
+diff --git a/src/sage/categories/examples/with_realizations.py b/src/sage/categories/examples/with_realizations.py
+--- a/src/sage/categories/examples/with_realizations.py
++++ b/src/sage/categories/examples/with_realizations.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.combinat sage.modules
