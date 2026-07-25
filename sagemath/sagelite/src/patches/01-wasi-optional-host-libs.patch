@@ -34632,3 +34632,8 @@ index a5ad9911..2d73337a 100644
 @@ -4399 +4414 @@ def _compute_g(p, n, prec, terms):
 -        sage: sage.rings.padics.padic_generic_element._compute_g(7, 3, 3, 3)[0]
 +        sage: sage.rings.padics.padic_generic_element._compute_g(7, 3, 3, 3)[0]  # known bug
+diff --git a/src/sage/rings/padics/pow_computer_flint.pyx b/src/sage/rings/padics/pow_computer_flint.pyx
+--- a/src/sage/rings/padics/pow_computer_flint.pyx
++++ b/src/sage/rings/padics/pow_computer_flint.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl

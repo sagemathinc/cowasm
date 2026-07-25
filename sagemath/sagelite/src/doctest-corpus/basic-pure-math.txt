@@ -1316,3 +1316,4 @@ src/sage/rings/padics/relaxed_template.pxi
 src/sage/rings/padics/morphism.pyx
 src/sage/rings/padics/padic_extension_generic.py
 src/sage/rings/padics/padic_generic_element.pyx
+src/sage/rings/padics/pow_computer_flint.pyx

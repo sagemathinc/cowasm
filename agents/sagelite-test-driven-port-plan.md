@@ -74479,6 +74479,60 @@ clean-reconstruction, and patch-replay evidence is under
 can audit the next historical p-adic guard or select the next persisted
 backend/runtime cluster.
 
+FLINT p-adic pow-computer guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/padics/pow_computer_flint.pyx` retained a historical file-wide
+`sage.rings.padics`, FLINT, and NTL annotation after the browser package gained
+all three dependencies and the q-adic polynomial-parent pass repaired its
+generic-to-FLINT constructor boundary. A runner-version-154 feature-selected
+replay against the current composed native resource bundle records:
+
+```text
+pow_computer_flint.pyx: 76 passed, 0 failed, 0 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The accumulated WASI patch therefore removes the obsolete file-wide guard
+without adding narrower dependency metadata. The ordinary default browser
+profile and the strict focused make target against a complete clean pinned-
+source reconstruction each also record:
+
+```text
+pow_computer_flint.pyx: 76 passed, 0 failed, 0 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+Saved block-failure, file-error, and skip queries are empty, active-row
+coverage is 100%, and the ordinary and strict-make dashboards agree exactly
+across every persisted stable field and raw actual output for all 76 ordered
+rows.
+
+`sage/rings/padics/pow_computer_flint.pyx` is now part of the curated pure-math
+corpus, raising it to 1,314 non-comment entries with no duplicates or missing
+paths. This pass changes only doctest dependency metadata and corpus
+membership. The installed native runtime already supplies the repaired
+pow-computer module, so no native WASM rebuild, standalone smoke change, or
+Electron resource-contract update is required.
+
+Validation includes the controlled feature-selected replay; ordinary packaged
+and strict focused-make dashboards; saved lifecycle/latest-run, failure, and
+skip queries; SQLite integrity and exact stable-row comparison; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete supported-pipeline application against clean pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte
+comparison of the reconstructed target used by both default-profile paths;
+rejection of a second forward patch application; and `git diff --check`.
+
+Removing the stale guard raises the accumulated patch to 1,791 serialized
+target sections (1,278 `diff --git` and 513 header-only legacy sections) and
+5,416 hunks. Controlled, ordinary, strict-make, query,
+clean-reconstruction, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-pow-computer-flint.ZRacvi/`. A future scheduled pass can
+audit the adjacent guarded `pow_computer_relative.pyx` module or select the
+next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
