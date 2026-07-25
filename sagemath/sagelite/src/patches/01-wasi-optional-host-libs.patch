@@ -34167,3 +34167,20 @@ diff --git a/src/sage/rings/finite_rings/hom_finite_field_givaro.pyx b/src/sage/
  # distutils: libraries = givaro NTL_LIBRARIES gmp m
  # distutils: extra_compile_args = NTL_CFLAGS
  # distutils: include_dirs = NTL_INCDIR
+diff --git a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+--- a/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
++++ b/src/sage/rings/finite_rings/element_ntl_gf2e.pyx
+@@ -7 +6,0 @@
+-# sage.doctest: needs sage.libs.ntl gf2x
+@@ -1165 +1164 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
+-            sage: b._gap_init_()
++            sage: b._gap_init_()                                                     # needs sage.libs.pari
+@@ -1279 +1278 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
+-            sage: g.log(g^7)
++            sage: g.log(g^7)                                                        # needs sage.libs.pari
+@@ -1305 +1304 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
+-            sage: F.one().log(F.one())
++            sage: F.one().log(F.one())                                              # needs sage.libs.pari
+@@ -1312 +1311 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
+-            sage: F.one().log(z)
++            sage: F.one().log(z)                                                    # needs sage.libs.pari

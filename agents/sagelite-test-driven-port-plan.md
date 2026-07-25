@@ -73738,6 +73738,71 @@ strict-make, query, and patch-replay evidence is under
 the next compact finite-ring guard or select the next persisted
 backend/runtime cluster.
 
+Characteristic-two NTL element guard reopening pass on 2026-07-25 UTC:
+
+`sage/rings/finite_rings/element_ntl_gf2e.pyx` carried the next historical
+file-wide NTL/GF2X annotation even though both libraries and the
+characteristic-two finite-field backend are now shipped in the browser
+runtime. A runner-version-154 controlled replay selected those features and
+recorded:
+
+```text
+element_ntl_gf2e.pyx: 180 passed, 4 failed, 3 skipped
+run lifecycle:         failed and closed
+SQLite integrity:      ok
+```
+
+All four active failures reached the same focused cypari2 object-model
+boundary through the element's PARI-backed discrete logarithm: one
+`_gap_init_()` representation, the 61-bit logarithm regression, and two
+identity-logarithm checks. An experimental replacement with Sage's generic
+discrete-log implementation was not practical: the 61-bit example exhausted
+the loader's allocation map before completion. The accumulated WASI patch
+therefore removes the broad NTL/GF2X guard and marks only those four optimized
+`fflog` rows with `# needs sage.libs.pari`.
+
+The ordinary default profile and the strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+element_ntl_gf2e.pyx: 180 passed, 0 failed, 7 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The final skips comprise four focused PARI rows, two pre-existing GAP rows,
+and one pre-existing Magma row. Saved block-failure and file-error queries are
+empty, active-row coverage is 100%, and the ordinary and strict-make
+dashboards contain the same 187 ordered block keys and stable metadata. Their
+only nondeterministic output difference is the expected memory address in an
+ellipsis-matched cache-object representation.
+
+`sage/rings/finite_rings/element_ntl_gf2e.pyx` is now part of the curated
+pure-math corpus, raising it to 1,300 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and
+corpus membership; the installed native runtime already supplies the 180
+reopened examples, so no native WASM rebuild or Electron resource-contract
+update is required.
+
+Validation includes the controlled feature-selected replay; the rejected
+generic discrete-log fallback probe; ordinary default and strict focused-make
+dashboards; saved lifecycle/failure/skip queries; SQLite integrity and ordered
+stable-row comparison; corpus uniqueness and path existence; patch syntax and
+complete supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated matrix, integer-ring, complex-roots, and SQLite
+changes remain untouched.
+
+Removing the stale characteristic-two element guard raises the accumulated
+patch to 1,771 serialized target sections (1,258 `diff --git` and 513
+header-only legacy sections) and 5,292 hunks. Controlled, fallback, default,
+strict-make, query, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-element-ntl.qVafEq/`. A future scheduled pass can audit
+another compact finite-ring/NTL guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
