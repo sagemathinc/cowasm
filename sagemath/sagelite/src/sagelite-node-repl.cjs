@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 151;
+const doctestRunnerVersion = 152;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1311,6 +1311,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.gelfand_tsetlin_patterns", ("GelfandTsetlinPattern", "GelfandTsetlinPatterns")),
         ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.crystals.all", ("crystals",)),
+        ("sage.combinat.rigged_configurations.all", ("RiggedConfigurations",)),
         ("sage.combinat.dyck_word", ("DyckWord",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
@@ -1379,6 +1380,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
         ("sage.categories.coxeter_groups", ("CoxeterGroups",)),
         ("sage.categories.finite_coxeter_groups", ("FiniteCoxeterGroups",)),
+        ("sage.categories.finite_crystals", ("FiniteCrystals",)),
         ("sage.categories.finite_weyl_groups", ("FiniteWeylGroups",)),
         ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
         ("sage.categories.finite_dimensional_hopf_algebras_with_basis", ("FiniteDimensionalHopfAlgebrasWithBasis",)),

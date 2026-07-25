@@ -71827,6 +71827,76 @@ pinned-source replay and patch log are under
 scheduled pass can audit another compact stale crystal-category guard or
 select a persisted backend/runtime cluster.
 
+Loop-crystal guard-reopening and corpus-promotion pass on 2026-07-25 UTC:
+
+A runner-version-152 controlled audit removed the historical file-wide
+`sage.graphs sage.combinat` annotation from
+`sage/categories/loop_crystals.py`. The initial reopened run recorded:
+
+```text
+loop_crystals.py: 208 passed, 14 failed, 6 skipped
+```
+
+Twelve failures initially presented as startup-namespace NameErrors:
+`FiniteCrystals` and `RiggedConfigurations` were usable through direct imports
+but were not seeded into the focused Sagelite doctest namespace. The runner
+now seeds both names, and the WASI `sage.all` startup branch exports them for
+interactive parity. Six examples then passed; the other six were
+rigged-configuration cardinality, listing, and fermionic-formula operations
+that try PyNormaliz and then fall back to the unavailable PPL backend. Those
+operations now carry focused `ppl` metadata.
+Two independent Lusztig-involution examples that reach libGAP now carry
+focused `sage.libs.gap` metadata.
+
+The final controlled audit and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+loop_crystals.py: 214 passed, 0 failed, 14 skipped
+skip groups:        6 optional:ppl
+                    3 long time
+                    2 optional:sage.libs.gap
+                    1 optional:dot2tex
+                    1 deferred:not implemented
+                    1 deferred:not tested
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+Both final dashboards contain 228 ordered block rows, have a 100%
+non-skipped pass rate, and agree on every stable persisted block field. Saved
+block-failure and file-error queries are empty.
+
+`sage/categories/loop_crystals.py` is now part of the curated pure-math
+corpus, raising it to 1,274 non-comment entries with no duplicates.
+
+Validation includes Node syntax checking; Python compilation; saved
+lifecycle/latest-run, failure-cluster, and skip queries; corpus uniqueness;
+focused make-target execution; accumulated-patch syntax; complete
+accumulated-patch application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed targets with the runtime-tested controlled source;
+and `git diff --check`. The installed schema-204 Electron resource manifest
+remains intact with 578 side modules and 759 required-resource hashes.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied source overlap. The
+external checkout and its unrelated changes remain untouched. The failed
+staging copy is retained under
+`/tmp/cowasm-sagelite-loop-crystals-audit.NK2ScL/failed-build/`; generated
+source staging was restored from the clean pinned replay before the focused
+make target passed.
+
+The accumulated source patch adds two `diff --git` sections and six hunks. It
+now has 1,752 serialized target sections (1,239 `diff --git` and 513
+header-only legacy sections) and 5,127 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-loop-crystals-audit.NK2ScL/`; the final clean
+pinned-source replay and patch log are under the directory named in
+`/tmp/cowasm-sagelite-loop-crystals-audit.NK2ScL/replay-dir-verify.txt`. A
+future scheduled pass can audit the broader base crystal-category guard or
+select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
