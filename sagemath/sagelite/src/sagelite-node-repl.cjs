@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 149;
+const doctestRunnerVersion = 150;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1310,6 +1310,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.free_module", ("CombinatorialFreeModule",)),
         ("sage.combinat.gelfand_tsetlin_patterns", ("GelfandTsetlinPattern", "GelfandTsetlinPatterns")),
         ("sage.combinat.composition", ("Composition",)),
+        ("sage.combinat.dyck_word", ("DyckWord",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.non_decreasing_parking_function", ("NonDecreasingParkingFunction", "NonDecreasingParkingFunctions")),
@@ -1362,12 +1363,14 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.fields", ("Fields",)),
         ("sage.categories.functor", ("IdentityFunctor",)),
         ("sage.categories.finite_fields", ("FiniteFields",)),
+        ("sage.categories.finite_lattice_posets", ("FiniteLatticePosets",)),
         ("sage.categories.finite_sets", ("FiniteSets",)),
         ("sage.categories.homset", ("End", "Hom")),
         ("sage.categories.commutative_rings", ("CommutativeRings",)),
         ("sage.categories.domains", ("Domains",)),
         ("sage.categories.rings", ("Rings",)),
         ("sage.categories.rngs", ("Rngs",)),
+        ("sage.dynamics.finite_dynamical_system", ("DiscreteDynamicalSystem",)),
         ("sage.categories.finite_enumerated_sets", ("FiniteEnumeratedSets",)),
         ("sage.categories.infinite_enumerated_sets", ("InfiniteEnumeratedSets",)),
         ("sage.categories.algebras_with_basis", ("AlgebrasWithBasis",)),

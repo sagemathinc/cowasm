@@ -71373,6 +71373,78 @@ source replay and patch log are under
 pass can audit another compact category guard or select a persisted
 backend/runtime cluster.
 
+Lattice-poset category guard-reopening and startup-namespace pass on 2026-07-25
+UTC:
+
+A runner-version-149 controlled audit removed the historical file-wide
+`sage.graphs` annotation from `sage/categories/lattice_posets.py`. The
+unmodified default profile recorded only the file-level dependency skip. The
+first controlled run exposed useful active coverage and a compact startup-name
+cluster:
+
+```text
+lattice_posets.py: 49 passed, 26 failed, 4 skipped
+failures:           17 missing FiniteLatticePosets
+                     7 dependent missing cat assignments
+                     1 missing DiscreteDynamicalSystem
+                     1 dependent missing DS assignment
+```
+
+Adding `FiniteLatticePosets` and `DiscreteDynamicalSystem` to the reduced WASI
+startup surface resolved 25 rows. The remaining row used the standard
+`DyckWord` constructor, which was likewise absent only from the reduced
+startup namespace. All three constructors now join `sage.all` for WASI and the
+runner's focused common-doctest imports. Runner version 150 records that
+namespace-semantics change.
+
+The stale file-wide graph guard is removed without changing the executable
+examples. The ordinary default profile and focused make target against the
+clean pinned-source replay each record:
+
+```text
+lattice_posets.py: 75 passed, 0 failed, 4 skipped
+skip group:          4 optional:sage.graphs,sage.modules
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Both final dashboards contain 79 ordered rows, have a 100% non-skipped pass
+rate, and agree on every stable persisted field apart from source-root-derived
+keys, durations, and database-local identifiers. Saved block- and file-failure
+queries are empty.
+
+`sage/categories/lattice_posets.py` is now part of the curated pure-math
+corpus, raising it to 1,267 non-comment entries with no duplicates.
+
+Validation includes JavaScript and Python syntax checks; saved
+lifecycle/latest-run/failure/skip queries; corpus uniqueness; focused
+make-target execution; accumulated-patch syntax; complete default-patch
+application against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; and byte-for-byte comparison of
+the replayed `lattice_posets.py` and `all.py` targets with the runtime-tested
+source. The external developer checkout and its unrelated changes remain
+untouched.
+
+A make dependency refresh replaced the generated source staging tree and
+started a clean standalone rebuild. That expansion was stopped after 230 of
+525 Cython-generation targets because this pass changes only Python source and
+doctest startup metadata. The installed resource directory, which the
+standalone script clears before rebuilding, was restored from the validated
+2026-07-25 02:29 UTC workspace snapshot. Its schema-204 manifest is
+byte-for-byte identical and still records 578 side modules and 759 required
+resource hashes. A focused make-target replay after the restore is green; the
+partial generated staging build can be resumed by a future full standalone
+build.
+
+The accumulated source patch adds two `diff --git` sections and three hunks.
+It now has 1,743 serialized target sections (1,230 `diff --git` and 513
+header-only legacy sections) and 5,107 hunks. Controlled dashboards are under
+`/tmp/cowasm-sagelite-lattice-posets-audit.6q9qyU/`; the clean pinned-source
+replay, focused make dashboards, and patch log are under
+`/tmp/cowasm-sagelite-lattice-posets-replay.zBxCC4/`. A future scheduled pass
+can audit another compact category guard or select a persisted backend/runtime
+cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

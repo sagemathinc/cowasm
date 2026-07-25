@@ -675,6 +675,7 @@ src/sage/categories/kahler_algebras.py
 src/sage/categories/triangular_kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lambda_bracket_algebras.py
+src/sage/categories/lattice_posets.py
 src/sage/categories/lie_conformal_algebras.py
 src/sage/categories/super_lie_conformal_algebras.py
 src/sage/categories/lie_groups.py

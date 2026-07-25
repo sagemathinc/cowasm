@@ -33065,3 +33065,26 @@ diff --git a/src/sage/categories/coalgebras.py b/src/sage/categories/coalgebras.
 @@ -192 +191 @@
 -                sage: Coalgebras(QQ).TensorProducts().super_categories()
 +                sage: Coalgebras(QQ).TensorProducts().super_categories()                # known bug
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -287,5 +287,6 @@
+     from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+     from sage.categories.finite_fields import FiniteFields
++    from sage.categories.finite_lattice_posets import FiniteLatticePosets
+     from sage.categories.finite_sets import FiniteSets
+     from sage.categories.graded_algebras import GradedAlgebras
+     from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+@@ -324,5 +325,7 @@
+     from sage.categories.posets import Posets as PartiallyOrderedSets
+     from sage.categories.right_modules import RightModules
++    from sage.combinat.dyck_word import DyckWord
++    from sage.dynamics.finite_dynamical_system import DiscreteDynamicalSystem
+     from sage.categories.ring_ideals import RingIdeals
+     Ideals = RingIdeals
+     from sage.categories.rings import Rings
+diff --git a/src/sage/categories/lattice_posets.py b/src/sage/categories/lattice_posets.py
+--- a/src/sage/categories/lattice_posets.py
++++ b/src/sage/categories/lattice_posets.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs
