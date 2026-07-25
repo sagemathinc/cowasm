@@ -34227,3 +34227,49 @@ diff --git a/src/sage/rings/padics/relative_ramified_FM.pyx b/src/sage/rings/pad
 +++ b/src/sage/rings/padics/relative_ramified_FM.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/pow_computer_flint.pyx b/src/sage/rings/padics/pow_computer_flint.pyx
+--- a/src/sage/rings/padics/pow_computer_flint.pyx
++++ b/src/sage/rings/padics/pow_computer_flint.pyx
+@@ -22,0 +23 @@
++from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+@@ -423 +424 @@
+-        R = ZZ[var]
++        R = PolynomialRing(ZZ, var, implementation='FLINT')
+@@ -436 +437 @@
+-        R = ZZ[var]
++        R = PolynomialRing(ZZ, var, implementation='FLINT')
+diff --git a/src/sage/rings/padics/qadic_flint_CA.pyx b/src/sage/rings/padics/qadic_flint_CA.pyx
+--- a/src/sage/rings/padics/qadic_flint_CA.pyx
++++ b/src/sage/rings/padics/qadic_flint_CA.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/qadic_flint_CR.pyx b/src/sage/rings/padics/qadic_flint_CR.pyx
+--- a/src/sage/rings/padics/qadic_flint_CR.pyx
++++ b/src/sage/rings/padics/qadic_flint_CR.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/qadic_flint_FM.pyx b/src/sage/rings/padics/qadic_flint_FM.pyx
+--- a/src/sage/rings/padics/qadic_flint_FM.pyx
++++ b/src/sage/rings/padics/qadic_flint_FM.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/qadic_flint_FP.pyx b/src/sage/rings/padics/qadic_flint_FP.pyx
+--- a/src/sage/rings/padics/qadic_flint_FP.pyx
++++ b/src/sage/rings/padics/qadic_flint_FP.pyx
+@@ -2 +1,0 @@
+-# sage.doctest: needs sage.libs.flint
+diff --git a/src/sage/rings/padics/pow_computer_flint.pyx b/src/sage/rings/padics/pow_computer_flint.pyx
+--- a/src/sage/rings/padics/pow_computer_flint.pyx
++++ b/src/sage/rings/padics/pow_computer_flint.pyx
+@@ -208 +208,4 @@
+-        cdef Polynomial_integer_dense_flint poly = _poly
++        cdef Polynomial_integer_dense_flint poly
++        if not isinstance(_poly, Polynomial_integer_dense_flint):
++            _poly = PolynomialRing(ZZ, _poly.parent().variable_name(), implementation='FLINT')(_poly)
++        poly = _poly
+@@ -267 +270,4 @@
+-        cdef Polynomial_integer_dense_flint poly = _poly
++        cdef Polynomial_integer_dense_flint poly
++        if not isinstance(_poly, Polynomial_integer_dense_flint):
++            _poly = PolynomialRing(ZZ, _poly.parent().variable_name(), implementation='FLINT')(_poly)
++        poly = _poly

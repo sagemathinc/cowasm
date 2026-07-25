@@ -74108,6 +74108,89 @@ clean-reconstruction, and patch-replay evidence is under
 can audit an adjacent compact q-adic FLINT guard or select the next persisted
 backend/runtime cluster.
 
+Q-adic FLINT polynomial-parent restoration and guard-reopening pass on
+2026-07-25 UTC:
+
+The four `qadic_flint_CA.pyx`, `qadic_flint_CR.pyx`,
+`qadic_flint_FM.pyx`, and `qadic_flint_FP.pyx` files still carried the broad
+FLINT guards added when the integer-polynomial side module was disabled.
+That module is now shipped, but a feature-selected capped-absolute replay
+exposed two active failures:
+
+```text
+qadic_flint_CA.pyx before: 17 passed, 2 failed, 0 skipped
+failure cluster:           2 Polynomial_generic_dense-to-FLINT TypeErrors
+```
+
+The FLINT pow-computer's result helpers constructed the WASI-default generic
+`ZZ[x]` parent and then cast its generator to
+`Polynomial_integer_dense_flint`. Direct `PowComputer_flint_*` construction
+had the same mismatch earlier in the path because it cast generic defining
+polynomials without first converting their parent. The accumulated WASI patch
+now imports `PolynomialRing`, explicitly requests the shipped FLINT
+implementation when returning FLINT-backed polynomials, and normalizes generic
+integer-polynomial constructor inputs into an explicit FLINT parent before
+accessing their native storage.
+
+A focused Cython generation, C++ compilation, and WASM side-module link
+validated the changed `pow_computer_flint` extension. The complete guarded
+module diagnostic then improved from:
+
+```text
+pow_computer_flint.pyx before: 44 passed, 32 failed, 0 skipped
+pow_computer_flint.pyx final:  76 passed,  0 failed, 0 skipped
+```
+
+The final ordinary browser-profile replay and strict focused make target
+against the complete pinned-source reconstruction each record:
+
+```text
+qadic_flint_CA.pyx: 19 passed, 0 failed, 0 skipped
+qadic_flint_CR.pyx: 23 passed, 0 failed, 0 skipped
+qadic_flint_FM.pyx: 17 passed, 0 failed, 0 skipped
+qadic_flint_FP.pyx: 22 passed, 0 failed, 0 skipped
+total:               81 passed, 0 failed, 0 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+Saved block-failure and file-error queries are empty. The ordinary and strict
+make dashboards agree across every stable field for all 81 ordered block
+rows. The four stale file-wide guards are removed, and all four files are now
+part of the curated pure-math corpus, raising it to 1,309 non-comment entries
+with no duplicates or missing paths.
+
+Validation includes the initial focused failure dashboard; the complete
+pow-computer before/final diagnostics; controlled, ordinary, and strict
+four-file dashboards; focused native Cython/C++/WASM rebuilding; a
+copy-on-write `/tmp` resource replay with the rebuilt module and refreshed
+scratch-manifest integrity hash; saved lifecycle and failure queries; SQLite
+integrity and exact stable-row comparison; corpus uniqueness, path existence,
+and full-target dry run; accumulated-patch syntax and complete supported-
+pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of all
+five reconstructed targets with the runtime-tested sources; rejection of a
+second forward patch application; and `git diff --check`. The shipped module
+was already part of the Electron resource contract, so the durable change
+needs no manifest schema update.
+
+An initial strict-make attempt noticed that its scratch `.patched` marker
+predated the new accumulated patch, refreshed that scratch tree from the dirty
+external developer checkout, and stopped at the checkout's pre-existing
+`complex_roots.py` conflict. The successful rerun used a fresh detached
+pinned-source reconstruction with post-patch markers. The external developer
+checkout and its unrelated matrix, integer-ring, complex-roots, and SQLite
+changes remain untouched.
+
+The runtime repair plus four guard removals raise the accumulated patch to
+1,783 serialized target sections (1,270 `diff --git` and 513 header-only
+legacy sections) and 5,309 hunks. Controlled, before/final, native-build,
+resource, strict-make, query, clean-reconstruction, failed-refresh, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-qadic-ca.mo80mP/`. A future scheduled pass can audit the
+adjacent guarded relaxed p-adic template or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

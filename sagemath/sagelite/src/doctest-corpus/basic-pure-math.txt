@@ -1308,3 +1308,7 @@ src/sage/rings/padics/relative_ramified_CR.pyx
 src/sage/rings/padics/relative_ramified_FP.pyx
 src/sage/rings/padics/relative_ramified_CA.pyx
 src/sage/rings/padics/relative_ramified_FM.pyx
+src/sage/rings/padics/qadic_flint_CA.pyx
+src/sage/rings/padics/qadic_flint_CR.pyx
+src/sage/rings/padics/qadic_flint_FM.pyx
+src/sage/rings/padics/qadic_flint_FP.pyx
