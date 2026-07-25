@@ -71700,6 +71700,65 @@ replay and patch log are under
 pass can audit another compact stale category guard or select a persisted
 backend/runtime cluster.
 
+Classical-crystal guard-reopening and corpus-promotion pass on 2026-07-25 UTC:
+
+A runner-version-151 controlled audit removed the historical file-wide
+`sage.graphs sage.combinat` annotation from
+`sage/categories/classical_crystals.py`. The standard `crystals` catalog
+exposed by the preceding crystal-category passes made most of the previously
+hidden examples runnable. The first reopened run recorded:
+
+```text
+classical_crystals.py: 53 passed, 21 failed, 1 skipped
+```
+
+The 21 failures were dependency boundaries rather than a shared runtime
+defect: three Demazure-character rows reached the unavailable symbolic
+backend, while 18 Weyl-character, Weyl-group, and Lusztig-involution rows
+either directly reached `sage.libs.gap.libgap` or depended on an earlier
+GAP-backed assignment. Those examples now carry focused inline
+`sage.symbolic` or `sage.libs.gap` metadata. Inline annotations preserve five
+independent setup rows that a broader standalone directive would have skipped.
+
+The final controlled audit and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+classical_crystals.py: 53 passed, 0 failed, 22 skipped
+skip groups:          18 optional:sage.libs.gap
+                       3 optional:sage.symbolic
+                       1 long time
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Both final dashboards contain 75 ordered block rows, have a 100% non-skipped
+pass rate, and agree on every stable persisted block field. Saved
+block-failure and file-error queries are empty.
+
+`sage/categories/classical_crystals.py` is now part of the curated pure-math
+corpus, raising it to 1,272 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete accumulated-patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison of the replayed target with the runtime-tested controlled source;
+and `git diff --check`. The external developer checkout and its unrelated
+changes remain untouched. The installed schema-204 Electron resource manifest
+remains intact with 578 side modules and 759 required-resource hashes.
+
+The accumulated source patch adds one `diff --git` section and five hunks. It
+now has 1,749 serialized target sections (1,236 `diff --git` and 513
+header-only legacy sections) and 5,119 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-classical-crystals-audit.knBPz9/`; the clean pinned-source
+replay and patch log are under
+`/tmp/cowasm-sagelite-classical-crystals-replay-final.72uRbF/`. A future scheduled
+pass can audit the neighboring highest-weight crystal guard or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
