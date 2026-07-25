@@ -73243,6 +73243,71 @@ under `/tmp/cowasm-sagelite-maps-finite-field.R6lgja/`. A future scheduled
 pass can audit the adjacent compact `homset.py` finite-ring guard or select the
 next persisted backend/runtime cluster.
 
+Finite-field homset guard reopening and focused PARI classification pass on
+2026-07-25 UTC:
+
+The adjacent `sage/rings/finite_rings/homset.py` file carried the same
+historical file-wide `sage.rings.finite_rings` annotation. A
+runner-version-153 controlled replay selected that feature and recorded:
+
+```text
+homset.py:         61 passed, 6 failed, 0 skipped
+run lifecycle:     failed and closed
+SQLite integrity:  ok
+```
+
+The guard was stale for 61 examples, but the six active failures exposed two
+compact residual clusters. Four finite-field homomorphism enumeration rows
+route polynomial root finding through the focused cypari2 object-model
+boundary and raise `NotImplementedError`; a fifth row depends on one of those
+setups. One `GF(25)` endomorphism-list example has deterministic NTL
+root-order display drift: the same two valid endomorphisms are returned in the
+opposite order from the historical expected output.
+
+The accumulated WASI patch now removes the obsolete file-wide guard, marks the
+five PARI-owned rows with `# needs sage.libs.pari`, and records the order-only
+display row as a deferred `# known bug`. The ordinary default profile then
+records:
+
+```text
+homset.py:         61 passed, 0 failed, 6 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The active examples cover finite-field homset construction, morphism
+evaluation and display, injectivity and surjectivity, prime-field and
+extension-field maps, list and order behavior where the delivered backend is
+self-contained, automorphism checks, and representative-element behavior.
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%.
+
+`sage/rings/finite_rings/homset.py` is now part of the curated pure-math
+corpus, raising it to 1,293 non-comment entries with no duplicates. This pass
+changes only doctest dependency metadata and corpus membership; the installed
+runtime already supplies the 61 reopened examples, so no native rebuild or
+Electron manifest update is required.
+
+Validation includes the controlled and ordinary default replays; the strict
+focused make dashboard against a clean pinned-source reconstruction; saved
+lifecycle/latest-run, failure-cluster, and skip queries; SQLite integrity;
+Python compilation; corpus uniqueness, path existence, and full-target dry
+run; accumulated-patch syntax and complete supported-pipeline application
+against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; Electron manifest, forge-resource, and runtime
+tests; and `git diff --check`. The external developer checkout and its
+unrelated changes remain untouched.
+
+Adding the focused homset section raises the accumulated patch to 1,762
+serialized target sections (1,249 `diff --git` and 513 header-only legacy
+sections) and 5,253 hunks. Controlled, ordinary, focused-make, and query
+dashboards plus the clean reconstruction are under
+`/tmp/cowasm-sagelite-finite-homset.WpGcsh/`. A future scheduled pass can
+audit another compact stale finite-ring guard or select the next persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

@@ -33818,3 +33818,28 @@ diff --git a/src/sage/rings/finite_rings/maps_finite_field.py b/src/sage/rings/f
 +++ b/src/sage/rings/finite_rings/maps_finite_field.py
 @@ -1,1 +1,0 @@
 -# sage.doctest: needs sage.rings.finite_rings
+diff --git a/src/sage/rings/finite_rings/homset.py b/src/sage/rings/finite_rings/homset.py
+--- a/src/sage/rings/finite_rings/homset.py
++++ b/src/sage/rings/finite_rings/homset.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.rings.finite_rings
+@@ -208,1 +207,1 @@
+-            sage: list(End(K))
++            sage: list(End(K))                                                        # known bug
+@@ -254,1 +253,1 @@
+-            sage: K.Hom(L)[0]
++            sage: K.Hom(L)[0]                                                        # needs sage.libs.pari
+@@ -282,6 +281,6 @@
+-            sage: H[1]
++            sage: H[1]                                                               # needs sage.libs.pari
+             Ring morphism:
+               From: Finite Field in a of size 2^5
+               To:   Finite Field in b of size 2^10
+               Defn: a |--> b^7 + b^5
+-            sage: H[2:4]
++            sage: H[2:4]                                                             # needs sage.libs.pari
+@@ -306,2 +305,2 @@
+-            sage: g = End(K)[3]
+-            sage: End(K).index(g) == 3
++            sage: g = End(K)[3]                                                      # needs sage.libs.pari
++            sage: End(K).index(g) == 3                                               # needs sage.libs.pari
