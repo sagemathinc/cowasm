@@ -1433,9 +1433,10 @@ with redirect_stdout(StringIO()):
     reverse = getattr_debug(list, 'reverse')
 assert reverse is list.reverse
 print('sagelite-node-ok CPython static-type getattr smoke')"
-run_node_import "NTL GF2X delivery smoke" "from sage.all import GF, PolynomialRing, pari, polygen
+run_node_import "NTL GF2X delivery smoke" "from sage.all import GF, PolynomialRing, pari, polygen, set_random_seed
 from sage.libs.ntl import all as ntl
 from sage.rings.finite_rings import element_ntl_gf2e
+from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 context = ntl.GF2EContext(ntl.GF2X([1, 1, 0, 1, 1, 0, 0, 0, 1]))
 value = ntl.GF2E([1, 0, 1, 0, 1], context)
 ntl.GF2XHexOutput(True)
@@ -1448,12 +1449,19 @@ assert repr(generic) == '[1 0 1 0 0 1]'
 assert generic == polygen(GF(2))**5 + polygen(GF(2))**2 + 1
 extension_value = GF(2**8, 'a').gen()**20
 assert repr(ntl.GF2X(extension_value)) == '[0 0 1 0 1 1 0 1]'
-K = GF(2**20, 'a', implementation='ntl')
+K = GF(2**20, 'a')
+assert isinstance(K, FiniteField_ntl_gf2e)
 a = K.gen()
 T = PolynomialRing(K, 't')
 t = T.gen()
 assert repr((a + 1) * t) == '(a + 1)*t'
 assert repr(K(pari('Mod(1,2)*a^20'))) == 'a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1'
+construction, base = K.construction()
+assert construction(base) is K
+assert repr(K._pari_modulus()) == 'Mod(1, 2)*a^20 + Mod(1, 2)*a^10 + Mod(1, 2)*a^9 + Mod(1, 2)*a^7 + Mod(1, 2)*a^6 + Mod(1, 2)*a^5 + Mod(1, 2)*a^4 + Mod(1, 2)*a + Mod(1, 2)'
+set_random_seed(6397)
+random_field = GF(2**17, 'r', modulus='random')
+assert repr(random_field.modulus()) == 'x^17 + x^16 + x^15 + x^10 + x^8 + x^6 + x^4 + x^3 + x^2 + x + 1'
 print('sagelite-node-ok NTL GF2X delivery smoke')"
 run_node_import "generic linear group delivery smoke" "from sage.all import GL, SL, ZZ, Integers
 from sage.matrix.constructor import matrix
@@ -2260,7 +2268,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=206
+electron_manifest_schema_version=207
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2328,7 +2336,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bliss-cano
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tdlib-tree-decomposition-v174"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-integer-polynomial-delivery-v175"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-exact-clique-search-v176"
-electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

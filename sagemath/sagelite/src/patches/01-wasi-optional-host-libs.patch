@@ -33747,3 +33747,64 @@ diff --git a/src/sage/categories/finite_posets.py b/src/sage/categories/finite_p
 +                sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))
 @@ -709,0 +712,1 @@
 +                sage: # needs sage.modules
+diff --git a/src/sage/rings/polynomial/polynomial_gf2x.pyx b/src/sage/rings/polynomial/polynomial_gf2x.pyx
+--- a/src/sage/rings/polynomial/polynomial_gf2x.pyx
++++ b/src/sage/rings/polynomial/polynomial_gf2x.pyx
+@@ -30,0 +31,4 @@
++import sys
++
++from sage.libs.ntl.ZZ cimport ZZ_SetSeed
++from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
+@@ -35,0 +40,20 @@
++cdef object _cowasm_ntl_seed_randstate = None
++
++
++cdef void _cowasm_set_seed_ntl() except *:
++    """
++    Seed this WASI side module's private NTL copy from Sage's randstate.
++    """
++    cdef object state
++    cdef ntl_ZZ seed
++    global _cowasm_ntl_seed_randstate
++    from sage.misc.randstate import current_randstate
++    from sage.rings.integer_ring import ZZ
++
++    state = current_randstate()
++    if _cowasm_ntl_seed_randstate is not state:
++        seed = ntl_ZZ(ZZ.random_element(1 << 128))
++        ZZ_SetSeed(seed.x)
++        _cowasm_ntl_seed_randstate = state
++
++
+@@ -360 +384,4 @@
+-    current_randstate().set_seed_ntl(False)
++    if sys.platform == "wasi":
++        _cowasm_set_seed_ntl()
++    else:
++        current_randstate().set_seed_ntl(False)
+diff --git a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -183 +183,4 @@
+-    FiniteField_ntl_gf2e = None
++    try:
++        from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
++    except ImportError:
++        FiniteField_ntl_gf2e = None
+@@ -734 +737 @@
+-                    if sys.platform == 'wasi':
++                    if sys.platform == 'wasi' and implementation != 'ntl':
+diff --git a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+--- a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
++++ b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+@@ -21,0 +22 @@
++import sys
+@@ -306,0 +308,3 @@
++        if sys.platform == "wasi":
++            modulus = self.modulus().change_variable_name('a')
++            return pari(f"Mod(1,{self.characteristic()})*({modulus})")
+diff --git a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+--- a/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
++++ b/src/sage/rings/finite_rings/finite_field_ntl_gf2e.py
+@@ -1,1 +1,0 @@
+-# sage.doctest: needs sage.libs.ntl

@@ -73041,6 +73041,82 @@ pass can decide whether to make the repaired NTL backend an implicit WASI
 default and address its remaining construction/random-polynomial/PARI-object
 model rows, or select another persisted backend/runtime cluster.
 
+NTL default finite-field and module-local randstate pass on 2026-07-25 UTC:
+
+The repaired `finite_field_ntl_gf2e.py` backend still had eight active rows
+when its historical file-wide NTL guard was selected. Five were policy
+fallout because the WASI finite-field factory deliberately kept NTL out of
+implicit characteristic-two construction. The remaining rows isolated three
+real compatibility gaps:
+
+- `polynomial_gf2x` called Sage's ordinary NTL seeding helper, which seeded
+  the separate `ntl_ZZ` side module rather than its own statically linked NTL
+  copy. Seeded random irreducible polynomials therefore differed from native
+  Sage.
+- automatically generated WASI moduli disabled the irreducibility-check key
+  even after the NTL path became capable of checking them. Reconstruction
+  used the default checked key, so `TestSuite(k)._test_construction` produced
+  an equal-looking but distinct factory object;
+- `_pari_modulus()` composed `Gen.subst()` and multiplication methods outside
+  the focused cypari2 object-model subset.
+
+`polynomial_gf2x` now mirrors Sage's randstate ownership inside its own WASI
+side module: each new Sage randstate supplies one 128-bit seed to that
+module-local NTL copy, and subsequent calls advance the local stream. The
+finite-field factory now imports the delivered NTL implementation under WASI
+and retains modulus checking for that backend while preserving the existing
+unchecked fallback for other WASI implementations. `_pari_modulus()` builds
+the same result with one PARI parser expression on WASI, avoiding unsupported
+intermediate `Gen` methods.
+
+The complete historical feature-selected file and the ordinary default
+profile now both record:
+
+```text
+finite_field_ntl_gf2e.py: 61 passed, 0 failed, 0 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The adjacent `polynomial_gf2x.pyx` audit records `42 passed, 0 failed,
+1 skipped`. Its seeded `GF2X_BuildRandomIrred_list` path and the finite-field
+example with `set_random_seed(6397)` now reproduce Sage's documented
+polynomial exactly. The strict focused make target against the clean pinned
+source also records 61 passes with no skips or failures.
+
+The obsolete file-wide `sage.libs.ntl` guard is removed, and
+`sage/rings/finite_rings/finite_field_ntl_gf2e.py` is now part of the curated
+pure-math corpus, raising it to 1,291 non-comment entries with no duplicates.
+The standalone and Electron-shaped NTL smoke now require implicit NTL field
+selection, construction identity, PARI-modulus conversion, and deterministic
+random-polynomial generation in addition to the earlier context, arithmetic,
+and PARI-element checks. The Electron manifest advances to schema 207 and
+smoke contract `ntl-gf2e-default-randstate-v179`.
+
+Validation includes the complete guarded and unguarded SQLite replays; the
+strict focused make dashboard; the full `polynomial_gf2x.pyx` audit; saved
+lifecycle/latest-run and failure-cluster queries; SQLite integrity; exact
+Cython/C++/WASM rebuilding of `polynomial_gf2x`; the complete Electron-shaped
+packaged smoke; manifest, forge-resource, and runtime tests; shell and
+JavaScript syntax checks; Python compilation; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of all
+three reconstructed targets with the runtime-tested sources; rejection of a
+second forward patch application; and `git diff --check`.
+
+The first focused make attempt correctly rejected the known dirty external
+Sagelite checkout at its unrelated `complex_roots.py` edit. The final make
+dashboard uses the clean pinned reconstruction; the external checkout and its
+unrelated changes remain untouched. The accumulated patch now has 1,759
+serialized target sections (1,246 `diff --git` and 513 header-only legacy
+sections) and 5,246 hunks. Dashboards, worker state, preserved runtime
+resources, exact build logs, and packaged-smoke evidence are under
+`/tmp/cowasm-sagelite-ntl-random-state.s0guCv/`; the final clean source replay
+is under `/tmp/cowasm-sagelite-ntl-default-final.E7a4XW/`. A future scheduled
+pass can audit another remaining compact stale dependency guard or select the
+next persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
