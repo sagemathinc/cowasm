@@ -71133,6 +71133,62 @@ and patch log are under
 can classify the compact crystal example graph boundary or select another
 persisted backend/runtime cluster.
 
+Crystal-example combinatorics and graph guard-reopening pass on 2026-07-25
+UTC:
+
+A runner-version-148 controlled audit enabled the historical file-wide
+`sage.combinat sage.graphs` annotation and recorded:
+
+```text
+crystals.py: 27 passed, 0 failed, 0 skipped
+```
+
+The minimal highest-weight and naive crystal examples now import and exercise
+their construction, category and element test suites, crystal operators,
+iteration, cardinality, and directed-graph edge traversal without reaching an
+unavailable browser-profile dependency. The broad combinatorics and graph
+guard was therefore stale after the corresponding crystal and graph support
+landed.
+
+The guard is removed without changing the executable examples. The ordinary
+default node profile and focused make target against the pinned-source replay
+both record:
+
+```text
+crystals.py:    27 passed, 0 failed, 0 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Each dashboard has 27 ordered rows and a 100% pass rate. Saved block-failure,
+file-error, and skip queries are empty. The controlled and default dashboards
+agree on every semantic block field; all source ranges shift upward by one
+line and the inherited optional tags disappear from all 27 rows. The default
+and focused replay dashboards agree on every stable persisted block field.
+
+`sage/categories/examples/crystals.py` is now part of the curated pure-math
+corpus, raising it to 1,263 non-comment entries with no duplicates.
+
+Validation additionally includes saved lifecycle/latest-run/failure/skip
+queries; Python compilation; accumulated-patch syntax; corpus uniqueness and
+make-target dry run; complete accumulated-patch application against the pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` while retaining its
+required generated source artifacts; rejection-free exact target replay;
+byte-for-byte comparison with the runtime-tested source; and
+`git diff --check`. The external developer Sagelite checkout and its unrelated
+local changes remain untouched. This source-only metadata change uses the
+preceding fully green standalone build as its compiled-runtime baseline.
+
+The accumulated source patch adds one `diff --git` section and one hunk. A
+direct syntax count now reports 1,737 serialized sections (1,224 `diff --git`
+and 513 legacy sections) and 5,089 hunks, correcting the recent ledger
+undercount of legacy headers. Controlled, default, and focused make-target
+dashboards are under `/tmp/cowasm-sagelite-crystals-audit.JA45r8/`; the
+complete pinned-source replay and patch log are under
+`/tmp/cowasm-sagelite-crystals-full-replay.dqpaKN/`. A future scheduled pass
+can audit another compact stale category dependency guard or select a
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
