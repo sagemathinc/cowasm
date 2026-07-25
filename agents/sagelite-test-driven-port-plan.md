@@ -71581,6 +71581,62 @@ sequential patch replay is under
 scheduled pass can audit the neighboring compact supercrystal guard or select
 another persisted backend/runtime cluster.
 
+Supercrystal guard-reopening and corpus-promotion pass on 2026-07-25 UTC:
+
+A runner-version-151 controlled audit removed the historical file-wide
+`sage.graphs sage.combinat` annotation from
+`sage/categories/supercrystals.py`. The standard `crystals` catalog exposed
+by the preceding regular-supercrystal pass was the only missing startup
+prerequisite. No additional runtime, namespace, or runner change was needed.
+
+The ordinary default profile and the focused make target against a complete
+clean pinned-source replay each record:
+
+```text
+supercrystals.py: 66 passed, 0 failed, 1 skipped
+skip group:        1 deferred:not tested external graph view
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The one skipped row is the existing `view(G)` example tagged for optional
+`dot2tex`/`graphviz` and marked `not tested` because it opens an external
+window. Both final dashboards contain 67 ordered block rows, have a 100%
+non-skipped pass rate, and agree on every stable persisted block field.
+Saved block-failure and file-error queries are empty.
+
+`sage/categories/supercrystals.py` is now part of the curated pure-math
+corpus, raising it to 1,270 non-comment entries with no duplicates.
+
+Validation includes Python compilation; saved lifecycle/latest-run,
+failure-cluster, and skip queries; corpus uniqueness; focused make-target
+execution; accumulated-patch syntax; complete sequential patch application
+against pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` with no rejects; byte-for-byte
+comparison among the controlled source, replayed source, and focused make
+staging source; and `git diff --check`. The installed schema-204 Electron
+resource manifest remains intact with 578 side modules and 759 required
+resource hashes.
+
+The first focused make invocation refreshed staging from the external
+developer checkout and reproduced its known pre-applied `complex_roots.py`
+overlap. The external checkout and its unrelated changes remain untouched.
+The generated source staging tree was reconstructed from a clean detached
+local clone at the pinned commit, the complete accumulated patch was applied
+without rejects, and the focused make target then passed. The failed staging
+copy is retained under
+`/tmp/cowasm-sagelite-supercrystals-failed-build.2Q2wZ5/`.
+
+The accumulated source patch adds one `diff --git` section and one hunk. It
+now has 1,747 serialized target sections (1,234 `diff --git` and 513
+header-only legacy sections) and 5,112 hunks. Controlled and focused
+dashboards are under
+`/tmp/cowasm-sagelite-supercrystals-audit.qm18Es/`; the clean pinned-source
+replay and patch log are under
+`/tmp/cowasm-sagelite-supercrystals-replay.o5CWvL/`. A future scheduled pass
+can audit another compact stale category guard or select a persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

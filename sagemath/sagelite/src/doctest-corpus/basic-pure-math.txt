@@ -705,6 +705,7 @@ src/sage/categories/quantum_group_representations.py
 src/sage/categories/quotient_fields.py
 src/sage/categories/quotients.py
 src/sage/categories/regular_supercrystals.py
+src/sage/categories/supercrystals.py
 src/sage/categories/ring_ideals.py
 src/sage/categories/r_trivial_semigroups.py
 src/sage/categories/schemes.py

@@ -33112,3 +33112,8 @@ diff --git a/src/sage/categories/regular_supercrystals.py b/src/sage/categories/
 +++ b/src/sage/categories/regular_supercrystals.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.graphs
+diff --git a/src/sage/categories/supercrystals.py b/src/sage/categories/supercrystals.py
+--- a/src/sage/categories/supercrystals.py
++++ b/src/sage/categories/supercrystals.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.graphs sage.combinat
