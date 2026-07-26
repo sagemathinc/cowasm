@@ -76661,3 +76661,68 @@ patch-replay evidence is under
 `/tmp/cowasm-sagelite-finite-field-base.yZgCUz/`. A future scheduled pass can
 audit another compact guarded finite-ring namespace or turn one of the
 persisted core fraction-field semantic gaps into a runtime fix.
+
+Characteristic-two residue-field guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/residue_field_ntl_gf2e.pyx` retained a historical
+file-wide number-field and NTL guard even though its function-field residue
+construction and characteristic-two NTL arithmetic now work in the browser
+runtime. A runner-version-154 replay selecting both historical features
+recorded:
+
+```text
+residue_field_ntl_gf2e.pyx selected: 15 passed, 16 failed, 1 skipped
+run lifecycle:                         failed and closed
+SQLite integrity:                      ok
+```
+
+All 16 failures belonged to three number-field sequences. Their primary
+factorization and maximal-order rows enter PARI-backed number-field ideal or
+integral-basis construction; the remaining rows depend on those failed
+assignments. The independent polynomial-function-field residue examples all
+pass through the repaired NTL backend.
+
+The accumulated WASI patch now removes the broad number-field/NTL guard and
+places only the 14 previously unannotated PARI-backed or dependent rows behind
+focused `sage.libs.pari` metadata. It preserves the file's existing three
+number-field annotations and one LinBox annotation. The ordinary browser
+profile and strict focused make target against a clean reconstruction of
+pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+residue_field_ntl_gf2e.pyx: 14 passed, 0 failed, 18 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The 18 skips comprise 14 focused PARI rows, three existing number-field rows,
+and one existing LinBox row. Saved block-failure and file-error queries are
+empty, active-row coverage is 100%, and the direct and strict-make dashboards
+agree exactly across all 32 ordered stable block fields, including raw actual
+output.
+
+`sage/rings/finite_rings/residue_field_ntl_gf2e.pyx` is now part of the
+curated pure-math corpus, raising it to 1,347 non-comment entries with no
+duplicates or missing paths. This pass changes only focused doctest dependency
+metadata and corpus membership; no native rebuild, Electron manifest change,
+or resource restaging is required.
+
+Validation includes the historical-feature classification baseline; ordinary
+and strict focused-make dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and exact stable-row comparison; corpus uniqueness,
+path existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against the clean pinned source; byte-for-byte
+reconstructed-source comparison; rejection of a second forward patch
+application; and `git diff --check`. The external developer checkout and its
+unrelated matrix, integer-ring, complex-roots, and SQLite changes remain
+untouched.
+
+The accumulated patch now contains 1,825 serialized target sections (1,312
+`diff --git` and 513 header-only legacy sections) and 5,836 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-residue-ntl.zkpXyS/`. A future scheduled pass can audit
+the adjacent generic residue-field guard, another compact finite-ring
+namespace, or turn one of the persisted core fraction-field semantic gaps
+into a runtime fix.

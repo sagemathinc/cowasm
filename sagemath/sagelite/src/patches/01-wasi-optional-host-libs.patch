@@ -39098,3 +39098,46 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 @@ -2224 +2222 @@
 -            sage: f.roots()
 +            sage: f.roots()                                                         # needs sage.libs.pari
+diff --git a/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx b/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
+--- a/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
++++ b/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.number_field sage.libs.ntl
+@@ -40,11 +39,11 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
+-        sage: P = K.ideal(29).factor()[0][0]
+-        sage: k = K.residue_field(P)
+-        sage: k.degree()
++        sage: P = K.ideal(29).factor()[0][0]  # needs sage.libs.pari
++        sage: k = K.residue_field(P)  # needs sage.libs.pari
++        sage: k.degree()  # needs sage.libs.pari
+         2
+-        sage: OK = K.maximal_order()
+-        sage: c = OK(a)
+-        sage: b = k(c)
+-        sage: b*c^2
++        sage: OK = K.maximal_order()  # needs sage.libs.pari
++        sage: c = OK(a)  # needs sage.libs.pari
++        sage: b = k(c)  # needs sage.libs.pari
++        sage: b*c^2  # needs sage.libs.pari
+         7
+-        sage: b*c
++        sage: b*c  # needs sage.libs.pari
+         13*abar + 5
+@@ -119,11 +118,11 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
+             sage: R.<x> = QQ[]
+             sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
+-            sage: P = K.ideal(61).factor()[0][0]
+-            sage: k = K.residue_field(P)
+-            sage: k(77*a^7 + 4)
++            sage: P = K.ideal(61).factor()[0][0]  # needs sage.libs.pari
++            sage: k = K.residue_field(P)  # needs sage.libs.pari
++            sage: k(77*a^7 + 4)  # needs sage.libs.pari
+             2*abar + 4
+-            sage: V = k.vector_space(map=False); v = V([3,-2])
+-            sage: type(k.convert_map_from(V))
++            sage: V = k.vector_space(map=False); v = V([3,-2])  # needs sage.libs.pari
++            sage: type(k.convert_map_from(V))  # needs sage.libs.pari
+             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+-            sage: k(v) # indirect doctest
++            sage: k(v) # indirect doctest  # needs sage.libs.pari
+             59*abar + 3
