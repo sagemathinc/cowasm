@@ -76926,3 +76926,76 @@ patch-replay evidence is under
 `/tmp/cowasm-sagelite-finite-field-pari.wp4Du0/`. A future scheduled pass can
 audit the adjacent guarded `sage/rings/finite_rings/element_pari_ffelt.pyx`
 module or turn the cached Frobenius cypari2 boundary into a runtime fix.
+
+PARI finite-field element guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/element_pari_ffelt.pyx` retained a historical
+file-wide PARI/NTL guard even though its construction, coercion, arithmetic,
+comparison, exponentiation, lifting, logarithm, serialization, and ordinary
+element paths now work in the browser runtime. A runner-version-154 replay
+selecting both historical features recorded:
+
+```text
+element_pari_ffelt.pyx selected: 273 passed, 27 failed, 7 skipped
+run lifecycle:                     failed and closed
+SQLite integrity:                  ok
+```
+
+The 27 failures were narrow dependency and platform islands. Seven rows
+entered the intentionally incomplete cypari2 object model through explicit
+PARI conversion or cached Frobenius maps. Two rows formed one PARI-backed
+large-characteristic polynomial-root sequence. Ten rows were GAP interface
+calls or dependents, and six were external GP interface calls. The remaining
+two rows exposed stable WASI `__pari__` variable-name behavior: the internal
+PARI generator keeps its implementation name, and the WASI-specific path does
+not raise Sage's historical illegal-variable diagnostic.
+
+The accumulated WASI patch now removes the broad file guard, gives only the
+nine cypari2/PARI-backed rows focused `sage.libs.pari` metadata, marks the
+fourteen GAP rows with `sage.libs.gap`, and classifies the six GP rows as the
+combined PARI/pexpect/subprocess boundary. The two stable `__pari__` output
+and diagnostic divergences are queryable deferred known bugs. The ordinary
+browser profile and strict focused make target against a clean reconstruction
+of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+element_pari_ffelt.pyx: 273 passed, 0 failed, 34 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The 34 skips comprise fourteen GAP rows, nine focused PARI rows, six combined
+PARI/pexpect/subprocess rows, two deferred known bugs, two existing
+not-tested timing rows, and one existing Magma row. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the direct and
+clean strict-make dashboards agree exactly across all 307 ordered stable
+block fields, including raw actual output.
+
+`sage/rings/finite_rings/element_pari_ffelt.pyx` is now part of the curated
+pure-math corpus, raising it to 1,351 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest dependency and
+deferred-test metadata plus corpus membership; no native rebuild, Electron
+manifest change, or resource restaging is required.
+
+Validation includes the historical-feature baseline; ordinary and clean
+strict focused-make dashboards; saved lifecycle, failure, and skip queries;
+SQLite integrity and exact stable-row comparison; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against a clean archive of the pinned source;
+byte-for-byte reconstructed-target comparison; rejection of a second forward
+patch application; and `git diff --check`. The first strict-make prerequisite
+copied the external developer checkout's unrelated matrix, integer-ring,
+complex-roots, and SQLite changes into the generated workspace and reproduced
+the known complex-roots patch reject. The generated workspace was then
+replaced by the successful clean pinned-source replay before the final strict
+run; the external checkout itself remains untouched.
+
+The accumulated patch now contains 1,829 serialized target sections (1,316
+`diff --git` and 513 header-only legacy sections) and 5,970 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-element-pari.jCEbDU/`. A future scheduled pass can turn
+the persisted FFELT conversion or cached-Frobenius cypari2 boundaries into
+runtime fixes, or return to one of the persisted core fraction-field semantic
+gaps.

@@ -39372,3 +39372,88 @@ diff --git a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py b/src/sage/r
 @@ -243 +242 @@ class FiniteField_pari_ffelt(FiniteField):
 -            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x                            # needs sage.modules
 +            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x                            # needs sage.libs.pari sage.modules
+diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
+--- a/src/sage/rings/finite_rings/element_pari_ffelt.pyx
++++ b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.pari sage.libs.ntl
+@@ -211 +210 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-        sage: F(b)
++        sage: F(b)                                                                      # needs sage.libs.gap
+@@ -218 +217 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-        sage: a.parent()
++        sage: a.parent()                                                                # needs sage.libs.gap
+@@ -255 +254 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-        sage: pari(x)
++        sage: pari(x)                                                                   # needs sage.libs.pari
+@@ -266 +265 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-        sage: pari(x)
++        sage: pari(x)                                                                   # needs sage.libs.pari
+@@ -388,2 +387,2 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: R = [r[0] for r in pol.roots()]
+-            sage: prod(Fq_X.gen() - r for r in R) == pol
++            sage: R = [r[0] for r in pol.roots()]                                       # needs sage.libs.pari
++            sage: prod(Fq_X.gen() - r for r in R) == pol                                # needs sage.libs.pari
+@@ -902 +901 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: x.pth_power(2) == x**(13**2)
++            sage: x.pth_power(2) == x**(13**2)                                          # needs sage.libs.pari
+@@ -904 +903 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: x.pth_power(-1)**13 == x
++            sage: x.pth_power(-1)**13 == x                                              # needs sage.libs.pari
+@@ -912 +911 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: x.pth_power(1) == x**127
++            sage: x.pth_power(1) == x**127                                              # needs sage.libs.pari
+@@ -914 +913 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: x.pth_power(2) == x**(127**2)
++            sage: x.pth_power(2) == x**(127**2)                                         # needs sage.libs.pari
+@@ -916 +915 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: x.pth_power(-1)**127 == x
++            sage: x.pth_power(-1)**127 == x                                             # needs sage.libs.pari
+@@ -1324 +1323 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: b.__pari__()
++            sage: b.__pari__()                                                          # known bug
+@@ -1330 +1329 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: pari(I)
++            sage: pari(I)                                                               # known bug
+@@ -1354 +1353 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(a)
++            sage: gp(a)                                                                 # needs sage.libs.pari pexpect subprocess
+@@ -1356 +1355 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(a).type()
++            sage: gp(a).type()                                                          # needs sage.libs.pari pexpect subprocess
+@@ -1358 +1357 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(a)^100
++            sage: gp(a)^100                                                             # needs sage.libs.pari pexpect subprocess
+@@ -1360 +1359 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(a^100)
++            sage: gp(a^100)                                                             # needs sage.libs.pari pexpect subprocess
+@@ -1362 +1361 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(k(0))
++            sage: gp(k(0))                                                              # needs sage.libs.pari pexpect subprocess
+@@ -1364 +1363 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gp(k(0)).type()
++            sage: gp(k(0)).type()                                                       # needs sage.libs.pari pexpect subprocess
+@@ -1401 +1400 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gap(aa)  # indirect doctest
++            sage: gap(aa)  # indirect doctest                                           # needs sage.libs.gap
+@@ -1405 +1404 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gap(a)
++            sage: gap(a)                                                                # needs sage.libs.gap
+@@ -1407 +1406 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gap(a^3)
++            sage: gap(a^3)                                                              # needs sage.libs.gap
+@@ -1409 +1408 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: F(gap('Z(8)^3'))
++            sage: F(gap('Z(8)^3'))                                                      # needs sage.libs.gap
+@@ -1411 +1410 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: F(libgap.Z(8)^3)
++            sage: F(libgap.Z(8)^3)                                                      # needs sage.libs.gap
+@@ -1418 +1417 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: a._gap_(gap)
++            sage: a._gap_(gap)                                                          # needs sage.libs.gap
+@@ -1420 +1419 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: (a^20)._gap_(gap)
++            sage: (a^20)._gap_(gap)                                                     # needs sage.libs.gap
+@@ -1431 +1430 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
+-            sage: gap.coerce(a)
++            sage: gap.coerce(a)                                                         # needs sage.libs.gap
