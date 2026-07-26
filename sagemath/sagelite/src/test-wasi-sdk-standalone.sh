@@ -1408,6 +1408,11 @@ z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
 assert p_root.__pari__().type() == 't_FFELT'
+K9 = GF(9, 'a', implementation='pari_ffelt')
+K9_functor, K9_base = K9.construction()
+assert K9_functor(K9_base) is K9
+from sage.misc.sage_unittest import TestSuite
+TestSuite(K9).run()
 reserved_pari_name = GF(25, 'I', implementation='pari_ffelt').gen()
 try:
     reserved_pari_name.__pari__()
@@ -2354,7 +2359,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=217
+electron_manifest_schema_version=218
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2431,6 +2436,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-p
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-lie-additive-identity-v187"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-ownership-v188"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-reserved-name-v189"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-construction-flags-v190"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

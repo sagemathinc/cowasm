@@ -77640,3 +77640,81 @@ strict-make, full reconstruction, rebuilt-bundle, and query evidence is under
 `/tmp/cowasm-sagelite-pari-var.Ex2RWC/`. A future scheduled pass can address
 the field-level construction `TestSuite(k).run()` known bug or select another
 persisted pure-math semantic gap.
+
+Finite-field construction-key delivery pass on 2026-07-26 UTC:
+
+The two remaining construction rows in
+`sage/rings/finite_rings/finite_field_base.pyx` and
+`finite_field_pari_ffelt.py` were previously hidden behind `# known bug`.
+Reopening `TestSuite(k).run()` reproduced an `_test_construction` failure:
+the algebraic-extension functor rebuilt a visually identical
+`GF(9, 'a', implementation='pari_ffelt')`, but did not recover the cached
+original object.
+
+The finite-field factory's modern twelve-item key records the
+`check_prime` and `check_irreducible` flags used to create the field. On WASI,
+automatic modulus construction intentionally changes the latter to `False`.
+`FiniteField.construction()` preserved only the implementation, so applying
+its functor supplied the default `check_irreducible=True` and selected a
+different factory cache key. The accumulated Sage patch now forwards both
+recorded validation flags when the modern key shape is available, while
+retaining the existing compatibility fallback for older or non-factory
+finite fields.
+
+The construction functor now exposes
+`{'check_prime': True, 'check_irreducible': False}` for the regression field,
+and applying it reproduces the exact twelve-item key and cached object. Both
+obsolete known-bug annotations are removed. Against the final clean rebuilt
+resource bundle, the ordinary browser-profile dashboard records:
+
+```text
+finite_field_base.pyx:       320 passed, 0 failed, 41 skipped
+finite_field_pari_ffelt.py:   42 passed, 0 failed,  1 skipped
+combined:                    362 passed, 0 failed, 42 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+This activates one row in each module relative to the preceding
+319/0/42 and 41/0/2 dashboards. Saved block-failure and file-error queries
+are empty, active-row coverage is 100%, and the focused pre-reconstruction
+and final clean-bundle dashboards agree across all 404 ordered rows on source,
+expected output, status, failure, tag, and skip metadata. Three accepted
+actual-output fields vary as expected: a generator address, regenerated
+traceback source context, and a nondeterministic finite-field embedding
+selected under an ellipsis expectation.
+
+The standalone and Electron-shaped finite-field smokes now require both the
+functor identity round trip and `TestSuite(K9).run()`. The Electron manifest
+schema advances to 218 and its smoke contract to
+`finite-field-construction-flags-v190`. The generated manifest records the
+clean pinned source revision and hashes all 760 required resources.
+
+A complete standalone reconstruction from a clean shared clone of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` regenerated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import smokes and doctest-runner self-tests, audited 523 staged and 578
+Electron side modules, and passed the complete Electron-shaped smoke,
+including relocated-resource validation. The desktop manifest,
+forge-resource, and runtime tests also pass against schema 218.
+
+Validation additionally includes the focused factory-key invariant; both
+complete direct and final rebuilt-bundle dashboards; saved lifecycle,
+failure, and skip queries; SQLite integrity and stable-metadata comparison;
+shell and JavaScript syntax; accumulated-patch syntax; complete sequential
+POSIX-patch application against the clean source clone; byte-for-byte
+reconstructed finite-field source comparison; rejection of a second forward
+patch application; corpus uniqueness and path existence; full-target dry run;
+and `git diff --check`. The external developer checkout and its unrelated
+matrix, integer-ring, complex-roots, and SQLite changes remain untouched.
+
+The accumulated patch now contains 1,832 serialized target sections (1,319
+`diff --git` and 513 header-only legacy sections) and 5,961 hunks because
+this pass removes two obsolete metadata hunks and adds one runtime hunk.
+Focused and final dashboards are under
+`/tmp/cowasm-sagelite-construction-{full,final}.sqlite3`; clean rebuild and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-construction-rebuild.Y45Q2H/` and the corresponding
+`/tmp/cowasm-sagelite-construction-*.log` files. A future scheduled pass can
+select another persisted pure-math semantic gap or revisit one of the
+explicit dependency-boundary skips.

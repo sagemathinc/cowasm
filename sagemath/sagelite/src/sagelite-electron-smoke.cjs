@@ -534,6 +534,11 @@ z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
 assert p_root.__pari__().type() == 't_FFELT'
+K9 = GF(9, 'a', implementation='pari_ffelt')
+K9_functor, K9_base = K9.construction()
+assert K9_functor(K9_base) is K9
+from sage.misc.sage_unittest import TestSuite
+TestSuite(K9).run()
 reserved_pari_name = GF(25, 'I', implementation='pari_ffelt').gen()
 try:
     reserved_pari_name.__pari__()

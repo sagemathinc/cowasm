@@ -39104,9 +39104,6 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 -            sage: var('x')
 -            x
 +            sage: R.<x> = ZZ[]
-@@ -1352 +1350 @@
--            sage: F(R) is k
-+            sage: F(R) is k                                                         # known bug
 @@ -1460 +1458 @@
 -            sage: L(u).minpoly() == u.minpoly()
 +            sage: L(u).minpoly() == u.minpoly()                                     # needs sage.libs.pari
@@ -39404,9 +39401,6 @@ diff --git a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py b/src/sage/r
 +++ b/src/sage/rings/finite_rings/finite_field_pari_ffelt.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.pari
-@@ -77 +76 @@ class FiniteField_pari_ffelt(FiniteField):
--        sage: TestSuite(k).run()
-+        sage: TestSuite(k).run()                                                       # known bug
 diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
 --- a/src/sage/rings/finite_rings/element_pari_ffelt.pyx
 +++ b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
@@ -39596,3 +39590,13 @@ diff --git a/src/sage/categories/examples/lie_algebras.py b/src/sage/categories/
          def _add_(self, rhs):
              """
              Add ``self`` and ``rhs``.
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -1352,1 +1352,5 @@
+-            kwds = {'implementation': self._factory_data[2][3]}
++            factory_key = self._factory_data[2]
++            kwds = {'implementation': factory_key[3]}
++            if len(factory_key) >= 12:
++                kwds['check_prime'] = factory_key[10]
++                kwds['check_irreducible'] = factory_key[11]
