@@ -39141,3 +39141,205 @@ diff --git a/src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx b/src/sage/r
 -            sage: k(v) # indirect doctest
 +            sage: k(v) # indirect doctest  # needs sage.libs.pari
              59*abar + 3
+
+diff --git a/src/sage/rings/finite_rings/residue_field.pyx b/src/sage/rings/finite_rings/residue_field.pyx
+--- a/src/sage/rings/finite_rings/residue_field.pyx
++++ b/src/sage/rings/finite_rings/residue_field.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.number_field sage.schemes.elliptic_curves sage.libs.ntl
+@@ -12,0 +12 @@
++    sage: # needs sage.libs.pari
+@@ -22,0 +23 @@
++    sage: # needs sage.libs.pari
+@@ -56,0 +58 @@
++    sage: # needs sage.libs.pari
+@@ -87,0 +90 @@
++    sage: # needs sage.libs.pari
+@@ -88,0 +92 @@
++    sage: # needs sage.schemes.elliptic_curves
+@@ -95,0 +100 @@
++
+@@ -98,0 +104 @@
++    sage: # needs sage.schemes.elliptic_curves
+@@ -109,0 +116 @@
++    sage: # needs sage.libs.pari
+@@ -129,0 +137 @@
++    sage: # needs sage.libs.pari
+@@ -212,0 +221 @@
++        sage: # needs sage.libs.pari
+@@ -242,0 +252 @@
++        sage: # needs sage.libs.pari
+@@ -252,0 +263 @@
++        sage: # needs sage.libs.pari
+@@ -273,0 +285 @@
++        sage: # needs sage.libs.pari
+@@ -293,0 +306 @@
++        sage: # needs sage.libs.pari
+@@ -305,0 +319 @@
++            sage: # needs sage.libs.pari
+@@ -353,0 +368 @@
++            sage: # needs sage.libs.pari
+@@ -483,0 +499 @@
++        sage: # needs sage.libs.pari
+@@ -490,0 +507 @@
++
+@@ -515,0 +533 @@
++            sage: # needs sage.libs.pari
+@@ -518,0 +537 @@
++
+@@ -524,0 +544 @@
++
+@@ -555,0 +576 @@
++            sage: # needs sage.libs.pari
+@@ -580,0 +602 @@
++            sage: # needs sage.libs.pari
+@@ -584,0 +607,2 @@
++
++
+@@ -586,0 +611 @@
++            sage: # needs sage.libs.pari
+@@ -590,0 +616 @@
++
+@@ -620,0 +647 @@
++            sage: # needs sage.libs.pari
+@@ -633,0 +661 @@
++
+@@ -666,0 +695 @@
++            sage: # needs sage.libs.pari
+@@ -678,0 +708 @@
++
+@@ -696,0 +727 @@
++            sage: # needs sage.libs.pari
+@@ -700,0 +732 @@
++
+@@ -703,0 +736 @@
++
+@@ -721,0 +755 @@
++            sage: # needs sage.libs.pari
+@@ -731,0 +766 @@
++
+@@ -751,0 +787 @@
++            sage: # needs sage.symbolic sage.libs.pari
+@@ -765,0 +802 @@
++
+@@ -767,0 +805 @@
++            sage: # needs sage.libs.pari
+@@ -770,0 +809,2 @@
++
++
+@@ -771,0 +812 @@
++            sage: # needs sage.libs.pari
+@@ -775,0 +817 @@
++
+@@ -794,0 +837 @@
++            sage: # needs sage.symbolic sage.libs.pari
+@@ -811,0 +855 @@
++
+@@ -836,0 +881 @@
++            sage: # needs sage.libs.pari
+@@ -843,0 +889 @@
++
+@@ -869,0 +916 @@
++            sage: # needs sage.libs.pari
+@@ -874,0 +922 @@
++
+@@ -891,0 +940 @@
++        sage: # needs sage.symbolic sage.libs.pari
+@@ -901,0 +951 @@
++
+@@ -918,0 +969 @@
++            sage: # needs sage.libs.pari
+@@ -924,0 +976 @@
++
+@@ -925,0 +978 @@
++            sage: # needs sage.libs.pari
+@@ -931,0 +985 @@
++
+@@ -960,0 +1015 @@
++            sage: # needs sage.libs.pari
+@@ -990,0 +1046 @@
++            sage: # needs sage.libs.pari
+@@ -1023,0 +1080 @@
++            sage: # needs sage.libs.pari
+@@ -1031,0 +1089 @@
++            sage: # needs sage.libs.pari
+@@ -1040,0 +1099 @@
++
+@@ -1057,0 +1117 @@
++            sage: # needs sage.libs.pari
+@@ -1135,0 +1196 @@
++            sage: # needs sage.libs.pari
+@@ -1144,0 +1206,2 @@
++
++
+@@ -1145,0 +1209 @@
++            sage: # needs sage.libs.pari
+@@ -1155,0 +1220 @@
++
+@@ -1180,0 +1246 @@
++        sage: # needs sage.libs.pari
+@@ -1197,0 +1264 @@
++
+@@ -1222,0 +1290 @@
++            sage: # needs sage.libs.pari
+@@ -1234,0 +1303 @@
++
+@@ -1256,0 +1326 @@
++            sage: # needs sage.libs.pari
+@@ -1288,0 +1359 @@
++            sage: # needs sage.libs.pari
+@@ -1319,0 +1391 @@
++            sage: # needs sage.libs.pari
+@@ -1325,0 +1398 @@
++
+@@ -1359,0 +1433 @@
++            sage: # needs sage.libs.pari
+@@ -1368,0 +1443,2 @@
++
++
+@@ -1369,0 +1446 @@
++            sage: # needs sage.libs.pari
+@@ -1380,0 +1458 @@
++
+@@ -1403,0 +1482 @@
++            sage: # needs sage.libs.pari
+@@ -1414,0 +1494 @@
++
+@@ -1434,0 +1515 @@
++        sage: # needs sage.libs.pari
+@@ -1446,0 +1528 @@
++
+@@ -1464,0 +1547 @@
++            sage: # needs sage.libs.pari
+@@ -1470,0 +1554 @@
++
+@@ -1472,0 +1557 @@
++            sage: # needs sage.libs.pari
+@@ -1481,0 +1567 @@
++
+@@ -1482,0 +1569 @@
++            sage: # needs sage.libs.pari
+@@ -1490,0 +1578 @@
++
+@@ -1509,0 +1598 @@
++            sage: # needs sage.libs.pari
+@@ -1534,0 +1624 @@
++            sage: # needs sage.libs.pari
+@@ -1558,0 +1649 @@
++            sage: # needs sage.libs.pari
+@@ -1568,0 +1660 @@
++
+@@ -1600,0 +1693 @@
++            sage: # needs sage.libs.pari
+@@ -1618,0 +1712 @@
++        sage: # needs sage.libs.pari
+@@ -1635,0 +1730 @@
++
+@@ -1659,0 +1755 @@
++            sage: # needs sage.libs.pari
+@@ -1663,0 +1760 @@
++
+@@ -1704,0 +1802 @@
++            sage: # needs sage.libs.pari
+@@ -1718,0 +1817 @@
++

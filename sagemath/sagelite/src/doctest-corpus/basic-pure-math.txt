@@ -1350,3 +1350,4 @@ src/sage/rings/fraction_field_element.pyx
 src/sage/rings/finite_rings/finite_field_prime_modn.py
 src/sage/rings/finite_rings/finite_field_base.pyx
 src/sage/rings/finite_rings/residue_field_ntl_gf2e.pyx
+src/sage/rings/finite_rings/residue_field.pyx

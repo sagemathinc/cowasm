@@ -76726,3 +76726,74 @@ patch-replay evidence is under
 the adjacent generic residue-field guard, another compact finite-ring
 namespace, or turn one of the persisted core fraction-field semantic gaps
 into a runtime fix.
+
+Generic residue-field dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/residue_field.pyx` retained a historical file-wide
+number-field, elliptic-curve, and NTL guard even though its integer and
+finite-polynomial residue-field construction, coercion, reduction, lifting,
+comparison, and prime-field element paths now work in the browser runtime.
+A runner-version-154 replay selecting all three historical features recorded:
+
+```text
+residue_field.pyx selected: 200 passed, 248 failed, 17 skipped
+run lifecycle:              failed and closed
+SQLite integrity:           ok
+```
+
+The 248 failures were dependency islands rather than a shared generic
+residue-field defect. Fifty primary number-field ideal-factorization rows
+reached the incomplete PARI-backed ideal/category path; maximal-order and
+quadratic-number-field rows reached adjacent PARI-backed object-model gaps;
+the remaining failures were their dependent undefined-state rows, three
+symbolic algebraic-number sequences, and two elliptic-curve sequences whose
+constructor is intentionally absent from the startup profile. Independent
+finite-polynomial examples continued to pass.
+
+The accumulated WASI patch now removes the broad file guard, gives the
+number-field islands focused `sage.libs.pari` metadata, composes
+`sage.symbolic` or `sage.schemes.elliptic_curves` only where those additional
+dependencies are real, and separates following finite-polynomial sequences
+so standalone dependency directives do not suppress them. The ordinary
+browser profile and strict focused make target against the previous run's
+byte-verified pinned-source reconstruction both record:
+
+```text
+residue_field.pyx: 192 passed, 0 failed, 273 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The 273 skips comprise 218 PARI rows, 14 symbolic-plus-PARI rows, ten existing
+number-field rows, six deferred not-implemented rows, six PARI-plus-number-
+field rows, four PARI-plus-elliptic-curve rows, three PARI-plus-Singular rows,
+three existing finite-ring rows, and nine rows across existing LinBox, NTL,
+module, elliptic-curve, and p-adic boundaries. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the direct and
+strict-make dashboards agree across all 465 ordered stable block rows after
+normalizing the accepted output of the single active random hash example.
+
+`sage/rings/finite_rings/residue_field.pyx` is now part of the curated
+pure-math corpus, raising it to 1,348 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest dependency metadata,
+directive separation, and corpus membership; no native rebuild, Electron
+manifest change, or resource restaging is required.
+
+Validation includes the historical-feature classification baseline; ordinary
+and strict focused-make dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and normalized stable-row comparison; accumulated-
+patch syntax; forward application of the new serialized section to the prior
+reject-free pinned reconstruction; byte-for-byte reconstructed-source
+comparison; rejection of a second forward application; corpus uniqueness,
+path existence, and full-target dry run; and `git diff --check`. The external
+developer checkout and its unrelated matrix, integer-ring, complex-roots, and
+SQLite changes remain untouched.
+
+The accumulated patch now contains 1,826 serialized target sections (1,313
+`diff --git` and 513 header-only legacy sections) and 5,933 hunks. Baseline,
+ordinary, strict-make, query, reconstruction, full-target dry-run, and patch-
+replay evidence is under
+`/tmp/cowasm-sagelite-generic-residue.TMpnnN/`. A future scheduled pass can
+audit the adjacent PARI finite-field residue implementation, another compact
+finite-ring guard, or turn one of the persisted fraction-field semantic gaps
+into a runtime fix.
