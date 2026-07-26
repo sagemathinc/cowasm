@@ -76592,3 +76592,72 @@ full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-prime-field.T6Hpek/`. A future scheduled pass can audit
 another compact guarded finite-ring namespace or turn one of the persisted
 core fraction-field semantic gaps into a runtime fix.
+
+Finite-field base guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/finite_field_base.pyx` retained a historical
+file-wide finite-ring guard even though the generic finite-field base,
+construction, iteration, extension, subfield, embedding, Frobenius, trace,
+and root APIs now largely work in the browser runtime. A runner-version-154
+replay selecting that feature recorded:
+
+```text
+finite_field_base.pyx selected: 309 passed, 24 failed, 28 skipped
+run lifecycle:                  failed and closed
+SQLite integrity:              ok
+```
+
+The 24 failures split into three focused groups. Thirteen rows directly
+entered the intentionally incomplete cypari2 object model or depended on
+those failed PARI-backed factorization, minimal-polynomial, subfield,
+embedding, dual-basis, and finite-field root operations. Ten rows belonged
+to one modulus-test sequence whose `var('x')` symbolic setup was unavailable;
+replacing it with the self-contained polynomial generator `R.<x> = ZZ[]`
+makes the complete sequence pass without broadening the symbolic startup
+surface. The final row is a stable construction-functor identity divergence,
+now recorded as a queryable deferred known bug.
+
+The accumulated WASI patch now removes the broad finite-ring guard, places
+only the 13 PARI-backed rows behind focused `sage.libs.pari` metadata, keeps
+the ten modulus rows active with the self-contained setup, and defers the one
+construction-identity mismatch. The ordinary browser profile and strict
+focused make target against a clean reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+finite_field_base.pyx: 319 passed, 0 failed, 42 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The 42 skips comprise 13 PARI rows, eight module rows, five Macaulay2 rows,
+four Magma rows, four p-adic rows, three number-field rows, one LinBox row,
+one NTL row, one long test, one existing randomized module row, and the new
+known bug. Saved block-failure and file-error queries are empty, active-row
+coverage is 100%, and the direct and strict-make dashboards agree across all
+361 ordered stable block rows after normalizing the accepted actual output of
+two ellipsis-matched examples.
+
+`sage/rings/finite_rings/finite_field_base.pyx` is now part of the curated
+pure-math corpus, raising it to 1,346 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest setup and dependency
+or deferred-test metadata plus corpus membership; no native rebuild, Electron
+manifest change, or resource restaging is required.
+
+Validation includes the historical-feature classification baseline; ordinary
+and strict focused-make dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and normalized stable-row comparison; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete sequential application against the clean pinned source;
+byte-for-byte reconstructed-source comparison; rejection of a second forward
+patch application; and `git diff --check`. The external developer checkout
+and its unrelated matrix, integer-ring, complex-roots, and SQLite changes
+remain untouched.
+
+The accumulated patch now contains 1,824 serialized target sections (1,311
+`diff --git` and 513 header-only legacy sections) and 5,833 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-finite-field-base.yZgCUz/`. A future scheduled pass can
+audit another compact guarded finite-ring namespace or turn one of the
+persisted core fraction-field semantic gaps into a runtime fix.

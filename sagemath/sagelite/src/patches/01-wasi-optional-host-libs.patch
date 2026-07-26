@@ -39048,3 +39048,53 @@ diff --git a/src/sage/rings/finite_rings/finite_field_prime_modn.py b/src/sage/r
 @@ -135 +134 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 -            sage: GF(3).has_coerce_map_from(Zp(3))                                      # needs sage.rings.padics
 +            sage: GF(3).has_coerce_map_from(Zp(3))
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.finite_rings
+@@ -704 +703 @@
+-            sage: k.multiplicative_generator()
++            sage: k.multiplicative_generator()                                      # needs sage.libs.pari
+@@ -913 +912 @@
+-            sage: F['x'](f).factor()
++            sage: F['x'](f).factor()                                                # needs sage.libs.pari
+@@ -932,2 +931 @@
+-            sage: var('x')
+-            x
++            sage: R.<x> = ZZ[]
+@@ -1352 +1350 @@
+-            sage: F(R) is k
++            sage: F(R) is k                                                         # known bug
+@@ -1460 +1458 @@
+-            sage: L(u).minpoly() == u.minpoly()
++            sage: L(u).minpoly() == u.minpoly()                                     # needs sage.libs.pari
+@@ -1657 +1655 @@
+-            sage: GF(3^8, 'a').subfield(4)
++            sage: GF(3^8, 'a').subfield(4)                                          # needs sage.libs.pari
+@@ -1895 +1893 @@
+-            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())
++            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())                  # needs sage.libs.pari
+@@ -1926 +1924 @@
+-            sage: GF(2).embeddings(GF(4))
++            sage: GF(2).embeddings(GF(4))                                           # needs sage.libs.pari
+@@ -1931 +1929 @@
+-            sage: GF(4).embeddings(GF(2).algebraic_closure())
++            sage: GF(4).embeddings(GF(2).algebraic_closure())                       # needs sage.libs.pari
+@@ -2074 +2072 @@
+-            sage: d = F.dual_basis(e, check=True); d
++            sage: d = F.dual_basis(e, check=True); d                                # needs sage.libs.pari
+@@ -2077,2 +2075,2 @@
+-            sage: vals = [[(x * y).trace() for x in e] for y in d]
+-            sage: matrix(vals) == matrix.identity(4)
++            sage: vals = [[(x * y).trace() for x in e] for y in d]                  # needs sage.libs.pari
++            sage: matrix(vals) == matrix.identity(4)                                # needs sage.libs.pari
+@@ -2086 +2084 @@
+-            sage: d = F.dual_basis(e, check=False); d
++            sage: d = F.dual_basis(e, check=False); d                               # needs sage.libs.pari
+@@ -2095 +2093 @@
+-            sage: F.dual_basis(d)
++            sage: F.dual_basis(d)                                                   # needs sage.libs.pari
+@@ -2224 +2222 @@
+-            sage: f.roots()
++            sage: f.roots()                                                         # needs sage.libs.pari
