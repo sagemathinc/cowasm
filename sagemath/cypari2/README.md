@@ -26,7 +26,10 @@ profile retain the explicit `NotImplementedError` fallback contract. Sage's
 dedicated PARI-to-rational converter also remains discoverable when converting
 a `Gen` back to `QQ`. The focused polynomial-vector conversion honors the
 requested `Polrev(name)` variable, preserving named generators when Sage
-constructs PARI-backed finite fields.
+constructs PARI-backed finite fields. Focused finite-field maps support
+`fffrobenius`, `ffcompomap`, and `ffmap`, which lets PARI-backed Sage finite
+fields cache and apply Frobenius powers without entering the unported general
+cypari2 object model.
 
 The standalone target now also builds private
 `cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules

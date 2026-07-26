@@ -77081,3 +77081,81 @@ reconstruction, full-target dry-run, and patch-replay evidence is under
 implement the remaining cached-Frobenius `Gen.fffrobenius` boundary, audit the
 PARI-backed polynomial-root island, or return to a persisted fraction-field
 semantic gap.
+
+Focused cypari2 finite-field Frobenius delivery pass on 2026-07-26 UTC:
+
+The reopened PARI finite-field dashboards retained seven rows behind
+`sage.libs.pari` solely because CoWasm's focused `Gen` object did not expose
+the finite-field map methods used by Sage. The field-level cache constructs
+the first map with `fffrobenius`, builds later powers with `ffcompomap`, and
+the diagnostic doctest applies them with `ffmap`; the element-level
+`pth_power` path passes the cached map directly to Sage's native PARI-backed
+FFELT implementation.
+
+The focused cypari2 runtime now wraps all three PARI operations with the same
+owned-clone and `pari_CATCH` error boundary as its existing integer and
+finite-field helpers. Its standalone regression constructs the Frobenius on
+`GF(3^2)`, checks application against PARI's own expression result, composes
+the map back to the identity, verifies invalid input raises `PariError`, and
+confirms a later PARI calculation still succeeds after error recovery.
+
+Runner-version-154 selected-feature replays against the rebuilt side module
+record all seven historical rows as active passes:
+
+```text
+finite_field_pari_ffelt.py selected: 2 passed, 0 failed
+element_pari_ffelt.pyx selected:     5 passed, 0 failed
+```
+
+The accumulated Sage patch therefore removes the obsolete PARI annotations.
+It preserves the independent `sage.modules` requirement on the inverse cached
+map row. Against the final manifest-validated copy-on-write resource bundle,
+the ordinary browser profile records:
+
+```text
+finite_field_pari_ffelt.py: 41 passed, 0 failed, 2 skipped
+element_pari_ffelt.pyx:     281 passed, 0 failed, 26 skipped
+combined:                    322 passed, 0 failed, 28 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+This reopens six rows in the default browser profile: the field cache's
+positive-power test and all five element `pth_power` tests. The seventh row
+passes when `sage.modules` is selected but remains an explicit module skip by
+default. The remaining 28 skips comprise fourteen GAP rows, six combined
+PARI/pexpect/subprocess rows, two PARI-backed polynomial-root rows, two known
+bugs, two not-tested timing rows, one Magma row, and the one module row. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the final direct and strict-make dashboards agree exactly across all 350
+ordered stable block rows, including raw actual output.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; both modules were already promoted. No Sage Cython/native
+rebuild is required because this pass extends the separately delivered
+cypari2 side module and changes only doctest dependency metadata in the Sage
+patch.
+
+Validation includes two complete cypari2 standalone rebuilds; positive,
+composition, invalid-input, and post-error-recovery map smokes; all seven
+selected-feature line replays; ordinary and clean strict focused-make
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; validation of the 759-resource copy-on-write
+manifest; the complete Electron-shaped smoke; accumulated-patch syntax;
+complete application against a clean archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+source comparison for both changed Sage modules; rejection of a second
+forward patch application; corpus uniqueness and path existence; full-target
+dry run; shell syntax; and `git diff --check`. The external developer checkout
+and its unrelated matrix, integer-ring, complex-roots, and SQLite changes
+remain untouched. One accidentally defaulted root-level doctest database was
+removed immediately; all retained run evidence is under `/tmp`.
+
+The accumulated patch still contains 1,829 serialized target sections (1,316
+`diff --git` and 513 header-only legacy sections) and now contains 5,960
+hunks. Focused, strict-make, query, copy-on-write resource, Electron, clean-
+reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-frobenius.hDf4Lt/`. A future scheduled pass can audit
+the remaining PARI-backed polynomial-root island, implement another focused
+cypari2 finite-field operation, or return to a persisted fraction-field
+semantic gap.

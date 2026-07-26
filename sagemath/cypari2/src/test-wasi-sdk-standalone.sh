@@ -674,6 +674,75 @@ cdef extern from *:
 
       return ok;
     }
+
+    static int cowasm_cypari2_gen_clone_fffrobenius(GEN input,
+                                                    long power,
+                                                    GEN *result,
+                                                    long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(fffrobenius(input, power));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_ffcompomap(GEN left,
+                                                   GEN right,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(ffcompomap(left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_ffmap(GEN map,
+                                              GEN input,
+                                              GEN *result,
+                                              long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(ffmap(map, input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
     """
     void cowasm_cypari2_gen_ensure_pari()
     int cowasm_cypari2_gen_is_inverse_error(long errnum)
@@ -746,6 +815,18 @@ cdef extern from *:
                                         const char *variable,
                                         GEN *result,
                                         long *errnum)
+    int cowasm_cypari2_gen_clone_fffrobenius(GEN input,
+                                             long power,
+                                             GEN *result,
+                                             long *errnum)
+    int cowasm_cypari2_gen_clone_ffcompomap(GEN left,
+                                            GEN right,
+                                            GEN *result,
+                                            long *errnum)
+    int cowasm_cypari2_gen_clone_ffmap(GEN map,
+                                       GEN input,
+                                       GEN *result,
+                                       long *errnum)
 
 
 _debug_level = 0
@@ -1177,6 +1258,38 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_ffgen(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def fffrobenius(self, long n=1):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_fffrobenius(
+            self.g, n, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def ffcompomap(self, other):
+        cdef Gen converted = objtogen(other)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_ffcompomap(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def ffmap(self, value):
+        cdef Gen converted = objtogen(value)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_ffmap(
+            self.g, converted.g, &result, &errnum
+        ):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -1945,6 +2058,20 @@ assert ff9_pol.type() == "t_POL"
 assert str(ff9_pol) == "Mod(1, 3)*x^2 + Mod(1, 3)*x + Mod(2, 3)"
 assert [int(c) for c in ff9_pol.list()] == [2, 1, 1]
 assert str(ff9_pol.ffgen()) == "x"
+ff9_gen = ff9_pol.ffgen()
+ff9_frobenius = ff9_gen.fffrobenius()
+ff9_frobenius_2 = ff9_frobenius.ffcompomap(ff9_frobenius)
+assert str(ff9_frobenius.ffmap(ff9_gen)) == str(
+    pari("ffmap(fffrobenius(ffgen(ffinit(3,2))),ffgen(ffinit(3,2)))")
+)
+assert str(ff9_frobenius_2.ffmap(ff9_gen)) == str(ff9_gen)
+try:
+    pari(1).fffrobenius()
+except PariError as err:
+    assert "PARI error" in str(err)
+else:
+    raise AssertionError("invalid Frobenius input did not raise PariError")
+assert str(pari("29*31")) == "899"
 assert str(pari(2).Mod(3)) == "Mod(2, 3)"
 rebuilt = pari([pari(2).Mod(3), pari(1).Mod(3), pari(1).Mod(3)]).Polrev()
 assert str(rebuilt) == str(ff9_pol)
