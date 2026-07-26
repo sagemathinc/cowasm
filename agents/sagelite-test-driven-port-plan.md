@@ -75211,6 +75211,82 @@ patch-replay evidence is under
 audit the adjacent guarded `padic_ZZ_pX_FM_element.pyx` module or select
 another persisted backend/runtime cluster.
 
+P-adic fixed-modulus `ZZ_pX` context-restoration and guard-reopening pass on
+2026-07-26 UTC:
+
+`sage/rings/padics/padic_ZZ_pX_FM_element.pyx` retained the next historical
+file-wide `sage.rings.padics` annotation. A runner-version-154
+feature-selected baseline against the current composed native resource bundle
+recorded:
+
+```text
+padic_ZZ_pX_FM_element.pyx before: 354 passed, 8 failed, 1 skipped
+run lifecycle:                      failed and closed
+SQLite integrity:                   ok
+```
+
+Seven active failures were corrupt fixed-modulus values in integer
+construction, Teichmuller lifting, and expansion. The FM element module
+restored contexts through separately linked pow-computer and NTL wrapper
+modules, but did not reconstruct its own module-local NTL static state before
+constructing coefficients or converting polynomial moduli. Restoring local
+contexts across those central paths recovered the integer and expansion rows
+and reduced the replay to three Teichmuller mismatches plus the unavailable
+GP interface.
+
+The shared `pow_computer_ext` Teichmuller helper had the same side-module
+boundary in both its ramified and unramified paths. Reconstructing a local
+`ZZ_pContext` there recovered the final three numeric rows. The accumulated
+WASI patch now removes the obsolete file-wide guard and marks the single
+`gp(...)` conversion with its focused PARI requirement. The corrected
+feature-selected replay, ordinary default browser profile, and strict focused
+make target against a complete clean pinned-source reconstruction each
+record:
+
+```text
+padic_ZZ_pX_FM_element.pyx: 361 passed, 0 failed, 2 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The two skips are the focused PARI/GP conversion and the pre-existing
+polyhedron-backed multiplication-matrix row. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the ordinary
+and strict-make dashboards agree exactly across all 363 ordered stable rows
+and raw actual output.
+
+`sage/rings/padics/padic_ZZ_pX_FM_element.pyx` is now part of the curated
+pure-math corpus, raising it to 1,325 non-comment entries with no duplicates
+or missing paths. The rebuilt FM element and shared pow-computer modules were
+already part of the Electron resource contract, so the repair needs no
+manifest schema or standalone smoke-contract change.
+
+Validation includes the initial failure dashboard; element-local and shared
+Teichmuller repair dashboards; corrected feature-selected and ordinary
+dashboards; focused Cython/C++/WASM rebuilding; strict focused-make
+validation; saved lifecycle/latest-run, failure, and skip queries; SQLite
+integrity and exact stable-row comparison; corpus uniqueness, path existence,
+and full-target dry run; accumulated-patch syntax and complete sequential
+application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested sources; rejection of a second
+forward patch application; and `git diff --check`. The first default make
+refresh correctly reproduced the external developer checkout's unrelated
+pre-existing patch conflict, and an initial strict resource symlink was
+correctly rejected by the runtime integrity contract; the successful strict
+validation used the detached pinned reconstruction and a real hard-linked
+copy-on-write resource root. The external developer checkout remains
+untouched.
+
+The FM element repair, shared Teichmuller repair, guard removal, and focused
+PARI metadata raise the accumulated patch to 1,803 serialized target sections
+(1,290 `diff --git` and 513 header-only legacy sections) and 5,520 hunks.
+Baseline, native-build, intermediate-dashboard, ordinary, strict-make, query,
+clean-reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-zz-px-fm.V81fpi/`. A future scheduled pass can
+audit the adjacent guarded `padic_ZZ_pX_FP_element.pyx` module or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

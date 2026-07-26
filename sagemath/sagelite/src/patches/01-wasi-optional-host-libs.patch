@@ -35274,3 +35274,145 @@ diff --git a/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx b/src/sage/rings/p
              poly = (<ntl_ZZ_pX>unit).x
              ans._set(&poly, mpz_get_si((<Integer>ordp).value), mpz_get_si((<Integer>relprec).value))
          return ans
+diff --git a/src/sage/rings/padics/pow_computer_ext.pyx b/src/sage/rings/padics/pow_computer_ext.pyx
+--- a/src/sage/rings/padics/pow_computer_ext.pyx
++++ b/src/sage/rings/padics/pow_computer_ext.pyx
+@@ -1144,6 +1144,7 @@
+         cdef ZZ_c tmp, q, u_q
+         cdef ZZ_pX_c xnew_q
+         cdef ntl_ZZ_pContext_class c
++        cdef ZZ_pContext_c local_context
+         cdef long mini = 0, minval = 0
+         if absprec == 0:
+             return 1
+@@ -1185,7 +1186,9 @@
+             mpz_clear(u)
+             mpz_clear(xnew)
+             mpz_to_ZZ(&tmp, value)
+-            self.restore_context_capdiv(absprec)
++            c = self.get_context_capdiv(absprec)
++            local_context = ZZ_pContext_c(c.p.x)
++            local_context.restore()
+             if ZZ_pX_IsZero(x[0]): # shortcut for the case x = 0
+                 ZZ_pX_SetCoeff(x[0], 0, ZZ_to_ZZ_p(tmp))
+             else:
+@@ -1195,12 +1198,13 @@
+             mpz_clear(value)
+         else:
+             c = self.get_context(absprec)
+-            c.restore_c()
++            local_context = ZZ_pContext_c(c.p.x)
++            local_context.restore()
+             q = self.pow_ZZ_tmp(self.f)[0]
+             ZZ_pX_min_val_coeff(minval, mini, a[0], self.pow_ZZ_tmp(1)[0])
+             if mini == -1 or minval > 0:
+                 return 1
+-            ZZ_pX_conv_modulus(x[0], a[0], c.x)
++            ZZ_pX_conv_modulus(x[0], a[0], local_context)
+             # u = 1 / Mod(1 - q, p^absprec)
+             ZZ_conv_from_long(u_q, 1)
+             ZZ_sub(u_q, u_q, q)
+diff --git a/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx b/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
+--- a/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
++++ b/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
+@@ -4,7 +4,6 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
+ # distutils: language = c++
+-# sage.doctest: needs sage.rings.padics
+ r"""
+ `p`-adic ``ZZ_pX`` FM Element
+
+@@ -150,6 +149,12 @@
+     cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
+     local_context.restore()
+
++cdef inline void ZZ_pX_conv_modulus_local(ZZ_pX_c* output, ZZ_pX_c* input,
++                                           ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++    ZZ_pX_conv_modulus(output[0], input[0], local_context)
++
+
+ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
+     def __init__(self, parent, x, absprec=None, relprec=None, empty=False):
+@@ -187,7 +192,7 @@
+
+         Check that :issue:`3865` is fixed::
+
+-            sage: W(gp('2 + O(5^2)'))
++            sage: W(gp('2 + O(5^2)'))  # needs sage.libs.pari
+             2
+
+         Check that :issue:`13612` has been fixed::
+@@ -293,6 +298,7 @@
+             4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11 + w^13 + 3*w^16 + w^17 + w^18 + 4*w^20 + 4*w^21 + w^22 + 2*w^23
+         """
+         self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+         cdef ZZ_c tmp
+         cdef mpz_t tmp_m
+         sig_on()
+@@ -322,6 +328,7 @@
+             4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11 + w^13 + 3*w^16 + w^17 + w^18 + 4*w^20 + 4*w^21 + w^22 + 2*w^23
+         """
+         self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+         if mpz_divisible_p(mpq_denref(x), self.prime_pow.prime.value):
+             raise ValueError("p divides denominator")
+         cdef mpz_t tmp_m
+@@ -355,7 +362,8 @@
+         """
+         self.prime_pow.restore_top_context()
+         self._check_ZZ_pContext(ctx)
+-        ZZ_pX_conv_modulus(self.value, poly[0], self.prime_pow.get_top_context().x)
++        ZZ_pX_conv_modulus_local(&self.value, poly,
++                                 self.prime_pow.get_top_context())
+
+     cdef int _set_from_ZZX(self, ZZX_c poly) except -1:
+         """
+@@ -413,6 +421,7 @@
+             True
+         """
+         self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+         cdef ntl_ZZ_pX holder = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         holder.c = self.prime_pow.get_top_context()
+         holder.x = self.value
+@@ -432,6 +441,7 @@
+             1 + w^5
+         """
+         self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+         cdef pAdicZZpXFMElement ans = pAdicZZpXFMElement.__new__(pAdicZZpXFMElement)
+         ans._parent = self._parent
+         ans.prime_pow = self.prime_pow
+@@ -464,6 +474,7 @@
+             return rich_to_bool(op, 1)
+         else:  # equal ordp
+             _left.prime_pow.restore_top_context()
++            restore_ZZ_p_context(_left.prime_pow.get_top_context())
+             if x_ordp == left.prime_pow.ram_prec_cap:
+                 return rich_to_bool(op, 0)  # since both are zero
+             elif _left.value == _right.value:
+@@ -956,9 +967,9 @@
+             if aprec >= self.prime_pow.prec_cap:
+                 return self
+             c = self.prime_pow.get_context(aprec)
+-            c.restore_c()
+-            ZZ_pX_conv_modulus(tmp, self.value, c.x)
+-            ZZ_pX_conv_modulus(ans.value, tmp, (<ntl_ZZ_pContext_class>self.prime_pow.get_top_context()).x)
++            ZZ_pX_conv_modulus_local(&tmp, &self.value, c)
++            ZZ_pX_conv_modulus_local(&ans.value, &tmp,
++                                     self.prime_pow.get_top_context())
+         else:
+             raise NotImplementedError
+         return ans
+@@ -1150,6 +1161,7 @@
+             [89 9 4 1]
+         """
+         self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         ans.c = self.prime_pow.get_top_context()
+         ans.x = self.value
