@@ -75004,6 +75004,63 @@ full-target dry-run, and patch-replay evidence is under
 audit the adjacent guarded `padic_ZZ_pX_element.pyx` module or select another
 persisted backend/runtime cluster.
 
+P-adic `ZZ_pX` shared-element guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/padics/padic_ZZ_pX_element.pyx` retained the adjacent historical
+file-wide `sage.rings.padics` annotation after the browser package gained the
+shared NTL-backed extension-element stack. A runner-version-154
+feature-selected replay against the current composed native resource bundle
+records:
+
+```text
+padic_ZZ_pX_element.pyx: 143 passed, 0 failed, 4 skipped
+run lifecycle:           passed and closed
+SQLite integrity:        ok
+```
+
+All 143 p-adic-selected examples are already clean. The four skips are the
+existing absolute- and relative-norm pairs that require the polyhedron/PPL
+stack. No narrower failure cluster or new dependency annotation was needed.
+A control run against the older repository-local packaged resource tree
+trapped at the first extension constructor because that bundle predates the
+recent composed p-adic NTL context repairs; the authoritative replay therefore
+continues to use the same composed resource bundle as the immediately
+preceding extension-element pass.
+
+The accumulated WASI patch now removes only the obsolete file-wide guard. The
+ordinary default browser profile and the strict focused make target against a
+complete clean pinned-source reconstruction each record the same 143 passing
+and four skipped rows. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, both dashboards have closed passing lifecycle
+rows and valid SQLite integrity, and they agree across every persisted stable
+field and raw actual output after normalizing source-root prefixes.
+
+`sage/rings/padics/padic_ZZ_pX_element.pyx` is now part of the curated
+pure-math corpus, raising it to 1,322 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and corpus
+membership. The module-local `ZZ_p` context restoration added by the preceding
+pass already supplies the relevant native behavior, and the module was already
+part of the Electron resource contract, so no new native rebuild, manifest
+schema change, or standalone smoke change is required.
+
+Validation includes the controlled older-resource trap; the composed-resource
+feature-selected baseline; ordinary and strict focused-make dashboards; saved
+lifecycle/latest-run, failure, and skip queries; SQLite integrity and exact
+stable-row comparison; corpus uniqueness, path existence, and full-target dry
+run; accumulated-patch syntax and complete sequential application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; rejection of a second forward
+patch application; and `git diff --check`. The external developer checkout and
+its unrelated changes remain untouched.
+
+Removing the stale guard leaves the accumulated patch at 1,799 serialized
+target sections (1,286 `diff --git` and 513 header-only legacy sections) and
+raises it to 5,461 hunks. Baseline, controlled, ordinary, strict-make, query,
+clean-reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-zz-px.w6AcUK/`. A future scheduled pass can audit
+the adjacent guarded `padic_ZZ_pX_CA_element.pyx` module or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
