@@ -76256,3 +76256,71 @@ full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-ring-morphism.oyqF9a/`. A future scheduled pass can audit
 the adjacent guarded `sage/rings/ring_extension_element.pyx` module or select
 another persisted runtime/backend cluster.
+
+Ring-extension element guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/ring_extension_element.pyx` retained a historical file-wide NTL
+guard plus older inline finite-ring, number-field, and PARI annotations. A
+runner-version-154 replay selecting the file's NTL feature recorded:
+
+```text
+ring_extension_element.pyx selected: 123 passed, 92 failed, 72 skipped
+run lifecycle:                         failed and closed
+SQLite integrity:                     ok
+```
+
+Opening every inline feature recorded `144 passed, 143 failed, 0 skipped`.
+The additional coverage showed that 21 inline annotations were stale: 15
+finite-field rows, four number-field rows, and two PARI rows pass in the
+browser runtime. The 143 failures formed focused relative finite-field
+construction islands: 18 primary rows reached the intentionally unsupported
+cypari2 object model, seven primary rows reached the finite-field
+root-multiplicity fallback while constructing the same PARI-backed relative
+extensions, and 118 rows were deterministic dependent-state failures or
+output mismatches after those assignments failed.
+
+The accumulated WASI patch now removes the broad NTL guard, removes the 21
+stale inline annotations, and places the complete 143-row
+relative-finite-field sequences behind focused `sage.libs.pari` metadata. The
+ordinary browser profile and strict focused make target against a clean
+reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+ring_extension_element.pyx: 144 passed, 0 failed, 143 skipped
+run lifecycle:               passed and closed
+SQLite integrity:            ok
+```
+
+All 143 skips are queryable as `optional:sage.libs.pari`. Saved block-failure
+and file-error queries are empty, active-row coverage is 100%, and the direct
+and strict-make dashboards agree exactly across all 287 ordered stable block
+fields, including raw actual output.
+
+`sage/rings/ring_extension_element.pyx` is now part of the curated pure-math
+corpus, raising it to 1,341 non-comment entries with no duplicates or missing
+paths. This pass changes only focused doctest dependency metadata and corpus
+membership; no native rebuild, Electron manifest change, or resource
+restaging is required.
+
+Validation includes the NTL-selected baseline; the all-feature classification
+replay; ordinary and strict focused-make dashboards; saved lifecycle, failure,
+and skip queries; SQLite integrity and exact stable-row comparison; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete sequential application against the clean pinned source;
+byte-for-byte reconstructed-source and generated-source comparison; rejection
+of a second forward patch application; and `git diff --check`. An interrupted
+make prerequisite probe briefly reconstructed the ignored generated source
+from the dirty developer checkout; the generated tree was then rebuilt through
+the supported make rule from a clean pinned Git clone and verified identical
+to the clean reconstruction. The external developer checkout and its
+unrelated matrix, integer-ring, complex-roots, and SQLite changes remain
+untouched.
+
+The accumulated patch now contains 1,819 serialized target sections (1,306
+`diff --git` and 513 header-only legacy sections) and 5,761 hunks. Baseline,
+classification, ordinary, strict-make, query, clean-reconstruction,
+generated-tree repair, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-ring-element.pmbIP1/`. A future scheduled pass can audit
+another compact guarded ring namespace or select a persisted runtime/backend
+cluster.
