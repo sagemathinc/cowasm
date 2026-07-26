@@ -2134,6 +2134,23 @@ section_domain = FiniteField(3**7, 's')
 section_codomain = FiniteField(3**21, 'S')
 embedding = FiniteFieldHomomorphism_generic(section_domain.Hom(section_codomain))
 assert embedding.section()(embedding(section_domain.gen())) == section_domain.gen()
+from sage.categories.homset import End
+homset_field = FiniteField(25, 'h')
+h = homset_field.gen()
+assert [phi(h) for phi in End(homset_field)] == [4*h + 1, h]
+root_field = FiniteField(4, 'r')
+r = root_field.gen()
+assert root_field(1).nth_root(0, all=True) == [r, r + 1, root_field(1)]
+try:
+    homset_field(0).multiplicative_order()
+except ArithmeticError as error:
+    assert str(error) == 'multiplicative order of 0 not defined'
+else:
+    raise AssertionError('zero unexpectedly had a multiplicative order')
+invariant_field = FiniteField(3**4, 'm')
+invariant_element = invariant_field.gen()**20
+assert str(invariant_element.charpoly('y')) == 'y^4 + 2*y^2 + 1'
+assert str(invariant_element.minpoly('y')) == 'y^2 + 1'
 print('sagelite-node-ok Sage PARI finite-field ownership boundary')"
 
 : >"$followups_file"
@@ -2372,7 +2389,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=219
+electron_manifest_schema_version=220
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2451,6 +2468,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-reserved-name-v189"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-construction-flags-v190"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-section-roots-v191"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-givaro-invariants-v192"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2631,6 +2649,7 @@ electron_required_paths=(
   "site-packages/sage/rings/finite_rings/finite_field_base.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/finite_field_constructor.py"
   "site-packages/sage/rings/finite_rings/finite_field_pari_ffelt.py"
+  "site-packages/sage/rings/finite_rings/homset.py"
   "site-packages/sage/rings/finite_rings/finite_field_prime_modn.py"
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py"

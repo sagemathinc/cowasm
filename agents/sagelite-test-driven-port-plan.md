@@ -77796,3 +77796,94 @@ strict-make, final, query, and comparison evidence is under
 under `/tmp/cowasm-sagelite-frobenius-clone.nvmuQb/`. A future scheduled pass
 can select another persisted pure-math semantic gap or revisit one of the
 remaining explicit dependency-boundary skips.
+
+Finite-field Givaro-invariant delivery pass on 2026-07-26 UTC:
+
+Replaying the remaining `FiniteFieldHomset.list()` known-bug row against the
+current default Givaro field reproduced a real browser-runtime gap. The method
+asked for polynomial roots with multiplicities even though it discarded those
+multiplicities, and the fallback root implementation deliberately rejects that
+stronger request. Calling the multiplicity-free path directly computed the
+right roots but exposed a second compatibility requirement: its enumeration
+order differs from Sage's ordinary factorization order.
+
+The accumulated Sage patch now keeps the ordinary `roots()` path first and
+falls back only on `NotImplementedError`. The fallback requests
+`multiplicities=False` and sorts roots by their corresponding linear
+polynomials, preserving the order of Sage's sorted factorization before
+constructing the homomorphisms. The deferred row is active, and the complete
+`homset.py` dashboard records 62 passed, 0 failed, and 5 skipped.
+
+Two deferred `element_base.pyx` invariants proved stale without source
+changes: zero still raises the exact expected multiplicative-order error, and
+the zero-th roots of one retain the documented order. Replaying the complete
+module then exposed eleven newly active default-Givaro failures in generic
+minimal- and characteristic-polynomial examples. Their default `pari`
+algorithm reached the explicit unimplemented direct-conversion boundary even
+though the existing matrix algorithm computed the same invariants. The
+generic methods now try PARI first and fall back narrowly on
+`NotImplementedError` to their matrix algorithms. Direct `__pari__`
+conversion examples remain explicitly dependency-bound. The final complete
+`element_base.pyx` dashboard records 226 passed, 0 failed, and 40 skipped.
+
+Against the final clean rebuilt resource bundle, the combined ordinary
+browser-profile dashboard records:
+
+```text
+homset.py:          62 passed, 0 failed,  5 skipped
+element_base.pyx:  226 passed, 0 failed, 40 skipped
+combined:          288 passed, 0 failed, 45 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+Saved block-failure and file-error queries are empty and active-row coverage
+is 100%. The 45 retained skips comprise 32 `sage.libs.pari` rows, five
+groups/GAP rows, four LinBox rows, two optional-module rows, one long row,
+and one Cunningham-tables row. Direct and strict-make dashboards agree on all
+333 persisted stable rows. Seven raw actual-output fields differ only in
+accepted traceback source paths or regenerated traceback context.
+
+The standalone and Electron-shaped finite-field smokes now require the
+canonical `End(GF(25))` generator-image order, the documented zero-th-root
+order over `GF(4)`, the exact zero multiplicative-order error, and default
+Givaro characteristic- and minimal-polynomial results. The required-resource
+contract now includes `homset.py`. The Electron manifest schema advances to
+220 and its smoke contract to `finite-field-givaro-invariants-v192`; the
+clean generated manifest records 761 required paths and matching hashes.
+
+A complete standalone reconstruction from a clean shared clone of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` regenerated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import smokes and the complete doctest-runner matrix, audited the staged and
+Electron side modules, emitted the clean-source schema-220 manifest, and
+passed the complete Electron-shaped and relocated-resource smokes.
+
+Validation additionally includes the failing homset baseline; the
+217-passed, 11-failed, 38-skipped pre-fix element dashboard; a nine-row
+matrix-algorithm probe; focused Cython reconstruction; complete direct,
+strict-make, and final rebuilt-bundle dashboards; saved lifecycle, failure,
+skip, and stable-row comparison queries; all desktop Electron manifest,
+forge-resource, and runtime tests; shell and JavaScript syntax;
+accumulated-patch syntax; exact target-patch application against pristine
+pinned sources; byte-for-byte reconstructed target comparison; rejection of
+a second forward application; corpus uniqueness and path existence;
+full-target dry run; and `git diff --check`.
+
+An initial strict-make invocation used the target's default build paths and
+encountered the external developer checkout's known unrelated matrix,
+integer-ring, complex-roots, and SQLite changes. That checkout was not
+modified. The generated project workspace was restored from the validated
+isolated reconstruction, and the displaced failed workspace remains
+recoverable under `/tmp/cowasm-sagelite-failed-build.w6Asgn/`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch remains at 1,832 serialized target
+sections (1,319 `diff --git` and 513 header-only legacy sections) and 5,954
+hunks: three obsolete metadata hunks were replaced by three runtime hunks.
+The clean rebuild, dashboards, and comparison evidence is under
+`/tmp/cowasm-sagelite-givaro-invariants.DeCf3B/`; exact target-patch replay is
+under `/tmp/cowasm-sagelite-target-replay.puxdGF/`; and the clean shared clone
+is under `/tmp/cowasm-sagelite-frobenius-clone.nvmuQb/`. A future scheduled
+pass can address direct Givaro `__pari__` conversion or select another
+persisted dependency-boundary or pure-math semantic gap.

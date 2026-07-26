@@ -33850,12 +33850,18 @@ diff --git a/src/sage/rings/finite_rings/homset.py b/src/sage/rings/finite_rings
 +++ b/src/sage/rings/finite_rings/homset.py
 @@ -1,1 +1,0 @@
 -# sage.doctest: needs sage.rings.finite_rings
-@@ -208,1 +207,1 @@
--            sage: list(End(K))
-+            sage: list(End(K))                                                        # known bug
 @@ -254,1 +253,1 @@
 -            sage: K.Hom(L)[0]
 +            sage: K.Hom(L)[0]                                                        # needs sage.libs.pari
+@@ -263,2 +262,6 @@
+-            r = g.roots()
+-            v = [self(D.hom(a, C)) for a, _ in r]
++            try:
++                r = [a for a, _ in g.roots()]
++            except NotImplementedError:
++                x = g.parent().gen()
++                r = sorted(g.roots(multiplicities=False), key=lambda a: x - a)
++            v = [self(D.hom(a, C)) for a in r]
 @@ -282,6 +281,6 @@
 -            sage: H[1]
 +            sage: H[1]                                                               # needs sage.libs.pari
@@ -33904,6 +33910,19 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
              [3, 5, 12, 14]
              sage: sorted(a._nth_root_common(4, True, "Johnston", cunningham=True))  # optional - cunningham_tables
              [3, 5, 12, 14]
+@@ -317,7 +316,10 @@
+         if algorithm == 'pari':
+             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+             R = PolynomialRing(self.parent().prime_subfield(), var)
+-            return R(self.__pari__().minpoly('x').lift())
++            try:
++                return R(self.__pari__().minpoly('x').lift())
++            except NotImplementedError:
++                return self.matrix().minpoly(var)
+-
++
+         if algorithm == 'matrix':
+             return self.matrix().minpoly(var)
 @@ -456,3 +455,3 @@
 -            sage: F = GF(random_prime(333)^randrange(111,999),'t')
 -            sage: a = F.random_element()
@@ -33930,11 +33949,13 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
 -            sage: type(t_string)
 +            sage: type(t_string)                                                      # needs sage.libs.pari
              <... 'str'>
-             sage: t_element = t.__pari__('b')
+-            sage: t_element = t.__pari__('b')
++            sage: t_element = t.__pari__('b')                                       # needs sage.libs.pari
 -            sage: t_element
 +            sage: t_element                                                           # needs sage.libs.pari
              3*b^2 + 2*b + 4
-             sage: type(t_element)
+-            sage: type(t_element)
++            sage: type(t_element)                                                    # needs sage.libs.pari
              <class 'cypari2.gen.Gen'>
 @@ -623,9 +622,9 @@
 
@@ -33990,6 +34011,19 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
              (x + 17)^2
              sage: b.minpoly('x')
              x + 17
+@@ -694,7 +693,10 @@
+         if algorithm == 'pari':
+             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+             R = PolynomialRing(self.parent().prime_subfield(), var)
+-            return R(self.__pari__().charpoly('x').lift())
++            try:
++                return R(self.__pari__().charpoly('x').lift())
++            except NotImplementedError:
++                return self.matrix().charpoly(var)
+-
++
+         if algorithm == 'matrix':
+             return self.matrix().charpoly(var)
 @@ -740,14 +739,14 @@
 
              sage: S.<a> = GF(5^3); S
@@ -34007,29 +34041,11 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
              2
              sage: z.charpoly('t')
              t^3 + 3*t^2 + 2*t + 2
-@@ -768,7 +767,7 @@
-             124
-             sage: (a^8).multiplicative_order()
-             31
--            sage: S(0).multiplicative_order()
-+            sage: S(0).multiplicative_order()                                         # known bug - implementation-specific exception text
-             Traceback (most recent call last):
-             ...
-             ArithmeticError: multiplicative order of 0 not defined
 @@ -818,2 +817,2 @@
 -            sage: k.<a> = FiniteField(4, implementation='ntl', modulus='primitive')               # needs sage.libs.ntl
 -            sage: (a**2).is_square()                                                    # needs sage.libs.ntl
 +            sage: k.<a> = FiniteField(4, implementation='ntl', modulus='primitive')
 +            sage: (a**2).is_square()
-@@ -978,7 +977,7 @@
-             sage: k.<a> = GF(4)
-             sage: a.nth_root(0,all=True)
-             []
--            sage: k(1).nth_root(0,all=True)
-+            sage: k(1).nth_root(0,all=True)                                           # known bug - implementation-specific root order
-             [a, a + 1, 1]
-
-         ALGORITHM:
 @@ -1098,12 +1097,12 @@
 
          Check that :issue:`26761` is fixed::

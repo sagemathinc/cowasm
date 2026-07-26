@@ -130,6 +130,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/finite_rings/finite_field_base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/finite_rings/finite_field_constructor.py",
   "site-packages/sage/rings/finite_rings/finite_field_pari_ffelt.py",
+  "site-packages/sage/rings/finite_rings/homset.py",
   "site-packages/sage/rings/finite_rings/finite_field_prime_modn.py",
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py",
@@ -317,7 +318,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 219,
+  schemaVersion: 220,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -444,6 +445,8 @@ expectedSageliteManifest.smokeContract +=
   "-finite-field-construction-flags-v190";
 expectedSageliteManifest.smokeContract +=
   "-finite-field-section-roots-v191";
+expectedSageliteManifest.smokeContract +=
+  "-finite-field-givaro-invariants-v192";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

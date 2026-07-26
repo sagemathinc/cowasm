@@ -559,6 +559,23 @@ section_domain = GF(3**7, 's')
 section_codomain = GF(3**21, 'S')
 embedding = FiniteFieldHomomorphism_generic(section_domain.Hom(section_codomain))
 assert embedding.section()(embedding(section_domain.gen())) == section_domain.gen()
+from sage.categories.homset import End
+homset_field = GF(25, 'h')
+h = homset_field.gen()
+assert [phi(h) for phi in End(homset_field)] == [4*h + 1, h]
+root_field = GF(4, 'r')
+r = root_field.gen()
+assert root_field(1).nth_root(0, all=True) == [r, r + 1, root_field(1)]
+try:
+    homset_field(0).multiplicative_order()
+except ArithmeticError as error:
+    assert str(error) == 'multiplicative order of 0 not defined'
+else:
+    raise AssertionError('zero unexpectedly had a multiplicative order')
+invariant_field = GF(3**4, 'm')
+invariant_element = invariant_field.gen()**20
+assert str(invariant_element.charpoly('y')) == 'y^4 + 2*y^2 + 1'
+assert str(invariant_element.minpoly('y')) == 'y^2 + 1'
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");
