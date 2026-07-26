@@ -1328,3 +1328,4 @@ src/sage/rings/padics/padic_ZZ_pX_element.pyx
 src/sage/rings/padics/padic_ZZ_pX_CA_element.pyx
 src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
 src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
+src/sage/rings/padics/pow_computer_ext.pyx

@@ -75287,6 +75287,87 @@ clean-reconstruction, full-target dry-run, and patch-replay evidence is under
 audit the adjacent guarded `padic_ZZ_pX_FP_element.pyx` module or select
 another persisted backend/runtime cluster.
 
+P-adic extension pow-computer local-context and guard-reopening pass on
+2026-07-26 UTC:
+
+The preceding handoff's `padic_ZZ_pX_FP_element.pyx` target does not exist in
+the pinned Sagelite tree. Resolving the remaining real guarded p-adic sources
+instead selected `sage/rings/padics/pow_computer_ext.pyx`, which is already
+part of the Electron resource contract and contains the shared NTL-backed
+extension arithmetic used by the recently reopened element modules.
+
+A runner-version-154 feature-selected baseline against the current composed
+native resource bundle trapped before block checkpointing in the first
+degree-30 extension stress test:
+
+```text
+pow_computer_ext.pyx before: 0 passed, 1 failed, 0 skipped
+active source line:          313
+active expression:           J.<a> = K.extension(x^30 - 11)
+native trap:                 NTL modulus unset in padic_ZZ_pX_CR_element
+```
+
+Classifying that contiguous stress sequence exposed the same capped-relative
+side-module boundary in the Teichmuller extension sequence at source line
+1132. Both sequences now have focused `sage.libs.ntl` requirements. With
+those two backend-heavy sequences isolated, the module recorded 256 passing,
+four failing, and 21 skipped rows. All four active failures were incorrect
+`_get_modulus_test` products: the pow-computer side module checked the operand
+modulus but performed its own NTL reductions without restoring its
+module-local static context.
+
+The accumulated WASI patch now reconstructs and restores a local
+`ZZ_pContext` from the checked operand modulus immediately before those
+reductions. A focused Cython, C++, and WASM side-module rebuild plus a
+copy-on-write resource bundle with refreshed manifest integrity recovers all
+four products. The patch also removes the obsolete file-wide
+`sage.rings.padics` guard. The corrected feature-selected replay, ordinary
+default browser profile, and strict focused make target against a complete
+clean pinned-source reconstruction each record:
+
+```text
+pow_computer_ext.pyx: 260 passed, 0 failed, 21 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The final skips comprise 19 rows in the two focused NTL extension sequences
+and two pre-existing finite-ring rows. Saved block-failure and file-error
+queries are empty, active-row coverage is 100%, and the ordinary and
+strict-make dashboards agree exactly across all 281 ordered stable rows and
+raw actual output.
+
+`sage/rings/padics/pow_computer_ext.pyx` is now part of the curated pure-math
+corpus, raising it to 1,326 non-comment entries with no duplicates or missing
+paths. The rebuilt module was already part of the Electron resource contract,
+so the repair needs no manifest schema or standalone smoke-contract change.
+
+Validation includes both controlled native traps; the classified
+pre-repair dashboard; focused Cython/C++/WASM rebuilding; corrected
+feature-selected and ordinary dashboards; strict focused-make validation;
+saved lifecycle/latest-run, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; corpus uniqueness, path existence, and
+full-target dry run; accumulated-patch syntax and complete sequential
+application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The first default make
+refresh correctly reproduced the external developer checkout's unrelated
+pre-existing `complex_roots.py` patch conflict. Its incomplete generated
+tree is retained with the run evidence, while the workspace build source was
+restored from the validated pinned reconstruction. The external checkout and
+its unrelated matrix, integer-ring, complex-roots, and SQLite changes remain
+untouched.
+
+The local-context repair, guard removal, and focused NTL metadata raise the
+accumulated patch to 1,804 serialized target sections (1,291 `diff --git` and
+513 header-only legacy sections) and 5,524 hunks. Baseline, native-build,
+classified, repaired, ordinary, strict-make, query, clean-reconstruction,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-pow-computer-ext.tlnqSy/`. A future scheduled pass can
+audit guarded `witt_vector.py` and `witt_vector_ring.py` together or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

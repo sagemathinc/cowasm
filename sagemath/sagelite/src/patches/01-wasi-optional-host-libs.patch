@@ -35416,3 +35416,39 @@ diff --git a/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx b/src/sage/rings/p
          cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
          ans.c = self.prime_pow.get_top_context()
          ans.x = self.value
+diff --git a/src/sage/rings/padics/pow_computer_ext.pyx b/src/sage/rings/padics/pow_computer_ext.pyx
+--- a/src/sage/rings/padics/pow_computer_ext.pyx
++++ b/src/sage/rings/padics/pow_computer_ext.pyx
+@@ -4,7 +4,6 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
+ # distutils: language = c++
+-# sage.doctest: needs sage.rings.padics
+ """
+ PowComputer_ext
+
+@@ -308,6 +307,7 @@
+
+     TESTS::
+
++        sage: # needs sage.libs.ntl
+         sage: R.<x> = QQ[]
+         sage: K = Qp(11,10)
+         sage: J.<a> = K.extension(x^30 - 11)
+@@ -995,6 +995,8 @@
+             raise ValueError("a context mismatch")
+         if self.pow_Integer(mpz_get_si(n.value)) != Integer(b.c.p):
+             raise ValueError("b context mismatch")
++        cdef ZZ_pContext_c local_context = ZZ_pContext_c(a.c.p.x)
++        local_context.restore()
+         cdef ntl_ZZ_pX r = (<ntl_ZZ_pX>a)._new()
+         cdef ntl_ZZ_pX aa = (<ntl_ZZ_pX>a)._new()
+         cdef ntl_ZZ_pX bb = (<ntl_ZZ_pX>b)._new()
+@@ -1125,6 +1127,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.libs.ntl
+             sage: R = Zp(17,5)
+             sage: S.<x> = R[]
+             sage: f = x^5 + 34*x^3 - 17*x^2 +289*x - 17
