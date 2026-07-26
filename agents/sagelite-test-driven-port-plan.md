@@ -76055,3 +76055,75 @@ full-target dry-run evidence is under
 in `sage/rings/valuation`; a future scheduled pass should select a persisted
 runtime/backend failure cluster or expand into the next mathematically useful
 namespace instead of repeating broad guarded-module scans.
+
+Ring-homset guard reopening and focused backend classification pass on
+2026-07-26 UTC:
+
+`sage/rings/homset.py` and `sage/rings/ring_extension_homset.py` retained
+historical file-wide NTL and finite-ring guards. A runner-version-154 replay
+selecting the base homset's NTL feature recorded:
+
+```text
+homset.py selected: 35 passed, 4 failed, 11 skipped
+failure cluster:      2 direct missing Singular-extension rows
+                      2 dependent missing-name rows
+run lifecycle:      failed and closed
+SQLite integrity:   ok
+```
+
+The four failures came from two unannotated multivariate quotient-ring setup
+sequences. Both enter the unavailable Singular Groebner-strategy extension;
+their dependent homset, morphism, and composition checks had reused stale
+state after the failed setup. The complete affected sequences now carry
+focused `sage.libs.singular` metadata. A separate finite-ring-selected replay
+confirmed that all five already annotated extension-field morphism examples
+now pass, so those stale inline finite-ring annotations are removed along with
+the broad NTL header.
+
+Selecting the extension homset's historical finite-ring feature recorded two
+passing base-extension setups and seven failures. The two primary failures
+construct relative finite-field extensions and reach the intentionally
+unsupported cypari2 finite-field object model; the remaining failures depend
+on those assignments. Those seven rows now carry focused `sage.libs.pari`
+metadata while the two working setups remain active.
+
+The ordinary browser profile and strict focused make target against a clean
+reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+homset.py:                36 passed, 0 failed, 14 skipped
+ring_extension_homset.py:  2 passed, 0 failed,  7 skipped
+combined:                  38 passed, 0 failed, 21 skipped
+run lifecycle:            passed and closed
+SQLite integrity:         ok
+```
+
+The 21 skips comprise 14 Singular-backed quotient-ring rows and seven
+PARI-backed relative finite-field rows. Saved block-failure and file-error
+queries are empty, active-row coverage is 100%, and the direct and strict-make
+dashboards agree exactly across all 59 ordered stable block fields, including
+raw actual output.
+
+Both modules are now part of the curated pure-math corpus, raising it to 1,338
+non-comment entries with no duplicates or missing paths. This pass changes
+only focused doctest dependency metadata and corpus membership; no native
+rebuild, Electron manifest update, or resource restaging is required.
+
+Validation includes the NTL-selected and finite-ring-selected classification
+replays; the extension-homset classification replay; ordinary and strict
+focused-make dashboards; saved lifecycle, failure, and skip queries; SQLite
+integrity and exact stable-row comparison; Python syntax checks; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete supported-pipeline application against the clean pinned source;
+byte-for-byte reconstructed-source comparison; rejection of a second forward
+patch application; and `git diff --check`. The external developer checkout
+and its unrelated changes remain untouched.
+
+The accumulated patch now contains 1,816 serialized target sections (1,303
+`diff --git` and 513 header-only legacy sections) and 5,683 hunks.
+Classification, ordinary, strict-make, query, clean-reconstruction,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-next-namespace.l31gho/`. A future scheduled pass can
+audit another compact ring namespace guard or select a persisted
+runtime/backend cluster.

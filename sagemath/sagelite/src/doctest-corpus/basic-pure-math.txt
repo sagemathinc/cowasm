@@ -1339,3 +1339,5 @@ src/sage/rings/valuation/mapped_valuation.py
 src/sage/rings/valuation/limit_valuation.py
 src/sage/rings/valuation/valuation.py
 src/sage/rings/valuation/inductive_valuation.py
+src/sage/rings/homset.py
+src/sage/rings/ring_extension_homset.py
