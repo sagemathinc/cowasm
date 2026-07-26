@@ -76393,3 +76393,76 @@ generated-tree repair, full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-ring-extension.pRtBll/`. A future scheduled pass can
 audit another compact guarded ring namespace or select a persisted
 runtime/backend cluster.
+
+Fraction-field guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/fraction_field.py` retained a historical file-wide NTL guard even
+though its generic fraction-field arithmetic and coercion machinery now works
+in the browser runtime. A runner-version-154 replay selecting the historical
+feature recorded:
+
+```text
+fraction_field.py selected: 262 passed, 17 failed, 19 skipped
+run lifecycle:              failed and closed
+SQLite integrity:           ok
+```
+
+The 17 failures formed six narrow islands. Two duplicated number-field
+ring-of-integers sequences contributed eight rows and enter PARI-backed
+maximal-order construction. A finite-field polynomial factorization row enters
+the intentionally incomplete cypari2 object model. The remaining six semantic
+failures are browser-runtime divergences in localization of a constant
+polynomial unit, recursive multivariate fraction conversion, and polynomial
+gcd over a multivariate fraction-field base. Two additional Laurent-series
+rows failed only because the doctest relied on a generator from another
+namespace; making that setup self-contained with `R.<x>` makes both rows pass.
+
+The accumulated WASI patch now removes the broad NTL guard, places the eight
+number-field rows and the finite-field factorization row behind focused
+`sage.libs.pari` metadata, and records the six localization, conversion, and
+gcd divergences as queryable `# known bug` skips. The ordinary browser profile
+and strict focused make target against a clean reconstruction of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+fraction_field.py: 264 passed, 0 failed, 34 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The 34 skips comprise 16 PARI rows including pre-existing coverage, six known
+bugs, five Magma rows, and seven rows for existing finite-ring, number-field,
+symbolic, complex-double, and real-field dependencies. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the direct and
+strict-make dashboards agree across all 298 ordered stable block rows after
+normalizing the accepted output of the single `# random` example.
+
+`sage/rings/fraction_field.py` is now part of the curated pure-math corpus,
+raising it to 1,343 non-comment entries with no duplicates or missing paths.
+This pass changes focused doctest setup and dependency/deferred-test metadata
+plus corpus membership; no native rebuild, Electron manifest change, or
+resource restaging is required.
+
+Validation includes the NTL-selected classification baseline; a focused
+self-contained Laurent-series rerun; ordinary and strict focused-make
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+normalized stable-row comparison; Python syntax checks; corpus uniqueness,
+path existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against the clean pinned source; byte-for-byte
+reconstructed-source comparison; rejection of a second forward patch
+application; and `git diff --check`. The first strict-make probe invalidated
+the generated `.patched` prerequisite and briefly reconstructed the ignored
+generated tree from the dirty developer checkout. That generated tree was
+replaced through the supported make rule from a clean pinned clone and verified
+identical to the clean replay. The external developer checkout and its
+unrelated matrix, integer-ring, complex-roots, and SQLite changes remain
+untouched; the failed generated reconstruction remains recoverable under the
+run evidence directory.
+
+The accumulated patch now contains 1,821 serialized target sections (1,308
+`diff --git` and 513 header-only legacy sections) and 5,812 hunks. Baseline,
+focused-fix, ordinary, strict-make, query, clean-reconstruction,
+generated-tree repair, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-fraction-field.ZVIdog/`. A future scheduled pass can
+turn one of the six newly persisted core fraction-field semantic gaps into a
+runtime fix or audit another compact guarded ring namespace.
