@@ -75983,3 +75983,75 @@ full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-valuation.nRUq79/`. A future scheduled pass can audit
 the remaining guarded `sage/rings/valuation/inductive_valuation.py` module
 or select another persisted backend/runtime cluster.
+
+Inductive valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/valuation/inductive_valuation.py` retained the final file-wide
+guard in the valuation package. Removing it in a clean pinned-source
+reconstruction immediately reached the previously hidden extended `Qp(2)`
+test at source line 150:
+
+```text
+active source: L.<a> = K.extension(x^4 + 4*x^3 + 6*x^2 + 4*x + 2)
+native trap:   NTL modulus unset in padic_ZZ_pX_CR_element
+```
+
+The complete contiguous extension test now carries its focused NTL
+requirement. A second guardless replay then completed and recorded:
+
+```text
+inductive_valuation.py classified: 239 passed, 15 failed, 31 skipped
+run lifecycle:                    failed and closed
+SQLite integrity:                 ok
+```
+
+The 15 failures were focused dependency and dependent-state islands rather
+than defects in the abstract inductive-valuation methods: five direct
+cypari2 object-model failures, two dependent display mismatches after failed
+PARI-backed augmentation/factorization, one GAP-backed Galois-closure import,
+one PPL/Newton-polyhedron import, and six dependent missing-name rows. The
+accumulated WASI patch now places the complete dependent prompt sequences
+behind focused PARI, GAP, polyhedron, or combined GAP/polyhedron metadata.
+
+The ordinary browser profile and strict focused make target against a clean
+reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+inductive_valuation.py: 233 passed, 0 failed, 52 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The 52 skips comprise 21 NTL-backed p-adic extension rows, 12 PARI/cypari2
+rows, nine polyhedron rows including the long TestSuite, four GAP rows, five
+combined GAP/polyhedron rows, and one pre-existing number-field row. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the ordinary and strict-make dashboards agree exactly across all 285
+ordered stable block fields, including raw actual output.
+
+`sage/rings/valuation/inductive_valuation.py` is now part of the curated
+pure-math corpus, raising it to 1,336 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest metadata and corpus
+membership; it does not alter native code, the Electron manifest schema, or
+the standalone smoke contract.
+
+Validation includes the controlled NTL trap; the complete guardless
+classification dashboard; ordinary and strict focused-make dashboards;
+saved lifecycle, failure, and skip queries; SQLite integrity and exact
+stable-row comparison; Python syntax checks; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against the clean pinned source; byte-for-byte
+reconstructed-source comparison; rejection of a second forward patch
+application; and `git diff --check`. The strict make invocation treated the
+existing generated `.patched` prerequisite as already satisfied and used the
+clean `/tmp` reconstruction directly, so the unrelated dirty developer
+checkout and generated workspace source were not modified.
+
+The accumulated patch now contains 1,301 `diff --git` sections and 5,676
+hunks. Trap, classification, ordinary, strict-make, query, patch-replay, and
+full-target dry-run evidence is under
+`/tmp/cowasm-sagelite-inductive.5pFgb5/`. No file-wide doctest guard remains
+in `sage/rings/valuation`; a future scheduled pass should select a persisted
+runtime/backend failure cluster or expand into the next mathematically useful
+namespace instead of repeating broad guarded-module scans.
