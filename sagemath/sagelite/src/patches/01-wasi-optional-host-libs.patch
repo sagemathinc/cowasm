@@ -35452,3 +35452,49 @@ diff --git a/src/sage/rings/padics/pow_computer_ext.pyx b/src/sage/rings/padics/
              sage: R = Zp(17,5)
              sage: S.<x> = R[]
              sage: f = x^5 + 34*x^3 - 17*x^2 +289*x - 17
+diff --git a/src/sage/rings/padics/witt_vector.py b/src/sage/rings/padics/witt_vector.py
+--- a/src/sage/rings/padics/witt_vector.py
++++ b/src/sage/rings/padics/witt_vector.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.flint sage.libs.ntl
+@@ -27 +25,0 @@
+-from sage.misc.functional import log
+@@ -175 +173 @@
+-            for _ in range(log(self._prec, 2).n().ceil()):
++            for _ in range((int(self._prec) - 1).bit_length()):
+diff --git a/src/sage/rings/padics/witt_vector_ring.py b/src/sage/rings/padics/witt_vector_ring.py
+--- a/src/sage/rings/padics/witt_vector_ring.py
++++ b/src/sage/rings/padics/witt_vector_ring.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.ntl
+@@ -221,2 +220,2 @@
+-        sage: A = SymmetricGroup(3).algebra(QQ)
+-        sage: WittVectorRing(A)
++        sage: A = SymmetricGroup(3).algebra(QQ)  # needs sage.groups
++        sage: WittVectorRing(A)                  # needs sage.groups
+@@ -453 +452,9 @@
+-        R = PolynomialRing(ZZ, var_names, implementation=implementation)
++        try:
++            R = PolynomialRing(ZZ, var_names, implementation=implementation)
++        except ModuleNotFoundError as error:
++            if (implementation != 'singular'
++                    or error.name !=
++                    'sage.rings.polynomial.multi_polynomial_libsingular'):
++                raise
++            implementation = 'generic'
++            R = PolynomialRing(ZZ, var_names, implementation=implementation)
+@@ -487 +494,2 @@
+-        S = PolynomialRing(coefficient_ring, x_y_vars)
++        S = PolynomialRing(coefficient_ring, x_y_vars,
++                           implementation=implementation)
+@@ -491 +499,2 @@
+-        S = PolynomialRing(coefficient_ring, x_vars)
++        S = PolynomialRing(coefficient_ring, x_vars,
++                           implementation=implementation)
+@@ -657 +666,5 @@
+-        return self.teichmuller_lift(self._coefficient_ring.gen(n))
++        try:
++            generator = self._coefficient_ring.gen(n)
++        except ValueError:
++            raise ValueError("Generator not defined.") from None
++        return self.teichmuller_lift(generator)

@@ -75368,6 +75368,83 @@ full-target dry-run, and patch-replay evidence is under
 audit guarded `witt_vector.py` and `witt_vector_ring.py` together or select
 another persisted backend/runtime cluster.
 
+Witt-vector generic-polynomial fallback and paired guard-reopening pass on
+2026-07-26 UTC:
+
+`sage/rings/padics/witt_vector.py` and `witt_vector_ring.py` retained broad
+historical guards even though their pure-Python implementations and supporting
+FLINT/NTL modules are present in the browser resource bundle. A
+runner-version-154 feature-selected baseline recorded:
+
+```text
+witt_vector.py before:       137 passed, 43 failed, 0 skipped
+witt_vector_ring.py before:  218 passed, 92 failed, 0 skipped
+combined before:             355 passed, 135 failed, 0 skipped
+```
+
+Fifty-eight direct failures, plus most cascading setup-name failures, came
+from the standard Witt algorithm selecting Singular unconditionally for its
+internal multivariate universal polynomials. The implementation already had a
+generic polynomial path for large exponents. It now retains Singular as the
+native fast path, catches only the missing
+`multi_polynomial_libsingular` module, and consistently uses the generic
+backend for both universal and projected polynomials after that fallback.
+This reduced the feature-selected replay to 486 passing and four failing rows.
+
+The remaining active issues were independent and narrow. Newton inversion now
+computes `ceil(log2(precision))` with integer bit length instead of importing
+the symbolic ring. The Witt-ring generator wrapper normalizes the generic
+backend's lowercase missing-generator diagnostic to the documented public
+error. The two-line noncommutative symmetric-group rejection test now carries
+its focused `sage.groups` requirement on both setup and assertion rows.
+
+The accumulated patch removes both obsolete file-wide guards. The final
+ordinary replay and strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+witt_vector.py:       180 passed, 0 failed, 0 skipped
+witt_vector_ring.py:  308 passed, 0 failed, 2 skipped
+combined:             488 passed, 0 failed, 2 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The two skips are exactly the focused `sage.groups` rows. Saved block-failure
+and file-error queries are empty, active-row coverage is 100%, and the
+ordinary and strict-make dashboards agree across all 490 ordered stable rows
+after normalizing four explicitly random outputs.
+
+Both Witt-vector modules are now part of the curated pure-math corpus, raising
+it to 1,328 non-comment entries with no duplicates or missing paths. The
+runtime already ships both pure-Python modules, so the repair needs no native
+rebuild, manifest schema, or standalone smoke-contract change.
+
+Validation includes the feature-selected baseline and repaired dashboard;
+final ordinary and strict focused-make dashboards; saved lifecycle/latest-run,
+failure, and skip queries; SQLite integrity and normalized stable-row
+comparison; Python syntax checks; corpus uniqueness, path existence, and
+full-target dry run; accumulated-patch syntax and complete sequential
+application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of both
+reconstructed targets with the runtime-tested sources; rejection of a second
+forward patch application; and `git diff --check`. The first default make
+refresh correctly reproduced the external developer checkout's unrelated
+pre-existing patch conflict. Its incomplete generated tree is retained with
+the run evidence, while the workspace build source was restored from the
+validated pinned reconstruction. The external checkout and its unrelated
+matrix, integer-ring, complex-roots, and SQLite changes remain untouched.
+
+The generic-polynomial fallback, integer-only inversion bound, normalized
+generator diagnostic, guard removals, and focused group metadata raise the
+accumulated patch to 1,806 serialized target sections (1,293 `diff --git` and
+513 header-only legacy sections) and 5,533 hunks. Baseline, repaired,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-witt-vector.9vXqxQ/`. A future scheduled pass can audit
+the remaining guarded `sage/rings/padics/CA_template.pxi` boundary or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
