@@ -39005,9 +39005,26 @@ diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
 @@ -555 +554 @@ class FractionField_generic(ring.Field):
 -            sage: R = LaurentSeriesRing(QQ, 'x')
 +            sage: R.<x> = LaurentSeriesRing(QQ)
-@@ -613 +612 @@ class FractionField_generic(ring.Field):
--            sage: Frac(ZZ['x,y'])(frac)
-+            sage: Frac(ZZ['x,y'])(frac)                                      # known bug
+@@ -745,7 +744,19 @@ class FractionField_generic(ring.Field):
+             try:
+                 return self._element_class(self, x, ring_one, coerce=coerce)
+             except (TypeError, ValueError):
+                 pass
++            # Generic WASI polynomial rings do not always push the target
++            # parent through mixed polynomial multiplication.  Evaluate a
++            # nested univariate polynomial at the matching target generator.
++            source = parent(x)
++            if isinstance(source, PolynomialRing_generic) and source.ngens() == 1:
++                variable = self.gens_dict_recursive().get(source.variable_name())
++                if (variable is not None and
++                        self.has_coerce_map_from(source.base_ring())):
++                    try:
++                        return x(self(variable))
++                    except (TypeError, ValueError):
++                        pass
+             y = self.one()
+         else:
+             if parent(x) is self:
 @@ -1035,2 +1034,2 @@ class FractionField_generic(ring.Field):
 -            sage: g = p.gcd(q)
 -            sage: g

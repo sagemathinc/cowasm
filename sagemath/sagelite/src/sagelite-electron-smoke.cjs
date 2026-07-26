@@ -666,6 +666,17 @@ assert L._extra_units == (Z(7), z**2 + 1)
 LF = L.fraction_field()
 phi = LF.coerce_map_from(L)
 assert phi(L(ZZ(1) / ZZ(7))) == ZZ(1) / ZZ(7)
+P0 = ZZ['u']
+u = P0.gen()
+P1 = P0.fraction_field()['v']
+v = P1.gen()
+nested = (u / (u**2 + 1))*v + 1 / (u**3 + 1)
+target = ZZ['u,v'].fraction_field()
+ut, vt = target.gens()
+assert target(nested) == (
+    (ut**4*vt + ut**2 + ut*vt + 1) /
+    (ut**5 + ut**3 + ut**2 + 1)
+)
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

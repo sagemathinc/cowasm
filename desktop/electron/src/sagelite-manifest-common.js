@@ -316,7 +316,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 212,
+  schemaVersion: 213,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -429,6 +429,8 @@ expectedSageliteManifest.smokeContract +=
   "-padic-local-ntl-context-numeric-log-v183";
 expectedSageliteManifest.smokeContract +=
   "-constant-polynomial-localization-v184";
+expectedSageliteManifest.smokeContract +=
+  "-recursive-fraction-polynomial-v185";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

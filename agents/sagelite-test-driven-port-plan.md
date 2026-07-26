@@ -77282,3 +77282,75 @@ under `/tmp/cowasm-sagelite-fraction-unit.HzGpp9/`. A future scheduled pass
 can fix the recursive multivariate fraction conversion or polynomial-gcd
 islands still persisted in the same module, or return to the mixed-field PARI
 ownership defect.
+
+Recursive fraction-polynomial conversion delivery pass on 2026-07-26 UTC:
+
+The remaining recursive-conversion row in `sage/rings/fraction_field.py`
+constructs a polynomial in `y` over `Frac(ZZ[x])` and converts it to
+`Frac(ZZ[x,y])`. Selecting the historical known-bug row reproduced
+`TypeError: x^2 + 1 is not a constant polynomial`. The ordinary Sage
+constructor clears coefficient denominators, then relies on mixed polynomial
+multiplication to select the multivariate target parent. Sagelite's generic
+polynomial backend retained the univariate source parent instead, so the
+multivariate constructor later tried to coerce the nonconstant coefficient
+numerator into `ZZ`.
+
+The accumulated Sage patch now gives the one-argument fraction-field
+constructor a narrow fallback after direct element construction fails. When
+the input is a univariate polynomial, its variable exists in the target, and
+the source coefficient ring coerces to the target fraction field, the
+constructor evaluates the polynomial directly at that target generator. This
+preserves Sage's intended recursive coercion without weakening constant
+polynomial conversion or accepting unrelated variables. The obsolete
+known-bug annotation is removed, and the focused row records:
+
+```text
+fraction_field.py:612: 1 passed, 0 failed, 0 skipped
+```
+
+The complete ordinary browser-profile dashboard and the strict focused make
+target from a clean shared clone of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+fraction_field.py: 266 passed, 0 failed, 32 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The remaining 32 skips comprise sixteen PARI rows, five Magma rows, four
+polynomial-gcd known bugs, and seven rows for the existing finite-ring,
+number-field, symbolic, complex-double, and real-field boundaries. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the direct and strict-make dashboards agree across all 298 ordered stable
+block rows.
+
+The standalone and Electron-shaped Laurent-polynomial delivery smokes now
+also require the recursive `Frac(ZZ[x])[y]` to `Frac(ZZ[x,y])` conversion and
+its exact normalized numerator and denominator. The Electron manifest schema
+advances to 213 and its smoke contract to
+`recursive-fraction-polynomial-v185`. A manifest-validated copy-on-write
+resource bundle covers all 759 required resource hashes and passes the
+complete Electron smoke.
+
+Validation includes the failing selected-deferred baseline; the focused
+active replay; complete ordinary and strict-make dashboards; saved lifecycle,
+failure, and skip queries; SQLite integrity and exact stable-row comparison;
+the Electron manifest, forge-resource, and runtime tests; the complete
+Electron-shaped smoke; shell and JavaScript syntax; accumulated-patch syntax;
+complete sequential application against a clean archive and a clean shared
+clone of the pinned source; byte-for-byte reconstructed fraction-field source
+comparison; Python compilation; rejection of a second forward patch
+application; corpus uniqueness and path existence; full-target dry run; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; `fraction_field.py` was already promoted. The accumulated
+patch remains at 1,829 serialized target sections (1,316 `diff --git` and 513
+header-only legacy sections) and 5,960 hunks because this pass again replaces
+one obsolete metadata hunk with one runtime hunk. Focused, complete,
+strict-make, query, manifest, Electron, clean-reconstruction, full-target
+dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-frac-recursive-fixed.m1wQOz/`. A future scheduled pass
+can implement the remaining polynomial-gcd island in the same module or
+return to the mixed-field PARI ownership defect.
