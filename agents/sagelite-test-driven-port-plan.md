@@ -76529,3 +76529,66 @@ patch-replay evidence is under
 `/tmp/cowasm-sagelite-fraction-element.VmMheI/`. A future scheduled pass can
 audit another compact guarded ring namespace or turn one of the persisted
 fraction-field semantic gaps into a runtime fix.
+
+Prime finite-field guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/finite_field_prime_modn.py` retained a historical
+file-wide number-field guard from an earlier runtime where its quadratic-field
+coercion example timed out. A runner-version-154 replay selecting that feature
+against the current Electron resource bundle now completes in about 14
+seconds:
+
+```text
+finite_field_prime_modn.py selected: 42 passed, 4 failed, 2 skipped
+run lifecycle:                       failed and closed
+SQLite integrity:                    ok
+```
+
+The old timeout no longer reproduces. All four failures form one focused
+PARI-backed sequence: constructing `QuadraticField(337)` reaches the
+intentionally incomplete cypari2 object model, and the following ideal,
+residue-field, and homomorphism rows depend on that assignment. A separate
+feature-selected replay confirmed that the existing prime-constructor and
+p-adic coercion annotations are stale: both rows pass in the browser runtime.
+
+The accumulated WASI patch now removes the broad number-field guard, removes
+those two stale inline annotations, and gives the four-row quadratic-field
+sequence focused `sage.libs.pari` metadata. The ordinary browser profile and
+strict focused make target against a clean reconstruction of pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+finite_field_prime_modn.py: 44 passed, 0 failed, 4 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+All four skips are queryable as `optional:sage.libs.pari`. Saved block-failure
+and file-error queries are empty, active-row coverage is 100%, and the direct
+and strict-make dashboards agree exactly across all 48 ordered stable block
+fields, including raw actual output.
+
+`sage/rings/finite_rings/finite_field_prime_modn.py` is now part of the
+curated pure-math corpus, raising it to 1,345 non-comment entries with no
+duplicates or missing paths. This pass changes only focused doctest dependency
+metadata and corpus membership; no native rebuild, Electron manifest change,
+or resource restaging is required.
+
+Validation includes the historical-feature baseline; the finite-ring and
+p-adic inline-feature replay; ordinary and strict focused-make dashboards;
+saved lifecycle, failure, and skip queries; SQLite integrity and exact
+stable-row comparison; Python syntax checks; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against the clean pinned source; byte-for-byte
+reconstructed-source comparison; rejection of a second forward patch
+application; and `git diff --check`. The external developer checkout and its
+unrelated matrix, integer-ring, complex-roots, and SQLite changes remain
+untouched.
+
+The accumulated patch now contains 1,823 serialized target sections (1,310
+`diff --git` and 513 header-only legacy sections) and 5,818 hunks. Baseline,
+inline-feature, ordinary, strict-make, query, clean-reconstruction,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-prime-field.T6Hpek/`. A future scheduled pass can audit
+another compact guarded finite-ring namespace or turn one of the persisted
+core fraction-field semantic gaps into a runtime fix.

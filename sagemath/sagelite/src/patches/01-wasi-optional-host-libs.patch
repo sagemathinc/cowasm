@@ -39028,3 +39028,23 @@ diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction
 @@ -138 +137 @@ cdef class FractionFieldElement(FieldElement):
 -            ((-i))/b
 +            (-i)/b
+diff --git a/src/sage/rings/finite_rings/finite_field_prime_modn.py b/src/sage/rings/finite_rings/finite_field_prime_modn.py
+--- a/src/sage/rings/finite_rings/finite_field_prime_modn.py
++++ b/src/sage/rings/finite_rings/finite_field_prime_modn.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.number_field
+@@ -51 +50 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
+-        sage: FiniteField(next_prime(1000))                                             # needs sage.rings.finite_rings
++        sage: FiniteField(next_prime(1000))
+@@ -112,4 +111,4 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
+-            sage: K.<w> = QuadraticField(337)  # See trac 11319
+-            sage: pp = K.ideal(13).factor()[0][0]
+-            sage: RF13 = K.residue_field(pp)
+-            sage: RF13.hom([GF(13)(1)])
++            sage: K.<w> = QuadraticField(337)  # See trac 11319                    # needs sage.libs.pari
++            sage: pp = K.ideal(13).factor()[0][0]                                 # needs sage.libs.pari
++            sage: RF13 = K.residue_field(pp)                                      # needs sage.libs.pari
++            sage: RF13.hom([GF(13)(1)])                                           # needs sage.libs.pari
+@@ -135 +134 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
+-            sage: GF(3).has_coerce_map_from(Zp(3))                                      # needs sage.rings.padics
++            sage: GF(3).has_coerce_map_from(Zp(3))
