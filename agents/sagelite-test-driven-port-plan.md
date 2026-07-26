@@ -77718,3 +77718,81 @@ patch-replay evidence is under
 `/tmp/cowasm-sagelite-construction-*.log` files. A future scheduled pass can
 select another persisted pure-math semantic gap or revisit one of the
 explicit dependency-boundary skips.
+
+Finite-field section-root delivery pass on 2026-07-26 UTC:
+
+The last deferred input-validation row in
+`sage/rings/finite_rings/hom_finite_field.pyx` was classified as a PARI
+fallback exception mismatch. A selected `# known bug` replay against the
+current runtime instead passed unchanged, proving that the recent finite-field
+ownership and construction work had made the annotation stale.
+
+Removing that annotation and replaying the complete module exposed a related
+five-row inverse-image cluster. `SectionFiniteFieldHomomorphism_generic`
+requested polynomial roots with their default multiplicities even though the
+method discarded every multiplicity. The browser fallback could compute the
+roots but deliberately declined the stronger factor-with-multiplicities path,
+so section and inverse-image checks raised `NotImplementedError` instead of
+returning a preimage or the expected out-of-image `ValueError`.
+
+The accumulated Sage patch now requests `multiplicities=False` and iterates
+the returned root elements directly. With that correction, the five active
+inverse-image rows pass. A feature-selected replay then activated all seven
+historical `sage.libs.pari` rows in the module and recorded 201 passes with no
+failures or skips, so those seven obsolete dependency annotations are removed
+along with the stale known-bug annotation.
+
+The complete ordinary browser-profile dashboard against the final rebuilt
+resource bundle records:
+
+```text
+hom_finite_field.pyx: 201 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+This improves the preceding curated result from 193 passed, 0 failed, and
+8 skipped. Saved block-failure, file-error, and skip queries are empty, and
+active-row coverage is 100%. The clean strict make dashboard and final
+rebuilt-bundle dashboard agree across all 201 ordered rows on every stable
+block field. Their only raw actual-output differences are the expected
+nondeterministic values from two hash examples and one cyfunction address.
+
+The standalone and Electron-shaped finite-field smokes now require a
+`GF(3^7)` to `GF(3^21)` section round trip that failed before the
+multiplicity-free change, plus exact `TypeError` handling for a finite-field
+element supplied as a Frobenius power. The Electron manifest schema advances
+to 219 and its smoke contract to `finite-field-section-roots-v191`.
+
+A complete standalone reconstruction from a clean shared clone of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` regenerated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import smokes and doctest-runner self-tests, audited 523 staged and 578
+Electron side modules, emitted a clean-source schema-219 manifest with hashes
+for all 760 required resources, and passed the complete Electron-shaped smoke
+including relocated-resource validation.
+
+Validation additionally includes the selected deferred baseline; the
+five-failure pre-fix dashboard; complete ordinary, PARI-selected, clean strict
+make, and final rebuilt-bundle dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and stable-row comparison; the discriminating
+section-root fixture against old and rebuilt modules; all desktop Electron
+manifest, forge-resource, and runtime tests; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte reconstructed target comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; full-target dry run; and `git diff --check`. The external developer
+checkout and its unrelated matrix, integer-ring, complex-roots, and SQLite
+changes remain untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; `hom_finite_field.pyx` was already promoted. The accumulated
+patch remains at 1,832 serialized target sections (1,319 `diff --git` and 513
+header-only legacy sections) and now contains 5,954 hunks after replacing
+eight obsolete metadata hunks with one runtime hunk. Baseline, focused,
+strict-make, final, query, and comparison evidence is under
+`/tmp/cowasm-sagelite-frobenius-input.FVZrRn/`; clean patch replay is under
+`/tmp/cowasm-sagelite-frobenius-replay.EPgLcP/`; and the clean shared clone is
+under `/tmp/cowasm-sagelite-frobenius-clone.nvmuQb/`. A future scheduled pass
+can select another persisted pure-math semantic gap or revisit one of the
+remaining explicit dependency-boundary skips.

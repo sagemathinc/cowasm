@@ -546,6 +546,19 @@ except ValueError as error:
     assert str(error) == 'variable name illegal in PARI'
 else:
     raise AssertionError('reserved PARI finite-field name was accepted')
+from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
+K125 = GF(5**3, 't')
+try:
+    FrobeniusEndomorphism_finite_field(K125, K125.gen())
+except TypeError as error:
+    assert str(error) == 'n (=t) is not an integer'
+else:
+    raise AssertionError('finite-field Frobenius accepted a non-integer power')
+from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+section_domain = GF(3**7, 's')
+section_codomain = GF(3**21, 'S')
+embedding = FiniteFieldHomomorphism_generic(section_domain.Hom(section_codomain))
+assert embedding.section()(embedding(section_domain.gen())) == section_domain.gen()
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");

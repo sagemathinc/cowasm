@@ -33883,30 +33883,10 @@ diff --git a/src/sage/rings/finite_rings/hom_finite_field.pyx b/src/sage/rings/f
 +++ b/src/sage/rings/finite_rings/hom_finite_field.pyx
 @@ -1,1 +1,0 @@
 -# sage.doctest: needs sage.rings.finite_rings
-@@ -39,1 +38,1 @@
--    sage: g(f(a)) == a
-+    sage: g(f(a)) == a                                                       # needs sage.libs.pari
-@@ -137,1 +136,1 @@
--            sage: g(f(a)) == a
-+            sage: g(f(a)) == a                                               # needs sage.libs.pari
-@@ -261,1 +260,1 @@
--            sage: g.section()(g(t)) == f.section()(f(t))
-+            sage: g.section()(g(t)) == f.section()(f(t))                     # needs sage.libs.pari
-@@ -313,1 +312,1 @@
--            sage: f(a*b) == f(a) * f(b)
-+            sage: f(a*b) == f(a) * f(b)                                     # needs sage.libs.pari
-@@ -379,1 +378,1 @@
--            sage: g(f(a) + f(b)) == a + b
-+            sage: g(f(a) + f(b)) == a + b                                   # needs sage.libs.pari
-@@ -490,1 +489,1 @@
--        sage: TestSuite(Frob).run()
-+        sage: TestSuite(Frob).run()                                          # needs sage.libs.pari
-@@ -518,1 +517,1 @@
--            sage: FrobeniusEndomorphism_finite_field(k, t)
-+            sage: FrobeniusEndomorphism_finite_field(k, t)                   # known bug - PARI fallback reports ValueError for non-prime-field elements
-@@ -841,1 +840,1 @@
--            sage: Frob == phi
-+            sage: Frob == phi                                                # needs sage.libs.pari
+@@ -148,1 +147,2 @@
+-        for root, _ in x.minimal_polynomial().roots(ring=self.codomain()):
++        for root in x.minimal_polynomial().roots(ring=self.codomain(),
++                                                 multiplicities=False):
 diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finite_rings/element_base.pyx
 --- a/src/sage/rings/finite_rings/element_base.pyx
 +++ b/src/sage/rings/finite_rings/element_base.pyx

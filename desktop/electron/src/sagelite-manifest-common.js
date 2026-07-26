@@ -317,7 +317,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 218,
+  schemaVersion: 219,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -442,6 +442,8 @@ expectedSageliteManifest.smokeContract +=
   "-pari-ffelt-reserved-name-v189";
 expectedSageliteManifest.smokeContract +=
   "-finite-field-construction-flags-v190";
+expectedSageliteManifest.smokeContract +=
+  "-finite-field-section-roots-v191";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

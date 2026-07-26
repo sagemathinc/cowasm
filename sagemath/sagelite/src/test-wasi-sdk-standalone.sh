@@ -2121,6 +2121,19 @@ reconstructed = Fq_X.one()
 for root in roots:
     reconstructed *= Fq_X.gen() - root
 assert reconstructed == pol
+from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
+K125 = FiniteField(5**3, 't')
+try:
+    FrobeniusEndomorphism_finite_field(K125, K125.gen())
+except TypeError as error:
+    assert str(error) == 'n (=t) is not an integer'
+else:
+    raise AssertionError('finite-field Frobenius accepted a non-integer power')
+from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+section_domain = FiniteField(3**7, 's')
+section_codomain = FiniteField(3**21, 'S')
+embedding = FiniteFieldHomomorphism_generic(section_domain.Hom(section_codomain))
+assert embedding.section()(embedding(section_domain.gen())) == section_domain.gen()
 print('sagelite-node-ok Sage PARI finite-field ownership boundary')"
 
 : >"$followups_file"
@@ -2359,7 +2372,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=218
+electron_manifest_schema_version=219
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2437,6 +2450,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-lie-additi
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-ownership-v188"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-reserved-name-v189"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-construction-flags-v190"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-section-roots-v191"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
