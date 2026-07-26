@@ -316,7 +316,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 214,
+  schemaVersion: 215,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -433,6 +433,8 @@ expectedSageliteManifest.smokeContract +=
   "-recursive-fraction-polynomial-v185";
 expectedSageliteManifest.smokeContract +=
   "-fraction-polynomial-gcd-v186";
+expectedSageliteManifest.smokeContract +=
+  "-lie-additive-identity-v187";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

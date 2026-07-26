@@ -77432,3 +77432,68 @@ patch-replay trees are under the corresponding
 `/tmp/cowasm-sagelite-fraction-gcd-*` paths. A future scheduled pass can
 return to the mixed-field PARI finite-field ownership defect or select
 another persisted pure-math semantic gap.
+
+Lie-algebra additive-identity delivery pass on 2026-07-26 UTC:
+
+The reopened `sage/categories/examples/lie_algebras.py` dashboard retained
+one active arithmetic row behind `# known bug`. Selecting that row reproduced
+`TypeError: unsupported operand type(s) for +: 'int' and
+'LieAlgebraFromAssociative_with_category.element_class'`. The example element
+already implemented same-parent addition and supplied its parent zero, but
+its inherited reverse-addition slot rejected the raw Python integer zero with
+which `sum()` starts.
+
+The accumulated Sage patch now gives this example element a narrow
+`__radd__` identity path: raw `0 + x` returns `x`, while every other
+left-hand operand remains `NotImplemented` and continues through Python's
+ordinary arithmetic error path. The obsolete known-bug annotation is removed.
+Focused replays cover both the original `sum()` row and the new explicit raw
+integer identity fixture.
+
+The complete direct dashboard, the strict focused make dashboard against a
+clean archive reconstruction, and the final dashboard against the fully
+rebuilt resource bundle all record:
+
+```text
+lie_algebras.py: 70 passed, 0 failed, 4 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates the one persisted row and improves the ordinary browser
+profile from 69 passed, 0 failed, and 5 skipped. The four retained skips are
+all explicit `sage.libs.symmetrica` rows. Saved block-failure and file-error
+queries are empty, active-row coverage is 100%, and the direct and strict
+dashboards agree exactly across all 74 ordered stable rows.
+
+The standalone and Electron-shaped smokes now require raw-zero addition,
+ordinary generator summation, and cancellation back to the Lie algebra's
+parent zero. The Electron manifest schema advances to 215 and its smoke
+contract to `lie-additive-identity-v187`. A full standalone reconstruction
+from a clean shared checkout of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` regenerated all 527 Cython
+sources, compiled and linked all 1,064 targets, passed all 90 Node import
+smokes and doctest-runner self-tests, emitted a manifest with 759 required
+resource hashes, and passed the complete Electron-shaped smoke.
+
+Validation also includes the failing selected-deferred baseline; both focused
+active fixtures; complete direct, clean strict, and final rebuilt-bundle
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; all Electron manifest, forge-resource, and
+runtime tests; a second complete Electron smoke against the regenerated
+bundle; shell and JavaScript syntax; accumulated-patch syntax; complete
+sequential patch application against a clean archive; byte-for-byte
+reconstructed `lie_algebras.py` comparison; rejection of a second forward
+patch application; corpus uniqueness and path existence; full-target dry
+run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; `lie_algebras.py` was already promoted. The accumulated patch
+now contains 1,831 serialized target sections (1,318 `diff --git` and 513
+header-only legacy sections) and 5,964 hunks. Baseline and focused evidence
+is under `/tmp/cowasm-sagelite-lie-sum.MJcelC/`; clean replay and strict-make
+evidence is under `/tmp/cowasm-sagelite-lie-replay.MCPa7H/`; final
+rebuilt-bundle and full-target dry-run evidence is under
+`/tmp/cowasm-sagelite-lie-final.xVq0Lz/`. A future scheduled pass can return
+to the mixed-field PARI finite-field ownership defect or select another
+persisted pure-math semantic gap.

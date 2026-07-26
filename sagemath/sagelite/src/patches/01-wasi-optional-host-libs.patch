@@ -39554,3 +39554,31 @@ diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
          Num = Pol.change_ring(self.base())
          f1 = Num(f.numerator())
          g1 = Num(g.numerator())
+diff --git a/src/sage/categories/examples/lie_algebras.py b/src/sage/categories/examples/lie_algebras.py
+--- a/src/sage/categories/examples/lie_algebras.py
++++ b/src/sage/categories/examples/lie_algebras.py
+@@ -217 +217 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
+-                sage: bool(sum(L.lie_algebra_generators()))  # known bug - sum starts with the integer zero
++                sage: bool(sum(L.lie_algebra_generators()))
+@@ -223,0 +224,18 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
++        def __radd__(self, lhs):
++            """
++            Add ``self`` from the right.
++
++            This makes the integer zero used by :func:`sum` act as the
++            additive identity.
++
++            EXAMPLES::
++
++                sage: L = LieAlgebras(QQ).example()
++                sage: x, y = L.lie_algebra_generators()
++                sage: 0r + x == x
++                True
++            """
++            if lhs == 0:
++                return self
++            return NotImplemented
++
+         def _add_(self, rhs):
+             """
+             Add ``self`` and ``rhs``.

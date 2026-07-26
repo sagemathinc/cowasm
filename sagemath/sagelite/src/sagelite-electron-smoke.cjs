@@ -687,6 +687,12 @@ left = (parameter*w + 1)**2
 right = (w + parameter)**2
 assert left.gcd(right) == T.one()
 assert (left*(w-a)).gcd(right*(w-a)) == w - a
+from sage.all import LieAlgebras
+L = LieAlgebras(QQ).example()
+lx, ly = L.lie_algebra_generators()
+assert 0 + lx == lx
+assert sum((lx, ly)) == lx + ly
+assert sum((lx, -lx)) == L.zero()
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

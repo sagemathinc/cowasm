@@ -1575,6 +1575,13 @@ assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is T
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
 print('sagelite-node-ok category parameter refinement delivery smoke')"
+run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
+L = LieAlgebras(QQ).example()
+x, y = L.lie_algebra_generators()
+assert 0 + x == x
+assert sum((x, y)) == x + y
+assert sum((x, -x)) == L.zero()
+print('sagelite-node-ok Lie algebra additive identity delivery smoke')"
 run_node_import "set element construction delivery smoke" "import sage.all
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.integer import Integer
@@ -2326,7 +2333,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=214
+electron_manifest_schema_version=215
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2400,6 +2407,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-loca
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-constant-polynomial-localization-v184"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-recursive-fraction-polynomial-v185"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-polynomial-gcd-v186"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-lie-additive-identity-v187"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
