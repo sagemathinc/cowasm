@@ -76999,3 +76999,85 @@ patch-replay evidence is under
 the persisted FFELT conversion or cached-Frobenius cypari2 boundaries into
 runtime fixes, or return to one of the persisted core fraction-field semantic
 gaps.
+
+PARI-convertible object and named-polynomial delivery pass on 2026-07-26 UTC:
+
+The newly reopened `element_pari_ffelt.pyx` dashboard exposed two focused
+`Pari(x)` rows whose Sage elements already returned valid owned PARI `Gen`
+objects through `__pari__()`, but CoWasm's focused `objtogen` rejected every
+non-built-in object before consulting that hook. Adding the hook alone moved
+the failure from `NotImplementedError` to output mismatch because the
+focused `Gen.Polrev(name)` implementation also ignored `name` and always
+constructed PARI's default variable `x`.
+
+The cypari2 boundary now accepts an available `__pari__()` hook only when it
+returns a real `Gen`. Invalid return values fail explicitly, while hooks that
+need intentionally absent converter modules retain the existing
+`NotImplementedError` fallback contract. `Polrev(name)` now passes the
+requested user-variable number to PARI's `gtopolyrev`, and reserved names such
+as `I` still raise `PariError`. Consequently PARI-backed finite fields are
+constructed with their requested generators while their elements preserve
+the required `t_FFELT` type; this avoids the tempting but incorrect workaround
+of reparsing the element's display string as a `t_POL`.
+
+Runner-version-154 focused replays against the final manifest-validated
+copy-on-write resource bundle record:
+
+```text
+element_pari_ffelt.pyx:254:   1 passed, 0 failed
+element_pari_ffelt.pyx:265:   1 passed, 0 failed
+element_pari_ffelt.pyx:1323:  1 passed, 0 failed
+real_double.pyx:1954:         1 passed, 0 failed
+```
+
+The real-double row is an important negative-path regression: its `__pari__`
+hook imports `cypari2.convert`, which remains outside the focused profile, so
+`objtogen` must preserve the source-level mpmath/PSLQ fallback rather than
+leaking `ModuleNotFoundError`. An initial broad standalone rebuild caught
+exactly that regression; the corrected implementation passes the dedicated
+cypari2 standalone suite and the complete Electron-shaped resource smoke,
+including the existing renamed-FFELT type and real-double algebraic-dependency
+contracts.
+
+The complete ordinary FFELT dashboard improves from the previous
+273 passed, 0 failed, and 34 skipped to:
+
+```text
+element_pari_ffelt.pyx: 276 passed, 0 failed, 31 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The three newly active rows are both `Pari(x)` conversions and direct
+`b.__pari__()` display with the Sage generator name. The remaining 31 skips
+comprise fourteen GAP rows, seven PARI-backed polynomial-root or cached-
+Frobenius rows, six combined PARI/pexpect/subprocess rows, two existing
+not-tested timing rows, one reserved-variable diagnostic known bug, and one
+Magma row. Saved block-failure and file-error queries are empty and active-row
+coverage is 100%.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; the module was already promoted in the preceding pass. The
+accumulated Sage patch removes only the three obsolete skip annotations and
+otherwise preserves the existing type-safe WASI `__pari__` behavior.
+
+Validation includes the cypari2 standalone build and positive, invalid-return,
+missing-converter, named-variable, and reserved-variable smokes; focused and
+complete SQLite replays; saved lifecycle, failure, and skip queries; SQLite
+integrity; a three-step focused Cython/native FFELT rebuild; validation of all
+759 resource hashes; the complete Electron-shaped smoke; accumulated-patch
+syntax; complete application against a clean archive of pinned Sagelite
+commit `f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+FFELT source comparison; rejection of a second forward application; corpus
+uniqueness and path existence; full-target dry run; shell syntax; restored
+Python/WASI ABI validation after an interrupted redundant wrapper rebuild; and
+`git diff --check`.
+
+The accumulated patch still contains 1,829 serialized target sections (1,316
+`diff --git` and 513 header-only legacy sections) and now contains 5,967
+hunks. Focused, complete, query, copy-on-write resource, Electron, clean-
+reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-cypari-hook-final.OsxoXN/`. A future scheduled pass can
+implement the remaining cached-Frobenius `Gen.fffrobenius` boundary, audit the
+PARI-backed polynomial-root island, or return to a persisted fraction-field
+semantic gap.

@@ -19,8 +19,14 @@ runtime also exposes the PARI integer operations needed by Sagelite's current
 pure-integer doctest slice, including factorization, `nextprime`, `znorder`,
 `ispseudoprime`, `isprimepower`, and `ispseudoprimepower`.
 Exact rational-like Python and Sage values can also cross the focused
-`objtogen` boundary, and Sage's dedicated PARI-to-rational converter remains
-discoverable when converting a `Gen` back to `QQ`.
+`objtogen` boundary. Sage extension types whose available `__pari__()` hook
+returns a real `Gen` can use the same boundary without falling back to lossy
+string conversion; hooks requiring converter modules outside the focused
+profile retain the explicit `NotImplementedError` fallback contract. Sage's
+dedicated PARI-to-rational converter also remains discoverable when converting
+a `Gen` back to `QQ`. The focused polynomial-vector conversion honors the
+requested `Polrev(name)` variable, preserving named generators when Sage
+constructs PARI-backed finite fields.
 
 The standalone target now also builds private
 `cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules

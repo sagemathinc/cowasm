@@ -649,9 +649,11 @@ cdef extern from *:
     }
 
     static int cowasm_cypari2_gen_clone_polrev(GEN input,
+                                               const char *variable,
                                                GEN *result,
                                                long *errnum) {
       int ok = 1;
+      long variable_number = -1;
 
       *result = NULL;
       *errnum = 0;
@@ -663,7 +665,10 @@ cdef extern from *:
         ok = 0;
       }
       pari_TRY {
-        *result = gclone(gtopolyrev(input, -1));
+        if (variable != NULL) {
+          variable_number = fetch_user_var(variable);
+        }
+        *result = gclone(gtopolyrev(input, variable_number));
       }
       pari_ENDCATCH;
 
@@ -738,6 +743,7 @@ cdef extern from *:
                                      GEN *result,
                                      long *errnum)
     int cowasm_cypari2_gen_clone_polrev(GEN input,
+                                        const char *variable,
                                         GEN *result,
                                         long *errnum)
 
@@ -1033,10 +1039,17 @@ cdef class Gen(Gen_base):
         return _new_owned(result)
 
     def Polrev(self, _variable=None):
+        cdef bytes encoded
+        cdef const char *variable = NULL
         cdef GEN result = NULL
         cdef long errnum = 0
 
-        if not cowasm_cypari2_gen_clone_polrev(self.g, &result, &errnum):
+        if _variable is not None:
+            encoded = str(_variable).encode("ascii")
+            variable = <const char *>encoded
+        if not cowasm_cypari2_gen_clone_polrev(
+            self.g, variable, &result, &errnum
+        ):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -1181,6 +1194,8 @@ cpdef Gen objtogen(s):
     cdef bytes encoded
     cdef GEN result = NULL
     cdef long errnum = 0
+    cdef object pari_method
+    cdef object pari_value
     cdef str text
     cdef list converted
     cdef object rational_parts
@@ -1217,6 +1232,23 @@ cpdef Gen objtogen(s):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    # Sage extension types expose their native PARI value through this hook.
+    # Keep the focused built-in conversions above, then accept only the real
+    # Gen contract here rather than stringifying arbitrary Python objects.
+    # Some Sage hooks import cypari2 converter modules outside this focused
+    # profile; treat those as unavailable so callers retain the established
+    # NotImplementedError fallback contract.
+    pari_method = getattr(s, "__pari__", None)
+    if pari_method is not None:
+        try:
+            pari_value = pari_method()
+        except ImportError:
+            pass
+        else:
+            if not isinstance(pari_value, Gen):
+                raise TypeError("__pari__() must return a cypari2 Gen")
+            return <Gen>pari_value
 
     _missing_runtime()
 
@@ -1767,6 +1799,41 @@ assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
 assert PariError.__module__ == "builtins"
 assert str(objtogen([1, 2, 3])) == "[1, 2, 3]"
+assert str(objtogen([1, 2, 3]).Polrev()) == "3*x^2 + 2*x + 1"
+assert str(objtogen([1, 2, 3]).Polrev("t")) == "3*t^2 + 2*t + 1"
+try:
+    objtogen([1, 2, 3]).Polrev("I")
+except PariError:
+    pass
+else:
+    raise AssertionError("reserved PARI variable name was accepted")
+
+class PariConvertible:
+    def __pari__(self):
+        return objtogen(37)
+
+class InvalidPariConvertible:
+    def __pari__(self):
+        return 37
+
+class UnavailablePariConvertible:
+    def __pari__(self):
+        raise ModuleNotFoundError("focused converter is unavailable")
+
+assert str(objtogen(PariConvertible())) == "37"
+try:
+    objtogen(InvalidPariConvertible())
+except TypeError as err:
+    assert str(err) == "__pari__() must return a cypari2 Gen"
+else:
+    raise AssertionError("invalid __pari__ conversion did not fail closed")
+try:
+    objtogen(UnavailablePariConvertible())
+except NotImplementedError as err:
+    assert "focused PARI Gen subset" in str(err)
+else:
+    raise AssertionError("unavailable __pari__ converter did not fail closed")
+
 assert isinstance(Gen(1), Gen_base)
 assert int(Gen(360)) == 360
 assert int(Gen(-8)) == -8

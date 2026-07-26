@@ -39383,12 +39383,6 @@ diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings
 @@ -218 +217 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -        sage: a.parent()
 +        sage: a.parent()                                                                # needs sage.libs.gap
-@@ -255 +254 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
--        sage: pari(x)
-+        sage: pari(x)                                                                   # needs sage.libs.pari
-@@ -266 +265 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
--        sage: pari(x)
-+        sage: pari(x)                                                                   # needs sage.libs.pari
 @@ -388,2 +387,2 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: R = [r[0] for r in pol.roots()]
 -            sage: prod(Fq_X.gen() - r for r in R) == pol
@@ -39409,9 +39403,6 @@ diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings
 @@ -916 +915 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: x.pth_power(-1)**127 == x
 +            sage: x.pth_power(-1)**127 == x                                             # needs sage.libs.pari
-@@ -1324 +1323 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
--            sage: b.__pari__()
-+            sage: b.__pari__()                                                          # known bug
 @@ -1330 +1329 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: pari(I)
 +            sage: pari(I)                                                               # known bug
