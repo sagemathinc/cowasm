@@ -1344,3 +1344,4 @@ src/sage/rings/ring_extension_homset.py
 src/sage/rings/ring_extension_conversion.pyx
 src/sage/rings/ring_extension_morphism.pyx
 src/sage/rings/ring_extension_element.pyx
+src/sage/rings/ring_extension.pyx
