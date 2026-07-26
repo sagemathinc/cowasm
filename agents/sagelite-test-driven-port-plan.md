@@ -75908,3 +75908,78 @@ The next milestone is complete when:
 - failures can be grouped into actionable root-cause clusters;
 - the fast Sagelite standalone smoke remains separate and passes its Node,
   `python-wasi-sdk`, doctest, and Electron resource probes.
+
+Core valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/valuation/valuation.py` retained the last broad guard on the
+abstract valuation module. A runner-version-154 feature-selected replay
+reached the totally ramified Montes-factorization example before block
+checkpointing and trapped in the capped-relative p-adic extension module:
+
+```text
+active source line: R.<w> = R.extension(w^3 + 5)
+native trap:       NTL modulus unset in padic_ZZ_pX_CR_element
+```
+
+Giving that contiguous extension sequence its focused NTL requirement and
+removing the file-wide guard produced a complete classification dashboard:
+
+```text
+valuation.py classified: 178 passed, 44 failed, 12 skipped
+run lifecycle:           failed and closed
+SQLite integrity:        ok
+```
+
+The 44 active failures were dependency islands rather than a defect in the
+abstract valuation classes: 39 PPL/Newton-polyhedron rows, including
+dependent assertions; two focused cypari2 object-model rows; two
+Gaussian-integer namespace rows; and one GAP-backed Galois check. The
+accumulated WASI patch now keeps each of those rows behind focused
+polyhedron, PARI, number-field, or GAP metadata while leaving working setup
+and abstract-valuation coverage active.
+
+The ordinary browser profile and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+valuation.py:       178 passed, 0 failed, 56 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The 56 skips comprise 39 PPL/polyhedron rows, seven NTL extension rows, four
+long tests, two PARI rows, two number-field rows, one GAP row, and one
+pre-existing deferred test. Saved block-failure and file-error queries are
+empty, active-row coverage is 100%, and the ordinary and strict-make
+dashboards agree exactly across every persisted stable field and raw actual
+output for all 234 ordered rows.
+
+`sage/rings/valuation/valuation.py` is now part of the curated pure-math
+corpus, raising it to 1,335 non-comment entries with no duplicates or missing
+paths. This pass changes only focused doctest metadata and corpus membership;
+no native rebuild, Electron manifest schema, or standalone smoke-contract
+change is required.
+
+Validation includes the controlled NTL trap; the complete guardless
+classification dashboard; ordinary and strict focused-make dashboards;
+saved lifecycle, failure, and skip queries; SQLite integrity and exact
+stable-row comparison; Python syntax checks; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+source comparison; rejection of a second forward patch application; and
+`git diff --check`. The first strict-make refresh reproduced the external
+developer checkout's unrelated pre-existing patch conflict and replaced the
+generated workspace source before stopping. The workspace source was
+restored from the validated pinned reconstruction, and the successful strict
+run used that reconstruction directly; the external checkout remains
+untouched.
+
+Removing the core valuation guard and classifying its focused dependency
+boundaries raises the accumulated patch to 1,813 serialized target sections
+(1,300 `diff --git` and 513 header-only legacy sections) and 5,671 hunks.
+Trap, classification, ordinary, strict-make, query, clean-reconstruction,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-valuation.nRUq79/`. A future scheduled pass can audit
+the remaining guarded `sage/rings/valuation/inductive_valuation.py` module
+or select another persisted backend/runtime cluster.

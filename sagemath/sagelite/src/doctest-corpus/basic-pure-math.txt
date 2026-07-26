@@ -1337,3 +1337,4 @@ src/sage/rings/valuation/augmented_valuation.py
 src/sage/rings/valuation/gauss_valuation.py
 src/sage/rings/valuation/mapped_valuation.py
 src/sage/rings/valuation/limit_valuation.py
+src/sage/rings/valuation/valuation.py

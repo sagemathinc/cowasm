@@ -36185,3 +36185,331 @@ diff --git a/src/sage/rings/valuation/limit_valuation.py b/src/sage/rings/valuat
              sage: K = QQ
              sage: R.<t> = K[]
              sage: L.<t> = K.extension(t^2 + 1)
+
+diff --git a/src/sage/rings/valuation/valuation.py b/src/sage/rings/valuation/valuation.py
+--- a/src/sage/rings/valuation/valuation.py
++++ b/src/sage/rings/valuation/valuation.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.ntl
+ r"""
+ Discrete valuations
+
+@@ -14,7 +13,7 @@
+
+     sage: ZZ.valuation(2)
+     2-adic valuation
+-    sage: GaussianIntegers().valuation(3)
++    sage: GaussianIntegers().valuation(3)  # needs sage.rings.number_field
+     3-adic valuation
+     sage: QQ.valuation(5)
+     5-adic valuation
+@@ -422,9 +421,9 @@
+
+             sage: v = QQ.valuation(2)
+             sage: R.<x> = QQ[]
+-            sage: v.mac_lane_approximants(x^2 + 1)
++            sage: v.mac_lane_approximants(x^2 + 1)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]]
+-            sage: v.mac_lane_approximants(x^2 + 1, required_precision=infinity)
++            sage: v.mac_lane_approximants(x^2 + 1, required_precision=infinity)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2,
+                v(x^2 + 1) = +Infinity ]]
+             sage: v.mac_lane_approximants(x^2 + x + 1)
+@@ -434,7 +433,7 @@
+         factor `x + 1` and an approximate factor `x + 1` (which is an
+         approximation to `x - 1`)::
+
+-            sage: v.mac_lane_approximants(x^2 - 1)
++            sage: v.mac_lane_approximants(x^2 - 1)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = +Infinity ],
+              [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1 ]]
+
+@@ -455,19 +454,19 @@
+             sage: F = y^21 + x*y^20 + (x^3 + x + 1)*y^18 + (x^3 + 1)*y^17 + (x^4 + x)*y^16 + (x^7 + x^6 + x^3 + x + 1)*y^15 + x^7*y^14 + (x^8 + x^7 + x^6 + x^4 + x^3 + 1)*y^13 + (x^9 + x^8 + x^4 + 1)*y^12 + (x^11 + x^9 + x^8 + x^5 + x^4 + x^3 + x^2)*y^11 + (x^12 + x^9 + x^8 + x^7 + x^5 + x^3 + x + 1)*y^10 + (x^14 + x^13 + x^10 + x^9 + x^8 + x^7 + x^6 + x^3 + x^2 + 1)*y^9 + (x^13 + x^9 + x^8 + x^6 + x^4 + x^3 + x)*y^8 + (x^16 + x^15 + x^13 + x^12 + x^11 + x^7 + x^3 + x)*y^7 + (x^17 + x^16 + x^13 + x^9 + x^8 + x)*y^6 + (x^17 + x^16 + x^12 + x^7 + x^5 + x^2 + x + 1)*y^5 + (x^19 + x^16 + x^15 + x^12 + x^6 + x^5 + x^3 + 1)*y^4 + (x^18 + x^15 + x^12 + x^10 + x^9 + x^7 + x^4 + x)*y^3 + (x^22 + x^21 + x^20 + x^18 + x^13 + x^12 + x^9 + x^8 + x^7 + x^5 + x^4 + x^3)*y^2 + (x^23 + x^22 + x^20 + x^17 + x^15 + x^14 + x^12 + x^9)*y + x^25 + x^23 + x^19 + x^17 + x^15 + x^13 + x^11 + x^5
+             sage: x = K._ring.gen()
+             sage: v0 = K.valuation(GaussValuation(K._ring, valuations.TrivialValuation(k)).augmentation(x,1))
+-            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # assumes squarefree for speed
++            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by (x)-adic valuation, v(y + x + 1) = 3/2 ],
+              [ Gauss valuation induced by (x)-adic valuation, v(y) = 1 ],
+              [ Gauss valuation induced by (x)-adic valuation, v(y) = 4/3 ],
+              [ Gauss valuation induced by (x)-adic valuation, v(y^15 + y^13 + y^12 + y^10 + y^9 + y^8 + y^4 + y^3 + y^2 + y + 1) = 1 ]]
+             sage: v0 = K.valuation(GaussValuation(K._ring, valuations.TrivialValuation(k)).augmentation(x+1,1))
+-            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # assumes squarefree for speed
++            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by (x + 1)-adic valuation, v(y + x^2 + 1) = 7/2 ],
+              [ Gauss valuation induced by (x + 1)-adic valuation, v(y) = 3/4 ],
+              [ Gauss valuation induced by (x + 1)-adic valuation, v(y) = 7/2 ],
+              [ Gauss valuation induced by (x + 1)-adic valuation, v(y^13 + y^12 + y^10 + y^7 + y^6 + y^3 + 1) = 1 ]]
+             sage: v0 = valuations.FunctionFieldValuation(K, GaussValuation(K._ring, valuations.TrivialValuation(k)).augmentation(x^3+x^2+1,1))
+-            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # assumes squarefree for speed
++            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # needs sage.libs.pari
+             [[ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y + x^3 + x^2 + x) = 2, v(y^2 + (x^6 + x^4 + 1)*y + x^14 + x^10 + x^9 + x^8 + x^5 + x^4 + x^3 + x^2 + x) = 5 ],
+              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^2 + (x^2 + x)*y + 1) = 1 ],
+              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + (x + 1)*y^2 + (x + 1)*y + x^2 + x + 1) = 1 ],
+@@ -483,7 +482,7 @@
+             sage: v0 = GaussValuation(K._ring, QQ.valuation(3))
+             sage: v1 = v0.augmentation(K._ring.gen(),1/3)
+             sage: mu0 = valuations.FunctionFieldValuation(K, v1)
+-            sage: mu0.mac_lane_approximants(F)
++            sage: mu0.mac_lane_approximants(F)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 3-adic valuation, v(x) = 1/3 ], v(y + 2*x) = 2/3 ],
+              [ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 3-adic valuation, v(x) = 1/3 ], v(y + x) = 2/3 ]]
+
+@@ -498,15 +497,15 @@
+             sage: v.mac_lane_approximants(G, required_precision=infinity)
+             [[ Gauss valuation induced by 2-adic valuation, v((1 + O(2^10))*x) = +Infinity ]]
+             sage: G = x^2 + 1
+-            sage: v.mac_lane_approximants(G)
++            sage: v.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v((1 + O(2^10))*x + 1 + O(2^10)) = 1/2 ]]
+-            sage: v.mac_lane_approximants(G, required_precision=infinity)
++            sage: v.mac_lane_approximants(G, required_precision=infinity)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v((1 + O(2^10))*x + 1 + O(2^10)) = 1/2,
+                v((1 + O(2^10))*x^2 + 1 + O(2^10)) = +Infinity ]]
+             sage: G = x^4 + 2*x^3 + 2*x^2 - 2*x + 2
+-            sage: v.mac_lane_approximants(G)
++            sage: v.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v((1 + O(2^10))*x) = 1/4 ]]
+-            sage: v.mac_lane_approximants(G, required_precision=infinity)
++            sage: v.mac_lane_approximants(G, required_precision=infinity)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v((1 + O(2^10))*x) = 1/4,
+                v((1 + O(2^10))*x^4 + (2 + O(2^11))*x^3 + (2 + O(2^11))*x^2 + (2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + 2^10 + O(2^11))*x + 2 + O(2^11)) = +Infinity ]]
+
+@@ -516,7 +515,7 @@
+             sage: v0 = QQ.valuation(2)
+             sage: R.<x> = QQ[]
+             sage: G = x^2 + 1
+-            sage: v0.mac_lane_approximants(G)
++            sage: v0.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]]
+
+             sage: v0 = QQ.valuation(3)
+@@ -524,10 +523,10 @@
+             [[ Gauss valuation induced by 3-adic valuation, v(x^2 + 1) = +Infinity ]]
+
+             sage: v0 = QQ.valuation(5)
+-            sage: v0.mac_lane_approximants(G)
++            sage: v0.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 5-adic valuation, v(x + 2) = 1 ],
+              [ Gauss valuation induced by 5-adic valuation, v(x + 3) = 1 ]]
+-            sage: v0.mac_lane_approximants(G, required_precision=10)
++            sage: v0.mac_lane_approximants(G, required_precision=10)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 5-adic valuation, v(x + 3116/237) = 10 ],
+              [ Gauss valuation induced by 5-adic valuation, v(x - 3116/237) = 10 ]]
+
+@@ -539,12 +538,12 @@
+             sage: v = k.valuation()
+             sage: R.<x> = k[]
+             sage: G = x^2 + 1
+-            sage: v1,v2 = v.mac_lane_approximants(G); v1,v2
++            sage: v1,v2 = v.mac_lane_approximants(G); v1,v2  # needs sage.geometry.polyhedron
+             ([ Gauss valuation induced by 5-adic valuation,
+                v((1 + O(5^4))*x + 2 + O(5^4)) = 1 ],
+              [ Gauss valuation induced by 5-adic valuation,
+                v((1 + O(5^4))*x + 3 + O(5^4)) = 1 ])
+-            sage: w1, w2 = v.mac_lane_approximants(G, required_precision=2); w1, w2
++            sage: w1, w2 = v.mac_lane_approximants(G, required_precision=2); w1, w2  # needs sage.geometry.polyhedron
+             ([ Gauss valuation induced by 5-adic valuation,
+                v((1 + O(5^4))*x + 2 + 5 + O(5^4)) = 2 ],
+              [ Gauss valuation induced by 5-adic valuation,
+@@ -552,14 +551,14 @@
+
+         Note how the latter give a better approximation to the factors of `x^2 + 1`::
+
+-            sage: v1.phi() * v2.phi() - G
++            sage: v1.phi() * v2.phi() - G  # needs sage.geometry.polyhedron
+             O(5^4)*x^2 + (5 + O(5^4))*x + 5 + O(5^4)
+-            sage: w1.phi() * w2.phi() - G
++            sage: w1.phi() * w2.phi() - G  # needs sage.geometry.polyhedron
+             O(5^4)*x^2 + (5^2 + O(5^4))*x + 5^3 + O(5^4)
+
+         In this example, the process stops with a factorization of `x^2 + 1`::
+
+-            sage: v.mac_lane_approximants(G, required_precision=infinity)
++            sage: v.mac_lane_approximants(G, required_precision=infinity)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 5-adic valuation,
+                v((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4)) = +Infinity ],
+              [ Gauss valuation induced by 5-adic valuation,
+@@ -571,10 +570,10 @@
+             sage: v = QQ.valuation(5)
+             sage: R.<x> = QQ[]
+             sage: G = x^2 + 1
+-            sage: v.mac_lane_approximants(G)
++            sage: v.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 5-adic valuation, v(x + 2) = 1 ],
+              [ Gauss valuation induced by 5-adic valuation, v(x + 3) = 1 ]]
+-            sage: v.mac_lane_approximants(G, required_precision=5)
++            sage: v.mac_lane_approximants(G, required_precision=5)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 5-adic valuation, v(x + 79/3) = 5 ],
+              [ Gauss valuation induced by 5-adic valuation, v(x - 79/3) = 5 ]]
+
+@@ -586,7 +585,7 @@
+             sage: alpha = T^3/4
+             sage: G = 3^3*T^3*(alpha^4 - alpha)^2 - (4*alpha^3 - 1)^3
+             sage: G = G/G.leading_coefficient()
+-            sage: K.valuation().mac_lane_approximants(G)
++            sage: K.valuation().mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 3-adic valuation, v(...1*T + ...2) = 1/9,
+                v(...1*T^9 + ...20*T^8 + ...210*T^7 + ...20*T^6 + ...20*T^5 + ...10*T^4
+                   + ...220*T^3 + ...20*T^2 + ...110*T + ...122) = 55/27 ]]
+@@ -596,7 +595,7 @@
+             sage: R.<x> = QQ[]
+             sage: v = QQ.valuation(3)
+             sage: G = (x^3 + 3)^3 - 81
+-            sage: v.mac_lane_approximants(G)
++            sage: v.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 3-adic valuation,
+                v(x) = 1/3, v(x^3 + 3*x + 3) = 13/9 ]]
+
+@@ -606,15 +605,15 @@
+             sage: Delta = (x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6
+             ....:           + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887)
+             sage: K.<theta> = NumberField(x^6 + 108)
+-            sage: K.is_galois()
++            sage: K.is_galois()  # needs sage.libs.gap
+             True
+-            sage: vK = QQ.valuation(2).extension(K)
+-            sage: vK(2)
++            sage: vK = QQ.valuation(2).extension(K)  # needs sage.geometry.polyhedron
++            sage: vK(2)  # needs sage.geometry.polyhedron
+             1
+-            sage: vK(theta)
++            sage: vK(theta)  # needs sage.geometry.polyhedron
+             1/3
+             sage: G = Delta.change_ring(K)
+-            sage: vK.mac_lane_approximants(G)
++            sage: vK.mac_lane_approximants(G)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 2-adic valuation,
+                v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + 3*theta + 1) = 3/2 ],
+              [ Gauss valuation induced by 2-adic valuation,
+@@ -641,7 +640,7 @@
+             sage: S.<x> = R[]
+             sage: v = R.valuation()
+             sage: f = x^4 + 234
+-            sage: len(v.mac_lane_approximants(f, assume_squarefree=True))
++            sage: len(v.mac_lane_approximants(f, assume_squarefree=True))  # needs sage.geometry.polyhedron
+             ....:
+             2
+
+@@ -651,7 +650,7 @@
+             sage: S.<x> = R[]
+             sage: f = (x^32 + 16)*(x^32 + 16 + 2^16*x^2) + 2^34
+             sage: v = R.valuation()
+-            sage: len(v.mac_lane_approximants(f, assume_squarefree=True))
++            sage: len(v.mac_lane_approximants(f, assume_squarefree=True))  # needs sage.geometry.polyhedron
+             ....:
+             2
+
+@@ -662,7 +661,7 @@
+             sage: f = (x^36 + 60552000*x^33 + 268157412*x^30 + 173881701*x^27 + 266324841*x^24
+             ....:       + 83125683*x^21 + 111803814*x^18 + 31925826*x^15 + 205726716*x^12
+             ....:       + 17990262*x^9 + 351459648*x^6 + 127014399*x^3 + 359254116)
+-            sage: v.mac_lane_approximants(f)
++            sage: v.mac_lane_approximants(f)  # needs sage.geometry.polyhedron
+             [[ Gauss valuation induced by 3-adic valuation,
+                v(x) = 1/3,
+                v(x^3 - 3) = 3/2,
+@@ -834,20 +833,20 @@
+         We can select an approximant by approximating it::
+
+             sage: w = GaussValuation(R, v).augmentation(x + 1, 1/2)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]
+
+         As long as this is the only matching approximant, the approximation can
+         be very coarse::
+
+             sage: w = GaussValuation(R, v)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]
+
+         Or it can be very specific::
+
+             sage: w = GaussValuation(R, v).augmentation(x + 1, 1/2).augmentation(G, infinity)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]
+
+         But it must be an approximation of an approximant::
+@@ -866,7 +865,7 @@
+
+             sage: G = x^2 - 1
+             sage: w = GaussValuation(R, v)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             Traceback (most recent call last):
+             ...
+             ValueError: The valuation Gauss valuation induced by 2-adic valuation
+@@ -874,7 +873,7 @@
+             with respect to x^2 - 1
+
+             sage: w = GaussValuation(R, v).augmentation(x + 1, 1)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             Traceback (most recent call last):
+             ...
+             ValueError: The valuation
+@@ -882,11 +881,11 @@
+             approximate a unique extension of 2-adic valuation with respect to x^2 - 1
+
+             sage: w = GaussValuation(R, v).augmentation(x + 1, 2)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = +Infinity ]
+
+             sage: w = GaussValuation(R, v).augmentation(x + 3, 2)
+-            sage: v.mac_lane_approximant(G, w)
++            sage: v.mac_lane_approximant(G, w)  # needs sage.geometry.polyhedron
+             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1 ]
+         """
+         if valuation.restriction(valuation.domain().base_ring()) is not self:
+@@ -949,7 +948,7 @@
+             sage: v = k.valuation()
+             sage: R.<x> = k[]
+             sage: G = x^2 + 1
+-            sage: v.montes_factorization(G)
++            sage: v.montes_factorization(G)  # needs sage.geometry.polyhedron
+             ((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4))
+              * ((1 + O(5^4))*x + 3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4))
+
+@@ -958,12 +957,12 @@
+
+             sage: R.<x> = QQ[]
+             sage: v = QQ.valuation(2)
+-            sage: v.montes_factorization(x^6 - 1)
++            sage: v.montes_factorization(x^6 - 1)  # needs sage.geometry.polyhedron
+             (x - 1) * (x + 1) * (x^2 - x + 1) * (x^2 + x + 1)
+
+             sage: v.montes_factorization(x^7 - 1)       # not tested
+
+-            sage: v.montes_factorization(x^7 - 1, required_precision=5)
++            sage: v.montes_factorization(x^7 - 1, required_precision=5)  # needs sage.geometry.polyhedron
+             (x - 1) * (x^3 - 5*x^2 - 6*x - 1) * (x^3 + 6*x^2 + 5*x - 1)
+
+         TESTS:
+@@ -977,11 +976,12 @@
+             sage: S.<x> = R[]
+             sage: f = (x^6+2)^25 + 5
+             sage: v = R.valuation()
+-            sage: v.montes_factorization(f, assume_squarefree=True, required_precision=0)
++            sage: v.montes_factorization(f, assume_squarefree=True, required_precision=0)  # needs sage.libs.pari
+             (x^50 + 2*5*x^45 + 5*x^40 + 5*x^30 + 2*x^25 + 3*5*x^20 + 2*5*x^10 + 2*5*x^5 + 5*x + 3 + 5) * (x^50 + 3*5*x^45 + 5*x^40 + 5*x^30 + (3 + 4*5)*x^25 + 3*5*x^20 + 2*5*x^10 + 3*5*x^5 + 4*5*x + 3 + 5) * (x^50 + 3*5*x^40 + 3*5*x^30 + 4*5*x^20 + 5*x^10 + 3 + 5)
+
+         In this case, ``f`` factors into degrees 1, 2, and 5 over a totally ramified extension::
+
++            sage: # needs sage.libs.ntl
+             sage: R = Zp(5)
+             sage: S.<w> = R[]
+             sage: R.<w> = R.extension(w^3 + 5)
+@@ -1050,7 +1050,7 @@
+     TESTS::
+
+         sage: v = ZZ.valuation(3)
+-        sage: v.extension(GaussianIntegers())  # indirect doctest
++        sage: v.extension(GaussianIntegers())  # needs sage.rings.number_field
+         3-adic valuation
+     """
+     def __init__(self, valuation, parent, ef, principal_part_bound, coefficients, valuations):
