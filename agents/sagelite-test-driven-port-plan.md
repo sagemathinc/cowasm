@@ -77159,3 +77159,58 @@ reconstruction, full-target dry-run, and patch-replay evidence is under
 the remaining PARI-backed polynomial-root island, implement another focused
 cypari2 finite-field operation, or return to a persisted fraction-field
 semantic gap.
+
+PARI finite-field polynomial-root classification pass on 2026-07-26 UTC:
+
+The two remaining `sage.libs.pari` rows in
+`element_pari_ffelt.pyx` do not represent an absent optional dependency.
+Selecting PARI reaches the focused cypari2 `Gen.factor` implementation and
+fails reproducibly with generic PARI error 7 (`e_IMPL`) while factoring the
+large-characteristic `t_FFELT` polynomial. Forcing PARI's dedicated
+`FFX_factor` path changes the failure to error 27 (`e_MODULUS`), which is a
+more precise diagnosis rather than a fix.
+
+Temporary instrumentation showed that the polynomial's finite-field
+coefficients print the same modulus but carry inconsistent internal field
+identity: PARI reported `inconsistent moduli in Rg_to_raw` with
+`13189065031705590731 != 13189065031705581443`. Copying the input vector,
+cloning hook results, and canonicalizing the integer-to-FFELT conversion did
+not repair that identity. These experiments were reverted, including the
+forced `FFX_factor` dispatch, because accepting a mixed-field polynomial at
+the generic cypari2 boundary would hide the ownership/composition defect.
+
+The accumulated Sage patch now classifies both dependent root rows as
+`known bug`. The ordinary browser profile records them as
+`deferred:known bug`; explicitly selecting deferred tests still reaches the
+same live error-7 failure. Against the restored, manifest-validated
+copy-on-write runtime, the complete module records:
+
+```text
+element_pari_ffelt.pyx: 281 passed, 0 failed, 26 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+Both rows are therefore queryable as a runtime defect without incorrectly
+suggesting that installing or selecting PARI will make them pass. This pass
+changes only doctest metadata in the accumulated Sage patch. It leaves the
+restored cypari2 and Sage FFELT binaries byte-for-byte on their pre-audit
+implementation paths and does not alter the curated corpus.
+
+Validation includes the focused default and forced-deferred replays, the
+complete FFELT dashboard, saved lifecycle and row-classification queries,
+SQLite integrity, the restored cypari2 standalone test, validation of patch
+syntax, complete sequential application against a clean archive of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`,
+byte-for-byte reconstructed FFELT source comparison, and `git diff --check`.
+The accumulated patch remains at 1,829 serialized target sections (1,316
+`diff --git` and 513 header-only legacy sections) and 5,960 hunks. Default,
+deferred, complete-dashboard, runtime, and clean-replay evidence is under
+`/tmp/cowasm-sagelite-pari-roots-default.rNmHx9/`,
+`/tmp/cowasm-sagelite-pari-roots-deferred.GI8ETF/`,
+`/tmp/cowasm-sagelite-pari-roots-final.z0fkBK/`,
+`/tmp/cowasm-sagelite-pari-roots-runtime.7jocNV/`, and
+`/tmp/cowasm-sagelite-pari-roots-replay.gk9e9v/`. A future pass should align
+FFELT field ownership across the Sage and cypari2 side-module boundary before
+enabling `FFX_factor`, or return to a persisted core fraction-field semantic
+gap.

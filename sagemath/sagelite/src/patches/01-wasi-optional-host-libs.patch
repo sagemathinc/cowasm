@@ -39380,8 +39380,8 @@ diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings
 @@ -388,2 +387,2 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: R = [r[0] for r in pol.roots()]
 -            sage: prod(Fq_X.gen() - r for r in R) == pol
-+            sage: R = [r[0] for r in pol.roots()]                                       # needs sage.libs.pari
-+            sage: prod(Fq_X.gen() - r for r in R) == pol                                # needs sage.libs.pari
++            sage: R = [r[0] for r in pol.roots()]                                       # known bug
++            sage: prod(Fq_X.gen() - r for r in R) == pol                                # known bug
 @@ -1330 +1329 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: pari(I)
 +            sage: pari(I)                                                               # known bug
