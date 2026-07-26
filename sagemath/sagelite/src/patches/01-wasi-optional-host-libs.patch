@@ -39343,3 +39343,18 @@ diff --git a/src/sage/rings/finite_rings/residue_field.pyx b/src/sage/rings/fini
 +            sage: # needs sage.libs.pari
 @@ -1718,0 +1817 @@
 +
+diff --git a/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx b/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
+--- a/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
++++ b/src/sage/rings/finite_rings/residue_field_pari_ffelt.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.pari
+@@ -38,0 +38 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
++        sage: # needs sage.libs.pari
+@@ -52,0 +53 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
++
+@@ -72,0 +73 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
++            sage: # needs sage.libs.pari
+@@ -99,0 +101 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
++            sage: # needs sage.libs.pari
+@@ -116,0 +119 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
++
