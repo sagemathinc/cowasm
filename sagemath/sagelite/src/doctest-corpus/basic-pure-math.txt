@@ -1346,3 +1346,4 @@ src/sage/rings/ring_extension_morphism.pyx
 src/sage/rings/ring_extension_element.pyx
 src/sage/rings/ring_extension.pyx
 src/sage/rings/fraction_field.py
+src/sage/rings/fraction_field_element.pyx

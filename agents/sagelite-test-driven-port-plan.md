@@ -76466,3 +76466,66 @@ generated-tree repair, full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-fraction-field.ZVIdog/`. A future scheduled pass can
 turn one of the six newly persisted core fraction-field semantic gaps into a
 runtime fix or audit another compact guarded ring namespace.
+
+Fraction-field element guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/fraction_field_element.pyx` retained a historical file-wide
+`sage.rings.fraction_field` guard from an earlier runtime where the opening
+rational-function examples timed out. With the adjacent generic
+fraction-field module now reopened, a runner-version-154 replay selecting the
+historical feature completed in about 13 seconds:
+
+```text
+fraction_field_element.pyx selected: 267 passed, 1 failed, 26 skipped
+run lifecycle:                      failed and closed
+SQLite integrity:                  ok
+```
+
+The old timeout no longer reproduces. The only failure was a display-only
+output mismatch at line 138: the current number-field coefficient printer
+renders `(-i)/b`, while the doctest still expected the redundant-parenthesis
+form `((-i))/b`.
+
+The accumulated WASI patch now removes the broad fraction-field guard and
+updates that expected representation to the current stable output. The
+existing 10,000-variable stress sequence remains behind its focused
+`# long time` metadata. The ordinary browser profile and strict focused make
+target against a clean reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+fraction_field_element.pyx: 268 passed, 0 failed, 26 skipped
+run lifecycle:              passed and closed
+SQLite integrity:          ok
+```
+
+The 26 skips comprise six symbolic rows, five long-time rows, four Singular
+rows, three finite-ring rows, three real-field rows, two Magma rows, and one
+row each for PARI, complex-double, and number-field coverage. Saved block-
+failure and file-error queries are empty, active-row coverage is 100%, and
+the direct and strict-make dashboards agree exactly across all 294 ordered
+stable block rows, including raw actual output.
+
+`sage/rings/fraction_field_element.pyx` is now part of the curated pure-math
+corpus, raising it to 1,344 non-comment entries with no duplicates or missing
+paths. This pass changes only focused doctest metadata/output and corpus
+membership; no native rebuild, Electron manifest change, or resource
+restaging is required.
+
+Validation includes the historical-feature baseline; ordinary and strict
+focused-make dashboards; saved lifecycle, failure, and skip queries; SQLite
+integrity and exact stable-row comparison; corpus uniqueness, path existence,
+and full-target dry run; accumulated-patch syntax and complete sequential
+application against the clean pinned source; byte-for-byte generated-source
+comparison; rejection of a second forward patch application; and
+`git diff --check`. The external developer checkout remained untouched; the
+repository's ordinary generated source changed only as the intended ignored
+mirror of this patch.
+
+The accumulated patch now contains 1,822 serialized target sections (1,309
+`diff --git` and 513 header-only legacy sections) and 5,814 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-fraction-element.VmMheI/`. A future scheduled pass can
+audit another compact guarded ring namespace or turn one of the persisted
+fraction-field semantic gaps into a runtime fix.

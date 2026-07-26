@@ -39020,3 +39020,11 @@ diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
 @@ -1125 +1124 @@ class FractionField_1poly_field(FractionField_generic):
 -            sage: f.factor()
 +            sage: f.factor()                                                  # needs sage.libs.pari
+diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction_field_element.pyx
+--- a/src/sage/rings/fraction_field_element.pyx
++++ b/src/sage/rings/fraction_field_element.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.fraction_field
+@@ -138 +137 @@ cdef class FractionFieldElement(FieldElement):
+-            ((-i))/b
++            (-i)/b
