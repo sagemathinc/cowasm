@@ -34841,3 +34841,436 @@ diff --git a/src/sage/rings/padics/padic_ext_element.pyx b/src/sage/rings/padics
 +++ b/src/sage/rings/padics/padic_ext_element.pyx
 @@ -7 +6,0 @@
 -# sage.doctest: needs sage.rings.padics
+diff --git a/src/sage/rings/padics/pow_computer_ext.pyx b/src/sage/rings/padics/pow_computer_ext.pyx
+--- a/src/sage/rings/padics/pow_computer_ext.pyx
++++ b/src/sage/rings/padics/pow_computer_ext.pyx
+@@ -326,6 +326,7 @@
+     cdef ZZ_pX_c highshift
+     cdef ZZ_pX_c working, working2
+     cdef ntl_ZZ_pContext_class c
++    cdef ZZ_pContext_c local_context
+     cdef ZZ_pX_Modulus_c* m
+     cdef long pshift = n / self.e
+     cdef long eis_part = n % self.e
+@@ -362,11 +363,12 @@
+         else:
+             c = self.get_context(finalprec)
+             m = self.get_modulus(finalprec)
+-        c.restore_c()
++        local_context = ZZ_pContext_c(c.p.x)
++        local_context.restore()
+         ##printer = ntl_ZZ_pX([],c)
+         ZZ_pX_PowerXMod_long_pre(powerx, -n, m[0])
+         ##printer.x = powerx
+-        ZZ_pX_conv_modulus(x[0], a[0], c.x)
++        ZZ_pX_conv_modulus(x[0], a[0], local_context)
+         ZZ_pX_MulMod_pre(x[0], powerx, a[0], m[0])
+         ##printer.x = x[0]
+         return 0
+@@ -376,7 +378,9 @@
+                 c = self.get_top_context()
+             else:
+                 c = self.get_context(finalprec)
+-            ZZ_pX_conv_modulus(x[0], a[0], c.x)
++            local_context = ZZ_pContext_c(c.p.x)
++            local_context.restore()
++            ZZ_pX_conv_modulus(x[0], a[0], local_context)
+         return 0
+
+ # The following doesn't work, sadly.  It should be possible to precompute and do better than what I replace this code with.
+@@ -418,23 +422,26 @@
+         m = self.get_top_modulus()
+     else:
+         c = self.get_context(finalprec + pshift + 1)
+-    c.restore_c()
+-    ZZ_pX_conv_modulus(working, a[0], c.x)
++    local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++    ZZ_pX_conv_modulus(working, a[0], local_context)
+     if pshift:
+         while pshift > 0:
+             pshift -= 1
+             if fm:
+-                ZZ_pX_right_pshift(working, working, self.pow_ZZ_tmp(1)[0],c.x)
++                ZZ_pX_right_pshift(working, working, self.pow_ZZ_tmp(1)[0], local_context)
+                 ZZ_pX_MulMod_premul(working, working, high_shifter_fm[0], m[0])
+             else:
+                 c = self.get_context(finalprec + pshift + 1)
+                 m = self.get_modulus(finalprec + pshift + 1)
+-                ZZ_pX_right_pshift(working, working, self.pow_ZZ_tmp(1)[0],c.x)
+-                ZZ_pX_conv_modulus(highshift, high_shifter[0], c.x)
++                local_context = ZZ_pContext_c(c.p.x)
++                local_context.restore()
++                ZZ_pX_right_pshift(working, working, self.pow_ZZ_tmp(1)[0], local_context)
++                ZZ_pX_conv_modulus(highshift, high_shifter[0], local_context)
+                 ZZ_pX_MulMod_pre(working, working, highshift, m[0])
+     elif not fm:
+         m = self.get_modulus(finalprec + 1)
+-    ZZ_pX_conv_modulus(working2, working, c.x)
++    ZZ_pX_conv_modulus(working2, working, local_context)
+     i = 0
+     two_shift = 1
+     while eis_part > 0:
+@@ -445,12 +452,12 @@
+             ZZ_pX_LeftShift(low_part, shifted_high_part, two_shift)
+             ZZ_pX_sub(low_part, working2, low_part)
+             ##printer.x = low_part
+-            ZZ_pX_right_pshift(low_part, low_part, self.pow_ZZ_tmp(1)[0], c.x)
++            ZZ_pX_right_pshift(low_part, low_part, self.pow_ZZ_tmp(1)[0], local_context)
+             ##printer.x = low_part
+             if fm:
+                 ZZ_pX_MulMod_premul(low_part, low_part, low_shifter_fm[i], m[0])
+             else:
+-                ZZ_pX_conv_modulus(lowshift, low_shifter[i], c.x)
++                ZZ_pX_conv_modulus(lowshift, low_shifter[i], local_context)
+                 ZZ_pX_MulMod_pre(low_part, low_part, lowshift, m[0])
+             ##printer.x = low_part
+             ZZ_pX_add(working2, low_part, shifted_high_part)
+@@ -459,7 +466,9 @@
+         two_shift = two_shift << 1
+         eis_part = eis_part >> 1
+     c = self.get_context(finalprec)
+-    ZZ_pX_conv_modulus(x[0], working2, c.x)
++    local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++    ZZ_pX_conv_modulus(x[0], working2, local_context)
+
+ cdef class PowComputer_ext(PowComputer_class):
+     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
+diff --git a/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx b/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
+--- a/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
++++ b/src/sage/rings/padics/padic_ZZ_pX_CR_element.pyx
+@@ -4,7 +4,6 @@
+ # distutils: library_dirs = NTL_LIBDIR
+ # distutils: extra_link_args = NTL_LIBEXTRA
+ # distutils: language = c++
+-# sage.doctest: needs sage.rings.padics
+ r"""
+ `p`-adic ``ZZ_pX`` CR Element
+
+@@ -218,6 +217,12 @@
+     cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
+     local_context.restore()
+
++cdef inline void ZZ_pX_conv_modulus_local(ZZ_pX_c* output, ZZ_pX_c* input,
++                                           ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++    ZZ_pX_conv_modulus(output[0], input[0], local_context)
++
+ cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) -1
+ cdef long minusmaxordp = -maxordp
+
+@@ -259,7 +264,7 @@
+             sage: W.<w> = R.ext(f)
+             sage: z = (1+w)^5; z  # indirect doctest
+             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
+-            sage: W(pari('3 + O(5^3)'))
++            sage: W(pari('3 + O(5^3)'))  # needs sage.libs.pari
+             3 + O(w^15)
+             sage: W(R(3,3))
+             3 + O(w^15)
+@@ -273,7 +278,7 @@
+
+         Check that :issue:`3865` is fixed::
+
+-            sage: W(gp('3 + O(5^10)'))
++            sage: W(gp('3 + O(5^10)'))  # needs sage.libs.pari
+             3 + O(w^3125)
+
+
+@@ -717,7 +722,8 @@
+         self.ordp = ordp
+         self._set_prec_rel(relprec)
+         if self.relprec != 0:
+-            ZZ_pX_conv_modulus(self.unit, unit[0], self.prime_pow.get_context_capdiv(relprec).x)
++            ZZ_pX_conv_modulus_local(&self.unit, unit,
++                                     self.prime_pow.get_context_capdiv(relprec))
+
+     cdef int _set_from_mpz_rel(self, mpz_t x, long relprec) except -1:
+         """
+@@ -1204,9 +1210,14 @@
+             sage: z = W(ntl.ZZ_pX([4,1,16],5^2), absprec=8, relprec=12); z  # indirect doctest
+             4 + w + w^2 + 3*w^7 + O(w^8)
+         """
++        cdef ntl_ZZ_pContext_class c
++        cdef ZZ_pContext_c local_context
+         # We've set self.relprec to what is actually the absolute precision.
+         if self.relprec != 0:
+-            ZZ_pX_conv_modulus(self.unit, poly[0], self.prime_pow.get_context_capdiv(self.relprec).x)
++            c = self.prime_pow.get_context_capdiv(self.relprec)
++            local_context = ZZ_pContext_c(c.p.x)
++            local_context.restore()
++            ZZ_pX_conv_modulus(self.unit, poly[0], local_context)
+             self.relprec -= self.ordp
+             self._internal_lshift(-self.ordp)
+
+@@ -1225,7 +1236,8 @@
+             self.prime_pow.restore_context_capdiv(self.relprec)
+             cdef ZZ_pX_c tmp = self.unit
+             self._set_prec_rel(new_rel_prec)
+-            ZZ_pX_conv_modulus(self.unit, tmp, self.prime_pow.get_context_capdiv(self.relprec).x)
++            ZZ_pX_conv_modulus_local(&self.unit, &tmp,
++                                     self.prime_pow.get_context_capdiv(self.relprec))
+
+         You may be able to just set ``self.relprec`` and
+         ``ZZ_pX_conv_modulus`` if you're decreasing precision.  I'm
+@@ -1244,6 +1256,7 @@
+             return False
+         if relprec != 0:
+             self.prime_pow.restore_context_capdiv(relprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(relprec))
+             self.unit = ZZ_pX_c()
+         self.relprec = relprec
+         return True
+@@ -1267,7 +1280,8 @@
+             self.prime_pow.restore_context_capdiv(self.relprec)
+             cdef ZZ_pX_c tmp = self.unit
+             self._set_prec_rel(new_rel_prec)
+-            ZZ_pX_conv_modulus(self.unit, tmp, self.prime_pow.get_context_capdiv(self.relprec).x)
++            ZZ_pX_conv_modulus_local(&self.unit, &tmp,
++                                     self.prime_pow.get_context_capdiv(self.relprec))
+
+         You may be able to just set ``self.relprec`` and
+         ``ZZ_pX_conv_modulus`` if you're decreasing precision.  I'm
+@@ -1295,6 +1309,7 @@
+                 self.relprec = arelprec
+             if self.relprec != 0:
+                 self.prime_pow.restore_context_capdiv(self.relprec)
++                restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec))
+                 self.unit = ZZ_pX_c()
+                 if relprec < 0:
+                     self.relprec = -self.relprec
+@@ -1395,6 +1410,7 @@
+         else:
+             if shift > 0:
+                 self.prime_pow.restore_context_capdiv(self.relprec)
++                restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec))
+                 mod = self.prime_pow.get_modulus_capdiv(self.relprec)
+                 ZZ_pX_PowerXMod_long_pre(tmpP, shift, mod[0])
+                 ZZ_pX_MulMod_pre(self.unit, self.unit, tmpP, mod[0])
+@@ -1441,7 +1457,7 @@
+                     high_array = (<PowComputer_ZZ_pX_small_Eis>self.prime_pow).high_shifter
+                 else:
+                     raise TypeError("unrecognized PowComputer type")
+-                ZZ_pX_conv_modulus(high_shifter, high_array[0], c.x)
++                ZZ_pX_conv_modulus_local(&high_shifter, high_array, c)
+                 ZZ_pX_InvMod_newton_ram(high_shifter, high_shifter, modulus[0], c.x)
+                 ZZ_pX_PowerMod_long_pre(high_shifter, high_shifter, shift, modulus[0])
+                 ZZ_pX_MulMod_pre(self.unit, self.unit, high_shifter, modulus[0])
+@@ -1460,7 +1476,8 @@
+                     raise TypeError("unrecognized PowComputer type")
+                 if shift >= self.prime_pow.prec_cap:
+                     # high_shifter = p^(2^(high_length - 1))/x^(e*2^(high_length - 1))
+-                    ZZ_pX_conv_modulus(high_shifter, high_array[high_length-1], c.x)
++                    ZZ_pX_conv_modulus_local(&high_shifter,
++                                             &high_array[high_length-1], c)
+                     # if shift = r + s * 2^(high_length - 1)
+                     # then high_shifter = p^(s*2^(high_length - 1))/x^(e*s*2^(high_length - 1))
+                     ZZ_pX_PowerMod_long_pre(high_shifter, high_shifter, (shift / (1L << (high_length - 1))), modulus[0])
+@@ -1469,7 +1486,7 @@
+                     shift = shift % (1L << (high_length - 1))
+                 while shift > 0:
+                     if shift & 1:
+-                        ZZ_pX_conv_modulus(high_shifter, high_array[i], c.x)
++                        ZZ_pX_conv_modulus_local(&high_shifter, &high_array[i], c)
+                         ZZ_pX_MulMod_pre(self.unit, self.unit, high_shifter, modulus[0])
+                     shift = shift >> 1
+                     i += 1
+@@ -1497,11 +1514,13 @@
+         ans.prime_pow = self.prime_pow
+         if relprec > 0:
+             self.prime_pow.restore_context_capdiv(relprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(relprec))
+             ans.relprec = relprec
+         elif relprec == 0:
+             ans._set_exact_zero()
+         else:
+             self.prime_pow.restore_context_capdiv(-relprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(-relprec))
+             ans.relprec = relprec
+         return ans
+
+@@ -1527,6 +1546,7 @@
+         if self.relprec == 0:
+             return make_ZZpXCRElement, (self.parent(), None, ordp, relprec, 0)
+         self.prime_pow.restore_context_capdiv(self.relprec)
++        restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec))
+         cdef ntl_ZZ_pX holder = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         holder.c = self.prime_pow.get_context_capdiv(self.relprec)
+         holder.x = self.unit
+@@ -1794,6 +1814,7 @@
+         ans.ordp = self.ordp
+         if self.relprec != 0:
+             self.prime_pow.restore_context_capdiv(self.relprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec))
+             ZZ_pX_negate(ans.unit, self.unit)
+         return ans
+
+@@ -1888,7 +1909,7 @@
+             1 + w^16 + O(w^32)
+             sage: (1+w+O(w^2))^32
+             1 + w^32 + w^50 + w^55 + w^60 + O(w^64)
+-            sage: (1+w+O(w^2))^64
++            sage: (1+w+O(w^2))^64  # needs sage.libs.ntl
+             1 + w^64 + w^66 + w^71 + w^76 + w^81 + w^84 + w^86 + w^91 + w^94 + w^96 + O(w^98)
+
+         TESTS:
+@@ -2079,7 +2100,8 @@
+                 ans.ordp = self.ordp
+             else:
+                 ans = self._new_c(self.ordp - right.ordp)
+-                ZZ_pX_conv_modulus(ans.unit, right.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++                ZZ_pX_conv_modulus_local(&ans.unit, &right.unit,
++                                         self.prime_pow.get_context_capdiv(ans.relprec))
+                 if right.relprec < 0:
+                     ans.relprec = -ans.relprec
+                 ans.ordp = right.ordp
+@@ -2092,7 +2114,8 @@
+                 ans.ordp = right.ordp
+             else:
+                 ans = self._new_c(right.ordp - self.ordp)
+-                ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++                ZZ_pX_conv_modulus_local(&ans.unit, &self.unit,
++                                         self.prime_pow.get_context_capdiv(ans.relprec))
+                 if self.relprec < 0:
+                     ans.relprec = -ans.relprec
+                 ans.ordp = self.ordp
+@@ -2110,17 +2133,22 @@
+             if srprec == rrprec:
+                 ans = self._new_c(-srprec) # -srprec indicates that ans is not normalized
+                 self.prime_pow.restore_context_capdiv(srprec)
++                restore_ZZ_p_context(self.prime_pow.get_context_capdiv(srprec))
+                 ZZ_pX_add(ans.unit, self.unit, right.unit)
+             elif srprec < rrprec:
+                 ans = self._new_c(-srprec)
+-                ZZ_pX_conv_modulus(ans.unit, right.unit, self.prime_pow.get_context_capdiv(srprec).x)
++                ZZ_pX_conv_modulus_local(&ans.unit, &right.unit,
++                                         self.prime_pow.get_context_capdiv(srprec))
+                 self.prime_pow.restore_context_capdiv(srprec)
++                restore_ZZ_p_context(self.prime_pow.get_context_capdiv(srprec))
+                 # conv_modulus should have restored the context, so we don't need to again.
+                 ZZ_pX_add(ans.unit, ans.unit, self.unit)
+             else:
+                 ans = self._new_c(-rrprec)
+-                ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(rrprec).x)
++                ZZ_pX_conv_modulus_local(&ans.unit, &self.unit,
++                                         self.prime_pow.get_context_capdiv(rrprec))
+                 self.prime_pow.restore_context_capdiv(rrprec)
++                restore_ZZ_p_context(self.prime_pow.get_context_capdiv(rrprec))
+                 # conv_modulus should have restored the context, so we don't need to again.
+                 ZZ_pX_add(ans.unit, ans.unit, right.unit)
+             ans.ordp = self.ordp
+@@ -2133,12 +2161,14 @@
+             else:
+                 ans = self._new_c(-tmpL - rrprec)
+             ans.ordp = self.ordp
+-            ZZ_pX_conv_modulus(ans.unit, right.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++            ZZ_pX_conv_modulus_local(&ans.unit, &right.unit,
++                                     self.prime_pow.get_context_capdiv(ans.relprec))
+             ans._internal_lshift(tmpL)
+             if srprec <= tmpL + rrprec:
+                 ZZ_pX_add(ans.unit, ans.unit, self.unit)
+             else:
+-                ZZ_pX_conv_modulus(tmpP, self.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++                ZZ_pX_conv_modulus_local(&tmpP, &self.unit,
++                                         self.prime_pow.get_context_capdiv(ans.relprec))
+                 ZZ_pX_add(ans.unit, ans.unit, tmpP)
+             # if self is normalized, then the valuations are actually different so the sum will be normalized.
+             if self.relprec > 0:
+@@ -2152,12 +2182,14 @@
+             else:
+                 ans = self._new_c(-tmpL - srprec)
+             ans.ordp = right.ordp
+-            ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++            ZZ_pX_conv_modulus_local(&ans.unit, &self.unit,
++                                     self.prime_pow.get_context_capdiv(ans.relprec))
+             ans._internal_lshift(tmpL)
+             if rrprec <= tmpL + srprec:
+                 ZZ_pX_add(ans.unit, ans.unit, right.unit)
+             else:
+-                ZZ_pX_conv_modulus(tmpP, right.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++                ZZ_pX_conv_modulus_local(&tmpP, &right.unit,
++                                         self.prime_pow.get_context_capdiv(ans.relprec))
+                 ZZ_pX_add(ans.unit, ans.unit, tmpP)
+             # if right is normalized, then the valuations are actually different so the sum will be normalized.
+             if right.relprec > 0:
+@@ -2228,17 +2260,20 @@
+             return ans
+         if self.relprec == right.relprec:
+             self.prime_pow.restore_context_capdiv(ans.relprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(ans.relprec))
+             sig_on()
+             ZZ_pX_MulMod_pre(ans.unit, self.unit, right.unit, self.prime_pow.get_modulus_capdiv(ans.relprec)[0])
+             sig_off()
+         elif self.relprec < right.relprec:
+             sig_on()
+-            ZZ_pX_conv_modulus(modulus_corrected, right.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++            ZZ_pX_conv_modulus_local(&modulus_corrected, &right.unit,
++                                     self.prime_pow.get_context_capdiv(ans.relprec))
+             ZZ_pX_MulMod_pre(ans.unit, self.unit, modulus_corrected, self.prime_pow.get_modulus_capdiv(ans.relprec)[0])
+             sig_off()
+         else:
+             sig_on()
+-            ZZ_pX_conv_modulus(modulus_corrected, self.unit, self.prime_pow.get_context_capdiv(ans.relprec).x)
++            ZZ_pX_conv_modulus_local(&modulus_corrected, &self.unit,
++                                     self.prime_pow.get_context_capdiv(ans.relprec))
+             ZZ_pX_MulMod_pre(ans.unit, right.unit, modulus_corrected, self.prime_pow.get_modulus_capdiv(ans.relprec)[0])
+             sig_off()
+         return ans
+@@ -2261,13 +2296,13 @@
+             sage: a = (1 + w)^25 - 1
+             sage: b = (1 + w)^5 - 1
+             sage: c = (1 + w)^20 + (1 + w)^15 + (1 + w)^10 + (1 + w)^5 + 1
+-            sage: d = a / b; d == c
++            sage: d = a / b; d == c  # needs sage.libs.ntl
+             True
+-            sage: d.precision_absolute()
++            sage: d.precision_absolute()  # needs sage.libs.ntl
+             120
+             sage: c.precision_absolute()
+             125
+-            sage: 1 / a == ~a
++            sage: 1 / a == ~a  # needs sage.libs.ntl
+             True
+         """
+         # for now, a simple implementation
+@@ -2411,6 +2446,7 @@
+         if self.relprec == 0:
+             raise ValueError("self == 0")
+         self.prime_pow.restore_context_capdiv(self.relprec)
++        restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.relprec))
+         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
+         ans.c = self.prime_pow.get_context_capdiv(self.relprec)
+         ans.x = self.unit
+@@ -2708,7 +2744,8 @@
+             raise PrecisionError("precision higher than allowed by the precision cap")
+         ans = self._new_c(rprec)
+         ans.ordp = self.ordp
+-        ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(rprec).x)
++        ZZ_pX_conv_modulus_local(&ans.unit, &self.unit,
++                                 self.prime_pow.get_context_capdiv(rprec))
+         return ans
+
+     def expansion(self, n=None, lift_mode='simple'):
+@@ -2966,10 +3003,10 @@
+             sage: all(L[i]^(7^3) == L[i] for i in range(9))
+             True
+
+-            sage: L = W(3).teichmuller_expansion(); L
++            sage: L = W(3).teichmuller_expansion(); L  # needs sage.libs.ntl
+             [3 + 3*w^3 + w^7 + O(w^9), O(w^8), O(w^7), 4 + 5*w^3 + O(w^6),
+              O(w^5), O(w^4), 3 + O(w^3), 6 + O(w^2)]
+-            sage: sum([w^i*L[i] for i in range(len(L))])
++            sage: sum([w^i*L[i] for i in range(len(L))])  # needs sage.libs.ntl
+             3 + O(w^9)
+         """
+         cdef long rp = self.relprec
+@@ -3280,6 +3317,7 @@
+             ans._set_inexact_zero(mpz_get_si((<Integer>ordp).value))
+         else:
+             ans.prime_pow.restore_context_capdiv(mpz_get_si((<Integer>relprec).value))
++            restore_ZZ_p_context(ans.prime_pow.get_context_capdiv(mpz_get_si((<Integer>relprec).value)))
+             poly = (<ntl_ZZ_pX>unit).x
+             ans._set(&poly, mpz_get_si((<Integer>ordp).value), mpz_get_si((<Integer>relprec).value))
+         return ans
