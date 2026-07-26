@@ -628,7 +628,7 @@ assert rational_left_solution * C == matrix(QQ, 1, 2, [1, 1])
     console.log("sagelite-electron-ok matrix solve smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");
     await python.exec(String.raw`
-from sage.all import QQ, LaurentPolynomialRing
+from sage.all import ZZ, QQ, LaurentPolynomialRing
 
 R = LaurentPolynomialRing(QQ, 't')
 t = R.gen()
@@ -659,6 +659,13 @@ else:
 ML = M.localization(x + 1)
 xi = ML(~x)
 assert M(xi) == ~x
+Z = ZZ['z']
+z = Z.gen()
+L = Z.localization((z**2 + 1, 7))
+assert L._extra_units == (Z(7), z**2 + 1)
+LF = L.fraction_field()
+phi = LF.coerce_map_from(L)
+assert phi(L(ZZ(1) / ZZ(7))) == ZZ(1) / ZZ(7)
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

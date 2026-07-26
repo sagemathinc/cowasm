@@ -18328,6 +18328,11 @@ diff --git a/src/sage/rings/localization.py b/src/sage/rings/localization.py
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.rings.polynomial.plural pexpect
  r"""
+@@ -230,2 +231,4 @@ def normalize_extra_units(base_ring, add_units, warning=True):
+             F = list(n.factor())
++            if not F:
++                F = [(n, 1)]
+             add_units_result += [f[0] for f in F]
 diff --git a/src/sage/quivers/algebra_elements.pyx b/src/sage/quivers/algebra_elements.pyx
 --- a/src/sage/quivers/algebra_elements.pyx
 +++ b/src/sage/quivers/algebra_elements.pyx
@@ -38988,9 +38993,6 @@ diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
 +            sage: S.<y> = R[]                                               # needs sage.libs.pari
 +            sage: F = FractionField(S)                                      # needs sage.libs.pari
 +            sage: F(1/a)                                                    # needs sage.libs.pari
-@@ -312 +311 @@ class FractionField_generic(ring.Field):
--            sage: f(L(1/7)) == 1/7
-+            sage: f(L(1/7)) == 1/7                                           # known bug
 @@ -386,4 +385,4 @@ class FractionField_generic(ring.Field):
 -            sage: R = K.ring_of_integers()
 -            sage: S.<y> = R[]

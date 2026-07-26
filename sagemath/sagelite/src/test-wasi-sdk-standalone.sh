@@ -1925,7 +1925,7 @@ assert fast_float(K(0)).op_list() == [('load_const', 0.0), 'return']
 assert fast_float(K(17)).op_list() == [('load_const', 0.0), ('load_const', 17.0), 'add', 'return']
 assert fast_float(y).op_list() == [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 1), ('ipow', 1), 'mul', 'add', 'return']
 print('sagelite-node-ok fast callable interpreter smoke')"
-run_node_import "Laurent polynomial smoke" "from sage.all import QQ, LaurentPolynomialRing
+run_node_import "Laurent polynomial smoke" "from sage.all import ZZ, QQ, LaurentPolynomialRing
 R = LaurentPolynomialRing(QQ, 't')
 t = R.gen()
 f = t**2 + 2 + t**-1
@@ -1955,6 +1955,13 @@ else:
 ML = M.localization(x + 1)
 xi = ML(~x)
 assert M(xi) == ~x
+Z = ZZ['z']
+z = Z.gen()
+L = Z.localization((z**2 + 1, 7))
+assert L._extra_units == (Z(7), z**2 + 1)
+LF = L.fraction_field()
+phi = LF.coerce_map_from(L)
+assert phi(L(ZZ(1) / ZZ(7))) == ZZ(1) / ZZ(7)
 print('sagelite-node-ok Laurent polynomial smoke')"
 run_node_import "Hamming code smoke" "import sage.all
 from sage.all import GF
@@ -2298,7 +2305,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=211
+electron_manifest_schema_version=212
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2369,6 +2376,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cliquer-ex
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-ntl-gf2e-link-delivery-v177-ntl-gf2e-context-pari-v178-ntl-gf2e-default-randstate-v179-givaro-default-backend-v180-givaro-construction-key-v181"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-padic-defining-polynomial-v182"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-local-ntl-context-numeric-log-v183"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-constant-polynomial-localization-v184"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -77214,3 +77214,71 @@ deferred, complete-dashboard, runtime, and clean-replay evidence is under
 FFELT field ownership across the Sage and cypari2 side-module boundary before
 enabling `FFX_factor`, or return to a persisted core fraction-field semantic
 gap.
+
+Constant-polynomial localization delivery pass on 2026-07-26 UTC:
+
+The reopened `sage/rings/fraction_field.py` dashboard retained one active
+localization coercion row behind `# known bug`. Its localization explicitly
+inverted both `x^2 + 1` and the constant polynomial `7`, but constructing
+`L(1/7)` still raised `ValueError: factor 7 of denominator is not a unit`.
+A focused probe showed that the generic WASI polynomial fallback represents
+the factorization of the nonunit constant polynomial `7` with factorization
+unit `7` and an empty factor list. `normalize_extra_units()` discarded the
+empty result, so the constructed localization retained only `x^2 + 1`.
+
+The accumulated Sage patch now keeps the original nonunit whenever
+factorization makes no progress. This preserves the localization's declared
+unit without pretending to split it into unavailable prime factors. The
+obsolete known-bug annotation is removed, and the focused coercion row now
+records:
+
+```text
+fraction_field.py:311: 1 passed, 0 failed, 0 skipped
+```
+
+A direct invariant fixture covers the empty generic factorization, normalized
+unit list, localization constructor, direct `1/7` conversion, and the
+localization-to-fraction-field coercion map with 11 passed rows. The complete
+ordinary browser-profile dashboard improves from 264 passed, 0 failed, and
+34 skipped to:
+
+```text
+fraction_field.py: 265 passed, 0 failed, 33 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+The remaining 33 skips comprise sixteen PARI rows, five Magma rows, five
+independent known bugs, and seven rows for the existing finite-ring,
+number-field, symbolic, complex-double, and real-field boundaries. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the direct and strict focused-make dashboards agree across all 298
+ordered stable rows after normalizing the accepted output of the single
+`# random` example.
+
+The standalone and Electron-shaped Laurent-polynomial delivery smokes now
+also require the constant-polynomial localization unit tuple and the
+coercion-map round trip. The Electron manifest schema advances to 212 and its
+smoke contract to `constant-polynomial-localization-v184`. A
+manifest-validated copy-on-write resource bundle covers all 759 required
+resource hashes and passes the complete Electron smoke.
+
+Validation includes the failing selected-deferred baseline; the focused
+active replay and direct invariant fixture; complete ordinary and strict-make
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+normalized stable-row comparison; all Electron manifest, forge-resource, and
+runtime tests; the complete Electron-shaped smoke; shell and JavaScript
+syntax; accumulated-patch syntax; complete sequential application against a
+clean archive of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+localization and fraction-field source comparison; Python compilation;
+rejection of a second forward patch application; and `git diff --check`.
+
+The accumulated patch remains at 1,829 serialized target sections (1,316
+`diff --git` and 513 header-only legacy sections) and 5,960 hunks because
+this pass replaces one obsolete metadata hunk with one runtime hunk. Focused,
+complete, strict-make, query, manifest, Electron, and clean-replay evidence is
+under `/tmp/cowasm-sagelite-fraction-unit.HzGpp9/`. A future scheduled pass
+can fix the recursive multivariate fraction conversion or polynomial-gcd
+islands still persisted in the same module, or return to the mixed-field PARI
+ownership defect.
