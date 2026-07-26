@@ -35889,3 +35889,299 @@ diff --git a/src/sage/rings/valuation/mapped_valuation.py b/src/sage/rings/valua
 @@ -589 +588 @@
 -            sage: isinstance(w, FiniteExtensionFromLimitValuation)
 +            sage: isinstance(w, FiniteExtensionFromLimitValuation)                      # needs sage.rings.function_field
+diff --git a/src/sage/rings/valuation/limit_valuation.py b/src/sage/rings/valuation/limit_valuation.py
+--- a/src/sage/rings/valuation/limit_valuation.py
++++ b/src/sage/rings/valuation/limit_valuation.py
+@@ -1,4 +1,3 @@
+-# sage.doctest: needs sage.rings.padics sage.rings.function_field sage.rings.number_field sage.libs.pari
+ r"""
+ Valuations which are defined as limits of valuations.
+
+@@ -30,6 +29,7 @@
+ point has two extensions to ``L``. The valuations corresponding to these
+ extensions can only be approximated::
+
++    sage: # needs sage.rings.function_field
+     sage: K.<x> = FunctionField(QQ)
+     sage: R.<y> = K[]
+     sage: L.<y> = K.extension(y^2 - x)
+@@ -40,6 +40,7 @@
+
+ The same phenomenon can be observed for valuations on number fields::
+
++    sage: # needs sage.geometry.polyhedron
+     sage: K = QQ
+     sage: R.<t> = K[]
+     sage: L.<t> = K.extension(t^2 + 1)
+@@ -54,6 +55,7 @@
+     valuation without using a limit. This is done to improve performance as many
+     computations already can be done correctly with an approximation::
+
++        sage: # needs sage.rings.function_field
+         sage: K.<x> = FunctionField(QQ)
+         sage: R.<y> = K[]
+         sage: L.<y> = K.extension(y^2 - x)
+@@ -158,6 +160,7 @@
+
+     EXAMPLES::
+
++        sage: # needs sage.rings.function_field
+         sage: K.<x> = FunctionField(QQ)
+         sage: R.<y> = K[]
+         sage: L.<y> = K.extension(y^2 - x)
+@@ -183,6 +186,7 @@
+         r"""
+         TESTS::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: R.<x> = QQ[]
+             sage: K.<i> = QQ.extension(x^2 + 1)
+             sage: v = K.valuation(2)
+@@ -209,6 +213,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^2 - (x - 1))
+@@ -228,6 +233,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^2 - x)
+@@ -247,6 +253,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^2 - (x - 1337))
+@@ -254,6 +261,7 @@
+         For the unique extension over the place at 1337, the initial
+         approximation is sufficient to compute the reduction of ``y``::
+
++            sage: # needs sage.rings.function_field
+             sage: v = K.valuation(1337)
+             sage: w = v.extension(L)
+             sage: u = w._base_valuation
+@@ -267,6 +275,7 @@
+         However, at a place over 1341, the initial approximation is not sufficient
+         for some values (note that 1341-1337 is a square)::
+
++            sage: # needs sage.rings.function_field
+             sage: v = K.valuation(1341)
+             sage: w = v.extensions(L)[1]
+             sage: u = w._base_valuation
+@@ -291,6 +300,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^2 - (x - 23))
+@@ -298,6 +308,7 @@
+         For the unique extension over the place at 23, the initial
+         approximation is sufficient to compute all valuations::
+
++            sage: # needs sage.rings.function_field
+             sage: v = K.valuation(23)
+             sage: w = v.extension(L)
+             sage: u = w._base_valuation
+@@ -313,6 +324,7 @@
+         improvement step is faster in this case than checking whether the
+         approximation is sufficient)::
+
++            sage: # needs sage.rings.function_field
+             sage: w(y)  # indirect doctest
+             1/2
+             sage: u._approximation
+@@ -325,6 +337,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -355,6 +368,7 @@
+
+     EXAMPLES::
+
++        sage: # needs sage.geometry.polyhedron
+         sage: R.<x> = QQ[]
+         sage: K.<i> = QQ.extension(x^2 + 1)
+         sage: v = K.valuation(2)
+@@ -365,6 +379,7 @@
+         r"""
+         TESTS::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: R.<x> = QQ[]
+             sage: K.<i> = QQ.extension(x^2 + 1)
+             sage: v = K.valuation(2)
+@@ -386,6 +401,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.number_field
+             sage: v = GaussianIntegers().valuation(2)
+             sage: u = v._base_valuation
+             sage: u.extensions(QQ['x'])
+@@ -410,6 +426,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^4 - x^2 - 2*x - 1)
+@@ -430,6 +447,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: R.<y> = K[]
+             sage: L.<y> = K.extension(y^2 - x)
+@@ -446,6 +464,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<x> = K[]
+             sage: vK = K.valuation(2)
+@@ -473,6 +492,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -519,6 +539,7 @@
+         approximation (perform one step of the Mac Lane algorithm) than to
+         check for this::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -595,6 +616,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -623,6 +645,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -647,6 +670,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: R.<x> = QQ[]
+             sage: F = (x^2 + 7) * (x^2 + 9)
+             sage: G = (x^2 + 7)
+@@ -661,6 +685,7 @@
+         The defining polynomials can differ by finite factors even when the
+         limit valuations approximate the same infinite factor::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: F = x*(x - 2)
+             sage: G = x*(x - 3)
+             sage: u = valuations.LimitValuation(QQ.valuation(2).mac_lane_approximants(F)[1], F)
+@@ -703,6 +728,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -724,6 +750,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -736,6 +763,7 @@
+             sage: u._base_valuation._weakly_separating_element(uu._base_valuation)  # long time
+             t + 2
+
++            sage: # needs sage.rings.function_field
+             sage: K.<x> = FunctionField(QQ)
+             sage: v = K.valuation(1/x)
+             sage: R.<y> = K[]
+@@ -778,6 +806,7 @@
+
+         TESTS::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -794,6 +823,7 @@
+
+         TESTS::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -818,6 +848,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -838,6 +869,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -866,6 +898,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -888,6 +921,7 @@
+
+         EXAMPLES::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)
+@@ -911,6 +945,7 @@
+         For a Mac Lane limit valuation, this is never the case, so this
+         method always returns ``False``::
+
++            sage: # needs sage.geometry.polyhedron
+             sage: K = QQ
+             sage: R.<t> = K[]
+             sage: L.<t> = K.extension(t^2 + 1)

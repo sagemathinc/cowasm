@@ -75779,6 +75779,77 @@ audit the next-smallest guarded
 `sage/rings/valuation/limit_valuation.py` module or select another persisted
 backend/runtime cluster.
 
+Limit-valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/valuation/limit_valuation.py` retained an old file-wide p-adic,
+function-field, number-field, and PARI guard. A runner-version-154
+feature-selected browser replay now completes without the historical timeout
+or any native trap and records:
+
+```text
+limit_valuation.py before: 125 passed, 115 failed, 5 skipped
+run lifecycle:             failed and closed
+SQLite integrity:          ok
+```
+
+The failures are focused dependency islands rather than a shared
+limit-valuation runtime defect. Function-field extension construction reaches
+the unavailable certified polynomial-factorization path. P-adic and
+number-field extension examples reach the PPL-backed Newton-polyhedron path.
+One Gaussian-integer example lacks the intentionally omitted number-field
+order namespace. The remaining failures are deterministic missing-name
+cascades from those failed setup rows.
+
+The accumulated WASI patch now removes the broad guard and adds standalone
+directives to each affected contiguous example sequence. Function-field
+construction and every dependent assertion use
+`sage.rings.function_field`; p-adic extension and Mac Lane approximant
+sequences use `sage.geometry.polyhedron`; and the Gaussian-integer sequence
+uses `sage.rings.number_field`. Existing long, random-output, number-field,
+and deferred metadata remains intact.
+
+The ordinary browser profile and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+limit_valuation.py: 14 passed, 0 failed, 231 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The skipped rows remain fully queryable as 141 PPL/polyhedron rows, 84
+function-field rows, five number-field rows, and one independent deferred
+row. Saved block-failure and file-error queries are empty, active-row
+coverage is 100%, and the ordinary and strict-make dashboards agree exactly
+across every persisted stable field and raw actual output for all 245 ordered
+rows.
+
+`sage/rings/valuation/limit_valuation.py` is now part of the curated
+pure-math corpus, raising it to 1,334 non-comment entries with no duplicates
+or missing paths. This metadata-only pass needs no native rebuild, Electron
+manifest schema, or standalone smoke-contract change.
+
+Validation includes the feature-selected classification baseline; ordinary
+and strict focused-make dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and exact stable-row comparison; Python syntax
+checks; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete sequential application against clean
+pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+source comparison; rejection of a second forward patch application; and
+`git diff --check`. The external developer checkout and its unrelated changes
+remain untouched.
+
+Removing the limit-valuation guard and classifying its dependency boundaries
+raises the accumulated patch to 1,812 serialized target sections (1,299
+`diff --git` and 513 header-only legacy sections) and 5,645 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-limit-valuation.PP125n/`. A future scheduled pass can
+audit the remaining smaller guarded
+`sage/rings/valuation/valuation.py` module or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
