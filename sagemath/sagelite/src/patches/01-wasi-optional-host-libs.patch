@@ -4185,7 +4185,8 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
  Finite field elements implemented via PARI's FFELT type
 @@ -23,6 +23,10 @@
  from cypari2.stack cimport new_gen, new_gen_noclear, clear_stack
- from cypari2.gen cimport Gen as pari_gen, objtogen
+-from cypari2.gen cimport Gen as pari_gen, objtogen
++from cypari2.gen cimport Gen as pari_gen, clone_ffelt, objtogen
 
 +import sys
 +if sys.platform == "wasi":
@@ -4220,10 +4221,25 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +                    except (ValueError, IndexError, TypeError):
 +                        raise TypeError("no coercion defined")
              raise TypeError("no coercion defined")
-@@ -1322,3 +1334,3 @@
+@@ -1316,9 +1328,18 @@
++            sage: p = 13189065031705623239
++            sage: k = FiniteField(p^3, "a")
++            sage: b = k(9288)
++            sage: z = b.__pari__(); del b
++            sage: z
++            9288
++
+             sage: F.<I> = GF((2^128+51)^2)
+             sage: pari(I)
+             Traceback (most recent call last):
+             ...
+             ValueError: variable name illegal in PARI
+         """
 -        if self._parent._need_replace_varname:
 +        if self._parent._need_replace_varname and sys.platform != "wasi":
              raise ValueError("variable name illegal in PARI")
++        if sys.platform == "wasi":
++            return clone_ffelt(self.val, <pari_gen>self._parent._gen_pari)
          return new_gen_noclear(self.val)
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
@@ -39396,11 +39412,6 @@ diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings
 @@ -218 +217 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -        sage: a.parent()
 +        sage: a.parent()                                                                # needs sage.libs.gap
-@@ -388,2 +387,2 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
--            sage: R = [r[0] for r in pol.roots()]
--            sage: prod(Fq_X.gen() - r for r in R) == pol
-+            sage: R = [r[0] for r in pol.roots()]                                       # known bug
-+            sage: prod(Fq_X.gen() - r for r in R) == pol                                # known bug
 @@ -1330 +1329 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: pari(I)
 +            sage: pari(I)                                                               # known bug

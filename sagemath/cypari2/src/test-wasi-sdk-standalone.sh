@@ -141,6 +141,10 @@ cp \
   "$probe_dir/generated/cypari2/auto_instance.pxi" \
   "$dist_dir/cypari2/"
 
+sed -i \
+  '/^cpdef Gen objtogen(s)$/a cdef Gen clone_ffelt(GEN input, Gen field)' \
+  "$dist_dir/cypari2/gen.pxd"
+
 cat >"$dist_dir/cypari2/__init__.py" <<'PY'
 """CoWasm build-support stub for cypari2.
 
@@ -743,6 +747,35 @@ cdef extern from *:
 
       return ok;
     }
+
+    static int cowasm_cypari2_gen_clone_ffelt(GEN input,
+                                               GEN field,
+                                               GEN *result,
+                                               long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        if (typ(input) != t_FFELT || typ(field) != t_FFELT) {
+          pari_err_TYPE("clone_ffelt", typ(input) != t_FFELT ? input : field);
+        }
+        if (!FF_samefield(input, field)) {
+          pari_err_MODULUS("clone_ffelt", input, field);
+        }
+        *result = gclone(Fq_to_FF(FF_to_FpXQ(input), field));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
     """
     void cowasm_cypari2_gen_ensure_pari()
     int cowasm_cypari2_gen_is_inverse_error(long errnum)
@@ -827,6 +860,10 @@ cdef extern from *:
                                        GEN input,
                                        GEN *result,
                                        long *errnum)
+    int cowasm_cypari2_gen_clone_ffelt(GEN input,
+                                       GEN field,
+                                       GEN *result,
+                                       long *errnum)
 
 
 _debug_level = 0
@@ -850,6 +887,17 @@ cdef Gen _new_owned(GEN g):
 
 cdef Gen _new_clone(GEN g):
     return _new_owned(gclone(g))
+
+
+cdef Gen clone_ffelt(GEN input, Gen field):
+    cdef GEN result = NULL
+    cdef long errnum = 0
+
+    if not cowasm_cypari2_gen_clone_ffelt(
+        input, field.g, &result, &errnum
+    ):
+        _raise_pari_error(errnum)
+    return _new_owned(result)
 
 
 cdef bint _is_integer_text(str text):

@@ -2097,6 +2097,20 @@ assert str(pari(q)) == '1/7'
 assert QQ(pari(q)) == q
 print('sagelite-node-ok Sage PARI rational converter boundary')"
 
+run_node_import "Sage PARI finite-field ownership boundary" "from sage.all import FiniteField, PolynomialRing
+p = 13189065031705623239
+Fq = FiniteField(p**3, 'a')
+owned = Fq(9288).__pari__()
+assert str(owned) == '9288'
+Fq_X = PolynomialRing(Fq, 'x')
+pol = Fq_X('x^9 + 13189065031705622723*x^7 + 13189065031705622723*x^6 + 9288*x^5 + 18576*x^4 + 13189065031705590731*x^3 + 13189065031705497851*x^2 + 13189065031705497851*x + 13189065031705581443')
+roots = [root for root, _multiplicity in pol.roots()]
+reconstructed = Fq_X.one()
+for root in roots:
+    reconstructed *= Fq_X.gen() - root
+assert reconstructed == pol
+print('sagelite-node-ok Sage PARI finite-field ownership boundary')"
+
 : >"$followups_file"
 cat >>"$followups_file" <<'EOFOLLOWUPS'
 sagelite-followup: rational polynomial roots over QQ exit before the Node.js polynomial helper smoke marker when promoted to the standalone import ladder.
@@ -2333,7 +2347,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=215
+electron_manifest_schema_version=216
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2408,6 +2422,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-constant-p
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-recursive-fraction-polynomial-v185"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-polynomial-gcd-v186"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-lie-additive-identity-v187"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-ownership-v188"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

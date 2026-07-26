@@ -282,6 +282,18 @@ assert str(objtogen('2+3')) == '5'
 assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
 assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]
 
+p = 13189065031705623239
+Fq = GF(p**3, 'a')
+owned_ffelt = Fq(9288).__pari__()
+assert str(owned_ffelt) == '9288'
+Fq_X = PolynomialRing(Fq, 'x')
+ffelt_polynomial = Fq_X('x^9 + 13189065031705622723*x^7 + 13189065031705622723*x^6 + 9288*x^5 + 18576*x^4 + 13189065031705590731*x^3 + 13189065031705497851*x^2 + 13189065031705497851*x + 13189065031705581443')
+ffelt_roots = [root for root, _multiplicity in ffelt_polynomial.roots()]
+ffelt_reconstructed = Fq_X.one()
+for root in ffelt_roots:
+    ffelt_reconstructed *= Fq_X.gen() - root
+assert ffelt_reconstructed == ffelt_polynomial
+
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
 assert A * A == matrix(ZZ, [[7, 10], [15, 22]])

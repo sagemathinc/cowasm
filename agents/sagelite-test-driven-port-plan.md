@@ -77497,3 +77497,77 @@ rebuilt-bundle and full-target dry-run evidence is under
 `/tmp/cowasm-sagelite-lie-final.xVq0Lz/`. A future scheduled pass can return
 to the mixed-field PARI finite-field ownership defect or select another
 persisted pure-math semantic gap.
+
+PARI finite-field ownership delivery pass on 2026-07-26 UTC:
+
+The two large-characteristic polynomial-root rows in
+`sage/rings/finite_rings/element_pari_ffelt.pyx` were previously classified
+as `# known bug` after PARI reported mixed internal finite-field moduli during
+factorization. The defect was not an absent PARI feature: the Sage FFELT
+`__pari__()` method returned a reference to its Sage-owned PARI object across
+the split WASM side-module boundary, so temporary coefficients could retain
+the wrong field identity or outlive their owner.
+
+The cypari2 standalone build now exposes a narrow Cython `clone_ffelt`
+boundary. It verifies that both arguments are PARI FFELTs in the same field,
+rebuilds the input through the cypari2-owned field generator with
+`Fq_to_FF(FF_to_FpXQ(...))`, and clones the result before wrapping it as an
+owned `Gen`. Sage's WASI `FiniteFieldElement_pari_ffelt.__pari__()` path uses
+that boundary; native behavior is unchanged. A new lifetime regression also
+deletes the original Sage element before reading its converted PARI value.
+The separate illegal-PARI-variable-name example remains an explicit known
+bug.
+
+Focused active replays cover the root list, exact reconstruction, and owned
+value lifetime:
+
+```text
+element_pari_ffelt.pyx:388:  1 passed, 0 failed, 0 skipped
+element_pari_ffelt.pyx:1332: 1 passed, 0 failed, 0 skipped
+```
+
+The complete direct dashboard and strict focused make target both record:
+
+```text
+element_pari_ffelt.pyx: 288 passed, 0 failed, 24 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+This adds five ownership-regression blocks and activates the two former root
+rows relative to the preceding 281-passed, 26-skipped dashboard. The retained
+skips comprise fourteen GAP rows, six GP/subprocess rows, two `not tested`
+timing rows, one illegal-variable known bug, and one Magma row. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the direct and strict dashboards agree exactly across all 312 ordered
+stable block rows.
+
+The standalone and Electron-shaped smokes now require the owned FFELT lifetime
+and exact reconstruction of the large-characteristic polynomial from its
+PARI-backed roots. The Electron manifest schema advances to 216 and its smoke
+contract to `pari-ffelt-ownership-v188`. A complete standalone reconstruction
+regenerated all 527 Cython sources, compiled and linked all 1,064 targets,
+passed all 91 Node import smokes and doctest-runner self-tests, emitted a
+manifest with 759 required resource hashes, and passed the complete
+Electron-shaped smoke. The desktop manifest, forge-resource, and runtime tests
+also pass against the rebuilt bundle.
+
+Validation additionally includes the cypari2 standalone build-support and
+PARI error-recovery suite; focused line replays; complete direct and strict
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; shell and JavaScript syntax; accumulated-patch
+syntax; complete sequential patch application against a clean archive of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte reconstructed `element_pari_ffelt.pyx` comparison; rejection of
+a second forward patch application; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries;
+`element_pari_ffelt.pyx` was already promoted. The accumulated patch remains
+at 1,831 serialized target sections (1,318 `diff --git` and 513 header-only
+legacy sections) and now contains 5,963 hunks because the obsolete two-row
+known-bug metadata hunk was removed. Clean replay evidence is under
+`/tmp/cowasm-sagelite-pari-ffelt.wwDD2D/`; focused, complete, strict-make, and
+query evidence is under
+`/tmp/cowasm-sagelite-pari-ffelt-doctest.hMl3xG/`. A future scheduled pass can
+address the remaining PARI variable-name normalization bug or select another
+persisted pure-math semantic gap.
