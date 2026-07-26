@@ -35674,3 +35674,218 @@ diff --git a/src/sage/rings/valuation/gauss_valuation.py b/src/sage/rings/valuat
 +++ b/src/sage/rings/valuation/gauss_valuation.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.libs.flint sage.rings.padics
+diff --git a/src/sage/rings/valuation/mapped_valuation.py b/src/sage/rings/valuation/mapped_valuation.py
+--- a/src/sage/rings/valuation/mapped_valuation.py
++++ b/src/sage/rings/valuation/mapped_valuation.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.function_field sage.rings.number_field sage.libs.pari
+@@ -12 +11 @@
+-    sage: L.<y> = K.extension(y^2 - x)
++    sage: L.<y> = K.extension(y^2 - x)                                                  # needs sage.rings.function_field
+@@ -46,3 +45,3 @@
+-        sage: L.<y> = K.extension(y^2 - x)
+-        sage: v = K.valuation(0)
+-        sage: w = v.extension(L); w
++        sage: L.<y> = K.extension(y^2 - x)                                              # needs sage.rings.function_field
++        sage: v = K.valuation(0)                                                        # needs sage.rings.function_field
++        sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
+@@ -69,3 +68,3 @@
+-            sage: L.<y> = K.extension(y^2 - x^2 + 1)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extension(L); w
++            sage: L.<y> = K.extension(y^2 - x^2 + 1)                                   # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L); w                                                 # needs sage.rings.function_field
+@@ -74 +73 @@
+-            sage: isinstance(w, MappedValuation_base)
++            sage: isinstance(w, MappedValuation_base)                                  # needs sage.rings.function_field
+@@ -94 +93 @@
+-            sage: v.extension(L)  # indirect doctest                                    # needs sage.rings.number_field
++            sage: v.extension(L)  # indirect doctest                                    # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -108 +107 @@
+-            sage: v.extension(L).residue_ring()                                         # needs sage.rings.number_field
++            sage: v.extension(L).residue_ring()                                         # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -123 +122 @@
+-            sage: v.extension(L).uniformizer()                                          # needs sage.rings.number_field
++            sage: v.extension(L).uniformizer()                                          # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -136,4 +135,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
+-            sage: w._to_base_domain(y).parent()
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
++            sage: w._to_base_domain(y).parent()                                         # needs sage.rings.function_field
+@@ -152,4 +151,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extension(L)
+-            sage: w._from_base_domain(w._base_valuation.domain().gen()).parent()
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
++            sage: w._from_base_domain(w._base_valuation.domain().gen()).parent()         # needs sage.rings.function_field
+@@ -168,4 +167,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extension(L)
+-            sage: w(y)  # indirect doctest
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
++            sage: w(y)  # indirect doctest                                              # needs sage.rings.function_field
+@@ -184,4 +183,4 @@
+-            sage: L.<y> = K.extension(y^2 - (x - 2))
+-            sage: v = K.valuation(0)
+-            sage: w = v.extension(L)
+-            sage: w.reduce(y)
++            sage: L.<y> = K.extension(y^2 - (x - 2))                                   # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
++            sage: w.reduce(y)                                                           # needs sage.rings.function_field
+@@ -201,4 +200,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(2)
+-            sage: w = v.extension(L)
+-            sage: w.lift(w.residue_field().gen())
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(2)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
++            sage: w.lift(w.residue_field().gen())                                       # needs sage.rings.function_field
+@@ -226,3 +225,3 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
+@@ -261,3 +260,3 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
+@@ -282,4 +281,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
+-            sage: w._to_base_residue_ring(1)
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
++            sage: w._to_base_residue_ring(1)                                            # needs sage.rings.function_field
+@@ -299,4 +298,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
+-            sage: w._from_base_residue_ring(1)
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
++            sage: w._from_base_residue_ring(1)                                          # needs sage.rings.function_field
+@@ -317,2 +316,2 @@
+-            sage: u,uu = v.extensions(L)
+-            sage: u.element_with_valuation(1)
++            sage: u,uu = v.extensions(L)                                                # needs sage.geometry.polyhedron
++            sage: u.element_with_valuation(1)                                           # needs sage.geometry.polyhedron
+@@ -332,4 +331,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
+-            sage: w._test_to_from_base_domain()
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
++            sage: w._test_to_from_base_domain()                                         # needs sage.rings.function_field
+@@ -352,4 +351,4 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extensions(L)[0]
+-            sage: w._test_to_from_base_residue_ring()
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extensions(L)[0]                                                # needs sage.rings.function_field
++            sage: w._test_to_from_base_residue_ring()                                   # needs sage.rings.function_field
+@@ -383,3 +382,3 @@
+-        sage: L.<y> = K.extension(y^2 - x)
+-        sage: v = K.valuation(0)
+-        sage: w = v.extension(L); w
++        sage: L.<y> = K.extension(y^2 - x)                                              # needs sage.rings.function_field
++        sage: v = K.valuation(0)                                                        # needs sage.rings.function_field
++        sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
+@@ -394,3 +393,3 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(0)
+-            sage: w = v.extension(L)
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(0)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
+@@ -398 +397 @@
+-            sage: isinstance(w, FiniteExtensionFromInfiniteValuation)
++            sage: isinstance(w, FiniteExtensionFromInfiniteValuation)                   # needs sage.rings.function_field
+@@ -415,3 +414,3 @@
+-            sage: w = v.extension(L)
+-            sage: ww = v.extension(L)
+-            sage: w == ww # indirect doctest
++            sage: w = v.extension(L)                                                    # needs sage.geometry.polyhedron
++            sage: ww = v.extension(L)                                                   # needs sage.geometry.polyhedron
++            sage: w == ww # indirect doctest                                            # needs sage.geometry.polyhedron
+@@ -433,2 +432,2 @@
+-            sage: w = v.extension(L)
+-            sage: w.restriction(K) is v
++            sage: w = v.extension(L)                                                    # needs sage.geometry.polyhedron
++            sage: w.restriction(K) is v                                                 # needs sage.geometry.polyhedron
+@@ -454 +453 @@
+-            sage: w = v.extension(L)
++            sage: w = v.extension(L)                                                    # needs sage.geometry.polyhedron
+@@ -456,2 +455,2 @@
+-            sage: u,uu = v.extensions(L)
+-            sage: u.separating_element([w,uu]) # indirect doctest
++            sage: u,uu = v.extensions(L)                                                # needs sage.geometry.polyhedron
++            sage: u.separating_element([w,uu]) # indirect doctest                       # needs sage.geometry.polyhedron
+@@ -482,2 +481,2 @@
+-            sage: w = v.extension(L)
+-            sage: w._relative_size(1024*t + 1024)
++            sage: w = v.extension(L)                                                    # needs sage.geometry.polyhedron
++            sage: w._relative_size(1024*t + 1024)                                       # needs sage.geometry.polyhedron
+@@ -502 +501 @@
+-            sage: u,uu = v.extensions(L)
++            sage: u,uu = v.extensions(L)                                                # needs sage.geometry.polyhedron
+@@ -504 +503 @@
+-            sage: u.simplify(f, error=u(f), force=True)
++            sage: u.simplify(f, error=u(f), force=True)                                 # needs sage.geometry.polyhedron
+@@ -527,2 +526,2 @@
+-            sage: u,uu = v.extensions(L)
+-            sage: u.lower_bound(t + 2)
++            sage: u,uu = v.extensions(L)                                                # needs sage.geometry.polyhedron
++            sage: u.lower_bound(t + 2)                                                  # needs sage.geometry.polyhedron
+@@ -530 +529 @@
+-            sage: u(t + 2)
++            sage: u(t + 2)                                                              # needs sage.geometry.polyhedron
+@@ -549,2 +548,2 @@
+-            sage: u,uu = v.extensions(L)
+-            sage: u.upper_bound(t + 2) >= 1
++            sage: u,uu = v.extensions(L)                                                # needs sage.geometry.polyhedron
++            sage: u.upper_bound(t + 2) >= 1                                             # needs sage.geometry.polyhedron
+@@ -552 +551 @@
+-            sage: u(t + 2)
++            sage: u(t + 2)                                                              # needs sage.geometry.polyhedron
+@@ -568,3 +567,3 @@
+-        sage: L.<y> = K.extension(y^2 - x)
+-        sage: v = K.valuation(1)
+-        sage: w = v.extensions(L); w
++        sage: L.<y> = K.extension(y^2 - x)                                              # needs sage.rings.function_field
++        sage: v = K.valuation(1)                                                        # needs sage.rings.function_field
++        sage: w = v.extensions(L); w                                                    # needs sage.rings.function_field
+@@ -584,3 +583,3 @@
+-            sage: L.<y> = K.extension(y^2 - x)
+-            sage: v = K.valuation(2)
+-            sage: w = v.extension(L); w
++            sage: L.<y> = K.extension(y^2 - x)                                         # needs sage.rings.function_field
++            sage: v = K.valuation(2)                                                    # needs sage.rings.function_field
++            sage: w = v.extension(L); w                                                 # needs sage.rings.function_field
+@@ -589 +588 @@
+-            sage: isinstance(w, FiniteExtensionFromLimitValuation)
++            sage: isinstance(w, FiniteExtensionFromLimitValuation)                      # needs sage.rings.function_field

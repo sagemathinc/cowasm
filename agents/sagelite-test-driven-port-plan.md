@@ -75705,6 +75705,80 @@ audit the next-smallest guarded
 `sage/rings/valuation/mapped_valuation.py` module or select another persisted
 backend/runtime cluster.
 
+Mapped-valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/valuation/mapped_valuation.py` retained the next-smallest
+file-wide guard in the valuation directory. A runner-version-154
+feature-selected browser baseline completed without a native trap and
+recorded:
+
+```text
+mapped_valuation.py before: 103 passed, 76 failed, 2 skipped
+run lifecycle:              failed and closed
+SQLite integrity:           ok
+```
+
+The failures were dependency islands rather than a shared mapped-valuation
+runtime defect. Function-field extension construction reached unavailable
+certified polynomial factorization, and the dependent valuation rows then
+failed from missing `L` or `w`. Number-field p-adic extension construction
+reached the known PPL-backed valuation path, with later rows cascading from
+missing `w` or `u`. The final Gaussian-integer display example remained
+behind its existing number-field annotation.
+
+The accumulated WASI patch now removes the broad function-field,
+number-field, and PARI guard. Each affected function-field construction and
+dependent valuation row carries the focused `sage.rings.function_field`
+requirement. P-adic extensions and their dependent assertions carry
+`sage.geometry.polyhedron`, including the three rows that already had a
+number-field requirement. Existing long and number-field metadata remains
+intact.
+
+The ordinary browser profile and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+mapped_valuation.py: 82 passed, 0 failed, 99 skipped
+run lifecycle:       passed and closed
+SQLite integrity:    ok
+```
+
+The skipped rows are fully queryable as 71 function-field rows, 23
+PPL/polyhedron rows, four number-field rows, and one independent long-test
+row. Saved block-failure and file-error queries are empty, active-row
+coverage is 100%, and the ordinary and strict-make dashboards agree exactly
+across every persisted stable field and raw actual output for all 181
+ordered rows.
+
+`sage/rings/valuation/mapped_valuation.py` is now part of the curated
+pure-math corpus, raising it to 1,333 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest metadata and corpus
+membership; no native rebuild, Electron manifest schema, or standalone
+smoke-contract change is required.
+
+Validation includes the feature-selected and guardless classification
+dashboards; ordinary and strict focused-make dashboards; saved lifecycle,
+failure, and skip queries; SQLite integrity and exact stable-row comparison;
+Python syntax checks; corpus uniqueness, path existence, and full-target dry
+run; accumulated-patch syntax and complete sequential application against
+clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte reconstructed
+source comparison; rejection of a second forward patch application; and
+`git diff --check`. The first strict-make attempt used the default dirty
+developer checkout and stopped during accumulated-patch replay; the
+successful run used a clean detached clone at the same pinned commit. The
+external developer checkout and its unrelated changes remain untouched.
+
+Removing the mapped-valuation guard and classifying its focused dependency
+boundaries raises the accumulated patch to 1,811 serialized target sections
+(1,298 `diff --git` and 513 header-only legacy sections) and 5,608 hunks.
+Baseline, guardless, ordinary, strict-make, query, clean-reconstruction,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-mapped-valuation.s9RvCF/`. A future scheduled pass can
+audit the next-smallest guarded
+`sage/rings/valuation/limit_valuation.py` module or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
