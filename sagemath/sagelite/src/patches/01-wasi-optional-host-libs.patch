@@ -35583,3 +35583,89 @@ diff --git a/src/sage/rings/padics/padic_valuation.py b/src/sage/rings/padics/pa
 +            sage: M.<b> = L.extension(x^2 + 1)                                        # needs sage.libs.pari
 +            sage: w = v.extension(L).extension(M)                                     # needs sage.libs.pari sage.geometry.polyhedron
 +            sage: w._to_base_domain(b)                                                # needs sage.libs.pari
+diff --git a/src/sage/rings/valuation/augmented_valuation.py b/src/sage/rings/valuation/augmented_valuation.py
+--- a/src/sage/rings/valuation/augmented_valuation.py
++++ b/src/sage/rings/valuation/augmented_valuation.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.ntl
+@@ -58 +57 @@
+-    ....:                      + 4*(u + 1)*x^2 + 6*(u + 1)*x + 4 + 3*u, 10)
++    ....:                      + 4*(u + 1)*x^2 + 6*(u + 1)*x + 4 + 3*u, 10)  # needs sage.libs.pari
+@@ -97 +96 @@
+-    sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
++    sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)  # needs sage.libs.pari
+@@ -558,4 +557,4 @@
+-            sage: K = GaussianIntegers().fraction_field()
+-            sage: R.<x> = K[]
+-            sage: v = GaussValuation(R, K.valuation(2))
+-            sage: w = v.augmentation(x^2 + x + 1, 1)
++            sage: K = GaussianIntegers().fraction_field()                              # needs sage.rings.number_field sage.libs.pari
++            sage: R.<x> = K[]                                                          # needs sage.rings.number_field sage.libs.pari
++            sage: v = GaussValuation(R, K.valuation(2))                                # needs sage.rings.number_field sage.libs.pari
++            sage: w = v.augmentation(x^2 + x + 1, 1)                                  # needs sage.rings.number_field sage.libs.pari
+@@ -772,4 +771,4 @@
+-            sage: R.<x> = GaussianIntegers()[]
+-            sage: v = GaussValuation(R, GaussianIntegers().valuation(2))
+-            sage: v = v.augmentation(x, 1)
+-            sage: v.change_domain(QQ['x'])
++            sage: R.<x> = GaussianIntegers()[]                                         # needs sage.rings.number_field sage.libs.pari
++            sage: v = GaussValuation(R, GaussianIntegers().valuation(2))               # needs sage.rings.number_field sage.libs.pari
++            sage: v = v.augmentation(x, 1)                                             # needs sage.rings.number_field sage.libs.pari
++            sage: v.change_domain(QQ['x'])                                             # needs sage.rings.number_field sage.libs.pari
+@@ -850,3 +849,3 @@
+-            sage: L.<y> = K.extension(y^2 + x^2)
+-            sage: w = v.extension(L)
+-            sage: w.residue_field()
++            sage: L.<y> = K.extension(y^2 + x^2)                                       # needs sage.rings.function_field
++            sage: w = v.extension(L)                                                   # needs sage.rings.function_field
++            sage: w.residue_field()                                                    # needs sage.rings.function_field
+@@ -854 +853 @@
+-            sage: w.residue_field().base_field()
++            sage: w.residue_field().base_field()                                       # needs sage.rings.function_field
+@@ -1044,2 +1043,2 @@
+-            sage: v = v0.augmentation(x^2 + x + 2, 1)
+-            sage: v.lift(v.reduce(x)) == x
++            sage: v = v0.augmentation(x^2 + x + 2, 1)                                 # needs sage.libs.pari
++            sage: v.lift(v.reduce(x)) == x                                             # needs sage.libs.pari
+@@ -1355,3 +1354,3 @@
+-            sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
+-            sage: u = ww.residue_ring().base().gen()
+-            sage: F = ww.residue_ring()(u); F
++            sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)   # needs sage.libs.pari
++            sage: u = ww.residue_ring().base().gen()                                   # needs sage.libs.pari
++            sage: F = ww.residue_ring()(u); F                                          # needs sage.libs.pari
+@@ -1359 +1358 @@
+-            sage: f = ww.lift(F); f
++            sage: f = ww.lift(F); f                                                    # needs sage.libs.pari
+@@ -1361 +1360 @@
+-            sage: F == ww.reduce(f)
++            sage: F == ww.reduce(f)                                                    # needs sage.libs.pari
+@@ -1444,5 +1443,5 @@
+-            sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
+-            sage: u = ww.residue_ring().base().gen()
+-            sage: y = ww.residue_ring().gen()
+-            sage: f = ww.lift_to_key(y^3+y+u)
+-            sage: f.degree()
++            sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)   # needs sage.libs.pari
++            sage: u = ww.residue_ring().base().gen()                                   # needs sage.libs.pari
++            sage: y = ww.residue_ring().gen()                                          # needs sage.libs.pari
++            sage: f = ww.lift_to_key(y^3+y+u)                                          # needs sage.libs.pari
++            sage: f.degree()                                                           # needs sage.libs.pari
+@@ -1450 +1449 @@
+-            sage: ww.is_key(f)
++            sage: ww.is_key(f)                                                         # needs sage.libs.pari
+@@ -1707,4 +1706,4 @@
+-            sage: v = GaussValuation(R, K.valuation(2))
+-            sage: v = v.augmentation(x, 3/2)
+-            sage: v = v.augmentation(x^2 + 8, 13/4)
+-            sage: v = v.augmentation(x^4 + 16*x^2 + 32*x + 64, 20/3)
++            sage: v = GaussValuation(R, K.valuation(2))                                # needs sage.rings.number_field sage.geometry.polyhedron
++            sage: v = v.augmentation(x, 3/2)                                           # needs sage.rings.number_field sage.geometry.polyhedron
++            sage: v = v.augmentation(x^2 + 8, 13/4)                                    # needs sage.rings.number_field sage.geometry.polyhedron
++            sage: v = v.augmentation(x^4 + 16*x^2 + 32*x + 64, 20/3)                   # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -1713 +1712 @@
+-            sage: v = F.valuation(v)
++            sage: v = F.valuation(v)                                                   # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -1715 +1714 @@
+-            sage: v.mac_lane_approximants(G)
++            sage: v.mac_lane_approximants(G)                                           # needs sage.rings.number_field sage.geometry.polyhedron

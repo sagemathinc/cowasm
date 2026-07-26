@@ -75585,6 +75585,77 @@ pass can audit the adjacent guarded
 `sage/rings/valuation/augmented_valuation.py` module or select another
 persisted backend/runtime cluster.
 
+Augmented-valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/valuation/augmented_valuation.py` retained a broad historical
+p-adic and NTL guard despite its largely pure valuation implementation and the
+now-repaired p-adic extension stack. A runner-version-154 feature-selected
+browser replay completed without a native trap and recorded:
+
+```text
+augmented_valuation.py before: 428 passed, 31 failed, 31 skipped
+run lifecycle:                 failed and closed
+SQLite integrity:              ok
+```
+
+The failures formed a small set of known backend islands rather than a shared
+valuation-runtime defect. Iterated residue extensions and relative
+number-field construction reached the focused cypari2 object-model boundary;
+Gaussian-integer setup lacked the intentionally omitted number-field order
+namespace; a function-field extension reached unavailable certified
+factorization behavior; and the final mixed number-field/function-field
+example reached PPL-backed valuation construction. The remaining name errors,
+coercion errors, and four output mismatches were deterministic cascades from
+those failed setup rows reusing older doctest state.
+
+The accumulated WASI patch now removes the broad file guard and gives each
+affected contiguous sequence focused number-field, PARI, function-field, or
+polyhedron metadata. Dependent setup and assertion rows carry the same
+requirement so a skipped constructor cannot leave a later row evaluating
+stale state. Existing NTL, finite-field, Singular, MIP, polyhedron, and long
+metadata remains intact.
+
+The ordinary browser profile and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+augmented_valuation.py: 420 passed, 0 failed, 70 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+The final count also exposes six pre-existing NTL-specific rows that the
+feature-selected baseline deliberately enabled. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the ordinary
+and strict-make dashboards agree exactly across every persisted stable field
+and raw actual output for all 490 ordered rows.
+
+`sage/rings/valuation/augmented_valuation.py` is now part of the curated
+pure-math corpus, raising it to 1,331 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest metadata and corpus
+membership; no native rebuild, Electron manifest schema, or standalone
+smoke-contract change is required.
+
+Validation includes the feature-selected classification dashboard; ordinary
+and strict focused-make dashboards; saved lifecycle, failure, and skip
+queries; SQLite integrity and exact stable-row comparison; Python syntax
+checks; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete sequential application against clean
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte comparison of the reconstructed target with the runtime-tested
+source; rejection of a second forward patch application; and
+`git diff --check`. The external developer checkout and its unrelated changes
+remain untouched.
+
+Removing the augmented-valuation guard raises the accumulated patch to 1,809
+serialized target sections (1,296 `diff --git` and 513 header-only legacy
+sections) and 5,570 hunks. Baseline, ordinary, strict-make, query,
+clean-reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-augmented-valuation.waPJRN/`. A future scheduled pass
+can audit the smaller adjacent guarded
+`sage/rings/valuation/gauss_valuation.py` module or select another persisted
+backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

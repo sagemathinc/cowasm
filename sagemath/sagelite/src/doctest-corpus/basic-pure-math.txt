@@ -1333,3 +1333,4 @@ src/sage/rings/padics/witt_vector.py
 src/sage/rings/padics/witt_vector_ring.py
 src/sage/rings/padics/CA_template.pxi
 src/sage/rings/padics/padic_valuation.py
+src/sage/rings/valuation/augmented_valuation.py
