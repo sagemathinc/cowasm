@@ -74930,6 +74930,80 @@ clean-reconstruction, full-target dry-run, and patch-replay evidence is under
 can audit the adjacent guarded `padic_ext_element.pyx` module or select
 another persisted backend/runtime cluster.
 
+P-adic extension series-expansion NTL-context restoration and guard-reopening
+pass on 2026-07-26 UTC:
+
+`sage/rings/padics/padic_ext_element.pyx` retained the next historical
+file-wide `sage.rings.padics` annotation after the browser package gained the
+extension-element stack. A runner-version-154 feature-selected baseline
+against the current composed native resource bundle reached the second
+balanced series-expansion assertion and trapped before block checkpointing:
+
+```text
+padic_ext_element.pyx before: 0 passed, 1 failed, 0 skipped
+active source line:           330
+active expression:            y._ext_p_list(False)
+native trap:                  NTL::to_ZZ_p with an unset local modulus
+```
+
+The shared `padic_ZZ_pX_element` side module called a pow-computer method to
+restore the top `ZZ_p` context before converting the extension coefficients.
+That pow-computer lives in a separately linked WASM side module, so restoring
+its NTL static state did not initialize the conversion module's own modulus.
+The accumulated WASI patch now reconstructs a module-local `ZZ_pContext` from
+the cached top context immediately before `ext_p_list_precs` performs its NTL
+conversions.
+
+A focused Cython generation, C++ compilation, and WASM side-module link
+validated the repair. A copy of the current composed resource bundle carried
+the rebuilt module with a refreshed manifest integrity hash. The complete
+feature-selected replay then recorded:
+
+```text
+padic_ext_element.pyx: 49 passed, 0 failed, 0 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+The accumulated patch also removes the obsolete file-wide guard. The ordinary
+default browser profile and strict focused make target against a complete
+clean pinned-source reconstruction each record the same 49 clean active rows.
+Saved block-failure, file-error, and skip queries are empty, active-row
+coverage is 100%, and all persisted stable metadata agrees exactly between
+the two dashboards. Raw actual output differs only for two passing expected
+exceptions whose ordinary traceback includes a source-code line that is not
+available from the strict reconstruction's separately compiled q-adic module.
+
+`sage/rings/padics/padic_ext_element.pyx` is now part of the curated pure-math
+corpus, raising it to 1,321 non-comment entries with no duplicates or missing
+paths. The shipped `padic_ZZ_pX_element` module was already part of the
+Electron resource contract, so the repair needs no manifest schema change.
+
+Validation includes the initial controlled trap; focused native
+Cython/C++/WASM rebuilding; the repaired feature-selected and ordinary
+dashboards; strict focused-make validation; saved lifecycle/latest-run,
+failure, and skip queries; SQLite integrity and exact stable-metadata
+comparison; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete sequential application against clean
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`;
+byte-for-byte comparison of both reconstructed targets with the
+runtime-tested sources; rejection of a second forward patch application;
+standalone shell syntax; and `git diff --check`. An initial strict-source
+archive command omitted its destination-directory creation, after which Make
+correctly reproduced the external checkout's unrelated pre-existing conflict;
+the successful validation used a fresh detached pinned reconstruction. The
+external developer checkout and its unrelated matrix, integer-ring,
+complex-roots, and SQLite changes remain untouched.
+
+The runtime repair plus guard removal raise the accumulated patch to 1,799
+serialized target sections (1,286 `diff --git` and 513 header-only legacy
+sections) and 5,460 hunks. Baseline, native-build, resource, controlled,
+ordinary, strict-make, query, clean-reconstruction, failed-refresh,
+full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-padic-ext-element.14utSh/`. A future scheduled pass can
+audit the adjacent guarded `padic_ZZ_pX_element.pyx` module or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

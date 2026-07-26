@@ -1323,3 +1323,4 @@ src/sage/rings/padics/generic_nodes.py
 src/sage/rings/padics/padic_generic.py
 src/sage/rings/padics/local_generic.py
 src/sage/rings/padics/local_generic_element.pyx
+src/sage/rings/padics/padic_ext_element.pyx

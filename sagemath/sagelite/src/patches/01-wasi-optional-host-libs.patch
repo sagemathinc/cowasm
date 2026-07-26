@@ -34782,3 +34782,20 @@ diff --git a/src/sage/rings/padics/local_generic_element.pyx b/src/sage/rings/pa
 @@ -806 +805 @@
 -            sage: s == sqrt(c2)
 +            sage: s == sqrt(c2)  # needs sage.libs.pari
+diff --git a/src/sage/rings/padics/padic_ZZ_pX_element.pyx b/src/sage/rings/padics/padic_ZZ_pX_element.pyx
+--- a/src/sage/rings/padics/padic_ZZ_pX_element.pyx
++++ b/src/sage/rings/padics/padic_ZZ_pX_element.pyx
+@@ -54,0 +55,5 @@
++cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
++    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
++    local_context.restore()
++
++
+@@ -286 +291 @@
+-        self.prime_pow.restore_top_context()
++        restore_ZZ_p_context(self.prime_pow.get_top_context())
+diff --git a/src/sage/rings/padics/padic_ext_element.pyx b/src/sage/rings/padics/padic_ext_element.pyx
+--- a/src/sage/rings/padics/padic_ext_element.pyx
++++ b/src/sage/rings/padics/padic_ext_element.pyx
+@@ -7 +6,0 @@
+-# sage.doctest: needs sage.rings.padics
