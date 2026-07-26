@@ -34318,15 +34318,55 @@ diff --git a/src/sage/rings/padics/padic_ZZ_pX_CA_element.pyx b/src/sage/rings/p
 index 70a07fc2..f5355fed 100644
 --- a/src/sage/rings/padics/padic_ZZ_pX_CA_element.pyx
 +++ b/src/sage/rings/padics/padic_ZZ_pX_CA_element.pyx
+@@ -7 +6,0 @@
+-# sage.doctest: needs sage.rings.padics
 @@ -192,0 +193,4 @@ from sage.rings.infinity import infinity
 +cdef inline void restore_ZZ_p_context(ntl_ZZ_pContext_class c) noexcept:
 +    cdef ZZ_pContext_c local_context = ZZ_pContext_c(c.p.x)
 +    local_context.restore()
 +
+@@ -230 +234 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: W(pari('3 + O(5^3)'))
++            sage: W(pari('3 + O(5^3)'))  # needs sage.libs.pari
+@@ -249 +253 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: W(gp('5 + O(5^2)'))
++            sage: W(gp('5 + O(5^2)'))  # needs sage.libs.pari
 @@ -673,0 +678 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 +            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.absprec))
 @@ -697,0 +703 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 +            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(self.absprec))
+@@ -796,6 +801,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+         """
+         if absprec < 0:
+             raise ValueError("absprec must be nonnegative")
++        if absprec > 0:
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(absprec))
+         if self.absprec == absprec:
+             return False
+         if absprec > 0:
+@@ -860,6 +867,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+         ans.absprec = absprec
+         if absprec > 0:
+             self.prime_pow.restore_context_capdiv(absprec)
++            restore_ZZ_p_context(self.prime_pow.get_context_capdiv(absprec))
+         elif absprec < 0:
+             raise ValueError("absprec must be positive")
+         return ans
+@@ -982 +992 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: z << 17  # indirect doctest
++            sage: z << 17  # needs sage.libs.ntl
+@@ -1003 +1013 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: z << 17  # indirect doctest
++            sage: z << 17  # needs sage.libs.ntl
+@@ -1229 +1239 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: (1+w+O(w^2))^64
++            sage: (1+w+O(w^2))^64  # needs sage.libs.ntl
+@@ -2070 +2080 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: L = W(3).teichmuller_expansion(); L
++            sage: L = W(3).teichmuller_expansion(); L  # needs sage.libs.ntl
+@@ -2074 +2084 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
+-            sage: sum([w^i*L[i] for i in range(len(L))])
++            sage: sum([w^i*L[i] for i in range(len(L))])  # needs sage.libs.ntl
 diff --git a/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx b/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
 index 19bf55f7..af6110e3 100644
 --- a/src/sage/rings/padics/padic_ZZ_pX_FM_element.pyx
