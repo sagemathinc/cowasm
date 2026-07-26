@@ -76859,3 +76859,70 @@ patch-replay evidence is under
 `/tmp/cowasm-sagelite-pari-residue.3rGtYy/`. A future scheduled pass can audit
 another compact finite-ring guard or turn the persisted number-field
 factorization/category boundary into a runtime fix.
+
+PARI finite-field implementation guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/finite_rings/finite_field_pari_ffelt.py` retained a historical
+file-wide PARI guard even though its construction, arithmetic, generator,
+characteristic, serialization, and ordinary element paths now work in the
+browser runtime. A runner-version-154 replay selecting the historical feature
+recorded:
+
+```text
+finite_field_pari_ffelt.py selected: 40 passed, 2 failed, 1 skipped
+run lifecycle:                       failed and closed
+SQLite integrity:                    ok
+```
+
+The two failures were independent and already narrow. `TestSuite(k)` exposed
+the construction-functor identity divergence documented by the adjacent
+upstream `FiniteField.construction()` known-bug doctest. The cached
+`_pari_frobenius()` test entered the intentionally incomplete cypari2 object
+model at `Gen.fffrobenius()`; its following inverse-Frobenius row already
+carried a module requirement but depended on the same PARI path.
+
+The accumulated WASI patch now removes the broad file guard, records the one
+construction-suite row as a deferred known bug, and gives both Frobenius rows
+focused `sage.libs.pari` metadata while preserving the second row's module
+requirement. The ordinary browser profile and strict focused make target
+against a clean reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+finite_field_pari_ffelt.py: 40 passed, 0 failed, 3 skipped
+run lifecycle:              passed and closed
+SQLite integrity:           ok
+```
+
+The three skips comprise one deferred known bug, one focused PARI row, and one
+combined PARI/module row. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, and the direct and strict-make dashboards agree
+exactly across all 43 ordered stable block fields, including raw actual
+output.
+
+`sage/rings/finite_rings/finite_field_pari_ffelt.py` is now part of the
+curated pure-math corpus, raising it to 1,350 non-comment entries with no
+duplicates or missing paths. This pass changes only focused doctest dependency
+and deferred-test metadata plus corpus membership; no native rebuild, Electron
+manifest change, or resource restaging is required.
+
+Validation includes the historical-feature baseline; ordinary and strict
+focused-make dashboards; saved lifecycle, failure, and skip queries; SQLite
+integrity and exact stable-row comparison; Python syntax checks; corpus
+uniqueness, path existence, and full-target dry run; accumulated-patch syntax
+and complete sequential application against the clean pinned source;
+byte-for-byte reconstructed-target comparison; rejection of a second forward
+application; and `git diff --check`. The first strict-make prerequisite
+reproduced the external developer checkout's unrelated pre-existing patch
+conflict and replaced the generated workspace source before stopping. The
+workspace source was restored from the validated pinned reconstruction, and
+the successful strict run used that reconstruction directly; the external
+checkout remains untouched.
+
+The accumulated patch now contains 1,828 serialized target sections (1,315
+`diff --git` and 513 header-only legacy sections) and 5,943 hunks. Baseline,
+ordinary, strict-make, query, clean-reconstruction, full-target dry-run, and
+patch-replay evidence is under
+`/tmp/cowasm-sagelite-finite-field-pari.wp4Du0/`. A future scheduled pass can
+audit the adjacent guarded `sage/rings/finite_rings/element_pari_ffelt.pyx`
+module or turn the cached Frobenius cypari2 boundary into a runtime fix.
