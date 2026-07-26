@@ -77354,3 +77354,81 @@ dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-frac-recursive-fixed.m1wQOz/`. A future scheduled pass
 can implement the remaining polynomial-gcd island in the same module or
 return to the mixed-field PARI ownership defect.
+
+Fraction-field polynomial-GCD delivery pass on 2026-07-26 UTC:
+
+The last four known-bug rows in `sage/rings/fraction_field.py` exercise
+univariate polynomial GCDs over `Frac(ZZ[x,y])`. Selecting the first deferred
+block reproduced `TypeError: fraction must have unit denominator`. The
+generic fallback attempted to convert `f.numerator()` and `g.numerator()` to
+polynomials over `ZZ[x,y]`, but the generic polynomial numerator operation
+does not clear the individual rational-function coefficient denominators.
+The multivariate generic backend also has no coefficient GCD with which to
+run the ordinary denominator-clearing algorithm.
+
+The accumulated Sage patch now uses a narrow exact specialization path when
+the coefficient base is a multivariate polynomial ring over `ZZ` and at least
+one input polynomial is monic. It evaluates the rational-function
+coefficients at deterministic integer points into `QQ[z]`, rejecting poles
+and degree drops. A constant specialized GCD is an exact coprimality
+certificate: over the integrally closed ring `ZZ[x_1, ..., x_n]`, every monic
+common factor of the monic input keeps its degree under a valid
+specialization. For the regression's linear case, a specialized root matching
+a base generator supplies the candidate `z - x_i`; denominator-cleared Horner
+evaluation then verifies exact divisibility of both original polynomials
+before returning it. Other coefficient rings and unresolved specialized GCDs
+continue through the existing fallback.
+
+The obsolete annotations are removed. The two focused block replays each
+record one active pass, covering the coprime result, parent preservation, and
+the recovered linear factor. The complete direct dashboard, the clean strict
+focused-make dashboard, and the final focused make against the rebuilt
+resource bundle all record:
+
+```text
+fraction_field.py: 270 passed, 0 failed, 28 skipped
+run lifecycle:     passed and closed
+SQLite integrity:  ok
+```
+
+This improves the preceding 266 passed, 0 failed, and 32 skipped dashboard by
+activating all four remaining GCD rows. The 28 retained skips comprise sixteen
+PARI rows, five Magma rows, and seven rows at the existing finite-ring,
+number-field, symbolic, complex-double, and real-field boundaries. Saved
+block-failure and file-error queries are empty. The direct and strict runs
+agree across all 298 ordered block rows after normalizing the accepted output
+of the single `# random` example; the final rebuilt-bundle run also matches
+their status, expected-output, failure-class, and skip-reason metadata
+exactly.
+
+The standalone and Electron-shaped Laurent-polynomial smokes now include a
+compact rational-function parameter, require a coprime polynomial GCD, and
+recover an exact common `w - a` factor. The Electron manifest schema advances
+to 214 and its smoke contract to `fraction-polynomial-gcd-v186`. The clean
+standalone rebuild emits a manifest-validated resource bundle with all 759
+required hashes, and the complete Electron-shaped smoke passes against that
+exact bundle.
+
+Validation includes the failing selected-deferred baseline; both focused
+active replays; complete direct, clean strict, and final rebuilt-bundle
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+stable-row comparison; a complete standalone rebuild from a clean clone of
+pinned Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58`; all
+standalone import and doctest-runner self-tests; all Electron manifest,
+forge-resource, and runtime tests; the complete Electron-shaped smoke; shell
+and JavaScript syntax; accumulated-patch syntax; complete sequential
+application against a clean archive; byte-for-byte reconstructed
+`fraction_field.py` comparison; Python compilation; rejection of a second
+forward patch application; corpus uniqueness and path existence; full-target
+dry run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; `fraction_field.py` was already promoted. The accumulated
+patch now contains 1,830 serialized target sections (1,317 `diff --git` and
+513 header-only legacy sections) and 5,962 hunks. Focused, complete,
+strict-make, final rebuilt-bundle, query, and full-target dry-run evidence is
+under `/tmp/cowasm-sagelite-fraction-gcd.gPrbr3/`; clean reconstruction and
+patch-replay trees are under the corresponding
+`/tmp/cowasm-sagelite-fraction-gcd-*` paths. A future scheduled pass can
+return to the mixed-field PARI finite-field ownership defect or select
+another persisted pure-math semantic gap.

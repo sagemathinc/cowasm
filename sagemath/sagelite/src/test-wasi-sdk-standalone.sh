@@ -1973,6 +1973,16 @@ assert target(nested) == (
     (ut**4*vt + ut**2 + ut*vt + 1) /
     (ut**5 + ut**3 + ut**2 + 1)
 )
+G = ZZ['a,b']
+a, b = G.gens()
+GK = G.fraction_field()
+T = GK['w']
+w = T.gen()
+parameter = (a + b) / (a**2 + b + 1)
+left = (parameter*w + 1)**2
+right = (w + parameter)**2
+assert left.gcd(right) == T.one()
+assert (left*(w-a)).gcd(right*(w-a)) == w - a
 print('sagelite-node-ok Laurent polynomial smoke')"
 run_node_import "Hamming code smoke" "import sage.all
 from sage.all import GF
@@ -2316,7 +2326,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=213
+electron_manifest_schema_version=214
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2389,6 +2399,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-flint-padi
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-local-ntl-context-numeric-log-v183"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-constant-polynomial-localization-v184"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-recursive-fraction-polynomial-v185"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-polynomial-gcd-v186"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

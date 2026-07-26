@@ -677,6 +677,16 @@ assert target(nested) == (
     (ut**4*vt + ut**2 + ut*vt + 1) /
     (ut**5 + ut**3 + ut**2 + 1)
 )
+G = ZZ['a,b']
+a, b = G.gens()
+GK = G.fraction_field()
+T = GK['w']
+w = T.gen()
+parameter = (a + b) / (a**2 + b + 1)
+left = (parameter*w + 1)**2
+right = (w + parameter)**2
+assert left.gcd(right) == T.one()
+assert (left*(w-a)).gcd(right*(w-a)) == w - a
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");
