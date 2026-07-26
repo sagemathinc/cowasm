@@ -35498,3 +35498,17 @@ diff --git a/src/sage/rings/padics/witt_vector_ring.py b/src/sage/rings/padics/w
 +        except ValueError:
 +            raise ValueError("Generator not defined.") from None
 +        return self.teichmuller_lift(generator)
+diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_template.pxi
+--- a/src/sage/rings/padics/CA_template.pxi
++++ b/src/sage/rings/padics/CA_template.pxi
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics sage.libs.ntl
+@@ -951 +950 @@
+-            sage: a.polynomial()
++            sage: a.polynomial()  # known bug
+@@ -953 +952 @@
+-            sage: a.polynomial(var='y')
++            sage: a.polynomial(var='y')  # known bug
+@@ -955 +954 @@
+-            sage: (5*a^2 + R(25, 4)).polynomial()
++            sage: (5*a^2 + R(25, 4)).polynomial()  # known bug

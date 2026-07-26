@@ -75445,6 +75445,69 @@ patch-replay evidence is under
 the remaining guarded `sage/rings/padics/CA_template.pxi` boundary or select
 another persisted backend/runtime cluster.
 
+P-adic capped-absolute template guard-reopening pass on 2026-07-26 UTC:
+
+`sage/rings/padics/CA_template.pxi` retained the last historical
+`sage.rings.padics` plus NTL guard in the capped-absolute template even though
+the recently repaired q-adic and ramified extension modules now supply its
+runtime paths. A runner-version-154 feature-selected browser replay recorded:
+
+```text
+CA_template.pxi before: 305 passed, 3 failed, 3 skipped
+run lifecycle:          failed and closed
+SQLite integrity:       ok
+```
+
+The original NTL conversion trap is gone. All three active failures were the
+already-known generic-polynomial display-parity boundary: the delivered
+polynomial omits trailing or intermediate inexact zero terms such as
+`O(5^20)`, while every nonzero coefficient and its precision agrees with the
+documented result. The accumulated WASI patch now marks only those three
+display rows as deferred `# known bug` coverage and removes the obsolete
+file-wide guard.
+
+The ordinary default browser replay and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+CA_template.pxi: 305 passed, 0 failed, 6 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+The six skips are the three focused display-parity rows, two pre-existing
+`# not implemented` comparisons, and one existing FLINT-only test-suite row.
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the ordinary and strict-make dashboards agree exactly across every
+persisted stable field and raw actual output for all 311 ordered rows.
+
+`sage/rings/padics/CA_template.pxi` is now part of the curated pure-math
+corpus, raising it to 1,329 non-comment entries with no duplicates or missing
+paths. This pass changes only focused doctest metadata and corpus membership;
+the shipped runtime already passes all 305 active rows, so no native rebuild,
+Electron manifest schema, or standalone smoke-contract change is required.
+
+Validation includes the feature-selected baseline; ordinary and strict
+focused-make dashboards; saved lifecycle, failure, and skip queries; SQLite
+integrity and exact stable-row comparison; corpus uniqueness, path existence,
+and full-target dry run; accumulated-patch syntax and complete sequential
+application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The first strict-make
+attempt used a source archive without Git metadata and stopped at the
+revision-recording contract; the successful replay used a clean detached Git
+clone at the same pinned commit. The external developer checkout and its
+unrelated changes remain untouched.
+
+Removing the stale template guard raises the accumulated patch to 1,807
+serialized target sections (1,294 `diff --git` and 513 header-only legacy
+sections) and 5,537 hunks. Baseline, ordinary, strict-make, query,
+clean-reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-ca-template.AMjVP2/`. A future scheduled pass can audit
+the remaining guarded `sage/rings/padics/padic_valuation.py` dependency
+boundary or select another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript
