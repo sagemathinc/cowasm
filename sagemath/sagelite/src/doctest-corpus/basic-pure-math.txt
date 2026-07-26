@@ -1342,3 +1342,4 @@ src/sage/rings/valuation/inductive_valuation.py
 src/sage/rings/homset.py
 src/sage/rings/ring_extension_homset.py
 src/sage/rings/ring_extension_conversion.pyx
+src/sage/rings/ring_extension_morphism.pyx
