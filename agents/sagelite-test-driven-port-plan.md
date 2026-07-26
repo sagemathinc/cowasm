@@ -75508,6 +75508,83 @@ clean-reconstruction, full-target dry-run, and patch-replay evidence is under
 the remaining guarded `sage/rings/padics/padic_valuation.py` dependency
 boundary or select another persisted backend/runtime cluster.
 
+P-adic valuation dependency-decomposition pass on 2026-07-26 UTC:
+
+`sage/rings/padics/padic_valuation.py` retained the final file-wide guard in
+the p-adic source directory. Its historical number-field and polyhedron
+annotation hid both substantial browser-safe valuation coverage and two
+unclassified p-adic extension boundaries. A runner-version-154
+feature-selected baseline trapped before block checkpointing:
+
+```text
+active source line: L.<y> = K.extension(y^2 + 3*y + 3)
+native trap:       NTL modulus unset in padic_ZZ_pX_CR_element
+```
+
+After isolating that capped-relative extension sequence, the next replay
+reached the analogous capped-absolute sequence at
+`S.<y> = R.extension(y^3 - 2)` and trapped in
+`padic_ZZ_pX_CA_element`. Both backend-heavy sequences now carry focused NTL
+requirements. The resulting complete feature-selected classification
+dashboard recorded:
+
+```text
+padic_valuation.py classified: 143 passed, 47 failed, 15 skipped
+run lifecycle:                 failed and closed
+SQLite integrity:              ok
+```
+
+The 47 active failures separated into the already-known dependency
+boundaries: 13 direct PPL/polyhedron failures; six focused cypari2
+object-model failures; three dependent number-field ideal or generic
+polynomial attribute failures; and 25 missing Gaussian-integer or cascading
+setup-name rows. The accumulated WASI patch now removes the broad guard and
+adds focused PARI and polyhedron metadata only to previously untagged rows and
+their dependent assertions. Existing number-field, long, and NTL metadata
+continues to describe the other unavailable paths.
+
+The ordinary browser profile and strict focused make target against a
+complete clean pinned-source reconstruction each record:
+
+```text
+padic_valuation.py: 143 passed, 0 failed, 62 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+The skipped rows are fully queryable as number-field/order, PARI, PPL-backed
+polyhedron, NTL extension, and long-test coverage. Saved block-failure and
+file-error queries are empty, active-row coverage is 100%, and the ordinary
+and strict-make dashboards agree exactly across every persisted stable field
+and raw actual output for all 205 ordered rows.
+
+`sage/rings/padics/padic_valuation.py` is now part of the curated pure-math
+corpus, raising it to 1,330 non-comment entries with no duplicates or missing
+paths. No file-wide `# sage.doctest: needs` guards remain under
+`sage/rings/padics`. This pass changes only focused doctest metadata and
+corpus membership; no native rebuild, Electron manifest schema, or standalone
+smoke-contract change is required.
+
+Validation includes both controlled NTL traps; the complete
+feature-selected classification dashboard; ordinary and strict focused-make
+dashboards; saved lifecycle, failure, and skip queries; SQLite integrity and
+exact stable-row comparison; Python syntax checks; corpus uniqueness, path
+existence, and full-target dry run; accumulated-patch syntax and complete
+sequential application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated changes remain untouched.
+
+Removing the final p-adic file guard raises the accumulated patch to 1,808
+serialized target sections (1,295 `diff --git` and 513 header-only legacy
+sections) and 5,554 hunks. Trap, classification, ordinary, strict-make,
+query, clean-reconstruction, full-target dry-run, and patch-replay evidence
+is under `/tmp/cowasm-sagelite-padic-valuation.fe9fKP/`. A future scheduled
+pass can audit the adjacent guarded
+`sage/rings/valuation/augmented_valuation.py` module or select another
+persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

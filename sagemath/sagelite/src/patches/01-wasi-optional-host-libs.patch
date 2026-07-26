@@ -35512,3 +35512,74 @@ diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_te
 @@ -955 +954 @@
 -            sage: (5*a^2 + R(25, 4)).polynomial()
 +            sage: (5*a^2 + R(25, 4)).polynomial()  # known bug
+diff --git a/src/sage/rings/padics/padic_valuation.py b/src/sage/rings/padics/padic_valuation.py
+--- a/src/sage/rings/padics/padic_valuation.py
++++ b/src/sage/rings/padics/padic_valuation.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.number_field sage.geometry.polyhedron
+@@ -11 +10 @@
+-    sage: CyclotomicField(5).valuation(5)                                               # needs sage.rings.number_field
++    sage: CyclotomicField(5).valuation(5)                                               # needs sage.rings.number_field sage.geometry.polyhedron
+@@ -24 +23 @@
+-    sage: v.montes_factorization(f, required_precision=20)                              # needs sage.geometry.polyhedron
++    sage: v.montes_factorization(f, required_precision=20)                              # needs sage.geometry.polyhedron sage.libs.pari
+@@ -108 +107 @@
+-        sage: valuations.pAdicValuation(L, 2)
++        sage: valuations.pAdicValuation(L, 2)                                          # needs sage.libs.pari
+@@ -286 +285 @@
+-            sage: GaussianIntegers().valuation(GaussianIntegers().number_field().fractional_ideal(2))  # indirect doctest
++            sage: GaussianIntegers().valuation(GaussianIntegers().number_field().fractional_ideal(2))  # indirect doctest  # needs sage.libs.pari
+@@ -296 +295 @@
+-            sage: I.norm()
++            sage: I.norm()                                                             # needs sage.libs.pari
+@@ -298 +297 @@
+-            sage: I in K.primes_above(2)
++            sage: I in K.primes_above(2)                                               # needs sage.libs.pari
+@@ -300 +299 @@
+-            sage: K.valuation(I)
++            sage: K.valuation(I)                                                       # needs sage.libs.pari
+@@ -305,2 +304,2 @@
+-            sage: K.<a, b> = NumberField([x^2 - 2, x^2 + x + 1])
+-            sage: K.valuation(2)
++            sage: K.<a, b> = NumberField([x^2 - 2, x^2 + x + 1])                       # needs sage.libs.pari
++            sage: K.valuation(2)                                                       # needs sage.libs.pari sage.geometry.polyhedron
+@@ -730,2 +729,2 @@
+-            sage: M.<b> = L.extension(b^2 + 2*b + a)
+-            sage: M.valuation(2)
++            sage: M.<b> = L.extension(b^2 + 2*b + a)                                  # needs sage.libs.pari
++            sage: M.valuation(2)                                                       # needs sage.libs.pari
+@@ -740 +739 @@
+-            sage: QQ.valuation(2).extensions(L)
++            sage: QQ.valuation(2).extensions(L)                                       # needs sage.geometry.polyhedron
+@@ -748 +747 @@
+-            sage: QQ.valuation(2).extensions(L)
++            sage: QQ.valuation(2).extensions(L)                                       # needs sage.geometry.polyhedron
+@@ -756,3 +755,3 @@
+-            sage: M.<b> = L.extension(x^2 + 1)
+-            sage: w = v.extension(L).extension(M)
+-            sage: w(w.uniformizer())
++            sage: M.<b> = L.extension(x^2 + 1)                                        # needs sage.libs.pari
++            sage: w = v.extension(L).extension(M)                                     # needs sage.libs.pari sage.geometry.polyhedron
++            sage: w(w.uniformizer())                                                  # needs sage.libs.pari
+@@ -767 +766 @@
+-            sage: v.extensions(L)
++            sage: v.extensions(L)                                                     # needs sage.geometry.polyhedron
+@@ -930,2 +929,2 @@
+-            sage: L.<y> = K.extension(y^2 + 3*y + 3)
+-            sage: L.valuation().element_with_valuation(3/2)
++            sage: L.<y> = K.extension(y^2 + 3*y + 3)                                  # needs sage.libs.ntl
++            sage: L.valuation().element_with_valuation(3/2)                            # needs sage.libs.ntl
+@@ -1000,3 +999,3 @@
+-            sage: S.<y> = R.extension(y^3 - 2)
+-            sage: v = S.valuation()
+-            sage: v.shift(1, 5)
++            sage: S.<y> = R.extension(y^3 - 2)                                        # needs sage.libs.ntl
++            sage: v = S.valuation()                                                   # needs sage.libs.ntl
++            sage: v.shift(1, 5)                                                       # needs sage.libs.ntl
+@@ -1348,3 +1347,3 @@
+-            sage: M.<b> = L.extension(x^2 + 1)
+-            sage: w = v.extension(L).extension(M)
+-            sage: w._to_base_domain(b)
++            sage: M.<b> = L.extension(x^2 + 1)                                        # needs sage.libs.pari
++            sage: w = v.extension(L).extension(M)                                     # needs sage.libs.pari sage.geometry.polyhedron
++            sage: w._to_base_domain(b)                                                # needs sage.libs.pari
