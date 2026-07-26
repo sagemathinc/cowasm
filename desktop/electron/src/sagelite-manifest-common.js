@@ -129,6 +129,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/finite_rings/element_base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/finite_rings/finite_field_base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/finite_rings/finite_field_constructor.py",
+  "site-packages/sage/rings/finite_rings/finite_field_pari_ffelt.py",
   "site-packages/sage/rings/finite_rings/finite_field_prime_modn.py",
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py",
@@ -316,7 +317,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 216,
+  schemaVersion: 217,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -437,6 +438,8 @@ expectedSageliteManifest.smokeContract +=
   "-lie-additive-identity-v187";
 expectedSageliteManifest.smokeContract +=
   "-pari-ffelt-ownership-v188";
+expectedSageliteManifest.smokeContract +=
+  "-pari-ffelt-reserved-name-v189";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

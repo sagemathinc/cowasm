@@ -77571,3 +77571,72 @@ query evidence is under
 `/tmp/cowasm-sagelite-pari-ffelt-doctest.hMl3xG/`. A future scheduled pass can
 address the remaining PARI variable-name normalization bug or select another
 persisted pure-math semantic gap.
+
+PARI finite-field reserved-name delivery pass on 2026-07-26 UTC:
+
+The remaining known-bug row in
+`sage/rings/finite_rings/element_pari_ffelt.pyx` expected construction with
+the PARI-reserved generator name `I` to make `__pari__()` raise
+`ValueError: variable name illegal in PARI`; the selected deferred baseline
+instead returned `x`. The WASI port overloaded `_need_replace_varname` for
+both an actual PARI variable-name rejection and the display normalization
+needed by every valid non-`x` finite-field generator, then bypassed the
+upstream rejection check entirely on WASI.
+
+The accumulated Sage patch now records an actual `PariError` separately as
+`_pari_varname_illegal`. `FiniteFieldElement_pari_ffelt.__pari__()` preserves
+the upstream error for that state while retaining the WASI owned-FFELT clone
+path for valid renamed fields. The obsolete known-bug annotation is removed.
+The standalone and Electron-shaped finite-field polynomial smokes reproduce
+the reserved-name rejection directly, while the prior owned conversion,
+lifetime, root reconstruction, and valid named-field coverage remains active.
+
+The selected line replay records 1 passed, 0 failed, and 0 skipped. The
+complete direct dashboard, the clean strict focused make target, and the final
+dashboard against the fully rebuilt resource bundle all record:
+
+```text
+element_pari_ffelt.pyx: 289 passed, 0 failed, 23 skipped
+run lifecycle:          passed and closed
+SQLite integrity:       ok
+```
+
+This activates the final known-bug row relative to the preceding
+288-passed, 24-skipped dashboard. The retained skips comprise fourteen GAP
+rows, six GP/pexpect/subprocess rows, two `not tested` timing rows, and one
+Magma row. Saved block-failure and file-error queries are empty, active-row
+coverage is 100%, and the final rebuilt-bundle and strict dashboards agree
+exactly across all 312 normalized stable block rows.
+
+The Electron manifest schema advances to 217 and its smoke contract to
+`pari-ffelt-reserved-name-v189`. Because the rebuilt Cython element module
+now depends on the new field-class state, the required-resource contract also
+hashes `finite_field_pari_ffelt.py`, bringing the manifest to 760 required
+paths and hashes and preventing a mixed-version bundle.
+
+A complete standalone reconstruction from a clean shared checkout of pinned
+Sagelite commit `f575cf6224f749763d7c875229cbd684e5939e58` regenerated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import smokes and doctest-runner self-tests, emitted the schema-217 manifest
+from a clean source revision, and passed the complete Electron-shaped smoke
+including relocated-resource validation.
+
+Validation additionally includes the failing selected-deferred baseline;
+focused active and complete direct dashboards; clean strict make and final
+rebuilt-bundle dashboards; saved lifecycle, failure, and skip queries; SQLite
+integrity and normalized stable-row comparison; all desktop Electron manifest,
+forge-resource, and runtime tests; shell, JavaScript, and generated-Python
+syntax; accumulated-patch syntax; complete sequential patch application
+against a clean source reconstruction; byte-for-byte generated-source
+comparison; rejection of a second forward patch application; corpus
+uniqueness and path existence; full-target dry run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths; `element_pari_ffelt.pyx` was already promoted. The accumulated
+patch remains at 1,831 serialized target sections (1,318 `diff --git` and 513
+header-only legacy sections) and now contains 5,962 hunks because the obsolete
+one-row known-bug metadata hunk was removed. Baseline, focused, clean replay,
+strict-make, full reconstruction, rebuilt-bundle, and query evidence is under
+`/tmp/cowasm-sagelite-pari-var.Ex2RWC/`. A future scheduled pass can address
+the field-level construction `TestSuite(k).run()` known bug or select another
+persisted pure-math semantic gap.

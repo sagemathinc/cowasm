@@ -4221,7 +4221,7 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +                    except (ValueError, IndexError, TypeError):
 +                        raise TypeError("no coercion defined")
              raise TypeError("no coercion defined")
-@@ -1316,9 +1328,18 @@
+@@ -1316,9 +1328,19 @@
 +            sage: p = 13189065031705623239
 +            sage: k = FiniteField(p^3, "a")
 +            sage: b = k(9288)
@@ -4236,7 +4236,8 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
              ValueError: variable name illegal in PARI
          """
 -        if self._parent._need_replace_varname:
-+        if self._parent._need_replace_varname and sys.platform != "wasi":
++        if (self._parent._pari_varname_illegal or
++                (self._parent._need_replace_varname and sys.platform != "wasi")):
              raise ValueError("variable name illegal in PARI")
 +        if sys.platform == "wasi":
 +            return clone_ffelt(self.val, <pari_gen>self._parent._gen_pari)
@@ -15565,9 +15566,14 @@ diff --git a/src/sage/rings/finite_rings/finite_field_pari_ffelt.py b/src/sage/r
 @@ -1,1 +1,2 @@
 +# sage.doctest: needs sage.libs.pari
  r"""
-@@ -136,6 +137,9 @@
+@@ -132,9 +133,14 @@
+         self._need_replace_varname = False
++        self._pari_varname_illegal = False
+         try:
+             modulus_pari = modulus._pari_with_name(self.variable_name())
          except PariError:
              self._need_replace_varname = True
++            self._pari_varname_illegal = True
              modulus_pari = modulus._pari_with_name()
 +        import sys
 +        if sys.platform == "wasi" and self.variable_name() != 'x':
@@ -39412,9 +39418,6 @@ diff --git a/src/sage/rings/finite_rings/element_pari_ffelt.pyx b/src/sage/rings
 @@ -218 +217 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -        sage: a.parent()
 +        sage: a.parent()                                                                # needs sage.libs.gap
-@@ -1330 +1329 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
--            sage: pari(I)
-+            sage: pari(I)                                                               # known bug
 @@ -1354 +1353 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 -            sage: gp(a)
 +            sage: gp(a)                                                                 # needs sage.libs.pari pexpect subprocess

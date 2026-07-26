@@ -534,6 +534,13 @@ z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
 assert p_root.__pari__().type() == 't_FFELT'
+reserved_pari_name = GF(25, 'I', implementation='pari_ffelt').gen()
+try:
+    reserved_pari_name.__pari__()
+except ValueError as error:
+    assert str(error) == 'variable name illegal in PARI'
+else:
+    raise AssertionError('reserved PARI finite-field name was accepted')
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");

@@ -1408,6 +1408,13 @@ z = K.gen()
 p_root = z**3 + 7*z**2 + 6*z + 10
 assert str(p_root) == 'z^3 + 7*z^2 + 6*z + 10'
 assert p_root.__pari__().type() == 't_FFELT'
+reserved_pari_name = GF(25, 'I', implementation='pari_ffelt').gen()
+try:
+    reserved_pari_name.__pari__()
+except ValueError as error:
+    assert str(error) == 'variable name illegal in PARI'
+else:
+    raise AssertionError('reserved PARI finite-field name was accepted')
 S2 = PolynomialRing(GF(2), 'v')
 v = S2.gen()
 assert type(v).__module__ == 'sage.rings.polynomial.polynomial_gf2x'
@@ -2347,7 +2354,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=216
+electron_manifest_schema_version=217
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2423,6 +2430,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-recursive-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-polynomial-gcd-v186"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-lie-additive-identity-v187"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-ownership-v188"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-ffelt-reserved-name-v189"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2602,6 +2610,7 @@ electron_required_paths=(
   "site-packages/sage/rings/finite_rings/element_base.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/finite_field_base.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/finite_field_constructor.py"
+  "site-packages/sage/rings/finite_rings/finite_field_pari_ffelt.py"
   "site-packages/sage/rings/finite_rings/finite_field_prime_modn.py"
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py"
