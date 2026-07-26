@@ -35669,3 +35669,8 @@ diff --git a/src/sage/rings/valuation/augmented_valuation.py b/src/sage/rings/va
 @@ -1715 +1714 @@
 -            sage: v.mac_lane_approximants(G)
 +            sage: v.mac_lane_approximants(G)                                           # needs sage.rings.number_field sage.geometry.polyhedron
+diff --git a/src/sage/rings/valuation/gauss_valuation.py b/src/sage/rings/valuation/gauss_valuation.py
+--- a/src/sage/rings/valuation/gauss_valuation.py
++++ b/src/sage/rings/valuation/gauss_valuation.py
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.libs.flint sage.rings.padics
