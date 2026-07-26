@@ -74857,6 +74857,79 @@ patch-replay evidence is under
 the adjacent guarded `local_generic_element.pyx` module or select another
 persisted backend/runtime cluster.
 
+Local p-adic element guard reopening and NTL/PARI boundary-classification pass
+on 2026-07-26 UTC:
+
+`sage/rings/padics/local_generic_element.pyx` retained a historical file-wide
+`sage.rings.padics` annotation after the browser package gained the base local
+element stack. A runner-version-154 feature-selected replay against the
+current composed native resource bundle initially reached the first untagged
+capped-relative Eisenstein inverse and trapped in the NTL `ZZ_p` inversion
+path before block checkpointing:
+
+```text
+local_generic_element.pyx before: 0 passed, 1 failed, 0 skipped
+failure class:                    runtime trap in NTL::inv
+active source line:               153
+run lifecycle:                    failed and closed
+SQLite integrity:                 ok
+```
+
+After isolating both capped-relative Eisenstein inverse pairs behind focused
+NTL metadata, the complete file replay recorded 190 passed, 14 failed, and 16
+skipped. All 14 active failures belonged to one direct or cascading square-root
+boundary: base `sqrt` calls require the broader cypari2/PARI object model, the
+ramified-extension assertions also inherit their NTL setup requirement, and
+three later assertions observed missing state after their setup or root row
+had failed or been skipped.
+
+The accumulated WASI patch now removes the file-wide p-adic guard, marks only
+the two trapping capped-relative inverse pairs as NTL-dependent, propagates
+the existing NTL requirement across the ramified square-root setup and its
+dependent assertions, and marks the base and random-element square-root rows
+as PARI-dependent. The corrected feature-selected replay, ordinary default
+browser profile, and strict focused make target against a complete clean
+pinned-source reconstruction each record:
+
+```text
+local_generic_element.pyx: 190 passed, 0 failed, 30 skipped
+run lifecycle:             passed and closed
+SQLite integrity:          ok
+```
+
+The final skips comprise 17 NTL rows, nine PARI rows, three rows requiring
+both NTL and PARI, and one pre-existing NTL-plus-symbolic row. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the ordinary and strict-make dashboards agree across all 220 ordered
+stable rows and raw actual output.
+
+`sage/rings/padics/local_generic_element.pyx` is now part of the curated
+pure-math corpus, raising it to 1,320 non-comment entries with no duplicates
+or missing paths. This pass changes only doctest dependency metadata and
+corpus membership; the current composed native bundle already supplies all
+190 active behaviors, so no native WASM rebuild, standalone smoke change, or
+Electron resource-contract update is required.
+
+Validation includes the two trap-localization dashboards; the complete
+unclassified dashboard; corrected feature-selected and ordinary dashboards;
+strict focused-make validation; saved lifecycle/latest-run, failure, and skip
+queries; SQLite integrity and exact stable-row comparison; corpus uniqueness,
+path existence, and full-target dry run; accumulated-patch syntax and complete
+supported-pipeline application against clean pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58`; byte-for-byte comparison of the
+reconstructed target with the runtime-tested source; rejection of a second
+forward patch application; and `git diff --check`. The external developer
+checkout and its unrelated changes remain untouched.
+
+Removing the stale guard and classifying the focused NTL/PARI boundaries raise
+the accumulated patch to 1,797 serialized target sections (1,284 `diff --git`
+and 513 header-only legacy sections) and 5,457 hunks. Baseline,
+trap-localization, classified, ordinary, strict-make, query,
+clean-reconstruction, full-target dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-local-generic-element.f5azqW/`. A future scheduled pass
+can audit the adjacent guarded `padic_ext_element.pyx` module or select
+another persisted backend/runtime cluster.
+
 ## Phase 6: TypeScript/NPM Direction
 
 The strategic product is a serious pure-math system in the JavaScript

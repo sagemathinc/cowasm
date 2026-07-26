@@ -34727,3 +34727,58 @@ diff --git a/src/sage/rings/padics/local_generic.py b/src/sage/rings/padics/loca
 @@ -1281 +1280 @@
 -            sage: M.smith_form(transformation=False)  # indirect doctest
 +            sage: M.smith_form(transformation=False)  # indirect doctest       # needs sage.geometry.polyhedron
+diff --git a/src/sage/rings/padics/local_generic_element.pyx b/src/sage/rings/padics/local_generic_element.pyx
+--- a/src/sage/rings/padics/local_generic_element.pyx
++++ b/src/sage/rings/padics/local_generic_element.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.padics
+@@ -152,2 +151,2 @@
+-            sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
+-            sage: (t - 1).inverse_of_unit()
++            sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )  # needs sage.libs.ntl
++            sage: (t - 1).inverse_of_unit()                                  # needs sage.libs.ntl
+@@ -158,2 +157,2 @@
+-            sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
+-            sage: (t - 1).inverse_of_unit()
++            sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )  # needs sage.libs.ntl
++            sage: (t - 1).inverse_of_unit()                                  # needs sage.libs.ntl
+@@ -736 +735 @@
+-            sage: sqrt(R(1))
++            sage: sqrt(R(1))  # needs sage.libs.pari
+@@ -739 +738 @@
+-            sage: R(2).sqrt(extend=False)
++            sage: R(2).sqrt(extend=False)  # needs sage.libs.pari
+@@ -744 +743 @@
+-            sage: s = sqrt(R(4)); -s
++            sage: s = sqrt(R(4)); -s  # needs sage.libs.pari
+@@ -747 +746 @@
+-            sage: s = sqrt(R(9)); s
++            sage: s = sqrt(R(9)); s  # needs sage.libs.pari
+@@ -754 +753 @@
+-            sage: sqrt(R2(1))
++            sage: sqrt(R2(1))  # needs sage.libs.pari
+@@ -756 +755 @@
+-            sage: sqrt(R2(4))
++            sage: sqrt(R2(4))  # needs sage.libs.pari
+@@ -765,2 +764,2 @@
+-            sage: R.<a> = Zp(2).extension(x^3 - 2)
+-            sage: u = R(1 + a^4 + a^5 + a^7 + a^8, 10); u
++            sage: R.<a> = Zp(2).extension(x^3 - 2)                              # needs sage.libs.ntl
++            sage: u = R(1 + a^4 + a^5 + a^7 + a^8, 10); u                      # needs sage.libs.ntl
+@@ -781 +780 @@
+-            sage: R(1, 6).sqrt()
++            sage: R(1, 6).sqrt()  # needs sage.libs.ntl sage.libs.pari
+@@ -786 +785 @@
+-            sage: R(1, 7).sqrt()
++            sage: R(1, 7).sqrt()  # needs sage.libs.ntl sage.libs.pari
+@@ -789 +788 @@
+-            sage: R(1+a^6, 7).sqrt(extend=False)
++            sage: R(1+a^6, 7).sqrt(extend=False)  # needs sage.libs.ntl sage.libs.pari
+@@ -800,2 +799,2 @@
+-            sage: s = sqrt(c^2)
+-            sage: s == c or s == -c
++            sage: s = sqrt(c^2)  # needs sage.libs.pari
++            sage: s == c or s == -c  # needs sage.libs.pari
+@@ -806 +805 @@
+-            sage: s == sqrt(c2)
++            sage: s == sqrt(c2)  # needs sage.libs.pari
