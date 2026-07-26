@@ -76127,3 +76127,69 @@ full-target dry-run, and patch-replay evidence is under
 `/tmp/cowasm-sagelite-next-namespace.l31gho/`. A future scheduled pass can
 audit another compact ring namespace guard or select a persisted
 runtime/backend cluster.
+
+Ring-extension conversion guard reopening pass on 2026-07-26 UTC:
+
+`sage/rings/ring_extension_conversion.pyx` retained a historical file-wide
+finite-ring guard even though the browser package now supplies its generic
+ring-extension and finite-field conversion machinery. A runner-version-154
+feature-selected replay against the current Electron resource bundle
+recorded:
+
+```text
+ring_extension_conversion.pyx before: 57 passed, 18 failed, 0 skipped
+run lifecycle:                         failed and closed
+SQLite integrity:                      ok
+```
+
+The 18 failures were four narrow relative finite-field construction
+sequences rather than defects in the working conversion helpers. Three
+primary rows reached the intentionally unsupported cypari2 finite-field
+object model directly. The fourth surfaced first as the generic finite-field
+root-multiplicity fallback, but an interactive traceback showed that its
+factorization path had already failed while converting extension
+coefficients through the same unavailable cypari2 object model. The remaining
+14 failures were deterministic dependent-state rows after those four failed
+assignments.
+
+The accumulated WASI patch now removes the broad finite-ring guard and places
+only the four affected relative-extension sequences behind focused
+`sage.libs.pari` metadata. The ordinary browser profile and strict focused
+make target against a clean reconstruction of pinned Sagelite commit
+`f575cf6224f749763d7c875229cbd684e5939e58` both record:
+
+```text
+ring_extension_conversion.pyx: 57 passed, 0 failed, 18 skipped
+run lifecycle:                  passed and closed
+SQLite integrity:              ok
+```
+
+All 18 skips are queryable as `optional:sage.libs.pari`. Saved block-failure
+and file-error queries are empty, active-row coverage is 100%, and the direct
+and strict-make dashboards agree exactly across all 75 ordered stable block
+fields, including raw actual output.
+
+`sage/rings/ring_extension_conversion.pyx` is now part of the curated
+pure-math corpus, raising it to 1,339 non-comment entries with no duplicates
+or missing paths. This pass changes only focused doctest dependency metadata
+and corpus membership; no native rebuild, Electron manifest change, or
+resource restaging is required.
+
+Validation includes the feature-selected classification baseline; the
+interactive PARI-path traceback; ordinary and strict focused-make dashboards;
+saved lifecycle, failure, and skip queries; SQLite integrity and exact stable
+row comparison; corpus uniqueness, path existence, and full-target dry run;
+accumulated-patch syntax and complete sequential application against the
+clean pinned source; byte-for-byte reconstructed-source comparison; rejection
+of a second forward patch application; and `git diff --check`. The external
+developer checkout and its unrelated matrix, integer-ring, complex-roots, and
+SQLite changes remain untouched.
+
+The accumulated patch now contains 1,817 serialized target sections (1,304
+`diff --git` and 513 header-only legacy sections) and 5,692 hunks. Baseline,
+traceback, ordinary, strict-make, query, clean-reconstruction, full-target
+dry-run, and patch-replay evidence is under
+`/tmp/cowasm-sagelite-ring-extension-conversion.SCKwZL/`. A future scheduled
+pass can audit the adjacent guarded
+`sage/rings/ring_extension_morphism.pyx` module or select another persisted
+runtime/backend cluster.
