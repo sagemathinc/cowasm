@@ -808,7 +808,9 @@ from sage.combinat.derangements import Derangements
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.subword import Subwords
 from sage.combinat.tuple import Tuples, UnorderedTuples
+from sage.all import RealNumber
 from sage.sets.family import Family
+from sage.sets.integer_range import IntegerRange
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
@@ -827,6 +829,12 @@ N = NonNegativeIntegers()
 assert 0 in N and 5 in N and -1 not in N
 P = PositiveIntegers()
 assert 1 in P and 5 in P and 0 not in P
+try:
+    IntegerRange(RealNumber('1.0'))
+except TypeError as err:
+    assert str(err) == \"end must be Integer or Infinity, not <class 'sage.rings.real_mpfr.RealLiteral'>\"
+else:
+    raise AssertionError('IntegerRange should reject a RealLiteral endpoint')
 print('sagelite-wasi-sdk-ok finite enumeration smoke')"
 run_wasi_sdk_python_import "unicode typeerror integer fields after sage.all" "import sage.all
 def keyword_only(*, value=None):
@@ -2471,7 +2479,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=228
+electron_manifest_schema_version=229
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2559,6 +2567,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-core-iteration-v198"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-pari-free-methods-v199"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-module-pari-init-v200"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-range-real-literal-v201"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

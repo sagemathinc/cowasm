@@ -318,7 +318,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 228,
+  schemaVersion: 229,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -454,7 +454,8 @@ expectedSageliteManifest.smokeContract +=
   "-finite-field-core-vector-space-v197" +
   "-finite-field-core-iteration-v198" +
   "-finite-field-pari-free-methods-v199" +
-  "-givaro-module-pari-init-v200";
+  "-givaro-module-pari-init-v200" +
+  "-integer-range-real-literal-v201";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

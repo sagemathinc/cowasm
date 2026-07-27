@@ -78494,3 +78494,75 @@ displaced pre-reconstruction build remains recoverable under
 `/tmp/cowasm-sagelite-givaro-init-backup.IbCQLr/`. A future scheduled pass can
 audit another deterministic dependency boundary; every remaining
 `finite_field_base.pyx` skip is now explicitly external or long-running.
+
+Integer-range RealLiteral promotion pass on 2026-07-27 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in `sage/sets/integer_range.py`. The ordinary
+browser-profile file replay recorded 165 passes and one skip. A
+feature-selected replay of line 220 then passed with the documented
+`RealLiteral` endpoint diagnostic:
+
+```text
+TypeError: end must be Integer or Infinity, not <class 'sage.rings.real_mpfr.RealLiteral'>
+```
+
+Real MPFR and Sage's public `RealNumber` literal factory are already shipped in
+the browser runtime, so the accumulated Sage patch now removes that obsolete
+annotation. The standalone and Electron-shaped finite-enumeration smokes
+construct the literal through `sage.all.RealNumber` and require the exact
+`IntegerRange` diagnostic. Using the public factory here is intentional:
+the module-local `sage.rings.real_mpfr.RealNumber` name is the underlying
+Cython class constructor rather than the preparser-facing literal factory.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer_range.py: 166 passed, 0 failed, 0 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates exactly one row relative to the 165-passed, one-skipped
+baseline. Saved block-failure, file-error, and skip queries are empty, active
+coverage is 100%, and the focused pre-reconstruction and final rebuilt-bundle
+dashboards agree across all 166 ordered rows on every stable block field.
+
+The Electron manifest schema advances to 229 and its smoke contract to
+`integer-range-real-literal-v201`. The clean generated manifest records pinned
+source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source
+tree, 761 required paths with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a separate clean clone generated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import probes and the complete doctest-runner matrix, audited 523 staged and
+578 Electron side modules, emitted the schema-229 manifest, and passed the
+complete Electron-shaped and relocated-resource smokes. The desktop Electron
+manifest, forge-resource, and runtime tests pass as well. The unrelated dirty
+external developer checkout remains untouched.
+
+Validation additionally includes the ordinary and feature-selected baselines;
+the complete direct and final rebuilt-bundle dashboards; saved lifecycle,
+failure, file-error, and skip queries; SQLite integrity and exact stable-row
+comparison; direct Electron smoke execution; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte installed-source comparison; rejection
+of a second forward patch application; corpus uniqueness and path existence;
+full-target dry run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,845 serialized target
+sections (1,332 `diff --git` and 513 header-only legacy sections) and 6,008
+hunks. Baseline dashboards are under
+`/tmp/cowasm-sagelite-integer-range.MAGNuH/`; the focused active dashboard is
+`/tmp/cowasm-sagelite-integer-range-active.qFbEfl/integer-range.sqlite3`; the
+final dashboard is
+`/tmp/cowasm-sagelite-integer-range-final.Iu2RKy/integer-range.sqlite3`; the
+clean source clone is
+`/tmp/cowasm-sagelite-integer-range-source.Ozj0O1/`; and the successful clean
+reconstruction log is
+`/tmp/cowasm-sagelite-integer-range-rebuild-rerun.log`. A future scheduled pass
+can audit another small deterministic dependency boundary in the curated
+pure-math corpus.

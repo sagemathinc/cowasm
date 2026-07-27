@@ -1051,7 +1051,9 @@ assert IntegerVectors(5, 3).cardinality() == 21
     console.log("sagelite-electron-start set family smoke");
     await python.exec(String.raw`
 import sage.all
+from sage.all import RealNumber
 from sage.sets.family import Family
+from sage.sets.integer_range import IntegerRange
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
 
@@ -1076,6 +1078,12 @@ assert 1 in P
 assert 5 in P
 assert 0 not in P
 assert list(P.some_elements())[:5] == [1, 2, 3, 4, 5]
+try:
+    IntegerRange(RealNumber('1.0'))
+except TypeError as err:
+    assert str(err) == "end must be Integer or Infinity, not <class 'sage.rings.real_mpfr.RealLiteral'>"
+else:
+    raise AssertionError('IntegerRange should reject a RealLiteral endpoint')
 `);
     console.log("sagelite-electron-ok set family smoke");
     console.log("sagelite-electron-start p-adic lattice pickle smoke");
