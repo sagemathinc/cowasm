@@ -39749,3 +39749,32 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
 @@ -837 +837 @@
 -            sage: k(0).is_square()                                                      # needs sage.libs.linbox
 +            sage: k(0).is_square()
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -1047 +1047 @@
+-            sage: k.random_element().parent() is k                                      # needs sage.modules
++            sage: k.random_element().parent() is k
+@@ -1052 +1052 @@
+-            sage: k.random_element(prob=0)                                              # needs sage.modules
++            sage: k.random_element(prob=0)
+@@ -1070 +1070 @@
+-            sage: k.some_elements()  # random output                                    # needs sage.modules
++            sage: k.some_elements()  # random output
+@@ -1131 +1131 @@
+-            sage: GF(27,'a').vector_space(map=False)                                    # needs sage.modules
++            sage: GF(27,'a').vector_space(map=False)
+@@ -1971,2 +1971,2 @@
+-            sage: a = k.random_element()                                                # needs sage.modules
+-            sage: Frob(a) == a^3                                                        # needs sage.modules
++            sage: a = k.random_element()
++            sage: Frob(a) == a^3
+@@ -2064 +2064 @@
+-            sage: F.dual_basis(basis=None, check=False)                                 # needs sage.modules
++            sage: F.dual_basis(basis=None, check=False)
+@@ -2102 +2102 @@
+-            sage: F.dual_basis([a], check=True)                                         # needs sage.modules
++            sage: F.dual_basis([a], check=True)
+@@ -2107 +2107 @@
+-            sage: F.dual_basis([a^0, a, a^0 + a], check=True)                           # needs sage.modules
++            sage: F.dual_basis([a^0, a, a^0 + a], check=True)

@@ -78188,3 +78188,77 @@ pre-reconstruction build remains recoverable under
 audit the remaining deterministic dependency boundaries in another focused
 pure-math file; the ten retained `element_base.pyx` skips have now been
 explicitly narrowed to external data, stress, long, or GAP-dependent coverage.
+
+Finite-field core module-method promotion pass on 2026-07-27 UTC:
+
+The next deterministic dependency-boundary audit found nine stale
+`sage.modules` annotations in
+`sage/rings/finite_rings/finite_field_base.pyx`. Feature-selected replays
+showed that ordinary and zero-probability random-element construction,
+`some_elements()`, vector-space construction, Frobenius evaluation, the
+default dual basis, and both invalid-basis checks all pass in the ordinary
+browser runtime. These rows use finite-field, vector, and matrix behavior
+already delivered by earlier porting passes and do not dynamically load the
+annotated optional dependency.
+
+The accumulated Sage patch now removes those obsolete annotations. The
+standalone and Electron-shaped finite-field smokes require representative
+random-element parenting and zero-probability behavior, parent preservation
+across `some_elements()`, the dimension of `GF(27)` as a vector space, the
+Frobenius action on `GF(125)`, and the default dual basis of `GF(16)`.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+finite_field_base.pyx: 329 passed, 0 failed, 32 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+This activates exactly nine rows relative to the preceding 320-passed,
+41-skipped dashboard. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, and the focused pre-reconstruction and final
+rebuilt-bundle dashboards agree across all 361 ordered rows on every stable
+block field. The 32 retained skips comprise thirteen focused PARI rows, five
+Macaulay2 rows, four Magma rows, four p-adic rows, three number-field rows,
+one long row, one LinBox row, and one NTL row.
+
+The Electron manifest schema advances to 225 and its smoke contract to
+`finite-field-core-vector-space-v197`. The final generated manifest records
+the pinned source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a
+clean source tree, 761 required paths with matching hashes, 578 Electron side
+modules, and nine native libraries.
+
+A clean pinned reconstruction and complete relink compiled and linked the
+full native target set, passed all 91 Node import smokes and the complete
+doctest-runner matrix, audited 523 staged and 578 Electron side modules,
+emitted the schema-225 manifest, and passed the complete Electron-shaped and
+relocated-resource smokes. All desktop Electron manifest, forge-resource, and
+runtime tests pass as well.
+
+Validation additionally includes the nine feature-selected baseline replays;
+focused active replays; complete direct and final rebuilt-bundle dashboards;
+saved lifecycle, failure, file-error, and skip queries; SQLite integrity and
+stable-row comparison; shell and JavaScript syntax; accumulated-patch syntax;
+complete sequential POSIX-patch application against a clean archive of the
+pinned source; byte-for-byte reconstructed finite-field target comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; and `git diff --check`. The unrelated dirty external developer
+checkout remains untouched; the final bundle provenance was regenerated from
+a separate clean clone at the pinned revision.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,840 serialized target
+sections (1,327 `diff --git` and 513 header-only legacy sections) and 5,991
+hunks. Baseline and focused dashboards are
+`/tmp/cowasm-sagelite-next-ffbase-modules-*.sqlite3` and
+`/tmp/cowasm-sagelite-ffbase-modules-{baseline2,active-full3}.sqlite3`; the
+final dashboard is
+`/tmp/cowasm-sagelite-ffbase-core-clean-final.jitOhk/finite-field-base.sqlite3`;
+exact pinned patch replay is under
+`/tmp/cowasm-sagelite-ffbase-pinned-replay.3cJGNu/`; and the separate clean
+source clone is under
+`/tmp/cowasm-sagelite-ffbase-clean-source.uSdcRS/`. A future scheduled pass
+can audit another deterministic dependency boundary in a compact pure-math
+file or revisit one of the remaining explicitly external finite-field skips.

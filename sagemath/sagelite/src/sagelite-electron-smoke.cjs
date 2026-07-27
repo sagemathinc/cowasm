@@ -534,6 +534,15 @@ s = F9_square.gen()
 assert not s.is_square()
 assert (s**2).is_square()
 assert F9_square(0).is_square()
+F19_4 = GF(19**4, 'q')
+assert F19_4.random_element().parent() is F19_4
+assert F19_4.random_element(prob=0) == 0
+assert all(value.parent() is F19_4 for value in F19_4.some_elements())
+assert GF(27, 'v').vector_space(map=False).dimension() == 3
+Frob125 = F125.frobenius_endomorphism()
+assert Frob125(g) == g**5
+F16 = GF(2**4, 'd')
+assert F16.dual_basis(basis=None, check=False) == [F16.gen()**3 + 1, F16.gen()**2, F16.gen(), 1]
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')
