@@ -39730,3 +39730,22 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
 @@ -39 +39 @@
 -            sage: sorted(a._nth_root_common(4, True, "Johnston", False))              # needs sage.libs.pari
 +            sage: sorted(a._nth_root_common(4, True, "Johnston", False))
+diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finite_rings/element_base.pyx
+--- a/src/sage/rings/finite_rings/element_base.pyx
++++ b/src/sage/rings/finite_rings/element_base.pyx
+@@ -688,2 +688,2 @@
+-            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm='matrix')         # needs sage.modules
+-            sage: q == p                                                                # needs sage.modules
++            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm='matrix')
++            sage: q == p
+@@ -821,4 +821,4 @@
+-            sage: k.<a> = FiniteField(9, implementation='givaro', modulus='primitive')            # needs sage.libs.linbox
+-            sage: a.is_square()                                                         # needs sage.libs.linbox
++            sage: k.<a> = FiniteField(9, implementation='givaro', modulus='primitive')
++            sage: a.is_square()
+             False
+-            sage: (a**2).is_square()                                                    # needs sage.libs.linbox
++            sage: (a**2).is_square()
+@@ -837 +837 @@
+-            sage: k(0).is_square()                                                      # needs sage.libs.linbox
++            sage: k(0).is_square()

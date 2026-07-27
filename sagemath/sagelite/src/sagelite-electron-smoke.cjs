@@ -525,6 +525,15 @@ F125 = GF(5**3, 'g')
 g = F125.gen()
 assert g.trace() == 0
 assert (g**2 + g + 1).trace() == 2
+from sage.rings.finite_rings.element_base import FinitePolyExtElement
+F361 = GF(19**2, 'h')
+h = F361.gen()
+assert FinitePolyExtElement.charpoly(h**20, 'x', algorithm='matrix') == (h**20).charpoly('x')
+F9_square = GF(9, 's', implementation='givaro', modulus='primitive')
+s = F9_square.gen()
+assert not s.is_square()
+assert (s**2).is_square()
+assert F9_square(0).is_square()
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')

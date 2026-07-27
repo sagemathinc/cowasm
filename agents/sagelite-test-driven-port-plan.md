@@ -78115,3 +78115,76 @@ displaced pre-reconstruction build remains recoverable under
 `/tmp/cowasm-sagelite-prime-generator-backup.O1nS5e/`. A future scheduled pass
 can select another persisted pure-math semantic gap or revisit one of the
 remaining explicit dependency-boundary skips.
+
+Finite-field core square and matrix-charpoly promotion pass on 2026-07-27 UTC:
+
+The next deterministic dependency-boundary audit found six stale annotations
+in `sage/rings/finite_rings/element_base.pyx`. Feature-selected line replays
+showed that the two `sage.modules` rows for matrix characteristic polynomials
+and the four `sage.libs.linbox` rows for Givaro square predicates all pass in
+the ordinary browser runtime. These rows use core matrix and finite-field
+behavior already delivered by earlier porting passes; they do not dynamically
+load either annotated optional dependency.
+
+The accumulated Sage patch now removes those obsolete annotations. The
+promoted coverage checks that the matrix characteristic polynomial agrees
+with the ordinary finite-extension characteristic polynomial, that a primitive
+generator of `GF(9)` is not a square, that its square is a square, and that
+zero is a square. The same invariants are now required by both the standalone
+and Electron-shaped finite-field smokes.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+element_base.pyx: 256 passed, 0 failed, 10 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates exactly six rows relative to the preceding 250-passed,
+16-skipped dashboard. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, and the focused pre-reconstruction and final
+rebuilt-bundle dashboards agree across all 266 ordered rows on every stable
+block field. The ten retained skips comprise five groups/GAP rows, three
+randomized large-extension PARI rows, one long row, and one
+Cunningham-tables row.
+
+The Electron manifest schema advances to 224 and its smoke contract to
+`finite-field-core-square-charpoly-v196`. The clean generated manifest records
+the pinned source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a
+clean source tree, 761 required paths with matching hashes, and 578 Electron
+side modules.
+
+A complete standalone reconstruction from the clean pinned Sagelite source
+regenerated all 527 Cython sources, compiled and linked all 1,064 targets,
+passed all 91 Node import headings and the complete doctest-runner matrix,
+audited 523 staged and 578 Electron side modules, emitted the schema-224
+manifest, and passed the complete Electron-shaped and relocated-resource
+smokes. All desktop Electron manifest, forge-resource, and runtime tests pass
+as well.
+
+Validation additionally includes the six feature-selected baseline replays;
+focused active replays; complete direct and final rebuilt-bundle dashboards;
+saved lifecycle, failure, file-error, and skip queries; SQLite integrity and
+stable-row comparison; shell and JavaScript syntax; accumulated-patch syntax;
+complete sequential POSIX-patch application against the clean pinned source;
+byte-for-byte reconstructed target comparison; rejection of a second forward
+patch application; corpus uniqueness and path existence; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,839 serialized target
+sections (1,326 `diff --git` and 513 header-only legacy sections) and 5,983
+hunks. Focused dashboards are under
+`/tmp/cowasm-sagelite-next-{modules-688,linbox-821,line-*}.sqlite3`; the direct
+and final dashboards are
+`/tmp/cowasm-sagelite-core-square-charpoly-{full,final}.sqlite3`; exact patch
+replay is under `/tmp/cowasm-sagelite-core-square-replay.yjLdwr/`; the clean
+rebuild evidence is under
+`/tmp/cowasm-sagelite-core-square-rebuild.qOOvUC/`; and the displaced
+pre-reconstruction build remains recoverable under
+`/tmp/cowasm-sagelite-core-square-backup.l1mQk6/`. A future scheduled pass can
+audit the remaining deterministic dependency boundaries in another focused
+pure-math file; the ten retained `element_base.pyx` skips have now been
+explicitly narrowed to external data, stress, long, or GAP-dependent coverage.
