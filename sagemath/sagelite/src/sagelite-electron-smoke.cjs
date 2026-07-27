@@ -496,7 +496,7 @@ assert V([QQ(1, 3), QQ(1, 6)]).denominator() == 6
     console.log("sagelite-electron-ok extended linear polynomial smoke");
     console.log("sagelite-electron-start finite-field polynomial smoke");
     await python.exec(String.raw`
-from sage.all import GF, PolynomialRing, ZZ
+from sage.all import GF, PolynomialRing, ZZ, set_random_seed
 
 S = PolynomialRing(GF(7), 't')
 t = S.gen()
@@ -575,6 +575,26 @@ r = F7_8.gen()
 F7_8_basis = [r**i for i in range(8)]
 F7_8_dual = F7_8.dual_basis(F7_8_basis, check=False)
 assert F7_8.dual_basis(F7_8_dual) == F7_8_basis
+F49 = GF(7**2, 'a')
+a49 = F49.gen()
+f49 = F49.modulus()
+assert str(F49['x'](f49).factor()) == '(x + a + 6) * (x + 6*a)'
+F4 = GF(4)
+A2 = GF(2).algebraic_closure()
+prime_embedding = GF(2).embeddings(F4)
+assert len(prime_embedding) == 1 and prime_embedding[0](1) == F4(1)
+closure_embedding = GF(4, 'b').an_embedding(A2)
+assert closure_embedding.domain() == GF(4, 'b')
+assert closure_embedding.codomain() is A2
+closure_embeddings = F4.embeddings(A2)
+assert [str(phi(F4.gen())) for phi in closure_embeddings] == ['z2', 'z2 + 1']
+set_random_seed(31337)
+F1024 = GF((2, 10), 'a')
+R1024 = PolynomialRing(F1024, 'x')
+f1024 = R1024.random_element(degree=10)
+assert f1024.roots() == [(F1024.gen()**9 + F1024.gen()**8 +
+                          F1024.gen()**6 + F1024.gen()**4 +
+                          F1024.gen()**2, 1)]
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')

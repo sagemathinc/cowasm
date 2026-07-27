@@ -1371,7 +1371,7 @@ ZZz = PolynomialRing(ZZ, 'z')
 z = ZZz.gen()
 assert (z**3 - z)(z + 1) == z**3 + 3*z**2 + 2*z
 print('sagelite-node-ok polynomial helper smoke')"
-run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing, ZZ
+run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing, ZZ, set_random_seed
 S = PolynomialRing(GF(7), 't')
 t = S.gen()
 assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
@@ -1449,6 +1449,26 @@ r = F7_8.gen()
 F7_8_basis = [r**i for i in range(8)]
 F7_8_dual = F7_8.dual_basis(F7_8_basis, check=False)
 assert F7_8.dual_basis(F7_8_dual) == F7_8_basis
+F49 = GF(7**2, 'a')
+a49 = F49.gen()
+f49 = F49.modulus()
+assert str(F49['x'](f49).factor()) == '(x + a + 6) * (x + 6*a)'
+F4 = GF(4)
+A2 = GF(2).algebraic_closure()
+prime_embedding = GF(2).embeddings(F4)
+assert len(prime_embedding) == 1 and prime_embedding[0](1) == F4(1)
+closure_embedding = GF(4, 'b').an_embedding(A2)
+assert closure_embedding.domain() == GF(4, 'b')
+assert closure_embedding.codomain() is A2
+closure_embeddings = F4.embeddings(A2)
+assert [str(phi(F4.gen())) for phi in closure_embeddings] == ['z2', 'z2 + 1']
+set_random_seed(31337)
+F1024 = GF((2, 10), 'a')
+R1024 = PolynomialRing(F1024, 'x')
+f1024 = R1024.random_element(degree=10)
+assert f1024.roots() == [(F1024.gen()**9 + F1024.gen()**8 +
+                          F1024.gen()**6 + F1024.gen()**4 +
+                          F1024.gen()**2, 1)]
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')
@@ -2451,7 +2471,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=227
+electron_manifest_schema_version=228
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2538,6 +2558,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-core-vector-space-v197"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-core-iteration-v198"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-pari-free-methods-v199"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-module-pari-init-v200"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

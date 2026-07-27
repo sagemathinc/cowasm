@@ -78415,3 +78415,82 @@ under `/tmp/cowasm-sagelite-ffbase-pari-replay.HiyUTG/`. A future scheduled
 pass can audit another compact deterministic dependency boundary; the five
 remaining PARI rows in `finite_field_base.pyx` are now narrowed to
 factorization, algebraic-closure embedding, and polynomial-root coverage.
+
+Givaro module-local PARI initialization delivery pass on 2026-07-27 UTC:
+
+The five remaining `sage.libs.pari` rows in
+`sage/rings/finite_rings/finite_field_base.pyx` all converged on one runtime
+defect. Feature-selected replays of finite-extension factorization,
+algebraic-closure embeddings, prime-field embeddings, and extension-field
+polynomial roots terminated in `element_givaro...err_recover` with a WASM
+function-signature mismatch. The Givaro side module called PARI allocation
+and `FF_to_FpXQ` routines without initializing its own statically linked PARI
+state.
+
+The accumulated Sage patch now initializes PARI when `element_givaro` loads
+under WASI, matching the established module-local initialization contract
+used by the other direct PARI side modules. Four selected rows pass
+immediately after the focused rebuild. The fifth then exposes only reversed
+algebraic-closure root order, so `FiniteField.embeddings()` now sorts closure
+roots by their stable string form before constructing the morphisms. This
+preserves the documented `z2`, `z2 + 1` embedding order without changing
+ordinary finite-field root handling.
+
+All five obsolete dependency annotations are removed. Against the final clean
+rebuilt resource bundle, the complete ordinary browser-profile dashboard
+records:
+
+```text
+finite_field_base.pyx: 344 passed, 0 failed, 17 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+This activates exactly five rows relative to the preceding 339-passed,
+22-skipped dashboard. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, and the focused pre-reconstruction and final
+rebuilt-bundle dashboards agree across all 361 ordered rows on status, source,
+expected output, expected kind, failure class, and skip reason. The seventeen
+retained skips comprise five Macaulay2 rows, four Magma rows, four p-adic
+rows, three number-field rows, and one long row.
+
+The standalone and Electron-shaped finite-field smokes now require Givaro
+extension factorization, the prime-field embedding, deterministic
+algebraic-closure embedding order, `an_embedding()` domain/codomain
+preservation, and the seeded degree-ten extension-field polynomial root. The
+Electron manifest schema advances to 228 and its smoke contract to
+`givaro-module-pari-init-v200`. The clean generated manifest records pinned
+source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source
+tree, 761 required paths with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+all 527 Cython sources, compiled and linked all 1,064 native targets, passed
+all 91 Node import probes and the complete doctest-runner matrix, audited 523
+staged and 578 Electron side modules, emitted the schema-228 manifest, and
+passed the complete Electron-shaped and relocated-resource smokes. All
+desktop Electron manifest, forge-resource, and runtime tests pass as well.
+
+Validation additionally includes the five failing feature-selected
+baselines; focused active replays; complete direct and final rebuilt-bundle
+dashboards; saved lifecycle, failure, file-error, and skip queries; SQLite
+integrity and stable-row comparison; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte reconstructed finite-field targets;
+direct finite-field smoke execution; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,844 serialized target
+sections (1,331 `diff --git` and 513 header-only legacy sections) and 6,007
+hunks. Baseline dashboards are under
+`/tmp/cowasm-sagelite-ffbase-next.s3akHB/`; focused active dashboards are
+`/tmp/cowasm-sagelite-ffbase-givaro-init-916.sqlite3`,
+`/tmp/cowasm-sagelite-ffbase-givaro-init.bc1vmH/`, and
+`/tmp/cowasm-sagelite-ffbase-givaro-init-1937-ordered.sqlite3`; the direct and
+final dashboards are
+`/tmp/cowasm-sagelite-ffbase-givaro-init-{full,final}.sqlite3`; exact patch
+replay is under `/tmp/cowasm-sagelite-givaro-init-replay-final.87Rbrr/`; and the
+displaced pre-reconstruction build remains recoverable under
+`/tmp/cowasm-sagelite-givaro-init-backup.IbCQLr/`. A future scheduled pass can
+audit another deterministic dependency boundary; every remaining
+`finite_field_base.pyx` skip is now explicitly external or long-running.

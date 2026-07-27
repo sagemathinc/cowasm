@@ -39813,3 +39813,47 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 @@ -2101 +2101 @@
 -            sage: F.dual_basis(d)                                                   # needs sage.libs.pari
 +            sage: F.dual_basis(d)
+diff --git a/src/sage/rings/finite_rings/element_givaro.pyx b/src/sage/rings/finite_rings/element_givaro.pyx
+--- a/src/sage/rings/finite_rings/element_givaro.pyx
++++ b/src/sage/rings/finite_rings/element_givaro.pyx
+@@ -55,6 +55,10 @@ from cysignals.signals cimport sig_on, sig_off
+
+ from cypari2.paridecl cimport *
+
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
+ import sage.arith.misc
+
+ from sage.misc.randstate cimport current_randstate
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -916 +916 @@
+-            sage: F['x'](f).factor()                                                # needs sage.libs.pari
++            sage: F['x'](f).factor()
+@@ -1901 +1901 @@
+-            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())                  # needs sage.libs.pari
++            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())
+@@ -1932 +1932 @@
+-            sage: GF(2).embeddings(GF(4))                                           # needs sage.libs.pari
++            sage: GF(2).embeddings(GF(4))
+@@ -1937 +1937 @@
+-            sage: GF(4).embeddings(GF(2).algebraic_closure())                       # needs sage.libs.pari
++            sage: GF(4).embeddings(GF(2).algebraic_closure())
+@@ -1954,7 +1954,10 @@
+         rs = []
+         if (emb := K.coerce_map_from(self)) is not None:
+             rs.append(emb(g))
+-        rs += [r for r,_ in g.minpoly().roots(ring=K) if r not in rs]
++        roots = [r for r,_ in g.minpoly().roots(ring=K) if r not in rs]
++        if type(K).__module__ == 'sage.rings.algebraic_closure_finite_field':
++            roots.sort(key=str)
++        rs += roots
+         return [self.hom([r]) for r in rs]
+
+     def frobenius_endomorphism(self, n=1):
+@@ -2230 +2233 @@
+-            sage: f.roots()                                                         # needs sage.libs.pari
++            sage: f.roots()
