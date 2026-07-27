@@ -543,6 +543,14 @@ Frob125 = F125.frobenius_endomorphism()
 assert Frob125(g) == g**5
 F16 = GF(2**4, 'd')
 assert F16.dual_basis(basis=None, check=False) == [F16.gen()**3 + 1, F16.gen()**2, F16.gen(), 1]
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteFieldBase
+for implementation in ('givaro', 'ntl'):
+    F8_iter = GF(8, 'i', implementation=implementation)
+    i = F8_iter.gen()
+    assert list(FiniteFieldBase.__iter__(F8_iter)) == [
+        F8_iter(0), F8_iter(1), i, i + 1,
+        i**2, i**2 + 1, i**2 + i, i**2 + i + 1,
+    ]
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')

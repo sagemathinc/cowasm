@@ -39778,3 +39778,12 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 @@ -2107 +2107 @@
 -            sage: F.dual_basis([a^0, a, a^0 + a], check=True)                           # needs sage.modules
 +            sage: F.dual_basis([a^0, a, a^0 + a], check=True)
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -332 +332 @@
+-            sage: print(list(FiniteField.__iter__(GF(8, implementation='givaro', names='z'))))    # needs sage.libs.linbox
++            sage: print(list(FiniteField.__iter__(GF(8, implementation='givaro', names='z'))))
+@@ -336 +336 @@
+-            sage: print(list(FiniteField.__iter__(GF(8, implementation='ntl', names='z'))))       # needs sage.libs.ntl
++            sage: print(list(FiniteField.__iter__(GF(8, implementation='ntl', names='z'))))
