@@ -39700,3 +39700,16 @@ diff --git a/src/sage/rings/finite_rings/homset.py b/src/sage/rings/finite_rings
 +                except NotImplementedError:
 +                    x = g.parent().gen()
 +                    r = sorted(g.roots(multiplicities=False), key=lambda a: x - a)
+diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finite_rings/element_base.pyx
+--- a/src/sage/rings/finite_rings/element_base.pyx
++++ b/src/sage/rings/finite_rings/element_base.pyx
+@@ -750 +750 @@
+-            sage: a.trace()                                                           # needs sage.libs.pari
++            sage: a.trace()
+@@ -757 +757 @@
+-            sage: z.trace()                                                           # needs sage.libs.pari
++            sage: z.trace()
+@@ -764 +764,2 @@
+-        return self.parent().prime_subfield()(self.__pari__().trace().lift())
++        f = self.charpoly('x')
++        return -f[f.degree() - 1]

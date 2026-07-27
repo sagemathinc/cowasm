@@ -520,6 +520,8 @@ assert F25_functor(F25_base) is F25
 a = F25.gen()
 F125 = GF(5**3, 'g')
 g = F125.gen()
+assert g.trace() == 0
+assert (g**2 + g + 1).trace() == 2
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')

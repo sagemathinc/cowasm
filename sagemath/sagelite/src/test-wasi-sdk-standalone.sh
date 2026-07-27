@@ -1394,6 +1394,8 @@ assert F25_functor(F25_base) is F25
 a = F25.gen()
 F125 = GF(5**3, 'g')
 g = F125.gen()
+assert g.trace() == 0
+assert (g**2 + g + 1).trace() == 2
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')
@@ -2396,7 +2398,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=221
+electron_manifest_schema_version=222
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2477,6 +2479,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-section-roots-v191"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-givaro-invariants-v192"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-pari-conversion-v193"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-trace-v194"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

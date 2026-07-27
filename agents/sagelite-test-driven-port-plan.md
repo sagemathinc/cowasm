@@ -77956,3 +77956,82 @@ clean rebuild log and related evidence are under
 is under `/tmp/cowasm-sagelite-givaro-pari-replay-final4.HbjNyp/`. A future
 scheduled pass can select another persisted pure-math semantic gap or revisit
 one of the remaining explicit dependency-boundary skips.
+
+Finite-field trace and direct-launcher delivery pass on 2026-07-27 UTC:
+
+The two remaining Givaro trace rows in
+`sage/rings/finite_rings/element_base.pyx` were still classified as
+`sage.libs.pari` dependencies. Feature-selected line replays showed that both
+reached the focused cypari compatibility boundary at `Gen.trace()` and raised
+`NotImplementedError`. The surrounding generic finite-extension class already
+computed norms from characteristic-polynomial coefficients, and its
+characteristic-polynomial method already had the matrix fallback delivered by
+the preceding finite-field invariant pass.
+
+`FinitePolyExtElement.trace()` now derives the trace as the negated
+degree-minus-one coefficient of its characteristic polynomial. This is the
+standard trace identity, keeps the result in the polynomial's prime-field base
+ring, and avoids expanding the generic cypari object model. The two obsolete
+PARI dependency annotations are removed.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+element_base.pyx: 249 passed, 0 failed, 17 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates exactly the two trace rows relative to the preceding
+247-passed, 19-skipped dashboard. Saved block-failure and file-error queries
+are empty, active-row coverage is 100%, and the focused pre-reconstruction and
+final rebuilt-bundle dashboards agree across all 266 ordered rows on every
+stable block field. The 17 retained skips comprise five groups/GAP rows, four
+LinBox rows, four explicit PARI boundaries, two module rows, one long row, and
+one Cunningham-tables row.
+
+The standalone and Electron-shaped finite-field smokes now require both the
+generator trace and the trace of a nontrivial quadratic expression in
+`GF(5^3)`. The Electron manifest schema advances to 222 and its smoke contract
+to `finite-field-trace-v194`; the clean generated manifest records the pinned
+source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source
+tree, and 761 required paths with matching hashes.
+
+The exact repository launcher requested during this pass also works against
+the rebuilt bundle. Piping `2^10`, a `GF(5^3)` trace, and `quit()` into
+`sagemath/sagelite/bin/sage` returns `1024`, `0`, and a clean exit without any
+resource-root override. This exercises the tracked launcher, Sage preparser,
+default manifest discovery, rebuilt finite-field module, and interactive
+shutdown path together.
+
+A complete standalone reconstruction from a clean shared clone of the pinned
+Sagelite source regenerated all 527 Cython sources, compiled and linked all
+1,064 targets, passed all 91 Node import smokes and the complete
+doctest-runner matrix, audited the staged and Electron side modules, emitted
+the schema-222 manifest, and passed the complete Electron-shaped and
+relocated-resource smokes.
+
+Validation additionally includes the two failing feature-selected baselines;
+focused active replays; complete direct and final rebuilt-bundle dashboards;
+saved lifecycle, failure, file-error, and skip queries; SQLite integrity and
+stable-row comparison; all desktop Electron manifest, forge-resource, and
+runtime tests; shell and JavaScript syntax; accumulated-patch syntax;
+complete sequential POSIX-patch application against a clean archive of the
+pinned source; byte-for-byte reconstructed target comparison; rejection of a
+second forward patch application; corpus uniqueness and path existence; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,836 serialized target
+sections (1,323 `diff --git` and 513 header-only legacy sections) and 5,978
+hunks. Baseline and focused evidence is under
+`/tmp/cowasm-sagelite-trace-line{750,757}*.sqlite3`; direct and final
+dashboards are `/tmp/cowasm-sagelite-trace-{full,final}.sqlite3`; clean patch
+replay is under `/tmp/cowasm-sagelite-trace-replay.T2t2Ey/`; and the complete
+rebuild log and clean source are under
+`/tmp/cowasm-sagelite-trace-final.owqH69/`. The displaced pre-rebuild
+generated bundle remains recoverable under
+`/tmp/cowasm-sagelite-trace-generated-backup.dmFTcK/`. A future scheduled
+pass can select another persisted pure-math semantic gap or revisit one of
+the remaining explicit dependency-boundary skips.
