@@ -39596,3 +39596,107 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 +            if len(factory_key) >= 12:
 +                kwds['check_prime'] = factory_key[10]
 +                kwds['check_irreducible'] = factory_key[11]
+diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finite_rings/element_base.pyx
+--- a/src/sage/rings/finite_rings/element_base.pyx
++++ b/src/sage/rings/finite_rings/element_base.pyx
+@@ -593 +593 @@
+-            sage: a.__pari__()                                                        # needs sage.libs.pari
++            sage: a.__pari__()
+@@ -595 +595 @@
+-            sage: a.__pari__('b')                                                     # needs sage.libs.pari
++            sage: a.__pari__('b')
+@@ -598,2 +598,2 @@
+-            sage: t_string = t._pari_init_('y')                                      # needs sage.libs.pari
+-            sage: t_string                                                            # needs sage.libs.pari
++            sage: t_string = t._pari_init_('y')
++            sage: t_string
+@@ -601 +601 @@
+-            sage: type(t_string)                                                      # needs sage.libs.pari
++            sage: type(t_string)
+@@ -603,2 +603,2 @@
+-            sage: t_element = t.__pari__('b')                                       # needs sage.libs.pari
+-            sage: t_element                                                           # needs sage.libs.pari
++            sage: t_element = t.__pari__('b')
++            sage: t_element
+@@ -606 +606 @@
+-            sage: type(t_element)                                                    # needs sage.libs.pari
++            sage: type(t_element)
+@@ -610,4 +610,6 @@
+-        ffgen = self._parent.modulus()._pari_with_name(var).ffgen()
++        from sage.libs.pari import pari
++        modulus = self._parent.modulus()._pari_with_name(var)
+         polypari = self.polynomial()._pari_with_name()
+-        # Add ffgen - ffgen to ensure that we really get an FFELT
+-        return polypari.subst("x", ffgen) + ffgen - ffgen
++        ffgen = "ffgen(%s, '%s)" % (modulus, var)
++        return pari("subst(%s, x, %s) + %s - %s" %
++                    (polypari, ffgen, ffgen, ffgen))
+@@ -628 +628 @@
+-            sage: b._pari_init_()                                                     # needs sage.libs.pari
++            sage: b._pari_init_()
+@@ -630 +630 @@
+-            sage: (2*b+3)._pari_init_()                                               # needs sage.libs.pari
++            sage: (2*b+3)._pari_init_()
+@@ -640 +640 @@
+-            sage: d._pari_init_()                                                     # needs sage.libs.pari
++            sage: d._pari_init_()
+@@ -642 +642 @@
+-            sage: (d^2+2*d+1)._pari_init_("p")                                        # needs sage.libs.pari
++            sage: (d^2+2*d+1)._pari_init_("p")
+@@ -644 +644 @@
+-            sage: d.__pari__()                                                        # needs sage.libs.pari
++            sage: d.__pari__()
+@@ -650 +650 @@
+-            sage: (M^3+1)._pari_init_()                                               # needs sage.libs.pari
++            sage: (M^3+1)._pari_init_()
+@@ -652 +652 @@
+-            sage: M._pari_init_(var='foo')                                            # needs sage.libs.pari
++            sage: M._pari_init_(var='foo')
+@@ -685 +685 @@
+-            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm='pari')          # needs sage.libs.pari
++            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm='pari')
+@@ -689 +689 @@
+-            sage: p                                                                   # needs sage.libs.pari
++            sage: p
+@@ -691 +691 @@
+-            sage: factor(p)                                                           # needs sage.libs.pari
++            sage: factor(p)
+@@ -826,2 +826,2 @@
+-            sage: k.<a> = FiniteField(17^5, implementation='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
+-            sage: a.is_square()                                                         # needs sage.libs.pari
++            sage: k.<a> = FiniteField(17^5, implementation='pari_ffelt', modulus='primitive')
++            sage: a.is_square()
+@@ -829 +829 @@
+-            sage: (a**2).is_square()                                                    # needs sage.libs.pari
++            sage: (a**2).is_square()
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -2246,5 +2246,9 @@
+         if K != L:
+             raise NotImplementedError
+
++        if (not multiplicities
++                and type(K).__module__ == 'sage.rings.finite_rings.finite_field_givaro'):
++            return [a for a in K if not f(a)]
++
+         if multiplicities:
+             return f._roots_from_factorization(f.factor(), multiplicities)
+diff --git a/src/sage/rings/finite_rings/homset.py b/src/sage/rings/finite_rings/homset.py
+--- a/src/sage/rings/finite_rings/homset.py
++++ b/src/sage/rings/finite_rings/homset.py
+@@ -267,7 +267,11 @@
+             f = D.modulus()
+             g = C['x'](f)
+-            try:
+-                r = [a for a, _ in g.roots()]
+-            except NotImplementedError:
++            if type(C).__module__ == 'sage.rings.finite_rings.finite_field_givaro':
+                 x = g.parent().gen()
+                 r = sorted(g.roots(multiplicities=False), key=lambda a: x - a)
++            else:
++                try:
++                    r = [a for a, _ in g.roots()]
++                except NotImplementedError:
++                    x = g.parent().gen()
++                    r = sorted(g.roots(multiplicities=False), key=lambda a: x - a)

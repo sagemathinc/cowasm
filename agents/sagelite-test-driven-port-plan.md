@@ -77887,3 +77887,72 @@ under `/tmp/cowasm-sagelite-target-replay.puxdGF/`; and the clean shared clone
 is under `/tmp/cowasm-sagelite-frobenius-clone.nvmuQb/`. A future scheduled
 pass can address direct Givaro `__pari__` conversion or select another
 persisted dependency-boundary or pure-math semantic gap.
+
+Direct Givaro-to-PARI conversion delivery pass on 2026-07-27 UTC:
+
+The first remaining direct-conversion row in `element_base.pyx` reproduced
+the documented `NotImplementedError` boundary. A generic expansion of the
+browser cypari compatibility surface made the selected conversion work, but
+also destabilized unrelated Givaro root factorization. That experiment was
+discarded. The narrower Sage-side implementation now serializes the modulus,
+polynomial, and named `ffgen` into one expression for the existing PARI
+parser. It returns an owned `t_FFELT`, preserves requested generator names,
+and does not add generic `Gen` arithmetic or substitution methods.
+
+Activating the complete 21-row direct-conversion cluster then exposed an
+unsafe PARI factorization route in generic polynomial-root dispatch. The
+Givaro backend now enumerates its finite field for multiplicity-free roots,
+while multiplicity-bearing requests retain the ordinary factorization path.
+`FiniteFieldHomset.list()` selects that safe route directly for a Givaro
+codomain and preserves Sage's canonical generator-image order by sorting the
+corresponding linear polynomials. This keeps the preceding section,
+endomorphism-order, characteristic-polynomial, and minimal-polynomial
+invariants intact.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+element_base.pyx: 247 passed, 0 failed, 19 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates 21 rows relative to the preceding 226-passed,
+40-skipped dashboard. Saved block-failure and file-error queries are empty,
+and active-row coverage is 100%. The 19 retained skips comprise six explicit
+PARI boundaries, five groups/GAP rows, four LinBox rows, two optional-module
+rows, one long row, and one Cunningham-tables row.
+
+The standalone and Electron-shaped smokes now require default and renamed
+Givaro elements to convert to exact `t_FFELT` values. The Electron manifest
+schema advances to 221 and its smoke contract to
+`givaro-pari-conversion-v193`. The clean generated manifest records the pinned
+source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source
+tree, and 761 required paths with matching hashes.
+
+A complete standalone reconstruction from that clean pinned source regenerated
+all 527 Cython sources, compiled and linked all 1,064 targets, passed all 91
+Node import smokes and the complete doctest-runner matrix, audited the staged
+and Electron side modules, emitted the schema-221 manifest, and passed the
+complete Electron-shaped and relocated-resource smokes.
+
+Validation additionally includes the failing selected baseline; the focused
+direct-conversion and Givaro semantic probes; the complete final dashboard;
+saved lifecycle, failure, file-error, and skip queries; SQLite integrity; all
+desktop Electron manifest tests; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte comparison of all three reconstructed
+finite-field targets; rejection of a second forward application; corpus
+uniqueness and path existence; full-target dry run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,835 serialized target
+sections (1,322 `diff --git` and 513 header-only legacy sections) and 5,975
+hunks. The final dashboard is
+`/tmp/cowasm-sagelite-givaro-pari-final.1ZoBqX/element-base.sqlite3`; the
+clean rebuild log and related evidence are under
+`/tmp/cowasm-sagelite-givaro-pari.QB6TWY/`; and exact accumulated-patch replay
+is under `/tmp/cowasm-sagelite-givaro-pari-replay-final4.HbjNyp/`. A future
+scheduled pass can select another persisted pure-math semantic gap or revisit
+one of the remaining explicit dependency-boundary skips.

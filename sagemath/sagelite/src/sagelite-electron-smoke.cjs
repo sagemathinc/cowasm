@@ -518,6 +518,13 @@ assert isinstance(F25, FiniteField_givaro)
 F25_functor, F25_base = F25.construction()
 assert F25_functor(F25_base) is F25
 a = F25.gen()
+F125 = GF(5**3, 'g')
+g = F125.gen()
+assert g.__pari__().type() == 't_FFELT'
+assert str(g.__pari__()) == 'g'
+renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')
+assert renamed_givaro.type() == 't_FFELT'
+assert str(renamed_givaro) == '3*b^2 + 2*b + 4'
 S25 = PolynomialRing(F25, 'w')
 w = S25.gen()
 assert type(w).__module__ == 'sage.rings.polynomial.polynomial_zz_pex'
