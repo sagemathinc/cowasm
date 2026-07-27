@@ -39863,3 +39863,9 @@ diff --git a/src/sage/sets/integer_range.py b/src/sage/sets/integer_range.py
 @@ -220 +220 @@
 -            sage: IntegerRange(1.0)                                                     # needs sage.rings.real_mpfr
 +            sage: IntegerRange(1.0)
+diff --git a/src/sage/sets/set_from_iterator.py b/src/sage/sets/set_from_iterator.py
+--- a/src/sage/sets/set_from_iterator.py
++++ b/src/sage/sets/set_from_iterator.py
+@@ -469 +469 @@
+-            sage: print(sage_getdoc(d))   # indirect doctest                          # needs packaging
++            sage: print(sage_getdoc(d))   # indirect doctest

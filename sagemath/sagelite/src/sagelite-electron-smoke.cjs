@@ -1346,6 +1346,8 @@ assert doc.startswith("WARNING: the enclosing module is marked 'needs sage.libs.
     );
     await python.exec(String.raw`
 from sage.misc.sageinspect import sage_getdoc
+from sage.rings.integer import Integer
+from sage.sets.set_from_iterator import Decorator
 
 def undocumented():
     pass
@@ -1357,6 +1359,11 @@ class Documented:
 
 assert sage_getdoc(undocumented) == ''
 assert sage_getdoc(Documented) == 'docs\n'
+d = Decorator()
+d.f = Integer.is_prime
+doc = sage_getdoc(d)
+assert doc.lstrip().startswith('Test whether "self" is prime.')
+assert 'Calls the PARI' in doc
 `);
     console.log(
       "sagelite-electron-ok CPython 3.14 doc normalization smoke",

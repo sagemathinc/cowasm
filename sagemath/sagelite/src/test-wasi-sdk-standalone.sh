@@ -1718,6 +1718,8 @@ assert doc.startswith(\"WARNING: the enclosing module is marked 'needs sage.libs
 print('sagelite-node-ok WASI doctest tag introspection delivery smoke')"
 run_node_import "CPython 3.14 doc normalization smoke" "import sage.all
 from sage.misc.sageinspect import sage_getdoc
+from sage.rings.integer import Integer
+from sage.sets.set_from_iterator import Decorator
 def undocumented():
     pass
 class Documented:
@@ -1726,6 +1728,11 @@ class Documented:
     '''
 assert sage_getdoc(undocumented) == ''
 assert sage_getdoc(Documented) == 'docs\\n'
+d = Decorator()
+d.f = Integer.is_prime
+doc = sage_getdoc(d)
+assert doc.lstrip().startswith('Test whether \"self\" is prime.')
+assert 'Calls the PARI' in doc
 print('sagelite-node-ok CPython 3.14 doc normalization smoke')"
 run_node_import "structure native delivery smoke" "from copy import copy
 from sage.all import PolynomialRing, QQ, ZZ
@@ -2479,7 +2486,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=229
+electron_manifest_schema_version=230
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2568,6 +2575,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-pari-free-methods-v199"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-module-pari-init-v200"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-range-real-literal-v201"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-iterator-instancedoc-v202"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

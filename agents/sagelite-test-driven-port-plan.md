@@ -78566,3 +78566,73 @@ reconstruction log is
 `/tmp/cowasm-sagelite-integer-range-rebuild-rerun.log`. A future scheduled pass
 can audit another small deterministic dependency boundary in the curated
 pure-math corpus.
+
+Set-from-iterator instance-documentation promotion pass on 2026-07-27 UTC:
+
+The next compact dependency-boundary audit found one stale `packaging`
+annotation in `sage/sets/set_from_iterator.py`. The ordinary browser-profile
+file replay recorded 135 passes and 77 skips. A feature-selected replay of line
+469 then passed and returned the complete instance documentation for
+`Integer.is_prime`, including the expected leading summary and PARI algorithm
+reference. The browser runtime and Electron resource bundle already ship
+`packaging`, so this documentation path no longer needs to remain excluded.
+
+The accumulated Sage patch removes the obsolete annotation. The standalone and
+Electron-shaped CPython 3.14 documentation smokes now assign
+`Integer.is_prime` through `Decorator`, call `sage_getdoc` on the instance, and
+require both stable portions of the returned documentation. This checks the
+same instance-doc behavior directly without depending on the doctest runner's
+ellipsis comparison.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+set_from_iterator.py: 136 passed, 0 failed, 76 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+This activates exactly one row relative to the 135-passed, 77-skipped
+baseline. Saved block-failure and file-error queries are empty, active coverage
+is 100%, and the focused pre-reconstruction and final rebuilt-bundle dashboards
+agree across all 212 ordered rows on every stable block field. The 76 retained
+skips comprise 54 graph rows, ten combinatorics rows, seven group rows, and five
+module rows.
+
+The Electron manifest schema advances to 230 and its smoke contract to
+`set-iterator-instancedoc-v202`. The clean generated manifest records pinned
+source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source
+tree, 761 required paths with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+the Cython sources, compiled and linked all 1,064 native targets, passed all 91
+Node import probes and the complete doctest-runner matrix, audited 523 staged
+and 578 Electron side modules, emitted the schema-230 manifest, and passed the
+complete Electron-shaped and relocated-resource smokes. The direct
+Electron-shaped smoke and all desktop Electron manifest, forge-resource, and
+runtime tests pass as well.
+
+Validation additionally includes the ordinary and feature-selected baselines;
+the complete active and final rebuilt-bundle dashboards; saved lifecycle,
+failure, file-error, and skip queries; SQLite integrity and exact stable-row
+comparison; shell and JavaScript syntax; accumulated-patch syntax; complete
+sequential POSIX-patch application against a clean archive of the pinned
+source; byte-for-byte reconstructed target comparison; rejection of a second
+forward patch application; corpus uniqueness and path existence; full-target
+dry run; and `git diff --check`. The unrelated dirty external developer
+checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,846 serialized target
+sections (1,333 `diff --git` and 513 header-only legacy sections) and 6,009
+hunks. Baseline, feature-selected, and active dashboards are under
+`/tmp/cowasm-sagelite-set-iterator.s2gctW/`; the final dashboard is
+`/tmp/cowasm-sagelite-set-iterator-final.BFwtg7/set-from-iterator.sqlite3`;
+exact patch replay is under
+`/tmp/cowasm-sagelite-set-iterator-replay.uo56as/`; and the successful clean
+reconstruction log is
+`/tmp/cowasm-sagelite-set-iterator-rebuild.log`. A future scheduled pass can
+audit another small deterministic dependency boundary in the curated pure-math
+corpus.
