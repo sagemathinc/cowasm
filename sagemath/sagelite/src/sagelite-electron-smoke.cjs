@@ -551,6 +551,30 @@ for implementation in ('givaro', 'ntl'):
         F8_iter(0), F8_iter(1), i, i + 1,
         i**2, i**2 + 1, i**2 + i, i**2 + i + 1,
     ]
+assert GF(997).multiplicative_generator() == 7
+K25_extension = GF((5, 2), 'u')
+L625_extension = K25_extension.extension(2, 'v')
+assert L625_extension(K25_extension.gen()).minpoly() == K25_extension.gen().minpoly()
+assert GF(3**8, 'a').subfield(4).order() == 3**4
+F7_4 = GF(7**4, 'e')
+e = F7_4.gen()
+F7_4_basis = [
+    4*e**3,
+    2*e**3 + e**2 + 3*e + 5,
+    3*e**3 + 5*e**2 + 4*e + 2,
+    2*e**3 + 2*e**2 + 2,
+]
+F7_4_dual = F7_4.dual_basis(F7_4_basis, check=True)
+assert all(
+    (x*y).trace() == (1 if i == j else 0)
+    for i, x in enumerate(F7_4_basis)
+    for j, y in enumerate(F7_4_dual)
+)
+F7_8 = GF(7**8, 'r')
+r = F7_8.gen()
+F7_8_basis = [r**i for i in range(8)]
+F7_8_dual = F7_8.dual_basis(F7_8_basis, check=False)
+assert F7_8.dual_basis(F7_8_dual) == F7_8_basis
 assert g.__pari__().type() == 't_FFELT'
 assert str(g.__pari__()) == 'g'
 renamed_givaro = (3*g**2 + 2*g + 4).__pari__('b')

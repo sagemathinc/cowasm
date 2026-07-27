@@ -39787,3 +39787,29 @@ diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/
 @@ -336 +336 @@
 -            sage: print(list(FiniteField.__iter__(GF(8, implementation='ntl', names='z'))))       # needs sage.libs.ntl
 +            sage: print(list(FiniteField.__iter__(GF(8, implementation='ntl', names='z'))))
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -703 +703 @@
+-            sage: k.multiplicative_generator()                                      # needs sage.libs.pari
++            sage: k.multiplicative_generator()
+@@ -1466 +1466 @@
+-            sage: L(u).minpoly() == u.minpoly()                                     # needs sage.libs.pari
++            sage: L(u).minpoly() == u.minpoly()
+@@ -1663 +1663 @@
+-            sage: GF(3^8, 'a').subfield(4)                                          # needs sage.libs.pari
++            sage: GF(3^8, 'a').subfield(4)
+@@ -2080 +2080 @@
+-            sage: d = F.dual_basis(e, check=True); d                                # needs sage.libs.pari
++            sage: d = F.dual_basis(e, check=True); d
+@@ -2083,2 +2083,2 @@
+-            sage: vals = [[(x * y).trace() for x in e] for y in d]                  # needs sage.libs.pari
+-            sage: matrix(vals) == matrix.identity(4)                                # needs sage.libs.pari
++            sage: vals = [[(x * y).trace() for x in e] for y in d]
++            sage: matrix(vals) == matrix.identity(4)
+@@ -2092 +2092 @@
+-            sage: d = F.dual_basis(e, check=False); d                               # needs sage.libs.pari
++            sage: d = F.dual_basis(e, check=False); d
+@@ -2101 +2101 @@
+-            sage: F.dual_basis(d)                                                   # needs sage.libs.pari
++            sage: F.dual_basis(d)

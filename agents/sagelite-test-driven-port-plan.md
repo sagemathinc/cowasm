@@ -78337,3 +78337,81 @@ source clone is
 pass can audit another deterministic dependency boundary in a compact
 pure-math file; the remaining `finite_field_base.pyx` skips are explicitly
 external, stress, or long-running coverage.
+
+Finite-field PARI-free method promotion pass on 2026-07-27 UTC:
+
+The next deterministic dependency-boundary audit found eight stale
+`sage.libs.pari` annotations in
+`sage/rings/finite_rings/finite_field_base.pyx`. Ordinary browser-profile
+replays show that the prime-field multiplicative generator, finite-extension
+generator minpoly preservation, default-named subfield construction, and
+checked and unchecked dual-basis computations all pass through the finite
+field, polynomial, trace, vector, and matrix behavior already shipped in the
+runtime. None of these examples needs the broader optional PARI feature.
+
+The accumulated Sage patch now removes those obsolete annotations. The
+promoted rows require:
+
+```text
+GF(997).multiplicative_generator():                         7
+GF(5^2).extension(2)(GF(5^2).gen()).minpoly preservation: True
+GF(3^8, 'a').subfield(4):                                  GF(3^4)
+GF(7^4) checked dual basis and trace-pairing matrix:        pass
+GF(7^8) unchecked dual basis and dual-of-dual recovery:    pass
+```
+
+The standalone and Electron-shaped finite-field smokes now exercise
+deterministic representatives of all five behaviors, including both
+`check=True` and `check=False` dual-basis paths.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+finite_field_base.pyx: 339 passed, 0 failed, 22 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+This activates exactly eight rows relative to the preceding 331-passed,
+30-skipped dashboard. All eight promoted block rows are passed, saved
+block-failure and file-error queries are empty, and active-row coverage is
+100%. The 22 retained skips comprise five Macaulay2 rows, five focused PARI
+rows, four Magma rows, four p-adic rows, three number-field rows, and one long
+row.
+
+The Electron manifest schema advances to 227 and its smoke contract to
+`finite-field-pari-free-methods-v199`. The final generated manifest records
+the pinned source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a
+clean source tree, 761 required paths with matching hashes, 578 Electron side
+modules, nine native libraries, and fourteen runtime dependency paths.
+
+The interrupted standalone reconstruction resumed from its stable Meson
+state and a separate clean clone at the pinned revision. It regenerated all
+527 Cython sources, compiled and linked all 1,064 targets, passed the complete
+Node import/runtime and doctest-runner matrices, audited 523 staged and 578
+Electron side modules, emitted the schema-227 manifest, and passed the
+complete standalone, Electron-shaped, and relocated-resource smokes. The
+unrelated dirty external developer checkout remains untouched.
+
+Validation additionally includes the complete rebuilt-bundle dashboard;
+focused SQLite inspection of every promoted row; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; all desktop Electron manifest,
+forge-resource, and runtime tests; shell and JavaScript syntax; accumulated-
+patch syntax; complete sequential POSIX-patch application against a clean
+archive of the pinned source; byte-for-byte reconstructed finite-field target
+comparison; rejection of a second forward patch application; direct
+repository-launcher verification; corpus uniqueness and path existence; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,842 serialized target
+sections (1,329 `diff --git` and 513 header-only legacy sections) and 6,000
+hunks. The final dashboard is
+`/tmp/cowasm-sagelite-ffbase-pari-final.sqlite3`; the clean reconstruction log
+is `/tmp/cowasm-sagelite-ffbase-pari-rebuild.log`; the clean source clone is
+`/tmp/cowasm-sagelite-ffbase-pari-source.1yR7RP/`; and exact patch replay is
+under `/tmp/cowasm-sagelite-ffbase-pari-replay.HiyUTG/`. A future scheduled
+pass can audit another compact deterministic dependency boundary; the five
+remaining PARI rows in `finite_field_base.pyx` are now narrowed to
+factorization, algebraic-closure embedding, and polynomial-root coverage.
