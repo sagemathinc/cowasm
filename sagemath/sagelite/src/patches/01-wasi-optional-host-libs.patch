@@ -39713,3 +39713,20 @@ diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finit
 -        return self.parent().prime_subfield()(self.__pari__().trace().lift())
 +        f = self.charpoly('x')
 +        return -f[f.degree() - 1]
+diff --git a/src/sage/rings/finite_rings/finite_field_base.pyx b/src/sage/rings/finite_rings/finite_field_base.pyx
+--- a/src/sage/rings/finite_rings/finite_field_base.pyx
++++ b/src/sage/rings/finite_rings/finite_field_base.pyx
+@@ -723,2 +723,6 @@
+             from sage.arith.misc import primitive_root
+-            return self(primitive_root(self.order()))
++            try:
++                return self(primitive_root(self.order()))
++            except NotImplementedError:
++                F, = self.factored_unit_order()
++                return self._element_of_factored_order(F)
+diff --git a/src/sage/rings/finite_rings/element_base.pyx b/src/sage/rings/finite_rings/element_base.pyx
+--- a/src/sage/rings/finite_rings/element_base.pyx
++++ b/src/sage/rings/finite_rings/element_base.pyx
+@@ -39 +39 @@
+-            sage: sorted(a._nth_root_common(4, True, "Johnston", False))              # needs sage.libs.pari
++            sage: sorted(a._nth_root_common(4, True, "Johnston", False))

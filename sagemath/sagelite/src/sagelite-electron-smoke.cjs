@@ -496,7 +496,7 @@ assert V([QQ(1, 3), QQ(1, 6)]).denominator() == 6
     console.log("sagelite-electron-ok extended linear polynomial smoke");
     console.log("sagelite-electron-start finite-field polynomial smoke");
     await python.exec(String.raw`
-from sage.all import GF, PolynomialRing
+from sage.all import GF, PolynomialRing, ZZ
 
 S = PolynomialRing(GF(7), 't')
 t = S.gen()
@@ -518,6 +518,9 @@ assert isinstance(F25, FiniteField_givaro)
 F25_functor, F25_base = F25.construction()
 assert F25_functor(F25_base) is F25
 a = F25.gen()
+F17 = GF(17)
+assert F17.multiplicative_generator() == 3
+assert sorted(F17(13)._nth_root_common(ZZ(4), True, 'Johnston', False)) == [3, 5, 12, 14]
 F125 = GF(5**3, 'g')
 g = F125.gen()
 assert g.trace() == 0

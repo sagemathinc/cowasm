@@ -1371,7 +1371,7 @@ ZZz = PolynomialRing(ZZ, 'z')
 z = ZZz.gen()
 assert (z**3 - z)(z + 1) == z**3 + 3*z**2 + 2*z
 print('sagelite-node-ok polynomial helper smoke')"
-run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing
+run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing, ZZ
 S = PolynomialRing(GF(7), 't')
 t = S.gen()
 assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
@@ -1392,6 +1392,9 @@ assert isinstance(F25, FiniteField_givaro)
 F25_functor, F25_base = F25.construction()
 assert F25_functor(F25_base) is F25
 a = F25.gen()
+F17 = GF(17)
+assert F17.multiplicative_generator() == 3
+assert sorted(F17(13)._nth_root_common(ZZ(4), True, 'Johnston', False)) == [3, 5, 12, 14]
 F125 = GF(5**3, 'g')
 g = F125.gen()
 assert g.trace() == 0
@@ -2398,7 +2401,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=222
+electron_manifest_schema_version=223
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2480,6 +2483,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-givaro-invariants-v192"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-pari-conversion-v193"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-field-trace-v194"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-prime-field-generator-fallback-v195"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -78035,3 +78035,83 @@ generated bundle remains recoverable under
 `/tmp/cowasm-sagelite-trace-generated-backup.dmFTcK/`. A future scheduled
 pass can select another persisted pure-math semantic gap or revisit one of
 the remaining explicit dependency-boundary skips.
+
+Prime-field multiplicative-generator delivery pass on 2026-07-27 UTC:
+
+The first remaining PARI-tagged row in
+`sage/rings/finite_rings/element_base.pyx` reproduced a focused compatibility
+gap. Computing the fourth roots of `13` modulo `17` asked the prime field for
+a root of unity. Prime-field `multiplicative_generator()` unconditionally
+called PARI's `znprimroot()`, which is outside the focused cypari object model,
+even though the generic finite-field implementation already has a
+factorization-and-enumeration algorithm for finding an element of the required
+order.
+
+The accumulated Sage patch now retains the ordinary `primitive_root()` result
+when available and falls back narrowly on `NotImplementedError` to the
+existing `_element_of_factored_order()` implementation. The fallback preserves
+the documented smallest generator for `GF(17)`, namely `3`, and activates the
+previously deferred fourth-root row:
+
+```text
+GF(17).multiplicative_generator():                  3
+sorted(GF(17)(13)._nth_root_common(4, True, ...)): [3, 5, 12, 14]
+```
+
+The adjacent three-row randomized large-extension list cluster was explicitly
+replayed before being considered for activation. Individual selected lines
+could pass, but a complete stateful replay reproduced a PARI stack overflow
+while constructing a random element of degree between 111 and 999. Those
+three `sage.libs.pari` dependency annotations are therefore retained rather
+than being misclassified as stale.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+element_base.pyx: 250 passed, 0 failed, 16 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+This activates one row relative to the preceding 249-passed, 17-skipped
+dashboard. Saved block-failure and file-error queries are empty and active-row
+coverage is 100%. The 16 retained skips comprise five groups/GAP rows, four
+LinBox rows, three randomized PARI rows, two module rows, one long row, and
+one Cunningham-tables row.
+
+The standalone and Electron-shaped finite-field smokes now require both the
+prime-field generator and the fourth-root set. The Electron manifest schema
+advances to 223 and its smoke contract to
+`prime-field-generator-fallback-v195`. The clean generated manifest records
+the pinned source revision `f575cf6224f749763d7c875229cbd684e5939e58`, a
+clean source tree, and 761 required paths with matching hashes.
+
+A complete standalone reconstruction from the clean pinned Sagelite source
+regenerated all Cython sources, compiled and linked the complete target set,
+passed all 91 Node import smokes and the complete doctest-runner matrix,
+audited 523 staged and 578 Electron side modules, emitted the schema-223
+manifest, and passed the complete Electron-shaped and relocated-resource
+smokes. The desktop manifest, forge-resource, and runtime tests also pass, as
+does the exact repository launcher probe.
+
+Validation additionally includes the failing feature-selected baseline; the
+focused active replay; the complete direct and final rebuilt-bundle
+dashboards; saved lifecycle, failure, file-error, and skip queries; SQLite
+integrity; shell and JavaScript syntax; accumulated-patch syntax; complete
+sequential POSIX-patch application against the clean pinned source; direct
+launcher verification; corpus uniqueness and path existence; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,838 serialized target
+sections (1,325 `diff --git` and 513 header-only legacy sections) and 5,980
+hunks. Baseline and focused dashboards are
+`/tmp/cowasm-sagelite-next-nth.sqlite3` and
+`/tmp/cowasm-sagelite-prime-generator-{active,full2}.sqlite3`; the final
+dashboard is `/tmp/cowasm-sagelite-prime-generator-final.sqlite3`; the clean
+rebuild log is `/tmp/cowasm-sagelite-prime-generator-rebuild.log`; and the
+displaced pre-reconstruction build remains recoverable under
+`/tmp/cowasm-sagelite-prime-generator-backup.O1nS5e/`. A future scheduled pass
+can select another persisted pure-math semantic gap or revisit one of the
+remaining explicit dependency-boundary skips.
