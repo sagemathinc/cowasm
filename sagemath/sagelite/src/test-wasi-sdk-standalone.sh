@@ -1258,6 +1258,15 @@ assert f == Envelope((3, 2, 2))
 assert f != Envelope([3, 2, 1])
 assert f != Envelope([3, 2, 2], min_part=2)
 print('sagelite-node-ok integer lists smoke')"
+run_node_import "generic numerical approximation smoke" "import sage.all
+from sage.arith.numerical_approx import numerical_approx_generic
+integer_approx = numerical_approx_generic(int(42), 20)
+float_approx = numerical_approx_generic(float(4.2), 20)
+assert str(integer_approx) == '42.000'
+assert str(float_approx) == '4.2000'
+assert integer_approx.parent().precision() == 20
+assert float_approx.parent().precision() == 20
+print('sagelite-node-ok generic numerical approximation smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -2522,7 +2531,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=237
+electron_manifest_schema_version=238
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2619,6 +2628,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-c
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-bimodules-real-v207"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polygonal-real-coercion-v208"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-lists-real-coercion-v209"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-numerical-approx-v210"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

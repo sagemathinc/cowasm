@@ -79143,3 +79143,72 @@ reconstruction log is
 `/tmp/cowasm-sagelite-integer-lists-rebuild.6IkkGq/standalone-rebuild.log`.
 A future scheduled pass can continue auditing another compact deterministic
 real-field dependency boundary in the curated pure-math corpus.
+
+Generic numerical-approximation promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found a stale
+file-level `sage.rings.real_mpfr` directive in
+`sage/arith/numerical_approx.pyx`. An ordinary replay against the untouched
+pinned source records the whole file as one explicit optional skip. A
+feature-selected replay activates the three real-field rows, which all pass,
+and retains only the individually tagged symbolic-constant example:
+
+```text
+numerical_approx.pyx: 3 passed, 0 failed, 1 skipped
+```
+
+The accumulated Sage patch removes the obsolete file-level directive while
+leaving the `pi` example's `# needs sage.symbolic` annotation intact. The
+standalone and Electron-shaped smokes now call
+`numerical_approx_generic(int(42), 20)` and
+`numerical_approx_generic(float(4.2), 20)`, require the documented `42.000`
+and `4.2000` displays, and verify that both results have 20-bit parents.
+
+Against the final clean rebuilt resource bundle, the ordinary browser-profile
+dashboard records:
+
+```text
+numerical_approx.pyx: 3 passed, 0 failed, 1 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+The retained row is the explicitly symbolic `pi` approximation. Saved
+block-failure and file-error queries are empty, active-row coverage is 100%,
+and the SQLite run records runner version 154 plus pinned Sagelite source
+revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`.
+
+The Electron manifest schema advances to 238 and its smoke contract to
+`generic-numerical-approx-v210`. The clean generated manifest records the
+pinned source revision and clean tree state, 761 required resources with
+matching hashes, 578 Electron side modules, nine native libraries, and
+fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean shared clone generated all
+527 declared Cython sources on its first attempt, compiled and linked all
+1,064 native targets, passed all 92 Node import probes and the complete
+doctest-runner matrix, audited 523 staged and 578 Electron side modules,
+emitted the schema-238 manifest, and passed the complete standalone,
+Electron-shaped, and relocated-resource smokes. The rebuilt resource smoke
+also passes directly with the desktop Electron `python-wasm` package, and the
+desktop manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; the final rebuilt-bundle dashboard; saved lifecycle, failure, and
+file-error queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax; clean patch application during reconstruction;
+corpus uniqueness and path existence; manifest contract consistency; and
+`git diff --check`. The unrelated dirty external developer checkout remains
+untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,854 serialized target
+sections (1,341 `diff --git` and 513 header-only legacy sections) and 6,023
+hunks. The untouched ordinary and feature-selected dashboards are
+`/tmp/cowasm-sagelite-numerical-ordinary.Rhqz0w/results.sqlite3` and
+`/tmp/cowasm-sagelite-numerical-feature.iCE4W1/results.sqlite3`; the final
+patched dashboard is
+`/tmp/cowasm-sagelite-numerical-patched.NsStX9/results.sqlite3`; and the clean
+pinned source clone is `/tmp/cowasm-sagelite-numerical-source.qda5d7/`. A
+future scheduled pass can continue auditing another compact deterministic
+real-field dependency boundary in the curated pure-math corpus.

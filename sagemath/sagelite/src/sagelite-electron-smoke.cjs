@@ -411,6 +411,19 @@ assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
 assert SetPartitions(4).cardinality() == 15
 `);
     console.log("sagelite-electron-ok combinatorics cardinality smoke");
+    console.log("sagelite-electron-start generic numerical approximation smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.arith.numerical_approx import numerical_approx_generic
+
+integer_approx = numerical_approx_generic(int(42), 20)
+float_approx = numerical_approx_generic(float(4.2), 20)
+assert str(integer_approx) == '42.000'
+assert str(float_approx) == '4.2000'
+assert integer_approx.parent().precision() == 20
+assert float_approx.parent().precision() == 20
+`);
+    console.log("sagelite-electron-ok generic numerical approximation smoke");
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing

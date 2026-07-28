@@ -39934,3 +39934,8 @@ diff --git a/src/sage/combinat/integer_lists/base.pyx b/src/sage/combinat/intege
 @@ -88 +88 @@
 -            sage: C = IntegerListsBackend(min_sum=1.4)                                  # needs sage.rings.real_mpfr
 +            sage: C = IntegerListsBackend(min_sum=1.4)
+diff --git a/src/sage/arith/numerical_approx.pyx b/src/sage/arith/numerical_approx.pyx
+--- a/src/sage/arith/numerical_approx.pyx
++++ b/src/sage/arith/numerical_approx.pyx
+@@ -1 +0,0 @@
+-# sage.doctest: needs sage.rings.real_mpfr
