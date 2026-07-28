@@ -39939,3 +39939,9 @@ diff --git a/src/sage/arith/numerical_approx.pyx b/src/sage/arith/numerical_appr
 +++ b/src/sage/arith/numerical_approx.pyx
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.rings.real_mpfr
+diff --git a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
+--- a/src/sage/sets/disjoint_set.pyx
++++ b/src/sage/sets/disjoint_set.pyx
+@@ -136 +136 @@
+-        sage: DisjointSet(4.3)                                                          # needs sage.rings.real_mpfr
++        sage: DisjointSet(4.3)

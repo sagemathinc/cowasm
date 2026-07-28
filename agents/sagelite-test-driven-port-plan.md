@@ -79212,3 +79212,74 @@ patched dashboard is
 pinned source clone is `/tmp/cowasm-sagelite-numerical-source.qda5d7/`. A
 future scheduled pass can continue auditing another compact deterministic
 real-field dependency boundary in the curated pure-math corpus.
+
+Disjoint-set real-literal promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in `sage/sets/disjoint_set.pyx`. An ordinary
+focused replay against the untouched pinned source records the
+`DisjointSet(4.3)` row as one explicit optional skip, while a feature-selected
+replay activates the row and passes with the documented diagnostic:
+
+```text
+TypeError: 'sage.rings.real_mpfr.RealLiteral' object is not iterable
+```
+
+The accumulated Sage patch removes the obsolete annotation. The standalone
+and Electron-shaped set-family smokes now construct the input explicitly with
+`RealNumber('4.3')` and require the same non-iterable diagnostic. Explicit
+construction is necessary in direct Python because Sage doctest preparsing
+turns the source literal into a `RealLiteral`, whereas unpreparsed Python would
+otherwise pass a native float.
+
+Against the rebuilt standard resource bundle, the ordinary browser-profile
+dashboard records:
+
+```text
+disjoint_set.pyx: 264 passed, 0 failed, 9 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The nine retained rows are explicitly optional graph and combinatorics
+examples. Saved block-failure and file-error queries are empty, active-row
+coverage is 100%, and the SQLite run records runner version 154. The untouched
+ordinary and feature-selected line replays record respectively
+`0 passed, 0 failed, 1 skipped` and `1 passed, 0 failed, 0 skipped`.
+
+The Electron manifest schema advances to 239 and its smoke contract to
+`disjoint-set-real-literal-v211`. The generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, 761
+required resources with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths. Its source-tree state
+is deliberately recorded as dirty because the external developer checkout
+contains unrelated pre-existing edits; that checkout was not modified.
+
+The complete standard standalone target regenerated the declared Cython
+sources, compiled and linked the native targets, passed all 92 Node import
+probes and the complete doctest-runner matrix, audited the staged and Electron
+side modules, emitted the schema-239 manifest, and passed the complete
+standalone, Electron-shaped, and relocated-resource smokes. The rebuilt
+resource smoke also passes directly with the desktop Electron `python-wasm`
+package, and the desktop manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; the complete patched-file dashboard; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax; exact sequential patch application against a clean
+pinned clone; byte-for-byte reconstructed `disjoint_set.pyx` comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; manifest contract consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,855 serialized target
+sections (1,342 `diff --git` and 513 header-only legacy sections) and 6,024
+hunks. The untouched ordinary and feature-selected dashboards are
+`/tmp/cowasm-sagelite-disjoint-baseline.0rDodi/ordinary.sqlite3` and
+`/tmp/cowasm-sagelite-disjoint-feature.Pz8em8/feature.sqlite3`; the complete
+patched dashboard is
+`/tmp/cowasm-sagelite-disjoint-patched.TahmBF/patched.sqlite3`; and exact
+clean-source patch replay is under
+`/tmp/cowasm-sagelite-disjoint-replay.wOMhqn/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.

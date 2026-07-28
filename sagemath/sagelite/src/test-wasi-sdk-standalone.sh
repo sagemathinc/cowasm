@@ -810,6 +810,7 @@ from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.subword import Subwords
 from sage.combinat.tuple import Tuples, UnorderedTuples
 from sage.all import RealNumber
+from sage.sets.disjoint_set import DisjointSet
 from sage.sets.family import Family
 from sage.sets.integer_range import IntegerRange
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -841,6 +842,12 @@ except TypeError as err:
     assert str(err) == \"end must be Integer or Infinity, not <class 'sage.rings.real_mpfr.RealLiteral'>\"
 else:
     raise AssertionError('IntegerRange should reject a RealLiteral endpoint')
+try:
+    DisjointSet(RealNumber('4.3'))
+except TypeError as err:
+    assert str(err) == \"'sage.rings.real_mpfr.RealLiteral' object is not iterable\"
+else:
+    raise AssertionError('DisjointSet should reject a non-iterable RealLiteral')
 print('sagelite-wasi-sdk-ok finite enumeration smoke')"
 run_wasi_sdk_python_import "unicode typeerror integer fields after sage.all" "import sage.all
 def keyword_only(*, value=None):
@@ -2531,7 +2538,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=238
+electron_manifest_schema_version=239
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2629,6 +2636,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-b
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polygonal-real-coercion-v208"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-lists-real-coercion-v209"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-numerical-approx-v210"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-disjoint-set-real-literal-v211"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
