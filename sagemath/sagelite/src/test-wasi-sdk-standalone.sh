@@ -1315,6 +1315,17 @@ run_node_import "real-double algebraic dependency smoke" "from sage.all import R
 r = sqrt(RDF(2))
 assert str(r.algebraic_dependency(5)) == 'x^2 - 2'
 print('sagelite-node-ok real-double algebraic dependency smoke')"
+run_node_import "real and complex field abstract base smoke" "import sage.all
+import sage.rings.abc
+from sage.rings.complex_mpfr import ComplexField, ComplexField_class
+from sage.rings.real_mpfr import RealField, RealField_class
+CC = ComplexField()
+RR = RealField()
+assert isinstance(RR, sage.rings.abc.RealField)
+assert sage.rings.abc.RealField.__subclasses__() == [RealField_class]
+assert isinstance(CC, sage.rings.abc.ComplexField)
+assert sage.rings.abc.ComplexField.__subclasses__() == [ComplexField_class]
+print('sagelite-node-ok real and complex field abstract base smoke')"
 run_node_import "Gosper constant homography smoke" "from sage.rings.continued_fraction import continued_fraction
 from sage.rings.continued_fraction_gosper import gosper_iterator
 cf = continued_fraction(([1, 2], [3, 4]))
@@ -2541,7 +2552,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=240
+electron_manifest_schema_version=241
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2641,6 +2652,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-li
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-numerical-approx-v210"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-disjoint-set-real-literal-v211"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fixtures-real-repr-v212"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-abc-v213"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -1319,10 +1319,11 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
+import sage.rings.abc
 from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField, ComplexField_class
+from sage.rings.real_mpfr import RealField, RealField_class
 
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
@@ -1331,6 +1332,10 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+assert isinstance(RR, sage.rings.abc.RealField)
+assert sage.rings.abc.RealField.__subclasses__() == [RealField_class]
+assert isinstance(CC, sage.rings.abc.ComplexField)
+assert sage.rings.abc.ComplexField.__subclasses__() == [ComplexField_class]
 assert Bimodules(CC, ZZ).element_class is Bimodules(RR, ZZ).element_class
 assert VectorSpaces(CC)._subcategory_hook_(Algebras(QQ)) is False
 C = cartesian_product([ZZ, QQ, CC])

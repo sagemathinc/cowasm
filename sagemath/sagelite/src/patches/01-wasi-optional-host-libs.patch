@@ -39951,3 +39951,18 @@ diff --git a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
 @@ -100 +100 @@
 -        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # needs sage.rings.real_mpfr
 +        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))
+diff --git a/src/sage/rings/abc.pyx b/src/sage/rings/abc.pyx
+--- a/src/sage/rings/abc.pyx
++++ b/src/sage/rings/abc.pyx
+@@ -179 +179 @@
+-        sage: isinstance(RR, sage.rings.abc.RealField)                                  # needs sage.rings.real_mpfr
++        sage: isinstance(RR, sage.rings.abc.RealField)
+@@ -184 +184 @@
+-        sage: sage.rings.abc.RealField.__subclasses__()                                 # needs sage.rings.real_mpfr
++        sage: sage.rings.abc.RealField.__subclasses__()
+@@ -279 +279 @@
+-        sage: isinstance(CC, sage.rings.abc.ComplexField)                               # needs sage.rings.real_mpfr
++        sage: isinstance(CC, sage.rings.abc.ComplexField)
+@@ -284 +284 @@
+-        sage: sage.rings.abc.ComplexField.__subclasses__()                              # needs sage.rings.real_mpfr
++        sage: sage.rings.abc.ComplexField.__subclasses__()

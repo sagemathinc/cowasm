@@ -79363,3 +79363,89 @@ Electron smoke log is
 `/tmp/cowasm-sagelite-fixtures-real-rebuild.QQ8XhE/desktop-electron-smoke.log`.
 A future scheduled pass can continue auditing another compact deterministic
 real-field dependency boundary in the curated pure-math corpus.
+
+Real and complex field abstract-base promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found four stale
+`sage.rings.real_mpfr` annotations in `sage/rings/abc.pyx`. An ordinary
+browser-profile replay against the preceding resource bundle records 43
+passes and 39 skips. A feature-selected replay activates the four annotated
+rows and records 47 passes and 35 skips. The promoted examples verify that the
+concrete MPFR real and complex fields implement the corresponding
+`sage.rings.abc` abstract bases and are their only loaded subclasses:
+
+```text
+isinstance(RR, sage.rings.abc.RealField):       True
+sage.rings.abc.RealField.__subclasses__():      [RealField_class]
+isinstance(CC, sage.rings.abc.ComplexField):    True
+sage.rings.abc.ComplexField.__subclasses__():   [ComplexField_class]
+```
+
+The accumulated Sage patch removes all four obsolete annotations. The
+standalone and Electron-shaped category smokes construct explicit
+`RealField()` and `ComplexField()` instances and require both the abstract-base
+relationships and the exact loaded-subclass lists. Explicit construction is
+intentional: direct imports of `RR` and `CC` from the stripped `sage.all`
+startup surface remain lazy wrappers, while the doctest runner resolves its
+focused lazy namespace before executing the examples.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+abc.pyx:          47 passed, 0 failed, 35 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the saved skip query accounts for all 35 retained optional rows:
+18 number-field rows, six p-adic rows, four FLINT rows, three combined
+GAP/number-field rows, and two rows each for complex-double and
+complex-interval fields. The feature-selected untouched dashboard and patched
+dashboard agree on every semantic block field; their only intended difference
+is removal of the four real-MPFR tags. The patched and final rebuilt-bundle
+dashboards agree exactly across all 82 stable block rows.
+
+The Electron manifest schema advances to 241 and its smoke contract to
+`real-complex-abc-v213`. The clean generated manifest records pinned Sagelite
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source
+tree, 761 required resources with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+all 527 declared Cython targets, compiled and linked all 1,064 native targets,
+passed all 93 Node import probes and the complete 34-case doctest-runner
+matrix, audited the staged and Electron side modules, emitted the schema-241
+manifest, and passed the complete standalone, Electron-shaped, and
+relocated-resource smokes. The first runtime pass correctly exposed the lazy
+`RR`/`CC` wrapper distinction in the new direct Node probe; switching that
+probe to explicit field construction fixed the test without changing the Sage
+patch, and the resumed clean build passed. The rebuilt resource smoke also
+passes directly with the desktop Electron `python-wasm` package, and the
+desktop manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; the pre-rebuild patched and final rebuilt-bundle dashboards; saved
+lifecycle, failure, file-error, and skip queries; SQLite integrity and stable
+semantic-row comparison; shell and JavaScript syntax; accumulated-patch
+syntax; complete sequential patch application against the clean pinned source;
+byte-for-byte reconstructed `abc.pyx` comparison; rejection of a second
+forward patch application; corpus uniqueness and path existence; full-target
+dry run; manifest contract consistency; and `git diff --check`. The unrelated
+dirty external developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,857 serialized target
+sections (1,344 `diff --git` and 513 header-only legacy sections) and 6,029
+hunks. The untouched ordinary dashboard is
+`/tmp/cowasm-sagelite-real-abc-ordinary.tunZ0t/abc.sqlite3`; the
+feature-selected dashboard is
+`/tmp/cowasm-sagelite-real-abc-feature-20260728/abc.sqlite3`; the pre-rebuild
+patched dashboard is
+`/tmp/cowasm-sagelite-real-abc-patched.Nn1z9N/abc.sqlite3`; exact patch replay
+is under `/tmp/cowasm-sagelite-real-abc-replay.050AXM/`; and the final clean
+reconstruction, dashboard, logs, and direct desktop Electron smoke are under
+`/tmp/cowasm-sagelite-real-abc-final-20260728/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency boundary
+in the curated pure-math corpus.
