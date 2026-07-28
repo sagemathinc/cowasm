@@ -1052,6 +1052,7 @@ assert IntegerVectors(5, 3).cardinality() == 21
     await python.exec(String.raw`
 import sage.all
 from sage.all import RealNumber
+from sage.arith.srange import ellipsis_range, srange
 from sage.sets.family import Family
 from sage.sets.integer_range import IntegerRange
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -1078,6 +1079,11 @@ assert 1 in P
 assert 5 in P
 assert 0 not in P
 assert list(P.some_elements())[:5] == [1, 2, 3, 4, 5]
+half = RealNumber('0.5')
+assert srange(1, 5, half) == [1 + i * half for i in range(8)]
+two_fifths = RealNumber('0.4')
+assert srange(0, 1, two_fifths) == [i * two_fifths for i in range(3)]
+assert ellipsis_range(1, Ellipsis, 3, step=half) == [1 + i * half for i in range(5)]
 try:
     IntegerRange(RealNumber('1.0'))
 except TypeError as err:

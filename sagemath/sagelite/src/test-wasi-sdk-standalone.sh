@@ -802,6 +802,7 @@ assert D.det() == QQ(1)
 assert D.inverse() * D == identity_matrix(QQ, 3)
 print('sagelite-wasi-sdk-ok linear algebra smoke')"
 run_wasi_sdk_python_import "finite enumeration smoke" "import sage.all
+from sage.arith.srange import ellipsis_range, srange
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.derangements import Derangements
@@ -829,6 +830,11 @@ N = NonNegativeIntegers()
 assert 0 in N and 5 in N and -1 not in N
 P = PositiveIntegers()
 assert 1 in P and 5 in P and 0 not in P
+half = RealNumber('0.5')
+assert srange(1, 5, half) == [1 + i * half for i in range(8)]
+two_fifths = RealNumber('0.4')
+assert srange(0, 1, two_fifths) == [i * two_fifths for i in range(3)]
+assert ellipsis_range(1, Ellipsis, 3, step=half) == [1 + i * half for i in range(5)]
 try:
     IntegerRange(RealNumber('1.0'))
 except TypeError as err:
@@ -2486,7 +2492,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=230
+electron_manifest_schema_version=231
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2576,6 +2582,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-fie
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-module-pari-init-v200"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-range-real-literal-v201"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-iterator-instancedoc-v202"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-literal-srange-v203"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -78636,3 +78636,73 @@ reconstruction log is
 `/tmp/cowasm-sagelite-set-iterator-rebuild.log`. A future scheduled pass can
 audit another small deterministic dependency boundary in the curated pure-math
 corpus.
+
+Real-literal `srange` promotion pass on 2026-07-28 UTC:
+
+The next compact dependency-boundary audit found stale
+`sage.rings.real_mpfr` annotations in `sage/arith/srange.pyx`. The ordinary
+browser-profile file replay recorded 67 passes and ten skips. A
+feature-selected replay recorded 75 passes and two skips, activating all five
+ordinary real-literal range examples covered by the file-wide directive, the
+two repeated explicit-step examples, and the preparser
+`[1..3, step=0.5]` example. The only retained skips require
+`sage.modules` for vector-space ranges.
+
+The accumulated Sage patch removes the obsolete file-wide and three inline
+annotations. Real MPFR and preparsed real literals are already shipped in the
+browser runtime, so the ordinary patched replay now matches the
+feature-selected result without opting into an unavailable dependency. The
+standalone and Electron-shaped finite-enumeration smokes construct `0.5` and
+`0.4` through the public `RealNumber` factory and require `srange` and
+`ellipsis_range` to return the corresponding exact real-number sequences.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+srange.pyx:       75 passed, 0 failed, 2 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the focused patched and final rebuilt-bundle dashboards agree across
+all 77 ordered rows on the stable semantic fields. Their two raw `actual`
+strings differ only in the expected generator address and in the rebuilt
+traceback line shifted by removal of the directive. The retained skips both
+have the explicit `optional:sage.modules` reason.
+
+The Electron manifest schema advances to 231 and its smoke contract to
+`real-literal-srange-v203`. The generated manifest records pinned source
+revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source tree, 761
+required paths with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean pinned clone generated all
+527 Cython sources, compiled and linked all 1,064 targets, passed all 91 Node
+import probes and the complete doctest-runner matrix, audited 523 staged and
+578 Electron side modules, emitted the schema-231 manifest, and passed the
+complete standalone, Electron-shaped, and relocated-resource smokes. The
+desktop Electron manifest, forge-resource, and runtime tests pass as well.
+
+Validation additionally includes the ordinary and feature-selected baselines;
+the patched and final rebuilt-bundle dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity and stable semantic-row
+comparison; shell and JavaScript syntax; accumulated-patch syntax; complete
+sequential POSIX-patch application against a clean archive of the pinned
+source; byte-for-byte reconstructed `srange.pyx` comparison; rejection of a
+second forward patch application; corpus uniqueness and path existence;
+full-target dry run; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,847 serialized target
+sections (1,334 `diff --git` and 513 header-only legacy sections) and 6,013
+hunks. Baseline and active dashboards are the
+`/tmp/cowasm-sagelite-srange-audit-*.sqlite3` and
+`/tmp/cowasm-sagelite-srange-active.sqlite3` files; the final dashboard is
+`/tmp/cowasm-sagelite-srange-final.ERhFK8/srange.sqlite3`; exact patch replay
+is under `/tmp/cowasm-sagelite-srange-replay.HEDnv4/`; the clean source clone
+is `/tmp/cowasm-sagelite-srange-source.P2TN4A/`; and the successful
+reconstruction log is `/tmp/cowasm-sagelite-srange-rebuild.log`. A future
+scheduled pass can audit another small deterministic dependency boundary in
+the curated pure-math corpus.

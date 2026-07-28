@@ -39869,3 +39869,17 @@ diff --git a/src/sage/sets/set_from_iterator.py b/src/sage/sets/set_from_iterato
 @@ -469 +469 @@
 -            sage: print(sage_getdoc(d))   # indirect doctest                          # needs packaging
 +            sage: print(sage_getdoc(d))   # indirect doctest
+diff --git a/src/sage/arith/srange.pyx b/src/sage/arith/srange.pyx
+--- a/src/sage/arith/srange.pyx
++++ b/src/sage/arith/srange.pyx
+@@ -238 +237,0 @@
+-        sage: # needs sage.rings.real_mpfr
+@@ -284 +283 @@
+-        sage: srange(1, 5, 0.5)                                                         # needs sage.rings.real_mpfr
++        sage: srange(1, 5, 0.5)
+@@ -287 +286 @@
+-        sage: srange(0, 1, 0.4)                                                         # needs sage.rings.real_mpfr
++        sage: srange(0, 1, 0.4)
+@@ -522 +521 @@
+-        sage: [1..3, step=0.5]                                                          # needs sage.rings.real_mpfr
++        sage: [1..3, step=0.5]
