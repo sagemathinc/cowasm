@@ -39945,3 +39945,9 @@ diff --git a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 @@ -136 +136 @@
 -        sage: DisjointSet(4.3)                                                          # needs sage.rings.real_mpfr
 +        sage: DisjointSet(4.3)
+diff --git a/src/sage/doctest/fixtures.py b/src/sage/doctest/fixtures.py
+--- a/src/sage/doctest/fixtures.py
++++ b/src/sage/doctest/fixtures.py
+@@ -100 +100 @@
+-        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # needs sage.rings.real_mpfr
++        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))

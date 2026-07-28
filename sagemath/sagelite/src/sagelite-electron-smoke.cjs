@@ -1081,6 +1081,7 @@ assert IntegerVectors(5, 3).cardinality() == 21
 import sage.all
 from sage.all import RealNumber
 from sage.arith.srange import ellipsis_range, srange
+from sage.doctest.fixtures import reproducible_repr
 from sage.sets.disjoint_set import DisjointSet
 from sage.sets.family import Family
 from sage.sets.integer_range import IntegerRange
@@ -1125,6 +1126,8 @@ except TypeError as err:
     assert str(err) == "'sage.rings.real_mpfr.RealLiteral' object is not iterable"
 else:
     raise AssertionError('DisjointSet should reject a non-iterable RealLiteral')
+assert reproducible_repr({RealNumber('3.0'): 'three', '2': 'two', 1: 'one'}) == \
+    "{'2': 'two', 1: 'one', 3.00000000000000: 'three'}"
 `);
     console.log("sagelite-electron-ok set family smoke");
     console.log("sagelite-electron-start p-adic lattice pickle smoke");

@@ -79283,3 +79283,83 @@ clean-source patch replay is under
 `/tmp/cowasm-sagelite-disjoint-replay.wOMhqn/`. A future scheduled pass can
 continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Deterministic fixture real-number representation promotion pass on 2026-07-28
+UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in `sage/doctest/fixtures.py`. An ordinary
+focused replay against the preceding resource bundle records the dictionary
+representation row as one explicit optional skip, while a feature-selected
+replay activates it and passes with the documented stable ordering and
+real-number display:
+
+```text
+{'2': 'two', 1: 'one', 3.00000000000000: 'three'}
+```
+
+The accumulated Sage patch removes the obsolete annotation. The standalone and
+Electron-shaped finite-enumeration/set-family smokes explicitly construct the
+real key with `RealNumber('3.0')` and require the same deterministic
+representation from `sage.doctest.fixtures.reproducible_repr`.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+fixtures.py:       61 passed, 0 failed, 0 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure, file-error, and skip queries are empty, active-row coverage
+is 100%, and the SQLite run records runner version 154 plus pinned Sagelite
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`. The temporary
+pre-rebuild patched source and final rebuilt source are byte-identical.
+
+The Electron manifest schema advances to 240 and its smoke contract to
+`fixtures-real-repr-v212`. The clean generated manifest records the pinned
+source revision and clean tree state, 761 required resources with matching
+hashes, 578 Electron side modules, nine native libraries, and fourteen runtime
+dependency paths.
+
+A complete standalone reconstruction from a clean pinned clone generated the
+full declared Cython source set, compiled and linked all 1,064 native targets,
+passed all 92 Node import probes and the complete doctest-runner matrix,
+audited the staged and Electron side modules, emitted the schema-240 manifest,
+and passed the complete standalone, Electron-shaped, and relocated-resource
+smokes. The rebuilt resource smoke also passes directly with the desktop
+Electron `python-wasm` package, and the desktop manifest, forge-resource, and
+runtime tests pass.
+
+The first standard make-target attempt correctly stopped during patch
+application because the external `/home/user/sagelite` developer checkout
+contains three pre-existing source edits. Read-only inspection confirmed that
+all three match older CoWasm patch work already committed here: the symbolic
+`integer_ring.pyx` doctest annotations, the dense matrix dimension guard, and
+the generic `complex_roots.py` fallbacks. Its untracked June 23 SQLite file is
+also an old 230-block Sagelite dashboard. None of those external-checkout
+artifacts was modified or removed; the authoritative reconstruction used the
+clean pinned clone under `/tmp`.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; the final rebuilt-bundle dashboard; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell, JavaScript, and
+TypeScript syntax; accumulated-patch syntax; exact clean patch application;
+byte-for-byte reconstructed `fixtures.py` comparison; corpus uniqueness and
+path existence; manifest contract consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,856 serialized target
+sections (1,343 `diff --git` and 513 header-only legacy sections) and 6,025
+hunks. The untouched ordinary and feature-selected dashboards are
+`/tmp/cowasm-sagelite-fixtures-real-audit.I464VY/ordinary.sqlite3` and
+`/tmp/cowasm-sagelite-fixtures-real-audit.I464VY/feature.sqlite3`; the final
+dashboard is
+`/tmp/cowasm-sagelite-fixtures-real-final.jhG5hS/fixtures.sqlite3`; the clean
+reconstruction is under
+`/tmp/cowasm-sagelite-fixtures-real-rebuild.QQ8XhE/`; and the direct desktop
+Electron smoke log is
+`/tmp/cowasm-sagelite-fixtures-real-rebuild.QQ8XhE/desktop-electron-smoke.log`.
+A future scheduled pass can continue auditing another compact deterministic
+real-field dependency boundary in the curated pure-math corpus.
