@@ -39889,3 +39889,21 @@ diff --git a/src/sage/categories/bimodules.py b/src/sage/categories/bimodules.py
 @@ -114 +114 @@
 -            sage: Bimodules.an_instance()                                               # needs sage.rings.real_mpfr
 +            sage: Bimodules.an_instance()
+diff --git a/src/sage/sets/cartesian_product.py b/src/sage/sets/cartesian_product.py
+--- a/src/sage/sets/cartesian_product.py
++++ b/src/sage/sets/cartesian_product.py
+@@ -367,3 +367,3 @@
+-                sage: C = cartesian_product([ZZ, QQ, CC])                               # needs sage.rings.real_mpfr
+-                sage: e = C.random_element()                                            # needs sage.rings.real_mpfr
+-                sage: len(e)                                                            # needs sage.rings.real_mpfr
++                sage: C = cartesian_product([ZZ, QQ, CC])
++                sage: e = C.random_element()
++                sage: len(e)
+@@ -380,2 +380,2 @@
+-                sage: A = cartesian_product([ZZ, RR])                                  # needs sage.rings.real_mpfr
+-                sage: A((1, 1.23)).cartesian_factors()                                  # needs sage.rings.real_mpfr
++                sage: A = cartesian_product([ZZ, RR])
++                sage: A((1, 1.23)).cartesian_factors()
+@@ -383 +383 @@
+-                sage: type(_)                                                           # needs sage.rings.real_mpfr
++                sage: type(_)

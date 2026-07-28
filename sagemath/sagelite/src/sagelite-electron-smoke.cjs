@@ -1281,14 +1281,24 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
-from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces
+from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
 
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
+CC = ComplexField()
+RR = RealField()
+C = cartesian_product([ZZ, QQ, CC])
+assert len(C.random_element()) == 3
+A = cartesian_product([ZZ, RR])
+factors = A((1, RR('1.23'))).cartesian_factors()
+assert factors == (ZZ(1), RR('1.23'))
+assert type(factors) is tuple
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

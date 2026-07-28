@@ -78775,3 +78775,76 @@ replay is under `/tmp/cowasm-sagelite-bimodules-replay.0ACj5k/`; and the clean
 reconstruction is under `/tmp/cowasm-sagelite-bimodules-rebuild.c9p16c/`. A
 future scheduled pass can audit another small deterministic dependency boundary
 in the curated pure-math corpus.
+
+Cartesian-product real-field element promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found six stale
+`sage.rings.real_mpfr` annotations in
+`sage/sets/cartesian_product.py`. The ordinary browser-profile replay recorded
+49 passes and six skips, while a feature-selected replay recorded 55 passes and
+no skips. The promoted rows cover random element construction in a
+`ZZ`/`QQ`/`CC` product, the resulting element length, and preservation of the
+ordinary tuple of factors in a `ZZ`/`RR` product.
+
+The accumulated Sage patch removes all six obsolete annotations. The
+standalone and Electron-shaped category smokes now construct explicit
+`ComplexField()` and `RealField()` instances, require the random element to
+have three factors, and require the real cartesian element to return the exact
+`(ZZ(1), RR('1.23'))` tuple. Explicit field construction is intentional in
+these direct runtime smokes because the stripped `sage.all` startup surface
+keeps `CC` and `RR` as lazy wrappers outside the doctest runner's focused
+namespace resolution.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+cartesian_product.py: 55 passed, 0 failed, 0 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Saved block-failure, file-error, and skip queries are empty, and active-row
+coverage is 100%. The patched and rebuilt-bundle dashboards agree across all
+55 ordered rows on every stable semantic block field. Their four raw `actual`
+differences are expected: one `# random` element and three exception tracebacks
+whose absolute resource-root paths changed from the repository bundle to the
+isolated clean bundle.
+
+The Electron manifest schema advances to 233 and its smoke contract to
+`cartesian-real-elements-v205`. The generated manifest records pinned source
+revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source tree, 761
+required resources with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+all 527 Cython sources, compiled and linked all 1,064 native targets, passed
+the complete Node import/runtime and doctest-runner matrices, audited the
+staged and Electron side modules, emitted the schema-233 manifest, and passed
+the complete standalone, Electron-shaped, and relocated-resource smokes. The
+updated category/cartesian assertion group passed directly in the clean Node
+bundle. All desktop Electron manifest, forge-resource, and runtime tests pass
+as well.
+
+Validation additionally includes the ordinary and feature-selected baselines;
+the patched and final rebuilt-bundle dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity and semantic-row comparison;
+direct repository-launcher verification; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte reconstructed `cartesian_product.py`
+comparison; rejection of a second forward patch application; corpus uniqueness
+and path existence; and `git diff --check`. The unrelated dirty external
+developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,849 serialized target
+sections (1,336 `diff --git` and 513 header-only legacy sections) and 6,017
+hunks. Baseline and feature-selected dashboards are under
+`/tmp/cowasm-sagelite-cartesian-real-audit.NYmLEy/`; the patched dashboard is
+under `/tmp/cowasm-sagelite-cartesian-real-active.62jqYh/`; the final dashboard
+is under `/tmp/cowasm-sagelite-cartesian-real-final.kUX8yi/`; exact patch
+replay is under `/tmp/cowasm-sagelite-cartesian-real-replay.GG9l2F/`; and the
+clean reconstruction is under
+`/tmp/cowasm-sagelite-cartesian-real-rebuild.mcz2Rq/`. A future scheduled pass
+can continue auditing the remaining small deterministic real-field dependency
+boundaries in the curated pure-math corpus.
