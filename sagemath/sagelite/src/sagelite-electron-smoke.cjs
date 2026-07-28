@@ -1282,11 +1282,13 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
     );
     await python.exec(String.raw`
 from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces
+from sage.categories.bimodules import Bimodules
 
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
+assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

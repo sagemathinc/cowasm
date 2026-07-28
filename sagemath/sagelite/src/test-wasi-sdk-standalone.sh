@@ -1678,10 +1678,12 @@ assert repr(result) == 'word: 1222353587'
 assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
 print('sagelite-node-ok incompatible word concatenation delivery smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces
+from sage.categories.bimodules import Bimodules
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ)) is True
 assert QQ['x'] in Algebras(Fields())
+assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -2492,7 +2494,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=231
+electron_manifest_schema_version=232
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2583,6 +2585,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-givaro-mod
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-range-real-literal-v201"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-iterator-instancedoc-v202"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-literal-srange-v203"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bimodules-real-field-v204"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

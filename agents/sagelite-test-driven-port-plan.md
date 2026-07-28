@@ -78706,3 +78706,72 @@ is `/tmp/cowasm-sagelite-srange-source.P2TN4A/`; and the successful
 reconstruction log is `/tmp/cowasm-sagelite-srange-rebuild.log`. A future
 scheduled pass can audit another small deterministic dependency boundary in
 the curated pure-math corpus.
+
+Bimodule real-field instance promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in `sage/categories/bimodules.py`. The
+ordinary browser-profile file replay recorded 14 passes and one skip. A
+feature-selected full-file replay recorded 15 passes and no skips, with
+`Bimodules.an_instance()` returning:
+
+```text
+Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
+```
+
+The browser runtime already ships the real MPFR field used by this constructor,
+so the accumulated Sage patch now removes the obsolete annotation. The
+standalone and Electron-shaped category smokes import `Bimodules`, construct
+its documented instance, and require the exact left-`QQ`, right-`RR` category
+representation.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+bimodules.py:     15 passed, 0 failed, 0 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure, file-error, and skip queries are empty, active-row coverage
+is 100%, and the feature-selected, patched, and final rebuilt-bundle dashboards
+agree across all 15 ordered rows on every stable semantic block field. The only
+intended metadata difference is removal of the optional real-MPFR tag from the
+promoted row.
+
+The Electron manifest schema advances to 232 and its smoke contract to
+`bimodules-real-field-v204`. The generated manifest records pinned source
+revision `f575cf6224f749763d7c875229cbd684e5939e58`, a clean source tree, 761
+required paths with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean pinned clone generated all
+525 declared Cython targets, compiled and linked all 1,064 targets, passed all
+91 Node import probes and the complete doctest-runner matrix, audited 523
+staged and 578 Electron side modules, emitted the schema-232 manifest, and
+passed the complete standalone, Electron-shaped, and relocated-resource
+smokes. The
+desktop Electron manifest, forge-resource, and runtime tests pass as well.
+
+Validation additionally includes the ordinary and feature-selected baselines;
+the patched and final rebuilt-bundle dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity and exact semantic-row
+comparison; shell and JavaScript syntax; accumulated-patch syntax; complete
+sequential POSIX-patch application against a clean clone of the pinned source;
+byte-for-byte reconstructed `bimodules.py` comparison; rejection of a second
+forward patch application; corpus uniqueness and path existence; full-target
+dry run; and `git diff --check`. The unrelated dirty external developer
+checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,848 serialized target
+sections (1,335 `diff --git` and 513 header-only legacy sections) and 6,014
+hunks. Baseline and feature-selected dashboards are under
+`/tmp/cowasm-sagelite-bimodules-audit.hYSKEp/`; the patched dashboard is
+`/tmp/cowasm-sagelite-bimodules-active.sqlite3`; the final dashboard is
+`/tmp/cowasm-sagelite-bimodules-final.Pilejg/bimodules.sqlite3`; exact patch
+replay is under `/tmp/cowasm-sagelite-bimodules-replay.0ACj5k/`; and the clean
+reconstruction is under `/tmp/cowasm-sagelite-bimodules-rebuild.c9p16c/`. A
+future scheduled pass can audit another small deterministic dependency boundary
+in the curated pure-math corpus.
