@@ -1293,6 +1293,7 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+assert Bimodules(CC, ZZ).element_class is Bimodules(RR, ZZ).element_class
 assert VectorSpaces(CC)._subcategory_hook_(Algebras(QQ)) is False
 C = cartesian_product([ZZ, QQ, CC])
 assert len(C.random_element()) == 3

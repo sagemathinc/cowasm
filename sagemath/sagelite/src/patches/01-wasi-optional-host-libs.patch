@@ -39913,3 +39913,12 @@ diff --git a/src/sage/categories/category_types.py b/src/sage/categories/categor
 @@ -446 +446 @@
 -            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories         # needs sage.rings.real_mpfr
 +            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories
+diff --git a/src/sage/categories/category.py b/src/sage/categories/category.py
+--- a/src/sage/categories/category.py
++++ b/src/sage/categories/category.py
+@@ -561 +561 @@
+-            sage: Bimodules.an_instance()                                               # needs sage.rings.real_mpfr
++            sage: Bimodules.an_instance()
+@@ -2772 +2772 @@
+-            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class      # needs sage.rings.real_mpfr
++            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class

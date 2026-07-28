@@ -78920,3 +78920,82 @@ Electron smoke log is
 `/tmp/cowasm-sagelite-category-desktop-electron-smoke.log`. A future scheduled
 pass can continue auditing another small deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Category bimodule real-field promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found two stale
+`sage.rings.real_mpfr` annotations in `sage/categories/category.py`. In the
+untouched pinned source, an ordinary replay records both
+`Bimodules.an_instance()` and
+`Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class` as explicit
+optional skips. A feature-selected replay activates both rows and records the
+documented bimodule instance plus `True`, confirming that the browser runtime
+already ships the concrete real and complex fields used by these category
+examples. The two unrelated output mismatches in that unpatched full-file
+replay remain outside this promotion and are already corrected by the
+accumulated WASI patch.
+
+The accumulated Sage patch removes both obsolete annotations. The standalone
+and Electron-shaped category smokes now require the complex-left bimodule
+element class to be identical to the corresponding real-left bimodule element
+class, alongside the existing concrete bimodule-instance and different-base
+category checks.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+category.py:     415 passed, 0 failed, 42 skipped
+run lifecycle:   passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the patched and final rebuilt-bundle dashboards agree across all 457
+ordered rows on every stable semantic field. Their sole raw `actual`
+difference is nondeterministic `frozenset` display order. The 42 retained
+skips are explicit optional or deferred rows for modules, groups, graphs,
+finite rings, combinatorics, plotting, and four not-implemented examples.
+
+The Electron manifest schema advances to 235 and its smoke contract to
+`category-bimodules-real-v207`. The clean generated manifest records Sagelite
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source
+tree, 761 required resources with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean shared clone generated all
+527 Cython sources on its first attempt, compiled and linked all 1,064 native
+targets, passed all 91 Node import probes and the complete doctest-runner
+matrix, audited 523 staged and 578 Electron side modules, emitted the
+schema-235 manifest, and passed the complete standalone, Electron-shaped, and
+relocated-resource smokes. The complete rebuilt resource smoke also passes
+directly with the desktop Electron `python-wasm` package, and the desktop
+manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; the patched and final rebuilt-bundle dashboards; saved lifecycle,
+failure, file-error, and skip queries; SQLite integrity and exact stable
+semantic-row comparison; shell, JavaScript, and TypeScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte reconstructed `category.py` comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; full-target dry run; and `git diff --check`. The unrelated dirty
+external developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,851 serialized target
+sections (1,338 `diff --git` and 513 header-only legacy sections) and 6,020
+hunks. The patched dashboard is
+`/tmp/cowasm-sagelite-category-bimodules-audit.Nbmuhq/category.sqlite3`; the
+untouched ordinary and feature-selected dashboards are under
+`/tmp/cowasm-sagelite-category-bimodules-{baseline.XWZ58C,feature.YCpCmZ}/`;
+the final dashboard is
+`/tmp/cowasm-sagelite-category-bimodules-final.vqF6y3/category.sqlite3`; exact
+patch replay is under
+`/tmp/cowasm-sagelite-category-bimodules-replay.rajRMT/`; and the successful
+clean reconstruction is under
+`/tmp/cowasm-sagelite-category-bimodules-rebuild.nuhFHO/`. The direct desktop
+Electron smoke log is
+`/tmp/cowasm-sagelite-category-bimodules-desktop-electron-smoke.log`. A future
+scheduled pass can continue auditing another small deterministic real-field
+dependency boundary in the curated pure-math corpus.
