@@ -39907,3 +39907,9 @@ diff --git a/src/sage/sets/cartesian_product.py b/src/sage/sets/cartesian_produc
 @@ -383 +383 @@
 -                sage: type(_)                                                           # needs sage.rings.real_mpfr
 +                sage: type(_)
+diff --git a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
+--- a/src/sage/categories/category_types.py
++++ b/src/sage/categories/category_types.py
+@@ -446 +446 @@
+-            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories         # needs sage.rings.real_mpfr
++            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories

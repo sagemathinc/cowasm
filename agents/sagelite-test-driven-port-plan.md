@@ -78848,3 +78848,75 @@ clean reconstruction is under
 `/tmp/cowasm-sagelite-cartesian-real-rebuild.mcz2Rq/`. A future scheduled pass
 can continue auditing the remaining small deterministic real-field dependency
 boundaries in the curated pure-math corpus.
+
+Category complex-base promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in
+`sage/categories/category_types.py`. The preceding complete file dashboard
+recorded 72 passes and 25 skips. A feature-selected replay of line 446 passed
+with the documented result:
+
+```text
+VectorSpaces(CC)._subcategory_hook_(Algebras(QQ)): False
+```
+
+The browser runtime already ships the concrete complex MPFR field used by this
+category comparison. The accumulated Sage patch now removes the obsolete
+annotation. The standalone and Electron-shaped category smokes construct
+`ComplexField()` explicitly and require the different-base-category hook to
+return `False`, alongside the existing refined-category and cartesian-product
+checks.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+category_types.py: 73 passed, 0 failed, 24 skipped
+run lifecycle:      passed and closed
+SQLite integrity:   ok
+```
+
+This activates exactly one row relative to the preceding 72-passed,
+25-skipped dashboard. Saved block-failure and file-error queries are empty,
+active-row coverage is 100%, and the focused patched and final rebuilt-bundle
+dashboards agree across all 97 ordered rows on the stable semantic fields. The
+24 retained skips comprise ten module rows, nine group rows, four combined
+combinatorics/module rows, and one plural-polynomial row.
+
+The Electron manifest schema advances to 234 and its smoke contract to
+`category-complex-base-v206`. The clean generated manifest records Sagelite
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source
+tree, 761 required resources with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a separate clean clone generated
+all 527 Cython sources on its first attempt, compiled and linked all 1,064
+native targets, passed all 91 Node import probes and the complete
+doctest-runner matrix, audited the staged and Electron side modules, emitted
+the schema-234 manifest, and passed the complete standalone, Electron-shaped,
+and relocated-resource smokes. The updated category assertion also passes
+directly with the desktop Electron `python-wasm` package, and the desktop
+manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; the patched and final rebuilt-bundle dashboards; saved lifecycle,
+failure, file-error, and skip queries; SQLite integrity and exact stable
+semantic-row comparison; shell, JavaScript, and TypeScript syntax; accumulated-
+patch syntax; clean patch application during reconstruction; corpus uniqueness
+and path existence; and `git diff --check`. The unrelated dirty external
+developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,850 serialized target
+sections (1,337 `diff --git` and 513 header-only legacy sections) and 6,018
+hunks. Focused dashboards are
+`/tmp/cowasm-sagelite-category-complex-{ordinary,baseline,active,patched}-run2.sqlite3`;
+the final dashboard is
+`/tmp/cowasm-sagelite-category-complex-final.sqlite3`; the clean source clone
+is `/tmp/cowasm-sagelite-category-source.L7srQY/`; the complete reconstruction
+log is `/tmp/cowasm-sagelite-category-rebuild.log`; and the direct desktop
+Electron smoke log is
+`/tmp/cowasm-sagelite-category-desktop-electron-smoke.log`. A future scheduled
+pass can continue auditing another small deterministic real-field dependency
+boundary in the curated pure-math corpus.
