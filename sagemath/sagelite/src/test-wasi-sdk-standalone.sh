@@ -1239,6 +1239,14 @@ assert SetPartitions(4).cardinality() == 15
 print('sagelite-node-ok combinatorics cardinality smoke')"
 run_node_import "integer lists smoke" "import sage.all
 from sage.combinat.integer_lists import Envelope, IntegerListsLex
+from sage.combinat.integer_lists.base import IntegerListsBackend
+from sage.rings.real_mpfr import RealField
+try:
+    IntegerListsBackend(min_sum=RealField()('1.4'))
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral integer-list bound unexpectedly accepted')
 L = IntegerListsLex(4, length=3)
 assert L.cardinality() == 15
 assert list(L.first()) == [4, 0, 0]
@@ -2514,7 +2522,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=236
+electron_manifest_schema_version=237
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2610,6 +2618,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cartesian-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-complex-base-v206"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-bimodules-real-v207"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polygonal-real-coercion-v208"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-lists-real-coercion-v209"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

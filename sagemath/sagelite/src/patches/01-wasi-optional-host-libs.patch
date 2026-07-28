@@ -39928,3 +39928,9 @@ diff --git a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
 @@ -1095 +1095 @@
 -        sage: polygonal_number(3.5, 1)                                                  # needs sage.rings.real_mpfr
 +        sage: polygonal_number(3.5, 1)
+diff --git a/src/sage/combinat/integer_lists/base.pyx b/src/sage/combinat/integer_lists/base.pyx
+--- a/src/sage/combinat/integer_lists/base.pyx
++++ b/src/sage/combinat/integer_lists/base.pyx
+@@ -88 +88 @@
+-            sage: C = IntegerListsBackend(min_sum=1.4)                                  # needs sage.rings.real_mpfr
++            sage: C = IntegerListsBackend(min_sum=1.4)

@@ -79071,3 +79071,75 @@ rebuild source is
 reconstruction log is `/tmp/cowasm-sagelite-polygonal-rebuild.log`. A future
 scheduled pass can continue auditing another compact deterministic real-field
 dependency boundary in the curated pure-math corpus.
+
+Integer-list real coercion promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in
+`sage/combinat/integer_lists/base.pyx`. An ordinary focused replay against the
+untouched pinned source records the non-integral `min_sum=1.4` example as one
+explicit optional skip. A feature-selected replay activates the row and passes
+with the documented diagnostic:
+
+```text
+TypeError: Attempt to coerce non-integral RealNumber to Integer
+```
+
+The accumulated Sage patch removes the obsolete annotation. The standalone
+integer-list smoke and Electron-shaped combinatorics smoke now construct the
+input explicitly with `RealField()('1.4')` and require the same coercion
+diagnostic. Explicit construction is necessary in the direct Python smokes
+because Sage doctest preparsing turns the source literal into a `RealNumber`,
+whereas an unpreparsed Python literal would otherwise exercise native-float
+coercion.
+
+Against the final clean rebuilt resource bundle, the ordinary
+browser-profile dashboard records:
+
+```text
+base.pyx:         121 passed, 0 failed, 1 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+The one retained row is the existing explicit `# not implemented` pickle
+roundtrip. Saved block-failure and file-error queries are empty, and active-row
+coverage is 100%. The untouched ordinary and feature-selected line replays
+record respectively `0 passed, 0 failed, 1 skipped` and
+`1 passed, 0 failed, 0 skipped`; the selected row's traceback reaches
+`RealNumber._integer_` and matches the expected `TypeError`.
+
+The Electron manifest schema advances to 237 and its smoke contract to
+`integer-lists-real-coercion-v209`. The clean generated manifest records pinned
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source
+tree, 761 required resources with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean pinned clone generated all
+527 declared Cython targets, compiled and linked the full native target set,
+passed all 91 Node import probes and the complete doctest-runner matrix,
+audited 523 staged and 578 Electron side modules, emitted the schema-237
+manifest, and passed the complete standalone, Electron-shaped, and
+relocated-resource smokes. The desktop manifest, forge-resource, and runtime
+tests also pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; the final rebuilt-bundle dashboard; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential POSIX-patch application against
+the clean pinned source; byte-for-byte reconstructed `base.pyx` comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; manifest contract consistency; and `git diff --check`. The unrelated
+dirty external developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,853 serialized target
+sections (1,340 `diff --git` and 513 header-only legacy sections) and 6,022
+hunks. The final dashboards are under
+`/tmp/cowasm-sagelite-integer-lists-final.UqDUuK/`; exact sequential patch
+replay and the clean reconstruction are under
+`/tmp/cowasm-sagelite-integer-lists-rebuild.6IkkGq/`; and the complete
+reconstruction log is
+`/tmp/cowasm-sagelite-integer-lists-rebuild.6IkkGq/standalone-rebuild.log`.
+A future scheduled pass can continue auditing another compact deterministic
+real-field dependency boundary in the curated pure-math corpus.

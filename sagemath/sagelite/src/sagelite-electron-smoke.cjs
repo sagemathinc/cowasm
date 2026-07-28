@@ -389,10 +389,17 @@ assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
 import sage.all
 from sage.combinat.combinat import polygonal_number
 from sage.combinat.combination import Combinations
+from sage.combinat.integer_lists.base import IntegerListsBackend
 from sage.combinat.perfect_matching import PerfectMatchings
 from sage.combinat.set_partition import SetPartitions
 from sage.rings.real_mpfr import RealField
 
+try:
+    IntegerListsBackend(min_sum=RealField()('1.4'))
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral integer-list bound unexpectedly accepted')
 try:
     polygonal_number(RealField()('3.5'), 1)
 except TypeError as error:
