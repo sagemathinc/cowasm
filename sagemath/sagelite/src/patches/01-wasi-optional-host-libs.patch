@@ -39922,3 +39922,9 @@ diff --git a/src/sage/categories/category.py b/src/sage/categories/category.py
 @@ -2772 +2772 @@
 -            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class      # needs sage.rings.real_mpfr
 +            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class
+diff --git a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
+--- a/src/sage/combinat/combinat.py
++++ b/src/sage/combinat/combinat.py
+@@ -1095 +1095 @@
+-        sage: polygonal_number(3.5, 1)                                                  # needs sage.rings.real_mpfr
++        sage: polygonal_number(3.5, 1)

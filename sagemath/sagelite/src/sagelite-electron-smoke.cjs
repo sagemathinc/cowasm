@@ -387,10 +387,18 @@ assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
     console.log("sagelite-electron-start combinatorics cardinality smoke");
     await python.exec(String.raw`
 import sage.all
+from sage.combinat.combinat import polygonal_number
 from sage.combinat.combination import Combinations
 from sage.combinat.perfect_matching import PerfectMatchings
 from sage.combinat.set_partition import SetPartitions
+from sage.rings.real_mpfr import RealField
 
+try:
+    polygonal_number(RealField()('3.5'), 1)
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral polygonal-number input unexpectedly accepted')
 assert PerfectMatchings(6).cardinality() == 15
 assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
 assert SetPartitions(4).cardinality() == 15

@@ -1067,6 +1067,7 @@ assert (x * y * z).parent() is M
 assert (x**3 * z**2).list() == [3, 0, 2]
 print('sagelite-node-ok free abelian monoid smoke')"
 run_node_import "combinatorics smoke" "import sage.all
+from sage.combinat.combinat import polygonal_number
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_signed import SignedCompositions
@@ -1083,7 +1084,14 @@ from sage.combinat.subset import Subsets
 from sage.combinat.tableau import SemistandardTableaux, StandardTableaux, Tableau
 from sage.combinat.tuple import Tuples, UnorderedTuples
 from sage.combinat.vector_partition import VectorPartitions
+from sage.rings.real_mpfr import RealField
 from sage.sets.finite_set_maps import FiniteSetMaps
+try:
+    polygonal_number(RealField()('3.5'), 1)
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral polygonal-number input unexpectedly accepted')
 assert str(sage.all.RootSystem(['A', 2])) == \"Root system of type ['A', 2]\"
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
@@ -2506,7 +2514,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=235
+electron_manifest_schema_version=236
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2601,6 +2609,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-bimodules-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cartesian-real-elements-v205"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-complex-base-v206"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-category-bimodules-real-v207"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-polygonal-real-coercion-v208"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

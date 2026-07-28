@@ -78999,3 +78999,75 @@ Electron smoke log is
 `/tmp/cowasm-sagelite-category-bimodules-desktop-electron-smoke.log`. A future
 scheduled pass can continue auditing another small deterministic real-field
 dependency boundary in the curated pure-math corpus.
+
+Polygonal-number real coercion promotion pass on 2026-07-28 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in `sage/combinat/combinat.py`. An ordinary
+focused replay against the untouched pinned source recorded the row as an
+explicit optional skip, while a feature-selected replay passed with the
+documented non-integral `RealNumber` coercion error.
+
+The accumulated Sage patch removes the obsolete annotation. The standalone
+and Electron-shaped combinatorics smokes now construct the input explicitly
+with `RealField()('3.5')` and require
+`Attempt to coerce non-integral RealNumber to Integer`. Explicit real-field
+construction is required in these direct Python smokes because Sage doctest
+preparsing turns the source literal into a `RealNumber`, whereas unpreparsed
+Python would otherwise pass a native float and exercise a different coercion
+path.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+combinat.py:      186 passed, 0 failed, 121 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the pre-rebuild and final rebuilt-bundle dashboards agree across all
+307 ordered rows on every stable semantic field.
+
+The Electron manifest schema advances to 236 and its smoke contract to
+`polygonal-real-coercion-v208`. The clean generated manifest records pinned
+source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source
+tree, 761 required resources with matching hashes, 578 Electron side modules,
+nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from a clean pinned clone generated all
+527 declared Cython targets, compiled and linked the full native target set,
+passed all 91 Node import probes and the complete doctest-runner matrix,
+audited 523 staged and 578 Electron side modules, emitted the schema-236
+manifest, and passed the complete standalone, Electron-shaped, and
+relocated-resource smokes. The direct smoke initially exposed that native
+Python `3.5` does not reproduce doctest preparsing; switching the assertion to
+an explicit `RealField` value exercises the intended semantic path. A second
+validation pass also caught and corrected the paired standalone manifest
+generator version before the final clean run passed. The rebuilt resource
+smoke passes directly with the desktop Electron `python-wasm` package, and the
+desktop manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; the pre-rebuild and final rebuilt-bundle dashboards; saved
+lifecycle, failure, and file-error queries; SQLite integrity and exact stable
+semantic-row comparison; shell and JavaScript syntax; accumulated-patch
+syntax; complete sequential POSIX-patch application against the clean pinned
+source; byte-for-byte reconstructed `combinat.py` comparison; rejection of a
+second forward patch application; corpus uniqueness and path existence; and
+`git diff --check`. The unrelated dirty external developer checkout remains
+untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,852 serialized target
+sections (1,339 `diff --git` and 513 header-only legacy sections) and 6,021
+hunks. The untouched ordinary, feature-selected, and pre-rebuild dashboards
+are under `/tmp/cowasm-sagelite-polygonal-audit.Ekm2dQ/`; the final dashboard
+is `/tmp/cowasm-sagelite-polygonal-final.smbkbQ/combinat.sqlite3`; exact patch
+replay is under `/tmp/cowasm-sagelite-polygonal-source.84mP5r/`; the clean
+rebuild source is
+`/tmp/cowasm-sagelite-polygonal-rebuild-source.FcLVyf/`; and the complete
+reconstruction log is `/tmp/cowasm-sagelite-polygonal-rebuild.log`. A future
+scheduled pass can continue auditing another compact deterministic real-field
+dependency boundary in the curated pure-math corpus.
