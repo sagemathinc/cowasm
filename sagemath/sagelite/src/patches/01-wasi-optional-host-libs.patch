@@ -40101,3 +40101,9 @@ diff --git a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object
 @@ -104 +104 @@
 -            sage: a.rename('pi')                                                        # needs sage.rings.real_mpfr
 +            sage: a.rename('pi')
+diff --git a/src/sage/functions/spike_function.py b/src/sage/functions/spike_function.py
+--- a/src/sage/functions/spike_function.py
++++ b/src/sage/functions/spike_function.py
+@@ -72 +72 @@
+-            sage: S.eps                                                                 # needs sage.rings.real_mpfr
++            sage: S.eps

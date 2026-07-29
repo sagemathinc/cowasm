@@ -430,6 +430,24 @@ else:
     raise AssertionError('real literal unexpectedly supported renaming')
 `);
     console.log("sagelite-electron-ok real literal rename diagnostic smoke");
+    console.log("sagelite-electron-start spike function real epsilon smoke");
+    await python.exec(String.raw`
+from sage.all import Integer, RealNumber
+from sage.functions.spike_function import spike_function
+from sage.repl.preparse import preparse
+
+namespace = {
+    'Integer': Integer,
+    'RealNumber': RealNumber,
+    'spike_function': spike_function,
+}
+spike = eval(
+    preparse('spike_function([(-3,4), (-1,1), (2,3)], 0.001)'),
+    namespace,
+)
+assert str(spike.eps) == '0.00100000000000000'
+`);
+    console.log("sagelite-electron-ok spike function real epsilon smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
