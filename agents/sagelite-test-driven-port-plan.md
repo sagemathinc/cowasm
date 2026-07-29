@@ -79684,3 +79684,84 @@ schema-244 reconstruction and complete standalone logs are under
 `/tmp/cowasm-sagelite-integer-real-build.htThWm/`. A future scheduled pass can
 continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Integer-to-high-precision-real coercion promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field boundary was the 200-bit integer
+coercion example near the top of `sage/rings/integer.pyx`. An ordinary focused
+replay against the preceding clean schema-244 resource bundle records the
+`RealField(200)` construction and coercion prompts as two explicit optional
+skips. A replay selecting only `sage.rings.real_mpfr` activates the output row
+and passes with the documented full-precision value:
+
+```text
+RealField(200)(Integer(9390823)):
+9.3908230000000000000000000000000000000000000000000000000000e6
+```
+
+The accumulated Sage patch removes both obsolete annotations. The standalone
+and Electron-shaped integer smokes now construct the same value explicitly,
+require its parent to have 200-bit precision, and require the exact displayed
+value alongside the preceding integer/real addition check. The
+feature-selected and promoted rows agree across status, source, expected and
+actual output, failure class, and failure detail; only the obsolete dependency
+metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1024 passed, 0 failed, 189 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The pre-rebuild and rebuilt dashboards agree on all 1,213 stable
+semantic rows. Their seven raw-output differences are expected: six random
+CPU timing values and one `cyfunction make_integer` address representation.
+
+The Electron manifest schema advances to 245 and its smoke contract to
+`integer-realfield-coercion-v217`. The clean generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a
+clean source tree, 762 required resources with matching hashes, 578 Electron
+side modules, nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+all 527 declared Cython targets on its first attempt, compiled and linked all
+1,064 native targets, passed all 96 direct Node probes and the complete
+34-case doctest-runner matrix, audited 523 staged and 578 Electron side
+modules, emitted the schema-245 manifest, and passed the complete standalone,
+Electron-shaped, and relocated-resource smokes. The rebuilt resource smoke
+also passes directly with the desktop Electron `python-wasm` package, and the
+desktop manifest, forge-resource, and runtime tests pass.
+
+An initial ad hoc direct desktop invocation used the repository root as its
+working directory and therefore could not find the relocated smoke's
+colocated manifest validator. Repeating it from the resource root, which is
+the supported desktop launch shape, passed the full smoke. No runtime or
+resource change was needed.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; the complete
+pre-rebuild and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax; complete sequential patch application against a
+fresh checkout of the pinned source; byte-for-byte reconstructed
+`integer.pyx` comparison; rejection of a second forward patch application;
+corpus uniqueness and path existence; full-target dry-run wiring; manifest
+contract and resource-hash consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,861 serialized target
+sections (1,348 `diff --git` and 513 header-only legacy sections) and 6,033
+hunks. The ordinary and feature-selected focused baselines are under
+`/tmp/cowasm-sagelite-integer-realfield-audit.xhgvxc/`; exact clean-source
+patch replay is under
+`/tmp/cowasm-sagelite-integer-realfield-replay.GRwTjM/`; final dashboards,
+saved query results, desktop logs, and the full-target dry run are under
+`/tmp/cowasm-sagelite-integer-realfield-final.IgBOeA/`; and the clean
+schema-245 reconstruction with complete standalone logs is under
+`/tmp/cowasm-sagelite-integer-realfield-build.7kw1hH/`. A future scheduled
+pass can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.

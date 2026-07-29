@@ -343,6 +343,9 @@ from sage.rings.real_mpfr import RealField
 
 value = Integer(3) + RealField()('4.0')
 assert str(value) == '7.00000000000000'
+high_precision = RealField(200)(Integer(9390823))
+assert high_precision.parent().precision() == 200
+assert str(high_precision) == '9.3908230000000000000000000000000000000000000000000000000000e6'
 `);
     console.log("sagelite-electron-ok integer real coercion smoke");
     console.log("sagelite-electron-start rational 3x3 matrix smoke");

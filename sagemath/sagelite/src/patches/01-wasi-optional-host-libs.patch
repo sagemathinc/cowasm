@@ -39984,3 +39984,11 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 @@ -17 +17 @@
 -    sage: a + 4.0                                                                       # needs sage.rings.real_mpfr
 +    sage: a + 4.0
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -67,2 +67,2 @@
+-    sage: RR = RealField(200)                                                           # needs sage.rings.real_mpfr
+-    sage: RR(n)                                                                         # needs sage.rings.real_mpfr
++    sage: RR = RealField(200)
++    sage: RR(n)
