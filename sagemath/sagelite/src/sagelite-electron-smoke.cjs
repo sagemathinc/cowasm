@@ -366,6 +366,14 @@ value = Integer(124).log(5, 100)
 assert str(value) == '2.9950093311241087454822446806'
 `);
     console.log("sagelite-electron-ok integer real logarithm smoke");
+    console.log("sagelite-electron-start integer exact real logarithm smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+
+value = Integer(125).log(5, prec=53)
+assert str(value) == '3.00000000000000'
+`);
+    console.log("sagelite-electron-ok integer exact real logarithm smoke");
     console.log("sagelite-electron-start rational 3x3 matrix smoke");
     await python.exec(String.raw`
 from sage.all import QQ
