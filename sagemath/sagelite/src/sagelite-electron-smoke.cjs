@@ -348,6 +348,15 @@ assert high_precision.parent().precision() == 200
 assert str(high_precision) == '9.3908230000000000000000000000000000000000000000000000000000e6'
 `);
     console.log("sagelite-electron-ok integer real coercion smoke");
+    console.log("sagelite-electron-start integer real power smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
+
+value = Integer(2) ** RealField()('1.5')
+assert str(value) == '2.82842712474619'
+`);
+    console.log("sagelite-electron-ok integer real power smoke");
     console.log("sagelite-electron-start real parent smoke");
     await python.exec(String.raw`
 from sage.rings.real_mpfr import RealField

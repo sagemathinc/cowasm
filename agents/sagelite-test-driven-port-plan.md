@@ -79999,3 +79999,84 @@ clean schema-248 reconstruction with complete standalone logs is under
 `/tmp/cowasm-sagelite-integer-exact-real-log-build.SQRFVU/`. A future scheduled
 pass can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Integer real-exponent promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field boundary was the real-exponent
+integer power example in `sage/rings/integer.pyx`. An ordinary focused replay
+against the preceding clean schema-248 resource bundle records the target as
+one explicit optional skip, while a replay selecting only
+`sage.rings.real_mpfr` activates it and passes with the documented value:
+
+```text
+2^1.5:
+2.82842712474619
+```
+
+The accumulated Sage patch removes the obsolete dependency annotation and its
+now-redundant descriptive comment, leaving the canonical source `2^1.5`.
+The standalone and Electron-shaped runtime smokes construct the operands
+explicitly as `Integer(2) ** RealField()('1.5')` and require the same exact
+display value. The feature-selected and promoted focused rows agree across
+block key, source, expected and actual output, status, failure class, and
+failure detail; only the obsolete dependency metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1027 passed, 0 failed, 186 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The preceding and rebuilt dashboards both contain 1,213 normalized
+block keys. Their only stable semantic and metadata difference is the intended
+promotion at line 2238 from skipped to passed; excluding that row, stable
+semantic differences are empty. The pre-rebuild and rebuilt promoted
+dashboards agree on all stable semantic fields. Their seven raw-output
+differences are expected: six random CPU timing values and one
+`cyfunction make_integer` address representation.
+
+The Electron manifest schema advances to 249 and its smoke contract to
+`integer-real-power-v221`. The clean generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a
+clean source tree, 762 required resources with matching hashes, 578 Electron
+side modules, nine native libraries, and fourteen runtime dependency paths.
+
+The clean standalone reconstruction generated all 527 declared Cython sources
+on its first attempt with four workers, compiled and linked all 1,064 native
+targets, passed all 100 direct Node probes and the complete 34-case
+doctest-runner matrix, audited 523 staged and 578 Electron side modules,
+emitted the schema-249 manifest, and passed the complete standalone,
+Electron-shaped, and relocated-resource smokes. The rebuilt resource smoke
+also passes directly with the desktop Electron `python-wasm` package, including
+the new integer real-power assertion, and the desktop TypeScript, manifest,
+forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; the complete
+pre-rebuild and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax; accumulated-
+patch syntax and complete sequential application against a fresh checkout of
+the pinned source; byte-for-byte reconstructed `integer.pyx` comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; full-target dry-run wiring; manifest contract and resource-hash
+consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,865 serialized target
+sections (1,352 `diff --git` and 513 header-only legacy sections) and 6,037
+hunks. The ordinary, feature-selected, and promoted focused dashboards are
+under `/tmp/cowasm-sagelite-integer-real-power-audit.W1ED98/`; the focused
+patched source is under
+`/tmp/cowasm-sagelite-integer-real-power-patched.xL4wJ4/`; exact clean-source
+patch replay is under
+`/tmp/cowasm-sagelite-integer-real-power-replay.4Yc0Ao/`; the final rebuilt
+dashboard, saved queries, comparisons, desktop logs, and full-target dry run
+are under `/tmp/cowasm-sagelite-integer-real-power-final.t1SmDH/`; and the
+clean schema-249 reconstruction with complete standalone logs is under
+`/tmp/cowasm-sagelite-integer-real-power-build.mst5mL/`. A future scheduled
+pass can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.
