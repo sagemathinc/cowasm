@@ -40043,3 +40043,18 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 @@ -6620 +6620 @@
 -            sage: type(0.sqrt(prec=53))                                                 # needs sage.rings.real_mpfr
 +            sage: type(0.sqrt(prec=53))
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -2894 +2894 @@
+-            sage: x.log(3, 53)  # default precision for RealField                       # needs sage.rings.real_mpfr
++            sage: x.log(3, 53)
+@@ -2896 +2896 @@
+-            sage: (x + 1).log(3, 53)                                                    # needs sage.rings.real_mpfr
++            sage: (x + 1).log(3, 53)
+@@ -2898 +2898 @@
+-            sage: (x + 1).log(3, 1000)                                                  # needs sage.rings.real_mpfr
++            sage: (x + 1).log(3, 1000)
+@@ -2903 +2903 @@
+-            sage: x.log(2.5, prec=53)                                                   # needs sage.rings.real_mpfr
++            sage: x.log(2.5, prec=53)

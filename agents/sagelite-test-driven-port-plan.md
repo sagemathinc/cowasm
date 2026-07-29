@@ -80322,3 +80322,88 @@ schema-252 reconstruction, generated resources, and standalone logs are under
 `/tmp/cowasm-sagelite-integer-sqrt-types-build.qckhLq/`. A future scheduled
 pass can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Integer high-precision real-logarithm promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field cluster was the four remaining
+arbitrary-precision logarithm examples in `sage/rings/integer.pyx`. The
+preceding schema-252 whole-file dashboard records all four rows as explicit
+optional skips. Focused replays selecting only `sage.rings.real_mpfr` activate
+each row and pass with the documented 53-bit, 1000-bit, and non-integral-base
+values:
+
+```text
+x = 3^100000
+x.log(3, 53):           100000.000000000
+(x + 1).log(3, 53):     100000.000000000
+(x + 1).log(3, 1000):   100000.000000000000...000000
+x.log(2.5, prec=53):    119897.784671579
+```
+
+The accumulated Sage patch removes the four obsolete dependency annotations
+and the first row's now-redundant precision comment. The standalone and
+Electron-shaped integer-logarithm smokes construct `3^100000` once, require
+the exact 53-bit displays, require a 1000-bit parent whose value compares equal
+to `100000`, and require the exact non-integral-base display. The
+feature-selected and promoted rows agree across source, expected and actual
+output, status, failure class, and failure detail; only the obsolete optional
+metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1037 passed, 0 failed, 176 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The preceding schema-252 and rebuilt dashboards both contain 1,213
+normalized block keys. Their only stable semantic and metadata differences are
+the four intended promotions at lines 2894, 2896, 2898, and 2903. Excluding
+those rows, stable semantic differences are empty. Five raw-output differences
+are expected: four random CPU timing values and one `cyfunction make_integer`
+address representation.
+
+The Electron manifest schema advances to 253 and its smoke contract adds
+`integer-high-precision-logarithms-v225`. The clean generated manifest records
+pinned Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source tree, 762 required
+resources with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction exercised the supported Cython
+generation resume path, then completed all 527 declared generated targets with
+four workers. It compiled and linked all 1,064 native targets, passed all 101
+direct Node probes and the complete 34-case doctest-runner matrix, audited 523
+staged and 578 Electron side modules, emitted the schema-253 manifest, and
+passed the standalone, Electron-shaped, and relocated-resource smokes. The
+rebuilt resource smoke also passes directly with the desktop Electron
+`python-wasm` package, including the expanded logarithm assertions, and the
+desktop TypeScript, manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes focused ordinary and feature-selected
+baselines; exact feature-to-promoted semantic-row comparison; complete
+preceding and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax; accumulated-
+patch syntax and complete sequential application against a clean clone of the
+pinned source; byte-for-byte reconstructed `integer.pyx` comparison; rejection
+of a second forward patch application; corpus uniqueness and path existence;
+full-target dry-run wiring; manifest contract and resource-hash consistency;
+and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,869 serialized target
+sections (1,356 `diff --git` and 513 header-only legacy sections) and 6,047
+hunks. Focused feature-selected baselines are the
+`/tmp/cowasm-sagelite-integer-log-*-feature.sqlite3` files; exact clean-source
+patch replay is under
+`/tmp/cowasm-sagelite-integer-high-log-replay.z2XHjv/`; the final rebuilt
+dashboard, saved queries, comparisons, desktop logs, and validation evidence
+are under `/tmp/cowasm-sagelite-integer-high-log-final.qRrPm6/`; and the clean
+schema-253 reconstruction with complete standalone logs and generated
+resources is under
+`/tmp/cowasm-sagelite-integer-high-log-build.M3X1Qr/`. A future scheduled pass
+can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.

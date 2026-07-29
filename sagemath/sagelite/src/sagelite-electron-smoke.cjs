@@ -393,9 +393,17 @@ assert str(parent(value)) == 'Real Field with 53 bits of precision'
     console.log("sagelite-electron-start integer real logarithm smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
 
 value = Integer(124).log(5, 100)
 assert str(value) == '2.9950093311241087454822446806'
+large = Integer(3) ** 100000
+assert str(large.log(3, 53)) == '100000.000000000'
+assert str((large + 1).log(3, 53)) == '100000.000000000'
+very_high = (large + 1).log(3, 1000)
+assert very_high.parent().precision() == 1000
+assert very_high == 100000
+assert str(large.log(RealField()('2.5'), prec=53)) == '119897.784671579'
 `);
     console.log("sagelite-electron-ok integer real logarithm smoke");
     console.log("sagelite-electron-start integer exact real logarithm smoke");
