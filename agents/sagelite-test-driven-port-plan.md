@@ -79449,3 +79449,81 @@ reconstruction, dashboard, logs, and direct desktop Electron smoke are under
 `/tmp/cowasm-sagelite-real-abc-final-20260728/`. A future scheduled pass can
 continue auditing another compact deterministic real-field dependency boundary
 in the curated pure-math corpus.
+
+Cyclotomic real-value promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation in
+`sage/rings/polynomial/cyclotomic.pyx`. An ordinary focused replay against the
+preceding clean resource bundle records the target row as an explicit optional
+skip. A feature-selected replay activates it and passes with the expected
+real-number value:
+
+```text
+cyclotomic_value(30, -1.0): 1.00000000000000
+```
+
+The accumulated Sage patch removes that obsolete annotation. The standalone
+and Electron-shaped runtime smokes construct the real input explicitly with
+`RealField()('-1.0')` and require the same deterministic value from
+`cyclotomic_value(30, ...)`. Explicit construction preserves the Sage
+preparser's real-literal semantics in direct Python runtime probes.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+cyclotomic.pyx:   28 passed, 0 failed, 9 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the saved skip query accounts for all nine retained optional rows:
+three PARI examples, three number-field examples, and one example each for
+finite rings, p-adics, and symbolic support. The promoted row agrees exactly
+with the feature-selected untouched baseline across status, source, expected
+and actual output, failure class, and failure detail; only its obsolete
+dependency metadata is removed.
+
+The Electron manifest schema advances to 242 and its smoke contract to
+`cyclotomic-real-value-v214`. The clean generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a
+clean source tree, 761 required resources with matching hashes, 578 Electron
+side modules, nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source generated
+all 527 declared Cython targets, compiled and linked all 1,064 native targets,
+passed all 94 Node import probes and the complete 34-case doctest-runner
+matrix, audited the staged and Electron side modules, emitted the schema-242
+manifest, and passed the complete standalone, Electron-shaped, and relocated-
+resource smokes. The first runtime pass correctly exposed that the new direct
+Node probe must initialize the supported `sage.all` startup surface before
+importing the cyclotomic extension; adding that initialization fixed the probe
+without changing the Sage patch, and the subsequent complete clean rebuild
+passed. The rebuilt resource smoke also passes directly with the desktop
+Electron `python-wasm` package, and the desktop manifest, forge-resource, and
+runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; exact feature-to-patched semantic-row comparison; the final
+rebuilt-bundle dashboard; saved lifecycle, failure, file-error, and skip
+queries; SQLite integrity; shell and JavaScript syntax; accumulated-patch
+syntax; complete sequential patch application against the clean pinned
+source; byte-for-byte reconstructed `cyclotomic.pyx` comparison; rejection of
+a second forward patch application; corpus uniqueness and path existence;
+full-target dry run; manifest contract consistency; and `git diff --check`.
+The unrelated dirty external developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,858 serialized target
+sections (1,345 `diff --git` and 513 header-only legacy sections) and 6,030
+hunks. The untouched ordinary and feature-selected dashboards are
+`/tmp/cowasm-sagelite-cyclotomic-real-audit.fp8TD6/ordinary.sqlite3` and
+`/tmp/cowasm-sagelite-cyclotomic-real-audit.fp8TD6/feature.sqlite3`; exact
+clean-source patch replay is under
+`/tmp/cowasm-sagelite-cyclotomic-replay.RPqP6k/`; and the final clean
+reconstruction, dashboard, logs, and direct desktop Electron smoke are under
+`/tmp/cowasm-sagelite-cyclotomic-final.4mLdG9/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency boundary
+in the curated pure-math corpus.

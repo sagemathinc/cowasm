@@ -318,6 +318,15 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start cyclotomic real value smoke");
+    await python.exec(String.raw`
+from sage.rings.polynomial.cyclotomic import cyclotomic_value
+from sage.rings.real_mpfr import RealField
+
+RR = RealField()
+assert str(cyclotomic_value(30, RR('-1.0'))) == '1.00000000000000'
+`);
+    console.log("sagelite-electron-ok cyclotomic real value smoke");
     console.log("sagelite-electron-start rational 3x3 matrix smoke");
     await python.exec(String.raw`
 from sage.all import QQ

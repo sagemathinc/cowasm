@@ -2192,6 +2192,12 @@ phi5 = cyclotomic_polynomial(5, 'x')
 assert phi5.degree() == 4
 assert phi5(1) == 5
 print('sagelite-node-ok functional helper smoke')"
+run_node_import "cyclotomic real value smoke" "import sage.all
+from sage.rings.polynomial.cyclotomic import cyclotomic_value
+from sage.rings.real_mpfr import RealField
+RR = RealField()
+assert str(cyclotomic_value(30, RR('-1.0'))) == '1.00000000000000'
+print('sagelite-node-ok cyclotomic real value smoke')"
 run_node_import "explicit FLINT integer polynomial delivery" "from sage.all import ZZ, PolynomialRing
 R = PolynomialRing(ZZ, 'x', implementation='FLINT')
 x = R.gen()
@@ -2552,7 +2558,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=241
+electron_manifest_schema_version=242
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2653,6 +2659,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-generic-nu
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-disjoint-set-real-literal-v211"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fixtures-real-repr-v212"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-abc-v213"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclotomic-real-value-v214"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
