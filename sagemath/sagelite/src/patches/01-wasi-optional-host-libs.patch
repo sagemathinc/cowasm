@@ -39978,3 +39978,9 @@ diff --git a/src/sage/features/sagemath.py b/src/sage/features/sagemath.py
 @@ -1000 +1000 @@
 -        sage: sage__rings__real_mpfr().is_present()                                     # needs sage.rings.real_mpfr
 +        sage: sage__rings__real_mpfr().is_present()
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -17 +17 @@
+-    sage: a + 4.0                                                                       # needs sage.rings.real_mpfr
++    sage: a + 4.0

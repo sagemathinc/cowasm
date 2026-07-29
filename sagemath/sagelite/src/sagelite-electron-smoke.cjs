@@ -336,6 +336,15 @@ assert bool(result)
 assert repr(result) == "FeatureTestResult('sage.rings.real_mpfr', True)"
 `);
     console.log("sagelite-electron-ok real MPFR feature presence smoke");
+    console.log("sagelite-electron-start integer real coercion smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
+
+value = Integer(3) + RealField()('4.0')
+assert str(value) == '7.00000000000000'
+`);
+    console.log("sagelite-electron-ok integer real coercion smoke");
     console.log("sagelite-electron-start rational 3x3 matrix smoke");
     await python.exec(String.raw`
 from sage.all import QQ
