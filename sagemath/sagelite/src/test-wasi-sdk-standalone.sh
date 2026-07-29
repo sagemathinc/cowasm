@@ -2224,6 +2224,15 @@ from sage.rings.integer import Integer
 value = Integer(2).sqrt(prec=10)
 assert value.parent().precision() == 10
 assert str(value) == '1.4'
+high_precision = Integer(2).sqrt(prec=100)
+assert high_precision.parent().precision() == 100
+assert str(high_precision) == '1.4142135623730950488016887242'
+all_high_precision = Integer(2).sqrt(prec=100, all=True)
+assert [value.parent().precision() for value in all_high_precision] == [100, 100]
+assert [str(value) for value in all_high_precision] == [
+    '1.4142135623730950488016887242',
+    '-1.4142135623730950488016887242',
+]
 print('sagelite-node-ok integer real square root smoke')"
 run_node_import "real parent smoke" "import sage.all
 from sage.rings.real_mpfr import RealField
@@ -2602,7 +2611,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=250
+electron_manifest_schema_version=251
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2712,6 +2721,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-re
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-exact-real-logarithm-v220"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-power-v221"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-square-root-v222"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-high-precision-square-roots-v223"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

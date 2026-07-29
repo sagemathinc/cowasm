@@ -364,6 +364,15 @@ from sage.rings.integer import Integer
 value = Integer(2).sqrt(prec=10)
 assert value.parent().precision() == 10
 assert str(value) == '1.4'
+high_precision = Integer(2).sqrt(prec=100)
+assert high_precision.parent().precision() == 100
+assert str(high_precision) == '1.4142135623730950488016887242'
+all_high_precision = Integer(2).sqrt(prec=100, all=True)
+assert [value.parent().precision() for value in all_high_precision] == [100, 100]
+assert [str(value) for value in all_high_precision] == [
+    '1.4142135623730950488016887242',
+    '-1.4142135623730950488016887242',
+]
 `);
     console.log("sagelite-electron-ok integer real square root smoke");
     console.log("sagelite-electron-start real parent smoke");

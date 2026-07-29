@@ -80159,3 +80159,83 @@ clean schema-250 reconstruction with complete standalone logs is under
 `/tmp/cowasm-sagelite-integer-real-sqrt-build.7SiwWm/`. A future scheduled
 pass can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Integer high-precision real-square-root promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field cluster was the adjacent pair of
+100-bit integer square-root examples in `sage/rings/integer.pyx`. The
+preceding schema-250 whole-file dashboard records both rows as explicit
+optional skips. Focused replays selecting only `sage.rings.real_mpfr` activate
+each row and pass with the documented scalar and ordered-root values:
+
+```text
+Integer(2).sqrt(prec=100):
+1.4142135623730950488016887242
+
+Integer(2).sqrt(prec=100, all=True):
+[1.4142135623730950488016887242, -1.4142135623730950488016887242]
+```
+
+The accumulated Sage patch removes both obsolete dependency annotations. The
+standalone and Electron-shaped integer square-root smokes now require the
+100-bit parent and exact scalar display, plus 100-bit parents and the exact
+positive-then-negative ordering for `all=True`. The feature-selected and
+promoted focused rows agree across block key, source, expected and actual
+output, status, failure class, and failure detail; only the obsolete optional
+metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1030 passed, 0 failed, 183 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The preceding schema-250 and rebuilt dashboards both contain 1,213
+normalized block keys. Their only stable semantic and metadata differences are
+the two intended promotions at lines 6595 and 6597. Their nine raw-output
+differences comprise those two newly active rows, six random CPU timing values,
+and one `cyfunction make_integer` address representation.
+
+The Electron manifest schema advances to 251 and its smoke contract adds
+`integer-high-precision-square-roots-v223`. The clean generated manifest
+records pinned Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source tree, 762
+required resources with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction generated all 527 declared
+Cython sources on its first attempt with four workers, compiled and linked all
+1,064 native targets, passed all 101 direct Node probes and the complete
+34-case doctest-runner matrix, audited 523 staged and 578 Electron side
+modules, emitted the schema-251 manifest, and passed the standalone,
+Electron-shaped, and relocated-resource smokes. The rebuilt resource smoke
+also passes directly with the desktop Electron `python-wasm` package,
+including the extended high-precision square-root assertions, and the desktop
+TypeScript, manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; complete
+pre-rebuild and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax and complete sequential application against a clean
+clone of the pinned source; byte-for-byte reconstructed `integer.pyx`
+comparison; rejection of a second forward patch application; corpus uniqueness
+and path existence; manifest contract and resource-hash consistency; and
+`git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,867 serialized target
+sections (1,354 `diff --git` and 513 header-only legacy sections) and 6,040
+hunks. The focused baselines, promoted dashboards, final rebuilt dashboard,
+saved queries, comparisons, and direct desktop Electron smoke log are under
+`/tmp/cowasm-sagelite-integer-real-sqrt-next.tnVcZy/`; exact clean-source
+patch replay is under that directory's `replay/` child; and the clean
+schema-251 reconstruction with complete standalone logs and generated
+resources is under
+`/tmp/cowasm-sagelite-integer-high-precision-sqrt-build.uBim8Z/`. A future
+scheduled pass can continue auditing another compact deterministic real-field
+dependency boundary in the curated pure-math corpus.
