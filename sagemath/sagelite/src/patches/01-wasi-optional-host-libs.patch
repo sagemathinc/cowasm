@@ -40067,3 +40067,19 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 @@ -6961 +6961 @@
 -            sage: 1 >> 2.5                                                              # needs sage.rings.real_mpfr
 +            sage: 1 >> 2.5
+diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
+--- a/src/sage/rings/morphism.pyx
++++ b/src/sage/rings/morphism.pyx
+@@ -71,2 +71,2 @@
+-    sage: R200 = RealField(200)                                                         # needs sage.rings.real_mpfr
+-    sage: f = RR.hom( R200 )                                                            # needs sage.rings.real_mpfr
++    sage: R200 = RealField(200)
++    sage: f = RR.hom( R200 )
+@@ -80,4 +80,4 @@
+-    sage: f = RR.hom(RealField(15))                                                     # needs sage.rings.real_mpfr
+-    sage: f(2.5)                                                                        # needs sage.rings.real_mpfr
++    sage: f = RR.hom(RealField(15))
++    sage: f(2.5)
+     2.500
+-    sage: f(RR.pi())                                                                    # needs sage.rings.real_mpfr
++    sage: f(RR.pi())

@@ -319,7 +319,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 254,
+  schemaVersion: 255,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -481,7 +481,8 @@ expectedSageliteManifest.smokeContract +=
   "-integer-high-precision-square-roots-v223" +
   "-integer-square-root-types-v224" +
   "-integer-high-precision-logarithms-v225" +
-  "-integer-real-shift-diagnostics-v226";
+  "-integer-real-shift-diagnostics-v226" +
+  "-real-field-morphisms-v227";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

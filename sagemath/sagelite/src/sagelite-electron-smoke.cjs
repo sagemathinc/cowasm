@@ -375,6 +375,26 @@ for operator, operation in [
         raise AssertionError(f'{operator} accepted a non-integral real shift')
 `);
     console.log("sagelite-electron-ok integer real shift diagnostics smoke");
+    console.log("sagelite-electron-start real field morphism smoke");
+    await python.exec(String.raw`
+from sage.rings.real_mpfr import RealField
+
+R53 = RealField()
+R200 = RealField(200)
+try:
+    R53.hom(R200)
+except TypeError as err:
+    assert str(err) == (
+        'natural coercion morphism from Real Field with 53 bits of precision '
+        'to Real Field with 200 bits of precision not defined'
+    )
+else:
+    raise AssertionError('unexpected real-field precision-raising morphism')
+lower = R53.hom(RealField(15))
+assert str(lower(R53('2.5'))) == '2.500'
+assert str(lower(R53.pi())) == '3.142'
+`);
+    console.log("sagelite-electron-ok real field morphism smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

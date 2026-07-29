@@ -80487,3 +80487,85 @@ schema-254 reconstruction and generated resources are under
 `/tmp/cowasm-sagelite-integer-shift-build.nCLRVw/`. A future scheduled pass
 can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Real-field morphism promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field cluster was the five remaining
+real-MPFR-gated rows in `sage/rings/morphism.pyx`. The preceding schema-254
+whole-file dashboard records all five as explicit optional skips. A
+feature-selected full-file replay activates all five and passes with the
+documented precision-changing morphism behavior:
+
+```text
+RR.hom(RealField(200)):
+TypeError: natural coercion morphism from Real Field with 53 bits of precision
+to Real Field with 200 bits of precision not defined
+
+f = RR.hom(RealField(15))
+f(2.5):     2.500
+f(RR.pi()): 3.142
+```
+
+The accumulated Sage patch removes the five obsolete dependency annotations.
+The standalone and Electron-shaped runtime smokes construct explicit 53-bit,
+200-bit, and 15-bit real fields, require the exact failed precision-raising
+morphism diagnostic, and require the two exact precision-lowering values.
+The feature-selected and promoted focused rows agree across block key, source,
+expected and actual output, status, failure class, and failure detail; only
+the obsolete optional metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+morphism.pyx:  393 passed, 0 failed, 391 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and `morphism.pyx` has no remaining `sage.rings.real_mpfr` skips. The
+preceding schema-254 and rebuilt dashboards both contain 784 normalized block
+keys. Their only stable semantic and metadata differences are the five
+intended promotions at lines 71, 72, 80, 81, and 83. Their six raw output
+differences outside those rows are exception tracebacks whose absolute
+resource roots changed; normalizing those roots leaves no output differences.
+
+The Electron manifest schema advances to 255 and its smoke contract adds
+`real-field-morphisms-v227`. The clean generated manifest records pinned
+Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source tree, 762 required
+resources with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction generated all 527 declared
+Cython targets on its first attempt with four workers, compiled and linked all
+1,064 native targets, passed all 102 direct Node probes and the complete
+34-case doctest-runner matrix, audited 523 staged and 578 Electron side
+modules, emitted the schema-255 manifest, and passed the standalone,
+Electron-shaped, and relocated-resource smokes. The generated resource smoke
+also passes directly with the desktop Electron `python-wasm` package,
+including the new real-field morphism assertions, and the desktop TypeScript,
+manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; complete
+preceding, pre-rebuild, and rebuilt-file dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax and complete sequential application against a clean
+clone of the pinned source; byte-for-byte reconstructed `morphism.pyx`
+comparison; rejection of a second forward patch application; corpus uniqueness
+and path existence; full-target dry-run wiring; manifest contract and resource-
+hash consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,871 serialized target
+sections (1,358 `diff --git` and 513 header-only legacy sections) and 6,051
+hunks. Focused ordinary, feature-selected, and pre-rebuild dashboards are
+under `/tmp/cowasm-sagelite-morphism-audit-20260729/`; the final rebuilt
+dashboard, saved comparisons, and validation evidence are under
+`/tmp/cowasm-sagelite-morphism-final-20260729/`; and the complete clean
+schema-255 reconstruction and generated resources are under
+`/tmp/cowasm-sagelite-morphism-build-20260729/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.
