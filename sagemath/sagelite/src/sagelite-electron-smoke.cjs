@@ -357,6 +357,15 @@ value = Integer(2) ** RealField()('1.5')
 assert str(value) == '2.82842712474619'
 `);
     console.log("sagelite-electron-ok integer real power smoke");
+    console.log("sagelite-electron-start integer real square root smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+
+value = Integer(2).sqrt(prec=10)
+assert value.parent().precision() == 10
+assert str(value) == '1.4'
+`);
+    console.log("sagelite-electron-ok integer real square root smoke");
     console.log("sagelite-electron-start real parent smoke");
     await python.exec(String.raw`
 from sage.rings.real_mpfr import RealField

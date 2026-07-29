@@ -40016,3 +40016,9 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 @@ -2238 +2238 @@
 -            sage: 2^1.5              # real number                                      # needs sage.rings.real_mpfr
 +            sage: 2^1.5
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -6593 +6593 @@
+-            sage: n.sqrt(prec=10)                                                       # needs sage.rings.real_mpfr
++            sage: n.sqrt(prec=10)
