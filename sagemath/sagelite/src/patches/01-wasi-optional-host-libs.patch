@@ -39972,3 +39972,9 @@ diff --git a/src/sage/rings/polynomial/cyclotomic.pyx b/src/sage/rings/polynomia
 @@ -272 +272 @@
 -        sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
 +        sage: cyclotomic_value(30, -1.0)
+diff --git a/src/sage/features/sagemath.py b/src/sage/features/sagemath.py
+--- a/src/sage/features/sagemath.py
++++ b/src/sage/features/sagemath.py
+@@ -1000 +1000 @@
+-        sage: sage__rings__real_mpfr().is_present()                                     # needs sage.rings.real_mpfr
++        sage: sage__rings__real_mpfr().is_present()

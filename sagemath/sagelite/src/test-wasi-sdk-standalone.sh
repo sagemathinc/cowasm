@@ -2198,6 +2198,12 @@ from sage.rings.real_mpfr import RealField
 RR = RealField()
 assert str(cyclotomic_value(30, RR('-1.0'))) == '1.00000000000000'
 print('sagelite-node-ok cyclotomic real value smoke')"
+run_node_import "real MPFR feature presence smoke" "import sage.all
+from sage.features.sagemath import sage__rings__real_mpfr
+result = sage__rings__real_mpfr().is_present()
+assert bool(result)
+assert repr(result) == \"FeatureTestResult('sage.rings.real_mpfr', True)\"
+print('sagelite-node-ok real MPFR feature presence smoke')"
 run_node_import "explicit FLINT integer polynomial delivery" "from sage.all import ZZ, PolynomialRing
 R = PolynomialRing(ZZ, 'x', implementation='FLINT')
 x = R.gen()
@@ -2558,7 +2564,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=242
+electron_manifest_schema_version=243
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2660,6 +2666,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-disjoint-s
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fixtures-real-repr-v212"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-abc-v213"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cyclotomic-real-value-v214"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-mpfr-feature-presence-v215"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -2783,6 +2790,7 @@ electron_required_paths=(
   "site-packages/sage/functions/__init__.py"
   "site-packages/sage/functions/all.py"
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/features/sagemath.py"
   "site-packages/sage/categories/__init__.py"
   "site-packages/sage/categories/action.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/algebras.py"

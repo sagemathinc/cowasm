@@ -79527,3 +79527,84 @@ reconstruction, dashboard, logs, and direct desktop Electron smoke are under
 `/tmp/cowasm-sagelite-cyclotomic-final.4mLdG9/`. A future scheduled pass can
 continue auditing another compact deterministic real-field dependency boundary
 in the curated pure-math corpus.
+
+Real-MPFR feature-presence promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic dependency-boundary audit found one stale
+`sage.rings.real_mpfr` annotation on the real-MPFR feature self-check in
+`sage/features/sagemath.py`. An ordinary focused replay against the preceding
+clean resource bundle records the row as one explicit optional skip, while a
+feature-selected replay activates it and passes with the documented result:
+
+```text
+FeatureTestResult('sage.rings.real_mpfr', True)
+```
+
+The complete untouched file improves from 104 passed and 72 skipped in the
+ordinary profile to 105 passed and 71 skipped when selecting the real-MPFR
+feature. The accumulated Sage patch removes the obsolete annotation. The
+standalone and Electron-shaped runtime smokes now instantiate
+`sage__rings__real_mpfr`, require its result to be truthy, and require the exact
+feature-result representation. The promoted feature-selected and patched rows
+agree across status, source, expected and actual output, failure class, and
+failure detail; only the obsolete dependency tags disappear.
+
+Against the final rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+features/sagemath.py: 105 passed, 0 failed, 71 skipped
+run lifecycle:        passed and closed
+SQLite integrity:     ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and the saved skip query accounts for all 71 retained optional or
+deferred rows. The largest remaining groups are eight number-field rows, six
+graph rows, five group rows, five module rows, and four rows each for combined
+combinatorics/modules and GAP/number-field coverage. The SQLite run records
+runner version 154 and pinned Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`.
+
+The Electron manifest schema advances to 243 and its smoke contract to
+`real-mpfr-feature-presence-v215`. The feature implementation
+`site-packages/sage/features/sagemath.py` is now an explicitly required
+resource. The clean generated manifest records the pinned source revision, 762
+required resources with matching hashes, 578 Electron side modules, nine
+native libraries, and fourteen runtime dependency paths.
+
+The standard standalone reconstruction generated all 527 declared Cython
+sources, compiled and linked all 1,064 native targets, passed all 95 direct
+Node probes and the complete 34-case doctest-runner matrix, audited 523 staged
+and 578 Electron side modules, emitted the schema-243 manifest, and passed the
+standalone, Electron-shaped, and relocated-resource smokes. The first
+invocation deliberately stopped after checkpointing its initial generated
+targets so the supported resume path could continue Cython generation with
+four workers; the resumed build completed without a retry or failure. The
+rebuilt resource smoke also passes directly with the desktop Electron
+`python-wasm` package, and the desktop manifest, forge-resource, and runtime
+tests pass.
+
+Validation additionally includes the ordinary and feature-selected untouched
+baselines; exact feature-to-patched semantic-row comparison; the final
+rebuilt-file dashboard; saved lifecycle, failure, file-error, and skip queries;
+SQLite integrity; shell and JavaScript syntax; accumulated-patch syntax;
+complete sequential patch application against a fresh checkout of the pinned
+source; byte-for-byte reconstructed `features/sagemath.py` comparison;
+rejection of a second forward patch application; corpus uniqueness and path
+existence; full-target dry-run wiring against the clean source; manifest
+contract consistency; and `git diff --check`. The unrelated dirty external
+developer checkout remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,859 serialized target
+sections (1,346 `diff --git` and 513 header-only legacy sections) and 6,031
+hunks. The focused audit databases and patched-file copy are under
+`/tmp/cowasm-sagelite-real-frontier.RghXUR/`; exact clean-source patch replay
+is under `/tmp/cowasm-sagelite-feature-replay.87brv0/`; the final dashboard,
+saved query results, desktop logs, and full-target dry run are under
+`/tmp/cowasm-sagelite-feature-final.S3QKlZ/`; and the rebuilt standard bundle
+and its complete standalone logs remain under
+`/tmp/cowasm-sagelite-cyclotomic-final.4mLdG9/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency boundary
+in the curated pure-math corpus.

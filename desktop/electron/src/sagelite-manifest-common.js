@@ -73,6 +73,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/functions/__init__.py",
   "site-packages/sage/functions/all.py",
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/features/sagemath.py",
   "site-packages/sage/categories/__init__.py",
   "site-packages/sage/categories/action.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/algebras.py",
@@ -318,7 +319,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 242,
+  schemaVersion: 243,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -468,7 +469,8 @@ expectedSageliteManifest.smokeContract +=
   "-disjoint-set-real-literal-v211" +
   "-fixtures-real-repr-v212" +
   "-real-complex-abc-v213" +
-  "-cyclotomic-real-value-v214";
+  "-cyclotomic-real-value-v214" +
+  "-real-mpfr-feature-presence-v215";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
