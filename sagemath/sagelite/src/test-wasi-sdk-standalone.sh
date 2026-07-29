@@ -2251,6 +2251,22 @@ lower = R53.hom(RealField(15))
 assert str(lower(R53('2.5'))) == '2.500'
 assert str(lower(R53.pi())) == '3.142'
 print('sagelite-node-ok real field morphism smoke')"
+run_node_import "real preparse literals smoke" "import sage.all
+from sage.all import RealNumber, ellipsis_range
+from sage.repl.preparse import preparse
+namespace = {
+    'Ellipsis': Ellipsis,
+    'RealNumber': RealNumber,
+    'ellipsis_range': ellipsis_range,
+}
+sqrt_value = eval(preparse('15.10.sqrt()'), namespace)
+assert str(sqrt_value) == '3.88587184554509'
+range_value = eval(preparse('[1.0..2.0]'), namespace)
+assert [str(value) for value in range_value] == [
+    '1.00000000000000',
+    '2.00000000000000',
+]
+print('sagelite-node-ok real preparse literals smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2656,7 +2672,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=255
+electron_manifest_schema_version=256
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2771,6 +2787,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-sq
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-high-precision-logarithms-v225"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-shift-diagnostics-v226"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-morphisms-v227"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-preparse-literals-v228"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

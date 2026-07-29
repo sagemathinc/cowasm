@@ -395,6 +395,25 @@ assert str(lower(R53('2.5'))) == '2.500'
 assert str(lower(R53.pi())) == '3.142'
 `);
     console.log("sagelite-electron-ok real field morphism smoke");
+    console.log("sagelite-electron-start real preparse literals smoke");
+    await python.exec(String.raw`
+from sage.all import RealNumber, ellipsis_range
+from sage.repl.preparse import preparse
+
+namespace = {
+    'Ellipsis': Ellipsis,
+    'RealNumber': RealNumber,
+    'ellipsis_range': ellipsis_range,
+}
+sqrt_value = eval(preparse('15.10.sqrt()'), namespace)
+assert str(sqrt_value) == '3.88587184554509'
+range_value = eval(preparse('[1.0..2.0]'), namespace)
+assert [str(value) for value in range_value] == [
+    '1.00000000000000',
+    '2.00000000000000',
+]
+`);
+    console.log("sagelite-electron-ok real preparse literals smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

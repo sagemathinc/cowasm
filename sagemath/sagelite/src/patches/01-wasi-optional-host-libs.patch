@@ -40083,3 +40083,12 @@ diff --git a/src/sage/rings/morphism.pyx b/src/sage/rings/morphism.pyx
      2.500
 -    sage: f(RR.pi())                                                                    # needs sage.rings.real_mpfr
 +    sage: f(RR.pi())
+diff --git a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
+--- a/src/sage/repl/preparse.py
++++ b/src/sage/repl/preparse.py
+@@ -66 +66 @@
+-    sage: 15.10.sqrt()                                                                  # needs sage.rings.real_mpfr
++    sage: 15.10.sqrt()
+@@ -1030 +1030 @@
+-        sage: [1.0..2.0]                                                                # needs sage.rings.real_mpfr
++        sage: [1.0..2.0]
