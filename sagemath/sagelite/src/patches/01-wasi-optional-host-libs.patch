@@ -40113,3 +40113,9 @@ diff --git a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
 @@ -2847 +2847 @@
 -        sage: find_object_modules(RR)                                                   # needs sage.rings.real_mpfr
 +        sage: find_object_modules(RR)
+diff --git a/src/sage/matrix/docs.py b/src/sage/matrix/docs.py
+--- a/src/sage/matrix/docs.py
++++ b/src/sage/matrix/docs.py
+@@ -300 +300 @@
+-    sage: A = matrix(RR,2,[1,10,3.5,2])                                             # needs sage.rings.real_mpfr
++    sage: A = matrix(RR,2,[1,10,3.5,2])

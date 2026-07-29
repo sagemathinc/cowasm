@@ -458,6 +458,27 @@ assert find_object_modules(RR(0).parent()) == {
 }
 `);
     console.log("sagelite-electron-ok real field object module lookup smoke");
+    console.log("sagelite-electron-start immutable real matrix copy smoke");
+    await python.exec(String.raw`
+from copy import copy
+from sage.all import Integer, RR, RealNumber, matrix
+from sage.repl.preparse import preparse
+
+real_field = RR(0).parent()
+namespace = {
+    'Integer': Integer,
+    'RR': real_field,
+    'RealNumber': RealNumber,
+    'matrix': matrix,
+}
+A = eval(preparse('matrix(RR,2,[1,10,3.5,2])'), namespace)
+A.set_immutable()
+B = copy(A)
+assert B is not A
+assert B == A
+assert B.is_mutable()
+`);
+    console.log("sagelite-electron-ok immutable real matrix copy smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
