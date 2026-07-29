@@ -360,6 +360,8 @@ assert str(value) == '2.82842712474619'
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
+from sage.rings.complex_mpfr import ComplexNumber
+from sage.rings.real_mpfr import RealNumber
 
 value = Integer(2).sqrt(prec=10)
 assert value.parent().precision() == 10
@@ -373,6 +375,9 @@ assert [str(value) for value in all_high_precision] == [
     '1.4142135623730950488016887242',
     '-1.4142135623730950488016887242',
 ]
+assert type(Integer(5).sqrt(prec=53)) is RealNumber
+assert type(Integer(-5).sqrt(prec=53)) is ComplexNumber
+assert type(Integer(0).sqrt(prec=53)) is RealNumber
 `);
     console.log("sagelite-electron-ok integer real square root smoke");
     console.log("sagelite-electron-start real parent smoke");

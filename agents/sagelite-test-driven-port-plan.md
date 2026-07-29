@@ -80239,3 +80239,86 @@ resources is under
 `/tmp/cowasm-sagelite-integer-high-precision-sqrt-build.uBim8Z/`. A future
 scheduled pass can continue auditing another compact deterministic real-field
 dependency boundary in the curated pure-math corpus.
+
+Integer square-root result-type promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field cluster was the adjacent trio of
+53-bit integer square-root result-type checks in `sage/rings/integer.pyx`.
+Ordinary focused replays against the preceding schema-251 resource bundle
+record all three rows as explicit optional skips. Replays selecting only
+`sage.rings.real_mpfr` activate each row and pass with the documented classes:
+
+```text
+type(5.sqrt(prec=53)):
+<class 'sage.rings.real_mpfr.RealNumber'>
+
+type((-5).sqrt(prec=53)):
+<class 'sage.rings.complex_mpfr.ComplexNumber'>
+
+type(0.sqrt(prec=53)):
+<class 'sage.rings.real_mpfr.RealNumber'>
+```
+
+The accumulated Sage patch removes the three obsolete dependency annotations.
+The standalone and Electron-shaped integer square-root smokes now import the
+concrete `RealNumber` and `ComplexNumber` classes and require exact type
+identity for the positive, negative, and zero cases. The feature-selected and
+promoted focused rows agree across block key, source, expected and actual
+output, status, failure class, and failure detail; only the obsolete optional
+metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1033 passed, 0 failed, 180 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The preceding schema-251 and rebuilt dashboards both contain 1,213
+normalized block keys. Their only stable semantic and metadata differences are
+the three intended promotions at lines 6616, 6618, and 6620. Their ten raw
+output differences comprise the three newly active rows, six random CPU timing
+values, and one `cyfunction make_integer` address representation. The
+pre-rebuild promoted and rebuilt dashboards have no stable semantic
+differences; their four raw differences are three timing values and the
+generated function address.
+
+The Electron manifest schema advances to 252 and its smoke contract adds
+`integer-square-root-types-v224`. The clean generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a
+clean source tree, 762 required resources with matching hashes, 578 Electron
+side modules, nine native libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction generated all 527 declared
+Cython sources on its first attempt with four workers, compiled and linked all
+1,064 native targets, passed all 101 direct Node probes and the complete
+34-case doctest-runner matrix, audited 523 staged and 578 Electron side
+modules, emitted the schema-252 manifest, and passed the standalone,
+Electron-shaped, and relocated-resource smokes. The rebuilt resource smoke
+also passes directly with the desktop Electron `python-wasm` package,
+including the expanded square-root result-type assertions, and the desktop
+TypeScript, manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; complete
+pre-rebuild and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax and complete sequential application against a clean
+clone of the pinned source; byte-for-byte reconstructed `integer.pyx`
+comparison; rejection of a second forward patch application; corpus uniqueness
+and path existence; full-target dry-run wiring; manifest contract and
+resource-hash consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,868 serialized target
+sections (1,355 `diff --git` and 513 header-only legacy sections) and 6,043
+hunks. Focused baselines, promoted and rebuilt dashboards, saved queries,
+comparisons, direct desktop logs, and patch validation are under
+`/tmp/cowasm-sagelite-integer-sqrt-types-audit.61oZ5v/`; the complete clean
+schema-252 reconstruction, generated resources, and standalone logs are under
+`/tmp/cowasm-sagelite-integer-sqrt-types-build.qckhLq/`. A future scheduled
+pass can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.
