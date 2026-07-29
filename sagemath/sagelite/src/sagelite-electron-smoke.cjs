@@ -358,6 +358,14 @@ assert parent(value) is value.parent()
 assert str(parent(value)) == 'Real Field with 53 bits of precision'
 `);
     console.log("sagelite-electron-ok real parent smoke");
+    console.log("sagelite-electron-start integer real logarithm smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+
+value = Integer(124).log(5, 100)
+assert str(value) == '2.9950093311241087454822446806'
+`);
+    console.log("sagelite-electron-ok integer real logarithm smoke");
     console.log("sagelite-electron-start rational 3x3 matrix smoke");
     await python.exec(String.raw`
 from sage.all import QQ

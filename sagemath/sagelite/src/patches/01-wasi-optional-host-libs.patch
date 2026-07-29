@@ -39998,3 +39998,9 @@ diff --git a/src/sage/structure/element.pxd b/src/sage/structure/element.pxd
 @@ -37 +37 @@
 -        sage: parent(c)                                                                 # needs sage.rings.real_mpfr
 +        sage: parent(c)
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -2869 +2869 @@
+-            sage: Integer(124).log(5, 100)                                              # needs sage.rings.real_mpfr
++            sage: Integer(124).log(5, 100)

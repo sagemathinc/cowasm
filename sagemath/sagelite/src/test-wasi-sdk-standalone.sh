@@ -2220,6 +2220,11 @@ value = RealField()('42.0')
 assert parent(value) is value.parent()
 assert str(parent(value)) == 'Real Field with 53 bits of precision'
 print('sagelite-node-ok real parent smoke')"
+run_node_import "integer real logarithm smoke" "import sage.all
+from sage.rings.integer import Integer
+value = Integer(124).log(5, 100)
+assert str(value) == '2.9950093311241087454822446806'
+print('sagelite-node-ok integer real logarithm smoke')"
 run_node_import "explicit FLINT integer polynomial delivery" "from sage.all import ZZ, PolynomialRing
 R = PolynomialRing(ZZ, 'x', implementation='FLINT')
 x = R.gen()
@@ -2580,7 +2585,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=246
+electron_manifest_schema_version=247
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2686,6 +2691,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-mpfr-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-coercion-v216"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-realfield-coercion-v217"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-structure-real-parent-v218"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-logarithm-v219"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
