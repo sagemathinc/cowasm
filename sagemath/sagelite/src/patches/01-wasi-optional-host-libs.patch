@@ -40092,3 +40092,12 @@ diff --git a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
 @@ -1030 +1030 @@
 -        sage: [1.0..2.0]                                                                # needs sage.rings.real_mpfr
 +        sage: [1.0..2.0]
+diff --git a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
+--- a/src/sage/structure/sage_object.pyx
++++ b/src/sage/structure/sage_object.pyx
+@@ -102 +102 @@
+-            sage: type(a)                                                               # needs sage.rings.real_mpfr
++            sage: type(a)
+@@ -104 +104 @@
+-            sage: a.rename('pi')                                                        # needs sage.rings.real_mpfr
++            sage: a.rename('pi')

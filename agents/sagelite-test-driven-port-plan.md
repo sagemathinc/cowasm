@@ -80652,3 +80652,87 @@ complete clean schema-256 reconstruction and generated resources are under
 `/tmp/cowasm-sagelite-preparse-build.c2DBpt/`. A future scheduled pass can
 continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Real-literal SageObject promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field cluster was the two remaining
+real-MPFR-gated rows in `sage/structure/sage_object.pyx`. The preceding
+schema-256 whole-file dashboard records both rows as explicit optional skips.
+A feature-selected full-file replay activates both and passes with the
+documented type and rename diagnostic:
+
+```text
+type(a):
+<class 'sage.rings.real_mpfr.RealLiteral'>
+
+a.rename('pi'):
+NotImplementedError: object does not support renaming: 3.14000000000000
+```
+
+The accumulated Sage patch removes the two obsolete dependency annotations.
+The standalone and Electron-shaped runtime smokes construct `3.14` through
+Sage's public preparser namespace, require exact `RealLiteral` type identity,
+and require the exact failed-renaming diagnostic. The feature-selected and
+promoted target rows agree across block key, source, expected and actual
+output, status, failure class, and failure detail; only the obsolete optional
+metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+sage_object.pyx:  75 passed, 0 failed, 77 skipped
+run lifecycle:    passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and `sage_object.pyx` has no remaining `sage.rings.real_mpfr` skips.
+The preceding schema-256 and rebuilt dashboards both contain 152 normalized
+block keys. Their only stable semantic and metadata differences are the two
+intended promotions at lines 102 and 104. Their four raw-output differences
+comprise those two newly active rows and two generated address
+representations. The pre-rebuild promoted and rebuilt dashboards have no
+stable semantic differences; their only raw differences are the two generated
+addresses.
+
+The Electron manifest schema advances to 257 and its smoke contract adds
+`real-literal-rename-diagnostic-v229`. The clean generated manifest records
+pinned Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source tree, 762 required
+resources with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction exercised the supported
+Cython-generation resume path, then generated all 527 declared targets with
+four workers on its first resumed attempt. It compiled and linked all 1,064
+native targets, passed all 105 direct Node probes and the complete 34-case
+doctest-runner matrix, audited 523 staged and 578 Electron side modules,
+emitted the schema-257 manifest, and passed the standalone, Electron-shaped,
+and relocated-resource smokes. The generated resource smoke also passes
+directly with the desktop Electron `python-wasm` package, including the new
+real-literal rename assertion, and the desktop TypeScript, manifest,
+forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; complete
+preceding, pre-rebuild, and rebuilt-file dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax and complete sequential application against a clean
+clone of the pinned source; byte-for-byte reconstructed `sage_object.pyx`
+comparison; rejection of a second forward patch application; corpus
+uniqueness and path existence; full-target dry-run wiring; manifest contract
+and resource-hash consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,873 serialized target
+sections (1,360 `diff --git` and 513 header-only legacy sections) and 6,055
+hunks. Focused ordinary, feature-selected, and promoted dashboards are under
+`/tmp/cowasm-sagelite-sage-object-audit.XiTKNi/`; exact clean-source patch
+replay is under `/tmp/cowasm-sagelite-sage-object-replay.H9Hih7/`; the final
+rebuilt dashboard, saved comparisons, direct desktop log, and validation
+evidence are under `/tmp/cowasm-sagelite-sage-object-final.cwa74E/`; and the
+complete clean schema-257 reconstruction and generated resources are under
+`/tmp/cowasm-sagelite-sage-object-build.YXC4sw/`. A future scheduled pass can
+continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.

@@ -414,6 +414,22 @@ assert [str(value) for value in range_value] == [
 ]
 `);
     console.log("sagelite-electron-ok real preparse literals smoke");
+    console.log("sagelite-electron-start real literal rename diagnostic smoke");
+    await python.exec(String.raw`
+from sage.all import RealNumber
+from sage.repl.preparse import preparse
+from sage.rings.real_mpfr import RealLiteral
+
+literal = eval(preparse('3.14'), {'RealNumber': RealNumber})
+assert type(literal) is RealLiteral
+try:
+    literal.rename('pi')
+except NotImplementedError as err:
+    assert str(err) == 'object does not support renaming: 3.14000000000000'
+else:
+    raise AssertionError('real literal unexpectedly supported renaming')
+`);
+    console.log("sagelite-electron-ok real literal rename diagnostic smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

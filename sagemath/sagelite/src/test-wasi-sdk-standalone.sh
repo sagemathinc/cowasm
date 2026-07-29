@@ -2267,6 +2267,19 @@ assert [str(value) for value in range_value] == [
     '2.00000000000000',
 ]
 print('sagelite-node-ok real preparse literals smoke')"
+run_node_import "real literal rename diagnostic smoke" "import sage.all
+from sage.all import RealNumber
+from sage.repl.preparse import preparse
+from sage.rings.real_mpfr import RealLiteral
+literal = eval(preparse('3.14'), {'RealNumber': RealNumber})
+assert type(literal) is RealLiteral
+try:
+    literal.rename('pi')
+except NotImplementedError as err:
+    assert str(err) == 'object does not support renaming: 3.14000000000000'
+else:
+    raise AssertionError('real literal unexpectedly supported renaming')
+print('sagelite-node-ok real literal rename diagnostic smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2672,7 +2685,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=256
+electron_manifest_schema_version=257
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2788,6 +2801,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-hi
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-real-shift-diagnostics-v226"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-morphisms-v227"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-preparse-literals-v228"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-literal-rename-diagnostic-v229"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
