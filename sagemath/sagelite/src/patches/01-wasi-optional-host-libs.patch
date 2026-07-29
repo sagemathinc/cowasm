@@ -39992,3 +39992,9 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 -    sage: RR(n)                                                                         # needs sage.rings.real_mpfr
 +    sage: RR = RealField(200)
 +    sage: RR(n)
+diff --git a/src/sage/structure/element.pxd b/src/sage/structure/element.pxd
+--- a/src/sage/structure/element.pxd
++++ b/src/sage/structure/element.pxd
+@@ -37 +37 @@
+-        sage: parent(c)                                                                 # needs sage.rings.real_mpfr
++        sage: parent(c)

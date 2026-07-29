@@ -79765,3 +79765,79 @@ schema-245 reconstruction with complete standalone logs is under
 `/tmp/cowasm-sagelite-integer-realfield-build.7kw1hH/`. A future scheduled
 pass can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Structure-element real-parent promotion pass on 2026-07-29 UTC:
+
+The next compact deterministic real-field boundary was the real-literal parent
+example in `sage/structure/element.pxd`. An ordinary focused replay against
+the preceding clean schema-245 resource bundle records the row as one explicit
+optional skip. A replay selecting only `sage.rings.real_mpfr` activates it and
+passes with the documented parent:
+
+```text
+parent(42.0): Real Field with 53 bits of precision
+```
+
+The accumulated Sage patch removes that obsolete annotation. The standalone
+and Electron-shaped runtime smokes construct the value explicitly with
+`RealField()('42.0')`, require `parent(value)` to be its concrete parent, and
+require the exact 53-bit real-field representation. Explicit construction
+preserves the Sage preparser's real-literal semantics in direct Python probes.
+The feature-selected and promoted rows agree across block key, source,
+expected and actual output, status, failure class, and failure detail; only the
+obsolete dependency metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+structure/element.pxd: 18 passed, 0 failed, 5 skipped
+run lifecycle:         passed and closed
+SQLite integrity:      ok
+```
+
+Saved block-failure and file-error queries are empty, and active-row coverage
+is 100%. The saved skip query accounts for all five retained optional rows:
+two combinatorics setup/results, two module/vector setup/results, and one GAP
+example.
+
+The Electron manifest schema advances to 246 and its smoke contract to
+`structure-real-parent-v218`. The clean generated manifest records pinned
+Sagelite source revision `acc8c18d6a620c940df09d3791c5b8e939e146ae`, a
+clean source tree, 762 required resources with matching hashes, 578 Electron
+side modules, nine native libraries, and fourteen runtime dependency paths.
+
+A complete standalone reconstruction from the clean pinned source initially
+generated and checkpointed twenty Cython targets, then exercised the supported
+resume path with four generation workers for the remaining 507 targets. It
+compiled and linked all 1,064 native targets, passed all 97 direct Node probes
+and the complete 34-case doctest-runner matrix, audited 523 staged and 578
+Electron side modules, emitted the schema-246 manifest, and passed the
+standalone, Electron-shaped, and relocated-resource smokes. The rebuilt
+resource smoke also passes directly with the desktop Electron `python-wasm`
+package, and the desktop manifest, forge-resource, and runtime tests pass.
+
+Validation additionally includes the ordinary and feature-selected focused
+baselines; exact feature-to-promoted semantic-row comparison; the complete
+pre-rebuild and rebuilt-file dashboards; saved lifecycle, failure, file-error,
+and skip queries; SQLite integrity; shell and JavaScript syntax; accumulated-
+patch syntax and complete sequential application against the clean pinned
+source; byte-for-byte reconstructed `element.pxd` comparison; rejection of a
+second forward patch application; corpus uniqueness and path existence;
+full-target dry-run wiring; manifest contract and resource-hash consistency;
+and `git diff --check`. The unrelated dirty external developer checkout
+remains untouched.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,862 serialized target
+sections (1,349 `diff --git` and 513 header-only legacy sections) and 6,034
+hunks. The ordinary, feature-selected, and pre-rebuild promoted dashboards are
+under `/tmp/cowasm-sagelite-structure-parent-audit-20260729/`; the focused
+patched source is under
+`/tmp/cowasm-sagelite-structure-parent-patched-20260729/`; the final rebuilt
+dashboard, saved queries, desktop smoke, comparisons, and full-target dry run
+are under `/tmp/cowasm-sagelite-structure-parent-final-20260729/`; and the
+clean schema-246 reconstruction with complete standalone logs is under
+`/tmp/cowasm-sagelite-structure-parent-build-20260729/`. A future scheduled
+pass can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.
