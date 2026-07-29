@@ -357,6 +357,24 @@ value = Integer(2) ** RealField()('1.5')
 assert str(value) == '2.82842712474619'
 `);
     console.log("sagelite-electron-ok integer real power smoke");
+    console.log("sagelite-electron-start integer real shift diagnostics smoke");
+    await python.exec(String.raw`
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
+
+shift = RealField()('2.5')
+for operator, operation in [
+    ('<<', lambda: Integer(1) << shift),
+    ('>>', lambda: Integer(1) >> shift),
+]:
+    try:
+        operation()
+    except TypeError as err:
+        assert str(err) == f'unsupported operands for {operator}: 1, 2.50000000000000'
+    else:
+        raise AssertionError(f'{operator} accepted a non-integral real shift')
+`);
+    console.log("sagelite-electron-ok integer real shift diagnostics smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

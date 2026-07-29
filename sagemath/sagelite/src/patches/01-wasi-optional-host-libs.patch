@@ -40058,3 +40058,12 @@ diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 @@ -2903 +2903 @@
 -            sage: x.log(2.5, prec=53)                                                   # needs sage.rings.real_mpfr
 +            sage: x.log(2.5, prec=53)
+diff --git a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -6928 +6928 @@
+-            sage: 1 << 2.5                                                              # needs sage.rings.real_mpfr
++            sage: 1 << 2.5
+@@ -6961 +6961 @@
+-            sage: 1 >> 2.5                                                              # needs sage.rings.real_mpfr
++            sage: 1 >> 2.5

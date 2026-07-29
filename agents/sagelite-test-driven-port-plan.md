@@ -80407,3 +80407,83 @@ resources is under
 `/tmp/cowasm-sagelite-integer-high-log-build.M3X1Qr/`. A future scheduled pass
 can continue auditing another compact deterministic real-field dependency
 boundary in the curated pure-math corpus.
+
+Integer real-shift diagnostic promotion pass on 2026-07-29 UTC:
+
+The final two real-MPFR-gated rows in `sage/rings/integer.pyx` were the
+non-integral real left- and right-shift diagnostics. The preceding schema-253
+whole-file dashboard records both rows as explicit optional skips. Focused
+replays selecting only `sage.rings.real_mpfr` activate both and pass with the
+documented diagnostic patterns:
+
+```text
+1 << 2.5: TypeError: unsupported operands for <<: 1, 2.5000...
+1 >> 2.5: TypeError: unsupported operands for >>: 1, 2.5000...
+```
+
+The accumulated Sage patch removes the two obsolete dependency annotations.
+The standalone and Electron-shaped runtime smokes construct the 53-bit
+`RealField` shift operand explicitly, require both operations to raise
+`TypeError`, and require the exact full diagnostics ending in
+`2.50000000000000`. The feature-selected and promoted focused rows agree
+across source, expected and actual output, status, failure class, and failure
+detail; only the obsolete optional metadata disappears.
+
+Against the final clean rebuilt resource bundle, the complete ordinary
+browser-profile dashboard records:
+
+```text
+integer.pyx:   1039 passed, 0 failed, 174 skipped
+run lifecycle: passed and closed
+SQLite integrity: ok
+```
+
+Saved block-failure and file-error queries are empty, active-row coverage is
+100%, and `integer.pyx` has no remaining `sage.rings.real_mpfr` skips. The
+preceding schema-253 and rebuilt dashboards both contain 1,213 normalized
+block keys. Their only stable semantic and metadata differences are the two
+intended promotions at lines 6928 and 6961. Excluding those rows, stable
+semantic differences are empty. The pre-rebuild promoted and rebuilt
+dashboards have no stable semantic differences; their seven raw-output
+differences are six random CPU timing values and one generated
+`cyfunction make_integer` address.
+
+The Electron manifest schema advances to 254 and its smoke contract adds
+`integer-real-shift-diagnostics-v226`. The clean generated manifest records
+pinned Sagelite source revision
+`acc8c18d6a620c940df09d3791c5b8e939e146ae`, a clean source tree, 762 required
+resources with matching hashes, 578 Electron side modules, nine native
+libraries, and fourteen runtime dependency paths.
+
+The complete clean standalone reconstruction generated all 527 declared
+Cython targets on its first attempt with four workers, compiled and linked all
+1,064 native targets, passed all 101 direct Node probes and the complete
+34-case doctest-runner matrix, audited 523 staged and 578 Electron side
+modules, emitted the schema-254 manifest, and passed the standalone,
+Electron-shaped, and relocated-resource smokes. The generated resource smoke
+also passes directly with the desktop Electron `python-wasm` package,
+including the new shift diagnostics, and the desktop TypeScript, manifest,
+forge-resource, and runtime tests pass.
+
+Validation additionally includes focused ordinary and feature-selected
+baselines; exact feature-to-promoted semantic-row comparison; complete
+preceding, pre-rebuild, and rebuilt-file dashboards; saved lifecycle, failure,
+file-error, and skip queries; SQLite integrity; shell and JavaScript syntax;
+accumulated-patch syntax and complete sequential application against a clean
+clone of the pinned source; byte-for-byte reconstructed `integer.pyx`
+comparison; rejection of a second forward patch application; corpus
+uniqueness and path existence; full-target dry-run wiring; manifest contract
+and resource-hash consistency; and `git diff --check`.
+
+The curated corpus remains at 1,351 non-comment entries with no duplicates or
+missing paths. The accumulated patch now contains 1,870 serialized target
+sections (1,357 `diff --git` and 513 header-only legacy sections) and 6,049
+hunks. Focused baselines and the pre-rebuild dashboard are under
+`/tmp/cowasm-sagelite-integer-shift-audit.T6jzcB/`; exact clean-source patch
+replay is under `/tmp/cowasm-sagelite-integer-shift-replay.xn0u6j/`; the final
+rebuilt dashboard, saved queries, and comparisons are under
+`/tmp/cowasm-sagelite-integer-shift-final.otQCyd/`; and the complete clean
+schema-254 reconstruction and generated resources are under
+`/tmp/cowasm-sagelite-integer-shift-build.nCLRVw/`. A future scheduled pass
+can continue auditing another compact deterministic real-field dependency
+boundary in the curated pure-math corpus.
