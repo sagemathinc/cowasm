@@ -2295,6 +2295,12 @@ spike = eval(
 )
 assert str(spike.eps) == '0.00100000000000000'
 print('sagelite-node-ok spike function real epsilon smoke')"
+run_node_import "real field object module lookup smoke" "import sage.all
+from sage.misc.sageinspect import find_object_modules
+assert find_object_modules(sage.all.RR(0).parent()) == {
+    'sage.rings.real_mpfr': ['RR'],
+}
+print('sagelite-node-ok real field object module lookup smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2700,7 +2706,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=258
+electron_manifest_schema_version=259
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2818,6 +2824,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-preparse-literals-v228"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-literal-rename-diagnostic-v229"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-spike-function-real-epsilon-v230"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-object-module-lookup-v231"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

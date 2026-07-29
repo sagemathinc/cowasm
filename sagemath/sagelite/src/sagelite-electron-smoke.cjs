@@ -448,6 +448,16 @@ spike = eval(
 assert str(spike.eps) == '0.00100000000000000'
 `);
     console.log("sagelite-electron-ok spike function real epsilon smoke");
+    console.log("sagelite-electron-start real field object module lookup smoke");
+    await python.exec(String.raw`
+from sage.all import RR
+from sage.misc.sageinspect import find_object_modules
+
+assert find_object_modules(RR(0).parent()) == {
+    'sage.rings.real_mpfr': ['RR'],
+}
+`);
+    console.log("sagelite-electron-ok real field object module lookup smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
