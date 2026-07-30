@@ -2172,11 +2172,12 @@ for args in (
     );
     await python.exec(String.raw`
 import sage.rings.abc
-from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+from sage.all import Algebras, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
 from sage.functions.gamma import gamma, gamma_inc_lower
+from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U, gen_legendre_P, gen_legendre_Q
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
@@ -2286,6 +2287,27 @@ gamma_100 = gamma(RealField(100)('2.5'))
 assert repr(gamma_100) == '1.3293403881791370204736256125'
 assert gamma_100.parent().precision() == 100
 assert RealField(1024).precision() == 1024
+assert repr(chebyshev_T._evalf_(10, 3)) == '2.26195370000000e7'
+assert repr(chebyshev_T._evalf_(10, 3, parent=RealField(75))) == '2.261953700000000000000e7'
+assert repr(chebyshev_T._evalf_(5, RR('0.3'))) == '0.998880000000000'
+for function in (chebyshev_T, chebyshev_U):
+    try:
+        function._evalf_(RR('1.5'), Mod(8, 9))
+    except TypeError as error:
+        assert str(error) == f'cannot evaluate {function} with parent Ring of integers modulo 9'
+    else:
+        raise AssertionError(f'{function} accepted a modular argument')
+assert repr(chebyshev_T(RR('1234.5'), RDF('2.1'))) == '5.48174256255782e735'
+try:
+    chebyshev_T._evalf_(ZZ(10)**6, RR('0.1'))
+except Exception as error:
+    assert type(error).__name__ == 'NoConvergence'
+    assert str(error) == 'Hypergeometric series converges too slowly. Try increasing maxterms.'
+else:
+    raise AssertionError('large Chebyshev evaluation unexpectedly converged')
+assert repr(chebyshev_T(ZZ(10)**6, RR('0.1'))) == '0.636384327171504'
+assert abs(gen_legendre_P.eval_gen_poly(1, 1, RR('0.5')) - RR('-0.866025403784439')) < RR('1e-14')
+assert repr(gen_legendre_Q(2, 1, ComplexField(70)(3))) == '-39.985946443425296223 + 0.016511473614919329585*I'
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

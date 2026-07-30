@@ -40731,3 +40731,47 @@ diff --git a/src/sage/functions/gamma.py b/src/sage/functions/gamma.py
 @@ -711 +711 @@ def gamma(a, *args, **kwds):
 -        sage: t.prec()                                                                  # needs sage.rings.real_mpfr
 +        sage: t.prec()
+diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogonal_polys.py
+--- a/src/sage/functions/orthogonal_polys.py
++++ b/src/sage/functions/orthogonal_polys.py
+@@ -611,2 +611,2 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: RR2 = RealField(5)                                                    # needs sage.rings.real_mpfr
+-            sage: chebyshev_T(100000, RR2(2))                                           # needs sage.rings.real_mpfr
++            sage: RR2 = RealField(5)
++            sage: chebyshev_T(100000, RR2(2))
+@@ -754 +754 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: # needs sage.rings.real_mpfr
++            sage:
+@@ -763 +763 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T(1/2, 0)
++            sage: chebyshev_T(1/2, 0)                                                   # needs sage.symbolic
+@@ -765 +765 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T(1/2, 3/2)
++            sage: chebyshev_T(1/2, 3/2)                                                 # needs sage.symbolic
+@@ -774 +774 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T(1234.5, RDF(2.1))                                         # needs sage.rings.real_mpfr
++            sage: chebyshev_T(1234.5, RDF(2.1))
+@@ -776 +776 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T(1234.5, I)                                                # needs sage.rings.real_mpfr sage.symbolic
++            sage: chebyshev_T(1234.5, I)                                                # needs sage.symbolic
+@@ -782 +782 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T._evalf_(10^6, 0.1)                                        # needs sage.rings.real_mpfr
++            sage: chebyshev_T._evalf_(10^6, 0.1)
+@@ -787 +787 @@ class Func_chebyshev_T(GinacFunction):
+-            sage: chebyshev_T(10^6, 0.1)                                                # needs sage.rings.real_mpfr
++            sage: chebyshev_T(10^6, 0.1)
+@@ -1153 +1153 @@ class Func_chebyshev_U(GinacFunction):
+-            sage: chebyshev_U._evalf_(1.5, Mod(8,9))                                    # needs sage.rings.real_mpfr
++            sage: chebyshev_U._evalf_(1.5, Mod(8,9))
+@@ -1683 +1683 @@ class Function_gen_legendre_P(BuiltinFunction):
+-        sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5)  # abs tol 1e-14                  # needs sage.rings.real_mpfr
++        sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5)  # abs tol 1e-14
+@@ -1837 +1837 @@ class Function_gen_legendre_P(BuiltinFunction):
+-            sage: gen_legendre_P(5/2, 2, ComplexField(70)(1+I))                         # needs sage.rings.real_mpfr sage.symbolic
++            sage: gen_legendre_P(5/2, 2, ComplexField(70)(1+I))                         # needs sage.symbolic
+@@ -1973 +1973 @@ class Function_gen_legendre_Q(BuiltinFunction):
+-            sage: gen_legendre_Q(2, 1, ComplexField(70)(3))                             # needs sage.rings.real_mpfr
++            sage: gen_legendre_Q(2, 1, ComplexField(70)(3))
+@@ -2302 +2302 @@ def ultraspherical(n, a, x):
+-        sage: ultraspherical(5, 9/10, RealField(100)(pi))                               # needs sage.rings.real_mpfr
++        sage: ultraspherical(5, 9/10, RealField(100)(pi))

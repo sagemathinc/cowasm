@@ -1988,11 +1988,12 @@ for args in (
     else:
         raise AssertionError('non-integral Gaunt inputs were accepted')
 print('sagelite-node-ok real Wigner evaluation smoke')"
-run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
 from sage.functions.gamma import gamma, gamma_inc_lower
+from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U, gen_legendre_P, gen_legendre_Q
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField
@@ -2097,6 +2098,27 @@ gamma_100 = gamma(RealField(100)('2.5'))
 assert repr(gamma_100) == '1.3293403881791370204736256125'
 assert gamma_100.parent().precision() == 100
 assert RealField(1024).precision() == 1024
+assert repr(chebyshev_T._evalf_(10, 3)) == '2.26195370000000e7'
+assert repr(chebyshev_T._evalf_(10, 3, parent=RealField(75))) == '2.261953700000000000000e7'
+assert repr(chebyshev_T._evalf_(5, RR('0.3'))) == '0.998880000000000'
+for function in (chebyshev_T, chebyshev_U):
+    try:
+        function._evalf_(RR('1.5'), Mod(8, 9))
+    except TypeError as error:
+        assert str(error) == f'cannot evaluate {function} with parent Ring of integers modulo 9'
+    else:
+        raise AssertionError(f'{function} accepted a modular argument')
+assert repr(chebyshev_T(RR('1234.5'), RDF('2.1'))) == '5.48174256255782e735'
+try:
+    chebyshev_T._evalf_(ZZ(10)**6, RR('0.1'))
+except Exception as error:
+    assert type(error).__name__ == 'NoConvergence'
+    assert str(error) == 'Hypergeometric series converges too slowly. Try increasing maxterms.'
+else:
+    raise AssertionError('large Chebyshev evaluation unexpectedly converged')
+assert repr(chebyshev_T(ZZ(10)**6, RR('0.1'))) == '0.636384327171504'
+assert abs(gen_legendre_P.eval_gen_poly(1, 1, RR('0.5')) - RR('-0.866025403784439')) < RR('1e-14')
+assert repr(gen_legendre_Q(2, 1, ComplexField(70)(3))) == '-39.985946443425296223 + 0.016511473614919329585*I'
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3272,7 +3294,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=298
+electron_manifest_schema_version=299
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3430,6 +3452,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-nth-r
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exponential-integrals-v268"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-bessel-evaluation-v269"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-gamma-evaluation-v270"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-orthogonal-polynomial-evaluation-v271"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3555,6 +3578,7 @@ electron_required_paths=(
   "site-packages/sage/functions/bessel.py"
   "site-packages/sage/functions/exp_integral.py"
   "site-packages/sage/functions/gamma.py"
+  "site-packages/sage/functions/orthogonal_polys.py"
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so"
   "site-packages/sage/features/sagemath.py"
   "site-packages/sage/categories/__init__.py"
