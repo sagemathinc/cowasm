@@ -40550,3 +40550,21 @@ diff --git a/src/sage/functions/wigner.py b/src/sage/functions/wigner.py
 @@ -619 +619 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 -        sage: gaunt(1,0,1,1.1,0,-1.1)                                                   # needs sage.rings.real_mpfr
 +        sage: gaunt(1,0,1,1.1,0,-1.1)
+diff --git a/src/sage/combinat/words/word_generators.py b/src/sage/combinat/words/word_generators.py
+--- a/src/sage/combinat/words/word_generators.py
++++ b/src/sage/combinat/words/word_generators.py
+@@ -776 +776 @@ class WordGenerator:
+-            sage: words.CharacteristicSturmianWord(4/5)                                 # needs sage.rings.real_mpfr
++            sage: words.CharacteristicSturmianWord(4/5)
+@@ -778 +778 @@ class WordGenerator:
+-            sage: words.CharacteristicSturmianWord(5/14)                                # needs sage.rings.real_mpfr
++            sage: words.CharacteristicSturmianWord(5/14)
+@@ -789 +789 @@ class WordGenerator:
+-            sage: F = words.CharacteristicSturmianWord(cf()); F                         # needs sage.rings.real_mpfr
++            sage: F = words.CharacteristicSturmianWord(cf()); F
+@@ -793 +793 @@ class WordGenerator:
+-            sage: F[:10000] == Fib[:10000]                                              # needs sage.rings.real_mpfr
++            sage: F[:10000] == Fib[:10000]
+@@ -798 +798 @@ class WordGenerator:
+-            sage: words.CharacteristicSturmianWord(cf(), 'rs')                          # needs sage.rings.real_mpfr
++            sage: words.CharacteristicSturmianWord(cf(), 'rs')

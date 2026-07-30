@@ -1724,12 +1724,25 @@ assert repr(result) == 'word: 1222353587'
 assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
 print('sagelite-node-ok incompatible word concatenation delivery smoke')"
 run_node_import "real characteristic Sturmian factor smoke" "import sage.all
+from sage.all import QQ
 from sage.combinat.words.word_generators import words
 from sage.rings.real_mpfr import RealField
 slope = RealField(200)('0.31415926535897932384626433832795028841971693993751')
 word = words.CharacteristicSturmianWord(slope)[:100]
 assert len(word) == 100
 assert word.is_sturmian_factor()
+assert repr(words.CharacteristicSturmianWord(QQ(4) / 5)) == 'word: 11110'
+assert repr(words.CharacteristicSturmianWord(QQ(5) / 14)) == 'word: 01001001001001'
+def cf():
+    yield 0
+    yield 2
+    while True:
+        yield 1
+F = words.CharacteristicSturmianWord(cf())
+Fib = words.FibonacciWord()
+assert repr(F) == 'word: 0100101001001010010100100101001001010010...'
+assert F[:10000] == Fib[:10000]
+assert repr(words.CharacteristicSturmianWord(cf(), 'rs')) == 'word: rsrrsrsrrsrrsrsrrsrsrrsrrsrsrrsrrsrsrrsr...'
 print('sagelite-node-ok real characteristic Sturmian factor smoke')"
 run_node_import "real trigonometric evaluation smoke" "import sage.all
 from sage.functions.trig import arccos, arcsin, tan
@@ -3169,7 +3182,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=289
+electron_manifest_schema_version=290
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3318,6 +3331,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-f
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exp-lambert-evaluation-v259"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-real-methods-v260"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-wigner-evaluation-v261"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-characteristic-sturmian-construction-v262"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
