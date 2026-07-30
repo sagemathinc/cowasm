@@ -41133,3 +41133,9 @@ diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
 @@ -6049 +6049 @@ def _key_complex_for_display(a):
 -        sage: key_c(CC(5, 5))                                                           # needs sage.rings.real_mpfr
 +        sage: key_c(CC(5, 5))
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -366 +366 @@ class PolynomialRing_general(UniqueRepresentation, ParentWithGens):
+-            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
++            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])
