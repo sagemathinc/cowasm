@@ -40119,3 +40119,9 @@ diff --git a/src/sage/matrix/docs.py b/src/sage/matrix/docs.py
 @@ -300 +300 @@
 -    sage: A = matrix(RR,2,[1,10,3.5,2])                                             # needs sage.rings.real_mpfr
 +    sage: A = matrix(RR,2,[1,10,3.5,2])
+diff --git a/src/sage/combinat/path_tableaux/frieze.py b/src/sage/combinat/path_tableaux/frieze.py
+--- a/src/sage/combinat/path_tableaux/frieze.py
++++ b/src/sage/combinat/path_tableaux/frieze.py
+@@ -422 +422 @@
+-            sage: fp.change_ring(RealField())                                           # needs sage.rings.real_mpfr
++            sage: fp.change_ring(RealField())

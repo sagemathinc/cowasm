@@ -479,6 +479,21 @@ assert B == A
 assert B.is_mutable()
 `);
     console.log("sagelite-electron-ok immutable real matrix copy smoke");
+    console.log("sagelite-electron-start frieze real field change-ring smoke");
+    await python.exec(String.raw`
+from sage.combinat.path_tableaux.frieze import FriezePattern
+from sage.rings.real_mpfr import RealField
+
+frieze = FriezePattern([1, 2, 7, 5, 3, 7, 4, 1]).change_ring(RealField())
+assert repr(frieze) == (
+    '[0.000000000000000, 1.00000000000000, 2.00000000000000, '
+    '7.00000000000000, 5.00000000000000, 3.00000000000000, '
+    '7.00000000000000, 4.00000000000000, 1.00000000000000, '
+    '0.000000000000000]'
+)
+assert frieze.parent().base_ring() is frieze[0].parent()
+`);
+    console.log("sagelite-electron-ok frieze real field change-ring smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
