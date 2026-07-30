@@ -40253,3 +40253,14 @@ diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/fi
 @@ -5666 +5666 @@
 -            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()             # needs sage.rings.real_mpfr
 +            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()
+diff --git a/src/sage/functions/trig.py b/src/sage/functions/trig.py
+--- a/src/sage/functions/trig.py
++++ b/src/sage/functions/trig.py
+@@ -230 +229,0 @@
+-            sage: # needs sage.rings.real_mpfr
+@@ -549 +548 @@
+-            sage: arcsin(0.5)                                                           # needs sage.rings.real_mpfr
++            sage: arcsin(0.5)
+@@ -613 +612 @@
+-            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
++            sage: arccos(0.5)

@@ -1823,6 +1823,22 @@ assert word.is_sturmian_factor()
       "sagelite-electron-ok real characteristic Sturmian factor smoke",
     );
     console.log(
+      "sagelite-electron-start real trigonometric evaluation smoke",
+    );
+    await python.exec(String.raw`
+from sage.functions.trig import arccos, arcsin, tan
+from sage.rings.real_mpfr import RealField
+
+RR = RealField(53)
+assert repr(tan(RR('3.1415'))) == '-0.0000926535900581913'
+assert repr(tan(RR('3.1415') / 4)) == '0.999953674278156'
+assert repr(arcsin(RR('0.5'))) == '0.523598775598299'
+assert repr(arccos(RR('0.5'))) == '1.04719755119660'
+`);
+    console.log(
+      "sagelite-electron-ok real trigonometric evaluation smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
