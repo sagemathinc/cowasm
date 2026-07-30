@@ -558,6 +558,20 @@ assert repr(points) == (
 )
 `);
     console.log("sagelite-electron-ok affine real point-set smoke");
+    console.log("sagelite-electron-start affine complex plane smoke");
+    await python.exec(String.raw`
+from sage.all import CC
+from sage.schemes.affine.affine_space import AffineSpace
+
+complex_field = CC(0).parent()
+plane = AffineSpace(complex_field, 2, names=('x', 'y'))
+assert repr(plane) == (
+    'Affine Space of dimension 2 over Complex Field with 53 bits of precision'
+)
+assert tuple(map(str, plane.gens())) == ('x', 'y')
+assert plane.base_ring() is complex_field
+`);
+    console.log("sagelite-electron-ok affine complex plane smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

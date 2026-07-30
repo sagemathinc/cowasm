@@ -40152,3 +40152,9 @@ diff --git a/src/sage/schemes/generic/scheme.py b/src/sage/schemes/generic/schem
 @@ -195 +195 @@
 -            sage: A(RR)                                                                 # needs sage.rings.real_mpfr
 +            sage: A(RR)
+diff --git a/src/sage/schemes/affine/affine_homset.py b/src/sage/schemes/affine/affine_homset.py
+--- a/src/sage/schemes/affine/affine_homset.py
++++ b/src/sage/schemes/affine/affine_homset.py
+@@ -239 +239 @@
+-            sage: A.<x,y> = AffineSpace(CC, 2)                                          # needs sage.rings.real_mpfr
++            sage: A.<x,y> = AffineSpace(CC, 2)
