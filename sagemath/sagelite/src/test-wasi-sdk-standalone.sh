@@ -2342,6 +2342,25 @@ assert E is not D
 assert set(E.items()) == set(D.items())
 assert E[None] is complex_field
 print('sagelite-node-ok weak dictionary complex-field copy smoke')"
+run_node_import "formal sums over real fields smoke" "from sage.all import Integer, RR
+from sage.misc.latex import latex
+from sage.repl.preparse import preparse
+from sage.structure.formal_sum import FormalSum, FormalSums
+formal_sum = eval(
+    preparse('FormalSum([(1,2), (5, 8/9), (-3, 7)])'),
+    {
+        'FormalSum': FormalSum,
+        'Integer': Integer,
+    },
+)
+assert latex(formal_sum) == r'2 + 5\cdot \frac{8}{9} - 3\cdot 7'
+real_field = RR(0).parent()
+action = FormalSums(real_field).get_action(real_field)
+assert repr(action) == (
+    'Right scalar multiplication by Real Field with 53 bits of precision '
+    'on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision'
+)
+print('sagelite-node-ok formal sums over real fields smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2747,7 +2766,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=262
+electron_manifest_schema_version=263
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2869,6 +2888,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-immutable-real-matrix-copy-v232"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-frieze-real-field-change-ring-v233"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-dictionary-complex-copy-v234"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-formal-sums-real-field-v235"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

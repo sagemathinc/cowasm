@@ -511,6 +511,29 @@ assert set(E.items()) == set(D.items())
 assert E[None] is complex_field
 `);
     console.log("sagelite-electron-ok weak dictionary complex-field copy smoke");
+    console.log("sagelite-electron-start formal sums over real fields smoke");
+    await python.exec(String.raw`
+from sage.all import Integer, RR
+from sage.misc.latex import latex
+from sage.repl.preparse import preparse
+from sage.structure.formal_sum import FormalSum, FormalSums
+
+formal_sum = eval(
+    preparse('FormalSum([(1,2), (5, 8/9), (-3, 7)])'),
+    {
+        'FormalSum': FormalSum,
+        'Integer': Integer,
+    },
+)
+assert latex(formal_sum) == r'2 + 5\cdot \frac{8}{9} - 3\cdot 7'
+real_field = RR(0).parent()
+action = FormalSums(real_field).get_action(real_field)
+assert repr(action) == (
+    'Right scalar multiplication by Real Field with 53 bits of precision '
+    'on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision'
+)
+`);
+    console.log("sagelite-electron-ok formal sums over real fields smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

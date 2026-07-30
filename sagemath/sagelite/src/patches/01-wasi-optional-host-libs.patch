@@ -40131,3 +40131,12 @@ diff --git a/src/sage/misc/weak_dict.pyx b/src/sage/misc/weak_dict.pyx
 @@ -368 +368 @@
 -            sage: D[None] = CC                                                          # needs sage.rings.real_mpfr
 +            sage: D[None] = CC
+diff --git a/src/sage/structure/formal_sum.py b/src/sage/structure/formal_sum.py
+--- a/src/sage/structure/formal_sum.py
++++ b/src/sage/structure/formal_sum.py
+@@ -204 +204 @@
+-            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))                          # needs sage.rings.real_mpfr
++            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
+@@ -442 +442 @@
+-            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
++            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
