@@ -1050,6 +1050,21 @@ assert type(real(a)) is RealLiteral
 assert real(a) is a
 `);
     console.log("sagelite-electron-ok real-part literal semantics smoke");
+    console.log(
+      "sagelite-electron-start symbolic binomial internal evaluation smoke",
+    );
+    await python.exec(String.raw`
+from sage.functions.other import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealNumber, create_RealNumber
+
+value = binomial._eval_(create_RealNumber('5.'), ZZ(3))
+assert value == create_RealNumber('10.')
+assert type(value) is RealNumber
+`);
+    console.log(
+      "sagelite-electron-ok symbolic binomial internal evaluation smoke",
+    );
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing

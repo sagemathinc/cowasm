@@ -1388,6 +1388,13 @@ assert str(real(a)) == '2.50000000000000'
 assert type(real(a)) is RealLiteral
 assert real(a) is a
 print('sagelite-node-ok real-part literal semantics smoke')"
+run_node_import "symbolic binomial internal evaluation smoke" "from sage.functions.other import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealNumber, create_RealNumber
+value = binomial._eval_(create_RealNumber('5.'), ZZ(3))
+assert value == create_RealNumber('10.')
+assert type(value) is RealNumber
+print('sagelite-node-ok symbolic binomial internal evaluation smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3483,7 +3490,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=308
+electron_manifest_schema_version=309
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3651,6 +3658,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-funct
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-semantics-v278"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-sparse-polynomial-semantics-v279"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-part-literal-semantics-v280"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-symbolic-binomial-v281"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -5345,6 +5353,37 @@ if [ "$doctest_module_global_exclusion_counts" != "2|0|0" ]; then
   cat "$doctest_module_global_exclusion_log" >&2
   sqlite3 "$doctest_module_global_exclusion_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t tested-module global exclusion smoke wrote unexpected SQLite counts: $doctest_module_global_exclusion_counts"
+fi
+doctest_module_global_override_db="$probe_dir/sagelite-doctest-module-global-override.sqlite3"
+doctest_module_global_override_log="$dist_dir/doctest-module-global-override.log"
+doctest_module_global_override_file="$build_dir/src/sage/functions/other.py"
+doctest_module_global_override_line="$(grep -nF 'sage: type(binomial._eval_(5., 3))' "$doctest_module_global_override_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$build_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_module_global_override_line" \
+      --sqlite "$doctest_module_global_override_db" \
+      "$doctest_module_global_override_file" \
+      >"$doctest_module_global_override_log" 2>&1
+doctest_module_global_override_status=$?
+set -e
+if [ "$doctest_module_global_override_status" -eq 124 ]; then
+  tail -120 "$doctest_module_global_override_log" >&2
+  record_blocker "sagelite-blocked: sage -t tested-module global override smoke timed out after $node_import_timeout; see $doctest_module_global_override_log for the first runtime blocker."
+fi
+if [ "$doctest_module_global_override_status" -ne 0 ]; then
+  tail -120 "$doctest_module_global_override_log" >&2
+  sqlite3 "$doctest_module_global_override_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tested-module global override smoke failed; see $doctest_module_global_override_log for the first runtime blocker."
+fi
+doctest_module_global_override_count="$(sqlite3 "$doctest_module_global_override_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_module_global_override_line and source = 'type(binomial._eval_(5., 3))';")"
+if [ "$doctest_module_global_override_count" != "1" ]; then
+  cat "$doctest_module_global_override_log" >&2
+  sqlite3 "$doctest_module_global_override_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tested-module global override smoke did not prefer the symbolic binomial object."
 fi
 doctest_namespace_leak_db="$probe_dir/sagelite-doctest-namespace-leak.sqlite3"
 doctest_namespace_leak_log="$dist_dir/doctest-namespace-leak.log"

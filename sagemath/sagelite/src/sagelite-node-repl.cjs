@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 155;
+const doctestRunnerVersion = 156;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2255,6 +2255,13 @@ __cowasm_tested_module_global_exclusions = {
     )),
 }
 
+# A tested module's internal callable may intentionally differ from the
+# convenience callable exported by sage.all.  Override only the explicit
+# collisions whose doctests exercise that internal API.
+__cowasm_tested_module_global_overrides = {
+    "sage.functions.other": frozenset(("binomial",)),
+}
+
 
 def __cowasm_seed_tested_module_doctest_globals(namespace, module_name):
     if module_name == "sage.graphs.graph_coloring":
@@ -2298,9 +2305,15 @@ def __cowasm_namespace(filename):
             excluded_names = __cowasm_tested_module_global_exclusions.get(
                 module_name, ()
             )
+            override_names = __cowasm_tested_module_global_overrides.get(
+                module_name, ()
+            )
             for name, value in vars(module).items():
                 if name not in excluded_names:
-                    namespace.setdefault(name, value)
+                    if name in override_names:
+                        namespace[name] = value
+                    else:
+                        namespace.setdefault(name, value)
             __cowasm_seed_tested_module_doctest_globals(namespace, module_name)
             __cowasm_resolve_core_lazy_namespace(namespace)
     namespace["__name__"] = "__main__"

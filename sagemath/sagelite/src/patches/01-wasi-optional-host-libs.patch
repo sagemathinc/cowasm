@@ -41043,3 +41043,6 @@ diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
              2.50000000000000
 -            sage: type(real(a))                                                         # needs sage.rings.real_mpfr
 +            sage: type(real(a))
+@@ -1736 +1736 @@ class Function_binomial(GinacFunction):
+-            sage: type(binomial._eval_(5., 3))                                          # needs sage.rings.real_mpfr
++            sage: type(binomial._eval_(5., 3))
