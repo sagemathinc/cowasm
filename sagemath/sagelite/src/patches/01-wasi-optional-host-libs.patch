@@ -40158,3 +40158,9 @@ diff --git a/src/sage/schemes/affine/affine_homset.py b/src/sage/schemes/affine/
 @@ -239 +239 @@
 -            sage: A.<x,y> = AffineSpace(CC, 2)                                          # needs sage.rings.real_mpfr
 +            sage: A.<x,y> = AffineSpace(CC, 2)
+diff --git a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/product_projective/space.py
+--- a/src/sage/schemes/product_projective/space.py
++++ b/src/sage/schemes/product_projective/space.py
+@@ -978 +978 @@
+-            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')                          # needs sage.rings.real_mpfr
++            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')

@@ -572,6 +572,22 @@ assert tuple(map(str, plane.gens())) == ('x', 'y')
 assert plane.base_ring() is complex_field
 `);
     console.log("sagelite-electron-ok affine complex plane smoke");
+    console.log("sagelite-electron-start product projective complex space smoke");
+    await python.exec(String.raw`
+from sage.all import CC
+from sage.schemes.product_projective.space import ProductProjectiveSpaces
+
+complex_field = CC(0).parent()
+space = ProductProjectiveSpaces([1, 2], complex_field, 'z')
+assert repr(space) == (
+    'Product of projective spaces P^1 x P^2 '
+    'over Complex Field with 53 bits of precision'
+)
+assert tuple(map(str, space.gens())) == ('z0', 'z1', 'z2', 'z3', 'z4')
+assert tuple(space.dimension_relative_components()) == (1, 2)
+assert space.base_ring() is complex_field
+`);
+    console.log("sagelite-electron-ok product projective complex space smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
