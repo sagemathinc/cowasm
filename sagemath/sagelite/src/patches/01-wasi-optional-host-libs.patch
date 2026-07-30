@@ -40568,3 +40568,23 @@ diff --git a/src/sage/combinat/words/word_generators.py b/src/sage/combinat/word
 @@ -798 +798 @@ class WordGenerator:
 -            sage: words.CharacteristicSturmianWord(cf(), 'rs')                          # needs sage.rings.real_mpfr
 +            sage: words.CharacteristicSturmianWord(cf(), 'rs')
+diff --git a/src/sage/categories/magmas.py b/src/sage/categories/magmas.py
+--- a/src/sage/categories/magmas.py
++++ b/src/sage/categories/magmas.py
+@@ -645 +645 @@ class Magmas(Category_singleton):
+-                        sage: cartesian_product([QQ, ZZ, RR]).one()                     # needs sage.rings.real_mpfr
++                        sage: cartesian_product([QQ, ZZ, RR]).one()
+@@ -672,2 +672,2 @@ class Magmas(Category_singleton):
+-                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])                 # needs sage.rings.real_mpfr
+-                        sage: c = C([2,-1,2,2]); c                                      # needs sage.rings.real_mpfr
++                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
++                        sage: c = C([2,-1,2,2]); c
+@@ -675 +675 @@ class Magmas(Category_singleton):
+-                        sage: ~c                                                        # needs sage.rings.real_mpfr
++                        sage: ~c
+@@ -681 +681 @@ class Magmas(Category_singleton):
+-                        sage: ~C([0,2,2,2])                                             # needs sage.rings.real_mpfr
++                        sage: ~C([0,2,2,2])
+@@ -686 +686 @@ class Magmas(Category_singleton):
+-                        sage: ~C([2,2,2,2])                                             # needs sage.rings.real_mpfr
++                        sage: ~C([2,2,2,2])

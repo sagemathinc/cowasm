@@ -2172,7 +2172,7 @@ for args in (
     );
     await python.exec(String.raw`
 import sage.rings.abc
-from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
 from sage.rings.real_mpfr import RealField, RealField_class
@@ -2196,6 +2196,18 @@ A = cartesian_product([ZZ, RR])
 factors = A((1, RR('1.23'))).cartesian_factors()
 assert factors == (ZZ(1), RR('1.23'))
 assert type(factors) is tuple
+assert repr(cartesian_product([QQ, ZZ, RR]).one()) == '(1, 1, 1.00000000000000)'
+C = cartesian_product([QQ, ZZ, RR, GF(5)])
+c = C([2, -1, 2, 2])
+assert repr(c) == '(2, -1, 2.00000000000000, 2)'
+assert repr(~c) == '(1/2, -1, 0.500000000000000, 3)'
+try:
+    ~C([0, 2, 2, 2])
+except ZeroDivisionError as error:
+    assert str(error) == 'rational division by zero'
+else:
+    raise AssertionError('noninvertible Cartesian product element was accepted')
+assert repr(~C([2, 2, 2, 2])) == '(1/2, 1/2, 0.500000000000000, 3)'
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

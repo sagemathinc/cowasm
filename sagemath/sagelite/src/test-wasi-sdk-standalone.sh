@@ -1988,7 +1988,7 @@ for args in (
     else:
         raise AssertionError('non-integral Gaunt inputs were accepted')
 print('sagelite-node-ok real Wigner evaluation smoke')"
-run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr import RealField
@@ -2007,6 +2007,18 @@ A = cartesian_product([ZZ, RR])
 factors = A((1, RR('1.23'))).cartesian_factors()
 assert factors == (ZZ(1), RR('1.23'))
 assert type(factors) is tuple
+assert repr(cartesian_product([QQ, ZZ, RR]).one()) == '(1, 1, 1.00000000000000)'
+C = cartesian_product([QQ, ZZ, RR, GF(5)])
+c = C([2, -1, 2, 2])
+assert repr(c) == '(2, -1, 2.00000000000000, 2)'
+assert repr(~c) == '(1/2, -1, 0.500000000000000, 3)'
+try:
+    ~C([0, 2, 2, 2])
+except ZeroDivisionError as error:
+    assert str(error) == 'rational division by zero'
+else:
+    raise AssertionError('noninvertible Cartesian product element was accepted')
+assert repr(~C([2, 2, 2, 2])) == '(1/2, 1/2, 0.500000000000000, 3)'
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3182,7 +3194,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=290
+electron_manifest_schema_version=291
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3332,6 +3344,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exp-l
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-real-methods-v260"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-wigner-evaluation-v261"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-characteristic-sturmian-construction-v262"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cartesian-magma-real-inversion-v263"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
