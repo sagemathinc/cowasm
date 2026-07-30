@@ -604,6 +604,22 @@ assert ring.base_ring() is complex_field
 assert loads(ring.dumps()) == ring
 `);
     console.log("sagelite-electron-ok complex Laurent series pickle smoke");
+    console.log("sagelite-electron-start complex power series pickle smoke");
+    await python.exec(String.raw`
+from sage.all import CC, PowerSeriesRing
+from sage.misc.persist import loads
+
+complex_field = CC(0).parent()
+ring = PowerSeriesRing(complex_field, 'q')
+generator = ring.gen()
+assert repr(ring) == (
+    'Power Series Ring in q over Complex Field with 53 bits of precision'
+)
+assert generator.parent() is ring
+assert ring.base_ring() is complex_field
+assert loads(generator.dumps()) == generator
+`);
+    console.log("sagelite-electron-ok complex power series pickle smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

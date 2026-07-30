@@ -2411,6 +2411,18 @@ assert repr(ring.gen()) == '1.00000000000000*q'
 assert ring.base_ring() is complex_field
 assert loads(ring.dumps()) == ring
 print('sagelite-node-ok complex Laurent series pickle smoke')"
+run_node_import "complex power series pickle smoke" "from sage.all import CC, PowerSeriesRing
+from sage.misc.persist import loads
+complex_field = CC(0).parent()
+ring = PowerSeriesRing(complex_field, 'q')
+generator = ring.gen()
+assert repr(ring) == (
+    'Power Series Ring in q over Complex Field with 53 bits of precision'
+)
+assert generator.parent() is ring
+assert ring.base_ring() is complex_field
+assert loads(generator.dumps()) == generator
+print('sagelite-node-ok complex power series pickle smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2816,7 +2828,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=268
+electron_manifest_schema_version=269
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2944,6 +2956,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-affine-rea
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-affine-complex-plane-v238"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-product-projective-complex-space-v239"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-laurent-series-pickle-v240"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-power-series-pickle-v241"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

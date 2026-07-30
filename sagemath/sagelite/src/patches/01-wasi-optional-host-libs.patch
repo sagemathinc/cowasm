@@ -40174,3 +40174,13 @@ diff --git a/src/sage/rings/laurent_series_ring.py b/src/sage/rings/laurent_seri
 -        sage: loads(K.dumps()) == K                                                     # needs sage.rings.real_mpfr
 +        sage: loads(K.dumps()) == K
          True
+diff --git a/src/sage/rings/power_series_poly.pyx b/src/sage/rings/power_series_poly.pyx
+--- a/src/sage/rings/power_series_poly.pyx
++++ b/src/sage/rings/power_series_poly.pyx
+@@ -24,4 +24,4 @@
+-            sage: R.<q> = PowerSeriesRing(CC); R                                        # needs sage.rings.real_mpfr
++            sage: R.<q> = PowerSeriesRing(CC); R
+             Power Series Ring in q over Complex Field with 53 bits of precision
+-            sage: loads(q.dumps()) == q                                                 # needs sage.rings.real_mpfr
++            sage: loads(q.dumps()) == q
+             True
