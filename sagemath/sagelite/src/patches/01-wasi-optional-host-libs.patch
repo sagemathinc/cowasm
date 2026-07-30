@@ -41103,3 +41103,12 @@ diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
 @@ -1083 +1083 @@ class Function_arg(GinacFunction):
 -            sage: arg(3.0r)                                                             # needs sage.rings.real_mpfr
 +            sage: arg(3.0r)
+diff --git a/src/sage/schemes/generic/divisor_group.py b/src/sage/schemes/generic/divisor_group.py
+--- a/src/sage/schemes/generic/divisor_group.py
++++ b/src/sage/schemes/generic/divisor_group.py
+@@ -216 +216 @@ class DivisorGroup_generic(UniqueRepresentation, Parent):
+-            sage: A.<x, y> = AffineSpace(2, CC)                                         # needs sage.rings.real_mpfr
++            sage: A.<x, y> = AffineSpace(2, CC)
+@@ -236 +236 @@ class DivisorGroup_generic(UniqueRepresentation, Parent):
+-            sage: A.<x, y> = AffineSpace(2, CC)                                         # needs sage.rings.real_mpfr
++            sage: A.<x, y> = AffineSpace(2, CC)
