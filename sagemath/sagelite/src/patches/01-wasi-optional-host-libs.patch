@@ -40264,3 +40264,33 @@ diff --git a/src/sage/functions/trig.py b/src/sage/functions/trig.py
 @@ -613 +612 @@
 -            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
 +            sage: arccos(0.5)
+diff --git a/src/sage/functions/hyperbolic.py b/src/sage/functions/hyperbolic.py
+--- a/src/sage/functions/hyperbolic.py
++++ b/src/sage/functions/hyperbolic.py
+@@ -56 +56 @@
+-            sage: sinh(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: sinh(3.1415)
+@@ -94 +94 @@
+-            sage: cosh(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: cosh(3.1415)
+@@ -132 +132 @@
+-            sage: tanh(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: tanh(3.1415)
+@@ -134 +134 @@
+-            sage: tan(3.1415/4)                                                         # needs sage.rings.real_mpfr
++            sage: tan(3.1415/4)
+@@ -200 +200 @@
+-            sage: coth(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: coth(3.1415)
+@@ -259 +259 @@
+-            sage: sech(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: sech(3.1415)
+@@ -316 +316 @@
+-            sage: csch(3.1415)                                                          # needs sage.rings.real_mpfr
++            sage: csch(3.1415)
+@@ -378 +378 @@
+-            sage: asinh(0.5)                                                            # needs sage.rings.real_mpfr
++            sage: asinh(0.5)
+@@ -530 +530 @@
+-            sage: atanh(0.5)                                                            # needs sage.rings.real_mpfr
++            sage: atanh(0.5)

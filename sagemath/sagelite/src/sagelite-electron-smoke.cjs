@@ -1839,6 +1839,29 @@ assert repr(arccos(RR('0.5'))) == '1.04719755119660'
       "sagelite-electron-ok real trigonometric evaluation smoke",
     );
     console.log(
+      "sagelite-electron-start real hyperbolic evaluation smoke",
+    );
+    await python.exec(String.raw`
+from sage.functions.hyperbolic import asinh, atanh, cosh, coth, csch, sech, sinh, tanh
+from sage.functions.trig import tan
+from sage.rings.real_mpfr import RealField
+
+RR = RealField(53)
+x = RR('3.1415')
+assert repr(sinh(x)) == '11.5476653707437'
+assert repr(cosh(x)) == '11.5908832931176'
+assert repr(tanh(x)) == '0.996271386633702'
+assert repr(tan(x / 4)) == '0.999953674278156'
+assert repr(coth(x)) == '1.00374256795520'
+assert repr(sech(x)) == '0.0862747018248192'
+assert repr(csch(x)) == '0.0865975907592133'
+assert repr(asinh(RR('0.5'))) == '0.481211825059603'
+assert repr(atanh(RR('0.5'))) == '0.549306144334055'
+`);
+    console.log(
+      "sagelite-electron-ok real hyperbolic evaluation smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

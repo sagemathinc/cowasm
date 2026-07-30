@@ -1740,6 +1740,22 @@ assert repr(tan(RR('3.1415') / 4)) == '0.999953674278156'
 assert repr(arcsin(RR('0.5'))) == '0.523598775598299'
 assert repr(arccos(RR('0.5'))) == '1.04719755119660'
 print('sagelite-node-ok real trigonometric evaluation smoke')"
+run_node_import "real hyperbolic evaluation smoke" "import sage.all
+from sage.functions.hyperbolic import asinh, atanh, cosh, coth, csch, sech, sinh, tanh
+from sage.functions.trig import tan
+from sage.rings.real_mpfr import RealField
+RR = RealField(53)
+x = RR('3.1415')
+assert repr(sinh(x)) == '11.5476653707437'
+assert repr(cosh(x)) == '11.5908832931176'
+assert repr(tanh(x)) == '0.996271386633702'
+assert repr(tan(x / 4)) == '0.999953674278156'
+assert repr(coth(x)) == '1.00374256795520'
+assert repr(sech(x)) == '0.0862747018248192'
+assert repr(csch(x)) == '0.0865975907592133'
+assert repr(asinh(RR('0.5'))) == '0.481211825059603'
+assert repr(atanh(RR('0.5'))) == '0.549306144334055'
+print('sagelite-node-ok real hyperbolic evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2934,7 +2950,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=277
+electron_manifest_schema_version=278
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3071,6 +3087,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-f
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fraction-field-reduction-v247"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-real-sturmian-factor-v248"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-trigonometric-evaluation-v249"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-hyperbolic-evaluation-v250"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
