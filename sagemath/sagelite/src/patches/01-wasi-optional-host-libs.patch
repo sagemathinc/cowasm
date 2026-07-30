@@ -41139,3 +41139,9 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
 @@ -366 +366 @@ class PolynomialRing_general(UniqueRepresentation, ParentWithGens):
 -            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
 +            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -2049 +2049 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative):
+-            sage: PolynomialRing_integral_domain._implementation_names_impl(None, ZZ, False)
++            sage: PolynomialRing_integral_domain._implementation_names_impl(None, ZZ, False)                       # needs sage.libs.flint
