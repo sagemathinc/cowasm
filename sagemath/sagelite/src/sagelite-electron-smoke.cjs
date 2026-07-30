@@ -665,6 +665,36 @@ assert f.domain() is real_field
 assert f.codomain() is QQ
 `);
     console.log("sagelite-electron-ok real-field map slot restoration smoke");
+    console.log(
+      "sagelite-electron-start poor-man map real-field composition smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import CC, RR, ZZ, factorial, sqrt
+from sage.categories.poor_man_map import PoorManMap
+
+real_field = RR(0).parent()
+complex_field = CC(0).parent()
+g = PoorManMap(factorial, domain=ZZ, codomain=ZZ)
+h = PoorManMap(sqrt, domain=real_field, codomain=complex_field)
+try:
+    g * h
+except ValueError as error:
+    assert str(error) == (
+        'the codomain Complex Field with 53 bits of precision '
+        'does not coerce into the domain Integer Ring'
+    )
+else:
+    raise AssertionError('incompatible poor-man map composition must fail')
+composition = h * g
+assert repr(composition) == (
+    'A map from Integer Ring to Complex Field with 53 bits of precision'
+)
+assert composition.domain() is ZZ
+assert composition.codomain() is complex_field
+`);
+    console.log(
+      "sagelite-electron-ok poor-man map real-field composition smoke",
+    );
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

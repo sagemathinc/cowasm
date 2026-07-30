@@ -2456,6 +2456,28 @@ assert f._repr_type_str == 'restored-map'
 assert f.domain() is real_field
 assert f.codomain() is QQ
 print('sagelite-node-ok real-field map slot restoration smoke')"
+run_node_import "poor-man map real-field composition smoke" "from sage.all import CC, RR, ZZ, factorial, sqrt
+from sage.categories.poor_man_map import PoorManMap
+real_field = RR(0).parent()
+complex_field = CC(0).parent()
+g = PoorManMap(factorial, domain=ZZ, codomain=ZZ)
+h = PoorManMap(sqrt, domain=real_field, codomain=complex_field)
+try:
+    g * h
+except ValueError as error:
+    assert str(error) == (
+        'the codomain Complex Field with 53 bits of precision '
+        'does not coerce into the domain Integer Ring'
+    )
+else:
+    raise AssertionError('incompatible poor-man map composition must fail')
+composition = h * g
+assert repr(composition) == (
+    'A map from Integer Ring to Complex Field with 53 bits of precision'
+)
+assert composition.domain() is ZZ
+assert composition.codomain() is complex_field
+print('sagelite-node-ok poor-man map real-field composition smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2861,7 +2883,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=271
+electron_manifest_schema_version=272
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2992,6 +3014,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-la
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-power-series-pickle-v241"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multivariate-power-series-real-base-extension-v242"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-map-slot-restoration-v243"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-poor-man-map-real-composition-v244"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

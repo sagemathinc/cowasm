@@ -40202,3 +40202,14 @@ diff --git a/src/sage/categories/map.pyx b/src/sage/categories/map.pyx
 @@ -448 +448 @@
 -            sage: # needs sage.rings.real_mpfr
 +            sage:
+diff --git a/src/sage/categories/poor_man_map.py b/src/sage/categories/poor_man_map.py
+--- a/src/sage/categories/poor_man_map.py
++++ b/src/sage/categories/poor_man_map.py
+@@ -204,2 +204,2 @@
+-            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)                          # needs sage.rings.real_mpfr
+-            sage: g*h                                                                   # needs sage.rings.real_mpfr
++            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)
++            sage: g*h
+@@ -210 +210 @@
+-            sage: h*g                                                                   # needs sage.rings.real_mpfr
++            sage: h*g
