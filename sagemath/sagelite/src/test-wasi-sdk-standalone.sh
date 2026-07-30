@@ -4394,6 +4394,42 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_imaginary_alias_file="$probe_dir/sagelite-doctest-imaginary-alias.py"
+doctest_imaginary_alias_db="$probe_dir/sagelite-doctest-imaginary-alias.sqlite3"
+doctest_imaginary_alias_log="$dist_dir/doctest-imaginary-alias.log"
+cat >"$doctest_imaginary_alias_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: CC(i) == I
+    True
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_imaginary_alias_db" "$doctest_imaginary_alias_file" \
+      >"$doctest_imaginary_alias_log" 2>&1
+doctest_imaginary_alias_status=$?
+set -e
+if [ "$doctest_imaginary_alias_status" -eq 124 ]; then
+  tail -120 "$doctest_imaginary_alias_log" >&2
+  record_blocker "sagelite-blocked: sage -t imaginary-alias doctest smoke timed out after $node_import_timeout; see $doctest_imaginary_alias_log for the first runtime blocker."
+fi
+if [ "$doctest_imaginary_alias_status" -ne 0 ]; then
+  tail -120 "$doctest_imaginary_alias_log" >&2
+  sqlite3 "$doctest_imaginary_alias_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t imaginary-alias doctest smoke failed; see $doctest_imaginary_alias_log for the first runtime blocker."
+fi
+doctest_imaginary_alias_count="$(sqlite3 "$doctest_imaginary_alias_db" "select count(*) from blocks where status = 'passed' and source like 'CC(i) == I%';")"
+if [ "$doctest_imaginary_alias_count" != "1" ]; then
+  cat "$doctest_imaginary_alias_log" >&2
+  sqlite3 "$doctest_imaginary_alias_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t imaginary-alias doctest smoke did not resolve the lowercase imaginary-unit alias."
+fi
 doctest_cfinite_namespace_db="$probe_dir/sagelite-doctest-cfinite-namespace.sqlite3"
 doctest_cfinite_namespace_log="$dist_dir/doctest-cfinite-namespace.log"
 doctest_cfinite_namespace_file="$build_dir/src/sage/rings/cfinite_sequence.py"

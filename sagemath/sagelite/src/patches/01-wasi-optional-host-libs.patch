@@ -40222,3 +40222,9 @@ diff --git a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/
 @@ -440 +440 @@
 -            sage: MultiFilteredVectorSpace(123, base_ring=RR)                           # needs sage.rings.real_mpfr
 +            sage: MultiFilteredVectorSpace(123, base_ring=RR)
+diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
+--- a/src/sage/functions/special.py
++++ b/src/sage/functions/special.py
+@@ -424 +424 @@
+-        sage: elliptic_j(CC(i))                                                         # needs sage.rings.real_mpfr
++        sage: elliptic_j(CC(i))                                                         # needs sage.libs.pari sage.rings.real_mpfr

@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 154;
+const doctestRunnerVersion = 155;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1293,6 +1293,7 @@ def __cowasm_resolve_core_lazy_namespace(namespace):
         "AA": ("sage.rings.qqbar", "AA"),
         "QQbar": ("sage.rings.qqbar", "QQbar"),
         "I": ("sage.rings.imaginary_unit", "I"),
+        "i": ("sage.rings.imaginary_unit", "I"),
     }
     for name, (module_name, object_name) in direct_imports.items():
         value = namespace.get(name)
