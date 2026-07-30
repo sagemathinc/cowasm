@@ -329,7 +329,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 310,
+  schemaVersion: 311,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -549,6 +549,8 @@ expectedSageliteManifest.smokeContract +=
   "-tested-module-symbolic-binomial-v281";
 expectedSageliteManifest.smokeContract +=
   "-real-complex-manifold-categories-v282";
+expectedSageliteManifest.smokeContract +=
+  "-real-argument-evaluation-v283";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

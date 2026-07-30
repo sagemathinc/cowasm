@@ -41097,3 +41097,9 @@ diff --git a/src/sage/categories/manifolds.py b/src/sage/categories/manifolds.py
 @@ -306 +305 @@ class Manifolds(Category_over_base_ring):
 -                sage: Manifolds(RR).AlmostComplex().super_categories()  # indirect doctest          # needs sage.rings.real_mpfr
 +                sage: Manifolds(RR).AlmostComplex().super_categories()  # indirect doctest
+diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
+--- a/src/sage/functions/other.py
++++ b/src/sage/functions/other.py
+@@ -1083 +1083 @@ class Function_arg(GinacFunction):
+-            sage: arg(3.0r)                                                             # needs sage.rings.real_mpfr
++            sage: arg(3.0r)

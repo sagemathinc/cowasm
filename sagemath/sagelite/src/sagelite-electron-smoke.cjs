@@ -1050,6 +1050,16 @@ assert type(real(a)) is RealLiteral
 assert real(a) is a
 `);
     console.log("sagelite-electron-ok real-part literal semantics smoke");
+    console.log("sagelite-electron-start real argument evaluation smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.functions.other import arg
+
+value = arg(float('3.0'))
+assert value == 0.0
+assert type(value) is float
+`);
+    console.log("sagelite-electron-ok real argument evaluation smoke");
     console.log(
       "sagelite-electron-start symbolic binomial internal evaluation smoke",
     );
