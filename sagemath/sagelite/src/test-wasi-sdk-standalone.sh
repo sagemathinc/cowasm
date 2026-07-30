@@ -2478,6 +2478,18 @@ assert repr(composition) == (
 assert composition.domain() is ZZ
 assert composition.codomain() is complex_field
 print('sagelite-node-ok poor-man map real-field composition smoke')"
+run_node_import "multi-filtered vector-space real-field smoke" "from sage.all import QQ, RR
+from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
+real_field = RR(0).parent()
+changed = MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(real_field)
+direct = MultiFilteredVectorSpace(123, base_ring=real_field)
+assert repr(changed) == 'Unfiltered RR^3'
+assert repr(direct) == 'Unfiltered RR^123'
+assert changed.base_ring() is real_field
+assert direct.base_ring() is real_field
+assert changed.dimension() == 3
+assert direct.dimension() == 123
+print('sagelite-node-ok multi-filtered vector-space real-field smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2883,7 +2895,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=272
+electron_manifest_schema_version=273
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3015,6 +3027,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-po
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multivariate-power-series-real-base-extension-v242"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-map-slot-restoration-v243"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-poor-man-map-real-composition-v244"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multi-filtered-vector-space-real-field-v245"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

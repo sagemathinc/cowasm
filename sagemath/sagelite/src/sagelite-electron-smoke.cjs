@@ -695,6 +695,26 @@ assert composition.codomain() is complex_field
     console.log(
       "sagelite-electron-ok poor-man map real-field composition smoke",
     );
+    console.log(
+      "sagelite-electron-start multi-filtered vector-space real-field smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import QQ, RR
+from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
+
+real_field = RR(0).parent()
+changed = MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(real_field)
+direct = MultiFilteredVectorSpace(123, base_ring=real_field)
+assert repr(changed) == 'Unfiltered RR^3'
+assert repr(direct) == 'Unfiltered RR^123'
+assert changed.base_ring() is real_field
+assert direct.base_ring() is real_field
+assert changed.dimension() == 3
+assert direct.dimension() == 123
+`);
+    console.log(
+      "sagelite-electron-ok multi-filtered vector-space real-field smoke",
+    );
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

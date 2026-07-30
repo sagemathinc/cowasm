@@ -40213,3 +40213,12 @@ diff --git a/src/sage/categories/poor_man_map.py b/src/sage/categories/poor_man_
 @@ -210 +210 @@
 -            sage: h*g                                                                   # needs sage.rings.real_mpfr
 +            sage: h*g
+diff --git a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/multi_filtered_vector_space.py
+--- a/src/sage/modules/multi_filtered_vector_space.py
++++ b/src/sage/modules/multi_filtered_vector_space.py
+@@ -184 +184 @@
+-            sage: MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(RR)             # needs sage.rings.real_mpfr
++            sage: MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(RR)
+@@ -440 +440 @@
+-            sage: MultiFilteredVectorSpace(123, base_ring=RR)                           # needs sage.rings.real_mpfr
++            sage: MultiFilteredVectorSpace(123, base_ring=RR)
