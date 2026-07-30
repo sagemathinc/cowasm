@@ -494,6 +494,23 @@ assert repr(frieze) == (
 assert frieze.parent().base_ring() is frieze[0].parent()
 `);
     console.log("sagelite-electron-ok frieze real field change-ring smoke");
+    console.log("sagelite-electron-start weak dictionary complex-field copy smoke");
+    await python.exec(String.raw`
+from copy import copy
+from sage.all import CC, QQ, ZZ
+from sage.misc.weak_dict import WeakValueDictionary
+
+complex_field = CC(0).parent()
+D = WeakValueDictionary()
+D[1] = QQ
+D[2] = ZZ
+D[None] = complex_field
+E = copy(D)
+assert E is not D
+assert set(E.items()) == set(D.items())
+assert E[None] is complex_field
+`);
+    console.log("sagelite-electron-ok weak dictionary complex-field copy smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

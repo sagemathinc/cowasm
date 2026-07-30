@@ -2329,6 +2329,19 @@ assert repr(frieze) == (
 )
 assert frieze.parent().base_ring() is frieze[0].parent()
 print('sagelite-node-ok frieze real field change-ring smoke')"
+run_node_import "weak dictionary complex-field copy smoke" "from copy import copy
+from sage.all import CC, QQ, ZZ
+from sage.misc.weak_dict import WeakValueDictionary
+complex_field = CC(0).parent()
+D = WeakValueDictionary()
+D[1] = QQ
+D[2] = ZZ
+D[None] = complex_field
+E = copy(D)
+assert E is not D
+assert set(E.items()) == set(D.items())
+assert E[None] is complex_field
+print('sagelite-node-ok weak dictionary complex-field copy smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2734,7 +2747,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=261
+electron_manifest_schema_version=262
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2855,6 +2868,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-spike-func
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-object-module-lookup-v231"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-immutable-real-matrix-copy-v232"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-frieze-real-field-change-ring-v233"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-dictionary-complex-copy-v234"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
