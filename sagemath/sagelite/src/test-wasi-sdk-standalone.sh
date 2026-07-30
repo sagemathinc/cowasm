@@ -1306,6 +1306,40 @@ except TypeError as error:
 else:
     raise AssertionError('low-precision real unexpectedly increased precision')
 print('sagelite-node-ok real functional semantics smoke')"
+run_node_import "real pushout semantics smoke" "import sage.all
+from sage.all import CC, CDF, QQ, RR, ZZ
+from sage.categories.pushout import AlgebraicClosureFunctor, ConstructionFunctor, MultiPolynomialFunctor, pushout
+from sage.categories.rings import Rings
+F = MultiPolynomialFunctor(['x', 'y'], None)
+assert str(F(CC)) == 'Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision'
+F2 = RR.construction()[0]
+assert F2.type == 'MPFR'
+assert F2.extras == {'rnd': 0, 'sci_not': False}
+closure = AlgebraicClosureFunctor()
+assert str(closure(RR)) == 'Complex Field with 53 bits of precision'
+double_closure = CDF.construction()[0]
+assert str(double_closure(RR)) == 'Complex Field with 53 bits of precision'
+class EvenPolynomialRing(type(QQ['x'])):
+    def __init__(self, base, var):
+        super().__init__(base, var)
+        self.register_embedding(base[var])
+    def construction(self):
+        return EvenPolynomialFunctor(), self.base()[self.variable_name()]
+    def _coerce_map_from_(self, R):
+        return self.base().has_coerce_map_from(R)
+class EvenPolynomialFunctor(ConstructionFunctor):
+    rank = 10
+    coercion_reversed = True
+    def __init__(self):
+        ConstructionFunctor.__init__(self, Rings(), Rings())
+    def _apply_functor(self, R):
+        return EvenPolynomialRing(R.base(), R.variable_name())
+assert pushout(EvenPolynomialRing(QQ, 'x'), RR).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x'), RR['x']).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x')).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR**2).base_ring().base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR['x']**2).base_ring().base_ring() is RR
+print('sagelite-node-ok real pushout semantics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3401,7 +3435,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=305
+electron_manifest_schema_version=306
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3566,6 +3600,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-set-m
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-metric-space-semantics-v275"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-arithmetic-semantics-v276"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-functional-semantics-v277"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-semantics-v278"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3704,6 +3739,7 @@ electron_required_paths=(
   "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_with_axiom.py"
+  "site-packages/sage/categories/pushout.py"
   "site-packages/sage/categories/additive_monoids.py"
   "site-packages/sage/categories/commutative_algebras.py"
   "site-packages/sage/categories/cartesian_product.py"

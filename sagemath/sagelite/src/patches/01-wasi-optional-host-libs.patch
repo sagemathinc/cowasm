@@ -40970,3 +40970,39 @@ diff --git a/src/sage/misc/functional.py b/src/sage/misc/functional.py
 @@ -1971 +1971 @@ def sqrt(x, *args, **kwds):
 -        sage: sqrt(4.00, prec=250)                                                      # needs sage.rings.real_mpfr
 +        sage: sqrt(4.00, prec=250)
+diff --git a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
+--- a/src/sage/categories/pushout.py
++++ b/src/sage/categories/pushout.py
+@@ -1007 +1007 @@ class MultiPolynomialFunctor(ConstructionFunctor):
+-            sage: F(CC)                                                                 # needs sage.rings.real_mpfr
++            sage: F(CC)
+@@ -1027 +1027 @@ class MultiPolynomialFunctor(ConstructionFunctor):
+-            sage: F(RR)          # indirect doctest                                     # needs sage.rings.real_mpfr
++            sage: F(RR)          # indirect doctest
+@@ -2508,3 +2508,3 @@ class CompletionFunctor(ConstructionFunctor):
+-            sage: F2.type                                                               # needs sage.rings.real_mpfr
++            sage: F2.type
+             'MPFR'
+-            sage: F2.extras                                                             # needs sage.rings.real_mpfr
++            sage: F2.extras
+@@ -3604 +3604 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
+-        sage: F(RR)                                                                     # needs sage.rings.real_mpfr
++        sage: F(RR)
+@@ -3619 +3619 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
+-            sage: F(RR)                                                                 # needs sage.rings.real_mpfr
++            sage: F(RR)
+@@ -4131 +4131 @@ def pushout(R, S):
+-        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR)                                  # needs sage.rings.real_mpfr
++        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR)
+@@ -4138 +4138 @@ def pushout(R, S):
+-        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR['x'])                             # needs sage.rings.real_mpfr
++        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR['x'])
+@@ -4143 +4143 @@ def pushout(R, S):
+-        sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x'))         # needs sage.rings.real_mpfr
++        sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x'))
+@@ -4146 +4146 @@ def pushout(R, S):
+-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # needs sage.modules sage.rings.real_mpfr
++        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # needs sage.modules
+@@ -4150 +4150 @@ def pushout(R, S):
+-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules sage.rings.real_mpfr
++        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules

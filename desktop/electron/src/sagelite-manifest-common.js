@@ -88,6 +88,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_with_axiom.py",
+  "site-packages/sage/categories/pushout.py",
   "site-packages/sage/categories/additive_monoids.py",
   "site-packages/sage/categories/commutative_algebras.py",
   "site-packages/sage/categories/cartesian_product.py",
@@ -326,7 +327,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 305,
+  schemaVersion: 306,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -539,7 +540,8 @@ expectedSageliteManifest.smokeContract +=
   "-real-set-membership-v274" +
   "-real-metric-space-semantics-v275" +
   "-real-field-arithmetic-semantics-v276" +
-  "-real-functional-semantics-v277";
+  "-real-functional-semantics-v277" +
+  "-real-pushout-semantics-v278";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

@@ -949,6 +949,47 @@ else:
     raise AssertionError('low-precision real unexpectedly increased precision')
 `);
     console.log("sagelite-electron-ok real functional semantics smoke");
+    console.log("sagelite-electron-start real pushout semantics smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.all import CC, CDF, QQ, RR, ZZ
+from sage.categories.pushout import AlgebraicClosureFunctor, ConstructionFunctor, MultiPolynomialFunctor, pushout
+from sage.categories.rings import Rings
+
+F = MultiPolynomialFunctor(['x', 'y'], None)
+assert str(F(CC)) == 'Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision'
+F2 = RR.construction()[0]
+assert F2.type == 'MPFR'
+assert F2.extras == {'rnd': 0, 'sci_not': False}
+closure = AlgebraicClosureFunctor()
+assert str(closure(RR)) == 'Complex Field with 53 bits of precision'
+double_closure = CDF.construction()[0]
+assert str(double_closure(RR)) == 'Complex Field with 53 bits of precision'
+
+class EvenPolynomialRing(type(QQ['x'])):
+    def __init__(self, base, var):
+        super().__init__(base, var)
+        self.register_embedding(base[var])
+    def construction(self):
+        return EvenPolynomialFunctor(), self.base()[self.variable_name()]
+    def _coerce_map_from_(self, R):
+        return self.base().has_coerce_map_from(R)
+
+class EvenPolynomialFunctor(ConstructionFunctor):
+    rank = 10
+    coercion_reversed = True
+    def __init__(self):
+        ConstructionFunctor.__init__(self, Rings(), Rings())
+    def _apply_functor(self, R):
+        return EvenPolynomialRing(R.base(), R.variable_name())
+
+assert pushout(EvenPolynomialRing(QQ, 'x'), RR).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x'), RR['x']).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x')).base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR**2).base_ring().base_ring() is RR
+assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR['x']**2).base_ring().base_ring() is RR
+`);
+    console.log("sagelite-electron-ok real pushout semantics smoke");
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing
