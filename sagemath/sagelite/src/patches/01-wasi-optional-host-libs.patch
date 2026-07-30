@@ -41152,3 +41152,15 @@ diff --git a/src/sage/all.py b/src/sage/all.py
      e = math.e
 +    lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
      from sage.categories.additive_groups import AdditiveGroups
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -1853,5 +1853,5 @@ class PolynomialRing_commutative(PolynomialRing_generic):
+-            sage: p.roots()
++            sage: p.roots()                                                             # needs sage.libs.singular
+             [(x^2 - 2*x + 1, 1), (x + 1, 2)]
+-            sage: p.roots(multiplicities=False)
++            sage: p.roots(multiplicities=False)                                        # needs sage.libs.singular
+             [x^2 - 2*x + 1, x + 1]
+-            sage: p.roots(degree_bound=1)
++            sage: p.roots(degree_bound=1)                                              # needs sage.libs.singular
