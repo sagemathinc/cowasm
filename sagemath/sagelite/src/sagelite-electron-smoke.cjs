@@ -1995,6 +1995,42 @@ assert type(literal) is RealLiteral
       "sagelite-electron-ok continued fraction real approximation smoke",
     );
     console.log(
+      "sagelite-electron-start real multivariate polynomial construction smoke",
+    );
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+
+CC = ComplexField()
+RR = RealField()
+
+R_real = PolynomialRing(RR, names=('x', 'y'))
+try:
+    ZZ(R_real(RR('0.5')))
+except TypeError as err:
+    assert str(err) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral real polynomial unexpectedly coerced to ZZ')
+
+R_complex = PolynomialRing(CC, names=('x', 'y'))
+x, y = R_complex.gens()
+i = CC(0, 1)
+F = ((0.759099196558145 + 0.845425869641446*i)*x**3
+     + (84.8317207268542 + 93.8840848648033*i)*x**2*y
+     + (3159.07040755858 + 3475.33037377779*i)*x*y**2
+     + (39202.5965389079 + 42882.5139724962*i)*y**3)
+assert F.parent() is R_complex
+assert F.degree() == 3
+assert len(F.dict()) == 4
+assert all(coefficient.parent() is CC for coefficient in F.coefficients())
+`);
+    console.log(
+      "sagelite-electron-ok real multivariate polynomial construction smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

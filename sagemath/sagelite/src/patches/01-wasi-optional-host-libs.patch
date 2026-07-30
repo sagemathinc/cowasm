@@ -40413,3 +40413,14 @@ diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fra
 @@ -2442 +2442 @@ def continued_fraction_list(x, type="std", bits=None, nterms=None,
 -        sage: type(a)                                                                   # needs sage.rings.real_mpfr
 +        sage: type(a)
+diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/polynomial/multi_polynomial.pyx
+--- a/src/sage/rings/polynomial/multi_polynomial.pyx
++++ b/src/sage/rings/polynomial/multi_polynomial.pyx
+@@ -134 +134 @@ cdef class MPolynomial_polydict(CommutativePolynomial):
+-            sage: ZZ(RR['x,y'](0.5))                                                    # needs sage.rings.real_mpfr
++            sage: ZZ(RR['x,y'](0.5))
+@@ -2537,2 +2537,2 @@ cdef class MPolynomial_polydict(CommutativePolynomial):
+-            sage: R.<x,y> = PolynomialRing(CC)                                          # needs sage.rings.real_mpfr
+-            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3                 # needs sage.rings.real_mpfr
++            sage: R.<x,y> = PolynomialRing(CC)
++            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3

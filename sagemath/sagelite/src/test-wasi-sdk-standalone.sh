@@ -1843,6 +1843,35 @@ assert float(a) == float(-QQ(17) / 389)
 literal = eval(preparse('1.575709393346379'))
 assert type(literal) is RealLiteral
 print('sagelite-node-ok continued fraction real approximation smoke')"
+run_node_import "real multivariate polynomial construction smoke" "import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+
+CC = ComplexField()
+RR = RealField()
+
+R_real = PolynomialRing(RR, names=('x', 'y'))
+try:
+    ZZ(R_real(RR('0.5')))
+except TypeError as err:
+    assert str(err) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral real polynomial unexpectedly coerced to ZZ')
+
+R_complex = PolynomialRing(CC, names=('x', 'y'))
+x, y = R_complex.gens()
+i = CC(0, 1)
+F = ((0.759099196558145 + 0.845425869641446*i)*x**3
+     + (84.8317207268542 + 93.8840848648033*i)*x**2*y
+     + (3159.07040755858 + 3475.33037377779*i)*x*y**2
+     + (39202.5965389079 + 42882.5139724962*i)*y**3)
+assert F.parent() is R_complex
+assert F.degree() == 3
+assert len(F.dict()) == 4
+assert all(coefficient.parent() is CC for coefficient in F.coefficients())
+print('sagelite-node-ok real multivariate polynomial construction smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -3037,7 +3066,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=284
+electron_manifest_schema_version=285
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3181,6 +3210,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-paren
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-element-core-semantics-v254"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-coercion-semantics-v255"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-real-approximation-v256"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-multivariate-polynomial-construction-v257"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
