@@ -990,6 +990,54 @@ assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR**2).base_ring().base_ring() is
 assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR['x']**2).base_ring().base_ring() is RR
 `);
     console.log("sagelite-electron-ok real pushout semantics smoke");
+    console.log(
+      "sagelite-electron-start real sparse polynomial semantics smoke",
+    );
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+
+real_ring = PolynomialRing(RealField(19), 'x', sparse=True)
+x = real_ring.gen()
+f = (2 - RealField()('3.5') * x)**3
+assert repr(f) == '-42.875*x^3 + 73.500*x^2 - 42.000*x + 8.0000'
+assert repr(f[:2]) == '-42.000*x + 8.0000'
+for key, message in (
+    (slice(1, 3), 'polynomial slicing with a start is not defined'),
+    (slice(1, 3, 2), 'polynomial slicing with a step is not defined'),
+):
+    try:
+        f[key]
+    except IndexError as error:
+        assert str(error) == message
+    else:
+        raise AssertionError('invalid sparse polynomial slice unexpectedly succeeded')
+try:
+    f['hello']
+except TypeError as error:
+    assert str(error) == 'list indices must be integers, not str'
+else:
+    raise AssertionError('string sparse polynomial index unexpectedly succeeded')
+complex_ring = PolynomialRing(ComplexField(), 'z', sparse=True)
+z = complex_ring.gen()
+z._unsafe_mutate(1, 0)
+assert z == 0
+integer_ring = PolynomialRing(ZZ, 't', sparse=True)
+t = integer_ring.gen()
+p = t**(2**100) - 5
+try:
+    p.shift(RealField()('1.5'))
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral sparse polynomial shift unexpectedly succeeded')
+`);
+    console.log(
+      "sagelite-electron-ok real sparse polynomial semantics smoke",
+    );
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing

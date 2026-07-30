@@ -41006,3 +41006,31 @@ diff --git a/src/sage/categories/pushout.py b/src/sage/categories/pushout.py
 @@ -4150 +4150 @@ def pushout(R, S):
 -        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules sage.rings.real_mpfr
 +        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules
+diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
+--- a/src/sage/rings/polynomial/polynomial_element_generic.py
++++ b/src/sage/rings/polynomial/polynomial_element_generic.py
+@@ -445,2 +445,2 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)                    # needs sage.rings.real_mpfr
+-            sage: f = (2-3.5*x)^3; f                                                    # needs sage.rings.real_mpfr
++            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)
++            sage: f = (2-3.5*x)^3; f
+@@ -451 +451 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: f[:2]                                                                 # needs sage.rings.real_mpfr
++            sage: f[:2]
+@@ -456 +456 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: f[1:3]                                                                # needs sage.rings.real_mpfr
++            sage: f[1:3]
+@@ -461 +461 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: f[1:3:2]                                                              # needs sage.rings.real_mpfr
++            sage: f[1:3:2]
+@@ -468 +468 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: f["hello"]                                                            # needs sage.rings.real_mpfr
++            sage: f["hello"]
+@@ -512,2 +512,2 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: z._unsafe_mutate(1, 0)                                                # needs sage.rings.real_mpfr
+-            sage: z                                                                     # needs sage.rings.real_mpfr
++            sage: z._unsafe_mutate(1, 0)
++            sage: z
+@@ -782 +782 @@ class Polynomial_generic_sparse(Polynomial):
+-            sage: p.shift(1.5)                                                          # needs sage.rings.real_mpfr
++            sage: p.shift(1.5)

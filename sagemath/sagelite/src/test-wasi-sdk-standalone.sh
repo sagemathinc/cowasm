@@ -1340,6 +1340,46 @@ assert pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x')).base_ri
 assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR**2).base_ring().base_ring() is RR
 assert pushout(EvenPolynomialRing(QQ, 'x')**2, RR['x']**2).base_ring().base_ring() is RR
 print('sagelite-node-ok real pushout semantics smoke')"
+run_node_import "real sparse polynomial semantics smoke" "import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+real_ring = PolynomialRing(RealField(19), 'x', sparse=True)
+x = real_ring.gen()
+f = (2 - RealField()('3.5') * x)**3
+assert repr(f) == '-42.875*x^3 + 73.500*x^2 - 42.000*x + 8.0000'
+assert repr(f[:2]) == '-42.000*x + 8.0000'
+for key, message in (
+    (slice(1, 3), 'polynomial slicing with a start is not defined'),
+    (slice(1, 3, 2), 'polynomial slicing with a step is not defined'),
+):
+    try:
+        f[key]
+    except IndexError as error:
+        assert str(error) == message
+    else:
+        raise AssertionError('invalid sparse polynomial slice unexpectedly succeeded')
+try:
+    f['hello']
+except TypeError as error:
+    assert str(error) == 'list indices must be integers, not str'
+else:
+    raise AssertionError('string sparse polynomial index unexpectedly succeeded')
+complex_ring = PolynomialRing(ComplexField(), 'z', sparse=True)
+z = complex_ring.gen()
+z._unsafe_mutate(1, 0)
+assert z == 0
+integer_ring = PolynomialRing(ZZ, 't', sparse=True)
+t = integer_ring.gen()
+p = t**(2**100) - 5
+try:
+    p.shift(RealField()('1.5'))
+except TypeError as error:
+    assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+else:
+    raise AssertionError('non-integral sparse polynomial shift unexpectedly succeeded')
+print('sagelite-node-ok real sparse polynomial semantics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3435,7 +3475,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=306
+electron_manifest_schema_version=307
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3601,6 +3641,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-metri
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-arithmetic-semantics-v276"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-functional-semantics-v277"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-semantics-v278"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-sparse-polynomial-semantics-v279"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
