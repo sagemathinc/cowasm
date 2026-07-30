@@ -41164,3 +41164,9 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
              [x^2 - 2*x + 1, x + 1]
 -            sage: p.roots(degree_bound=1)
 +            sage: p.roots(degree_bound=1)                                              # needs sage.libs.singular
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -357 +357 @@ class PolynomialRing_generic(ParentWithGens):
+-            sage: x = var('x')
++            sage: x = var('x')                                                          # needs sage.symbolic
