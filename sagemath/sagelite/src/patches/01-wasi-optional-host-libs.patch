@@ -40228,3 +40228,11 @@ diff --git a/src/sage/functions/special.py b/src/sage/functions/special.py
 @@ -424 +424 @@
 -        sage: elliptic_j(CC(i))                                                         # needs sage.rings.real_mpfr
 +        sage: elliptic_j(CC(i))                                                         # needs sage.libs.pari sage.rings.real_mpfr
+diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
+--- a/src/sage/rings/fraction_field.py
++++ b/src/sage/rings/fraction_field.py
+@@ -297,2 +297,2 @@
+-            sage: LCt = LaurentPolynomialRing(CC,'t')                                   # needs sage.rings.real_mpfr
+-            sage: coercion_model.common_parent(FQt, LCt)                                # needs sage.rings.real_mpfr
++            sage: LCt = LaurentPolynomialRing(CC,'t')
++            sage: coercion_model.common_parent(FQt, LCt)

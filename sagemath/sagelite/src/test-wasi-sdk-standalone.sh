@@ -2490,6 +2490,17 @@ assert direct.base_ring() is real_field
 assert changed.dimension() == 3
 assert direct.dimension() == 123
 print('sagelite-node-ok multi-filtered vector-space real-field smoke')"
+run_node_import "fraction-field complex Laurent common-parent smoke" "from sage.all import CC, QQ, LaurentPolynomialRing, PolynomialRing
+from sage.structure.element import coercion_model
+rational_fraction = PolynomialRing(QQ, 't').fraction_field()
+complex_laurent = LaurentPolynomialRing(CC, 't')
+common = coercion_model.common_parent(rational_fraction, complex_laurent)
+assert common is complex_laurent.fraction_field()
+assert repr(common) == (
+    'Fraction Field of Univariate Polynomial Ring in t '
+    'over Complex Field with 53 bits of precision'
+)
+print('sagelite-node-ok fraction-field complex Laurent common-parent smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2895,7 +2906,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=273
+electron_manifest_schema_version=274
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3028,6 +3039,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multivaria
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-map-slot-restoration-v243"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-poor-man-map-real-composition-v244"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multi-filtered-vector-space-real-field-v245"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-field-complex-laurent-common-parent-v246"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

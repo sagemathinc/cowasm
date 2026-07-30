@@ -715,6 +715,25 @@ assert direct.dimension() == 123
     console.log(
       "sagelite-electron-ok multi-filtered vector-space real-field smoke",
     );
+    console.log(
+      "sagelite-electron-start fraction-field complex Laurent common-parent smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import CC, QQ, LaurentPolynomialRing, PolynomialRing
+from sage.structure.element import coercion_model
+
+rational_fraction = PolynomialRing(QQ, 't').fraction_field()
+complex_laurent = LaurentPolynomialRing(CC, 't')
+common = coercion_model.common_parent(rational_fraction, complex_laurent)
+assert common is complex_laurent.fraction_field()
+assert repr(common) == (
+    'Fraction Field of Univariate Polynomial Ring in t '
+    'over Complex Field with 53 bits of precision'
+)
+`);
+    console.log(
+      "sagelite-electron-ok fraction-field complex Laurent common-parent smoke",
+    );
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
