@@ -40811,3 +40811,28 @@ diff --git a/src/sage/rings/infinity.py b/src/sage/rings/infinity.py
 @@ -1752 +1752 @@ def check_comparison(ring):
 -        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
 +        sage: rings += [RR, RealField(200)]
+diff --git a/src/sage/sets/set.py b/src/sage/sets/set.py
+--- a/src/sage/sets/set.py
++++ b/src/sage/sets/set.py
+@@ -586,2 +586,2 @@ class Set_object(Set_generic):
+-            sage: R = Set(RR)                                                           # needs sage.rings.real_mpfr
+-            sage: R.an_element()  # indirect doctest                                    # needs sage.rings.real_mpfr
++            sage: R = Set(RR)
++            sage: R.an_element()  # indirect doctest
+@@ -1255 +1255 @@ class Set_object_enumerated(Set_object):
+-            sage: W.difference(Z)                                                       # needs sage.rings.real_mpfr
++            sage: W.difference(Z)
+@@ -1765,2 +1765,2 @@ class Set_object_intersection(Set_object_binary):
+-            sage: X = Set(QQ).intersection(Set(RR))                                     # needs sage.rings.real_mpfr
+-            sage: 5 in X                                                                # needs sage.rings.real_mpfr
++            sage: X = Set(QQ).intersection(Set(RR))
++            sage: 5 in X
+@@ -1768 +1768 @@ class Set_object_intersection(Set_object_binary):
+-            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
++            sage: ComplexField().0 in X
+@@ -1943 +1943 @@ class Set_object_difference(Set_object_binary):
+-            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
++            sage: ComplexField().0 in X
+@@ -2116 +2116 @@ class Set_object_symmetric_difference(Set_object_binary):
+-            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
++            sage: ComplexField().0 in X

@@ -2336,6 +2336,26 @@ assert repr(gen_legendre_Q(2, 1, ComplexField(70)(3))) == '-39.98594644342529622
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",
     );
+    console.log("sagelite-electron-start real set membership smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, ZZ
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+from sage.sets.set import Set
+
+CC = ComplexField()
+RR = RealField()
+real_set = Set(RR)
+assert real_set.an_element() == RR.one()
+assert Set([RR('2.5'), 4, 5, 6]).difference(Set(ZZ)) == Set([RR('2.5')])
+rational_real_intersection = Set(QQ).intersection(real_set)
+assert 5 in rational_real_intersection
+complex_zero = CC.zero()
+assert complex_zero not in rational_real_intersection
+assert complex_zero not in Set(QQ).difference(Set(ZZ))
+assert complex_zero not in Set(QQ).symmetric_difference(Set(ZZ))
+`);
+    console.log("sagelite-electron-ok real set membership smoke");
     console.log(
       "sagelite-electron-start set element construction delivery smoke",
     );
