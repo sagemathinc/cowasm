@@ -40140,3 +40140,9 @@ diff --git a/src/sage/structure/formal_sum.py b/src/sage/structure/formal_sum.py
 @@ -442 +442 @@
 -            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
 +            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
+diff --git a/src/sage/schemes/generic/spec.py b/src/sage/schemes/generic/spec.py
+--- a/src/sage/schemes/generic/spec.py
++++ b/src/sage/schemes/generic/spec.py
+@@ -155 +155 @@
+-            sage: F(RR)  # indirect doctest                                             # needs sage.rings.real_mpfr
++            sage: F(RR)  # indirect doctest

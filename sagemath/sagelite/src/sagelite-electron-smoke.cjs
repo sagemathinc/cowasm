@@ -534,6 +534,16 @@ assert repr(action) == (
 )
 `);
     console.log("sagelite-electron-ok formal sums over real fields smoke");
+    console.log("sagelite-electron-start spectrum over real field smoke");
+    await python.exec(String.raw`
+from sage.all import RR
+from sage.schemes.generic.spec import SpecFunctor
+
+real_field = RR(0).parent()
+spectrum = SpecFunctor()(real_field)
+assert repr(spectrum) == 'Spectrum of Real Field with 53 bits of precision'
+`);
+    console.log("sagelite-electron-ok spectrum over real field smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
