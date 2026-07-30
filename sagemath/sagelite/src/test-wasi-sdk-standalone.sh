@@ -1988,7 +1988,7 @@ for args in (
     else:
         raise AssertionError('non-integral Gaunt inputs were accepted')
 print('sagelite-node-ok real Wigner evaluation smoke')"
-run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, CDF, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product, oo
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
@@ -1997,6 +1997,7 @@ from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U, gen_legend
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField
+from sage.rings.infinity import InfinityRing, UnsignedInfinityRing, check_comparison
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RealField, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -2007,6 +2008,26 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+assert repr(UnsignedInfinityRing(CC(oo))) == 'Infinity'
+assert UnsignedInfinityRing.has_coerce_map_from(CC) is True
+complex_infinity = CC(0, oo)
+assert repr((InfinityRing(CC(oo)), InfinityRing(CC(-oo)))) == '(+Infinity, -Infinity)'
+try:
+    InfinityRing(complex_infinity)
+except ValueError as error:
+    assert str(error) == 'infinite but not with +/- phase'
+else:
+    raise AssertionError('complex infinity unexpectedly coerced to signed infinity')
+try:
+    InfinityRing(CDF(complex_infinity))
+except ValueError as error:
+    assert str(error) == 'infinite but not with +/- phase'
+else:
+    raise AssertionError('double complex infinity unexpectedly coerced to signed infinity')
+assert InfinityRing.has_coerce_map_from(CC) is False
+assert complex_infinity < CC(1)
+for real_ring in (RR, RealField(200)):
+    check_comparison(real_ring)
 real_zero_vector = (RR**0)()
 assert real_zero_vector.dot_product(real_zero_vector) == RR.zero()
 assert real_zero_vector.parent().base_ring() is RR
@@ -3297,7 +3318,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=300
+electron_manifest_schema_version=301
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3457,6 +3478,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-besse
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-gamma-evaluation-v270"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-orthogonal-polynomial-evaluation-v271"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-free-module-zero-vector-v272"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-infinity-coercion-v273"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

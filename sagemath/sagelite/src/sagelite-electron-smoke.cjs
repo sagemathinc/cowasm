@@ -2172,7 +2172,7 @@ for args in (
     );
     await python.exec(String.raw`
 import sage.rings.abc
-from sage.all import Algebras, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
+from sage.all import Algebras, CDF, Fields, GF, GroupAlgebras, Mod, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product, oo
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
@@ -2181,6 +2181,7 @@ from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U, gen_legend
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
+from sage.rings.infinity import InfinityRing, UnsignedInfinityRing, check_comparison
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -2192,6 +2193,26 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+assert repr(UnsignedInfinityRing(CC(oo))) == 'Infinity'
+assert UnsignedInfinityRing.has_coerce_map_from(CC) is True
+complex_infinity = CC(0, oo)
+assert repr((InfinityRing(CC(oo)), InfinityRing(CC(-oo)))) == '(+Infinity, -Infinity)'
+try:
+    InfinityRing(complex_infinity)
+except ValueError as error:
+    assert str(error) == 'infinite but not with +/- phase'
+else:
+    raise AssertionError('complex infinity unexpectedly coerced to signed infinity')
+try:
+    InfinityRing(CDF(complex_infinity))
+except ValueError as error:
+    assert str(error) == 'infinite but not with +/- phase'
+else:
+    raise AssertionError('double complex infinity unexpectedly coerced to signed infinity')
+assert InfinityRing.has_coerce_map_from(CC) is False
+assert complex_infinity < CC(1)
+for real_ring in (RR, RealField(200)):
+    check_comparison(real_ring)
 real_zero_vector = (RR**0)()
 assert real_zero_vector.dot_product(real_zero_vector) == RR.zero()
 assert real_zero_vector.parent().base_ring() is RR

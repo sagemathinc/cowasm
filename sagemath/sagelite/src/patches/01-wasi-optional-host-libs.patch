@@ -40781,3 +40781,33 @@ diff --git a/src/sage/modules/free_module_element.pyx b/src/sage/modules/free_mo
 @@ -2685 +2685 @@ cdef class FreeModuleElement(element_Vector):
 -            sage: rings += [RR]                                                         # needs sage.rings.real_mpfr
 +            sage: rings += [RR]
+diff --git a/src/sage/rings/infinity.py b/src/sage/rings/infinity.py
+--- a/src/sage/rings/infinity.py
++++ b/src/sage/rings/infinity.py
+@@ -689 +689 @@ class UnsignedInfinityRing_class(Parent, UniqueRepresentation):
+-            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))           # needs sage.rings.real_mpfr
++            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))
+@@ -740 +740 @@ class UnsignedInfinityRing_class(Parent, UniqueRepresentation):
+-            sage: UnsignedInfinityRing.has_coerce_map_from(CC)                          # needs sage.rings.real_mpfr
++            sage: UnsignedInfinityRing.has_coerce_map_from(CC)
+@@ -1135 +1135 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: i_infinity = CC(0, oo)                                                # needs sage.rings.real_mpfr
++            sage: i_infinity = CC(0, oo)
+@@ -1136 +1136 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))                           # needs sage.rings.real_mpfr
++            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))
+@@ -1138 +1138 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: InfinityRing(i_infinity)                                              # needs sage.rings.real_mpfr
++            sage: InfinityRing(i_infinity)
+@@ -1144 +1144 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: InfinityRing(CDF(i_infinity))                                         # needs sage.rings.complex_double sage.rings.real_mpfr
++            sage: InfinityRing(CDF(i_infinity))                                         # needs sage.rings.complex_double
+@@ -1240 +1240 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: InfinityRing.has_coerce_map_from(CC)                                  # needs sage.rings.real_mpfr
++            sage: InfinityRing.has_coerce_map_from(CC)
+@@ -1242 +1242 @@ class InfinityRing_class(Parent, UniqueRepresentation):
+-            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring                # needs sage.rings.real_mpfr
++            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring
+@@ -1752 +1752 @@ def check_comparison(ring):
+-        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
++        sage: rings += [RR, RealField(200)]
