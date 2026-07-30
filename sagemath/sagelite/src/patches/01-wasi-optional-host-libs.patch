@@ -41182,3 +41182,9 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
 @@ -1979 +1979 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative):
 -            sage: all(p.is_weil_polynomial() for p in L)
 +            sage: all(p.is_weil_polynomial() for p in L)                               # needs sage.libs.pari
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -3554 +3554 @@ class PolynomialRing_dense_mod_p(PolynomialRing_field):
+-            sage: GF(5)['x'].irreducible_element(32, algorithm='primitive')
++            sage: GF(5)['x'].irreducible_element(32, algorithm='primitive')             # needs sage.libs.pari
