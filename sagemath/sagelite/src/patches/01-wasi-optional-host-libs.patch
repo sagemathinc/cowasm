@@ -40858,3 +40858,61 @@ diff --git a/src/sage/categories/metric_spaces.py b/src/sage/categories/metric_s
 @@ -380 +380 @@ class CartesianProducts(CartesianProductsCategory):
 -                    sage: QR in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
 +                    sage: QR in MetricSpaces().Complete()
+diff --git a/src/sage/categories/fields.py b/src/sage/categories/fields.py
+--- a/src/sage/categories/fields.py
++++ b/src/sage/categories/fields.py
+@@ -46 +46 @@ class Fields(CategoryWithAxiom):
+-        sage: K(RealField())                                                            # needs sage.rings.real_mpfr
++        sage: K(RealField())
+@@ -184 +184 @@ class ParentMethods:
+-            sage: K(RealField())                                                        # needs sage.rings.real_mpfr
++            sage: K(RealField())
+@@ -394 +394 @@ class ParentMethods:
+-                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
++                sage: fields += [RR, CC]
+@@ -405 +405 @@ class ParentMethods:
+-                sage: # needs sage.rings.real_mpfr
++                sage:
+@@ -419 +419 @@ class ParentMethods:
+-                sage: # needs sage.rings.real_mpfr
++                sage:
+@@ -493 +493 @@ class ParentMethods:
+-                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
++                sage: fields += [RR, CC]
+@@ -604,2 +604,2 @@ class ParentMethods:
+-                sage: RR.fraction_field()                                                   # needs sage.rings.real_mpfr
++                sage: RR.fraction_field()
+                 Real Field with 53 bits of precision
+@@ -606 +606 @@ class ParentMethods:
+-                sage: CC.fraction_field()                                                   # needs sage.rings.real_mpfr
++                sage: CC.fraction_field()
+@@ -840 +840 @@ class ElementMethods:
+-                sage: gcd(15.0,12.0)                                                    # needs sage.rings.real_mpfr
++                sage: gcd(15.0,12.0)
+@@ -845 +845 @@ class ElementMethods:
+-                sage: gcd(3.2, 2.18)                                                    # needs sage.rings.real_mpfr
++                sage: gcd(3.2, 2.18)
+@@ -848 +848 @@ class ElementMethods:
+-                sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
++                sage: gcd(0.0, 0.0)
+@@ -899 +899 @@ class ElementMethods:
+-                sage: lcm(15.0, 12.0)                                                   # needs sage.rings.real_mpfr
++                sage: lcm(15.0, 12.0)
+@@ -904 +904 @@ class ElementMethods:
+-                sage: lcm(3.2, 2.18)                                                    # needs sage.rings.real_mpfr
++                sage: lcm(3.2, 2.18)
+@@ -907 +907 @@ class ElementMethods:
+-                sage: lcm(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
++                sage: lcm(0.0, 0.0)
+@@ -969 +969 @@ class ElementMethods:
+-                sage: xgcd(12.0, 8.0)                                                   # needs sage.rings.real_mpfr
++                sage: xgcd(12.0, 8.0)
+@@ -972 +972 @@ class ElementMethods:
+-                sage: xgcd(3.1, 2.98714)                                                # needs sage.rings.real_mpfr
++                sage: xgcd(3.1, 2.98714)
+@@ -975 +975 @@ class ElementMethods:
+-                sage: xgcd(0.0, 1.1)                                                    # needs sage.rings.real_mpfr
++                sage: xgcd(0.0, 1.1)
+@@ -1008 +1008 @@ class ElementMethods:
+-                sage: RR(0).factor()                                                    # needs sage.rings.real_mpfr
++                sage: RR(0).factor()

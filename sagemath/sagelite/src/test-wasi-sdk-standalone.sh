@@ -2174,6 +2174,30 @@ rational_real_plane = QQ.cartesian_product(RR)
 assert rational_real_plane in MetricSpaces()
 assert rational_real_plane not in MetricSpaces().Complete()
 print('sagelite-node-ok real metric space semantics smoke')"
+run_node_import "real field arithmetic semantics smoke" "import sage.all
+from sage.categories.fields import Fields
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+CC = ComplexField()
+RR = RealField()
+assert Fields()(RR) is RR
+assert RR.fraction_field() is RR
+assert CC.fraction_field() is CC
+R = PolynomialRing(RR, 'x')
+x = R.gen()
+assert repr((x**3).gcd(x**5 + 1)) == '1.00000000000000'
+assert (x**3).gcd(x**5 + x**2) == x**2
+assert RR('15.0').gcd(RR('12.0')) == RR(3)
+assert RR('15.0').lcm(RR('12.0')) == RR(60)
+assert RR('12.0').xgcd(RR('8.0')) == (RR(4), RR(1), RR(-1))
+try:
+    RR.zero().factor()
+except ArithmeticError as error:
+    assert str(error) == 'factorization of 0.000000000000000 is not defined'
+else:
+    raise AssertionError('zero real factorization unexpectedly succeeded')
+print('sagelite-node-ok real field arithmetic semantics smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
 x, y = L.lie_algebra_generators()
@@ -3348,7 +3372,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=303
+electron_manifest_schema_version=304
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3511,6 +3535,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-free-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-infinity-coercion-v273"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-set-membership-v274"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-metric-space-semantics-v275"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-arithmetic-semantics-v276"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3655,6 +3680,7 @@ electron_required_paths=(
   "site-packages/sage/categories/enumerated_sets.py"
   "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py"
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py"
+  "site-packages/sage/categories/fields.py"
   "site-packages/sage/categories/groupoid.py"
   "site-packages/sage/categories/metric_spaces.py"
   "site-packages/sage/categories/modules.py"

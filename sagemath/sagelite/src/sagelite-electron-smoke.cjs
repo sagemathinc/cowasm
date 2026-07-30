@@ -2374,6 +2374,34 @@ assert rational_real_plane in MetricSpaces()
 assert rational_real_plane not in MetricSpaces().Complete()
 `);
     console.log("sagelite-electron-ok real metric space semantics smoke");
+    console.log("sagelite-electron-start real field arithmetic semantics smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.categories.fields import Fields
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+
+CC = ComplexField()
+RR = RealField()
+assert Fields()(RR) is RR
+assert RR.fraction_field() is RR
+assert CC.fraction_field() is CC
+R = PolynomialRing(RR, 'x')
+x = R.gen()
+assert repr((x**3).gcd(x**5 + 1)) == '1.00000000000000'
+assert (x**3).gcd(x**5 + x**2) == x**2
+assert RR('15.0').gcd(RR('12.0')) == RR(3)
+assert RR('15.0').lcm(RR('12.0')) == RR(60)
+assert RR('12.0').xgcd(RR('8.0')) == (RR(4), RR(1), RR(-1))
+try:
+    RR.zero().factor()
+except ArithmeticError as error:
+    assert str(error) == 'factorization of 0.000000000000000 is not defined'
+else:
+    raise AssertionError('zero real factorization unexpectedly succeeded')
+`);
+    console.log("sagelite-electron-ok real field arithmetic semantics smoke");
     console.log(
       "sagelite-electron-start set element construction delivery smoke",
     );
