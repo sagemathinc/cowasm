@@ -40146,3 +40146,9 @@ diff --git a/src/sage/schemes/generic/spec.py b/src/sage/schemes/generic/spec.py
 @@ -155 +155 @@
 -            sage: F(RR)  # indirect doctest                                             # needs sage.rings.real_mpfr
 +            sage: F(RR)  # indirect doctest
+diff --git a/src/sage/schemes/generic/scheme.py b/src/sage/schemes/generic/scheme.py
+--- a/src/sage/schemes/generic/scheme.py
++++ b/src/sage/schemes/generic/scheme.py
+@@ -195 +195 @@
+-            sage: A(RR)                                                                 # needs sage.rings.real_mpfr
++            sage: A(RR)

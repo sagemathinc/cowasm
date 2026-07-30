@@ -2367,6 +2367,16 @@ real_field = RR(0).parent()
 spectrum = SpecFunctor()(real_field)
 assert repr(spectrum) == 'Spectrum of Real Field with 53 bits of precision'
 print('sagelite-node-ok spectrum over real field smoke')"
+run_node_import "affine real point-set smoke" "from sage.all import QQ, RR
+from sage.schemes.affine.affine_space import AffineSpace
+real_field = RR(0).parent()
+plane = AffineSpace(2, QQ)
+points = plane(real_field)
+assert repr(points) == (
+    'Set of rational points of Affine Space of dimension 2 '
+    'over Real Field with 53 bits of precision'
+)
+print('sagelite-node-ok affine real point-set smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2772,7 +2782,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=264
+electron_manifest_schema_version=265
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2896,6 +2906,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-frieze-rea
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-weak-dictionary-complex-copy-v234"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-formal-sums-real-field-v235"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-spectrum-real-field-v236"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-affine-real-point-set-v237"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -544,6 +544,20 @@ spectrum = SpecFunctor()(real_field)
 assert repr(spectrum) == 'Spectrum of Real Field with 53 bits of precision'
 `);
     console.log("sagelite-electron-ok spectrum over real field smoke");
+    console.log("sagelite-electron-start affine real point-set smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, RR
+from sage.schemes.affine.affine_space import AffineSpace
+
+real_field = RR(0).parent()
+plane = AffineSpace(2, QQ)
+points = plane(real_field)
+assert repr(points) == (
+    'Set of rational points of Affine Space of dimension 2 '
+    'over Real Field with 53 bits of precision'
+)
+`);
+    console.log("sagelite-electron-ok affine real point-set smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
