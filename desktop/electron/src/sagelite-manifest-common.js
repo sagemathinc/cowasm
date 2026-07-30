@@ -99,6 +99,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/fields.py",
   "site-packages/sage/categories/groupoid.py",
   "site-packages/sage/categories/metric_spaces.py",
+  "site-packages/sage/categories/manifolds.py",
   "site-packages/sage/categories/modules.py",
   "site-packages/sage/categories/modules_with_basis.py",
   "site-packages/sage/categories/monoids.py",
@@ -328,7 +329,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 309,
+  schemaVersion: 310,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -546,6 +547,8 @@ expectedSageliteManifest.smokeContract +=
   "-real-sparse-polynomial-semantics-v279" +
   "-real-part-literal-semantics-v280" +
   "-tested-module-symbolic-binomial-v281";
+expectedSageliteManifest.smokeContract +=
+  "-real-complex-manifold-categories-v282";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

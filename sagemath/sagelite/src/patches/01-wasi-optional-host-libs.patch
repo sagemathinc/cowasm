@@ -41054,3 +41054,46 @@ diff --git a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/homse
 -            sage: A(3/2) == AC(3/2)                                                     # needs sage.rings.real_mpfr
 +            sage: AC = AffineSpace(CC, 1, 'x')
 +            sage: A(3/2) == AC(3/2)                                                     # needs sage.libs.singular sage.rings.real_mpfr
+diff --git a/src/sage/categories/manifolds.py b/src/sage/categories/manifolds.py
+--- a/src/sage/categories/manifolds.py
++++ b/src/sage/categories/manifolds.py
+@@ -29 +28,0 @@ class Manifolds(Category_over_base_ring):
+-        sage: # needs sage.rings.real_mpfr
+@@ -38 +37 @@ class Manifolds(Category_over_base_ring):
+-        sage: TestSuite(C).run(skip='_test_category_over_bases')                        # needs sage.rings.real_mpfr
++        sage: TestSuite(C).run(skip='_test_category_over_bases')
+@@ -105 +104 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Connected()                                         # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Connected()
+@@ -125 +124 @@ class Manifolds(Category_over_base_ring):
+-                sage: C = Manifolds(RR).Connected().FiniteDimensional(); C              # needs sage.rings.real_mpfr
++                sage: C = Manifolds(RR).Connected().FiniteDimensional(); C
+@@ -146 +145 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Differentiable()                                    # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Differentiable()
+@@ -166 +165 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Smooth()                                            # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Smooth()
+@@ -186 +185 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Analytic()                                          # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Analytic()
+@@ -207 +206 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).AlmostComplex()                                     # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).AlmostComplex()
+@@ -227 +226 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(CC).Complex()                                           # needs sage.rings.real_mpfr
++                sage: Manifolds(CC).Complex()
+@@ -233,2 +232,2 @@ class Manifolds(Category_over_base_ring):
+-                sage: TestSuite(Manifolds(CC).Complex()).run()                          # needs sage.rings.real_mpfr
+-                sage: Manifolds(CC).Complex.__module__                                  # needs sage.rings.real_mpfr
++                sage: TestSuite(Manifolds(CC).Complex()).run()
++                sage: Manifolds(CC).Complex.__module__
+@@ -261 +260 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Smooth().super_categories()  # indirect doctest     # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Smooth().super_categories()  # indirect doctest
+@@ -282 +281 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).Analytic().super_categories()  # indirect doctest   # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).Analytic().super_categories()  # indirect doctest
+@@ -306 +305 @@ class Manifolds(Category_over_base_ring):
+-                sage: Manifolds(RR).AlmostComplex().super_categories()  # indirect doctest          # needs sage.rings.real_mpfr
++                sage: Manifolds(RR).AlmostComplex().super_categories()  # indirect doctest

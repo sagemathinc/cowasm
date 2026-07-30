@@ -1065,6 +1065,34 @@ assert type(value) is RealNumber
     console.log(
       "sagelite-electron-ok symbolic binomial internal evaluation smoke",
     );
+    console.log(
+      "sagelite-electron-start real and complex manifold category semantics smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import CC, RR
+from sage.categories.manifolds import Manifolds
+
+real_manifolds = Manifolds(RR)
+assert str(real_manifolds) == 'Category of manifolds over Real Field with 53 bits of precision'
+assert list(map(str, real_manifolds.super_categories())) == ['Category of topological spaces']
+connected = real_manifolds.Connected()
+finite_connected = connected.FiniteDimensional()
+assert str(connected) == 'Category of connected manifolds over Real Field with 53 bits of precision'
+assert str(finite_connected) == 'Category of finite dimensional connected manifolds over Real Field with 53 bits of precision'
+differentiable = real_manifolds.Differentiable()
+smooth = real_manifolds.Smooth()
+analytic = real_manifolds.Analytic()
+almost_complex = real_manifolds.AlmostComplex()
+assert smooth.super_categories() == [differentiable]
+assert analytic.super_categories() == [smooth]
+assert almost_complex.super_categories() == [smooth]
+complex_manifolds = Manifolds(CC).Complex()
+assert str(complex_manifolds) == 'Category of complex manifolds over Complex Field with 53 bits of precision'
+assert Manifolds(CC).Complex.__module__ == 'sage.categories.manifolds'
+`);
+    console.log(
+      "sagelite-electron-ok real and complex manifold category semantics smoke",
+    );
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing

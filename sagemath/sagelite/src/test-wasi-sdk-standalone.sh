@@ -1395,6 +1395,26 @@ value = binomial._eval_(create_RealNumber('5.'), ZZ(3))
 assert value == create_RealNumber('10.')
 assert type(value) is RealNumber
 print('sagelite-node-ok symbolic binomial internal evaluation smoke')"
+run_node_import "real and complex manifold category semantics smoke" "from sage.all import CC, RR
+from sage.categories.manifolds import Manifolds
+real_manifolds = Manifolds(RR)
+assert str(real_manifolds) == 'Category of manifolds over Real Field with 53 bits of precision'
+assert list(map(str, real_manifolds.super_categories())) == ['Category of topological spaces']
+connected = real_manifolds.Connected()
+finite_connected = connected.FiniteDimensional()
+assert str(connected) == 'Category of connected manifolds over Real Field with 53 bits of precision'
+assert str(finite_connected) == 'Category of finite dimensional connected manifolds over Real Field with 53 bits of precision'
+differentiable = real_manifolds.Differentiable()
+smooth = real_manifolds.Smooth()
+analytic = real_manifolds.Analytic()
+almost_complex = real_manifolds.AlmostComplex()
+assert smooth.super_categories() == [differentiable]
+assert analytic.super_categories() == [smooth]
+assert almost_complex.super_categories() == [smooth]
+complex_manifolds = Manifolds(CC).Complex()
+assert str(complex_manifolds) == 'Category of complex manifolds over Complex Field with 53 bits of precision'
+assert Manifolds(CC).Complex.__module__ == 'sage.categories.manifolds'
+print('sagelite-node-ok real and complex manifold category semantics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3490,7 +3510,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=309
+electron_manifest_schema_version=310
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3659,6 +3679,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pusho
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-sparse-polynomial-semantics-v279"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-part-literal-semantics-v280"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-symbolic-binomial-v281"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-manifold-categories-v282"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3808,6 +3829,7 @@ electron_required_paths=(
   "site-packages/sage/categories/fields.py"
   "site-packages/sage/categories/groupoid.py"
   "site-packages/sage/categories/metric_spaces.py"
+  "site-packages/sage/categories/manifolds.py"
   "site-packages/sage/categories/modules.py"
   "site-packages/sage/categories/modules_with_basis.py"
   "site-packages/sage/categories/monoids.py"
