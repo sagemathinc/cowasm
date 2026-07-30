@@ -41124,3 +41124,12 @@ diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
 @@ -3887 +3887 @@ def binomial(x, m, **kwds):
 -        sage: binomial(-2., 3)                                                          # needs sage.rings.real_mpfr
 +        sage: binomial(-2., 3)
+diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
+--- a/src/sage/arith/misc.py
++++ b/src/sage/arith/misc.py
+@@ -6047 +6047 @@ def _key_complex_for_display(a):
+-        sage: key_c(CC(5))                                                              # needs sage.rings.real_mpfr
++        sage: key_c(CC(5))
+@@ -6049 +6049 @@ def _key_complex_for_display(a):
+-        sage: key_c(CC(5, 5))                                                           # needs sage.rings.real_mpfr
++        sage: key_c(CC(5, 5))
