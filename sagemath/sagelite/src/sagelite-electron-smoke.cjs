@@ -1808,6 +1808,21 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
       "sagelite-electron-ok incompatible word concatenation delivery smoke",
     );
     console.log(
+      "sagelite-electron-start real characteristic Sturmian factor smoke",
+    );
+    await python.exec(String.raw`
+from sage.combinat.words.word_generators import words
+from sage.rings.real_mpfr import RealField
+
+slope = RealField(200)('0.31415926535897932384626433832795028841971693993751')
+word = words.CharacteristicSturmianWord(slope)[:100]
+assert len(word) == 100
+assert word.is_sturmian_factor()
+`);
+    console.log(
+      "sagelite-electron-ok real characteristic Sturmian factor smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

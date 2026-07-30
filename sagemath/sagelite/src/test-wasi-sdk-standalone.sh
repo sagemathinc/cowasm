@@ -1723,6 +1723,14 @@ result = z + y
 assert repr(result) == 'word: 1222353587'
 assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
 print('sagelite-node-ok incompatible word concatenation delivery smoke')"
+run_node_import "real characteristic Sturmian factor smoke" "import sage.all
+from sage.combinat.words.word_generators import words
+from sage.rings.real_mpfr import RealField
+slope = RealField(200)('0.31415926535897932384626433832795028841971693993751')
+word = words.CharacteristicSturmianWord(slope)[:100]
+assert len(word) == 100
+assert word.is_sturmian_factor()
+print('sagelite-node-ok real characteristic Sturmian factor smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2917,7 +2925,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=275
+electron_manifest_schema_version=276
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3052,6 +3060,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-poor-man-m
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multi-filtered-vector-space-real-field-v245"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-field-complex-laurent-common-parent-v246"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fraction-field-reduction-v247"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-real-sturmian-factor-v248"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

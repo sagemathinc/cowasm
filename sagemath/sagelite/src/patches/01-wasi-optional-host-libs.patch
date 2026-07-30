@@ -40247,3 +40247,9 @@ diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction
              (x^2 + 2.0*x + 1.0)/(x + 1.0)
 -            sage: f.reduce(); f                                                         # needs sage.rings.real_mpfr
 +            sage: f.reduce(); f
+diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/finite_word.py
+--- a/src/sage/combinat/words/finite_word.py
++++ b/src/sage/combinat/words/finite_word.py
+@@ -5666 +5666 @@
+-            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()             # needs sage.rings.real_mpfr
++            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()
