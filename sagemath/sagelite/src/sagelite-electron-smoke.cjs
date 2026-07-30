@@ -2176,6 +2176,7 @@ from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, Ve
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
 from sage.rings.real_mpfr import RealField, RealField_class
+from sage.schemes.projective.projective_space import ProjectiveSpace
 
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
@@ -2208,6 +2209,10 @@ except ZeroDivisionError as error:
 else:
     raise AssertionError('noninvertible Cartesian product element was accepted')
 assert repr(~C([2, 2, 2, 2])) == '(1/2, 1/2, 0.500000000000000, 3)'
+P = ProjectiveSpace(QQ, 1, 'x')
+P2 = ProjectiveSpace(CC, 1, 'y')
+assert repr(P2) == 'Projective Space of dimension 1 over Complex Field with 53 bits of precision'
+assert P2(CC)._coerce_map_from_(P(QQ)) is False
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

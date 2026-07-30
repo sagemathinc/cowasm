@@ -40588,3 +40588,11 @@ diff --git a/src/sage/categories/magmas.py b/src/sage/categories/magmas.py
 @@ -686 +686 @@ class Magmas(Category_singleton):
 -                        sage: ~C([2,2,2,2])                                             # needs sage.rings.real_mpfr
 +                        sage: ~C([2,2,2,2])
+diff --git a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/homset.py
+--- a/src/sage/schemes/generic/homset.py
++++ b/src/sage/schemes/generic/homset.py
+@@ -458,2 +458,2 @@ class SchemeHomset_points(SchemeHomset_generic):
+-            sage: P2 = ProjectiveSpace(CC, 1, 'y')                                      # needs sage.rings.real_mpfr
+-            sage: P2(CC)._coerce_map_from_(P(QQ))                                       # needs sage.rings.real_mpfr
++            sage: P2 = ProjectiveSpace(CC, 1, 'y')
++            sage: P2(CC)._coerce_map_from_(P(QQ))
