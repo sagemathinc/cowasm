@@ -40605,3 +40605,24 @@ diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
              0.400000000000000
 -            sage: type(frac(5.4))                                                       # needs sage.rings.real_mpfr
 +            sage: type(frac(5.4))
+diff --git a/src/sage/misc/sage_input.py b/src/sage/misc/sage_input.py
+--- a/src/sage/misc/sage_input.py
++++ b/src/sage/misc/sage_input.py
+@@ -382,3 +382,3 @@ class SageInputBuilder:
+-            sage: sib.result(sib(RealField(200)(1.5), True))                            # needs sage.rings.real_mpfr
++            sage: sib.result(sib(RealField(200)(1.5), True))
+             1.5000000000000000000000000000000000000000000000000000000000000
+-            sage: sib.result(sib(RealField(200)(1.5), 2))                               # needs sage.rings.real_mpfr
++            sage: sib.result(sib(RealField(200)(1.5), 2))
+@@ -410 +410 @@ class SageInputBuilder:
+-            sage: sage_input(float(42), preparse=True, verify=True)                     # needs sage.rings.real_mpfr
++            sage: sage_input(float(42), preparse=True, verify=True)
+@@ -431 +431 @@ class SageInputBuilder:
+-            sage: sage_input((2, 3.5, 'Hi'), verify=True)                               # needs sage.rings.real_mpfr
++            sage: sage_input((2, 3.5, 'Hi'), verify=True)
+@@ -1749 +1749 @@ class SIE_literal_stringrep(SageInputExpression):
+-        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)                     # needs sage.rings.real_mpfr
++        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)
+@@ -2155 +2155 @@ class SIE_tuple(SageInputExpression):
+-            sage: sib((3.5, -2))                                                        # needs sage.rings.real_mpfr
++            sage: sib((3.5, -2))

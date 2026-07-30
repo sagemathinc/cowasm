@@ -2175,6 +2175,7 @@ import sage.rings.abc
 from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.functions.other import frac
+from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
 from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -2217,6 +2218,13 @@ assert P2(CC)._coerce_map_from_(P(QQ)) is False
 fractional_part = frac(RR('5.4'))
 assert repr(fractional_part) == '0.400000000000000'
 assert type(fractional_part) is RealNumber
+sib = SageInputBuilder()
+assert repr(sib.result(sib(RealField(200)(1.5), True))) == '1.5000000000000000000000000000000000000000000000000000000000000'
+assert repr(sib.result(sib(RealField(200)(1.5), 2))) == '1.5'
+assert repr(sage_input(float(42), preparse=True, verify=True)) == '# Verified\nfloat(42)'
+assert repr(sage_input((ZZ(2), RR('3.5'), 'Hi'), verify=True)) == "# Verified\n(2, 3.5, 'Hi')"
+assert isinstance(sib(RR('3.14159'), True), SIE_literal_stringrep)
+assert repr(sib((RR('3.5'), -ZZ(2)))) == '{tuple: ({atomic:3.5}, {unop:- {atomic:2}})}'
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",
