@@ -2007,6 +2007,9 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+real_zero_vector = (RR**0)()
+assert real_zero_vector.dot_product(real_zero_vector) == RR.zero()
+assert real_zero_vector.parent().base_ring() is RR
 assert Bimodules(CC, ZZ).element_class is Bimodules(RR, ZZ).element_class
 assert VectorSpaces(CC)._subcategory_hook_(Algebras(QQ)) is False
 C = cartesian_product([ZZ, QQ, CC])
@@ -3294,7 +3297,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=299
+electron_manifest_schema_version=300
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3453,6 +3456,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-expon
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-bessel-evaluation-v269"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-gamma-evaluation-v270"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-orthogonal-polynomial-evaluation-v271"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-free-module-zero-vector-v272"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3694,6 +3698,7 @@ electron_required_paths=(
   "site-packages/sage/matrix/special.py"
   "site-packages/sage/modules/__init__.py"
   "site-packages/sage/modules/free_module.py"
+  "site-packages/sage/modules/free_module_element.pyx"
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/free_module_homspace.py"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"

@@ -40775,3 +40775,9 @@ diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogo
 @@ -2302 +2302 @@ def ultraspherical(n, a, x):
 -        sage: ultraspherical(5, 9/10, RealField(100)(pi))                               # needs sage.rings.real_mpfr
 +        sage: ultraspherical(5, 9/10, RealField(100)(pi))
+diff --git a/src/sage/modules/free_module_element.pyx b/src/sage/modules/free_module_element.pyx
+--- a/src/sage/modules/free_module_element.pyx
++++ b/src/sage/modules/free_module_element.pyx
+@@ -2685 +2685 @@ cdef class FreeModuleElement(element_Vector):
+-            sage: rings += [RR]                                                         # needs sage.rings.real_mpfr
++            sage: rings += [RR]

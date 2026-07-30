@@ -2192,6 +2192,9 @@ assert QQ['x'] in Algebras(Fields())
 assert repr(Bimodules.an_instance()) == 'Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right'
 CC = ComplexField()
 RR = RealField()
+real_zero_vector = (RR**0)()
+assert real_zero_vector.dot_product(real_zero_vector) == RR.zero()
+assert real_zero_vector.parent().base_ring() is RR
 assert isinstance(RR, sage.rings.abc.RealField)
 assert sage.rings.abc.RealField.__subclasses__() == [RealField_class]
 assert isinstance(CC, sage.rings.abc.ComplexField)
