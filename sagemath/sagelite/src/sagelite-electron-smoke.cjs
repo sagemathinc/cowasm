@@ -588,6 +588,22 @@ assert tuple(space.dimension_relative_components()) == (1, 2)
 assert space.base_ring() is complex_field
 `);
     console.log("sagelite-electron-ok product projective complex space smoke");
+    console.log("sagelite-electron-start complex Laurent series pickle smoke");
+    await python.exec(String.raw`
+from sage.all import CC
+from sage.misc.persist import loads
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+
+complex_field = CC(0).parent()
+ring = LaurentSeriesRing(complex_field, 'q')
+assert repr(ring) == (
+    'Laurent Series Ring in q over Complex Field with 53 bits of precision'
+)
+assert repr(ring.gen()) == '1.00000000000000*q'
+assert ring.base_ring() is complex_field
+assert loads(ring.dumps()) == ring
+`);
+    console.log("sagelite-electron-ok complex Laurent series pickle smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

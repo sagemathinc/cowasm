@@ -40164,3 +40164,13 @@ diff --git a/src/sage/schemes/product_projective/space.py b/src/sage/schemes/pro
 @@ -978 +978 @@
 -            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')                          # needs sage.rings.real_mpfr
 +            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')
+diff --git a/src/sage/rings/laurent_series_ring.py b/src/sage/rings/laurent_series_ring.py
+--- a/src/sage/rings/laurent_series_ring.py
++++ b/src/sage/rings/laurent_series_ring.py
+@@ -104,4 +104,4 @@
+-        sage: K = LaurentSeriesRing(CC, 'q'); K                                         # needs sage.rings.real_mpfr
++        sage: K = LaurentSeriesRing(CC, 'q'); K
+         Laurent Series Ring in q over Complex Field with 53 bits of precision
+-        sage: loads(K.dumps()) == K                                                     # needs sage.rings.real_mpfr
++        sage: loads(K.dumps()) == K
+         True
