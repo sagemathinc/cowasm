@@ -2356,6 +2356,24 @@ assert complex_zero not in Set(QQ).difference(Set(ZZ))
 assert complex_zero not in Set(QQ).symmetric_difference(Set(ZZ))
 `);
     console.log("sagelite-electron-ok real set membership smoke");
+    console.log("sagelite-electron-start real metric space semantics smoke");
+    await python.exec(String.raw`
+from sage.all import QQ
+from sage.categories.metric_spaces import MetricSpaces
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+
+CC = ComplexField()
+RR = RealField()
+assert CC.dist(3, 2) == RR.one()
+real_plane = RR.cartesian_product(RR)
+assert real_plane in MetricSpaces()
+assert real_plane in MetricSpaces().Complete()
+rational_real_plane = QQ.cartesian_product(RR)
+assert rational_real_plane in MetricSpaces()
+assert rational_real_plane not in MetricSpaces().Complete()
+`);
+    console.log("sagelite-electron-ok real metric space semantics smoke");
     console.log(
       "sagelite-electron-start set element construction delivery smoke",
     );

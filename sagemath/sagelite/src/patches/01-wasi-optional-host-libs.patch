@@ -40836,3 +40836,25 @@ diff --git a/src/sage/sets/set.py b/src/sage/sets/set.py
 @@ -2116 +2116 @@ class Set_object_symmetric_difference(Set_object_binary):
 -            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
 +            sage: ComplexField().0 in X
+diff --git a/src/sage/categories/metric_spaces.py b/src/sage/categories/metric_spaces.py
+--- a/src/sage/categories/metric_spaces.py
++++ b/src/sage/categories/metric_spaces.py
+@@ -187 +187 @@ class MetricSpaces(CategoryWithAxiom):
+-                sage: CC.dist(3, 2)                                                     # needs sage.rings.real_mpfr
++                sage: CC.dist(3, 2)
+@@ -371,2 +371,2 @@ class CartesianProducts(CartesianProductsCategory):
+-                    sage: R2 = RR.cartesian_product(RR)                                  # needs sage.rings.real_mpfr
+-                    sage: R2 in MetricSpaces()                                           # needs sage.rings.real_mpfr
++                    sage: R2 = RR.cartesian_product(RR)
++                    sage: R2 in MetricSpaces()
+@@ -374 +374 @@ class CartesianProducts(CartesianProductsCategory):
+-                    sage: R2 in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
++                    sage: R2 in MetricSpaces().Complete()
+@@ -377,2 +377,2 @@ class CartesianProducts(CartesianProductsCategory):
+-                    sage: QR = QQ.cartesian_product(RR)                                  # needs sage.rings.real_mpfr
+-                    sage: QR in MetricSpaces()                                           # needs sage.rings.real_mpfr
++                    sage: QR = QQ.cartesian_product(RR)
++                    sage: QR in MetricSpaces()
+@@ -380 +380 @@ class CartesianProducts(CartesianProductsCategory):
+-                    sage: QR in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
++                    sage: QR in MetricSpaces().Complete()

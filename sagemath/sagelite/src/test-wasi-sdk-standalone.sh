@@ -2160,6 +2160,20 @@ assert complex_zero not in rational_real_intersection
 assert complex_zero not in Set(QQ).difference(Set(ZZ))
 assert complex_zero not in Set(QQ).symmetric_difference(Set(ZZ))
 print('sagelite-node-ok real set membership smoke')"
+run_node_import "real metric space semantics smoke" "from sage.all import QQ
+from sage.categories.metric_spaces import MetricSpaces
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+CC = ComplexField()
+RR = RealField()
+assert CC.dist(3, 2) == RR.one()
+real_plane = RR.cartesian_product(RR)
+assert real_plane in MetricSpaces()
+assert real_plane in MetricSpaces().Complete()
+rational_real_plane = QQ.cartesian_product(RR)
+assert rational_real_plane in MetricSpaces()
+assert rational_real_plane not in MetricSpaces().Complete()
+print('sagelite-node-ok real metric space semantics smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
 x, y = L.lie_algebra_generators()
@@ -3334,7 +3348,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=302
+electron_manifest_schema_version=303
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3496,6 +3510,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-ortho
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-free-module-zero-vector-v272"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-infinity-coercion-v273"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-set-membership-v274"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-metric-space-semantics-v275"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3641,6 +3656,7 @@ electron_required_paths=(
   "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py"
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py"
   "site-packages/sage/categories/groupoid.py"
+  "site-packages/sage/categories/metric_spaces.py"
   "site-packages/sage/categories/modules.py"
   "site-packages/sage/categories/modules_with_basis.py"
   "site-packages/sage/categories/monoids.py"

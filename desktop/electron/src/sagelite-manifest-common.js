@@ -95,6 +95,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py",
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py",
   "site-packages/sage/categories/groupoid.py",
+  "site-packages/sage/categories/metric_spaces.py",
   "site-packages/sage/categories/modules.py",
   "site-packages/sage/categories/modules_with_basis.py",
   "site-packages/sage/categories/monoids.py",
@@ -324,7 +325,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 302,
+  schemaVersion: 303,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -534,7 +535,8 @@ expectedSageliteManifest.smokeContract +=
   "-real-orthogonal-polynomial-evaluation-v271" +
   "-real-free-module-zero-vector-v272" +
   "-real-infinity-coercion-v273" +
-  "-real-set-membership-v274";
+  "-real-set-membership-v274" +
+  "-real-metric-space-semantics-v275";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
