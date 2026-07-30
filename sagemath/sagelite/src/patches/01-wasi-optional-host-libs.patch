@@ -41046,3 +41046,11 @@ diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
 @@ -1736 +1736 @@ class Function_binomial(GinacFunction):
 -            sage: type(binomial._eval_(5., 3))                                          # needs sage.rings.real_mpfr
 +            sage: type(binomial._eval_(5., 3))
+diff --git a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/homset.py
+--- a/src/sage/schemes/generic/homset.py
++++ b/src/sage/schemes/generic/homset.py
+@@ -538,2 +538,2 @@ class SchemeHomset_points(SchemeHomset_generic):
+-            sage: AC = AffineSpace(CC, 1, 'x')                                          # needs sage.rings.real_mpfr
+-            sage: A(3/2) == AC(3/2)                                                     # needs sage.rings.real_mpfr
++            sage: AC = AffineSpace(CC, 1, 'x')
++            sage: A(3/2) == AC(3/2)                                                     # needs sage.libs.singular sage.rings.real_mpfr
