@@ -2090,6 +2090,44 @@ assert str(lambert) == '0.56714329040978387299996866221'
     console.log(
       "sagelite-electron-ok real exponential and Lambert W smoke",
     );
+    console.log("sagelite-electron-start rational real methods smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RealField
+
+R = RealField()
+R100 = RealField(100)
+assert str((QQ(355) / QQ(113)).continued_fraction().n(digits=10)) == '3.141592920'
+
+a = QQ(25) / QQ(6)
+assert [str(a.local_height(p)) for p in (2, 3, 5)] == [
+    '0.693147180559945',
+    '1.09861228866811',
+    '0.000000000000000',
+]
+a = QQ(6) / QQ(25)
+assert str(a.local_height_arch()) == '0.000000000000000'
+assert str((1 / a).local_height_arch()) == '1.42711635564015'
+assert str((1 / a).local_height_arch(100)) == '1.4271163556401457483890413081'
+a = QQ(5) / QQ(6)
+assert str(a.global_height_non_arch()) == '1.79175946922805'
+assert str(a.global_height_arch()) == '0.000000000000000'
+
+assert str(R(QQ(1) / QQ(7))) == '0.142857142857143'
+assert str(R(QQ(1) / QQ(8))) == '0.125000000000000'
+assert str(R(QQ(1) / QQ(6))) == '0.166666666666667'
+assert str(R100(QQ(333) / QQ(106))) == '3.1415094339622641509433962264'
+r = RDF(QQ(-17) / QQ(89))
+assert abs(R(r).exact_rational() - QQ(-17) / QQ(89)) <= R(r.ulp()) / 2
+
+assert str((QQ(124) / QQ(345)).log(5, 100)) == '-0.63578895682825611710391773754'
+assert str((QQ(125) / QQ(8)).log(QQ(5) / QQ(2), prec=53)) == '3.00000000000000'
+assert str((QQ(1) / QQ(3)).gamma(prec=100)) == '2.6789385347077476336556929410'
+assert str((QQ(1) / QQ(2)).gamma(prec=100)) == '1.7724538509055160272981674833'
+`);
+    console.log("sagelite-electron-ok rational real methods smoke");
     console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
