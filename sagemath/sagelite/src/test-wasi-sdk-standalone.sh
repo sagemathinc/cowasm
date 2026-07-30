@@ -1380,6 +1380,14 @@ except TypeError as error:
 else:
     raise AssertionError('non-integral sparse polynomial shift unexpectedly succeeded')
 print('sagelite-node-ok real sparse polynomial semantics smoke')"
+run_node_import "real-part literal semantics smoke" "import sage.all
+from sage.functions.other import real
+from sage.rings.real_mpfr import RealLiteral
+a = sage.all.RealNumber('2.5')
+assert str(real(a)) == '2.50000000000000'
+assert type(real(a)) is RealLiteral
+assert real(a) is a
+print('sagelite-node-ok real-part literal semantics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3475,7 +3483,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=307
+electron_manifest_schema_version=308
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3642,6 +3650,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-functional-semantics-v277"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-semantics-v278"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-sparse-polynomial-semantics-v279"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-part-literal-semantics-v280"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3767,6 +3776,7 @@ electron_required_paths=(
   "site-packages/sage/functions/bessel.py"
   "site-packages/sage/functions/exp_integral.py"
   "site-packages/sage/functions/gamma.py"
+  "site-packages/sage/functions/other.py"
   "site-packages/sage/functions/orthogonal_polys.py"
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so"
   "site-packages/sage/features/sagemath.py"

@@ -41034,3 +41034,12 @@ diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/
 @@ -782 +782 @@ class Polynomial_generic_sparse(Polynomial):
 -            sage: p.shift(1.5)                                                          # needs sage.rings.real_mpfr
 +            sage: p.shift(1.5)
+diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
+--- a/src/sage/functions/other.py
++++ b/src/sage/functions/other.py
+@@ -1145,3 +1145,3 @@ class Function_real_part(GinacFunction):
+-            sage: real(a)                                                               # needs sage.rings.real_mpfr
++            sage: real(a)
+             2.50000000000000
+-            sage: type(real(a))                                                         # needs sage.rings.real_mpfr
++            sage: type(real(a))

@@ -1038,6 +1038,18 @@ else:
     console.log(
       "sagelite-electron-ok real sparse polynomial semantics smoke",
     );
+    console.log("sagelite-electron-start real-part literal semantics smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.functions.other import real
+from sage.rings.real_mpfr import RealLiteral
+
+a = sage.all.RealNumber('2.5')
+assert str(real(a)) == '2.50000000000000'
+assert type(real(a)) is RealLiteral
+assert real(a) is a
+`);
+    console.log("sagelite-electron-ok real-part literal semantics smoke");
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing
