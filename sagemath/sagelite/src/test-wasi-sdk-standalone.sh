@@ -1872,6 +1872,37 @@ assert F.degree() == 3
 assert len(F.dict()) == 4
 assert all(coefficient.parent() is CC for coefficient in F.coefficients())
 print('sagelite-node-ok real multivariate polynomial construction smoke')"
+run_node_import "rational field real embeddings smoke" "import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.infinity import Infinity
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+
+RR = RealField()
+one_seventh = QQ(1) / QQ(7)
+assert str(RealField(9).pi()) == '3.1'
+assert QQ(RR(one_seventh)) - one_seventh == 0
+
+completion = QQ.completion(Infinity, 53)
+assert completion is RR
+
+real_places = QQ.places()
+assert len(real_places) == 1
+assert real_places[0].codomain() is RR
+assert real_places[0](QQ(3) / QQ(2)) == RR('1.5')
+
+complex_place = QQ.places(prec=200, all_complex=True)[0]
+assert complex_place.codomain() is ComplexField(200)
+assert complex_place(QQ(3) / QQ(2)) == ComplexField(200)('1.5')
+
+complex_embedding = QQ.complex_embedding()
+assert complex_embedding.codomain() is ComplexField(53)
+assert complex_embedding(one_seventh) == ComplexField(53)(one_seventh)
+
+complex_embedding_20 = QQ.complex_embedding(20)
+assert complex_embedding_20.codomain() is ComplexField(20)
+assert complex_embedding_20(one_seventh) == ComplexField(20)(one_seventh)
+print('sagelite-node-ok rational field real embeddings smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -3066,7 +3097,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=285
+electron_manifest_schema_version=286
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3211,6 +3242,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-eleme
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-coercion-semantics-v255"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-real-approximation-v256"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-multivariate-polynomial-construction-v257"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-field-real-embeddings-v258"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

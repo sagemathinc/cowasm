@@ -40424,3 +40424,27 @@ diff --git a/src/sage/rings/polynomial/multi_polynomial.pyx b/src/sage/rings/pol
 -            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3                 # needs sage.rings.real_mpfr
 +            sage: R.<x,y> = PolynomialRing(CC)
 +            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3
+diff --git a/src/sage/rings/rational_field.py b/src/sage/rings/rational_field.py
+--- a/src/sage/rings/rational_field.py
++++ b/src/sage/rings/rational_field.py
+@@ -19 +19 @@ Interactively, an instance of :class:`RationalField` is available as ``QQ``::
+-    sage: RealField(9).pi()                                                             # needs sage.rings.real_mpfr
++    sage: RealField(9).pi()
+@@ -110 +110 @@ class RationalField(Singleton, number_field_base.NumberField):
+-        sage: QQ(RR(1/7)) - 1/7                                                         # needs sage.rings.real_mpfr
++        sage: QQ(RR(1/7)) - 1/7
+@@ -335 +335 @@ class RationalField(Singleton, number_field_base.NumberField):
+-            sage: QQ.completion(infinity, 53)                                           # needs sage.rings.real_mpfr
++            sage: QQ.completion(infinity, 53)
+@@ -663 +663 @@ class RationalField(Singleton, number_field_base.NumberField):
+-            sage: QQ.places()                                                           # needs sage.rings.real_mpfr
++            sage: QQ.places()
+@@ -673 +673 @@ class RationalField(Singleton, number_field_base.NumberField):
+-            sage: QQ.places(prec=200, all_complex=True)                                 # needs sage.rings.real_mpfr
++            sage: QQ.places(prec=200, all_complex=True)
+@@ -709 +709 @@ class RationalField(Singleton, number_field_base.NumberField):
+-            sage: QQ.complex_embedding()                                                # needs sage.rings.real_mpfr
++            sage: QQ.complex_embedding()
+@@ -714 +714 @@ class RationalField(Singleton, number_field_base.NumberField):
+-            sage: QQ.complex_embedding(20)                                              # needs sage.rings.real_mpfr
++            sage: QQ.complex_embedding(20)

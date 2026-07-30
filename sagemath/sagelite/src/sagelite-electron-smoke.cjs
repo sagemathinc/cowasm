@@ -2031,6 +2031,44 @@ assert all(coefficient.parent() is CC for coefficient in F.coefficients())
       "sagelite-electron-ok real multivariate polynomial construction smoke",
     );
     console.log(
+      "sagelite-electron-start rational field real embeddings smoke",
+    );
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.infinity import Infinity
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+
+RR = RealField()
+one_seventh = QQ(1) / QQ(7)
+assert str(RealField(9).pi()) == '3.1'
+assert QQ(RR(one_seventh)) - one_seventh == 0
+
+completion = QQ.completion(Infinity, 53)
+assert completion is RR
+
+real_places = QQ.places()
+assert len(real_places) == 1
+assert real_places[0].codomain() is RR
+assert real_places[0](QQ(3) / QQ(2)) == RR('1.5')
+
+complex_place = QQ.places(prec=200, all_complex=True)[0]
+assert complex_place.codomain() is ComplexField(200)
+assert complex_place(QQ(3) / QQ(2)) == ComplexField(200)('1.5')
+
+complex_embedding = QQ.complex_embedding()
+assert complex_embedding.codomain() is ComplexField(53)
+assert complex_embedding(one_seventh) == ComplexField(53)(one_seventh)
+
+complex_embedding_20 = QQ.complex_embedding(20)
+assert complex_embedding_20.codomain() is ComplexField(20)
+assert complex_embedding_20(one_seventh) == ComplexField(20)(one_seventh)
+`);
+    console.log(
+      "sagelite-electron-ok rational field real embeddings smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
