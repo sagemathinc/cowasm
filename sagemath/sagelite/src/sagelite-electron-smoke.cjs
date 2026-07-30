@@ -1913,6 +1913,29 @@ assert CC._is_real_numerical() is False
       "sagelite-electron-ok real parent numeric predicates smoke",
     );
     console.log(
+      "sagelite-electron-start real element core semantics smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import CC, QQ, RR, ZZ, parent
+
+q = QQ(3) / 5
+q._set_parent(CC)
+assert str(parent(q)) == 'Complex Field with 53 bits of precision'
+try:
+    q._set_parent(float)
+except TypeError as error:
+    assert str(error) == 'Cannot convert type to sage.structure.parent.Parent'
+else:
+    raise AssertionError('setting an element parent to float unexpectedly succeeded')
+assert repr((QQ(2) / 3).numerical_approx()) == '0.666666666666667'
+assert repr(ZZ(0).n(algorithm='foo')) == '0.000000000000000'
+assert repr((QQ(2) / 3).n()) == '0.666666666666667'
+assert repr(RR(-1).abs()) == '1.00000000000000'
+`);
+    console.log(
+      "sagelite-electron-ok real element core semantics smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

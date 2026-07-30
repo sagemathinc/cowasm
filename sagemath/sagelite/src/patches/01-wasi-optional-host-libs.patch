@@ -40336,3 +40336,26 @@ diff --git a/src/sage/structure/parent.pyx b/src/sage/structure/parent.pyx
 @@ -2944 +2944 @@ cdef class Parent(CategoryObject):
 -            sage: CC._is_real_numerical()                                               # needs sage.rings.real_mpfr
 +            sage: CC._is_real_numerical()
+diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
+--- a/src/sage/structure/element.pyx
++++ b/src/sage/structure/element.pyx
+@@ -421,2 +421,2 @@ cdef class Element(SageObject):
+-            sage: q._set_parent(CC)                                                     # needs sage.rings.real_mpfr
+-            sage: parent(q)                                                             # needs sage.rings.real_mpfr
++            sage: q._set_parent(CC)
++            sage: parent(q)
+@@ -424 +424 @@ cdef class Element(SageObject):
+-            sage: q._set_parent(float)                                                  # needs sage.rings.real_mpfr
++            sage: q._set_parent(float)
+@@ -874 +874 @@ cdef class Element(SageObject):
+-            sage: (2/3).numerical_approx()                                              # needs sage.rings.real_mpfr
++            sage: (2/3).numerical_approx()
+@@ -885 +885 @@ cdef class Element(SageObject):
+-            sage: (0).n(algorithm='foo')                                                # needs sage.rings.real_mpfr
++            sage: (0).n(algorithm='foo')
+@@ -899 +899 @@ cdef class Element(SageObject):
+-            sage: (2/3).n()                                                             # needs sage.rings.real_mpfr
++            sage: (2/3).n()
+@@ -2880 +2880 @@ cpdef class RingElement(ModuleElement):
+-            sage: RR(-1).abs()                                                          # needs sage.rings.real_mpfr
++            sage: RR(-1).abs()

@@ -1783,6 +1783,21 @@ assert [RR._is_numerical(), CC._is_numerical()] == [True, True]
 assert [RR._is_real_numerical(), RLF._is_real_numerical()] == [True, True]
 assert CC._is_real_numerical() is False
 print('sagelite-node-ok real parent numeric predicates smoke')"
+run_node_import "real element core semantics smoke" "from sage.all import CC, QQ, RR, ZZ, parent
+q = QQ(3) / 5
+q._set_parent(CC)
+assert str(parent(q)) == 'Complex Field with 53 bits of precision'
+try:
+    q._set_parent(float)
+except TypeError as error:
+    assert str(error) == 'Cannot convert type to sage.structure.parent.Parent'
+else:
+    raise AssertionError('setting an element parent to float unexpectedly succeeded')
+assert repr((QQ(2) / 3).numerical_approx()) == '0.666666666666667'
+assert repr(ZZ(0).n(algorithm='foo')) == '0.000000000000000'
+assert repr((QQ(2) / 3).n()) == '0.666666666666667'
+assert repr(RR(-1).abs()) == '1.00000000000000'
+print('sagelite-node-ok real element core semantics smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2977,7 +2992,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=281
+electron_manifest_schema_version=282
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3118,6 +3133,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-hyper
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-ring-category-epsilon-v251"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-error-function-evaluation-v252"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-parent-numeric-predicates-v253"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-element-core-semantics-v254"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
