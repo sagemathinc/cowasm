@@ -40359,3 +40359,30 @@ diff --git a/src/sage/structure/element.pyx b/src/sage/structure/element.pyx
 @@ -2880 +2880 @@ cpdef class RingElement(ModuleElement):
 -            sage: RR(-1).abs()                                                          # needs sage.rings.real_mpfr
 +            sage: RR(-1).abs()
+diff --git a/src/sage/structure/coerce.pyx b/src/sage/structure/coerce.pyx
+--- a/src/sage/structure/coerce.pyx
++++ b/src/sage/structure/coerce.pyx
+@@ -379 +379 @@ def parent_is_numerical(P):
+-        sage: [parent_is_numerical(R) for R in [RR, CC]]                                # needs sage.rings.real_mpfr
++        sage: [parent_is_numerical(R) for R in [RR, CC]]
+@@ -537 +536,0 @@ cdef class CoercionModel:
+-        sage: # needs sage.rings.real_mpfr
+@@ -870,2 +869,2 @@ cdef class CoercionModel:
+-            sage: R100 = RealField(100)                                                 # needs sage.rings.real_mpfr
+-            sage: cm.explain(R100, float, operator.add)                                 # needs sage.rings.real_mpfr
++            sage: R100 = RealField(100)
++            sage: cm.explain(R100, float, operator.add)
+@@ -874 +873 @@ cdef class CoercionModel:
+-            sage: parent(R100(1) + float(1))                                            # needs sage.rings.real_mpfr
++            sage: parent(R100(1) + float(1))
+@@ -1066 +1065 @@ cdef class CoercionModel:
+-            sage: cm.common_parent(ZZ, QQ, RR)                                          # needs sage.rings.real_mpfr
++            sage: cm.common_parent(ZZ, QQ, RR)
+@@ -1076,2 +1075,2 @@ cdef class CoercionModel:
+-            sage: real_fields = [RealField(prec) for prec in [10,20..100]]              # needs sage.rings.real_mpfr
+-            sage: cm.common_parent(*real_fields)                                        # needs sage.rings.real_mpfr
++            sage: real_fields = [RealField(prec) for prec in [10,20..100]]
++            sage: cm.common_parent(*real_fields)
+@@ -1683 +1682 @@ cdef class CoercionModel:
+-            sage: cm.discover_coercion(RR, QQ)                                          # needs sage.rings.real_mpfr
++            sage: cm.discover_coercion(RR, QQ)

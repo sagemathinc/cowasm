@@ -1798,6 +1798,33 @@ assert repr(ZZ(0).n(algorithm='foo')) == '0.000000000000000'
 assert repr((QQ(2) / 3).n()) == '0.666666666666667'
 assert repr(RR(-1).abs()) == '1.00000000000000'
 print('sagelite-node-ok real element core semantics smoke')"
+run_node_import "real coercion semantics smoke" "import io
+import operator
+from contextlib import redirect_stdout
+from sage.all import CC, QQ, RR, ZZ, RealField, parent, polygen
+from sage.structure.coerce import parent_is_numerical
+from sage.structure.element import get_coercion_model
+
+assert [parent_is_numerical(R) for R in [RR, CC]] == [True, True]
+x = polygen(RR)
+p = x**3 + 2*x - 1
+assert repr(p(float('1.2'))) == '3.12800000000000'
+assert repr(p(int('2'))) == '11.0000000000000'
+cm = get_coercion_model()
+R100 = RealField(100)
+explanation = io.StringIO()
+with redirect_stdout(explanation):
+    cm.explain(R100, float, operator.add)
+assert explanation.getvalue() == 'Right operand is numeric, will attempt coercion in both directions.\\nUnknown result parent.\\n'
+assert parent(R100(1) + float(1)) is float
+assert cm.common_parent(ZZ, QQ, RR) is RR
+real_fields = [RealField(prec) for prec in range(10, 101, 10)]
+assert cm.common_parent(*real_fields) is real_fields[0]
+left, right = cm.discover_coercion(RR, QQ)
+assert left is None
+assert right.domain() is QQ
+assert right.codomain() is RR
+print('sagelite-node-ok real coercion semantics smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2992,7 +3019,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=282
+electron_manifest_schema_version=283
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3134,6 +3161,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-ring-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-error-function-evaluation-v252"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-parent-numeric-predicates-v253"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-element-core-semantics-v254"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-coercion-semantics-v255"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

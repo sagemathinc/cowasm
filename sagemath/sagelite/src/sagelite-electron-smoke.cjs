@@ -1936,6 +1936,40 @@ assert repr(RR(-1).abs()) == '1.00000000000000'
       "sagelite-electron-ok real element core semantics smoke",
     );
     console.log(
+      "sagelite-electron-start real coercion semantics smoke",
+    );
+    await python.exec(String.raw`
+import io
+import operator
+from contextlib import redirect_stdout
+from sage.all import CC, QQ, RR, ZZ, RealField, parent, polygen
+from sage.structure.coerce import parent_is_numerical
+from sage.structure.element import get_coercion_model
+
+assert [parent_is_numerical(R) for R in [RR, CC]] == [True, True]
+x = polygen(RR)
+p = x**3 + 2*x - 1
+assert repr(p(float('1.2'))) == '3.12800000000000'
+assert repr(p(int('2'))) == '11.0000000000000'
+cm = get_coercion_model()
+R100 = RealField(100)
+explanation = io.StringIO()
+with redirect_stdout(explanation):
+    cm.explain(R100, float, operator.add)
+assert explanation.getvalue() == 'Right operand is numeric, will attempt coercion in both directions.\nUnknown result parent.\n'
+assert parent(R100(1) + float(1)) is float
+assert cm.common_parent(ZZ, QQ, RR) is RR
+real_fields = [RealField(prec) for prec in range(10, 101, 10)]
+assert cm.common_parent(*real_fields) is real_fields[0]
+left, right = cm.discover_coercion(RR, QQ)
+assert left is None
+assert right.domain() is QQ
+assert right.codomain() is RR
+`);
+    console.log(
+      "sagelite-electron-ok real coercion semantics smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
