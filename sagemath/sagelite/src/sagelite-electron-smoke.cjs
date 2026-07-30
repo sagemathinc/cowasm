@@ -620,6 +620,28 @@ assert ring.base_ring() is complex_field
 assert loads(generator.dumps()) == generator
 `);
     console.log("sagelite-electron-ok complex power series pickle smoke");
+    console.log(
+      "sagelite-electron-start multivariate power series real base extension smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import PowerSeriesRing, QQ, RR
+
+real_field = RR(0).parent()
+ring = PowerSeriesRing(QQ, names=('t', 'u', 'v'))
+extended = ring.base_extend(real_field)
+assert repr(ring) == (
+    'Multivariate Power Series Ring in t, u, v over Rational Field'
+)
+assert repr(extended) == (
+    'Multivariate Power Series Ring in t, u, v '
+    'over Real Field with 53 bits of precision'
+)
+assert extended.base_ring() is real_field
+assert tuple(map(str, extended.gens())) == ('t', 'u', 'v')
+`);
+    console.log(
+      "sagelite-electron-ok multivariate power series real base extension smoke",
+    );
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

@@ -40184,3 +40184,12 @@ diff --git a/src/sage/rings/power_series_poly.pyx b/src/sage/rings/power_series_
 -            sage: loads(q.dumps()) == q                                                 # needs sage.rings.real_mpfr
 +            sage: loads(q.dumps()) == q
              True
+diff --git a/src/sage/rings/multi_power_series_ring.py b/src/sage/rings/multi_power_series_ring.py
+--- a/src/sage/rings/multi_power_series_ring.py
++++ b/src/sage/rings/multi_power_series_ring.py
+@@ -121 +121 @@
+-    sage: R.base_extend(RR)                                                             # needs sage.rings.real_mpfr
++    sage: R.base_extend(RR)
+@@ -520 +520 @@
+-            sage: R.base_extend(RR)                                                     # needs sage.rings.real_mpfr
++            sage: R.base_extend(RR)
