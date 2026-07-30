@@ -1050,6 +1050,27 @@ assert type(real(a)) is RealLiteral
 assert real(a) is a
 `);
     console.log("sagelite-electron-ok real-part literal semantics smoke");
+    console.log(
+      "sagelite-electron-start quaternion polynomial semantics smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import PolynomialRing, QQ, QuaternionAlgebra
+
+A = QuaternionAlgebra(QQ, -1, -1)
+i, j, k = A.gens()
+R = PolynomialRing(A, 'w', sparse=True)
+w = R.gen()
+f = w**3 + (i + j)*w + 1
+assert str(f) == 'w^3 + (i + j)*w + 1'
+assert str(f**2) == 'w^6 + (2*i + 2*j)*w^4 + 2*w^3 - 2*w^2 + (2*i + 2*j)*w + 1'
+f = w + i
+g = w + j
+assert str(f*g) == 'w^2 + (i + j)*w + k'
+assert str(g*f) == 'w^2 + (i + j)*w - k'
+`);
+    console.log(
+      "sagelite-electron-ok quaternion polynomial semantics smoke",
+    );
     console.log("sagelite-electron-start real argument evaluation smoke");
     await python.exec(String.raw`
 import sage.all

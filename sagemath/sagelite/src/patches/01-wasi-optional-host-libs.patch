@@ -41145,3 +41145,10 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
 @@ -2049 +2049 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative):
 -            sage: PolynomialRing_integral_domain._implementation_names_impl(None, ZZ, False)
 +            sage: PolynomialRing_integral_domain._implementation_names_impl(None, ZZ, False)                       # needs sage.libs.flint
+diff --git a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -257,2 +257,3 @@ if sys.platform == 'wasi':
+     e = math.e
++    lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
+     from sage.categories.additive_groups import AdditiveGroups

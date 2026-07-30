@@ -1388,6 +1388,19 @@ assert str(real(a)) == '2.50000000000000'
 assert type(real(a)) is RealLiteral
 assert real(a) is a
 print('sagelite-node-ok real-part literal semantics smoke')"
+run_node_import "quaternion polynomial semantics smoke" "from sage.all import PolynomialRing, QQ, QuaternionAlgebra
+A = QuaternionAlgebra(QQ, -1, -1)
+i, j, k = A.gens()
+R = PolynomialRing(A, 'w', sparse=True)
+w = R.gen()
+f = w**3 + (i + j)*w + 1
+assert str(f) == 'w^3 + (i + j)*w + 1'
+assert str(f**2) == 'w^6 + (2*i + 2*j)*w^4 + 2*w^3 - 2*w^2 + (2*i + 2*j)*w + 1'
+f = w + i
+g = w + j
+assert str(f*g) == 'w^2 + (i + j)*w + k'
+assert str(g*f) == 'w^2 + (i + j)*w - k'
+print('sagelite-node-ok quaternion polynomial semantics smoke')"
 run_node_import "real argument evaluation smoke" "import sage.all
 from sage.functions.other import arg
 value = arg(float('3.0'))
@@ -3516,7 +3529,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=311
+electron_manifest_schema_version=312
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3687,6 +3700,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-part-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-module-symbolic-binomial-v281"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-manifold-categories-v282"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-argument-evaluation-v283"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quaternion-polynomial-semantics-v284"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3802,6 +3816,7 @@ electron_required_paths=(
   "site-packages/sage/arith/power.cpython-314-wasm32-wasi.so"
   "site-packages/sage/arith/rational_reconstruction.cpython-314-wasm32-wasi.so"
   "site-packages/sage/arith/srange.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/algebras/quatalg/quaternion_algebra.py"
   "site-packages/sage/misc/__init__.py"
   "site-packages/sage/misc/flatten.py"
   "site-packages/sage/misc/functional.py"

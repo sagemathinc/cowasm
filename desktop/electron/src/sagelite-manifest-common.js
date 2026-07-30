@@ -65,6 +65,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/arith/power.cpython-314-wasm32-wasi.so",
   "site-packages/sage/arith/rational_reconstruction.cpython-314-wasm32-wasi.so",
   "site-packages/sage/arith/srange.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/algebras/quatalg/quaternion_algebra.py",
   "site-packages/sage/misc/__init__.py",
   "site-packages/sage/misc/flatten.py",
   "site-packages/sage/misc/functional.py",
@@ -329,7 +330,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 311,
+  schemaVersion: 312,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -551,6 +552,8 @@ expectedSageliteManifest.smokeContract +=
   "-real-complex-manifold-categories-v282";
 expectedSageliteManifest.smokeContract +=
   "-real-argument-evaluation-v283";
+expectedSageliteManifest.smokeContract +=
+  "-quaternion-polynomial-semantics-v284";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",
