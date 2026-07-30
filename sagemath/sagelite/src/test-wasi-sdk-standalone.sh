@@ -1990,6 +1990,7 @@ for args in (
 print('sagelite-node-ok real Wigner evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
+from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField
@@ -2045,6 +2046,27 @@ assert repr(high_precision_square_root) == '1.4142135623730950488016887242'
 assert positive_cube_root.parent() is RR
 assert negative_cube_root.parent() is RR
 assert high_precision_square_root.parent().precision() == 100
+exp_e = exp_integral_e(1, RealField(100)(1))
+exp_e1 = exp_integral_e1(RealField(100)(1))
+exp_e1_half = exp_integral_e1(RealField(200)('0.5'))
+log_i = log_integral(RealField(200)('1e6'))
+log_i_offset = log_integral_offset(RealField(200)('1e6'))
+sin_i = sin_integral(RealField(200)('1e23'))
+ei = Ei(RealField(300)('1.1'))
+assert repr(exp_e) == '0.21938393439552027367716377546'
+assert repr(exp_e1) == '0.21938393439552027367716377546'
+assert repr(exp_e1_half) == '0.55977359477616081174679593931508523522684689031635351524829'
+assert repr(log_i) == '78627.549159462181919862910747947261161321874382421767074759'
+assert repr(log_i_offset) == '78626.503995682064427078066159058066548185351766843615873183'
+assert repr(sin_i) == '1.5707963267948966192313288218697837425815368604836679189519'
+assert repr(ei) == '2.16737827956340282358378734233807621497112737591639704719499002090327541763352339357795426'
+assert exp_e.parent().precision() == 100
+assert exp_e1.parent().precision() == 100
+assert exp_e1_half.parent().precision() == 200
+assert log_i.parent().precision() == 200
+assert log_i_offset.parent().precision() == 200
+assert sin_i.parent().precision() == 200
+assert ei.parent().precision() == 300
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3220,7 +3242,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=295
+electron_manifest_schema_version=296
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3375,6 +3397,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-pr
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fractional-part-v265"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sage-input-real-literals-v266"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-nth-root-v267"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exponential-integrals-v268"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3497,6 +3520,7 @@ electron_required_paths=(
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so"
   "site-packages/sage/functions/__init__.py"
   "site-packages/sage/functions/all.py"
+  "site-packages/sage/functions/exp_integral.py"
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so"
   "site-packages/sage/features/sagemath.py"
   "site-packages/sage/categories/__init__.py"

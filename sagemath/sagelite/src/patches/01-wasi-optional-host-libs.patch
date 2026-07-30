@@ -40639,3 +40639,33 @@ diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
 @@ -873 +873 @@ class Function_real_nth_root(BuiltinFunction):
 -            sage: real_nth_root(Reals(100)(2), 2)                                       # needs sage.rings.real_mpfr
 +            sage: real_nth_root(Reals(100)(2), 2)
+diff --git a/src/sage/functions/exp_integral.py b/src/sage/functions/exp_integral.py
+--- a/src/sage/functions/exp_integral.py
++++ b/src/sage/functions/exp_integral.py
+@@ -220 +220 @@ class Function_exp_integral_e(BuiltinFunction):
+-            sage: exp_integral_e(1, RealField(100)(1))                                  # needs sage.rings.real_mpfr
++            sage: exp_integral_e(1, RealField(100)(1))
+@@ -282 +282 @@ class Function_exp_integral_e1(BuiltinFunction):
+-        sage: exp_integral_e1(RealField(100)(1))                                        # needs sage.rings.real_mpfr
++        sage: exp_integral_e1(RealField(100)(1))
+@@ -290 +290 @@ class Function_exp_integral_e1(BuiltinFunction):
+-        sage: N(exponential_integral_1(2.0))                                            # needs sage.rings.real_mpfr
++        sage: N(exponential_integral_1(2.0))                                            # needs sage.libs.pari
+@@ -329 +329 @@ class Function_exp_integral_e1(BuiltinFunction):
+-            sage: exp_integral_e1(RealField(200)(0.5))                                  # needs sage.rings.real_mpfr
++            sage: exp_integral_e1(RealField(200)(0.5))
+@@ -471 +471 @@ class Function_log_integral(BuiltinFunction):
+-            sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
++            sage: log_integral(RealField(200)(1e6))
+@@ -661 +661 @@ class Function_log_integral_offset(BuiltinFunction):
+-            sage: log_integral_offset(RealField(200)(1e6))                              # needs sage.rings.real_mpfr
++            sage: log_integral_offset(RealField(200)(1e6))
+@@ -729 +729 @@ def sin_integral(x, hold=False):
+-        sage: sin_integral(RealField(200)(1e23))                                        # needs sage.rings.real_mpfr
++        sage: sin_integral(RealField(200)(1e23))
+@@ -840 +840 @@ class Function_sin_integral(BuiltinFunction):
+-            sage: sin_integral(RealField(200)(1e23))                                    # needs sage.rings.real_mpfr
++            sage: sin_integral(RealField(200)(1e23))
+@@ -1339 +1339 @@ class Function_exp_integral(BuiltinFunction):
+-        sage: Ei(RealField(300)(1.1))                                                   # needs sage.rings.real_mpfr
++        sage: Ei(RealField(300)(1.1))
