@@ -1992,9 +1992,11 @@ run_node_import "category parameter refinement delivery smoke" "from sage.all im
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
+from sage.functions.gamma import gamma, gamma_inc_lower
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RealField, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
@@ -2087,6 +2089,14 @@ assert repr(bessel_y_53) == '-0.781212821300289'
 assert repr(bessel_y_order_200) == '-0.78121282130028871654715000004796482054990639071644460784383'
 assert bessel_y_53.parent().precision() == 53
 assert bessel_y_order_200.parent().precision() == 200
+assert RR(-1).gamma().is_NaN()
+assert RDF(-1).gamma().is_NaN()
+assert repr(gamma_inc_lower(3, RR(2))) == '0.646647167633873'
+assert repr(gamma_inc_lower(0, RR(2))) == '+infinity'
+gamma_100 = gamma(RealField(100)('2.5'))
+assert repr(gamma_100) == '1.3293403881791370204736256125'
+assert gamma_100.parent().precision() == 100
+assert RealField(1024).precision() == 1024
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3262,7 +3272,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=297
+electron_manifest_schema_version=298
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3419,6 +3429,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sage-input
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-nth-root-v267"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exponential-integrals-v268"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-bessel-evaluation-v269"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-gamma-evaluation-v270"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -3543,6 +3554,7 @@ electron_required_paths=(
   "site-packages/sage/functions/all.py"
   "site-packages/sage/functions/bessel.py"
   "site-packages/sage/functions/exp_integral.py"
+  "site-packages/sage/functions/gamma.py"
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so"
   "site-packages/sage/features/sagemath.py"
   "site-packages/sage/categories/__init__.py"

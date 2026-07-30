@@ -74,6 +74,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/functions/all.py",
   "site-packages/sage/functions/bessel.py",
   "site-packages/sage/functions/exp_integral.py",
+  "site-packages/sage/functions/gamma.py",
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so",
   "site-packages/sage/features/sagemath.py",
   "site-packages/sage/categories/__init__.py",
@@ -321,7 +322,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 297,
+  schemaVersion: 298,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -526,7 +527,8 @@ expectedSageliteManifest.smokeContract +=
   "-sage-input-real-literals-v266" +
   "-real-nth-root-v267" +
   "-real-exponential-integrals-v268" +
-  "-real-bessel-evaluation-v269";
+  "-real-bessel-evaluation-v269" +
+  "-real-gamma-evaluation-v270";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

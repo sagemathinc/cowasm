@@ -40690,3 +40690,44 @@ diff --git a/src/sage/functions/bessel.py b/src/sage/functions/bessel.py
 @@ -1025 +1025 @@ class Function_Bessel_K(BuiltinFunction):
 -            sage: bessel_K(0, RealField(128)(1))                                        # needs sage.rings.real_mpfr
 +            sage: bessel_K(0, RealField(128)(1))
+diff --git a/src/sage/functions/gamma.py b/src/sage/functions/gamma.py
+--- a/src/sage/functions/gamma.py
++++ b/src/sage/functions/gamma.py
+@@ -139 +139 @@ class Function_gamma(BuiltinFunction):
+-            sage: (-1.).gamma()                                                         # needs sage.rings.real_mpfr
++            sage: (-1.).gamma()
+@@ -143 +143 @@ class Function_gamma(BuiltinFunction):
+-            sage: RDF(-1).gamma()                                                       # needs sage.rings.real_mpfr
++            sage: RDF(-1).gamma()
+@@ -397 +397 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: gamma_inc(2, 0)                                                       # needs sage.rings.real_mpfr
++            sage: gamma_inc(2, 0)                                                       # needs sage.symbolic
+@@ -430 +430 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: gamma_inc(0, 2.)                                                      # needs sage.rings.real_mpfr
++            sage: gamma_inc(0, 2.)                                                      # needs sage.symbolic
+@@ -443,2 +443,2 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: R = RealField(1024)                                                   # needs sage.rings.real_mpfr
+-            sage: gamma(R(9), R(10^-3))  # rel tol 1e-308                               # needs sage.rings.real_mpfr
++            sage: R = RealField(1024)
++            sage: gamma(R(9), R(10^-3))  # rel tol 1e-308                               # needs sage.symbolic
+@@ -451 +451 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: gamma_inc(float(-1), float(-1))                                       # needs sage.rings.real_mpfr
++            sage: gamma_inc(float(-1), float(-1))                                       # needs sage.symbolic
+@@ -460 +460 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: r = gamma_inc(float(0), float(1)); r                                  # needs sage.rings.real_mpfr
++            sage: r = gamma_inc(float(0), float(1)); r                                  # needs sage.symbolic
+@@ -462 +462 @@ class Function_gamma_inc(BuiltinFunction):
+-            sage: type(r)                                                               # needs sage.rings.real_mpfr
++            sage: type(r)                                                               # needs sage.symbolic
+@@ -587 +587 @@ class Function_gamma_inc_lower(BuiltinFunction):
+-            sage: gamma_inc_lower(3, 2.)                                                # needs sage.rings.real_mpfr
++            sage: gamma_inc_lower(3, 2.)
+@@ -591 +591 @@ class Function_gamma_inc_lower(BuiltinFunction):
+-            sage: gamma_inc_lower(0, 2.)                                                # needs sage.rings.real_mpfr
++            sage: gamma_inc_lower(0, 2.)
+@@ -709 +709 @@ def gamma(a, *args, **kwds):
+-        sage: t = gamma(RealField(100)(2.5)); t                                         # needs sage.rings.real_mpfr
++        sage: t = gamma(RealField(100)(2.5)); t
+@@ -711 +711 @@ def gamma(a, *args, **kwds):
+-        sage: t.prec()                                                                  # needs sage.rings.real_mpfr
++        sage: t.prec()

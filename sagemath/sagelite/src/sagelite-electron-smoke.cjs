@@ -2176,9 +2176,11 @@ from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, Ve
 from sage.categories.bimodules import Bimodules
 from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
+from sage.functions.gamma import gamma, gamma_inc_lower
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
+from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
@@ -2276,6 +2278,14 @@ assert repr(bessel_y_53) == '-0.781212821300289'
 assert repr(bessel_y_order_200) == '-0.78121282130028871654715000004796482054990639071644460784383'
 assert bessel_y_53.parent().precision() == 53
 assert bessel_y_order_200.parent().precision() == 200
+assert RR(-1).gamma().is_NaN()
+assert RDF(-1).gamma().is_NaN()
+assert repr(gamma_inc_lower(3, RR(2))) == '0.646647167633873'
+assert repr(gamma_inc_lower(0, RR(2))) == '+infinity'
+gamma_100 = gamma(RealField(100)('2.5'))
+assert repr(gamma_100) == '1.3293403881791370204736256125'
+assert gamma_100.parent().precision() == 100
+assert RealField(1024).precision() == 1024
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",
