@@ -1900,6 +1900,19 @@ assert repr(erfc(R100(1) / 2)) == '0.47950012218695346231725334611'
       "sagelite-electron-ok real error function evaluation smoke",
     );
     console.log(
+      "sagelite-electron-start real parent numeric predicates smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import CC, RR, RLF
+
+assert [RR._is_numerical(), CC._is_numerical()] == [True, True]
+assert [RR._is_real_numerical(), RLF._is_real_numerical()] == [True, True]
+assert CC._is_real_numerical() is False
+`);
+    console.log(
+      "sagelite-electron-ok real parent numeric predicates smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

@@ -40324,3 +40324,15 @@ diff --git a/src/sage/functions/error.py b/src/sage/functions/error.py
 @@ -408 +408 @@ class Function_erfc(BuiltinFunction):
 -        sage: erfc(RealField(100)(1/2))                                                 # needs sage.rings.real_mpfr
 +        sage: erfc(RealField(100)(1/2))
+diff --git a/src/sage/structure/parent.pyx b/src/sage/structure/parent.pyx
+--- a/src/sage/structure/parent.pyx
++++ b/src/sage/structure/parent.pyx
+@@ -2899 +2899 @@ cdef class Parent(CategoryObject):
+-            sage: [RR._is_numerical(), CC._is_numerical()]                              # needs sage.rings.real_mpfr
++            sage: [RR._is_numerical(), CC._is_numerical()]
+@@ -2940 +2940 @@ cdef class Parent(CategoryObject):
+-            sage: [RR._is_real_numerical(), RLF._is_real_numerical()]                   # needs sage.rings.real_mpfr
++            sage: [RR._is_real_numerical(), RLF._is_real_numerical()]
+@@ -2944 +2944 @@ cdef class Parent(CategoryObject):
+-            sage: CC._is_real_numerical()                                               # needs sage.rings.real_mpfr
++            sage: CC._is_real_numerical()
