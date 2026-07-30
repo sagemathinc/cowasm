@@ -41170,3 +41170,9 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
 @@ -357 +357 @@ class PolynomialRing_generic(ParentWithGens):
 -            sage: x = var('x')
 +            sage: x = var('x')                                                          # needs sage.symbolic
+diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -2425 +2425 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
+-            sage: p = R.lagrange_polynomial(data, algorithm='pari'); p
++            sage: p = R.lagrange_polynomial(data, algorithm='pari'); p                  # needs sage.libs.pari
