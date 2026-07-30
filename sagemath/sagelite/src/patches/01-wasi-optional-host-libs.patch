@@ -40916,3 +40916,57 @@ diff --git a/src/sage/categories/fields.py b/src/sage/categories/fields.py
 @@ -1008 +1008 @@ class ElementMethods:
 -                sage: RR(0).factor()                                                    # needs sage.rings.real_mpfr
 +                sage: RR(0).factor()
+diff --git a/src/sage/misc/functional.py b/src/sage/misc/functional.py
+--- a/src/sage/misc/functional.py
++++ b/src/sage/misc/functional.py
+@@ -1040 +1040 @@ def log(x, b=None):
+-        sage: log(CC(-1))                                                               # needs sage.rings.real_mpfr
++        sage: log(CC(-1))
+@@ -1073 +1073 @@ def log(x, b=None):
+-        sage: log(CC(0))                                                                # needs sage.rings.real_mpfr
++        sage: log(CC(0))
+@@ -1431 +1431 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: # needs sage.rings.real_mpfr
++        sage:
+@@ -1494 +1494 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: y = N(3.14, digits=3); y                                                  # needs sage.rings.real_mpfr
++        sage: y = N(3.14, digits=3); y
+@@ -1496 +1496 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: x == y                                                                    # needs sage.rings.real_mpfr sage.symbolic
++        sage: x == y                                                                    # needs sage.symbolic
+@@ -1500 +1500 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: y.str(base=2)                                                             # needs sage.rings.real_mpfr
++        sage: y.str(base=2)
+@@ -1505 +1505 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: CC(-5).n(prec=100)                                                        # needs sage.rings.real_mpfr
++        sage: CC(-5).n(prec=100)
+@@ -1509 +1509 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: n(1.3r, digits=20)                                                        # needs sage.rings.real_mpfr
++        sage: n(1.3r, digits=20)
+@@ -1513 +1513 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: RealField(24).pi().n()                                                    # needs sage.rings.real_mpfr
++        sage: RealField(24).pi().n()
+@@ -1536 +1536 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: N(3, prec=2)                                                              # needs sage.rings.real_mpfr
++        sage: N(3, prec=2)
+@@ -1550 +1550 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: type(numerical_approx(CC(1/2)))                                           # needs sage.rings.real_mpfr
++        sage: type(numerical_approx(CC(1/2)))
+@@ -1569 +1569 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: all(check_str_length(k) and check_precision(k) for k in ks)               # needs sage.rings.real_mpfr
++        sage: all(check_str_length(k) and check_precision(k) for k in ks)
+@@ -1582 +1582 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
+-        sage: n(0, algorithm='foo')                                                     # needs sage.rings.real_mpfr
++        sage: n(0, algorithm='foo')
+@@ -1870 +1870 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
+-        sage: _do_sqrt(3, prec=10)                                                      # needs sage.rings.real_mpfr
++        sage: _do_sqrt(3, prec=10)
+@@ -1872 +1872 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
+-        sage: _do_sqrt(3, prec=100)                                                     # needs sage.rings.real_mpfr
++        sage: _do_sqrt(3, prec=100)
+@@ -1969 +1969 @@ def sqrt(x, *args, **kwds):
+-        sage: sqrt(a, prec=100)                                                         # needs sage.rings.real_mpfr
++        sage: sqrt(a, prec=100)
+@@ -1971 +1971 @@ def sqrt(x, *args, **kwds):
+-        sage: sqrt(4.00, prec=250)                                                      # needs sage.rings.real_mpfr
++        sage: sqrt(4.00, prec=250)

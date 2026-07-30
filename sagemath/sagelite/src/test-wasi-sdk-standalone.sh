@@ -1277,6 +1277,35 @@ assert str(float_approx) == '4.2000'
 assert integer_approx.parent().precision() == 20
 assert float_approx.parent().precision() == 20
 print('sagelite-node-ok generic numerical approximation smoke')"
+run_node_import "real functional semantics smoke" "import sage.all
+from sage.misc.functional import N, _do_sqrt, log, numerical_approx, sqrt
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+CC = ComplexField()
+assert str(log(CC(-1))) == '3.14159265358979*I'
+assert str(log(CC(0))) == '-infinity'
+a = CC(-5).n(prec=40)
+b = ComplexField(40)(-5)
+assert a == b
+assert a.parent() is b.parent()
+assert str(numerical_approx(9)) == '9.00000000000000'
+y = N(3.14, digits=3)
+assert str(y) == '3.14'
+assert y.str(base=2) == '11.001000111101'
+assert str(N(3, prec=2)) == '3.0'
+assert type(numerical_approx(CC(1/2))) is type(CC(0))
+assert str(N(0, algorithm='foo')) == '0.000000000000000'
+assert str(_do_sqrt(3, prec=10)) == '1.7'
+assert str(_do_sqrt(3, prec=100)) == '1.7320508075688772935274463415'
+assert str(sqrt(sage.all.RealNumber('1.1'), prec=100)) == '1.0488088481701515469914535137'
+assert str(sqrt(sage.all.RealNumber('4.00'), prec=250)) == '2.0000000000000000000000000000000000000000000000000000000000000000000000000'
+try:
+    RealField(24).pi().n()
+except TypeError as error:
+    assert str(error) == 'cannot approximate to a precision of 53 bits, use at most 24 bits'
+else:
+    raise AssertionError('low-precision real unexpectedly increased precision')
+print('sagelite-node-ok real functional semantics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -3372,7 +3401,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=304
+electron_manifest_schema_version=305
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3536,6 +3565,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-infin
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-set-membership-v274"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-metric-space-semantics-v275"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-arithmetic-semantics-v276"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-functional-semantics-v277"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
