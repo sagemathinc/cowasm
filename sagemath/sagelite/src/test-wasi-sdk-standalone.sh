@@ -2501,6 +2501,17 @@ assert repr(common) == (
     'over Complex Field with 53 bits of precision'
 )
 print('sagelite-node-ok fraction-field complex Laurent common-parent smoke')"
+run_node_import "real fraction-field reduction smoke" "from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+real_field = RealField(10)
+ring = PolynomialRing(real_field, 'x')
+x = ring.gen()
+value = (x**2 + 2*x + 1) / (x + 1)
+assert repr(value) == '(x^2 + 2.0*x + 1.0)/(x + 1.0)'
+value.reduce()
+assert repr(value) == 'x + 1.0'
+assert value.parent().base_ring() is real_field
+print('sagelite-node-ok real fraction-field reduction smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2906,7 +2917,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=274
+electron_manifest_schema_version=275
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3040,6 +3051,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-poor-man-map-real-composition-v244"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multi-filtered-vector-space-real-field-v245"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-fraction-field-complex-laurent-common-parent-v246"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fraction-field-reduction-v247"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

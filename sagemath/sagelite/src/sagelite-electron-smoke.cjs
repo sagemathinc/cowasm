@@ -734,6 +734,25 @@ assert repr(common) == (
     console.log(
       "sagelite-electron-ok fraction-field complex Laurent common-parent smoke",
     );
+    console.log(
+      "sagelite-electron-start real fraction-field reduction smoke",
+    );
+    await python.exec(String.raw`
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.real_mpfr import RealField
+
+real_field = RealField(10)
+ring = PolynomialRing(real_field, 'x')
+x = ring.gen()
+value = (x**2 + 2*x + 1) / (x + 1)
+assert repr(value) == '(x^2 + 2.0*x + 1.0)/(x + 1.0)'
+value.reduce()
+assert repr(value) == 'x + 1.0'
+assert value.parent().base_ring() is real_field
+`);
+    console.log(
+      "sagelite-electron-ok real fraction-field reduction smoke",
+    );
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer

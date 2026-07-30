@@ -40236,3 +40236,14 @@ diff --git a/src/sage/rings/fraction_field.py b/src/sage/rings/fraction_field.py
 -            sage: coercion_model.common_parent(FQt, LCt)                                # needs sage.rings.real_mpfr
 +            sage: LCt = LaurentPolynomialRing(CC,'t')
 +            sage: coercion_model.common_parent(FQt, LCt)
+diff --git a/src/sage/rings/fraction_field_element.pyx b/src/sage/rings/fraction_field_element.pyx
+--- a/src/sage/rings/fraction_field_element.pyx
++++ b/src/sage/rings/fraction_field_element.pyx
+@@ -159,4 +159,4 @@
+-            sage: R.<x> = RealField(10)[]                                               # needs sage.rings.real_mpfr
+-            sage: f = (x^2+2*x+1)/(x+1); f                                              # needs sage.rings.real_mpfr
++            sage: R.<x> = RealField(10)[]
++            sage: f = (x^2+2*x+1)/(x+1); f
+             (x^2 + 2.0*x + 1.0)/(x + 1.0)
+-            sage: f.reduce(); f                                                         # needs sage.rings.real_mpfr
++            sage: f.reduce(); f
