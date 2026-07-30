@@ -1990,7 +1990,7 @@ for args in (
 print('sagelite-node-ok real Wigner evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
-from sage.functions.other import frac
+from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr import RealField, RealNumber
@@ -2036,6 +2036,15 @@ assert repr(sage_input(float(42), preparse=True, verify=True)) == '# Verified\nf
 assert repr(sage_input((ZZ(2), RR('3.5'), 'Hi'), verify=True)) == \"# Verified\n(2, 3.5, 'Hi')\"
 assert isinstance(sib(RR('3.14159'), True), SIE_literal_stringrep)
 assert repr(sib((RR('3.5'), -ZZ(2)))) == '{tuple: ({atomic:3.5}, {unop:- {atomic:2}})}'
+positive_cube_root = real_nth_root(RR('2.'), 3)
+negative_cube_root = real_nth_root(RR('-2.'), 3)
+high_precision_square_root = real_nth_root(RealField(100)(2), 2)
+assert repr(positive_cube_root) == '1.25992104989487'
+assert repr(negative_cube_root) == '-1.25992104989487'
+assert repr(high_precision_square_root) == '1.4142135623730950488016887242'
+assert positive_cube_root.parent() is RR
+assert negative_cube_root.parent() is RR
+assert high_precision_square_root.parent().precision() == 100
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3211,7 +3220,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=294
+electron_manifest_schema_version=295
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3365,6 +3374,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cartesian-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-projective-coercion-v264"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fractional-part-v265"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-sage-input-real-literals-v266"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-nth-root-v267"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

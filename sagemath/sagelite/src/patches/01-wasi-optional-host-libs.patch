@@ -40626,3 +40626,16 @@ diff --git a/src/sage/misc/sage_input.py b/src/sage/misc/sage_input.py
 @@ -2155 +2155 @@ class SIE_tuple(SageInputExpression):
 -            sage: sib((3.5, -2))                                                        # needs sage.rings.real_mpfr
 +            sage: sib((3.5, -2))
+diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
+--- a/src/sage/functions/other.py
++++ b/src/sage/functions/other.py
+@@ -814,4 +814,4 @@ class Function_real_nth_root(BuiltinFunction):
+-        sage: real_nth_root(2., 3)                                                      # needs sage.rings.real_mpfr
++        sage: real_nth_root(2., 3)
+         1.25992104989487
+-        sage: real_nth_root(-2., 3)                                                     # needs sage.rings.real_mpfr
++        sage: real_nth_root(-2., 3)
+         -1.25992104989487
+@@ -873 +873 @@ class Function_real_nth_root(BuiltinFunction):
+-            sage: real_nth_root(Reals(100)(2), 2)                                       # needs sage.rings.real_mpfr
++            sage: real_nth_root(Reals(100)(2), 2)
