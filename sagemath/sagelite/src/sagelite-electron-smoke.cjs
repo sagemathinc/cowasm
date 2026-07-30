@@ -2174,8 +2174,9 @@ for args in (
 import sage.rings.abc
 from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
+from sage.functions.other import frac
 from sage.rings.complex_mpfr import ComplexField, ComplexField_class
-from sage.rings.real_mpfr import RealField, RealField_class
+from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
@@ -2213,6 +2214,9 @@ P = ProjectiveSpace(QQ, 1, 'x')
 P2 = ProjectiveSpace(CC, 1, 'y')
 assert repr(P2) == 'Projective Space of dimension 1 over Complex Field with 53 bits of precision'
 assert P2(CC)._coerce_map_from_(P(QQ)) is False
+fractional_part = frac(RR('5.4'))
+assert repr(fractional_part) == '0.400000000000000'
+assert type(fractional_part) is RealNumber
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

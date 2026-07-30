@@ -40596,3 +40596,12 @@ diff --git a/src/sage/schemes/generic/homset.py b/src/sage/schemes/generic/homse
 -            sage: P2(CC)._coerce_map_from_(P(QQ))                                       # needs sage.rings.real_mpfr
 +            sage: P2 = ProjectiveSpace(CC, 1, 'y')
 +            sage: P2(CC)._coerce_map_from_(P(QQ))
+diff --git a/src/sage/functions/other.py b/src/sage/functions/other.py
+--- a/src/sage/functions/other.py
++++ b/src/sage/functions/other.py
+@@ -716,3 +716,3 @@ class Function_frac(BuiltinFunction):
+-            sage: frac(5.4)                                                             # needs sage.rings.real_mpfr
++            sage: frac(5.4)
+             0.400000000000000
+-            sage: type(frac(5.4))                                                       # needs sage.rings.real_mpfr
++            sage: type(frac(5.4))

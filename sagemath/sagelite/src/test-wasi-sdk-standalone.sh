@@ -1990,8 +1990,9 @@ for args in (
 print('sagelite-node-ok real Wigner evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
+from sage.functions.other import frac
 from sage.rings.complex_mpfr import ComplexField
-from sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealField, RealNumber
 from sage.schemes.projective.projective_space import ProjectiveSpace
 assert VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) is True
 assert Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings()))) is True
@@ -2024,6 +2025,9 @@ P = ProjectiveSpace(QQ, 1, 'x')
 P2 = ProjectiveSpace(CC, 1, 'y')
 assert repr(P2) == 'Projective Space of dimension 1 over Complex Field with 53 bits of precision'
 assert P2(CC)._coerce_map_from_(P(QQ)) is False
+fractional_part = frac(RR('5.4'))
+assert repr(fractional_part) == '0.400000000000000'
+assert type(fractional_part) is RealNumber
 print('sagelite-node-ok category parameter refinement delivery smoke')"
 run_node_import "Lie algebra additive identity delivery smoke" "from sage.all import LieAlgebras, QQ
 L = LieAlgebras(QQ).example()
@@ -3199,7 +3203,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=292
+electron_manifest_schema_version=293
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3351,6 +3355,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-wigne
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-characteristic-sturmian-construction-v262"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-cartesian-magma-real-inversion-v263"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-projective-coercion-v264"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fractional-part-v265"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
