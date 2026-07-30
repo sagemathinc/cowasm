@@ -1825,6 +1825,24 @@ assert left is None
 assert right.domain() is QQ
 assert right.codomain() is RR
 print('sagelite-node-ok real coercion semantics smoke')"
+run_node_import "continued fraction real approximation smoke" "from sage.all import QQ, RealField, RealNumber, continued_fraction
+from sage.repl.preparse import preparse
+from sage.rings.real_mpfr import RealLiteral
+
+assert repr(continued_fraction(QQ(1) / 2).n()) == '0.500000000000000'
+assert repr(continued_fraction([0, 4]).n()) == '0.250000000000000'
+assert repr(continued_fraction([12, 1, 3, 4, 2, 2, 3, 1, 2]).n(digits=4)) == '12.76'
+assert continued_fraction(QQ(12) / 7).n(digits=13) == (QQ(12) / 7).n(digits=13)
+assert continued_fraction(-QQ(14) / 333).n(digits=21) == (-QQ(14) / 333).n(digits=21)
+for prec in [17, 24, 53, 128, 256]:
+    for rnd in ['RNDN', 'RNDD', 'RNDU', 'RNDZ', 'RNDA']:
+        R = RealField(prec=prec, rnd=rnd)
+        assert R(continued_fraction(QQ(17) / 389)) == R(QQ(17) / 389)
+a = continued_fraction(-QQ(17) / 389)
+assert float(a) == float(-QQ(17) / 389)
+literal = eval(preparse('1.575709393346379'))
+assert type(literal) is RealLiteral
+print('sagelite-node-ok continued fraction real approximation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -3019,7 +3037,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=283
+electron_manifest_schema_version=284
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3162,6 +3180,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-error
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-parent-numeric-predicates-v253"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-element-core-semantics-v254"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-coercion-semantics-v255"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-real-approximation-v256"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

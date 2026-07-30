@@ -40386,3 +40386,30 @@ diff --git a/src/sage/structure/coerce.pyx b/src/sage/structure/coerce.pyx
 @@ -1683 +1682 @@ cdef class CoercionModel:
 -            sage: cm.discover_coercion(RR, QQ)                                          # needs sage.rings.real_mpfr
 +            sage: cm.discover_coercion(RR, QQ)
+diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fraction.py
+--- a/src/sage/rings/continued_fraction.py
++++ b/src/sage/rings/continued_fraction.py
+@@ -604 +604 @@ class ContinuedFraction_base(SageObject):
+-            sage: continued_fraction(1/2).n()                                           # needs sage.rings.real_mpfr
++            sage: continued_fraction(1/2).n()
+@@ -606 +606 @@ class ContinuedFraction_base(SageObject):
+-            sage: continued_fraction([0,4]).n()                                         # needs sage.rings.real_mpfr
++            sage: continued_fraction([0,4]).n()
+@@ -608 +608 @@ class ContinuedFraction_base(SageObject):
+-            sage: continued_fraction([12,1,3,4,2,2,3,1,2]).n(digits=4)                  # needs sage.rings.real_mpfr
++            sage: continued_fraction([12,1,3,4,2,2,3,1,2]).n(digits=4)
+@@ -611 +611 @@ class ContinuedFraction_base(SageObject):
+-            sage: continued_fraction(12/7).n(digits=13) == (12/7).n(digits=13)          # needs sage.rings.real_mpfr
++            sage: continued_fraction(12/7).n(digits=13) == (12/7).n(digits=13)
+@@ -613 +613 @@ class ContinuedFraction_base(SageObject):
+-            sage: continued_fraction(-14/333).n(digits=21) == (-14/333).n(digits=21)    # needs sage.rings.real_mpfr
++            sage: continued_fraction(-14/333).n(digits=21) == (-14/333).n(digits=21)
+@@ -659 +659 @@ class ContinuedFraction_base(SageObject):
+-            sage: for prec in [17, 24, 53, 128, 256]:                                   # needs sage.rings.real_mpfr
++            sage: for prec in [17, 24, 53, 128, 256]:
+@@ -756 +756 @@ class ContinuedFraction_base(SageObject):
+-            sage: float(a)                                                              # needs sage.rings.real_mpfr
++            sage: float(a)
+@@ -2442 +2442 @@ def continued_fraction_list(x, type="std", bits=None, nterms=None,
+-        sage: type(a)                                                                   # needs sage.rings.real_mpfr
++        sage: type(a)

@@ -1970,6 +1970,31 @@ assert right.codomain() is RR
       "sagelite-electron-ok real coercion semantics smoke",
     );
     console.log(
+      "sagelite-electron-start continued fraction real approximation smoke",
+    );
+    await python.exec(String.raw`
+from sage.all import QQ, RealField, RealNumber, continued_fraction
+from sage.repl.preparse import preparse
+from sage.rings.real_mpfr import RealLiteral
+
+assert repr(continued_fraction(QQ(1) / 2).n()) == '0.500000000000000'
+assert repr(continued_fraction([0, 4]).n()) == '0.250000000000000'
+assert repr(continued_fraction([12, 1, 3, 4, 2, 2, 3, 1, 2]).n(digits=4)) == '12.76'
+assert continued_fraction(QQ(12) / 7).n(digits=13) == (QQ(12) / 7).n(digits=13)
+assert continued_fraction(-QQ(14) / 333).n(digits=21) == (-QQ(14) / 333).n(digits=21)
+for prec in [17, 24, 53, 128, 256]:
+    for rnd in ['RNDN', 'RNDD', 'RNDU', 'RNDZ', 'RNDA']:
+        R = RealField(prec=prec, rnd=rnd)
+        assert R(continued_fraction(QQ(17) / 389)) == R(QQ(17) / 389)
+a = continued_fraction(-QQ(17) / 389)
+assert float(a) == float(-QQ(17) / 389)
+literal = eval(preparse('1.575709393346379'))
+assert type(literal) is RealLiteral
+`);
+    console.log(
+      "sagelite-electron-ok continued fraction real approximation smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
