@@ -40193,3 +40193,12 @@ diff --git a/src/sage/rings/multi_power_series_ring.py b/src/sage/rings/multi_po
 @@ -520 +520 @@
 -            sage: R.base_extend(RR)                                                     # needs sage.rings.real_mpfr
 +            sage: R.base_extend(RR)
+diff --git a/src/sage/categories/map.pyx b/src/sage/categories/map.pyx
+--- a/src/sage/categories/map.pyx
++++ b/src/sage/categories/map.pyx
+@@ -417 +417 @@
+-            sage: # needs sage.rings.real_mpfr
++            sage:
+@@ -448 +448 @@
+-            sage: # needs sage.rings.real_mpfr
++            sage:

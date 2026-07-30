@@ -2437,6 +2437,25 @@ assert repr(extended) == (
 assert extended.base_ring() is real_field
 assert tuple(map(str, extended.gens())) == ('t', 'u', 'v')
 print('sagelite-node-ok multivariate power series real base extension smoke')"
+run_node_import "real-field map slot restoration smoke" "from sage.all import QQ, RR, ZZ
+from sage.categories.homset import Hom
+from sage.categories.map import Map
+from sage.categories.rings import Rings
+real_field = RR(0).parent()
+f = Map(Hom(QQ, ZZ, Rings()))
+f._update_slots_test({'_domain': real_field, '_codomain': QQ})
+assert f.domain() is real_field
+assert f.codomain() is QQ
+assert f._repr_type_str is None
+f._update_slots_test({
+    '_repr_type_str': 'restored-map',
+    '_domain': real_field,
+    '_codomain': QQ,
+})
+assert f._repr_type_str == 'restored-map'
+assert f.domain() is real_field
+assert f.codomain() is QQ
+print('sagelite-node-ok real-field map slot restoration smoke')"
 run_node_import "integer real square root smoke" "import sage.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
@@ -2842,7 +2861,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=270
+electron_manifest_schema_version=271
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -2972,6 +2991,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-product-pr
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-laurent-series-pickle-v240"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-complex-power-series-pickle-v241"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-multivariate-power-series-real-base-extension-v242"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-field-map-slot-restoration-v243"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

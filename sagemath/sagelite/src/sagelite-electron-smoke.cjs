@@ -642,6 +642,29 @@ assert tuple(map(str, extended.gens())) == ('t', 'u', 'v')
     console.log(
       "sagelite-electron-ok multivariate power series real base extension smoke",
     );
+    console.log("sagelite-electron-start real-field map slot restoration smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, RR, ZZ
+from sage.categories.homset import Hom
+from sage.categories.map import Map
+from sage.categories.rings import Rings
+
+real_field = RR(0).parent()
+f = Map(Hom(QQ, ZZ, Rings()))
+f._update_slots_test({'_domain': real_field, '_codomain': QQ})
+assert f.domain() is real_field
+assert f.codomain() is QQ
+assert f._repr_type_str is None
+f._update_slots_test({
+    '_repr_type_str': 'restored-map',
+    '_domain': real_field,
+    '_codomain': QQ,
+})
+assert f._repr_type_str == 'restored-map'
+assert f.domain() is real_field
+assert f.codomain() is QQ
+`);
+    console.log("sagelite-electron-ok real-field map slot restoration smoke");
     console.log("sagelite-electron-start integer real square root smoke");
     await python.exec(String.raw`
 from sage.rings.integer import Integer
