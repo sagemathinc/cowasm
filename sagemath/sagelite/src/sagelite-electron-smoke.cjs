@@ -2174,6 +2174,7 @@ for args in (
 import sage.rings.abc
 from sage.all import Algebras, Fields, GF, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
+from sage.functions.bessel import bessel_I, bessel_J, bessel_K, bessel_Y
 from sage.functions.exp_integral import Ei, exp_integral_e, exp_integral_e1, log_integral, log_integral_offset, sin_integral
 from sage.functions.other import frac, real_nth_root
 from sage.misc.sage_input import SIE_literal_stringrep, SageInputBuilder, sage_input
@@ -2256,6 +2257,25 @@ assert log_i.parent().precision() == 200
 assert log_i_offset.parent().precision() == 200
 assert sin_i.parent().precision() == 200
 assert ei.parent().precision() == 300
+R113 = RealField(113)
+bessel_argument = R113('8.935761195587725798762818805462843676e-01')
+bessel_argument_200 = RealField(200)(bessel_argument)
+for order in range(-10, 11):
+    assert bessel_J(R113(order), bessel_argument) == R113(bessel_J(order, bessel_argument_200))
+bessel_y_200 = bessel_Y(0, RealField(200)(1))
+bessel_i_200 = bessel_I(0, RealField(200)(1))
+bessel_k_200 = bessel_K(0, RealField(200)(1))
+bessel_k_128 = bessel_K(0, RealField(128)(1))
+assert repr(bessel_y_200) == '0.088256964215676957982926766023515162827817523090675546711044'
+assert repr(bessel_i_200) == '1.2660658777520083355982446252147175376076703113549622068081'
+assert repr(bessel_k_200) == '0.42102443824070833333562737921260903613621974822666047229897'
+assert repr(bessel_k_128) == '0.42102443824070833333562737921260903614'
+bessel_y_53 = bessel_Y(RealField(200)(1), RR(1))
+bessel_y_order_200 = bessel_Y(RealField(200)(1), 1)
+assert repr(bessel_y_53) == '-0.781212821300289'
+assert repr(bessel_y_order_200) == '-0.78121282130028871654715000004796482054990639071644460784383'
+assert bessel_y_53.parent().precision() == 53
+assert bessel_y_order_200.parent().precision() == 200
 `);
     console.log(
       "sagelite-electron-ok category parameter refinement delivery smoke",

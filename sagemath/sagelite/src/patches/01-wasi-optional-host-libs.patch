@@ -40669,3 +40669,24 @@ diff --git a/src/sage/functions/exp_integral.py b/src/sage/functions/exp_integra
 @@ -1339 +1339 @@ class Function_exp_integral(BuiltinFunction):
 -        sage: Ei(RealField(300)(1.1))                                                   # needs sage.rings.real_mpfr
 +        sage: Ei(RealField(300)(1.1))
+diff --git a/src/sage/functions/bessel.py b/src/sage/functions/bessel.py
+--- a/src/sage/functions/bessel.py
++++ b/src/sage/functions/bessel.py
+@@ -402 +402 @@ class Function_Bessel_J(BuiltinFunction):
+-            sage: # needs sage.rings.real_mpfr
++            sage:
+@@ -514 +514 @@ def bessel_Y(nu, z, algorithm='mpmath'):
+-        sage: bessel_Y(0, RealField(200)(1))                                            # needs sage.rings.real_mpfr
++        sage: bessel_Y(0, RealField(200)(1))
+@@ -541 +541 @@ def bessel_Y(nu, z, algorithm='mpmath'):
+-        sage: # needs sage.rings.real_mpfr
++        sage:
+@@ -735 +735 @@ def bessel_I(nu, z, algorithm='mpmath'):
+-        sage: bessel_I(0, RealField(200)(1))                                            # needs sage.rings.real_mpfr
++        sage: bessel_I(0, RealField(200)(1))
+@@ -923 +923 @@ def bessel_K(nu, z, algorithm='mpmath'):
+-        sage: bessel_K(0, RealField(200)(1))                                            # needs sage.rings.real_mpfr
++        sage: bessel_K(0, RealField(200)(1))
+@@ -1025 +1025 @@ class Function_Bessel_K(BuiltinFunction):
+-            sage: bessel_K(0, RealField(128)(1))                                        # needs sage.rings.real_mpfr
++            sage: bessel_K(0, RealField(128)(1))
