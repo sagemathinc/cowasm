@@ -41112,3 +41112,15 @@ diff --git a/src/sage/schemes/generic/divisor_group.py b/src/sage/schemes/generi
 @@ -236 +236 @@ class DivisorGroup_generic(UniqueRepresentation, Parent):
 -            sage: A.<x, y> = AffineSpace(2, CC)                                         # needs sage.rings.real_mpfr
 +            sage: A.<x, y> = AffineSpace(2, CC)
+diff --git a/src/sage/arith/misc.py b/src/sage/arith/misc.py
+--- a/src/sage/arith/misc.py
++++ b/src/sage/arith/misc.py
+@@ -3832 +3832 @@ def binomial(x, m, **kwds):
+-        sage: binomial(RealField()('2.5'), 2)                                           # needs sage.rings.real_mpfr
++        sage: binomial(RealField()('2.5'), 2)                                           # needs sage.libs.pari
+@@ -3885 +3885 @@ def binomial(x, m, **kwds):
+-        sage: binomial(1., 3)                                                           # needs sage.rings.real_mpfr
++        sage: binomial(1., 3)
+@@ -3887 +3887 @@ def binomial(x, m, **kwds):
+-        sage: binomial(-2., 3)                                                          # needs sage.rings.real_mpfr
++        sage: binomial(-2., 3)
