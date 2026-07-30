@@ -1862,6 +1862,23 @@ assert repr(atanh(RR('0.5'))) == '0.549306144334055'
       "sagelite-electron-ok real hyperbolic evaluation smoke",
     );
     console.log(
+      "sagelite-electron-start real ring category epsilon smoke",
+    );
+    await python.exec(String.raw`
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+
+complex_field = ComplexField(53)
+real_field = RealField(53)
+assert complex_field.is_subring(complex_field)
+assert repr(complex_field.epsilon()) == '2.22044604925031e-16'
+assert repr(RealField(10).epsilon()) == '0.0020'
+assert repr(real_field['x'].epsilon()) == '2.22044604925031e-16'
+`);
+    console.log(
+      "sagelite-electron-ok real ring category epsilon smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

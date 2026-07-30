@@ -40294,3 +40294,18 @@ diff --git a/src/sage/functions/hyperbolic.py b/src/sage/functions/hyperbolic.py
 @@ -530 +530 @@
 -            sage: atanh(0.5)                                                            # needs sage.rings.real_mpfr
 +            sage: atanh(0.5)
+diff --git a/src/sage/categories/rings.py b/src/sage/categories/rings.py
+--- a/src/sage/categories/rings.py
++++ b/src/sage/categories/rings.py
+@@ -567 +567 @@
+-                sage: CC.is_subring(CC)                                                     # needs sage.rings.real_mpfr
++                sage: CC.is_subring(CC)
+@@ -1781,3 +1781,3 @@
+-                sage: ComplexField(53).epsilon()                                            # needs sage.rings.real_mpfr
++                sage: ComplexField(53).epsilon()
+                 2.22044604925031e-16
+-                sage: RealField(10).epsilon()                                               # needs sage.rings.real_mpfr
++                sage: RealField(10).epsilon()
+@@ -1793 +1793 @@
+-                sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
++                sage: RR['x'].epsilon()

@@ -1756,6 +1756,15 @@ assert repr(csch(x)) == '0.0865975907592133'
 assert repr(asinh(RR('0.5'))) == '0.481211825059603'
 assert repr(atanh(RR('0.5'))) == '0.549306144334055'
 print('sagelite-node-ok real hyperbolic evaluation smoke')"
+run_node_import "real ring category epsilon smoke" "from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+complex_field = ComplexField(53)
+real_field = RealField(53)
+assert complex_field.is_subring(complex_field)
+assert repr(complex_field.epsilon()) == '2.22044604925031e-16'
+assert repr(RealField(10).epsilon()) == '0.0020'
+assert repr(real_field['x'].epsilon()) == '2.22044604925031e-16'
+print('sagelite-node-ok real ring category epsilon smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2950,7 +2959,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=278
+electron_manifest_schema_version=279
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3088,6 +3097,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-fract
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-real-sturmian-factor-v248"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-trigonometric-evaluation-v249"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-hyperbolic-evaluation-v250"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-ring-category-epsilon-v251"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
