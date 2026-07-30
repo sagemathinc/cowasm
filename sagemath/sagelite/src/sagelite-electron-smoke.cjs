@@ -2128,6 +2128,32 @@ assert str((QQ(1) / QQ(3)).gamma(prec=100)) == '2.6789385347077476336556929410'
 assert str((QQ(1) / QQ(2)).gamma(prec=100)) == '1.7724538509055160272981674833'
 `);
     console.log("sagelite-electron-ok rational real methods smoke");
+    console.log("sagelite-electron-start real Wigner evaluation smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.functions.wigner import gaunt, wigner_3j, wigner_9j
+from sage.rings.real_mpfr import RealField
+
+RR = RealField(53)
+assert str(wigner_3j(2500, 2500, 5000, 2488, 2400, -4888, prec=64)) == '7.60424456883448589e-12'
+try:
+    wigner_9j(1, 1, 1, RR('0.5'), 1, RR('1.5'), RR('0.5'), 1, RR('2.5'), prec=64)
+except ValueError as error:
+    assert str(error) == 'j values must be integer or half integer and fulfill the triangle relation'
+else:
+    raise AssertionError('invalid Wigner 9-j inputs were accepted')
+for args in (
+    (RR('1.2'), 0, RR('1.2'), 0, 0, 0),
+    (1, 0, 1, RR('1.1'), 0, RR('-1.1')),
+):
+    try:
+        gaunt(*args)
+    except TypeError as error:
+        assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+    else:
+        raise AssertionError('non-integral Gaunt inputs were accepted')
+`);
+    console.log("sagelite-electron-ok real Wigner evaluation smoke");
     console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );

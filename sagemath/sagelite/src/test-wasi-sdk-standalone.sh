@@ -1953,6 +1953,28 @@ assert str((QQ(125) / QQ(8)).log(QQ(5) / QQ(2), prec=53)) == '3.00000000000000'
 assert str((QQ(1) / QQ(3)).gamma(prec=100)) == '2.6789385347077476336556929410'
 assert str((QQ(1) / QQ(2)).gamma(prec=100)) == '1.7724538509055160272981674833'
 print('sagelite-node-ok rational real methods smoke')"
+run_node_import "real Wigner evaluation smoke" "import sage.all
+from sage.functions.wigner import gaunt, wigner_3j, wigner_9j
+from sage.rings.real_mpfr import RealField
+RR = RealField(53)
+assert str(wigner_3j(2500, 2500, 5000, 2488, 2400, -4888, prec=64)) == '7.60424456883448589e-12'
+try:
+    wigner_9j(1, 1, 1, RR('0.5'), 1, RR('1.5'), RR('0.5'), 1, RR('2.5'), prec=64)
+except ValueError as error:
+    assert str(error) == 'j values must be integer or half integer and fulfill the triangle relation'
+else:
+    raise AssertionError('invalid Wigner 9-j inputs were accepted')
+for args in (
+    (RR('1.2'), 0, RR('1.2'), 0, 0, 0),
+    (1, 0, 1, RR('1.1'), 0, RR('-1.1')),
+):
+    try:
+        gaunt(*args)
+    except TypeError as error:
+        assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
+    else:
+        raise AssertionError('non-integral Gaunt inputs were accepted')
+print('sagelite-node-ok real Wigner evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -3147,7 +3169,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=288
+electron_manifest_schema_version=289
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3295,6 +3317,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-multi
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-field-real-embeddings-v258"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exp-lambert-evaluation-v259"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-real-methods-v260"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-wigner-evaluation-v261"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
