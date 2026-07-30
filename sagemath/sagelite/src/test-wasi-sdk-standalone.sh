@@ -1903,6 +1903,21 @@ complex_embedding_20 = QQ.complex_embedding(20)
 assert complex_embedding_20.codomain() is ComplexField(20)
 assert complex_embedding_20(one_seventh) == ComplexField(20)(one_seventh)
 print('sagelite-node-ok rational field real embeddings smoke')"
+run_node_import "real exponential and Lambert W smoke" "import sage.all
+from sage.functions.log import exp, lambert_w
+from sage.rings.real_mpfr import RealField
+
+R100 = RealField(100)
+exponential = exp(R100(2))
+assert exponential.parent() is R100
+assert exponential.precision() == 100
+assert str(exponential) == '7.3890560989306502272304274606'
+
+lambert = lambert_w(R100(1))
+assert lambert.parent() is R100
+assert lambert.precision() == 100
+assert str(lambert) == '0.56714329040978387299996866221'
+print('sagelite-node-ok real exponential and Lambert W smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -3097,7 +3112,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=286
+electron_manifest_schema_version=287
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3243,6 +3258,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-coerc
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-real-approximation-v256"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-multivariate-polynomial-construction-v257"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-rational-field-real-embeddings-v258"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-exp-lambert-evaluation-v259"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

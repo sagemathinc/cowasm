@@ -2069,6 +2069,28 @@ assert complex_embedding_20(one_seventh) == ComplexField(20)(one_seventh)
       "sagelite-electron-ok rational field real embeddings smoke",
     );
     console.log(
+      "sagelite-electron-start real exponential and Lambert W smoke",
+    );
+    await python.exec(String.raw`
+import sage.all
+from sage.functions.log import exp, lambert_w
+from sage.rings.real_mpfr import RealField
+
+R100 = RealField(100)
+exponential = exp(R100(2))
+assert exponential.parent() is R100
+assert exponential.precision() == 100
+assert str(exponential) == '7.3890560989306502272304274606'
+
+lambert = lambert_w(R100(1))
+assert lambert.parent() is R100
+assert lambert.precision() == 100
+assert str(lambert) == '0.56714329040978387299996866221'
+`);
+    console.log(
+      "sagelite-electron-ok real exponential and Lambert W smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`

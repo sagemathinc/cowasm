@@ -40448,3 +40448,18 @@ diff --git a/src/sage/rings/rational_field.py b/src/sage/rings/rational_field.py
 @@ -714 +714 @@ class RationalField(Singleton, number_field_base.NumberField):
 -            sage: QQ.complex_embedding(20)                                              # needs sage.rings.real_mpfr
 +            sage: QQ.complex_embedding(20)
+diff --git a/src/sage/functions/log.py b/src/sage/functions/log.py
+--- a/src/sage/functions/log.py
++++ b/src/sage/functions/log.py
+@@ -106 +106 @@ if a result with higher precision is desired::
+-        sage: t = exp(RealField(100)(2)); t                                             # needs sage.rings.real_mpfr
++        sage: t = exp(RealField(100)(2)); t
+@@ -108 +108 @@ if a result with higher precision is desired::
+-        sage: t.prec()                                                                  # needs sage.rings.real_mpfr
++        sage: t.prec()
+@@ -542 +542 @@ class Function_dilog(GinacFunction):
+-            sage: # needs sage.rings.real_mpfr sage.symbolic
++            sage: # needs sage.symbolic
+@@ -791 +791 @@ class Function_lambert_w(BuiltinFunction):
+-            sage: lambert_w(RealField(100)(1))                                          # needs sage.rings.real_mpfr
++            sage: lambert_w(RealField(100)(1))
