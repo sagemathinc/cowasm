@@ -1765,6 +1765,19 @@ assert repr(complex_field.epsilon()) == '2.22044604925031e-16'
 assert repr(RealField(10).epsilon()) == '0.0020'
 assert repr(real_field['x'].epsilon()) == '2.22044604925031e-16'
 print('sagelite-node-ok real ring category epsilon smoke')"
+run_node_import "real error function evaluation smoke" "from sage.functions.error import erf, erfc
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+C53 = ComplexField(53)
+C100 = ComplexField(100)
+C1000 = ComplexField(1000)
+R53 = RealField(53)
+R100 = RealField(100)
+assert repr(erf(C100(2, 3))) == '-20.829461427614568389103088452 + 8.6873182714701631444280787545*I'
+assert repr(R53(3).erf()) == '0.999977909503001'
+assert repr(C53(erf(C1000(2, 3)))) == '-20.8294614276146 + 8.68731827147016*I'
+assert repr(erfc(R100(1) / 2)) == '0.47950012218695346231725334611'
+print('sagelite-node-ok real error function evaluation smoke')"
 run_node_import "category parameter refinement delivery smoke" "from sage.all import Algebras, Fields, GroupAlgebras, Modules, QQ, Rings, VectorSpaces, ZZ, cartesian_product
 from sage.categories.bimodules import Bimodules
 from sage.rings.complex_mpfr import ComplexField
@@ -2959,7 +2972,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=279
+electron_manifest_schema_version=280
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3098,6 +3111,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-wor
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-trigonometric-evaluation-v249"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-hyperbolic-evaluation-v250"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-ring-category-epsilon-v251"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-error-function-evaluation-v252"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

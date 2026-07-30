@@ -40309,3 +40309,18 @@ diff --git a/src/sage/categories/rings.py b/src/sage/categories/rings.py
 @@ -1793 +1793 @@
 -                sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
 +                sage: RR['x'].epsilon()
+diff --git a/src/sage/functions/error.py b/src/sage/functions/error.py
+--- a/src/sage/functions/error.py
++++ b/src/sage/functions/error.py
+@@ -88 +88 @@ class Function_erf(BuiltinFunction):
+-        sage: erf(ComplexField(100)(2+3j))                                              # needs sage.rings.real_mpfr
++        sage: erf(ComplexField(100)(2+3j))
+@@ -133 +133 @@ class Function_erf(BuiltinFunction):
+-        sage: RR(3).erf()                                                               # needs sage.rings.real_mpfr
++        sage: RR(3).erf()
+@@ -184 +184 @@ class Function_erf(BuiltinFunction):
+-        sage: CC(erf(ComplexField(1000)(2+3j)))                                         # needs sage.rings.real_mpfr
++        sage: CC(erf(ComplexField(1000)(2+3j)))
+@@ -408 +408 @@ class Function_erfc(BuiltinFunction):
+-        sage: erfc(RealField(100)(1/2))                                                 # needs sage.rings.real_mpfr
++        sage: erfc(RealField(100)(1/2))

@@ -1879,6 +1879,27 @@ assert repr(real_field['x'].epsilon()) == '2.22044604925031e-16'
       "sagelite-electron-ok real ring category epsilon smoke",
     );
     console.log(
+      "sagelite-electron-start real error function evaluation smoke",
+    );
+    await python.exec(String.raw`
+from sage.functions.error import erf, erfc
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfr import RealField
+
+C53 = ComplexField(53)
+C100 = ComplexField(100)
+C1000 = ComplexField(1000)
+R53 = RealField(53)
+R100 = RealField(100)
+assert repr(erf(C100(2, 3))) == '-20.829461427614568389103088452 + 8.6873182714701631444280787545*I'
+assert repr(R53(3).erf()) == '0.999977909503001'
+assert repr(C53(erf(C1000(2, 3)))) == '-20.8294614276146 + 8.68731827147016*I'
+assert repr(erfc(R100(1) / 2)) == '0.47950012218695346231725334611'
+`);
+    console.log(
+      "sagelite-electron-ok real error function evaluation smoke",
+    );
+    console.log(
       "sagelite-electron-start category parameter refinement delivery smoke",
     );
     await python.exec(String.raw`
