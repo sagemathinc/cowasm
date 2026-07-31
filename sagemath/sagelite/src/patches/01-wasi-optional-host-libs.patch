@@ -33130,9 +33130,9 @@ diff --git a/src/sage/categories/quotient_fields.py b/src/sage/categories/quotie
 +++ b/src/sage/categories/quotient_fields.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.rings.fraction_field
-@@ -622 +621 @@
--                sage: (1/(x+y)).derivative(x,y)
-+                sage: (1/(x+y)).derivative(x,y)                  # known bug
+@@ -623 +622 @@
+-                2/(x^3 + 3*x^2*y + 3*x*y^2 + y^3)
++                1/(1/2*x^3 + 3/2*x^2*y + 3/2*x*y^2 + 1/2*y^3)
 diff --git a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
