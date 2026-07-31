@@ -33452,6 +33452,17 @@ diff --git a/src/sage/categories/posets.py b/src/sage/categories/posets.py
  r"""
  Posets
  """
+@@ -75,8 +74,7 @@ Posets
+-        sage: # not implemented
+-        sage: x < y
++        sage: x < y  # todo: not implemented
+         True
+         sage: x < x
+         False
+         sage: x <= x
+         True
+-        sage: y >= x
++        sage: y >= x  # todo: not implemented
 diff --git a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx b/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
 index 9aa36ce..c731fe0 100644
 --- a/src/sage/libs/ntl/ntl_ZZ_pEX.pyx
