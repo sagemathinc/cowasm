@@ -41800,3 +41800,11 @@ diff --git a/src/sage/plot/colors.py b/src/sage/plot/colors.py
 @@ -1129 +1129 @@
 -            sage: from colorsys import hsv_to_rgb    # not tested
 +            sage: from colorsys import hsv_to_rgb
+diff --git a/src/sage/coding/self_dual_codes.py b/src/sage/coding/self_dual_codes.py
+--- a/src/sage/coding/self_dual_codes.py
++++ b/src/sage/coding/self_dual_codes.py
+@@ -41,2 +41,2 @@
+-    sage: R = PolynomialRing(CC,"T")                            # not tested
+-    sage: T = R.gen()                                           # not tested
++    sage: R = PolynomialRing(CC,"T")
++    sage: T = R.gen()
