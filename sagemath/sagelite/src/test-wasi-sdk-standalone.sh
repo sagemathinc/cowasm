@@ -3534,7 +3534,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=314
+electron_manifest_schema_version=315
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3708,6 +3708,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-argum
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quaternion-polynomial-semantics-v284"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-facade-conversion-v285"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-concrete-field-v286"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-rounding-long-test-v287"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

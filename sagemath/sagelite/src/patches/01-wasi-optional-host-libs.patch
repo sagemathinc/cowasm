@@ -41386,3 +41386,9 @@ diff --git a/src/sage/categories/coalgebras.py b/src/sage/categories/coalgebras.
 +                sage: sorted(Coalgebras(QQ).TensorProducts().super_categories(), key=str)
 +                [Category of coalgebras over Rational Field,
 +                 Category of tensor products of vector spaces over Rational Field]
+diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fraction.py
+--- a/src/sage/rings/continued_fraction.py
++++ b/src/sage/rings/continued_fraction.py
+@@ -662 +662 @@
+-            sage: for n in range(3000):  # long time, not tested, known bug (see :issue:`29957`)
++            sage: for n in range(3000):  # long time
