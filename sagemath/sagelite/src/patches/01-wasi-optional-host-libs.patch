@@ -41704,3 +41704,31 @@ diff --git a/src/sage/combinat/quickref.py b/src/sage/combinat/quickref.py
 -    sage: DisjointUnionEnumeratedSets(Family(IV_3, NonNegativeIntegers))  # not tested
 +    sage: DisjointUnionEnumeratedSets(Family(NonNegativeIntegers(), IV_3))
 +    Disjoint union of Lazy family (IV_3(i))_{i in Non negative integers}
+diff --git a/src/sage/categories/primer.py b/src/sage/categories/primer.py
+--- a/src/sage/categories/primer.py
++++ b/src/sage/categories/primer.py
+@@ -449,2 +449,2 @@
+-    sage: i._pow_.__module__  # not tested (Issue #24275)
+-    'sage.categories.semigroups'
++    sage: i._pow_.__module__
++    'sage.rings.integer'
+@@ -457,10 +457,9 @@
+-We see that integers and polynomials have each their own
+-multiplication method: the multiplication algorithms are indeed
+-unrelated and deeply tied to their respective datastructures. On the
+-other hand, as we have seen above, they share the same powering method
+-because the set `\ZZ` of integers, and the set `\QQ[x]` of
+-polynomials are both semigroups. Namely, the class for integers and
+-the class for polynomials both derive from an *abstract class* for
+-semigroup elements, which factors out the *generic* methods like
+-``_pow_``. This illustrates the use of *hierarchy of classes* to share
+-common code between classes having common behaviour.
++We see that integers and polynomials have each their own multiplication
++method: the multiplication algorithms are indeed unrelated and deeply tied
++to their respective datastructures. Both the set `\ZZ` of integers and the
++set `\QQ[x]` of polynomials are semigroups and therefore expose the same
++powering interface. Their element classes share common behavior through the
++category hierarchy, which can supply generic operations, while individual
++datatypes can replace them with specialized implementations, as integer
++powering above does. This illustrates the use of *hierarchy of classes* to
++share common code between classes having common behaviour.
