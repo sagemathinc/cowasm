@@ -38,6 +38,7 @@ const expectedSageliteNativeLibraryPaths = Object.freeze([
   "site-packages/sage/libs/linbox/libcxx.so",
   "site-packages/sage/libs/ntl/libcxx.so",
   "site-packages/sage/rings/finite_rings/libcxx.so",
+  "site-packages/sage/rings/number_field/libcxx.so",
   "site-packages/sage/rings/polynomial/libcxx.so",
 ]);
 
@@ -332,7 +333,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 320,
+  schemaVersion: 321,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -572,6 +573,8 @@ expectedSageliteManifest.smokeContract +=
   "-finite-word-unknown-length-conjugacy-v291";
 expectedSageliteManifest.smokeContract +=
   "-empty-species-arithmetic-v292";
+expectedSageliteManifest.smokeContract +=
+  "-integer-list-backend-pickle-identity-v293";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

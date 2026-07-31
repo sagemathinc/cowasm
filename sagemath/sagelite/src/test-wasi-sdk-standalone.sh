@@ -1248,8 +1248,11 @@ assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
 assert SetPartitions(4).cardinality() == 15
 print('sagelite-node-ok combinatorics cardinality smoke')"
 run_node_import "integer lists smoke" "import sage.all
+import gc
+import weakref
 from sage.combinat.integer_lists import Envelope, IntegerListsLex
 from sage.combinat.integer_lists.base import IntegerListsBackend
+from sage.misc.persist import dumps, loads
 from sage.rings.real_mpfr import RealField
 try:
     IntegerListsBackend(min_sum=RealField()('1.4'))
@@ -1262,6 +1265,15 @@ assert L.cardinality() == 15
 assert list(L.first()) == [4, 0, 0]
 assert list(L.last()) == [0, 0, 4]
 assert [list(v) for v in L[:4]] == [[4, 0, 0], [3, 1, 0], [3, 0, 1], [2, 2, 0]]
+backend = IntegerListsBackend(3, length=2)
+backend_ref = weakref.ref(backend)
+backend_pickle = dumps(backend)
+assert loads(backend_pickle) is backend
+del backend
+gc.collect()
+assert backend_ref() is None
+assert loads(backend_pickle) == IntegerListsBackend(3, length=2)
+assert loads(dumps(L.backend)) is L.backend
 f = Envelope([3, 2, 2])
 assert f == Envelope([3, 2, 2])
 assert f == Envelope((3, 2, 2))
@@ -2021,6 +2033,7 @@ run_node_import "real coercion semantics smoke" "import io
 import operator
 from contextlib import redirect_stdout
 from sage.all import CC, QQ, RR, ZZ, RealField, parent, polygen
+from sage.rings.real_mpfr import RR as RR_parent
 from sage.structure.coerce import parent_is_numerical
 from sage.structure.element import get_coercion_model
 
@@ -2036,13 +2049,13 @@ with redirect_stdout(explanation):
     cm.explain(R100, float, operator.add)
 assert explanation.getvalue() == 'Right operand is numeric, will attempt coercion in both directions.\\nUnknown result parent.\\n'
 assert parent(R100(1) + float(1)) is float
-assert cm.common_parent(ZZ, QQ, RR) is RR
+assert cm.common_parent(ZZ, QQ, RR) is RR_parent
 real_fields = [RealField(prec) for prec in range(10, 101, 10)]
 assert cm.common_parent(*real_fields) is real_fields[0]
 left, right = cm.discover_coercion(RR, QQ)
 assert left is None
 assert right.domain() is QQ
-assert right.codomain() is RR
+assert right.codomain() is RR_parent
 print('sagelite-node-ok real coercion semantics smoke')"
 run_node_import "continued fraction real approximation smoke" "from sage.all import QQ, RealField, RealNumber, continued_fraction
 from sage.repl.preparse import preparse
@@ -3580,7 +3593,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=320
+electron_manifest_schema_version=321
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3760,6 +3773,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-subs
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-polynomial-factor-precision-v290"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-unknown-length-conjugacy-v291"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-empty-species-arithmetic-v292"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-backend-pickle-identity-v293"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -4583,7 +4597,7 @@ if [ "$doctest_run_path_metadata_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "80" ]; then
+if [ "$doctest_block_key_count" != "84" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -5496,7 +5510,7 @@ if [ "$doctest_module_global_override_status" -ne 0 ]; then
   sqlite3 "$doctest_module_global_override_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t tested-module global override smoke failed; see $doctest_module_global_override_log for the first runtime blocker."
 fi
-doctest_module_global_override_count="$(sqlite3 "$doctest_module_global_override_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_module_global_override_line and source = 'type(binomial._eval_(5., 3))';")"
+doctest_module_global_override_count="$(sqlite3 "$doctest_module_global_override_db" "select count(*) from blocks where status = 'passed' and start_line = $doctest_module_global_override_line and source = 'type(binomial._eval_(5., 3))' || char(10);")"
 if [ "$doctest_module_global_override_count" != "1" ]; then
   cat "$doctest_module_global_override_log" >&2
   sqlite3 "$doctest_module_global_override_db" ".dump" >&2 || true

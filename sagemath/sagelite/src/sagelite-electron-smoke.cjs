@@ -910,11 +910,15 @@ assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
     console.log("sagelite-electron-start combinatorics cardinality smoke");
     await python.exec(String.raw`
 import sage.all
+import gc
+import weakref
 from sage.combinat.combinat import polygonal_number
 from sage.combinat.combination import Combinations
+from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_lists.base import IntegerListsBackend
 from sage.combinat.perfect_matching import PerfectMatchings
 from sage.combinat.set_partition import SetPartitions
+from sage.misc.persist import dumps, loads
 from sage.rings.real_mpfr import RealField
 
 try:
@@ -929,6 +933,16 @@ except TypeError as error:
     assert str(error) == 'Attempt to coerce non-integral RealNumber to Integer'
 else:
     raise AssertionError('non-integral polygonal-number input unexpectedly accepted')
+backend = IntegerListsBackend(3, length=2)
+backend_ref = weakref.ref(backend)
+backend_pickle = dumps(backend)
+assert loads(backend_pickle) is backend
+del backend
+gc.collect()
+assert backend_ref() is None
+assert loads(backend_pickle) == IntegerListsBackend(3, length=2)
+lex_backend = IntegerListsLex(3, length=2).backend
+assert loads(dumps(lex_backend)) is lex_backend
 assert PerfectMatchings(6).cardinality() == 15
 assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
 assert SetPartitions(4).cardinality() == 15
@@ -2227,6 +2241,7 @@ import io
 import operator
 from contextlib import redirect_stdout
 from sage.all import CC, QQ, RR, ZZ, RealField, parent, polygen
+from sage.rings.real_mpfr import RR as RR_parent
 from sage.structure.coerce import parent_is_numerical
 from sage.structure.element import get_coercion_model
 
@@ -2242,13 +2257,13 @@ with redirect_stdout(explanation):
     cm.explain(R100, float, operator.add)
 assert explanation.getvalue() == 'Right operand is numeric, will attempt coercion in both directions.\nUnknown result parent.\n'
 assert parent(R100(1) + float(1)) is float
-assert cm.common_parent(ZZ, QQ, RR) is RR
+assert cm.common_parent(ZZ, QQ, RR) is RR_parent
 real_fields = [RealField(prec) for prec in range(10, 101, 10)]
 assert cm.common_parent(*real_fields) is real_fields[0]
 left, right = cm.discover_coercion(RR, QQ)
 assert left is None
 assert right.domain() is QQ
-assert right.codomain() is RR
+assert right.codomain() is RR_parent
 `);
     console.log(
       "sagelite-electron-ok real coercion semantics smoke",
