@@ -41442,4 +41442,25 @@ diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 +        except (TypeError, ValueError, ArithmeticError):
 +            return False
 +        return True
-+
+
+diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
+--- a/src/sage/rings/polynomial/polynomial_element_generic.py
++++ b/src/sage/rings/polynomial/polynomial_element_generic.py
+@@ -1328,4 +1328,5 @@
+-            sage: g = f._factor_of_degree(3)    # not tested                            # needs sage.rings.padics
+-            Traceback (most recent call last)
+-            ...
+-            KeyboardInterrupt:
++            sage: try:                                                                  # needs sage.rings.padics
++            ....:     g = f._factor_of_degree(3)
++            ....: except PrecisionError as error:
++            ....:     print(error)
++            cannot divide by something indistinguishable from zero
+@@ -1354 +1355,6 @@
+-            a[deg] = a[deg].add_bigoh(self.base_ring().default_prec())
++            base_ring = self.base_ring()
++            try:
++                prec = base_ring.default_prec()
++            except AttributeError:
++                prec = base_ring.precision_cap()
++            a[deg] = a[deg].add_bigoh(prec)

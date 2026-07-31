@@ -327,6 +327,18 @@ W = V.span([[1, 0]])
 assert V([1, 0]) in W
 assert V([0, 1]) not in W
 assert V([O(5**5), 1]) not in W
+R = PolynomialRing(Qp(5), 't')
+t = R.gen()
+f = 5 + 3*t + t**4 + 25*t**10
+g = f._factor_of_degree(4)
+assert (f % g).is_zero()
+try:
+    f._factor_of_degree(3)
+except Exception as error:
+    assert type(error).__name__ == 'PrecisionError'
+    assert str(error) == 'cannot divide by something indistinguishable from zero'
+else:
+    raise AssertionError('invalid p-adic factor degree did not fail')
 K = QqCR(ZZ(2)**3, 5, names='a')
 a = K.gen()
 S = PolynomialRing(K, 'x')

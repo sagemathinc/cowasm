@@ -330,7 +330,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 317,
+  schemaVersion: 318,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -564,6 +564,8 @@ expectedSageliteManifest.smokeContract +=
   "-continued-fraction-symbolic-quotient-v288";
 expectedSageliteManifest.smokeContract +=
   "-padic-subspace-minimal-polynomial-v289";
+expectedSageliteManifest.smokeContract +=
+  "-padic-polynomial-factor-precision-v290";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

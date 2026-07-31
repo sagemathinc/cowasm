@@ -1776,6 +1776,18 @@ W = V.span([[1, 0]])
 assert V([1, 0]) in W
 assert V([0, 1]) not in W
 assert V([O(5**5), 1]) not in W
+R = PolynomialRing(Qp(5), 't')
+t = R.gen()
+f = 5 + 3*t + t**4 + 25*t**10
+g = f._factor_of_degree(4)
+assert (f % g).is_zero()
+try:
+    f._factor_of_degree(3)
+except Exception as error:
+    assert type(error).__name__ == 'PrecisionError'
+    assert str(error) == 'cannot divide by something indistinguishable from zero'
+else:
+    raise AssertionError('invalid p-adic factor degree did not fail')
 K = QqCR(ZZ(2)**3, 5, names='a')
 a = K.gen()
 S = PolynomialRing(K, 'x')
@@ -3548,7 +3560,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=317
+electron_manifest_schema_version=318
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3725,6 +3737,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pusho
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-rounding-long-test-v287"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-symbolic-quotient-v288"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-subspace-minimal-polynomial-v289"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-polynomial-factor-precision-v290"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
