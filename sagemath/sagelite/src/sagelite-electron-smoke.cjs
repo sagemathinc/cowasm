@@ -952,10 +952,12 @@ else:
     console.log("sagelite-electron-start real pushout semantics smoke");
     await python.exec(String.raw`
 import sage.all
-from sage.all import CC, CDF, QQ, RR, ZZ
+from sage.all import CC, CDF, QQ, ZZ
 from sage.categories.pushout import AlgebraicClosureFunctor, ConstructionFunctor, MultiPolynomialFunctor, pushout
 from sage.categories.rings import Rings
+from sage.rings.real_mpfr import RealField
 
+RR = RealField()
 F = MultiPolynomialFunctor(['x', 'y'], None)
 assert str(F(CC)) == 'Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision'
 F2 = RR.construction()[0]

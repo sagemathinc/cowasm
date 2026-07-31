@@ -1307,9 +1307,12 @@ else:
     raise AssertionError('low-precision real unexpectedly increased precision')
 print('sagelite-node-ok real functional semantics smoke')"
 run_node_import "real pushout semantics smoke" "import sage.all
-from sage.all import CC, CDF, QQ, RR, ZZ
+from sage.all import CC, CDF, QQ, ZZ
 from sage.categories.pushout import AlgebraicClosureFunctor, ConstructionFunctor, MultiPolynomialFunctor, pushout
 from sage.categories.rings import Rings
+from sage.rings.real_mpfr import RealField
+
+RR = RealField()
 F = MultiPolynomialFunctor(['x', 'y'], None)
 assert str(F(CC)) == 'Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision'
 F2 = RR.construction()[0]
@@ -3531,7 +3534,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=313
+electron_manifest_schema_version=314
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3704,6 +3707,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-compl
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-argument-evaluation-v283"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quaternion-polynomial-semantics-v284"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-facade-conversion-v285"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-concrete-field-v286"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
