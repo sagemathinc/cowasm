@@ -41751,3 +41751,22 @@ diff --git a/src/sage/categories/loop_crystals.py b/src/sage/categories/loop_cry
 +                ....:     T2.digraph(), edge_labels=True, certificate=True)
 +                sage: isomorphic and len(certificate) == T1.cardinality() == T2.cardinality()
 +                True
+diff --git a/src/sage/combinat/root_system/integrable_representations.py b/src/sage/combinat/root_system/integrable_representations.py
+--- a/src/sage/combinat/root_system/integrable_representations.py
++++ b/src/sage/combinat/root_system/integrable_representations.py
+@@ -1146,7 +1146,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
+             0   1   2   3   4
+             F4~
+-            sage: A1xC3=WeylCharacterRing("A1xC3",style='coroots')
+-            sage: A1xC3.dynkin_diagram()
++            sage: A1xC3=WeylCharacterRing("A1xC3",style='coroots')                      # needs sage.libs.gap
++            sage: A1xC3.dynkin_diagram()                                                # needs sage.libs.gap
+             O
+             1
+             O---O=<=O
+@@ -1162 +1162 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
+-            sage: V.branch(i=1, weyl_character_ring=A1xC3, sequence={0:1,2:4,3:3,4:2})  # long time
++            sage: V.branch(i=1, weyl_character_ring=A1xC3, sequence={0:1,2:4,3:3,4:2})  # long time  # needs sage.libs.gap
+@@ -1174 +1174 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
+-            sage: r = [x.degree() for x in V.branch(depth=15)]; r
++            sage: r = [x.degree() for x in V.branch(depth=15)]; r                       # needs sage.libs.gap
