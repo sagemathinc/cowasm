@@ -34773,9 +34773,6 @@ diff --git a/src/sage/rings/padics/padic_generic.py b/src/sage/rings/padics/padi
 @@ -1286 +1285 @@
 -            sage: zeta == R.teichmuller(2)
 +            sage: zeta == R.teichmuller(2)  # needs sage.libs.pari
-@@ -1295 +1294 @@
--            sage: zeta
-+            sage: zeta  # known bug
 @@ -1352 +1351 @@
 -            sage: roots = R.roots_of_unity(); roots
 +            sage: roots = R.roots_of_unity(); roots  # needs sage.libs.pari
