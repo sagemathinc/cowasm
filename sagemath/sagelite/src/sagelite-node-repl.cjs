@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 157;
+const doctestRunnerVersion = 158;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -2789,7 +2789,7 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         return want == got
 
     def __check_exception_line_output(self, want, got, optionflags):
-        want_error = self.__exception_output(want)
+        want_error = self.__exception_output(want, exception_prefix_only=True)
         got_error = self.__exception_output(got)
         if want_error is None or got_error is None:
             return False
@@ -2808,13 +2808,13 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             return None
         return self.__exception_from_lines(lines[1:])
 
-    def __exception_output(self, text):
+    def __exception_output(self, text, exception_prefix_only=False):
         lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
         if not lines or lines[0] == "Traceback (most recent call last):":
             return None
-        return self.__exception_from_lines(lines)
+        return self.__exception_from_lines(lines, exception_prefix_only)
 
-    def __exception_from_lines(self, lines):
+    def __exception_from_lines(self, lines, exception_prefix_only=False):
         candidates = []
         for index, line in enumerate(lines):
             exception_class, detail = self.__split_exception_line(line)
@@ -2827,7 +2827,24 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             candidates.append((index, exception_class, detail))
         if not candidates:
             return None
-        index, exception_class, detail = candidates[-1]
+        if exception_prefix_only:
+            # Python's doctest checker passes an expected exception after the
+            # protected leading ellipsis marker.  Do not reinterpret an
+            # arbitrary later capitalized output line (for example True)
+            # as an exception class.
+            candidate = next((
+                candidate
+                for candidate in candidates
+                if all(
+                    line in ("...", COWASM_LEADING_ELLIPSIS_SENTINEL)
+                    for line in lines[:candidate[0]]
+                )
+            ), None)
+            if candidate is None:
+                return None
+            index, exception_class, detail = candidate
+        else:
+            index, exception_class, detail = candidates[-1]
         continuation = [line for line in lines[index + 1:] if line != "..."]
         normalized_detail = " ".join([detail] + continuation).strip()
         if normalized_detail:

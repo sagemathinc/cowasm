@@ -8456,6 +8456,54 @@ if [ "$doctest_rel_tol_failure_count" != "1" ]; then
   sqlite3 "$doctest_rel_tol_failure_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke did not record the expected failed tolerance block metadata."
 fi
+doctest_false_exception_match_file="$probe_dir/sagelite-doctest-false-exception-match.py"
+doctest_false_exception_match_db="$probe_dir/sagelite-doctest-false-exception-match.sqlite3"
+doctest_false_exception_match_log="$dist_dir/doctest-false-exception-match.log"
+cat >"$doctest_false_exception_match_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: print("actual prefix\nTrue")
+    expected prefix
+    True
+    sage: exec("cowasm_syntax_smoke =")
+    Traceback (most recent call last):
+    ...
+    SyntaxError...
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  run_host_timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_false_exception_match_db" \
+      "$doctest_false_exception_match_file" \
+      >"$doctest_false_exception_match_log" 2>&1
+doctest_false_exception_match_status=$?
+set -e
+if [ "$doctest_false_exception_match_status" -eq 124 ]; then
+  tail -120 "$doctest_false_exception_match_log" >&2
+  record_blocker "sagelite-blocked: sage -t false exception-match smoke timed out after $node_import_timeout; see $doctest_false_exception_match_log for the first runtime blocker."
+fi
+if [ "$doctest_false_exception_match_status" -eq 0 ]; then
+  cat "$doctest_false_exception_match_log" >&2
+  sqlite3 "$doctest_false_exception_match_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t false exception-match smoke unexpectedly passed."
+fi
+doctest_false_exception_match_count="$(sqlite3 "$doctest_false_exception_match_db" "select count(*) from blocks where status = 'failed' and expected = 'expected prefix' || char(10) || 'True' || char(10) and actual = 'actual prefix' || char(10) || 'True' || char(10) and failure_class = 'output_mismatch' and failure_detail = 'expected output mismatch';")"
+if [ "$doctest_false_exception_match_count" != "1" ]; then
+  cat "$doctest_false_exception_match_log" >&2
+  sqlite3 "$doctest_false_exception_match_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t false exception-match smoke did not reject mismatched multiline output ending in True."
+fi
+doctest_contextual_exception_match_count="$(sqlite3 "$doctest_false_exception_match_db" "select count(*) from blocks where status = 'passed' and source = 'exec(\"cowasm_syntax_smoke =\")' || char(10) and expected like '%SyntaxError...%';")"
+if [ "$doctest_contextual_exception_match_count" != "1" ]; then
+  cat "$doctest_false_exception_match_log" >&2
+  sqlite3 "$doctest_false_exception_match_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t false exception-match smoke did not preserve contextual SyntaxError matching."
+fi
 printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
 
 run_electron_smoke() {
