@@ -41794,3 +41794,9 @@ diff --git a/src/sage/categories/lie_algebras.py b/src/sage/categories/lie_algeb
 +                sage: L.is_commutative()
 @@ -892 +891,0 @@
 -                sage: # not implemented, needs sage.combinat sage.modules
+diff --git a/src/sage/plot/colors.py b/src/sage/plot/colors.py
+--- a/src/sage/plot/colors.py
++++ b/src/sage/plot/colors.py
+@@ -1129 +1129 @@
+-            sage: from colorsys import hsv_to_rgb    # not tested
++            sage: from colorsys import hsv_to_rgb
