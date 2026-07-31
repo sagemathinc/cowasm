@@ -41770,3 +41770,15 @@ diff --git a/src/sage/combinat/root_system/integrable_representations.py b/src/s
 @@ -1174 +1174 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 -            sage: r = [x.degree() for x in V.branch(depth=15)]; r
 +            sage: r = [x.degree() for x in V.branch(depth=15)]; r                       # needs sage.libs.gap
+diff --git a/src/sage/categories/commutative_rings.py b/src/sage/categories/commutative_rings.py
+--- a/src/sage/categories/commutative_rings.py
++++ b/src/sage/categories/commutative_rings.py
+@@ -45,4 +45,5 @@
+-    GroupAlgebra should be fixed::
++    Group algebras over abelian groups are commutative::
+-
++
+-        sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings()     # not implemented, needs sage.groups sage.modules
++        sage: from sage.algebras.group_algebra import GroupAlgebra
++        sage: GroupAlgebra(AbelianGroup([3]), QQ) in CommutativeRings()
+         True
