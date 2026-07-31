@@ -41782,3 +41782,15 @@ diff --git a/src/sage/categories/commutative_rings.py b/src/sage/categories/comm
 +        sage: from sage.algebras.group_algebra import GroupAlgebra
 +        sage: GroupAlgebra(AbelianGroup([3]), QQ) in CommutativeRings()
          True
+diff --git a/src/sage/categories/lie_algebras.py b/src/sage/categories/lie_algebras.py
+--- a/src/sage/categories/lie_algebras.py
++++ b/src/sage/categories/lie_algebras.py
+@@ -577 +577,0 @@
+-                sage: # not implemented, needs sage.combinat sage.modules
+@@ -605,2 +604,2 @@
+-                sage: L.<x> = LieAlgebra(QQ, 1)         # not implemented               # needs sage.combinat sage.modules
+-                sage: L.is_commutative()                # not implemented               # needs sage.combinat sage.modules
++                sage: L.<x> = LieAlgebra(QQ, 1)
++                sage: L.is_commutative()
+@@ -892 +891,0 @@
+-                sage: # not implemented, needs sage.combinat sage.modules
