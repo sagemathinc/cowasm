@@ -34493,12 +34493,6 @@ index a5ad9911..2d73337a 100644
 @@ -1861 +1860 @@ cdef class pAdicGenericElement(LocalGenericElement):
 -            sage: K.zeta().multiplicative_order(20)
 +            sage: K.zeta().multiplicative_order(20)  # needs sage.libs.pari
-@@ -1881 +1880 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: v.multiplicative_order()
-+            sage: v.multiplicative_order()  # known bug
-@@ -1883 +1882 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: (u*v).multiplicative_order()
-+            sage: (u*v).multiplicative_order()  # known bug
 @@ -1903 +1902 @@ cdef class pAdicGenericElement(LocalGenericElement):
 -            sage: R.zeta().multiplicative_order(20)
 +            sage: R.zeta().multiplicative_order(20)  # needs sage.libs.pari
