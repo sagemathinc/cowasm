@@ -225,7 +225,25 @@ ${LIBPNG_WASI_SDK}/lib/libpng.a:
 test-sagelite-patch-syntax:
 	git apply --numstat ${SRC}/patches/01-wasi-optional-host-libs.patch > /dev/null
 
-${BUILD_WASI_SDK}/.build: ${SRC}/patches/01-wasi-optional-host-libs.patch | test-sagelite-patch-syntax
+.PHONY: test-sagelite-patch-replay
+test-sagelite-patch-replay: test-sagelite-patch-syntax
+	@set -eu; \
+	replay_dir="$$(mktemp -d /tmp/cowasm-sagelite-patch-replay.XXXXXX)"; \
+	cleanup() { \
+		case "$$replay_dir" in \
+		/tmp/cowasm-sagelite-patch-replay.*) rm -rf -- "$$replay_dir" ;; \
+		esac; \
+	}; \
+	trap cleanup EXIT HUP INT TERM; \
+	git -C ${SAGELITE_SOURCE} archive HEAD | tar -x -C "$$replay_dir"; \
+	if ! patch --fuzz=2 -p1 -d "$$replay_dir" \
+		< ${SRC}/patches/01-wasi-optional-host-libs.patch \
+		> "$$replay_dir/patch.log" 2>&1; then \
+		cat "$$replay_dir/patch.log" >&2; \
+		exit 1; \
+	fi
+
+${BUILD_WASI_SDK}/.build: ${SRC}/patches/01-wasi-optional-host-libs.patch | test-sagelite-patch-replay
 	test -d ${SAGELITE_SOURCE}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
@@ -248,7 +266,7 @@ ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state: force-sagelite-source-meta
 	fi
 
 ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build ${SRC}/patches/01-wasi-optional-host-libs.patch
-	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-wasi-optional-host-libs.patch
+	cd ${BUILD_WASI_SDK} && patch --fuzz=2 -p1 < ${SRC}/patches/01-wasi-optional-host-libs.patch
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
