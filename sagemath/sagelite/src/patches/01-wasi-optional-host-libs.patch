@@ -41392,3 +41392,6 @@ diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fra
 @@ -662 +662 @@
 -            sage: for n in range(3000):  # long time, not tested, known bug (see :issue:`29957`)
 +            sage: for n in range(3000):  # long time
+@@ -1899 +1899 @@
+-            sage: cf.quotient(10000)            # long time
++            sage: cf.quotient(10000)            # long time                        # needs sage.symbolic
