@@ -2374,6 +2374,8 @@ except ValueError as error:
     assert str(error) == '4 not in {1, 2, 3}'
 else:
     raise AssertionError('nonmember construction unexpectedly succeeded')
+nested = Set([Set([]), Set([1])])
+assert nested(nested.an_element()) in nested
 NN = NonNegativeIntegers(facade=False)
 n = NN.from_integer(Integer(5))
 assert n.parent() is NN
@@ -3529,7 +3531,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=312
+electron_manifest_schema_version=313
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3701,6 +3703,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-tested-mod
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-complex-manifold-categories-v282"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-argument-evaluation-v283"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-quaternion-polynomial-semantics-v284"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-facade-conversion-v285"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

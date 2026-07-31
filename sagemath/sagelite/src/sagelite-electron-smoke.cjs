@@ -2627,6 +2627,9 @@ except ValueError as error:
 else:
     raise AssertionError('nonmember construction unexpectedly succeeded')
 
+nested = Set([Set([]), Set([1])])
+assert nested(nested.an_element()) in nested
+
 NN = NonNegativeIntegers(facade=False)
 n = NN.from_integer(Integer(5))
 assert n.parent() is NN

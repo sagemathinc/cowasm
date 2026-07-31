@@ -41296,3 +41296,35 @@ diff --git a/src/sage/matrix/matrix_sparse.pyx b/src/sage/matrix/matrix_sparse.p
 @@ -537 +537 @@ cdef class Matrix_sparse(Matrix):
 -            sage: A.charpoly()
 +            sage: A.charpoly()                                                         # needs sage.libs.linbox
+diff --git a/src/sage/sets/set.py b/src/sage/sets/set.py
+--- a/src/sage/sets/set.py
++++ b/src/sage/sets/set.py
+@@ -508,0 +509,22 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operat
++    def __call__(self, el):
++        """
++        Return ``el`` as an element of ``self``.
++
++        Set objects are facade parents whose elements need not inherit from
++        :class:`~sage.structure.element.Element`.  Bypass the generic
++        conversion map for those objects, since maps are statically typed to
++        return ``Element``.
++
++        TESTS::
++
++            sage: S = Set([Set([]), Set([1])])
++            sage: S(S.an_element()) in S
++            True
++        """
++        if not isinstance(el, Element):
++            return self._element_constructor_(el)
++        try:
++            return Parent.__call__(self, el)
++        except TypeError:
++            return self._element_constructor_(el)
++
+diff --git a/src/sage/combinat/sidon_sets.py b/src/sage/combinat/sidon_sets.py
+--- a/src/sage/combinat/sidon_sets.py
++++ b/src/sage/combinat/sidon_sets.py
+@@ -57 +57 @@ def sidon_sets(N, g=1):
+-        sage: TestSuite(S).run()  # known bug - facade conversion is statically typed to return Element
++        sage: TestSuite(S).run()
