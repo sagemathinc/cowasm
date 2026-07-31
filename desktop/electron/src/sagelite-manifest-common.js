@@ -259,6 +259,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/set_partition_ordered.py",
   "site-packages/sage/combinat/skew_tableau.py",
+  "site-packages/sage/combinat/species/empty_species.py",
+  "site-packages/sage/combinat/species/species.py",
   "site-packages/sage/combinat/subword.py",
   "site-packages/sage/combinat/subset.py",
   "site-packages/sage/combinat/subsets_pairwise.py",
@@ -330,7 +332,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 319,
+  schemaVersion: 320,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -568,6 +570,8 @@ expectedSageliteManifest.smokeContract +=
   "-padic-polynomial-factor-precision-v290";
 expectedSageliteManifest.smokeContract +=
   "-finite-word-unknown-length-conjugacy-v291";
+expectedSageliteManifest.smokeContract +=
+  "-empty-species-arithmetic-v292";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

@@ -2065,6 +2065,19 @@ assert z.is_conjugate_with(
     console.log(
       "sagelite-electron-ok unknown-length word conjugacy smoke",
     );
+    console.log("sagelite-electron-start empty species arithmetic smoke");
+    await python.exec(String.raw`
+from sage.combinat.species.library import CharacteristicSpecies, EmptySpecies
+
+empty = EmptySpecies()
+characteristic = CharacteristicSpecies(2)
+assert characteristic + empty is characteristic
+assert empty + characteristic is characteristic
+weighted_empty = EmptySpecies(weight=2)
+assert characteristic * weighted_empty is weighted_empty
+assert weighted_empty * characteristic is weighted_empty
+`);
+    console.log("sagelite-electron-ok empty species arithmetic smoke");
     console.log(
       "sagelite-electron-start real characteristic Sturmian factor smoke",
     );

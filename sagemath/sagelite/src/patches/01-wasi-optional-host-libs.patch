@@ -41497,3 +41497,51 @@ diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/fi
 +        if other_length is None:
 +            other_length = sum(1 for _ in islice(other, length + 1))
 +        return length == other_length and self.is_factor(other * other)
+diff -urN a/src/sage/combinat/species/empty_species.py b/src/sage/combinat/species/empty_species.py
+--- a/src/sage/combinat/species/empty_species.py
++++ b/src/sage/combinat/species/empty_species.py
+@@ -52,3 +52,3 @@
+         sage: X = S + Empt
+-        sage: X == S    # TODO: Not Implemented
++        sage: X == S
+         True
+@@ -68,3 +68,3 @@
+         sage: Y = Empt*S
+-        sage: Y == Empt   # TODO: Not Implemented
++        sage: Y == Empt
+         True
+diff -urN a/src/sage/combinat/species/species.py b/src/sage/combinat/species/species.py
+--- a/src/sage/combinat/species/species.py
++++ b/src/sage/combinat/species/species.py
+@@ -292,6 +292,14 @@
+             [[1, 2], [2, 1], [1, 2], [2, 1]]
++            sage: E = species.EmptySpecies()
++            sage: P + E is P and E + P is P
++            True
+         """
+-        from .sum_species import SumSpecies
+         if not isinstance(g, GenericCombinatorialSpecies):
+             raise TypeError("g must be a combinatorial species")
++        from .empty_species import EmptySpecies
++        if isinstance(self, EmptySpecies):
++            return g
++        if isinstance(g, EmptySpecies):
++            return self
++        from .sum_species import SumSpecies
+         return SumSpecies(self, g)
+@@ -309,6 +317,14 @@
+             Product of (Permutation species) and (Permutation species)
++            sage: E = species.EmptySpecies(weight=2)
++            sage: P * E is E and E * P is E
++            True
+         """
+-        from .product_species import ProductSpecies
+         if not isinstance(g, GenericCombinatorialSpecies):
+             raise TypeError("g must be a combinatorial species")
++        from .empty_species import EmptySpecies
++        if isinstance(self, EmptySpecies):
++            return self
++        if isinstance(g, EmptySpecies):
++            return g
++        from .product_species import ProductSpecies
+         return ProductSpecies(self, g)

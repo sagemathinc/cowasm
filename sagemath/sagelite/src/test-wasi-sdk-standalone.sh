@@ -1919,6 +1919,16 @@ assert z.is_conjugate_with(
     Word(iter([2] * 100), length='unknown', caching=False)
 )
 print('sagelite-node-ok unknown-length word conjugacy smoke')"
+run_node_import "empty species arithmetic smoke" "import sage.all
+from sage.combinat.species.library import CharacteristicSpecies, EmptySpecies
+empty = EmptySpecies()
+characteristic = CharacteristicSpecies(2)
+assert characteristic + empty is characteristic
+assert empty + characteristic is characteristic
+weighted_empty = EmptySpecies(weight=2)
+assert characteristic * weighted_empty is weighted_empty
+assert weighted_empty * characteristic is weighted_empty
+print('sagelite-node-ok empty species arithmetic smoke')"
 run_node_import "real characteristic Sturmian factor smoke" "import sage.all
 from sage.all import QQ
 from sage.combinat.words.word_generators import words
@@ -3570,7 +3580,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=319
+electron_manifest_schema_version=320
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3749,6 +3759,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-subspace-minimal-polynomial-v289"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-polynomial-factor-precision-v290"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-unknown-length-conjugacy-v291"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-empty-species-arithmetic-v292"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
@@ -4058,6 +4069,8 @@ electron_required_paths=(
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/set_partition_ordered.py"
   "site-packages/sage/combinat/skew_tableau.py"
+  "site-packages/sage/combinat/species/empty_species.py"
+  "site-packages/sage/combinat/species/species.py"
   "site-packages/sage/combinat/subword.py"
   "site-packages/sage/combinat/subset.py"
   "site-packages/sage/combinat/subsets_pairwise.py"
