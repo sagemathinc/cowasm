@@ -34703,9 +34703,9 @@ index a5ad9911..2d73337a 100644
 @@ -4386 +4401 @@ def _findprec(c_1, c_2, c_3, p):
 -        if c_1*k - c_2*k.log(p).n() > c_3:
 +        if c_1*k - c_2*R(k).log()/logp > c_3:
-@@ -4399 +4414 @@ def _compute_g(p, n, prec, terms):
--        sage: sage.rings.padics.padic_generic_element._compute_g(7, 3, 3, 3)[0]
-+        sage: sage.rings.padics.padic_generic_element._compute_g(7, 3, 3, 3)[0]  # known bug
+@@ -4400 +4415 @@ def _compute_g(p, n, prec, terms):
+-        O(7^3)*v^2 + (1 + O(7^3))*v + O(7^3)
++        (1 + O(7^3))*v
 diff --git a/src/sage/rings/padics/pow_computer_flint.pyx b/src/sage/rings/padics/pow_computer_flint.pyx
 --- a/src/sage/rings/padics/pow_computer_flint.pyx
 +++ b/src/sage/rings/padics/pow_computer_flint.pyx
