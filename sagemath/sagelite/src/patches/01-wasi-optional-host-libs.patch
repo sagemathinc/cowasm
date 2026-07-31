@@ -34440,9 +34440,6 @@ index a5ad9911..2d73337a 100644
 +++ b/src/sage/rings/padics/padic_generic_element.pyx
 @@ -2 +1,0 @@
 -# sage.doctest: needs sage.libs.ntl
-@@ -910 +909 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: pi.artin_hasse_exp(algorithm='newton')  # indirect doctest
-+            sage: pi.artin_hasse_exp(algorithm='newton')  # known bug
 @@ -985 +984 @@ cdef class pAdicGenericElement(LocalGenericElement):
 -            sage: pi.minimal_polynomial()
 +            sage: pi.minimal_polynomial()  # known bug
