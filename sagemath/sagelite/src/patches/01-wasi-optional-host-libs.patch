@@ -41808,3 +41808,9 @@ diff --git a/src/sage/coding/self_dual_codes.py b/src/sage/coding/self_dual_code
 -    sage: T = R.gen()                                           # not tested
 +    sage: R = PolynomialRing(CC,"T")
 +    sage: T = R.gen()
+diff --git a/src/sage/knots/knotinfo.py b/src/sage/knots/knotinfo.py
+--- a/src/sage/knots/knotinfo.py
++++ b/src/sage/knots/knotinfo.py
+@@ -482 +482 @@
+-        sage: import sage.knots.knotinfo   # not tested
++        sage: import sage.knots.knotinfo
