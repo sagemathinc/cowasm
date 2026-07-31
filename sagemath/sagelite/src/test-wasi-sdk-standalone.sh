@@ -1770,6 +1770,20 @@ assert _findprec(1, 1, 2, 2) == 5
 assert abs(_polylog_c(1, 2) - 4.52876637294490) < 1e-14
 assert Qp(13)(-1).polylog(6) == 0
 print('sagelite-node-ok p-adic local NTL context and numeric log smoke')"
+run_node_import "p-adic subspace and minimal polynomial smoke" "from sage.all import O, PolynomialRing, Qp, QqCR, VectorSpace, ZZ
+V = VectorSpace(Qp(5), 2)
+W = V.span([[1, 0]])
+assert V([1, 0]) in W
+assert V([0, 1]) not in W
+assert V([O(5**5), 1]) not in W
+K = QqCR(ZZ(2)**3, 5, names='a')
+a = K.gen()
+S = PolynomialRing(K, 'x')
+x = S.gen()
+L = K.extension(x**4 - 2*a, names='pi')
+pi = L.gen()
+assert str(pi.minimal_polynomial()) == '(1 + O(2^5))*x^4 + a*2 + a*2^2 + a*2^3 + a*2^4 + a*2^5 + O(2^6)'
+print('sagelite-node-ok p-adic subspace and minimal polynomial smoke')"
 run_node_import "CPython static-type getattr smoke" "from contextlib import redirect_stdout
 from io import StringIO
 from sage.cpython.debug import getattr_debug
@@ -3534,7 +3548,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=316
+electron_manifest_schema_version=317
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3710,6 +3724,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-set-facade
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-real-pushout-concrete-field-v286"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-rounding-long-test-v287"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-symbolic-quotient-v288"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-subspace-minimal-polynomial-v289"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

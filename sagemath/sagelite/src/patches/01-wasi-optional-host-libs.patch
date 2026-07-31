@@ -34440,30 +34440,17 @@ index a5ad9911..2d73337a 100644
 +++ b/src/sage/rings/padics/padic_generic_element.pyx
 @@ -2 +1,0 @@
 -# sage.doctest: needs sage.libs.ntl
-@@ -985 +984 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: pi.minimal_polynomial()
-+            sage: pi.minimal_polynomial()  # known bug
-@@ -987 +986 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: (pi^2).minimal_polynomial()
-+            sage: (pi^2).minimal_polynomial()  # known bug
-@@ -989 +988 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: (1/pi).minimal_polynomial()
-+            sage: (1/pi).minimal_polynomial()  # known bug
-@@ -1054 +1053 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: pi.norm()  # norm over K
-+            sage: pi.norm()  # known bug
-@@ -1056 +1055 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: (pi^2).norm()
-+            sage: (pi^2).norm()  # known bug
-@@ -1058 +1057 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: pi.norm()^2
-+            sage: pi.norm()^2  # known bug
-@@ -1094 +1093 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: pi.trace()  # trace over K
-+            sage: pi.trace()  # known bug
-@@ -1096 +1095 @@ cdef class pAdicGenericElement(LocalGenericElement):
--            sage: (pi+1).trace()
-+            sage: (pi+1).trace()  # known bug
+@@ -992,2 +991,2 @@ cdef class pAdicGenericElement(LocalGenericElement):
+-            sage: P = elt.minimal_polynomial()  # not tested, known bug (see :issue:`32111`)
+-            sage: P(elt) == 0  # not tested
++            sage: P = elt.minimal_polynomial()
++            sage: P(elt) == 0
+@@ -1065 +1064 @@ cdef class pAdicGenericElement(LocalGenericElement):
+-            sage: (x*y).norm() == x.norm() * y.norm()  # not tested, known bug (see :issue:`32085`)
++            sage: (x*y).norm() == x.norm() * y.norm()
+@@ -1103 +1102 @@ cdef class pAdicGenericElement(LocalGenericElement):
+-            sage: (x+y).trace() == x.trace() + y.trace()  # not tested, known bug (see :issue:`32085`)
++            sage: (x+y).trace() == x.trace() + y.trace()
 @@ -1140 +1139 @@ cdef class pAdicGenericElement(LocalGenericElement):
 -            sage: a.algebraic_dependency(1)
 +            sage: a.algebraic_dependency(1)  # needs sage.libs.pari
@@ -41418,3 +41405,41 @@ diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_te
 +            (1 + O(5^20))*y
 +            sage: (5*a^2 + R(25, 4)).polynomial()
 +            (5 + O(5^4))*x^2 + 5^2 + O(5^4)
+diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
+--- a/src/sage/modules/free_module.py
++++ b/src/sage/modules/free_module.py
+@@ -6656,0 +6657,32 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
++    def __contains__(self, x):
++        r"""
++        Return whether ``x`` belongs to this embedded submodule.
++
++        For exact coordinate rings, use the standard parent containment
++        test.  For inexact coordinate rings, conversion into ``self`` cannot
++        test containment: the element constructor preserves all coordinates,
++        and approximate equality can therefore accept a vector outside the
++        submodule.  Verify its echelon coordinates instead.
++
++        EXAMPLES::
++
++            sage: V = VectorSpace(Qp(5), 2)
++            sage: W = V.span([[1, 0]])
++            sage: V([1, 0]) in W
++            True
++            sage: V([0, 1]) in W
++            False
++            sage: V([O(5^5), 1]) in W
++            False
++        """
++        if self.coordinate_ring().is_exact():
++            return super().__contains__(x)
++        try:
++            if x.parent() is self:
++                return True
++        except AttributeError:
++            pass
++        try:
++            self.echelon_coordinates(x)
++        except (TypeError, ValueError, ArithmeticError):
++            return False
++        return True
++

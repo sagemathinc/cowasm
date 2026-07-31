@@ -318,6 +318,25 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start p-adic subspace and minimal polynomial smoke");
+    await python.exec(String.raw`
+from sage.all import O, PolynomialRing, Qp, QqCR, VectorSpace, ZZ
+
+V = VectorSpace(Qp(5), 2)
+W = V.span([[1, 0]])
+assert V([1, 0]) in W
+assert V([0, 1]) not in W
+assert V([O(5**5), 1]) not in W
+K = QqCR(ZZ(2)**3, 5, names='a')
+a = K.gen()
+S = PolynomialRing(K, 'x')
+x = S.gen()
+L = K.extension(x**4 - 2*a, names='pi')
+pi = L.gen()
+assert str(pi.minimal_polynomial()) == \
+    '(1 + O(2^5))*x^4 + a*2 + a*2^2 + a*2^3 + a*2^4 + a*2^5 + O(2^6)'
+`);
+    console.log("sagelite-electron-ok p-adic subspace and minimal polynomial smoke");
     console.log("sagelite-electron-start cyclotomic real value smoke");
     await python.exec(String.raw`
 from sage.rings.polynomial.cyclotomic import cyclotomic_value
