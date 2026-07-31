@@ -7,7 +7,7 @@ const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 156;
+const doctestRunnerVersion = 157;
 
 class DoctestRunInterrupted extends Error {
   constructor(signal) {
@@ -1145,6 +1145,26 @@ def __cowasm_doctest_pretty(value):
     return stream.getvalue()
 
 
+def __cowasm_doctest_contains_nested_ascii_art(value):
+    for item in value:
+        if (
+            isinstance(item, (list, tuple))
+            and __cowasm_doctest_contains_nested_ascii_art(item)
+        ):
+            return True
+        try:
+            if item._repr_option("ascii_art"):
+                return True
+        except (AttributeError, TypeError):
+            pass
+        try:
+            if item.parent()._repr_option("element_ascii_art"):
+                return True
+        except (AttributeError, TypeError):
+            pass
+    return False
+
+
 def __cowasm_doctest_displayhook(value):
     try:
         if isinstance(value, __CowasmSequence):
@@ -1163,7 +1183,10 @@ def __cowasm_doctest_displayhook(value):
             from sage.repl.display.fancy_repr import TallListRepr
             formatted = TallListRepr().format_string(value)
             if formatted == "--- object not handled by representer ---":
-                formatted = __cowasm_doctest_pretty(value)
+                if __cowasm_doctest_contains_nested_ascii_art(value):
+                    formatted = repr(value)
+                else:
+                    formatted = __cowasm_doctest_pretty(value)
             sys.stdout.write(formatted + "\\n")
         elif __cowasm_doctest_display_large_matrix(value):
             pass

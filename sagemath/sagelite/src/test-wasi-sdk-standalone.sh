@@ -4263,6 +4263,18 @@ EXAMPLES::
     [1 2]  [1 2]
     [3 4], [3 4]
     ]
+    sage: [('m', _cowasm_display_matrix)]
+    [('m', [1 2]
+    [3 4])]
+    sage: class CowasmCountedRepr:
+    ....:     calls = 0
+    ....:     def __repr__(self):
+    ....:         type(self).calls += 1
+    ....:         return "counted repr"
+    sage: [CowasmCountedRepr()]
+    [counted repr]
+    sage: CowasmCountedRepr.calls
+    1
     sage: matrix(ZZ, 100, 100, 0)
     100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
     sage: from sage.misc.html import HtmlFragment
@@ -4419,7 +4431,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|80|63|0|17" ]; then
+if [ "$doctest_smoke_counts" != "passed|84|67|0|17" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -8263,7 +8275,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|80|70|0|10" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|84|74|0|10" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -8313,7 +8325,7 @@ if [ "$doctest_deferred_feature_status" -eq 0 ]; then
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke unexpectedly passed."
 fi
 doctest_deferred_feature_counts="$(sqlite3 "$doctest_deferred_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_deferred_feature_counts" != "failed|80|64|1|15" ]; then
+if [ "$doctest_deferred_feature_counts" != "failed|84|68|1|15" ]; then
   cat "$doctest_deferred_feature_log" >&2
   sqlite3 "$doctest_deferred_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t deferred-feature smoke wrote unexpected SQLite counts: $doctest_deferred_feature_counts"

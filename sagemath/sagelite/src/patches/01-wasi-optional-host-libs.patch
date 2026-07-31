@@ -41328,3 +41328,18 @@ diff --git a/src/sage/combinat/sidon_sets.py b/src/sage/combinat/sidon_sets.py
 @@ -57 +57 @@ def sidon_sets(N, g=1):
 -        sage: TestSuite(S).run()  # known bug - facade conversion is statically typed to return Element
 +        sage: TestSuite(S).run()
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -651 +651 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra):
+-        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
++        sage: sorted(dict(L.basis()).items())
+@@ -670 +670 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra):
+-        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
++        sage: sorted(dict(L.basis()).items())
+diff --git a/src/sage/tensor/modules/finite_rank_free_module.py b/src/sage/tensor/modules/finite_rank_free_module.py
+--- a/src/sage/tensor/modules/finite_rank_free_module.py
++++ b/src/sage/tensor/modules/finite_rank_free_module.py
+@@ -888 +888 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, Parent):
+-            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis  # random - matrix-list pretty-printer display differs in Sagelite
++            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis
