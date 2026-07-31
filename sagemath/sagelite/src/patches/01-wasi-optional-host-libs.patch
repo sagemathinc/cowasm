@@ -41478,3 +41478,22 @@ diff --git a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/
 +            except AttributeError:
 +                prec = base_ring.precision_cap()
 +            a[deg] = a[deg].add_bigoh(prec)
+diff --git a/src/sage/combinat/words/finite_word.py b/src/sage/combinat/words/finite_word.py
+--- a/src/sage/combinat/words/finite_word.py
++++ b/src/sage/combinat/words/finite_word.py
+@@ -2143 +2143,7 @@
+-            sage: z.is_conjugate_with(w) #TODO: Not implemented for word of unknown length
++            sage: z.is_conjugate_with(w)
++            True
++            sage: z.is_conjugate_with(Word(iter([2]*99), length='unknown'))
++            False
++            sage: z.is_conjugate_with(Word(iter([2]*101), length='unknown'))
++            False
++            sage: z.is_conjugate_with(Word(iter([2]*100), length='unknown', caching=False))
+@@ -2169 +2175,5 @@
+-        return self.length() == other.length() and self.is_factor(other * other)
++        length = self.length()
++        other_length = other.length()
++        if other_length is None:
++            other_length = sum(1 for _ in islice(other, length + 1))
++        return length == other_length and self.is_factor(other * other)

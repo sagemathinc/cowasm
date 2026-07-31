@@ -1909,6 +1909,16 @@ result = z + y
 assert repr(result) == 'word: 1222353587'
 assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
 print('sagelite-node-ok incompatible word concatenation delivery smoke')"
+run_node_import "unknown-length word conjugacy smoke" "import sage.all
+from sage.combinat.words.word import Word
+z = Word([2] * 100)
+assert z.is_conjugate_with(Word(iter([2] * 100), length='unknown'))
+assert not z.is_conjugate_with(Word(iter([2] * 99), length='unknown'))
+assert not z.is_conjugate_with(Word(iter([2] * 101), length='unknown'))
+assert z.is_conjugate_with(
+    Word(iter([2] * 100), length='unknown', caching=False)
+)
+print('sagelite-node-ok unknown-length word conjugacy smoke')"
 run_node_import "real characteristic Sturmian factor smoke" "import sage.all
 from sage.all import QQ
 from sage.combinat.words.word_generators import words
@@ -3560,7 +3570,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=318
+electron_manifest_schema_version=319
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3738,6 +3748,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-continued-fraction-symbolic-quotient-v288"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-subspace-minimal-polynomial-v289"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-polynomial-factor-precision-v290"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-unknown-length-conjugacy-v291"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

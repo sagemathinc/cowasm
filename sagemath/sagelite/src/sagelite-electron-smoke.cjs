@@ -2049,6 +2049,23 @@ assert list(result) == ['1', '2', '2', '2', '3', 5, 3, 5, 8, 7]
       "sagelite-electron-ok incompatible word concatenation delivery smoke",
     );
     console.log(
+      "sagelite-electron-start unknown-length word conjugacy smoke",
+    );
+    await python.exec(String.raw`
+from sage.combinat.words.word import Word
+
+z = Word([2] * 100)
+assert z.is_conjugate_with(Word(iter([2] * 100), length='unknown'))
+assert not z.is_conjugate_with(Word(iter([2] * 99), length='unknown'))
+assert not z.is_conjugate_with(Word(iter([2] * 101), length='unknown'))
+assert z.is_conjugate_with(
+    Word(iter([2] * 100), length='unknown', caching=False)
+)
+`);
+    console.log(
+      "sagelite-electron-ok unknown-length word conjugacy smoke",
+    );
+    console.log(
       "sagelite-electron-start real characteristic Sturmian factor smoke",
     );
     await python.exec(String.raw`
