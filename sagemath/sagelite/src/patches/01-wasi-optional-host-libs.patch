@@ -41697,3 +41697,10 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage
 +    from sage.misc.lazy_import import LazyImport
 +    if type(base_ring) is LazyImport:
 +        base_ring = base_ring._get_object()
+diff --git a/src/sage/combinat/quickref.py b/src/sage/combinat/quickref.py
+--- a/src/sage/combinat/quickref.py
++++ b/src/sage/combinat/quickref.py
+@@ -35 +35,2 @@
+-    sage: DisjointUnionEnumeratedSets(Family(IV_3, NonNegativeIntegers))  # not tested
++    sage: DisjointUnionEnumeratedSets(Family(NonNegativeIntegers(), IV_3))
++    Disjoint union of Lazy family (IV_3(i))_{i in Non negative integers}
