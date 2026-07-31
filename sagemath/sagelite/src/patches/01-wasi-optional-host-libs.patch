@@ -41343,3 +41343,13 @@ diff --git a/src/sage/tensor/modules/finite_rank_free_module.py b/src/sage/tenso
 @@ -888 +888 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, Parent):
 -            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis  # random - matrix-list pretty-printer display differs in Sagelite
 +            sage: W_basis = [phi_e_T02(b) for b in e_Sym2Vdual]; W_basis
+diff --git a/src/sage/categories/coalgebras.py b/src/sage/categories/coalgebras.py
+--- a/src/sage/categories/coalgebras.py
++++ b/src/sage/categories/coalgebras.py
+@@ -192,3 +192,3 @@ class Coalgebras(Category_over_base_ring):
+-                sage: Coalgebras(QQ).TensorProducts().super_categories()                # known bug
+-                [Category of tensor products of vector spaces over Rational Field,
+-                 Category of coalgebras over Rational Field]
++                sage: sorted(Coalgebras(QQ).TensorProducts().super_categories(), key=str)
++                [Category of coalgebras over Rational Field,
++                 Category of tensor products of vector spaces over Rational Field]
