@@ -6107,6 +6107,12 @@ diff -urN a/src/sage/rings/real_mpfi.pyx b/src/sage/rings/real_mpfi.pyx
 +++ b/src/sage/rings/real_mpfi.pyx
 @@ -124,0 +125 @@
 +    sage: # needs sage.symbolic
+@@ -242,3 +243,3 @@
+-        sage: val = RIF(airy_ai(1)); val # known bug
++        sage: val = RIF(airy_ai(1)); val # needs sage.symbolic
+         0.13529241631288142?
+-        sage: val.overlaps(ref)          # known bug
++        sage: val.overlaps(ref)          # needs sage.symbolic
 @@ -805 +806 @@
 -            sage: phi = RIF.coerce_map_from(AA); phi
 +            sage: phi = RIF.coerce_map_from(AA); phi                                     # needs sage.rings.number_field
@@ -21720,6 +21726,12 @@ diff --git a/src/sage/algebras/down_up_algebra.py b/src/sage/algebras/down_up_al
 diff --git a/src/sage/rings/complex_interval.pyx b/src/sage/rings/complex_interval.pyx
 --- a/src/sage/rings/complex_interval.pyx
 +++ b/src/sage/rings/complex_interval.pyx
+@@ -34,3 +34,3 @@
+-        sage: val = CIF(airy_ai(1)); val # known bug
++        sage: val = CIF(airy_ai(1)); val # needs sage.symbolic
+         0.13529241631288142?
+-        sage: val.overlaps(ref)          # known bug
++        sage: val.overlaps(ref)          # needs sage.symbolic
 @@ -278 +278 @@
 -            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
 +            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))  # needs sage.plot
