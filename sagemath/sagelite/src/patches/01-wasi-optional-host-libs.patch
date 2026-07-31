@@ -41399,6 +41399,12 @@ diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_te
 +            (1 + O(5^20))*y
 +            sage: (5*a^2 + R(25, 4)).polynomial()
 +            (5 + O(5^4))*x^2 + 5^2 + O(5^4)
+@@ -1312 +1312 @@
+-            sage: g == f # todo: comparison not implemented
++            sage: g == f
+@@ -1331 +1331 @@
+-            sage: g == f # todo: comparison not implemented
++            sage: g == f
 diff --git a/src/sage/modules/free_module.py b/src/sage/modules/free_module.py
 --- a/src/sage/modules/free_module.py
 +++ b/src/sage/modules/free_module.py
