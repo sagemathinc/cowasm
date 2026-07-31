@@ -41732,3 +41732,22 @@ diff --git a/src/sage/categories/primer.py b/src/sage/categories/primer.py
 +datatypes can replace them with specialized implementations, as integer
 +powering above does. This illustrates the use of *hierarchy of classes* to
 +share common code between classes having common behaviour.
+diff --git a/src/sage/categories/loop_crystals.py b/src/sage/categories/loop_crystals.py
+--- a/src/sage/categories/loop_crystals.py
++++ b/src/sage/categories/loop_crystals.py
+@@ -396,11 +396,4 @@
+-                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True,  # todo: not implemented (see #10904 and #10549)
+-                ....:                            certificate=True)
+-                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]],
+-                        [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
+-                        [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]],
+-                        [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
+-                        [[1], [2]]]: [[[1], [2]], [[1]]],
+-                        [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
+-                        [[1], [2]]]: [[[2], [3]], [[1]]],
+-                        [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]],
+-                        [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
++                sage: isomorphic, certificate = T1.digraph().is_isomorphic(
++                ....:     T2.digraph(), edge_labels=True, certificate=True)
++                sage: isomorphic and len(certificate) == T1.cardinality() == T2.cardinality()
++                True
