@@ -41392,3 +41392,16 @@ diff --git a/src/sage/rings/continued_fraction.py b/src/sage/rings/continued_fra
 @@ -1899 +1899 @@
 -            sage: cf.quotient(10000)            # long time
 +            sage: cf.quotient(10000)            # long time                        # needs sage.symbolic
+diff --git a/src/sage/rings/padics/padic_extension_generic.py b/src/sage/rings/padics/padic_extension_generic.py
+--- a/src/sage/rings/padics/padic_extension_generic.py
++++ b/src/sage/rings/padics/padic_extension_generic.py
+@@ -329,2 +329,2 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: W.defining_polynomial()  # known bug
+-            (1 + O(5^5))*x^5 + O(5^6)*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
++            sage: W.defining_polynomial()
++            (1 + O(5^5))*x^5 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
+@@ -415,2 +415,2 @@ class pAdicExtensionGeneric(pAdicGeneric):
+-            sage: W.modulus()  # known bug
+-            (1 + O(5^5))*x^5 + O(5^6)*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
++            sage: W.modulus()
++            (1 + O(5^5))*x^5 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
