@@ -41405,3 +41405,19 @@ diff --git a/src/sage/rings/padics/padic_extension_generic.py b/src/sage/rings/p
 -            (1 + O(5^5))*x^5 + O(5^6)*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
 +            sage: W.modulus()
 +            (1 + O(5^5))*x^5 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
+diff --git a/src/sage/rings/padics/CA_template.pxi b/src/sage/rings/padics/CA_template.pxi
+--- a/src/sage/rings/padics/CA_template.pxi
++++ b/src/sage/rings/padics/CA_template.pxi
+@@ -951,6 +951,6 @@
+-            sage: a.polynomial()  # known bug
+-            (1 + O(5^20))*x + O(5^20)
+-            sage: a.polynomial(var='y')  # known bug
+-            (1 + O(5^20))*y + O(5^20)
+-            sage: (5*a^2 + R(25, 4)).polynomial()  # known bug
+-            (5 + O(5^4))*x^2 + O(5^4)*x + 5^2 + O(5^4)
++            sage: a.polynomial()
++            (1 + O(5^20))*x
++            sage: a.polynomial(var='y')
++            (1 + O(5^20))*y
++            sage: (5*a^2 + R(25, 4)).polynomial()
++            (5 + O(5^4))*x^2 + 5^2 + O(5^4)
