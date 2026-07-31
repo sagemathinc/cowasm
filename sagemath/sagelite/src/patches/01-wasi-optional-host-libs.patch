@@ -41188,3 +41188,111 @@ diff --git a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polyn
 @@ -3554 +3554 @@ class PolynomialRing_dense_mod_p(PolynomialRing_field):
 -            sage: GF(5)['x'].irreducible_element(32, algorithm='primitive')
 +            sage: GF(5)['x'].irreducible_element(32, algorithm='primitive')             # needs sage.libs.pari
+diff --git a/src/sage/rings/integer_ring.pyx b/src/sage/rings/integer_ring.pyx
+--- a/src/sage/rings/integer_ring.pyx
++++ b/src/sage/rings/integer_ring.pyx
+@@ -386 +386 @@ class IntegerRing_class(PrincipalIdealDomain):
+-            sage: ZZ[sqrt(2), sqrt(3)]
++            sage: ZZ[sqrt(2), sqrt(3)]                                                  # needs sage.symbolic
+@@ -389 +389 @@ class IntegerRing_class(PrincipalIdealDomain):
+-            sage: R = ZZ[sqrt(5) + 1]; R
++            sage: R = ZZ[sqrt(5) + 1]; R                                               # needs sage.symbolic
+@@ -392 +392 @@ class IntegerRing_class(PrincipalIdealDomain):
+-            sage: R.is_maximal()
++            sage: R.is_maximal()                                                        # needs sage.symbolic
+@@ -394 +394 @@ class IntegerRing_class(PrincipalIdealDomain):
+-            sage: R = ZZ[(1 + sqrt(5))/2]; R
++            sage: R = ZZ[(1 + sqrt(5))/2]; R                                            # needs sage.symbolic
+@@ -397 +397 @@ class IntegerRing_class(PrincipalIdealDomain):
+-            sage: R.is_maximal()
++            sage: R.is_maximal()                                                        # needs sage.symbolic
+diff --git a/src/sage/rings/lazy_series_ring.py b/src/sage/rings/lazy_series_ring.py
+--- a/src/sage/rings/lazy_series_ring.py
++++ b/src/sage/rings/lazy_series_ring.py
+@@ -2474 +2474 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            1 + (-2*q) + 2*q^4 + (-2*q^9) + 2*q^16 + O(q^17)
++            1 - 2*q + 2*q^4 - 2*q^9 + 2*q^16 + O(q^17)
+@@ -2476 +2476 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            -2 + 2*q^2 + (-2*q^6) + 2*q^12 + O(q^17)
++            -2 + 2*q^2 - 2*q^6 + 2*q^12 + O(q^17)
+@@ -2517 +2517 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            1 + (-2*q) + 2*q^4 + (-2*q^9) + 2*q^16 + O(q^17)
++            1 - 2*q + 2*q^4 - 2*q^9 + 2*q^16 + O(q^17)
+@@ -2522 +2522 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            2 + (-6*q^2) + 10*q^6 + (-14*q^12) + O(q^17)
++            2 - 6*q^2 + 10*q^6 - 14*q^12 + O(q^17)
+@@ -2524 +2524 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            2 + (-6*q^2) + 10*q^6 + (-14*q^12) + O(q^17)
++            2 - 6*q^2 + 10*q^6 - 14*q^12 + O(q^17)
+@@ -2531 +2531 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            4 + (-24*q^4) + 36*q^8 + 40*q^12 + (-120*q^16) + O(q^17)
++            4 - 24*q^4 + 36*q^8 + 40*q^12 - 120*q^16 + O(q^17)
+@@ -2533 +2533 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            4 + (-24*q^4) + 36*q^8 + 40*q^12 + O(q^16)
++            4 - 24*q^4 + 36*q^8 + 40*q^12 + O(q^16)
+@@ -2538,4 +2538 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            1/2/q - 5 + 45/2*q + (-65*q^2) + 153*q^3 + (-336*q^4) + 1375/2*q^5
+-             + (-1305*q^6) + 2376*q^7 + (-4181*q^8) + 7093*q^9 + (-11745*q^10)
+-             + 38073/2*q^11 + (-30157*q^12) + 46968*q^13 + (-72041*q^14)
+-             + 108810*q^15 + O(q^16)
++            1/2/q - 5 + 45/2*q - 65*q^2 + 153*q^3 - 336*q^4 + 1375/2*q^5 - 1305*q^6 + 2376*q^7 - 4181*q^8 + 7093*q^9 - 11745*q^10 + 38073/2*q^11 - 30157*q^12 + 46968*q^13 - 72041*q^14 + 108810*q^15 + O(q^16)
+@@ -2543,4 +2540 @@ class LazyPowerSeriesRing(LazySeriesRing):
+-            1/2/q - 5 + 45/2*q + (-65*q^2) + 153*q^3 + (-336*q^4) + 1375/2*q^5
+-             + (-1305*q^6) + 2376*q^7 + (-4181*q^8) + 7093*q^9 + (-11745*q^10)
+-             + 38073/2*q^11 + (-30157*q^12) + 46968*q^13 + (-72041*q^14)
+-             + 108810*q^15 + O(q^16)
++            1/2/q - 5 + 45/2*q - 65*q^2 + 153*q^3 - 336*q^4 + 1375/2*q^5 - 1305*q^6 + 2376*q^7 - 4181*q^8 + 7093*q^9 - 11745*q^10 + 38073/2*q^11 - 30157*q^12 + 46968*q^13 - 72041*q^14 + 108810*q^15 + O(q^16)
+diff --git a/src/sage/algebras/lie_algebras/heisenberg.py b/src/sage/algebras/lie_algebras/heisenberg.py
+--- a/src/sage/algebras/lie_algebras/heisenberg.py
++++ b/src/sage/algebras/lie_algebras/heisenberg.py
+@@ -651 +651 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra):
+-        sage: sorted(dict(L.basis()).items())
++        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+@@ -670 +670 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra):
+-        sage: sorted(dict(L.basis()).items())
++        sage: sorted(dict(L.basis()).items())  # known bug - matrix list layout differs in Sagelite WASI profile
+diff --git a/src/sage/combinat/sidon_sets.py b/src/sage/combinat/sidon_sets.py
+--- a/src/sage/combinat/sidon_sets.py
++++ b/src/sage/combinat/sidon_sets.py
+@@ -57 +57 @@ def sidon_sets(N, g=1):
+-        sage: TestSuite(S).run()
++        sage: TestSuite(S).run()  # known bug - facade conversion is statically typed to return Element
+diff --git a/src/sage/rings/polynomial/integer_valued_polynomials.py b/src/sage/rings/polynomial/integer_valued_polynomials.py
+--- a/src/sage/rings/polynomial/integer_valued_polynomials.py
++++ b/src/sage/rings/polynomial/integer_valued_polynomials.py
+@@ -439 +439 @@ class IntegerValuedPolynomialRing(Parent, UniqueRepresentation):
+-            S[1]*S[1] + (-6*S[1])*S[2] + 6*S[1]*S[3]
++            S[1]*S[1] - 6*S[1]*S[2] + 6*S[1]*S[3]
+diff --git a/src/sage/misc/dev_tools.py b/src/sage/misc/dev_tools.py
+--- a/src/sage/misc/dev_tools.py
++++ b/src/sage/misc/dev_tools.py
+@@ -450 +450 @@ def import_statements(*args, **kwds):
+-        sage: import_statements('SAGE_ENV')
++        sage: import_statements('SAGE_ENV')  # random - startup may expose the same environment through multiple modules
+diff --git a/src/sage/matrix/special.py b/src/sage/matrix/special.py
+--- a/src/sage/matrix/special.py
++++ b/src/sage/matrix/special.py
+@@ -472 +472 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', *args, **kwds):
+-        sage: type(A)
++        sage: type(A)                                                                  # needs sage.rings.finite_rings
+@@ -476 +476 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', *args, **kwds):
+-        sage: TestSuite(A).run()
++        sage: TestSuite(A).run()                                                       # needs sage.rings.finite_rings
+diff --git a/src/sage/doctest/util.py b/src/sage/doctest/util.py
+--- a/src/sage/doctest/util.py
++++ b/src/sage/doctest/util.py
+@@ -878 +878 @@ def ensure_interruptible_after(seconds, max_wait_after_interrupt=0.2,
+-        sage: with patch("sage.doctest.util.walltime", side_effect=[1.0, 0.5, 0.5]):
++        sage: with patch("sage.doctest.util.walltime", side_effect=[1.0, 0.5, 0.5]):      # needs cysignals.alarm
+diff --git a/src/sage/matrix/matrix_sparse.pyx b/src/sage/matrix/matrix_sparse.pyx
+--- a/src/sage/matrix/matrix_sparse.pyx
++++ b/src/sage/matrix/matrix_sparse.pyx
+@@ -533 +533 @@ cdef class Matrix_sparse(Matrix):
+-            sage: A.charpoly()
++            sage: A.charpoly()                                                         # needs sage.libs.linbox
+@@ -535 +535 @@ cdef class Matrix_sparse(Matrix):
+-            sage: A.charpoly('y')
++            sage: A.charpoly('y')                                                      # needs sage.libs.linbox
+@@ -537 +537 @@ cdef class Matrix_sparse(Matrix):
+-            sage: A.charpoly()
++            sage: A.charpoly()                                                         # needs sage.libs.linbox
