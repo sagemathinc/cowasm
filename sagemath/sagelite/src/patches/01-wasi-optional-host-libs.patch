@@ -33159,9 +33159,30 @@ diff --git a/src/sage/categories/regular_crystals.py b/src/sage/categories/regul
 +++ b/src/sage/categories/regular_crystals.py
 @@ -1 +0,0 @@
 -# sage.doctest: needs sage.combinat sage.graphs
-@@ -836 +835 @@
+@@ -833,13 +832,16 @@ class RegularCrystals(Category_singleton):
+                  ([[1, 3], [2, 4]], [[1, 2], [3, 4]], 3)]
+                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
+                 sage: G = T(2,1,4,3,5).dual_equivalence_class()
 -                sage: G.edges(sort=True)
-+                sage: G.edges(sort=True)  # known bug: WASM graph edge orientation/order drift
+-                [([[1, 3, 4], [2, 5]], [[1, 3, 5], [2, 4]], 4),
+-                 ([[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], 2),
+-                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 2),
+-                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 3),
+-                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 3),
+-                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 4)]
++                sage: edges = ((*sorted((u, v), key=repr), label)
++                ....:          for u, v, label in G.edges(sort=False))
++                sage: for edge in sorted(edges, key=repr):
++                ....:     print(edge)
++                ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 3)
++                ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 4)
++                ([[1, 2, 4], [3, 5]], [[1, 3, 4], [2, 5]], 2)
++                ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 2)
++                ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 3)
++                ([[1, 3, 4], [2, 5]], [[1, 3, 5], [2, 4]], 4)
+             """
+             if index_set is None:
+                 index_set = self.index_set()
 diff --git a/src/sage/categories/classical_crystals.py b/src/sage/categories/classical_crystals.py
 --- a/src/sage/categories/classical_crystals.py
 +++ b/src/sage/categories/classical_crystals.py
