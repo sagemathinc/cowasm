@@ -3311,7 +3311,11 @@ quadratic_different = quadratic_field.different()
 assert quadratic_different.__class__.__name__ == 'NumberFieldFractionalIdeal'
 assert quadratic_different.number_field() is quadratic_field
 assert quadratic_different is quadratic_field.different()
+assert quadratic_different.norm() == 23
 assert quadratic_field.disc() == -23
+other_quadratic_field = NumberField(x**2 - 123, 'b')
+assert other_quadratic_field.different().norm() == 492
+assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
 assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
@@ -3634,7 +3638,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=327
+electron_manifest_schema_version=328
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3821,6 +3825,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-integral-basis-v297"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-signature-v298"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-different-v299"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-norm-v300"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

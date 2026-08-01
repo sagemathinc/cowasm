@@ -42,6 +42,9 @@ number field's different is available as an owned PARI ideal through
 conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
+Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
+and `idealnorm()` results, completing the adjacent
+`NumberFieldFractionalIdeal.norm()` path.
 Focused finite-field maps support `fffrobenius`, `ffcompomap`, and `ffmap`,
 which lets PARI-backed Sage finite fields cache and apply Frobenius powers
 without entering the unported general cypari2 object model. A narrow Cython

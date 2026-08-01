@@ -494,6 +494,76 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealhnf(GEN nf,
+                                                  GEN ideal,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealhnf(nf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_idealadd(GEN nf,
+                                                  GEN left,
+                                                  GEN right,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealadd(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
+                                                   GEN ideal,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealnorm(nf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_nf_sign(GEN input,
                                            long *r1,
                                            long *r2,
@@ -1176,6 +1246,19 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_nf_diff(GEN input,
                                          GEN *result,
                                          long *errnum)
+    int cowasm_cypari2_gen_clone_idealhnf(GEN nf,
+                                          GEN ideal,
+                                          GEN *result,
+                                          long *errnum)
+    int cowasm_cypari2_gen_clone_idealadd(GEN nf,
+                                          GEN left,
+                                          GEN right,
+                                          GEN *result,
+                                          long *errnum)
+    int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
+                                           GEN ideal,
+                                           GEN *result,
+                                           long *errnum)
     int cowasm_cypari2_gen_nf_sign(GEN input,
                                    long *r1,
                                    long *r2,
@@ -1722,6 +1805,46 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_nf_diff(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealhnf(self, ideal):
+        cdef Gen converted = objtogen(ideal)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not cowasm_cypari2_gen_clone_idealhnf(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealadd(self, left, right):
+        cdef Gen converted_left = objtogen(left)
+        cdef Gen converted_right = objtogen(right)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not cowasm_cypari2_gen_clone_idealadd(
+            self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealnorm(self, ideal):
+        cdef Gen converted = objtogen(ideal)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not cowasm_cypari2_gen_clone_idealnorm(
+            self.g, converted.g, &result, &errnum
+        ):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -2646,6 +2769,23 @@ assert [
     int(value.poldegree(value.variables()[0])) if value.variables() else 0
     for value in quartic_different_basis
 ] == [0, 1, 2, 3]
+zero_ideal = quartic_nf.idealhnf(0)
+unit_ideal = quartic_nf.idealhnf(1)
+two_ideal = quartic_nf.idealhnf(2)
+assert str(zero_ideal) == '[;]'
+assert unit_ideal.nrows() == unit_ideal.ncols() == 4
+assert [
+    [int(unit_ideal[row, column]) for column in range(4)]
+    for row in range(4)
+] == [
+    [1, 0, 0, 0],
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+]
+assert str(quartic_nf.idealadd(zero_ideal, two_ideal)) == str(two_ideal)
+assert int(quartic_nf.idealnorm(unit_ideal)) == 1
+assert int(quartic_nf.idealnorm(two_ideal)) == 16
 assert quartic_nf.nf_get_sign() == [0, 2]
 assert isinstance(quartic_nf.nf_get_sign(), list)
 assert all(isinstance(value, int) for value in quartic_nf.nf_get_sign())
@@ -2661,6 +2801,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field different accessor was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealhnf(1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal HNF was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nf_get_sign()
