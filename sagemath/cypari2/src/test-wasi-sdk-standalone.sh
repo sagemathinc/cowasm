@@ -190,6 +190,7 @@ from .types cimport (
     t_POL,
     t_POLMOD,
     t_REAL,
+    t_SER,
     t_VEC,
     typ,
 )
@@ -281,6 +282,37 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(gpolvar(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_change_variable_name(GEN input,
+                                                        const char *variable,
+                                                        GEN *result,
+                                                        int *unchanged,
+                                                        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *unchanged = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        long variable_number = fetch_user_var(variable);
+        if (varn(input) == variable_number) {
+          *unchanged = 1;
+        } else {
+          *result = gclone(input);
+          setvarn(*result, variable_number);
+        }
       }
       pari_ENDCATCH;
 
@@ -855,6 +887,11 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_variable(GEN input,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_change_variable_name(GEN input,
+                                                const char *variable,
+                                                GEN *result,
+                                                int *unchanged,
+                                                long *errnum)
     int cowasm_cypari2_gen_clone_div(GEN left,
                                      GEN right,
                                      GEN *result,
@@ -1250,6 +1287,25 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_variable(self.g, &result, &errnum):
             _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def change_variable_name(self, variable):
+        cdef bytes encoded
+        cdef GEN result = NULL
+        cdef int unchanged = 0
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) not in (t_POL, t_SER):
+            raise TypeError(
+                "set_variable() only works for polynomials or power series"
+            )
+        encoded = str(variable).encode("ascii")
+        if not cowasm_cypari2_gen_change_variable_name(
+            self.g, <const char *>encoded, &result, &unchanged, &errnum
+        ):
+            _raise_pari_error(errnum)
+        if unchanged:
+            return self
         return _new_owned(result)
 
     def simplify(self):
@@ -2082,6 +2138,13 @@ assert str(objtogen([1, 2, 3]).Polrev("t")) == "3*t^2 + 2*t + 1"
 f = objtogen("y^2 - 2")
 y = f.variable()
 assert str(y) == "y"
+assert f.change_variable_name("y") is f
+renamed = f.change_variable_name("x")
+assert str(renamed) == "x^2 - 2"
+assert renamed is not f
+assert str(f) == "y^2 - 2"
+series = objtogen("1 + 2*y + O(y^10)")
+assert str(series.change_variable_name("q")) == "1 + 2*q + O(q^10)"
 assert not hasattr(f, "_repr_option")
 assert not hasattr(f, "_repr_pretty_")
 assert not hasattr(f, "parent")
@@ -2096,6 +2159,18 @@ except PariError:
     pass
 else:
     raise AssertionError("reserved PARI variable name was accepted")
+try:
+    f.change_variable_name("I")
+except PariError:
+    pass
+else:
+    raise AssertionError("reserved PARI variable name was accepted")
+try:
+    objtogen(1).change_variable_name("x")
+except TypeError as err:
+    assert str(err) == "set_variable() only works for polynomials or power series"
+else:
+    raise AssertionError("non-polynomial variable rename was accepted")
 
 class PariConvertible:
     def __pari__(self):

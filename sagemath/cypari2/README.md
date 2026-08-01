@@ -28,7 +28,9 @@ a `Gen` back to `QQ`. The focused polynomial-vector conversion honors the
 requested `Polrev(name)` variable, preserving named generators when Sage
 constructs PARI-backed finite fields. The same polynomial surface exposes the
 main variable, generic division, and modular reversal needed for Sage's
-absolute number-field structure maps. Focused finite-field maps support
+absolute number-field structure maps. It can also clone a polynomial or power
+series with a requested PARI variable name, which completes Sage's
+`NumberField.pari_polynomial(name)` path. Focused finite-field maps support
 `fffrobenius`, `ffcompomap`, and `ffmap`, which lets PARI-backed Sage finite
 fields cache and apply Frobenius powers without entering the unported general
 cypari2 object model. A narrow Cython `clone_ffelt` boundary also rebuilds a

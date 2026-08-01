@@ -272,6 +272,11 @@ assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
 f = pari('y^2 + 6')
 y = f.variable()
 assert str(y) == 'y'
+assert f.change_variable_name('y') is f
+renamed = f.change_variable_name('x')
+assert str(renamed) == 'x^2 + 6'
+assert renamed is not f
+assert str(f) == 'y^2 + 6'
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
 assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
