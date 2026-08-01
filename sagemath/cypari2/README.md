@@ -36,11 +36,16 @@ basis construction, and number-field initialization, completing the first
 `NumberField.pari_nf()` prefix doctest. It also exposes the initialized
 number field's integral basis through `nf_get_zk()`, completing the focused
 `NumberField.pari_zk()` path, and its real/complex embedding counts through
-`nf_get_sign()`, completing `NumberField.signature()`. Focused finite-field
-maps support `fffrobenius`, `ffcompomap`, and `ffmap`, which lets PARI-backed
-Sage finite fields cache and apply Frobenius powers without entering the
-unported general cypari2 object model. A narrow Cython `clone_ffelt` boundary
-also rebuilds a
+`nf_get_sign()`, completing `NumberField.signature()`. The initialized
+number field's different is available as an owned PARI ideal through
+`nf_get_diff()`, completing `NumberField.different()` construction. The narrow
+conversion protocol supporting that path includes owned generic
+multiplication, variable discovery and variable-specific polynomial degree,
+polynomial coefficient indexing, and univariate polynomial evaluation.
+Focused finite-field maps support `fffrobenius`, `ffcompomap`, and `ffmap`,
+which lets PARI-backed Sage finite fields cache and apply Frobenius powers
+without entering the unported general cypari2 object model. A narrow Cython
+`clone_ffelt` boundary also rebuilds a
 Sage-owned finite-field element against cypari2's owned field generator before
 wrapping it. This keeps temporary Sage coefficients from leaving dangling or
 mixed-field PARI objects when polynomials cross split WASM side modules.

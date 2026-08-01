@@ -283,12 +283,30 @@ quartic_nf = pari([quartic, quartic_basis]).nfinit()
 assert quartic.poldegree() > 1
 assert str(quartic_basis) == '[1, y, y^2, y^3]'
 assert str(quartic_nf[:4]) == '[y^4 - 3*y + 7, [0, 2], 85621, 1]'
+quartic_diff = quartic_nf.nf_get_diff()
+assert [[int(quartic_diff[row, column]) for column in range(4)] for row in range(4)] == [
+    [85621, 66591, 35930, 14526], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]
+]
+assert str(quartic_nf.nf_get_zk() * quartic_diff) == '[85621, y + 66591, y^2 + 35930, y^3 + y^2 + 14524]'
+quartic_different_basis = quartic_nf.nf_get_zk() * quartic_diff
+assert [int(value.poldegree(value.variables()[0])) if value.variables() else 0 for value in quartic_different_basis] == [0, 1, 2, 3]
 assert quartic_nf.nf_get_sign() == [0, 2]
 cubic = pari('y^3 - 17')
 cubic_nf = pari([cubic, cubic.nfbasis()]).nfinit()
 assert str(cubic_nf.nf_get_zk()) == '[1, 1/3*y^2 - 1/3*y + 1/3, y]'
 assert str(cubic_nf.getattr('zk')) == '[1, 1/3*y^2 - 1/3*y + 1/3, y]'
 assert cubic_nf.nf_get_sign() == [1, 1]
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+Qx = PolynomialRing(QQ, 'x')
+x = Qx.gen()
+quadratic_field = NumberField(x**2 + 23, 'a')
+quadratic_different = quadratic_field.different()
+assert quadratic_different.__class__.__name__ == 'NumberFieldFractionalIdeal'
+assert quadratic_different.number_field() is quadratic_field
+assert quadratic_different is quadratic_field.different()
+assert quadratic_field.disc() == -23
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
 assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
