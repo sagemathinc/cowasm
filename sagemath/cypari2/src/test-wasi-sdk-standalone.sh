@@ -381,6 +381,28 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nf_zk(GEN input,
+                                               GEN *result,
+                                               long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nf_get_zk(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_change_variable_name(GEN input,
                                                         const char *variable,
                                                         GEN *result,
@@ -996,6 +1018,9 @@ cdef extern from *:
                                         long precision,
                                         GEN *result,
                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nf_zk(GEN input,
+                                       GEN *result,
+                                       long *errnum)
     int cowasm_cypari2_gen_change_variable_name(GEN input,
                                                 const char *variable,
                                                 GEN *result,
@@ -1459,6 +1484,19 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    def nf_get_zk(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nf_zk(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def getattr(self, attr):
+        if attr in ("zk", b"zk"):
+            return self.nf_get_zk()
+        return _missing_runtime(attr)
 
     def change_variable_name(self, variable):
         cdef bytes encoded
@@ -2340,6 +2378,11 @@ assert str(quartic_nf[1]) == "[0, 2]"
 assert int(quartic_nf[2]) == 85621
 assert int(quartic_nf[3]) == 1
 assert str(quartic_nf[:4]) == "[y^4 - 3*y + 7, [0, 2], 85621, 1]"
+cubic = objtogen("y^3 - 17")
+cubic_nf = objtogen([cubic, cubic.nfbasis()]).nfinit()
+assert str(cubic_nf.nf_get_zk()) == "[1, 1/3*y^2 - 1/3*y + 1/3, y]"
+assert str(cubic_nf.getattr("zk")) == "[1, 1/3*y^2 - 1/3*y + 1/3, y]"
+assert str(cubic_nf.getattr(b"zk")) == "[1, 1/3*y^2 - 1/3*y + 1/3, y]"
 series = objtogen("1 + 2*y + O(y^10)")
 assert str(series.change_variable_name("q")) == "1 + 2*q + O(q^10)"
 assert not hasattr(f, "_repr_option")

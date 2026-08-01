@@ -3288,6 +3288,10 @@ quartic_nf = pari([quartic, quartic_basis]).nfinit()
 assert quartic.poldegree() > 1
 assert str(quartic_basis) == '[1, y, y^2, y^3]'
 assert str(quartic_nf[:4]) == '[y^4 - 3*y + 7, [0, 2], 85621, 1]'
+cubic = pari('y^3 - 17')
+cubic_nf = pari([cubic, cubic.nfbasis()]).nfinit()
+assert str(cubic_nf.nf_get_zk()) == '[1, 1/3*y^2 - 1/3*y + 1/3, y]'
+assert str(cubic_nf.getattr('zk')) == '[1, 1/3*y^2 - 1/3*y + 1/3, y]'
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
 assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
@@ -3610,7 +3614,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=324
+electron_manifest_schema_version=325
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3794,6 +3798,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-li
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-polynomial-structure-maps-v294"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-polynomial-variable-rename-v295"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-init-v296"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-integral-basis-v297"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
