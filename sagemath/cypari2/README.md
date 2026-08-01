@@ -30,7 +30,10 @@ constructs PARI-backed finite fields. The same polynomial surface exposes the
 main variable, generic division, and modular reversal needed for Sage's
 absolute number-field structure maps. It can also clone a polynomial or power
 series with a requested PARI variable name, which completes Sage's
-`NumberField.pari_polynomial(name)` path. Focused finite-field maps support
+`NumberField.pari_polynomial(name)` path. The same focused surface now
+supports polynomial degree, scalar comparisons, vector slicing, integral
+basis construction, and number-field initialization, completing the first
+`NumberField.pari_nf()` prefix doctest. Focused finite-field maps support
 `fffrobenius`, `ffcompomap`, and `ffmap`, which lets PARI-backed Sage finite
 fields cache and apply Frobenius powers without entering the unported general
 cypari2 object model. A narrow Cython `clone_ffelt` boundary also rebuilds a

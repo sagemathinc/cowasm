@@ -195,6 +195,7 @@ from .types cimport (
     typ,
 )
 from .paridecl cimport GENtostr, cgetg, gel, glength, gclone, gunclone_deep, hash_GEN, itos, pari_free
+from cpython.object cimport Py_EQ, Py_GE, Py_GT, Py_LE, Py_LT, Py_NE
 
 
 def _missing_runtime(*_args, **_kwargs):
@@ -282,6 +283,98 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(gpolvar(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_poldegree(GEN input,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gppoldegree(input, -1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_compare(GEN left,
+                                           GEN right,
+                                           int ordered,
+                                           int *result,
+                                           long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = ordered ? gcmp(left, right) : gequal(left, right);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nfbasis(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfbasis(input, NULL));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nfinit(GEN input,
+                                                long flag,
+                                                long precision,
+                                                GEN *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfinit0(input, flag, nbits2prec(precision)));
       }
       pari_ENDCATCH;
 
@@ -887,6 +980,22 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_variable(GEN input,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_poldegree(GEN input,
+                                           GEN *result,
+                                           long *errnum)
+    int cowasm_cypari2_gen_compare(GEN left,
+                                   GEN right,
+                                   int ordered,
+                                   int *result,
+                                   long *errnum)
+    int cowasm_cypari2_gen_clone_nfbasis(GEN input,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nfinit(GEN input,
+                                        long flag,
+                                        long precision,
+                                        GEN *result,
+                                        long *errnum)
     int cowasm_cypari2_gen_change_variable_name(GEN input,
                                                 const char *variable,
                                                 GEN *result,
@@ -1157,6 +1266,32 @@ cdef class Gen(Gen_base):
             words[0] = header
         return result
 
+    def __richcmp__(self, right, int op):
+        cdef Gen converted
+        cdef int result = 0
+        cdef long errnum = 0
+        cdef int ordered = op not in (Py_EQ, Py_NE)
+
+        try:
+            converted = objtogen(right)
+        except Exception:
+            return NotImplemented
+        if not cowasm_cypari2_gen_compare(
+            self.g, converted.g, ordered, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        if op == Py_EQ:
+            return result != 0
+        if op == Py_NE:
+            return result == 0
+        if op == Py_LT:
+            return result < 0
+        if op == Py_LE:
+            return result <= 0
+        if op == Py_GT:
+            return result > 0
+        return result >= 0
+
     def __len__(self):
         cdef long kind
         if self.g == NULL:
@@ -1182,6 +1317,12 @@ cdef class Gen(Gen_base):
             raise IndexError("empty PARI object")
 
         kind = typ(self.g)
+        if isinstance(key, slice):
+            if kind not in (t_VEC, t_COL):
+                return _missing_runtime(key)
+            return objtogen([
+                self[i] for i in range(*key.indices(glength(self.g)))
+            ])
         if kind == t_MAT:
             if isinstance(key, tuple):
                 if len(key) != 2:
@@ -1286,6 +1427,36 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_variable(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def poldegree(self, variable=None):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if variable is not None:
+            return _missing_runtime(variable)
+        if not cowasm_cypari2_gen_clone_poldegree(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfbasis(self, *args, **kwargs):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if args or kwargs:
+            return _missing_runtime(*args, **kwargs)
+        if not cowasm_cypari2_gen_clone_nfbasis(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfinit(self, long flag=0, long precision=64):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfinit(
+            self.g, flag, precision, &result, &errnum
+        ):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -2138,11 +2309,37 @@ assert str(objtogen([1, 2, 3]).Polrev("t")) == "3*t^2 + 2*t + 1"
 f = objtogen("y^2 - 2")
 y = f.variable()
 assert str(y) == "y"
+assert int(f.poldegree()) == 2
+assert int(y.poldegree()) == 1
+assert int(objtogen(7).poldegree()) == 0
+assert f.poldegree() > 1
+assert f.poldegree() >= 2
+assert f.poldegree() == 2
+assert f.poldegree() != 3
+assert f.poldegree() <= 2
+assert f.poldegree() < 3
+try:
+    objtogen([0]) <= objtogen(0)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("unordered PARI values were accepted by rich comparison")
+assert str(objtogen("13*17")) == "221"
 assert f.change_variable_name("y") is f
 renamed = f.change_variable_name("x")
 assert str(renamed) == "x^2 - 2"
 assert renamed is not f
 assert str(f) == "y^2 - 2"
+quartic = objtogen("y^4 - 3*y + 7")
+quartic_basis = quartic.nfbasis()
+assert str(quartic_basis) == "[1, y, y^2, y^3]"
+quartic_nf = objtogen([quartic, quartic_basis]).nfinit()
+assert len(quartic_nf) == 9
+assert str(quartic_nf[0]) == "y^4 - 3*y + 7"
+assert str(quartic_nf[1]) == "[0, 2]"
+assert int(quartic_nf[2]) == 85621
+assert int(quartic_nf[3]) == 1
+assert str(quartic_nf[:4]) == "[y^4 - 3*y + 7, [0, 2], 85621, 1]"
 series = objtogen("1 + 2*y + O(y^10)")
 assert str(series.change_variable_name("q")) == "1 + 2*q + O(q^10)"
 assert not hasattr(f, "_repr_option")

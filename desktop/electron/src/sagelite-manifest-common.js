@@ -333,7 +333,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 323,
+  schemaVersion: 324,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -579,6 +579,7 @@ expectedSageliteManifest.smokeContract +=
   "-pari-polynomial-structure-maps-v294";
 expectedSageliteManifest.smokeContract +=
   "-pari-polynomial-variable-rename-v295";
+expectedSageliteManifest.smokeContract += "-pari-number-field-init-v296";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

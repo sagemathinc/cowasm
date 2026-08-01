@@ -277,6 +277,12 @@ renamed = f.change_variable_name('x')
 assert str(renamed) == 'x^2 + 6'
 assert renamed is not f
 assert str(f) == 'y^2 + 6'
+quartic = pari('y^4 - 3*y + 7')
+quartic_basis = quartic.nfbasis()
+quartic_nf = pari([quartic, quartic_basis]).nfinit()
+assert quartic.poldegree() > 1
+assert str(quartic_basis) == '[1, y, y^2, y^3]'
+assert str(quartic_nf[:4]) == '[y^4 - 3*y + 7, [0, 2], 85621, 1]'
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
 assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
