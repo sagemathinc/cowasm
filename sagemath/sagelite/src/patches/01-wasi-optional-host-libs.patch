@@ -41842,3 +41842,12 @@ diff --git a/src/sage/combinat/sf/sfa.py b/src/sage/combinat/sf/sfa.py
 +            sage: H = SymmetricFunctions(R).macdonald().H()            # needs sage.libs.symmetrica
 +            sage: F, R = H.construction()                              # needs sage.libs.symmetrica
 +            sage: F(ZZ["q", "t"].hom(GF(3)["q", "t"]))  # known bug  # needs sage.libs.symmetrica
+diff --git a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/combinat/posets/linear_extension_iterator.pyx
+--- a/src/sage/combinat/posets/linear_extension_iterator.pyx
++++ b/src/sage/combinat/posets/linear_extension_iterator.pyx
+@@ -98 +98 @@
+-        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # not tested
++        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
+@@ -125 +125 @@
+-        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # not tested
++        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
