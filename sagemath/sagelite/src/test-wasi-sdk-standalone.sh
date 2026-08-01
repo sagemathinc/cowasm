@@ -3274,6 +3274,12 @@ assert str(pari('factorback(factor(360))')) == '360'
 assert str(pari('znorder(Mod(2,101))')) == '100'
 assert str(pari('polisirreducible(x^2+1)')) == '1'
 assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
+f = pari('y^2 + 6')
+y = f.variable()
+assert str(y) == 'y'
+alpha = (y / 6).Mod(f)
+assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
+assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
 try:
     pari('1/0')
 except PariError as err:
@@ -3593,7 +3599,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=321
+electron_manifest_schema_version=322
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3774,6 +3780,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-padic-poly
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-finite-word-unknown-length-conjugacy-v291"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-empty-species-arithmetic-v292"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-integer-list-backend-pickle-identity-v293"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-polynomial-structure-maps-v294"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

@@ -265,6 +265,73 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_variable(GEN input,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gpolvar(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_div(GEN left,
+                                             GEN right,
+                                             GEN *result,
+                                             long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gdiv(left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_modreverse(GEN input,
+                                                    GEN *result,
+                                                    long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(modreverse(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_integer(const char *digits,
                                                 GEN *result,
                                                 long *errnum) {
@@ -785,6 +852,16 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_expression(const char *expression,
                                             GEN *result,
                                             long *errnum)
+    int cowasm_cypari2_gen_clone_variable(GEN input,
+                                          GEN *result,
+                                          long *errnum)
+    int cowasm_cypari2_gen_clone_div(GEN left,
+                                     GEN right,
+                                     GEN *result,
+                                     long *errnum)
+    int cowasm_cypari2_gen_clone_modreverse(GEN input,
+                                            GEN *result,
+                                            long *errnum)
     int cowasm_cypari2_gen_clone_integer(const char *digits,
                                          GEN *result,
                                          long *errnum)
@@ -998,11 +1075,11 @@ cdef class Gen(Gen_base):
             self.g = NULL
 
     def __getattr__(self, _name):
-        if _name == "_rational_":
-            # Sage checks for this optional conversion hook before its
-            # dedicated cypari2 Gen converter.  Do not claim a hook that this
-            # focused runtime does not implement; allowing AttributeError here
-            # lets Sage use set_rational_from_gen as intended.
+        if _name in ("_rational_", "_repr_html_", "_repr_option",
+                     "_repr_pretty_", "parent"):
+            # Sage probes these optional conversion and display hooks before
+            # using dedicated Gen converters or plain repr.  Do not advertise
+            # hooks that this focused runtime does not implement.
             raise AttributeError(_name)
         return _missing_runtime
 
@@ -1111,6 +1188,30 @@ cdef class Gen(Gen_base):
     def __index__(self):
         return int(self)
 
+    def __truediv__(left, right):
+        cdef Gen converted_left = objtogen(left)
+        cdef Gen converted_right = objtogen(right)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_div(
+            converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def __rtruediv__(right, left):
+        cdef Gen converted_left = objtogen(left)
+        cdef Gen converted_right = objtogen(right)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_div(
+            converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def ncols(self):
         if self.g == NULL or typ(self.g) != t_MAT:
             raise TypeError("PARI object is not a matrix")
@@ -1143,6 +1244,14 @@ cdef class Gen(Gen_base):
             raise TypeError("empty PARI object has no type")
         return cowasm_cypari2_gen_type_name(self.g).decode("ascii")
 
+    def variable(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_variable(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def simplify(self):
         if self.g != NULL and typ(self.g) in (t_INT, t_FRAC):
             return self
@@ -1164,6 +1273,14 @@ cdef class Gen(Gen_base):
         if not cowasm_cypari2_gen_clone_mod(
             self.g, converted.g, &result, &errnum
         ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def modreverse(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_modreverse(self.g, &result, &errnum):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -1962,6 +2079,17 @@ assert PariError.__module__ == "builtins"
 assert str(objtogen([1, 2, 3])) == "[1, 2, 3]"
 assert str(objtogen([1, 2, 3]).Polrev()) == "3*x^2 + 2*x + 1"
 assert str(objtogen([1, 2, 3]).Polrev("t")) == "3*t^2 + 2*t + 1"
+f = objtogen("y^2 - 2")
+y = f.variable()
+assert str(y) == "y"
+assert not hasattr(f, "_repr_option")
+assert not hasattr(f, "_repr_pretty_")
+assert not hasattr(f, "parent")
+assert str(y / 6) == "1/6*y"
+assert str(6 / y) == "6/y"
+alpha = (y / 6).Mod(objtogen("y^2 + 6"))
+assert str(alpha) == "Mod(1/6*y, y^2 + 6)"
+assert str(alpha.modreverse()) == "Mod(6*y, y^2 + 1/6)"
 try:
     objtogen([1, 2, 3]).Polrev("I")
 except PariError:

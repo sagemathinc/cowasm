@@ -269,6 +269,12 @@ assert str(pari('factorback(factor(360))')) == '360'
 assert str(pari('znorder(Mod(2,101))')) == '100'
 assert str(pari('polisirreducible(x^2+1)')) == '1'
 assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
+f = pari('y^2 + 6')
+y = f.variable()
+assert str(y) == 'y'
+alpha = (y / 6).Mod(f)
+assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
+assert str(alpha.modreverse()) == 'Mod(6*y, y^2 + 1/6)'
 try:
     pari('1/0')
 except PariError as err:
