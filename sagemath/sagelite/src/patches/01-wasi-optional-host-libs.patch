@@ -41851,3 +41851,22 @@ diff --git a/src/sage/combinat/posets/linear_extension_iterator.pyx b/src/sage/c
 @@ -125 +125 @@
 -        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram             # not tested
 +        sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
+diff --git a/src/sage/rings/number_field/number_field.py b/src/sage/rings/number_field/number_field.py
+--- a/src/sage/rings/number_field/number_field.py
++++ b/src/sage/rings/number_field/number_field.py
+@@ -4180,7 +4180,14 @@
+             powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
+             # need to double reverse
+             g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
+-        g /= g.content()
++        content_method = getattr(g, 'content', None)
++        if content_method is None:
++            # Generic integer polynomials do not provide ``content()``.
++            # This implementation is used when FLINT is unavailable.
++            content = gcd(g.coefficients())
++        else:
++            content = content_method()
++        g /= content
+         assert g.leading_coefficient() == 1
+         f = g._pari_with_name('y')
+         y = f.variable()
