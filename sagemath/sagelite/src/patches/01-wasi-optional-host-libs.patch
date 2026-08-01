@@ -41814,3 +41814,31 @@ diff --git a/src/sage/knots/knotinfo.py b/src/sage/knots/knotinfo.py
 @@ -482 +482 @@
 -        sage: import sage.knots.knotinfo   # not tested
 +        sage: import sage.knots.knotinfo
+diff --git a/src/sage/combinat/sf/sfa.py b/src/sage/combinat/sf/sfa.py
+--- a/src/sage/combinat/sf/sfa.py
++++ b/src/sage/combinat/sf/sfa.py
+@@ -6594,3 +6594,3 @@
+-            sage: s = SymmetricFunctions(QQ).s()
+-            sage: F, R = s.construction()
+-            sage: F(ZZ.hom(GF(3)))  # indirect doctest
++            sage: s = SymmetricFunctions(QQ).s()                       # needs sage.libs.symmetrica
++            sage: F, R = s.construction()                              # needs sage.libs.symmetrica
++            sage: F(ZZ.hom(GF(3)))  # indirect doctest                 # needs sage.libs.symmetrica
+@@ -6601,4 +6601,4 @@
+-            sage: R.<t> = ZZ[]
+-            sage: P = SymmetricFunctions(R).jack().P()
+-            sage: F, R = P.construction()
+-            sage: F(ZZ["t"].hom(GF(3)["t"]))
++            sage: R.<t> = ZZ[]                                         # needs sage.libs.symmetrica
++            sage: P = SymmetricFunctions(R).jack().P()                 # needs sage.libs.symmetrica
++            sage: F, R = P.construction()                              # needs sage.libs.symmetrica
++            sage: F(ZZ["t"].hom(GF(3)["t"]))                          # needs sage.libs.symmetrica
+@@ -6609,4 +6609,4 @@
+-            sage: R.<q, t> = ZZ[]
+-            sage: H = SymmetricFunctions(R).macdonald().H()
+-            sage: F, R = H.construction()
+-            sage: F(ZZ["q", "t"].hom(GF(3)["q", "t"]))  # known bug
++            sage: R.<q, t> = ZZ[]                                      # needs sage.libs.symmetrica
++            sage: H = SymmetricFunctions(R).macdonald().H()            # needs sage.libs.symmetrica
++            sage: F, R = H.construction()                              # needs sage.libs.symmetrica
++            sage: F(ZZ["q", "t"].hom(GF(3)["q", "t"]))  # known bug  # needs sage.libs.symmetrica
