@@ -43,15 +43,18 @@ conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
-`idealintersect()`, `idealinv()`, `idealnumden()`, `idealmul()`, `idealdiv()`,
-`idealpow()`, and `idealnorm()` results, completing the adjacent
-`NumberFieldFractionalIdeal.norm()`, intersection, multiplication, quotient,
-inverse, and direct PARI inversion, numerator/denominator, and power paths.
+`idealaddtoone()`, `idealintersect()`, `idealinv()`, `idealnumden()`,
+`idealmul()`, `idealdiv()`, `idealpow()`, and `idealnorm()` results, completing
+the adjacent `NumberFieldFractionalIdeal.norm()`, intersection,
+multiplication, quotient, inverse, direct PARI inversion,
+numerator/denominator, power, and coprime ideal element paths.
 Focused BNF support preserves PARI random state and exposes owned `bnfinit()`,
 `bnfisprincipal()`, `nffactorback()`, and `nfbasistoalg()` results. This is
 the narrow principality chain Sage uses to print reduced generators for small
-number-field ideals. Certification, scalar `Gen` truth testing, and modular
-modulus access complete the control and conversion path used by that display.
+number-field ideals. The focused `nfbasistoalg_lift()` composition converts
+owned basis vectors for Sage's number-field element constructor.
+Certification, scalar `Gen` truth testing, and modular modulus access complete
+the control and conversion path used by that display.
 Focused finite-field maps support `fffrobenius`, `ffcompomap`, and `ffmap`,
 which lets PARI-backed Sage finite fields cache and apply Frobenius powers
 without entering the unported general cypari2 object model. A narrow Cython

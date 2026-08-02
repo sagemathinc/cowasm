@@ -349,6 +349,12 @@ quadratic_inverse_denominator = quadratic_field.ideal(quadratic_inverse_numden[1
 assert repr(quadratic_inverse_numerator) == 'Fractional ideal (1)'
 assert repr(quadratic_inverse_denominator) == 'Fractional ideal (a)'
 assert repr(quadratic_inverse_numerator / quadratic_inverse_denominator) == 'Fractional ideal (1/23*a)'
+quadratic_two_ideal = quadratic_field.ideal(2)
+quadratic_three_ideal = quadratic_field.ideal(3)
+quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
+assert quadratic_one_mod_three == -2
+assert quadratic_one_mod_three in quadratic_two_ideal
+assert 1 - quadratic_one_mod_three in quadratic_three_ideal
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492

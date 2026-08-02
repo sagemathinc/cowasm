@@ -3354,6 +3354,12 @@ quadratic_inverse_denominator = quadratic_field.ideal(quadratic_inverse_numden[1
 assert repr(quadratic_inverse_numerator) == 'Fractional ideal (1)'
 assert repr(quadratic_inverse_denominator) == 'Fractional ideal (a)'
 assert repr(quadratic_inverse_numerator / quadratic_inverse_denominator) == 'Fractional ideal (1/23*a)'
+quadratic_two_ideal = quadratic_field.ideal(2)
+quadratic_three_ideal = quadratic_field.ideal(3)
+quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
+assert quadratic_one_mod_three == -2
+assert quadratic_one_mod_three in quadratic_two_ideal
+assert 1 - quadratic_one_mod_three in quadratic_three_ideal
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
@@ -3719,7 +3725,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=335
+electron_manifest_schema_version=336
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3914,6 +3920,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-intersection-v305"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-inversion-v306"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-numden-v307"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-add-to-one-v308"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
