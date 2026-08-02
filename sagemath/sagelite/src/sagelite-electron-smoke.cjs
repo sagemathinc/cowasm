@@ -103,6 +103,21 @@ assert root_field.roots_of_unity() == [root_field.gen(), -1, -root_field.gen(), 
 del root_field
 `);
     console.log("sagelite-electron-ok number field roots of unity resources smoke");
+    console.log("sagelite-electron-start number field zeta coefficients resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+zeta_field = NumberField(x**2 + 1, 'a')
+assert [int(value) for value in zeta_field.zeta_coefficients(10)] == [
+    1, 1, 0, 1, 2, 0, 0, 1, 1, 2
+]
+del zeta_field
+`);
+    console.log("sagelite-electron-ok number field zeta coefficients resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

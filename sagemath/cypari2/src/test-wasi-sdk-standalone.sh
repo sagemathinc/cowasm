@@ -494,6 +494,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_dirzetak(GEN nf,
+                                                  GEN bound,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(dirzetak(nf, bound));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                                   GEN right,
                                                   GEN *result,
@@ -1989,6 +2012,10 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_nfrootsof1(GEN input,
                                             GEN *result,
                                             long *errnum)
+    int cowasm_cypari2_gen_clone_dirzetak(GEN nf,
+                                          GEN bound,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2748,6 +2775,17 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nfrootsof1(
             self.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def dirzetak(self, bound):
+        cdef Gen converted = objtogen(bound)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_dirzetak(
+            self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4237,6 +4275,10 @@ assert str(quartic_roots_of_unity[1]) == "-1"
 gaussian_roots_of_unity = objtogen("x^2 + 1").nfinit().nfrootsof1()
 assert int(gaussian_roots_of_unity[0]) == 4
 assert str(gaussian_roots_of_unity[1]) == "[0, 1]~"
+gaussian_zeta_coefficients = objtogen("x^2 + 1").nfinit().dirzetak(10)
+assert [int(value) for value in gaussian_zeta_coefficients] == [
+    1, 1, 0, 1, 2, 0, 0, 1, 1, 2
+]
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4443,6 +4485,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field root-of-unity input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).dirzetak(10)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-number-field zeta-series input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.dirzetak(objtogen("[1, 2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("nonscalar zeta-series bound was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))
