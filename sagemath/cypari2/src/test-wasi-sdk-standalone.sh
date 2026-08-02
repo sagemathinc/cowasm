@@ -653,6 +653,72 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_mat(GEN input,
+                                             GEN *result,
+                                             long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gtomat(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_col(GEN input,
+                                             GEN *result,
+                                             long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gtocol(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_transpose(GEN input,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gtrans(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealhnf(GEN nf,
                                                   GEN ideal,
                                                   GEN *result,
@@ -718,6 +784,53 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(idealaddtoone(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_idealfactor(GEN nf,
+                                                     GEN ideal,
+                                                     GEN *result,
+                                                     long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealfactor(nf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_idealchinese(GEN nf,
+                                                      GEN factors,
+                                                      GEN residues,
+                                                      GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealchinese(nf, factors, residues));
       }
       pari_ENDCATCH;
 
@@ -1623,6 +1736,15 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_nf_diff(GEN input,
                                          GEN *result,
                                          long *errnum)
+    int cowasm_cypari2_gen_clone_mat(GEN input,
+                                     GEN *result,
+                                     long *errnum)
+    int cowasm_cypari2_gen_clone_col(GEN input,
+                                     GEN *result,
+                                     long *errnum)
+    int cowasm_cypari2_gen_clone_transpose(GEN input,
+                                           GEN *result,
+                                           long *errnum)
     int cowasm_cypari2_gen_clone_idealhnf(GEN nf,
                                           GEN ideal,
                                           GEN *result,
@@ -1637,6 +1759,15 @@ cdef extern from *:
                                                GEN right,
                                                GEN *result,
                                                long *errnum)
+    int cowasm_cypari2_gen_clone_idealfactor(GEN nf,
+                                             GEN ideal,
+                                             GEN *result,
+                                             long *errnum)
+    int cowasm_cypari2_gen_clone_idealchinese(GEN nf,
+                                              GEN factors,
+                                              GEN residues,
+                                              GEN *result,
+                                              long *errnum)
     int cowasm_cypari2_gen_clone_idealintersect(GEN nf,
                                                 GEN left,
                                                 GEN right,
@@ -2169,6 +2300,30 @@ cdef class Gen(Gen_base):
             return _new_owned(result).python_list()
         return self.python_list()
 
+    def Mat(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_mat(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def Col(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_col(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def mattranspose(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_transpose(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def type(self):
         if self.g == NULL:
             raise TypeError("empty PARI object has no type")
@@ -2304,6 +2459,26 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
+    def pr_get_p(self):
+        if self.g == NULL or typ(self.g) != t_VEC or glength(self.g) != 5:
+            raise TypeError("PARI object is not a prime ideal")
+        return self[0]
+
+    def pr_get_gen(self):
+        if self.g == NULL or typ(self.g) != t_VEC or glength(self.g) != 5:
+            raise TypeError("PARI object is not a prime ideal")
+        return self[1]
+
+    def pr_get_e(self):
+        if self.g == NULL or typ(self.g) != t_VEC or glength(self.g) != 5:
+            raise TypeError("PARI object is not a prime ideal")
+        return self[2]
+
+    def pr_get_f(self):
+        if self.g == NULL or typ(self.g) != t_VEC or glength(self.g) != 5:
+            raise TypeError("PARI object is not a prime ideal")
+        return self[3]
+
     def idealhnf(self, ideal):
         cdef Gen converted = objtogen(ideal)
         cdef GEN result = NULL
@@ -2347,6 +2522,41 @@ cdef class Gen(Gen_base):
         converted_right = objtogen(right)
         if not cowasm_cypari2_gen_clone_idealaddtoone(
             self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealfactor(self, ideal):
+        cdef Gen converted
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted = objtogen(ideal)
+        if not cowasm_cypari2_gen_clone_idealfactor(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealchinese(self, factors, residues=None):
+        cdef Gen converted_factors
+        cdef Gen converted_residues
+        cdef GEN residue_gen = NULL
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        converted_factors = objtogen(factors)
+        if residues is not None:
+            converted_residues = objtogen(residues)
+            residue_gen = converted_residues.g
+        if not cowasm_cypari2_gen_clone_idealchinese(
+            self.g, converted_factors.g, residue_gen, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -3298,6 +3508,12 @@ class Pari:
     def setrand(self, seed):
         set_random_state(seed)
 
+    def Mat(self, value):
+        return objtogen(value).Mat()
+
+    def Col(self, value):
+        return objtogen(value).Col()
+
     def __call__(self, *args, **kwargs):
         if kwargs or len(args) != 1:
             return _missing_runtime(*args, **kwargs)
@@ -3447,6 +3663,34 @@ assert str(quartic_nf.nfbasistoalg_lift(add_to_one[1])) == "3"
 assert str(
     quartic_nf.idealaddtoone(IdealLike(two_ideal), IdealLike(three_ideal))
 ) == str(add_to_one)
+twelve_ideal = quartic_nf.idealhnf(12)
+twelve_factorization = quartic_nf.idealfactor(twelve_ideal)
+assert twelve_factorization.nrows() == 3
+assert twelve_factorization.ncols() == 2
+assert [int(twelve_factorization[row, 1]) for row in range(3)] == [2, 1, 1]
+first_prime = twelve_factorization[0, 0]
+assert str(first_prime.pr_get_p()) == "2"
+assert str(first_prime.pr_get_gen()) == "[2, 0, 0, 0]~"
+assert int(first_prime.pr_get_e()) == 1
+assert int(first_prime.pr_get_f()) == 4
+assert str(quartic_nf.idealfactor(IdealLike(twelve_ideal))) == str(
+    twelve_factorization
+)
+pari = Pari()
+rebuilt_factorization = pari.Mat([
+    pari.Col([twelve_factorization[row, 0], twelve_factorization[row, 1]])
+    for row in range(3)
+]).mattranspose()
+assert str(rebuilt_factorization) == str(twelve_factorization)
+chinese_residues = [1, 2, 3]
+chinese_result = quartic_nf.idealchinese(
+    rebuilt_factorization, chinese_residues
+)
+assert str(chinese_result) == "[5, -4, 4, -4]~"
+chinese_init = quartic_nf.idealchinese(rebuilt_factorization)
+assert str(quartic_nf.idealchinese(chinese_init, chinese_residues)) == str(
+    chinese_result
+)
 assert str(quartic_nf.idealintersect(unit_ideal, two_ideal)) == str(two_ideal)
 assert str(quartic_nf.idealintersect(two_ideal, two_ideal)) == str(two_ideal)
 four_ideal = quartic_nf.idealhnf(4)
@@ -3580,6 +3824,41 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("noncoprime ideals were accepted by idealaddtoone")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealfactor(12)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal factorization was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen([1]).pr_get_p()
+except TypeError as err:
+    assert str(err) == "PARI object is not a prime ideal"
+else:
+    raise AssertionError("non-prime-ideal accessor input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealfactor(zero_ideal)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("zero ideal factorization was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealchinese([], [])
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal Chinese remainder was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealchinese(twelve_factorization, [1])
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("wrong-length ideal residues were accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealinv(1)

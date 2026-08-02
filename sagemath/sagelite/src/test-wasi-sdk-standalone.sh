@@ -3307,6 +3307,7 @@ from sage.rings.rational_field import QQ
 Qx = PolynomialRing(QQ, 'x')
 x = Qx.gen()
 quadratic_field = NumberField(x**2 + 23, 'a')
+quadratic_generator = quadratic_field.gen()
 quadratic_different = quadratic_field.different()
 assert quadratic_different.__class__.__name__ == 'NumberFieldFractionalIdeal'
 assert quadratic_different.number_field() is quadratic_field
@@ -3360,6 +3361,13 @@ quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_idea
 assert quadratic_one_mod_three == -2
 assert quadratic_one_mod_three in quadratic_two_ideal
 assert 1 - quadratic_one_mod_three in quadratic_three_ideal
+quadratic_crt = quadratic_field.idealchinese(
+    [quadratic_field.ideal(5), quadratic_field.ideal(7)],
+    [quadratic_generator, 1],
+)
+assert quadratic_crt == QQ(7)/2 * quadratic_generator - QQ(5)/2
+assert quadratic_crt - quadratic_generator in quadratic_field.ideal(5)
+assert quadratic_crt - 1 in quadratic_field.ideal(7)
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
@@ -3725,7 +3733,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=336
+electron_manifest_schema_version=337
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3921,6 +3929,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-inversion-v306"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-numden-v307"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-add-to-one-v308"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-chinese-v309"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

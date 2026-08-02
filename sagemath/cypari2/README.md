@@ -43,11 +43,14 @@ conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
-`idealaddtoone()`, `idealintersect()`, `idealinv()`, `idealnumden()`,
-`idealmul()`, `idealdiv()`, `idealpow()`, and `idealnorm()` results, completing
-the adjacent `NumberFieldFractionalIdeal.norm()`, intersection,
+`idealaddtoone()`, `idealchinese()`, `idealfactor()`, `idealintersect()`,
+`idealinv()`, `idealnumden()`, `idealmul()`, `idealdiv()`, `idealpow()`, and
+`idealnorm()` results, completing the adjacent
+`NumberFieldFractionalIdeal.norm()`, factorization, intersection,
 multiplication, quotient, inverse, direct PARI inversion,
-numerator/denominator, power, and coprime ideal element paths.
+numerator/denominator, power, coprime ideal element, and Chinese remainder
+paths. Prime-ideal accessors plus focused `Mat`, `Col`, and transpose
+conversions preserve the standard Sage wrapper for factorization-based CRT.
 Focused BNF support preserves PARI random state and exposes owned `bnfinit()`,
 `bnfisprincipal()`, `nffactorback()`, and `nfbasistoalg()` results. This is
 the narrow principality chain Sage uses to print reduced generators for small
