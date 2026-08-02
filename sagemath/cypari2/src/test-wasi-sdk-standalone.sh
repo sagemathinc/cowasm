@@ -517,6 +517,32 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nfgaloisconj(GEN nf,
+                                                      long flag,
+                                                      GEN discriminant,
+                                                      long precision,
+                                                      GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(galoisconj0(
+            nf, flag, discriminant, nbits2prec(precision)));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                                   GEN right,
                                                   GEN *result,
@@ -2016,6 +2042,12 @@ cdef extern from *:
                                           GEN bound,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_nfgaloisconj(GEN nf,
+                                              long flag,
+                                              GEN discriminant,
+                                              long precision,
+                                              GEN *result,
+                                              long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2786,6 +2818,21 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_dirzetak(
             self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfgaloisconj(self, long flag=0, d=None, long precision=64):
+        cdef Gen converted
+        cdef GEN converted_gen = NULL
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if d is not None:
+            converted = objtogen(d)
+            converted_gen = converted.g
+        if not cowasm_cypari2_gen_clone_nfgaloisconj(
+            self.g, flag, converted_gen, precision, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4279,6 +4326,13 @@ gaussian_zeta_coefficients = objtogen("x^2 + 1").nfinit().dirzetak(10)
 assert [int(value) for value in gaussian_zeta_coefficients] == [
     1, 1, 0, 1, 2, 0, 0, 1, 1, 2
 ]
+quadratic_conjugates = objtogen("x^2 + 10000").nfinit().nfgaloisconj()
+assert str(quadratic_conjugates) == "[-x, x]~"
+assert str(objtogen("x^2 + 10000").nfinit().nfgaloisconj(
+    flag=0, d=-40000, precision=128
+)) == "[-x, x]~"
+assert str(objtogen("x^3 + 2").nfinit().nfgaloisconj()) == "[x]~"
+assert str(objtogen("x^4 + 2").nfinit().nfgaloisconj()) == "[-x, x]~"
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4499,6 +4553,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("nonscalar zeta-series bound was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).nfgaloisconj()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-number-field Galois-conjugate input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))

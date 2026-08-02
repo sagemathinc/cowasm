@@ -118,6 +118,23 @@ assert [int(value) for value in zeta_field.zeta_coefficients(10)] == [
 del zeta_field
 `);
     console.log("sagelite-electron-ok number field zeta coefficients resources smoke");
+    console.log("sagelite-electron-start number field automorphisms resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+automorphism_field = NumberField(x**2 + 10000, 'a')
+automorphisms = automorphism_field.automorphisms()
+assert [morphism(automorphism_field.gen()) for morphism in automorphisms] == [
+    automorphism_field.gen(), -automorphism_field.gen()
+]
+del automorphisms
+del automorphism_field
+`);
+    console.log("sagelite-electron-ok number field automorphisms resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all
