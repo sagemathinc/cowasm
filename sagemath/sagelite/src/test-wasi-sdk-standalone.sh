@@ -3487,6 +3487,16 @@ assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
 assert str(objtogen('2+3')) == '5'
 print('sagelite-node-ok cypari2 PARI runtime smoke')"
 
+run_node_import "number field discriminant boundary" "import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+x = PolynomialRing(QQ, 'x').gen()
+field = NumberField(x**3 + x**2 - 2*x + 8, 'd')
+assert field.discriminant() == -503
+assert field.disc() == -503
+print('sagelite-node-ok number field discriminant boundary')"
+
 run_node_import "Sage PARI factorization boundary" "from sage.rings.integer_ring import ZZ
 from sage.rings.factorint_pari import factor_using_pari
 assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
@@ -3783,7 +3793,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=345
+electron_manifest_schema_version=346
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3988,6 +3998,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-approximation-v315"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-power-test-v316"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-element-valuation-v317"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-discriminant-v318"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

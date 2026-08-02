@@ -42,6 +42,8 @@ number field's different is available as an owned PARI ideal through
 conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
+The same polynomial boundary exposes `nfdisc()`, completing the direct
+`NumberField.discriminant()` path without constructing a maximal order.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,

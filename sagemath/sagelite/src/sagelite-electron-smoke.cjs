@@ -73,6 +73,20 @@ assert ZZ(84).lcm(ZZ(30)) == ZZ(420)
 assert ZZ(7) < ZZ(9)
 `);
     console.log("sagelite-electron-ok integer method resources smoke");
+    console.log("sagelite-electron-start number field discriminant resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+discriminant_field = NumberField(x**3 + x**2 - 2*x + 8, 'd')
+assert discriminant_field.discriminant() == -503
+assert discriminant_field.disc() == -503
+del discriminant_field
+`);
+    console.log("sagelite-electron-ok number field discriminant resources smoke");
     console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all
