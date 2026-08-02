@@ -333,7 +333,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 340,
+  schemaVersion: 341,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -608,6 +608,8 @@ expectedSageliteManifest.smokeContract +=
   "-pari-number-field-ideal-reduction-v311";
 expectedSageliteManifest.smokeContract +=
   "-pari-number-field-ideal-two-generators-v312";
+expectedSageliteManifest.smokeContract +=
+  "-pari-number-field-ideal-valuation-v313";
 
 const expectedSageliteManifestFields = Object.freeze([
   "schemaVersion",

@@ -977,6 +977,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealval(GEN nf,
+                                                  GEN ideal,
+                                                  GEN prime,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gpidealval(nf, ideal, prime));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                                   GEN left,
                                                   GEN right,
@@ -1864,6 +1888,11 @@ cdef extern from *:
                                              GEN ideal,
                                              GEN *result,
                                              long *errnum)
+    int cowasm_cypari2_gen_clone_idealval(GEN nf,
+                                          GEN ideal,
+                                          GEN prime,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                           GEN left,
                                           GEN right,
@@ -2759,6 +2788,24 @@ cdef class Gen(Gen_base):
         converted = objtogen(ideal)
         if not cowasm_cypari2_gen_clone_idealtwoelt(
             self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealval(self, ideal, prime):
+        cdef Gen converted_ideal
+        cdef Gen converted_prime
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted_ideal = objtogen(ideal)
+        converted_prime = objtogen(prime)
+        if not cowasm_cypari2_gen_clone_idealval(
+            self.g, converted_ideal.g, converted_prime.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -3887,6 +3934,10 @@ assert str(
 assert str(quartic_nf.idealtwoelt(IdealLike(twelve_ideal))) == str(
     twelve_generators
 )
+assert int(quartic_nf.idealval(twelve_ideal, first_prime)) == 2
+assert int(quartic_nf.idealval(unit_ideal, first_prime)) == 0
+assert str(quartic_nf.idealval(zero_ideal, first_prime)) == "+oo"
+assert int(quartic_nf.idealval(IdealLike(twelve_ideal), first_prime)) == 2
 assert str(quartic_nf.idealmul(unit_ideal, two_ideal)) == str(two_ideal)
 assert str(
     quartic_nf.idealmul(IdealLike(unit_ideal), IdealLike(two_ideal))
@@ -4100,6 +4151,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("wrong-dimension two-generator ideal was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealval(1, first_prime)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal valuation was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealval(twelve_ideal, objtogen("[2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("malformed prime ideal was accepted by idealval")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealdiv(1, 1)

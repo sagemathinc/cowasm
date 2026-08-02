@@ -365,6 +365,12 @@ assert two_generator_field.ideal([
 ]).gens_two() == (3, two_generator + 2)
 assert two_generator_field.ideal(0).gens_two() == (0, 0)
 assert two_generator_field.ideal(12).gens_two() == (12, 0)
+quadratic_valuation_prime = quadratic_field.factor(23)[0][0]
+assert quadratic_different_square.valuation(quadratic_valuation_prime) == 2
+assert quadratic_field.ideal(1).valuation(quadratic_valuation_prime) == 0
+assert repr(
+    quadratic_field.ideal(0).valuation(quadratic_valuation_prime)
+) == '+Infinity'
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)

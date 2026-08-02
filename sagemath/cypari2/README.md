@@ -45,19 +45,18 @@ polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealchinese()`, `idealcoprime()`, `idealfactor()`,
 `idealintersect()`, `idealinv()`, `idealnumden()`, `idealmul()`, `idealdiv()`,
-`idealpow()`, `idealred()`, `idealtwoelt()`, and `idealnorm()` results,
-completing the adjacent `NumberFieldFractionalIdeal.norm()`, factorization,
-intersection,
-multiplication, quotient, inverse, direct PARI inversion,
-numerator/denominator, power, equivalent-ideal reduction, coprime ideal element
-and multiplier, two-generator ideal representation, and Chinese remainder
-paths. Explicit PARI `gequal()` comparison supports the scalar-ideal fast path
-without routing it through conversion. The standard lazy `Gen.sage()` bridge
-now delegates to Sage's owned PARI converter, which restores HNF matrix
-comparison for number-field ideals while retaining Sage's type-specific
-conversion policy. Prime-ideal accessors plus focused `Mat`, `Col`, and
-transpose conversions preserve the standard Sage wrapper for factorization-
-based CRT.
+`idealpow()`, `idealred()`, `idealtwoelt()`, `idealval()`, and `idealnorm()`
+results, completing the adjacent `NumberFieldFractionalIdeal.norm()`,
+factorization, intersection, multiplication, quotient, inverse, direct PARI
+inversion, numerator/denominator, power, equivalent-ideal reduction, coprime
+ideal element and multiplier, two-generator ideal representation, prime-ideal
+valuation, and Chinese remainder paths. Explicit PARI `gequal()` comparison
+supports the scalar-ideal fast path without routing it through conversion. The
+standard lazy `Gen.sage()` bridge now delegates to Sage's owned PARI converter,
+which restores HNF matrix comparison and converts finite and infinite ideal
+valuations while retaining Sage's type-specific conversion policy. Prime-ideal
+accessors plus focused `Mat`, `Col`, and transpose conversions preserve the
+standard Sage wrapper for factorization-based CRT.
 Focused BNF support preserves PARI random state and exposes owned `bnfinit()`,
 `bnfisprincipal()`, `nffactorback()`, and `nfbasistoalg()` results. This is
 the narrow principality chain Sage uses to print reduced generators for small
