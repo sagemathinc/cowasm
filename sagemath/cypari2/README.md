@@ -56,6 +56,9 @@ prime-ideal valuation and primality, negative uniformizers, and Chinese
 remainder paths. Explicit PARI
 `gequal()` comparison
 supports the scalar-ideal fast path without routing it through conversion. The
+scalar `nfeltval()` bridge also completes number-field-element valuations at
+PARI prime records while preserving upstream cypari2's ordinary integer return
+contract. The
 standard lazy `Gen.sage()` bridge now delegates to Sage's owned PARI converter,
 which restores HNF matrix comparison and converts finite and infinite ideal
 valuations while retaining Sage's type-specific conversion policy. Prime-ideal

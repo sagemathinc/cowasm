@@ -545,6 +545,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_nfeltval(GEN nf,
+                                            GEN element,
+                                            GEN prime,
+                                            long *result,
+                                            long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = nfval(nf, element, prime);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfbasistoalg(GEN nf,
                                                       GEN value,
                                                       GEN *result,
@@ -1887,6 +1911,11 @@ cdef extern from *:
                                                GEN exponents,
                                                GEN *result,
                                                long *errnum)
+    int cowasm_cypari2_gen_nfeltval(GEN nf,
+                                    GEN element,
+                                    GEN prime,
+                                    long *result,
+                                    long *errnum)
     int cowasm_cypari2_gen_clone_nfbasistoalg(GEN nf,
                                                GEN value,
                                                GEN *result,
@@ -2640,6 +2669,22 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    def nfeltval(self, element, prime):
+        cdef Gen converted_element
+        cdef Gen converted_prime
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI element valuations require a number field")
+        converted_element = objtogen(element)
+        converted_prime = objtogen(prime)
+        if not cowasm_cypari2_gen_nfeltval(
+            self.g, converted_element.g, converted_prime.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return result
 
     def nfbasistoalg(self, value):
         cdef Gen converted = objtogen(value)
@@ -4029,6 +4074,9 @@ assert int(first_prime.pr_get_f()) == 4
 assert str(quartic_nf.idealfactor(IdealLike(twelve_ideal))) == str(
     twelve_factorization
 )
+assert quartic_nf.nfeltval(12, first_prime) == 2
+assert quartic_nf.nfeltval(3, first_prime) == 0
+assert quartic_nf.nfeltval(objtogen("4*y"), first_prime) == 2
 pari = Pari()
 rebuilt_factorization = pari.Mat([
     pari.Col([twelve_factorization[row, 0], twelve_factorization[row, 1]])
@@ -4194,6 +4242,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field different accessor was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).nfeltval(1, first_prime)
+except TypeError as err:
+    assert str(err) == "PARI element valuations require a number field"
+else:
+    raise AssertionError("non-number-field element valuation was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.nfeltval(12, objtogen("[2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("malformed prime was accepted by nfeltval")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealhnf(1)

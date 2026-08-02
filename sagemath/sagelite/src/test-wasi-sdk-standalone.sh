@@ -3389,6 +3389,9 @@ assert repr(negative_uniformizer) == '1/2*u + 1/2'
 assert uniformizer_field.ideal(negative_uniformizer).valuation(
     uniformizer_prime
 ) == 1
+assert negative_uniformizer.valuation(uniformizer_prime) == 1
+assert uniformizer_field(1).valuation(uniformizer_prime) == 0
+assert repr(uniformizer_field(0).valuation(uniformizer_prime)) == '+Infinity'
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 assert quadratic_field.pari_nf().idealispower(quadratic_two_ideal, 3) == 0
@@ -3780,7 +3783,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=344
+electron_manifest_schema_version=345
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3984,6 +3987,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-primality-v314"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-approximation-v315"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-power-test-v316"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-element-valuation-v317"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

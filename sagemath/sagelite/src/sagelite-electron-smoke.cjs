@@ -384,6 +384,9 @@ assert repr(negative_uniformizer) == '1/2*u + 1/2'
 assert uniformizer_field.ideal(negative_uniformizer).valuation(
     uniformizer_prime
 ) == 1
+assert negative_uniformizer.valuation(uniformizer_prime) == 1
+assert uniformizer_field(1).valuation(uniformizer_prime) == 0
+assert repr(uniformizer_field(0).valuation(uniformizer_prime)) == '+Infinity'
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 assert quadratic_field.pari_nf().idealispower(quadratic_two_ideal, 3) == 0
