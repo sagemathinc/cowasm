@@ -908,6 +908,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealismaximal(GEN nf,
+                                                        GEN ideal,
+                                                        GEN *result,
+                                                        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealismaximal(nf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealnumden(GEN nf,
                                                      GEN ideal,
                                                      GEN *result,
@@ -1876,6 +1899,10 @@ cdef extern from *:
                                           GEN ideal,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_idealismaximal(GEN nf,
+                                                GEN ideal,
+                                                GEN *result,
+                                                long *errnum)
     int cowasm_cypari2_gen_clone_idealnumden(GEN nf,
                                              GEN ideal,
                                              GEN *result,
@@ -2739,6 +2766,22 @@ cdef class Gen(Gen_base):
             ideal = ideal.pari_hnf()
         converted = objtogen(ideal)
         if not cowasm_cypari2_gen_clone_idealinv(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealismaximal(self, ideal):
+        cdef Gen converted
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted = objtogen(ideal)
+        if not cowasm_cypari2_gen_clone_idealismaximal(
             self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3911,6 +3954,15 @@ assert str(quartic_nf.idealnorm(inverse_two_ideal_direct)) == "1/16"
 assert str(quartic_nf.idealinv(IdealLike(two_ideal))) == str(
     inverse_two_ideal_direct
 )
+first_prime_hnf = quartic_nf.idealhnf(first_prime)
+maximal_candidate = quartic_nf.idealismaximal(first_prime_hnf)
+assert int(maximal_candidate[0]) == int(first_prime[0])
+assert int(maximal_candidate.pr_get_e()) == int(first_prime.pr_get_e())
+assert int(maximal_candidate.pr_get_f()) == int(first_prime.pr_get_f())
+assert int(quartic_nf.idealismaximal(unit_ideal)) == 0
+assert int(quartic_nf.idealismaximal(IdealLike(first_prime_hnf))[0]) == int(
+    first_prime[0]
+)
 half_numden = quartic_nf.idealnumden(objtogen("1/2"))
 assert str(half_numden) == "[1, 2]"
 inverse_two_numden = quartic_nf.idealnumden(inverse_two_ideal_direct)
@@ -4109,6 +4161,20 @@ except PariError as err:
     assert "impossible inverse" in str(err)
 else:
     raise AssertionError("zero ideal inversion was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealismaximal(1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field maximal-ideal test was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealismaximal(objtogen("[2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("malformed maximal-ideal test was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealnumden(1)

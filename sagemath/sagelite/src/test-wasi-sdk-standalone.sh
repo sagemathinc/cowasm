@@ -3376,6 +3376,10 @@ assert quadratic_field.ideal(1).valuation(quadratic_valuation_prime) == 0
 assert repr(
     quadratic_field.ideal(0).valuation(quadratic_valuation_prime)
 ) == '+Infinity'
+primality_field = NumberField(x**2 - 17, 'd')
+assert primality_field.ideal(5).is_prime()
+assert not primality_field.ideal(13).is_prime()
+assert not primality_field.ideal(17).is_prime()
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
@@ -3765,7 +3769,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=341
+electron_manifest_schema_version=342
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3966,6 +3970,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-reduction-v311"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-two-generators-v312"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-valuation-v313"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-primality-v314"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

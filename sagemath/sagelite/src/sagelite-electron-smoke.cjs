@@ -371,6 +371,10 @@ assert quadratic_field.ideal(1).valuation(quadratic_valuation_prime) == 0
 assert repr(
     quadratic_field.ideal(0).valuation(quadratic_valuation_prime)
 ) == '+Infinity'
+primality_field = NumberField(x**2 - 17, 'd')
+assert primality_field.ideal(5).is_prime()
+assert not primality_field.ideal(13).is_prime()
+assert not primality_field.ideal(17).is_prime()
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
