@@ -43,11 +43,14 @@ conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
 The same polynomial boundary exposes `nfdisc()`, `nfisisom()`,
-`nfrootsof1()`, `dirzetak()`, `nfgaloisconj()`, and `nfsubfields()`,
+`nfrootsof1()`, `dirzetak()`, `nfgaloisconj()`, `nfsubfields()`, and
+`nffactor()`,
 completing the direct
 `NumberField.discriminant()`, `NumberField.is_isomorphic()`, number-field
 roots-of-unity, Dedekind-zeta coefficient, automorphism, and subfield paths
 for explicit degrees without constructing a maximal order or unit group.
+The factorization bridge also completes polynomial factorization over absolute
+number fields and the reverse maps returned for full-degree subfields.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,

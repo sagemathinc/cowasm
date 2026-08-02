@@ -156,6 +156,29 @@ del quadratic_subfields, quadratic_field, quadratic_embedding, reverse_map
 del subfield_field
 `);
     console.log("sagelite-electron-ok number field subfields resources smoke");
+    console.log("sagelite-electron-start number field factorization resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+factor_field = NumberField(x**4 - 2, 'a')
+a = factor_field.gen()
+t = PolynomialRing(factor_field, 't').gen()
+factorization = (t**2 - a**2).factor()
+assert len(factorization) == 2
+assert factorization.prod() == t**2 - a**2
+complete_subfields = factor_field.subfields()
+assert [field.degree() for field, _, _ in complete_subfields] == [1, 2, 4]
+full_field, embedding, reverse_map = complete_subfields[-1]
+assert reverse_map is not None
+assert reverse_map(embedding(full_field.gen())) == full_field.gen()
+del factorization, complete_subfields, full_field, embedding, reverse_map
+del factor_field, a, t
+`);
+    console.log("sagelite-electron-ok number field factorization resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

@@ -566,6 +566,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nffactor(GEN nf,
+                                                  GEN polynomial,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nffactor(nf, polynomial));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                                   GEN right,
                                                   GEN *result,
@@ -2075,6 +2098,10 @@ cdef extern from *:
                                              long degree,
                                              GEN *result,
                                              long *errnum)
+    int cowasm_cypari2_gen_clone_nffactor(GEN nf,
+                                          GEN polynomial,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2870,6 +2897,17 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nfsubfields(
             self.g, degree, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nffactor(self, polynomial):
+        cdef Gen converted = objtogen(polynomial)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nffactor(
+            self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4378,6 +4416,21 @@ assert str(objtogen("x^4 - 2").nfsubfields(2)) == "[[x^2 - 2, -x^2]]"
 assert str(objtogen("x^3 - 3*x + 1").nfsubfields()) == (
     "[[x, 0], [x^3 - 3*x + 1, x]]"
 )
+gaussian_nf = objtogen("y^2 + 1").nfinit()
+gaussian_quadratic_factors = gaussian_nf.nffactor(objtogen("x^2 + 1"))
+assert gaussian_quadratic_factors.nrows() == 2
+assert gaussian_quadratic_factors.ncols() == 2
+assert [str(gaussian_quadratic_factors[row, 0]) for row in range(2)] == [
+    "x + Mod(-y, y^2 + 1)", "x + Mod(y, y^2 + 1)"
+]
+assert [int(gaussian_quadratic_factors[row, 1]) for row in range(2)] == [1, 1]
+gaussian_quartic_factors = objtogen("y^2 + 1").nffactor(objtogen("x^4 - 1"))
+assert gaussian_quartic_factors.nrows() == 4
+assert gaussian_quartic_factors.ncols() == 2
+assert [str(gaussian_quartic_factors[row, 0]) for row in range(4)] == [
+    "x - 1", "x + 1", "x + Mod(-y, y^2 + 1)", "x + Mod(y, y^2 + 1)"
+]
+assert [int(gaussian_quartic_factors[row, 1]) for row in range(4)] == [1] * 4
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4612,6 +4665,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial subfield input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    gaussian_nf.nffactor(objtogen(1))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial number-field factor input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))
