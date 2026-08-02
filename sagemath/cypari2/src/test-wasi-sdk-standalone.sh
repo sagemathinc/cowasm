@@ -724,6 +724,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealdiv(GEN nf,
+                                                  GEN left,
+                                                  GEN right,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealdiv(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                                    GEN ideal,
                                                    GEN *result,
@@ -1495,6 +1519,11 @@ cdef extern from *:
                                           GEN right,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_idealdiv(GEN nf,
+                                          GEN left,
+                                          GEN right,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                            GEN ideal,
                                            GEN *result,
@@ -2173,6 +2202,26 @@ cdef class Gen(Gen_base):
         converted_left = objtogen(left)
         converted_right = objtogen(right)
         if not cowasm_cypari2_gen_clone_idealmul(
+            self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealdiv(self, left, right):
+        cdef Gen converted_left
+        cdef Gen converted_right
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(left, Gen) and hasattr(left, "pari_hnf"):
+            left = left.pari_hnf()
+        if not isinstance(right, Gen) and hasattr(right, "pari_hnf"):
+            right = right.pari_hnf()
+        converted_left = objtogen(left)
+        converted_right = objtogen(right)
+        if not cowasm_cypari2_gen_clone_idealdiv(
             self.g, converted_left.g, converted_right.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3160,6 +3209,14 @@ assert str(quartic_nf.idealmul(two_ideal, two_ideal)) == str(
     quartic_nf.idealhnf(4)
 )
 assert int(quartic_nf.idealnorm(quartic_nf.idealmul(two_ideal, two_ideal))) == 256
+assert str(quartic_nf.idealdiv(two_ideal, unit_ideal)) == str(two_ideal)
+assert str(quartic_nf.idealdiv(two_ideal, two_ideal)) == str(unit_ideal)
+inverse_two_ideal = quartic_nf.idealdiv(unit_ideal, two_ideal)
+assert str(quartic_nf.idealmul(inverse_two_ideal, two_ideal)) == str(unit_ideal)
+assert str(quartic_nf.idealnorm(inverse_two_ideal)) == "1/16"
+assert str(
+    quartic_nf.idealdiv(IdealLike(two_ideal), IdealLike(two_ideal))
+) == str(unit_ideal)
 assert int(quartic_nf.idealnorm(unit_ideal)) == 1
 assert int(quartic_nf.idealnorm(two_ideal)) == 16
 pari = Pari()
@@ -3222,6 +3279,13 @@ except TypeError as err:
     assert str(err) == "PARI ideal operations require a number field"
 else:
     raise AssertionError("non-number-field ideal multiplication was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealdiv(1, 1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal division was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).bnfinit(1)

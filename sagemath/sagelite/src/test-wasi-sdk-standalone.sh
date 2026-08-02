@@ -3317,12 +3317,28 @@ quadratic_different_square = quadratic_different * quadratic_different
 assert quadratic_different_square.number_field() is quadratic_field
 assert quadratic_different_square.norm() == 529
 assert repr(quadratic_different_square) == 'Fractional ideal (23)'
+quadratic_different_quotient = quadratic_different_square / quadratic_different
+assert quadratic_different_quotient.number_field() is quadratic_field
+assert quadratic_different_quotient.norm() == 23
+assert repr(quadratic_different_quotient) == 'Fractional ideal (a)'
+assert repr(quadratic_different / quadratic_different) == 'Fractional ideal (1)'
+quadratic_different_square_inverse = ~quadratic_different_square
+assert quadratic_different_square_inverse.norm() == QQ(1) / 529
+assert repr(quadratic_different_square_inverse) == 'Fractional ideal (1/23)'
+assert repr(quadratic_different_square_inverse * quadratic_different_square) == 'Fractional ideal (1)'
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
 assert repr(other_quadratic_field.different()) == 'Fractional ideal (2*b)'
 assert (other_quadratic_field.different()**2).norm() == 242064
 assert repr(other_quadratic_field.different()**2) == 'Fractional ideal (492)'
+other_quadratic_quotient = (other_quadratic_field.different()**2) / other_quadratic_field.different()
+assert other_quadratic_quotient.number_field() is other_quadratic_field
+assert other_quadratic_quotient.norm() == 492
+assert repr(other_quadratic_quotient) == 'Fractional ideal (2*b)'
+other_quadratic_square_inverse = ~(other_quadratic_field.different()**2)
+assert other_quadratic_square_inverse.norm() == QQ(1) / 242064
+assert repr(other_quadratic_square_inverse) == 'Fractional ideal (1/492)'
 assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
@@ -3646,7 +3662,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=330
+electron_manifest_schema_version=331
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3836,6 +3852,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-norm-v300"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-display-v301"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-multiplication-v302"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-division-v303"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
