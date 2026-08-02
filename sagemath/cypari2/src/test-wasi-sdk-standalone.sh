@@ -450,6 +450,165 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_bnfinit(GEN input,
+                                                 long flag,
+                                                 long precision,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(bnfinit0(input, flag, NULL, nbits2prec(precision)));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_bnfisprincipal(GEN bnf,
+                                                        GEN ideal,
+                                                        long flag,
+                                                        GEN *result,
+                                                        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(bnfisprincipal0(bnf, ideal, flag));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_bnfcertify(GEN bnf,
+                                              long flag,
+                                              long *result,
+                                              long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = bnfcertify0(bnf, flag);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nffactorback(GEN nf,
+                                                       GEN factors,
+                                                       GEN exponents,
+                                                       GEN *result,
+                                                       long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nffactorback(nf, factors, exponents));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nfbasistoalg(GEN nf,
+                                                      GEN value,
+                                                      GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(basistoalg(nf, value));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_random_state(GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(getrand());
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_set_random_state(GEN seed,
+                                                    long *errnum) {
+      int ok = 1;
+
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        setrand(seed);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nf_zk(GEN input,
                                                GEN *result,
                                                long *errnum) {
@@ -683,6 +842,31 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(modreverse(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_modulus(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        if (typ(input) != t_INTMOD && typ(input) != t_POLMOD) {
+          pari_err_TYPE("mod", input);
+        }
+        *result = gclone(gel(input, 1));
       }
       pari_ENDCATCH;
 
@@ -1236,10 +1420,37 @@ cdef extern from *:
                                          GEN *result,
                                          long *errnum)
     int cowasm_cypari2_gen_clone_nfinit(GEN input,
-                                        long flag,
-                                        long precision,
-                                        GEN *result,
-                                        long *errnum)
+                                         long flag,
+                                         long precision,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_bnfinit(GEN input,
+                                          long flag,
+                                          long precision,
+                                          GEN *result,
+                                          long *errnum)
+    int cowasm_cypari2_gen_clone_bnfisprincipal(GEN bnf,
+                                                 GEN ideal,
+                                                 long flag,
+                                                 GEN *result,
+                                                 long *errnum)
+    int cowasm_cypari2_gen_bnfcertify(GEN bnf,
+                                       long flag,
+                                       long *result,
+                                       long *errnum)
+    int cowasm_cypari2_gen_clone_nffactorback(GEN nf,
+                                               GEN factors,
+                                               GEN exponents,
+                                               GEN *result,
+                                               long *errnum)
+    int cowasm_cypari2_gen_clone_nfbasistoalg(GEN nf,
+                                               GEN value,
+                                               GEN *result,
+                                               long *errnum)
+    int cowasm_cypari2_gen_clone_random_state(GEN *result,
+                                               long *errnum)
+    int cowasm_cypari2_gen_set_random_state(GEN seed,
+                                             long *errnum)
     int cowasm_cypari2_gen_clone_nf_zk(GEN input,
                                        GEN *result,
                                        long *errnum)
@@ -1277,8 +1488,11 @@ cdef extern from *:
                                      GEN *result,
                                      long *errnum)
     int cowasm_cypari2_gen_clone_modreverse(GEN input,
-                                            GEN *result,
-                                            long *errnum)
+                                             GEN *result,
+                                             long *errnum)
+    int cowasm_cypari2_gen_clone_modulus(GEN input,
+                                         GEN *result,
+                                         long *errnum)
     int cowasm_cypari2_gen_clone_integer(const char *digits,
                                          GEN *result,
                                          long *errnum)
@@ -1466,6 +1680,23 @@ cpdef set_debug_level(int level):
     _debug_level = int(level)
 
 
+cpdef Gen get_random_state():
+    cdef GEN result = NULL
+    cdef long errnum = 0
+
+    if not cowasm_cypari2_gen_clone_random_state(&result, &errnum):
+        _raise_pari_error(errnum)
+    return _new_owned(result)
+
+
+cpdef set_random_state(seed):
+    cdef Gen converted = objtogen(seed)
+    cdef long errnum = 0
+
+    if not cowasm_cypari2_gen_set_random_state(converted.g, &errnum):
+        _raise_pari_error(errnum)
+
+
 cdef class Gen_base:
     pass
 
@@ -1585,6 +1816,9 @@ cdef class Gen(Gen_base):
         if kind == t_MAT or kind == t_VEC or kind == t_COL:
             return glength(self.g)
         raise TypeError("PARI object does not have a Python length")
+
+    def __bool__(self):
+        return self != 0
 
     def __iter__(self):
         cdef Py_ssize_t i
@@ -1792,6 +2026,66 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
+    def bnfinit(self, long flag=0, tech=None, long precision=64):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if tech is not None:
+            return _missing_runtime(tech)
+        if not cowasm_cypari2_gen_clone_bnfinit(
+            self.g, flag, precision, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def bnfisprincipal(self, ideal, long flag=1):
+        cdef Gen converted = objtogen(ideal)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_bnfisprincipal(
+            self.g, converted.g, flag, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def bnfcertify(self, long flag=0):
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_bnfcertify(
+            self.g, flag, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return result
+
+    def nffactorback(self, factors, exponents=None):
+        cdef Gen converted_factors = objtogen(factors)
+        cdef Gen converted_exponents
+        cdef GEN exponent_gen = NULL
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if exponents is not None:
+            converted_exponents = objtogen(exponents)
+            exponent_gen = converted_exponents.g
+        if not cowasm_cypari2_gen_clone_nffactorback(
+            self.g, converted_factors.g, exponent_gen, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfbasistoalg(self, value):
+        cdef Gen converted = objtogen(value)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfbasistoalg(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def nf_get_zk(self):
         cdef GEN result = NULL
         cdef long errnum = 0
@@ -1901,6 +2195,16 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_mod(
             self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def mod(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_modulus(
+            self.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -2607,9 +2911,11 @@ factorization while unsupported conversion and method paths still fail closed.
 from .gen import (
     _missing_runtime,
     eval_string,
+    get_random_state,
     get_debug_level,
     objtogen,
     prime as _prime,
+    set_random_state,
     set_debug_level,
 )
 
@@ -2653,6 +2959,12 @@ class Pari:
 
     def prime(self, n):
         return _prime(int(n))
+
+    def getrand(self):
+        return get_random_state()
+
+    def setrand(self, seed):
+        set_random_state(seed)
 
     def __call__(self, *args, **kwargs):
         if kwargs or len(args) != 1:
@@ -2786,6 +3098,37 @@ assert [
 assert str(quartic_nf.idealadd(zero_ideal, two_ideal)) == str(two_ideal)
 assert int(quartic_nf.idealnorm(unit_ideal)) == 1
 assert int(quartic_nf.idealnorm(two_ideal)) == 16
+pari = Pari()
+saved_random_state = pari.getrand()
+pari.setrand(37)
+seeded_random_state = pari.getrand()
+assert seeded_random_state != saved_random_state
+pari.setrand(seeded_random_state)
+assert pari.getrand() == seeded_random_state
+pari.setrand(saved_random_state)
+quadratic = objtogen("y^2 + 23")
+quadratic_bnf = quadratic.bnfinit(1)
+assert len(quadratic_bnf) == 10
+assert quadratic_bnf.bnfcertify() == 1
+quadratic_nf = objtogen([quadratic, quadratic.nfbasis()]).nfinit()
+quadratic_different_hnf = quadratic_nf.idealhnf(quadratic_nf.nf_get_diff())
+quadratic_principal = quadratic_bnf.bnfisprincipal(
+    quadratic_different_hnf, 5
+)
+assert str(quadratic_principal[0]) == "[0]~"
+assert not any(quadratic_principal[0])
+assert not bool(objtogen(0))
+assert bool(objtogen(1))
+quadratic_generator_basis = quadratic_bnf.nffactorback(
+    quadratic_principal[1]
+)
+assert str(quadratic_generator_basis) == "[1, 2]~"
+assert str(quadratic_bnf.nfbasistoalg(quadratic_generator_basis)) == (
+    "Mod(y, y^2 + 23)"
+)
+assert str(quadratic_bnf.nfbasistoalg(quadratic_generator_basis).mod()) == (
+    "y^2 + 23"
+)
 assert quartic_nf.nf_get_sign() == [0, 2]
 assert isinstance(quartic_nf.nf_get_sign(), list)
 assert all(isinstance(value, int) for value in quartic_nf.nf_get_sign())
@@ -2810,6 +3153,27 @@ else:
     raise AssertionError("non-number-field ideal HNF was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
+    objtogen(1).bnfinit(1)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial BNF initialization was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).bnfcertify()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-BNF certification was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).mod()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-modular modulus access was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
     objtogen(1).nf_get_sign()
 except PariError as err:
     assert str(err).startswith("PARI error ")
@@ -2825,7 +3189,9 @@ assert str(y / 6) == "1/6*y"
 assert str(6 / y) == "6/y"
 alpha = (y / 6).Mod(objtogen("y^2 + 6"))
 assert str(alpha) == "Mod(1/6*y, y^2 + 6)"
+assert str(alpha.mod()) == "y^2 + 6"
 assert str(alpha.modreverse()) == "Mod(6*y, y^2 + 1/6)"
+assert int(objtogen(2).Mod(101).mod()) == 101
 try:
     objtogen([1, 2, 3]).Polrev("I")
 except PariError:

@@ -45,6 +45,11 @@ polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 and `idealnorm()` results, completing the adjacent
 `NumberFieldFractionalIdeal.norm()` path.
+Focused BNF support preserves PARI random state and exposes owned `bnfinit()`,
+`bnfisprincipal()`, `nffactorback()`, and `nfbasistoalg()` results. This is
+the narrow principality chain Sage uses to print reduced generators for small
+number-field ideals. Certification, scalar `Gen` truth testing, and modular
+modulus access complete the control and conversion path used by that display.
 Focused finite-field maps support `fffrobenius`, `ffcompomap`, and `ffmap`,
 which lets PARI-backed Sage finite fields cache and apply Frobenius powers
 without entering the unported general cypari2 object model. A narrow Cython

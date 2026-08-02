@@ -307,9 +307,11 @@ assert quadratic_different.__class__.__name__ == 'NumberFieldFractionalIdeal'
 assert quadratic_different.number_field() is quadratic_field
 assert quadratic_different is quadratic_field.different()
 assert quadratic_different.norm() == 23
+assert repr(quadratic_different) == 'Fractional ideal (a)'
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
+assert repr(other_quadratic_field.different()) == 'Fractional ideal (2*b)'
 assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
