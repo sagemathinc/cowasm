@@ -55,8 +55,11 @@ Focused polynomial introspection now includes leading coefficient, content,
 denominator, irreducibility, and recursive polynomial lifting. Together with
 owned `nf_rnfeq()`, `nf_nfzk()`, `nfeltup()`, absolute-to-relative,
 relative-to-absolute, and reverse coefficient-vector conversion results, this
-completes construction, base-field inclusion, and relative-vector-space
-round trips for monic relative number fields.
+completes construction, base-field inclusion, relative-vector-space round
+trips, and recognition of extension elements that lie in the base field for
+monic relative number fields. The latter path uses an owned generic PARI
+`simplify()` result so variable elimination is structural rather than inferred
+from display text.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,

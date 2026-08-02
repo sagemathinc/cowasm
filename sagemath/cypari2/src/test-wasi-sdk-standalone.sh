@@ -2118,6 +2118,28 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_simplify(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(simplify(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_lifted_polcoeffs(GEN input,
                                                          GEN *result,
                                                          long *errnum) {
@@ -2612,6 +2634,9 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_lift(GEN input,
                                       GEN *result,
                                       long *errnum)
+    int cowasm_cypari2_gen_clone_simplify(GEN input,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_lifted_polcoeffs(GEN input,
                                                   GEN *result,
                                                   long *errnum)
@@ -3822,9 +3847,16 @@ cdef class Gen(Gen_base):
         return _new_owned(result)
 
     def simplify(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
         if self.g != NULL and typ(self.g) in (t_INT, t_FRAC):
             return self
-        return _missing_runtime()
+        if not cowasm_cypari2_gen_clone_simplify(
+            self.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
 
     def lift(self):
         cdef GEN result = NULL
@@ -4873,6 +4905,19 @@ assert str(gaussian_relative_equation._eltabstorel_lift(objtogen("x"))) == (
 assert str(
     gaussian_relative_equation._eltabstorel_lift(objtogen("x")).Vecrev(2)
 ) == "[Mod(-y, y^2 + 1), 1]"
+gaussian_absolute_base_value = gaussian_nf._nfeltup(
+    objtogen("y + 1/2"), gaussian_nfzk
+)
+gaussian_base_value = gaussian_relative_equation._eltabstorel_lift(
+    gaussian_absolute_base_value
+).lift()
+assert gaussian_base_value.type() == "t_POL"
+assert str(gaussian_base_value.variable()) == "x"
+assert str(gaussian_base_value) == "(y + 1/2)"
+gaussian_base_value = gaussian_base_value.simplify()
+assert gaussian_base_value.type() == "t_POL"
+assert str(gaussian_base_value.variable()) == "y"
+assert str(gaussian_base_value) == "y + 1/2"
 assert str(gaussian_relative_equation._eltreltoabs(objtogen("x"))) == (
     "1/2*x^3 + 7/2*x"
 )

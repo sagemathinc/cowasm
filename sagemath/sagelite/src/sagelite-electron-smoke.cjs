@@ -207,11 +207,19 @@ mixed_element = quadratic_extension.gen() + base_field.gen()
 coordinates = to_relative_space(mixed_element)
 assert from_relative_space(coordinates) == mixed_element
 assert coordinates[0] == base_field.gen() and coordinates[1] == 1
+assert quadratic_extension.lift_to_base(quadratic_extension.gen()**2) == base_field.gen()
+assert quadratic_extension.lift_to_base(lifted_base) == base_field.gen() + QQ(1)/2
+try:
+    quadratic_extension.lift_to_base(quadratic_extension.gen())
+except ValueError as err:
+    assert str(err) == 'The element b is not in the base field'
+else:
+    raise AssertionError('relative generator unexpectedly lifted to the base field')
 del relative_field, base_field, t, quadratic_extension, lifted_base
 del relative_space, from_relative_space, to_relative_space
 del mixed_element, coordinates
 `);
-    console.log("sagelite-electron-ok relative number field elements resources smoke");
+    console.log("sagelite-electron-ok relative number field base lifts resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all
