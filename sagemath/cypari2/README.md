@@ -53,8 +53,10 @@ The factorization bridge also completes polynomial factorization over absolute
 number fields and the reverse maps returned for full-degree subfields.
 Focused polynomial introspection now includes leading coefficient, content,
 denominator, irreducibility, and recursive polynomial lifting. Together with
-owned `nf_rnfeq()` and relative-to-absolute conversion results, this completes
-construction and basic degree inspection for monic relative number fields.
+owned `nf_rnfeq()`, `nf_nfzk()`, `nfeltup()`, absolute-to-relative,
+relative-to-absolute, and reverse coefficient-vector conversion results, this
+completes construction, base-field inclusion, and relative-vector-space
+round trips for monic relative number fields.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,

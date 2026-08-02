@@ -198,9 +198,20 @@ quadratic_extension = base_field.extension(t**2 - base_field.gen(), 'b')
 assert quadratic_extension.relative_degree() == 2
 assert quadratic_extension.absolute_degree() == 4
 assert quadratic_extension.absolute_polynomial().degree() == 4
-del relative_field, base_field, t, quadratic_extension
+lifted_base = quadratic_extension(base_field.gen() + QQ(1)/2)
+assert lifted_base == base_field.gen() + QQ(1)/2
+relative_space, from_relative_space, to_relative_space = (
+    quadratic_extension.relative_vector_space()
+)
+mixed_element = quadratic_extension.gen() + base_field.gen()
+coordinates = to_relative_space(mixed_element)
+assert from_relative_space(coordinates) == mixed_element
+assert coordinates[0] == base_field.gen() and coordinates[1] == 1
+del relative_field, base_field, t, quadratic_extension, lifted_base
+del relative_space, from_relative_space, to_relative_space
+del mixed_element, coordinates
 `);
-    console.log("sagelite-electron-ok relative number field resources smoke");
+    console.log("sagelite-electron-ok relative number field elements resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

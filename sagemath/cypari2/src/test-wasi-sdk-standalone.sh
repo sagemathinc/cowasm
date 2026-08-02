@@ -423,6 +423,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_vecrev(GEN input,
+                                                long length,
+                                                GEN *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gtovecrev0(input, length));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_polcoeff(GEN input,
                                                   long index,
                                                   GEN *result,
@@ -717,6 +740,77 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(nf_rnfeq(nf, relative_polynomial));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nf_nfzk(GEN nf,
+                                                 GEN relative_equation,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nf_nfzk(nf, relative_equation));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nfeltup(GEN nf,
+                                                 GEN value,
+                                                 GEN nfzk,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfeltup(nf, value, nfzk));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_eltabstorel_lift(
+        GEN relative_equation,
+        GEN value,
+        GEN *result,
+        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(eltabstorel_lift(relative_equation, value));
       }
       pari_ENDCATCH;
 
@@ -2227,6 +2321,10 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_variables(GEN input,
                                            GEN *result,
                                            long *errnum)
+    int cowasm_cypari2_gen_clone_vecrev(GEN input,
+                                        long length,
+                                        GEN *result,
+                                        long *errnum)
     int cowasm_cypari2_gen_clone_polcoeff(GEN input,
                                           long index,
                                           GEN *result,
@@ -2279,6 +2377,19 @@ cdef extern from *:
                                           GEN relative_polynomial,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_nf_nfzk(GEN nf,
+                                         GEN relative_equation,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nfeltup(GEN nf,
+                                         GEN value,
+                                         GEN nfzk,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_eltabstorel_lift(GEN relative_equation,
+                                                   GEN value,
+                                                   GEN *result,
+                                                   long *errnum)
     int cowasm_cypari2_gen_clone_eltreltoabs(GEN relative_equation,
                                              GEN value,
                                              GEN *result,
@@ -3059,6 +3170,16 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result).python_list()
 
+    def Vecrev(self, long length=0):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_vecrev(
+            self.g, length, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def nfbasis(self, *args, **kwargs):
         cdef GEN result = NULL
         cdef long errnum = 0
@@ -3152,6 +3273,44 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_nf_rnfeq(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def _nf_nfzk(self, relative_equation):
+        cdef Gen converted = objtogen(relative_equation)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nf_nfzk(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def _nfeltup(self, value, nfzk):
+        cdef Gen converted_value = objtogen(value)
+        cdef Gen converted_nfzk = objtogen(nfzk)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfeltup(
+            self.g,
+            converted_value.g,
+            converted_nfzk.g,
+            &result,
+            &errnum,
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def _eltabstorel_lift(self, value):
+        cdef Gen converted = objtogen(value)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_eltabstorel_lift(
             self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -4703,6 +4862,17 @@ gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
 assert str(gaussian_relative_equation) == (
     "[x^4 + 6*x^2 + 1, 1/2*x^3 + 5/2*x, -1, y^2 + 1, x^2 + 2]"
 )
+gaussian_nfzk = gaussian_nf._nf_nfzk(gaussian_relative_equation)
+assert str(gaussian_nfzk) == "[2, x^3 + 5*x]"
+assert str(gaussian_nf._nfeltup(objtogen("y"), gaussian_nfzk)) == (
+    "1/2*x^3 + 5/2*x"
+)
+assert str(gaussian_relative_equation._eltabstorel_lift(objtogen("x"))) == (
+    "x + Mod(-y, y^2 + 1)"
+)
+assert str(
+    gaussian_relative_equation._eltabstorel_lift(objtogen("x")).Vecrev(2)
+) == "[Mod(-y, y^2 + 1), 1]"
 assert str(gaussian_relative_equation._eltreltoabs(objtogen("x"))) == (
     "1/2*x^3 + 7/2*x"
 )
@@ -4964,6 +5134,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial relative equation was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    gaussian_nf._nfeltup(objtogen("z"), gaussian_nfzk)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("foreign-variable base-field lift was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))
