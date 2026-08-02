@@ -931,6 +931,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealred(GEN nf,
+                                                  GEN ideal,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealred(nf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                                   GEN left,
                                                   GEN right,
@@ -1810,6 +1833,10 @@ cdef extern from *:
                                              GEN ideal,
                                              GEN *result,
                                              long *errnum)
+    int cowasm_cypari2_gen_clone_idealred(GEN nf,
+                                          GEN ideal,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                           GEN left,
                                           GEN right,
@@ -2657,6 +2684,22 @@ cdef class Gen(Gen_base):
             ideal = ideal.pari_hnf()
         converted = objtogen(ideal)
         if not cowasm_cypari2_gen_clone_idealnumden(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealred(self, ideal):
+        cdef Gen converted
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted = objtogen(ideal)
+        if not cowasm_cypari2_gen_clone_idealred(
             self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3773,6 +3816,8 @@ assert str(
 ) == str(inverse_two_ideal_direct)
 ideal_like_numden = quartic_nf.idealnumden(IdealLike(inverse_two_ideal_direct))
 assert str(ideal_like_numden) == str(inverse_two_numden)
+assert str(quartic_nf.idealred(twelve_ideal)) == str(unit_ideal)
+assert str(quartic_nf.idealred(IdealLike(twelve_ideal))) == str(unit_ideal)
 assert str(quartic_nf.idealmul(unit_ideal, two_ideal)) == str(two_ideal)
 assert str(
     quartic_nf.idealmul(IdealLike(unit_ideal), IdealLike(two_ideal))
@@ -3958,6 +4003,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("wrong-dimension ideal numerator/denominator was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealred(1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal reduction was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealred(objtogen("[1,0,0;0,1,0;0,0,1]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("wrong-dimension ideal reduction was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealdiv(1, 1)
