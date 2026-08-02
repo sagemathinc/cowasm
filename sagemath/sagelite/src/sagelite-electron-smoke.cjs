@@ -336,6 +336,13 @@ assert quadratic_intersection.number_field() is quadratic_field
 assert quadratic_intersection.norm() == 529
 assert repr(quadratic_intersection) == 'Fractional ideal (23)'
 assert repr(quadratic_field.ideal(quadratic_field.pari_nf().idealintersect(quadratic_field.ideal(1), quadratic_different))) == 'Fractional ideal (a)'
+quadratic_inverse_via_pari = quadratic_field.ideal(
+    quadratic_field.pari_nf().idealinv(quadratic_different)
+)
+assert quadratic_inverse_via_pari.number_field() is quadratic_field
+assert quadratic_inverse_via_pari.norm() == 1/23
+assert repr(quadratic_inverse_via_pari) == 'Fractional ideal (1/23*a)'
+assert repr(quadratic_inverse_via_pari * quadratic_different) == 'Fractional ideal (1)'
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
@@ -365,6 +372,13 @@ assert other_quadratic_intersection.number_field() is other_quadratic_field
 assert other_quadratic_intersection.norm() == 242064
 assert repr(other_quadratic_intersection) == 'Fractional ideal (492)'
 assert repr(other_quadratic_field.ideal(other_quadratic_field.pari_nf().idealintersect(other_quadratic_field.ideal(1), other_quadratic_field.different()))) == 'Fractional ideal (2*b)'
+other_quadratic_inverse_via_pari = other_quadratic_field.ideal(
+    other_quadratic_field.pari_nf().idealinv(other_quadratic_field.different())
+)
+assert other_quadratic_inverse_via_pari.number_field() is other_quadratic_field
+assert other_quadratic_inverse_via_pari.norm() == 1/492
+assert repr(other_quadratic_inverse_via_pari) == 'Fractional ideal (1/246*b)'
+assert repr(other_quadratic_inverse_via_pari * other_quadratic_field.different()) == 'Fractional ideal (1)'
 assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
