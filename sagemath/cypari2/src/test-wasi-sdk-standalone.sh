@@ -700,6 +700,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealintersect(GEN nf,
+                                                        GEN left,
+                                                        GEN right,
+                                                        GEN *result,
+                                                        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealintersect(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                                   GEN left,
                                                   GEN right,
@@ -1538,6 +1562,11 @@ cdef extern from *:
                                           GEN right,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_idealintersect(GEN nf,
+                                                GEN left,
+                                                GEN right,
+                                                GEN *result,
+                                                long *errnum)
     int cowasm_cypari2_gen_clone_idealmul(GEN nf,
                                           GEN left,
                                           GEN right,
@@ -2211,6 +2240,26 @@ cdef class Gen(Gen_base):
         if self.g == NULL or typ(self.g) != t_VEC:
             raise TypeError("PARI ideal operations require a number field")
         if not cowasm_cypari2_gen_clone_idealadd(
+            self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealintersect(self, left, right):
+        cdef Gen converted_left
+        cdef Gen converted_right
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(left, Gen) and hasattr(left, "pari_hnf"):
+            left = left.pari_hnf()
+        if not isinstance(right, Gen) and hasattr(right, "pari_hnf"):
+            right = right.pari_hnf()
+        converted_left = objtogen(left)
+        converted_right = objtogen(right)
+        if not cowasm_cypari2_gen_clone_idealintersect(
             self.g, converted_left.g, converted_right.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3248,6 +3297,13 @@ assert [
     [0, 0, 0, 1],
 ]
 assert str(quartic_nf.idealadd(zero_ideal, two_ideal)) == str(two_ideal)
+assert str(quartic_nf.idealintersect(unit_ideal, two_ideal)) == str(two_ideal)
+assert str(quartic_nf.idealintersect(two_ideal, two_ideal)) == str(two_ideal)
+four_ideal = quartic_nf.idealhnf(4)
+assert str(quartic_nf.idealintersect(two_ideal, four_ideal)) == str(four_ideal)
+assert str(
+    quartic_nf.idealintersect(IdealLike(unit_ideal), IdealLike(two_ideal))
+) == str(two_ideal)
 assert str(quartic_nf.idealmul(unit_ideal, two_ideal)) == str(two_ideal)
 assert str(
     quartic_nf.idealmul(IdealLike(unit_ideal), IdealLike(two_ideal))
@@ -3335,6 +3391,13 @@ except TypeError as err:
     assert str(err) == "PARI ideal operations require a number field"
 else:
     raise AssertionError("non-number-field ideal multiplication was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealintersect(1, 1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal intersection was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealdiv(1, 1)
