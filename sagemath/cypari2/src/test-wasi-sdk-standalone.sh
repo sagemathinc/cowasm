@@ -790,6 +790,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealcoprime(GEN nf,
+                                                      GEN left,
+                                                      GEN right,
+                                                      GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealcoprime(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealfactor(GEN nf,
                                                      GEN ideal,
                                                      GEN *result,
@@ -1759,6 +1783,11 @@ cdef extern from *:
                                                GEN right,
                                                GEN *result,
                                                long *errnum)
+    int cowasm_cypari2_gen_clone_idealcoprime(GEN nf,
+                                              GEN left,
+                                              GEN right,
+                                              GEN *result,
+                                              long *errnum)
     int cowasm_cypari2_gen_clone_idealfactor(GEN nf,
                                              GEN ideal,
                                              GEN *result,
@@ -2521,6 +2550,26 @@ cdef class Gen(Gen_base):
         converted_left = objtogen(left)
         converted_right = objtogen(right)
         if not cowasm_cypari2_gen_clone_idealaddtoone(
+            self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealcoprime(self, left, right):
+        cdef Gen converted_left
+        cdef Gen converted_right
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(left, Gen) and hasattr(left, "pari_hnf"):
+            left = left.pari_hnf()
+        if not isinstance(right, Gen) and hasattr(right, "pari_hnf"):
+            right = right.pari_hnf()
+        converted_left = objtogen(left)
+        converted_right = objtogen(right)
+        if not cowasm_cypari2_gen_clone_idealcoprime(
             self.g, converted_left.g, converted_right.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3664,6 +3713,14 @@ assert str(
     quartic_nf.idealaddtoone(IdealLike(two_ideal), IdealLike(three_ideal))
 ) == str(add_to_one)
 twelve_ideal = quartic_nf.idealhnf(12)
+coprime_multiplier = quartic_nf.idealcoprime(twelve_ideal, two_ideal)
+assert str(coprime_multiplier) == "1/4"
+coprime_product = quartic_nf.idealmul(coprime_multiplier, twelve_ideal)
+assert str(coprime_product) == str(three_ideal)
+assert int(quartic_nf.idealnorm(coprime_product)) == 81
+assert str(
+    quartic_nf.idealcoprime(IdealLike(twelve_ideal), IdealLike(two_ideal))
+) == str(coprime_multiplier)
 twelve_factorization = quartic_nf.idealfactor(twelve_ideal)
 assert twelve_factorization.nrows() == 3
 assert twelve_factorization.ncols() == 2
@@ -3824,6 +3881,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("noncoprime ideals were accepted by idealaddtoone")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealcoprime(2, 3)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal coprime multiplier was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen([1, 2]).idealcoprime(2, 3)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("invalid number field was accepted by idealcoprime")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealfactor(12)

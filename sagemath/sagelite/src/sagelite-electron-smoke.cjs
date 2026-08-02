@@ -356,6 +356,17 @@ quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_idea
 assert quadratic_one_mod_three == -2
 assert quadratic_one_mod_three in quadratic_two_ideal
 assert 1 - quadratic_one_mod_three in quadratic_three_ideal
+quadratic_non_coprime_ideal = quadratic_field.ideal(quadratic_generator + 1)
+quadratic_coprime_multiplier = quadratic_non_coprime_ideal.idealcoprime(
+    quadratic_three_ideal
+)
+assert quadratic_coprime_multiplier in (
+    -QQ(1)/6 * quadratic_generator + QQ(1)/6,
+    QQ(1)/6 * quadratic_generator - QQ(1)/6,
+)
+assert (quadratic_coprime_multiplier * quadratic_non_coprime_ideal).is_coprime(
+    quadratic_three_ideal
+)
 quadratic_crt = quadratic_field.idealchinese(
     [quadratic_field.ideal(5), quadratic_field.ideal(7)],
     [quadratic_generator, 1],
