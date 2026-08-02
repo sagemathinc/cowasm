@@ -700,6 +700,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealmul(GEN nf,
+                                                  GEN left,
+                                                  GEN right,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealmul(nf, left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                                    GEN ideal,
                                                    GEN *result,
@@ -1466,6 +1490,11 @@ cdef extern from *:
                                           GEN right,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_idealmul(GEN nf,
+                                          GEN left,
+                                          GEN right,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                            GEN ideal,
                                            GEN *result,
@@ -2124,6 +2153,26 @@ cdef class Gen(Gen_base):
         if self.g == NULL or typ(self.g) != t_VEC:
             raise TypeError("PARI ideal operations require a number field")
         if not cowasm_cypari2_gen_clone_idealadd(
+            self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealmul(self, left, right):
+        cdef Gen converted_left
+        cdef Gen converted_right
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(left, Gen) and hasattr(left, "pari_hnf"):
+            left = left.pari_hnf()
+        if not isinstance(right, Gen) and hasattr(right, "pari_hnf"):
+            right = right.pari_hnf()
+        converted_left = objtogen(left)
+        converted_right = objtogen(right)
+        if not cowasm_cypari2_gen_clone_idealmul(
             self.g, converted_left.g, converted_right.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -3084,6 +3133,13 @@ assert [
 zero_ideal = quartic_nf.idealhnf(0)
 unit_ideal = quartic_nf.idealhnf(1)
 two_ideal = quartic_nf.idealhnf(2)
+class IdealLike:
+    def __init__(self, hnf):
+        self._hnf = hnf
+
+    def pari_hnf(self):
+        return self._hnf
+
 assert str(zero_ideal) == '[;]'
 assert unit_ideal.nrows() == unit_ideal.ncols() == 4
 assert [
@@ -3096,6 +3152,14 @@ assert [
     [0, 0, 0, 1],
 ]
 assert str(quartic_nf.idealadd(zero_ideal, two_ideal)) == str(two_ideal)
+assert str(quartic_nf.idealmul(unit_ideal, two_ideal)) == str(two_ideal)
+assert str(
+    quartic_nf.idealmul(IdealLike(unit_ideal), IdealLike(two_ideal))
+) == str(two_ideal)
+assert str(quartic_nf.idealmul(two_ideal, two_ideal)) == str(
+    quartic_nf.idealhnf(4)
+)
+assert int(quartic_nf.idealnorm(quartic_nf.idealmul(two_ideal, two_ideal))) == 256
 assert int(quartic_nf.idealnorm(unit_ideal)) == 1
 assert int(quartic_nf.idealnorm(two_ideal)) == 16
 pari = Pari()
@@ -3151,6 +3215,13 @@ except TypeError as err:
     assert str(err) == "PARI ideal operations require a number field"
 else:
     raise AssertionError("non-number-field ideal HNF was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealmul(1, 1)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal multiplication was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).bnfinit(1)
