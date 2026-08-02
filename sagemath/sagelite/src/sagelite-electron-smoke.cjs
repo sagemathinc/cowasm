@@ -87,6 +87,22 @@ assert discriminant_field.disc() == -503
 del discriminant_field
 `);
     console.log("sagelite-electron-ok number field discriminant resources smoke");
+    console.log("sagelite-electron-start number field roots of unity resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+root_field = NumberField(x**2 + 1, 'i')
+assert root_field.zeta_order() == 4
+assert root_field.number_of_roots_of_unity() == 4
+assert root_field.primitive_root_of_unity() == root_field.gen()
+assert root_field.roots_of_unity() == [root_field.gen(), -1, -root_field.gen(), 1]
+del root_field
+`);
+    console.log("sagelite-electron-ok number field roots of unity resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

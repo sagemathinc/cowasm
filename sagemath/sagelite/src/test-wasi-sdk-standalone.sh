@@ -3497,6 +3497,18 @@ assert field.discriminant() == -503
 assert field.disc() == -503
 print('sagelite-node-ok number field discriminant boundary')"
 
+run_node_import "number field roots of unity boundary" "import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+x = PolynomialRing(QQ, 'x').gen()
+field = NumberField(x**2 + 1, 'i')
+assert field.zeta_order() == 4
+assert field.number_of_roots_of_unity() == 4
+assert field.primitive_root_of_unity() == field.gen()
+assert field.roots_of_unity() == [field.gen(), -1, -field.gen(), 1]
+print('sagelite-node-ok number field roots of unity boundary')"
+
 run_node_import "number field isomorphism boundary" "import sage.all
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -3821,7 +3833,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=348
+electron_manifest_schema_version=349
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -4029,6 +4041,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-discriminant-v318"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-isomorphism-v319"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-bounded-ideals-v320"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-roots-of-unity-v321"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

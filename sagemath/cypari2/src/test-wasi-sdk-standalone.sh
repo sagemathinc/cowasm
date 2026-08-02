@@ -472,6 +472,28 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nfrootsof1(GEN input,
+                                                    GEN *result,
+                                                    long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfrootsof1(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                                   GEN right,
                                                   GEN *result,
@@ -1964,6 +1986,9 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_nfdisc(GEN input,
                                         GEN *result,
                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nfrootsof1(GEN input,
+                                            GEN *result,
+                                            long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2712,6 +2737,16 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_nfdisc(
+            self.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfrootsof1(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfrootsof1(
             self.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -4196,6 +4231,12 @@ assert str(quartic_nf.idealfactor(IdealLike(twelve_ideal))) == str(
 )
 assert int(objtogen("x^3 + x^2 - 2*x + 8").nfdisc()) == -503
 assert int(objtogen("x^2 - 1/2").nfdisc()) == 8
+quartic_roots_of_unity = quartic_nf.nfrootsof1()
+assert int(quartic_roots_of_unity[0]) == 2
+assert str(quartic_roots_of_unity[1]) == "-1"
+gaussian_roots_of_unity = objtogen("x^2 + 1").nfinit().nfrootsof1()
+assert int(gaussian_roots_of_unity[0]) == 4
+assert str(gaussian_roots_of_unity[1]) == "[0, 1]~"
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4395,6 +4436,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial number-field discriminant was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).nfrootsof1()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-number-field root-of-unity input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))

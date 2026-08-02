@@ -42,9 +42,10 @@ number field's different is available as an owned PARI ideal through
 conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
-The same polynomial boundary exposes `nfdisc()` and `nfisisom()`, completing
-the direct `NumberField.discriminant()` and `NumberField.is_isomorphic()`
-paths without constructing a maximal order.
+The same polynomial boundary exposes `nfdisc()`, `nfisisom()`, and
+`nfrootsof1()`, completing the direct `NumberField.discriminant()`,
+`NumberField.is_isomorphic()`, and number-field roots-of-unity paths without
+constructing a maximal order or unit group.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,
