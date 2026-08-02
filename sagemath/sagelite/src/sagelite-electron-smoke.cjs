@@ -354,6 +354,17 @@ quadratic_principal_large = quadratic_field.ideal(quadratic_generator * 23**5)
 quadratic_principal_reduced = quadratic_principal_large.reduce_equiv()
 assert quadratic_principal_reduced.number_field() is quadratic_field
 assert repr(quadratic_principal_reduced) == 'Fractional ideal (1)'
+two_generator_field = NumberField(x**2 + 5, 'c')
+two_generator = two_generator_field.gen()
+two_generator_ideal = two_generator_field.ideal([two_generator + 2, 9])
+assert two_generator_ideal.gens_two() == (9, two_generator + 2)
+assert two_generator_ideal == two_generator_field.ideal(two_generator + 2)
+assert two_generator_ideal != two_generator_field.ideal(3)
+assert two_generator_field.ideal([
+    two_generator + 5, two_generator + 8
+]).gens_two() == (3, two_generator + 2)
+assert two_generator_field.ideal(0).gens_two() == (0, 0)
+assert two_generator_field.ideal(12).gens_two() == (12, 0)
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
