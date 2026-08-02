@@ -135,6 +135,27 @@ del automorphisms
 del automorphism_field
 `);
     console.log("sagelite-electron-ok number field automorphisms resources smoke");
+    console.log("sagelite-electron-start number field subfields resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+subfield_field = NumberField(x**4 - 2, 'a')
+quadratic_subfields = subfield_field.subfields(2)
+assert len(quadratic_subfields) == 1
+quadratic_field, quadratic_embedding, reverse_map = quadratic_subfields[0]
+assert quadratic_field.degree() == 2
+assert quadratic_field.polynomial() == x**2 - 2
+assert quadratic_embedding(quadratic_field.gen()) == -(subfield_field.gen()**2)
+assert reverse_map is None
+assert len(subfield_field.subfields(1)) == 1
+del quadratic_subfields, quadratic_field, quadratic_embedding, reverse_map
+del subfield_field
+`);
+    console.log("sagelite-electron-ok number field subfields resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

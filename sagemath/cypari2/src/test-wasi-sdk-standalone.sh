@@ -543,6 +543,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nfsubfields(GEN nf,
+                                                     long degree,
+                                                     GEN *result,
+                                                     long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfsubfields(nf, degree));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                                   GEN right,
                                                   GEN *result,
@@ -2048,6 +2071,10 @@ cdef extern from *:
                                               long precision,
                                               GEN *result,
                                               long *errnum)
+    int cowasm_cypari2_gen_clone_nfsubfields(GEN nf,
+                                             long degree,
+                                             GEN *result,
+                                             long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2833,6 +2860,16 @@ cdef class Gen(Gen_base):
             converted_gen = converted.g
         if not cowasm_cypari2_gen_clone_nfgaloisconj(
             self.g, flag, converted_gen, precision, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfsubfields(self, long degree=0):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfsubfields(
+            self.g, degree, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4333,6 +4370,14 @@ assert str(objtogen("x^2 + 10000").nfinit().nfgaloisconj(
 )) == "[-x, x]~"
 assert str(objtogen("x^3 + 2").nfinit().nfgaloisconj()) == "[x]~"
 assert str(objtogen("x^4 + 2").nfinit().nfgaloisconj()) == "[-x, x]~"
+quartic_subfields = objtogen("x^4 - 2").nfsubfields()
+assert str(quartic_subfields) == (
+    "[[x, 0], [x^2 - 2, -x^2], [x^4 - 2, x]]"
+)
+assert str(objtogen("x^4 - 2").nfsubfields(2)) == "[[x^2 - 2, -x^2]]"
+assert str(objtogen("x^3 - 3*x + 1").nfsubfields()) == (
+    "[[x, 0], [x^3 - 3*x + 1, x]]"
+)
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4560,6 +4605,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field Galois-conjugate input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).nfsubfields()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial subfield input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))
