@@ -955,6 +955,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_idealispower(GEN nf,
+                                                GEN ideal,
+                                                long exponent,
+                                                long *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = idealispower(nf, ideal, exponent, NULL);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealnumden(GEN nf,
                                                      GEN ideal,
                                                      GEN *result,
@@ -1932,6 +1956,11 @@ cdef extern from *:
                                                 GEN ideal,
                                                 GEN *result,
                                                 long *errnum)
+    int cowasm_cypari2_gen_idealispower(GEN nf,
+                                        GEN ideal,
+                                        long exponent,
+                                        long *result,
+                                        long *errnum)
     int cowasm_cypari2_gen_clone_idealnumden(GEN nf,
                                              GEN ideal,
                                              GEN *result,
@@ -2828,6 +2857,24 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    def idealispower(self, ideal, long exponent, B=None):
+        cdef Gen converted
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if B is not None:
+            raise NotImplementedError("optional argument B not available")
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted = objtogen(ideal)
+        if not cowasm_cypari2_gen_idealispower(
+            self.g, converted.g, exponent, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return result
 
     def idealnumden(self, ideal):
         cdef Gen converted
@@ -4042,6 +4089,11 @@ assert int(quartic_nf.idealismaximal(unit_ideal)) == 0
 assert int(quartic_nf.idealismaximal(IdealLike(first_prime_hnf))[0]) == int(
     first_prime[0]
 )
+eight_ideal = quartic_nf.idealpow(two_ideal, 3)
+assert quartic_nf.idealispower(eight_ideal, 3) == 1
+assert quartic_nf.idealispower(two_ideal, 3) == 0
+assert quartic_nf.idealispower(unit_ideal, 5) == 1
+assert quartic_nf.idealispower(IdealLike(eight_ideal), 3) == 1
 half_numden = quartic_nf.idealnumden(objtogen("1/2"))
 assert str(half_numden) == "[1, 2]"
 inverse_two_numden = quartic_nf.idealnumden(inverse_two_ideal_direct)
@@ -4268,6 +4320,27 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("malformed maximal-ideal test was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealispower(1, 2)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal power test was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealispower(two_ideal, 0)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("nonpositive ideal power test was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealispower(two_ideal, 3, object())
+except NotImplementedError as err:
+    assert str(err) == "optional argument B not available"
+else:
+    raise AssertionError("optional ideal power root output was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealnumden(1)

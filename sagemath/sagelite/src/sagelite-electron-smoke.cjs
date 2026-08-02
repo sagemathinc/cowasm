@@ -386,6 +386,8 @@ assert uniformizer_field.ideal(negative_uniformizer).valuation(
 ) == 1
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
+assert quadratic_field.pari_nf().idealispower(quadratic_two_ideal, 3) == 0
+assert quadratic_field.pari_nf().idealispower(quadratic_two_ideal**3, 3) == 1
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)
 assert quadratic_one_mod_three == -2
 assert quadratic_one_mod_three in quadratic_two_ideal

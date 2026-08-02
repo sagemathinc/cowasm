@@ -45,13 +45,15 @@ polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
 `idealaddtoone()`, `idealappr()`, `idealchinese()`, `idealcoprime()`,
 `idealfactor()`, `idealintersect()`, `idealinv()`, `idealismaximal()`,
-`idealnumden()`, `idealmul()`, `idealdiv()`, `idealpow()`, `idealred()`,
-`idealtwoelt()`, `idealval()`, and `idealnorm()` results, completing the adjacent
+`idealispower()`, `idealnumden()`, `idealmul()`, `idealdiv()`, `idealpow()`,
+`idealred()`, `idealtwoelt()`, `idealval()`, and `idealnorm()` results,
+completing the adjacent
 `NumberFieldFractionalIdeal.norm()`, factorization, intersection,
 multiplication, quotient, inverse, direct PARI inversion,
-numerator/denominator, power, equivalent-ideal reduction, coprime ideal element
-and multiplier, two-generator ideal representation, prime-ideal valuation and
-primality, negative uniformizers, and Chinese remainder paths. Explicit PARI
+numerator/denominator, power and power testing, equivalent-ideal reduction,
+coprime ideal element and multiplier, two-generator ideal representation,
+prime-ideal valuation and primality, negative uniformizers, and Chinese
+remainder paths. Explicit PARI
 `gequal()` comparison
 supports the scalar-ideal fast path without routing it through conversion. The
 standard lazy `Gen.sage()` bridge now delegates to Sage's owned PARI converter,
