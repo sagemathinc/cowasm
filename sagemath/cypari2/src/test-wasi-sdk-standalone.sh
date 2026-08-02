@@ -312,6 +312,95 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_pollead(GEN input,
+                                                 GEN variable,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(pollead(input, variable ? gvar(variable) : -1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_content(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(content(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_denominator(GEN input,
+                                                     GEN *result,
+                                                     long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(denom(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_polisirreducible(GEN input,
+                                                    long *result,
+                                                    long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = polisirreducible(input);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_variables(GEN input,
                                                    GEN *result,
                                                    long *errnum) {
@@ -374,6 +463,28 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(poleval(input, value));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_liftpol(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(liftpol(input));
       }
       pari_ENDCATCH;
 
@@ -583,6 +694,52 @@ cdef extern from *:
       }
       pari_TRY {
         *result = gclone(nffactor(nf, polynomial));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
+                                                  GEN relative_polynomial,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nf_rnfeq(nf, relative_polynomial));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_eltreltoabs(GEN relative_equation,
+                                                     GEN value,
+                                                     GEN *result,
+                                                     long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(eltreltoabs(relative_equation, value));
       }
       pari_ENDCATCH;
 
@@ -2054,6 +2211,19 @@ cdef extern from *:
                                            GEN variable,
                                            GEN *result,
                                            long *errnum)
+    int cowasm_cypari2_gen_clone_pollead(GEN input,
+                                         GEN variable,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_content(GEN input,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_denominator(GEN input,
+                                             GEN *result,
+                                             long *errnum)
+    int cowasm_cypari2_gen_polisirreducible(GEN input,
+                                            long *result,
+                                            long *errnum)
     int cowasm_cypari2_gen_clone_variables(GEN input,
                                            GEN *result,
                                            long *errnum)
@@ -2063,6 +2233,9 @@ cdef extern from *:
                                           long *errnum)
     int cowasm_cypari2_gen_clone_poleval(GEN input,
                                          GEN value,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_liftpol(GEN input,
                                          GEN *result,
                                          long *errnum)
     int cowasm_cypari2_gen_compare(GEN left,
@@ -2102,6 +2275,14 @@ cdef extern from *:
                                           GEN polynomial,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
+                                          GEN relative_polynomial,
+                                          GEN *result,
+                                          long *errnum)
+    int cowasm_cypari2_gen_clone_eltreltoabs(GEN relative_equation,
+                                             GEN value,
+                                             GEN *result,
+                                             long *errnum)
     int cowasm_cypari2_gen_clone_nfisisom(GEN left,
                                           GEN right,
                                           GEN *result,
@@ -2817,6 +2998,59 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
+    def pollead(self, variable=None):
+        cdef Gen converted
+        cdef GEN result = NULL
+        cdef GEN variable_gen = NULL
+        cdef long errnum = 0
+
+        if variable is not None:
+            converted = objtogen(variable)
+            variable_gen = converted.g
+        if not cowasm_cypari2_gen_clone_pollead(
+            self.g, variable_gen, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def content(self, *args, **kwargs):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if args or kwargs:
+            return _missing_runtime(*args, **kwargs)
+        if not cowasm_cypari2_gen_clone_content(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def denominator(self, *args, **kwargs):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if args or kwargs:
+            return _missing_runtime(*args, **kwargs)
+        if not cowasm_cypari2_gen_clone_denominator(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def polisirreducible(self):
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_polisirreducible(
+            self.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return bool(result)
+
+    def liftpol(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_liftpol(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def variables(self):
         cdef GEN result = NULL
         cdef long errnum = 0
@@ -2907,6 +3141,28 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_nffactor(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def _nf_rnfeq(self, relative_polynomial):
+        cdef Gen converted = objtogen(relative_polynomial)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nf_rnfeq(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def _eltreltoabs(self, value):
+        cdef Gen converted = objtogen(value)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_eltreltoabs(
             self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -4282,6 +4538,16 @@ assert int(objtogen(7).poldegree()) == 0
 assert [str(variable) for variable in f.variables()] == ["y"]
 assert objtogen(7).variables() == []
 assert int(f.poldegree(f.variables()[0])) == 2
+assert int(f.pollead()) == 1
+assert int(objtogen("2*y^2 - 2").pollead(y)) == 2
+assert int(objtogen(7).pollead()) == 7
+assert int(objtogen("6*y^2 - 4").content()) == 2
+assert int(objtogen("7/12").denominator()) == 12
+assert f.polisirreducible()
+assert not objtogen("y^2 - 1").polisirreducible()
+assert str(objtogen("Mod(y, y^2 + 1) + Mod(2, 3)").liftpol()) == (
+    "y + Mod(2, 3)"
+)
 assert [int(f[index]) for index in (0, 1, 2, 100, -1)] == [-2, 0, 1, 0, 0]
 assert int(f(objtogen(3))) == 7
 assert str(y * 2) == "2*y"
@@ -4431,6 +4697,18 @@ assert [str(gaussian_quartic_factors[row, 0]) for row in range(4)] == [
     "x - 1", "x + 1", "x + Mod(-y, y^2 + 1)", "x + Mod(y, y^2 + 1)"
 ]
 assert [int(gaussian_quartic_factors[row, 1]) for row in range(4)] == [1] * 4
+gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
+    objtogen("x^2 + 2")
+)
+assert str(gaussian_relative_equation) == (
+    "[x^4 + 6*x^2 + 1, 1/2*x^3 + 5/2*x, -1, y^2 + 1, x^2 + 2]"
+)
+assert str(gaussian_relative_equation._eltreltoabs(objtogen("x"))) == (
+    "1/2*x^3 + 7/2*x"
+)
+assert str(gaussian_relative_equation._eltreltoabs(objtogen("y"))) == (
+    "1/2*x^3 + 5/2*x"
+)
 isomorphic_cubic = objtogen("x^3 - 2")
 same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
 scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
@@ -4667,11 +4945,25 @@ else:
     raise AssertionError("non-polynomial subfield input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
+    objtogen([1, 2]).pollead()
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("vector leading coefficient was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
     gaussian_nf.nffactor(objtogen(1))
 except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial number-field factor input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen("y^2 + 1")._nf_rnfeq(objtogen(1))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial relative equation was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).nfisisom(objtogen("x^2 - 2"))

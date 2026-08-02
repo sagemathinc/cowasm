@@ -179,6 +179,28 @@ del factorization, complete_subfields, full_field, embedding, reverse_map
 del factor_field, a, t
 `);
     console.log("sagelite-electron-ok number field factorization resources smoke");
+    console.log("sagelite-electron-start relative number field resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+relative_field = NumberField([x**3 - 2, x**2 + x + 1], 'a')
+assert relative_field.relative_degree() == 3
+assert relative_field.base_field().degree() == 2
+assert relative_field.absolute_degree() == 6
+assert relative_field.absolute_polynomial().degree() == 6
+base_field = NumberField(x**2 + 1, 'i')
+t = PolynomialRing(base_field, 't').gen()
+quadratic_extension = base_field.extension(t**2 - base_field.gen(), 'b')
+assert quadratic_extension.relative_degree() == 2
+assert quadratic_extension.absolute_degree() == 4
+assert quadratic_extension.absolute_polynomial().degree() == 4
+del relative_field, base_field, t, quadratic_extension
+`);
+    console.log("sagelite-electron-ok relative number field resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all
