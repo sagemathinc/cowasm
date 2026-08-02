@@ -105,6 +105,24 @@ assert result and len(maps) == 2
 del base_field, isomorphic_field, nonisomorphic_field, result, maps
 `);
     console.log("sagelite-electron-ok number field isomorphism resources smoke");
+    console.log("sagelite-electron-start bounded norm number field ideals resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+bounded_ideal_field = NumberField(x**2 + 23, 'a')
+bounded_ideals = bounded_ideal_field.ideals_of_bdd_norm(5)
+assert list(bounded_ideals) == [1, 2, 3, 4, 5]
+assert [len(bounded_ideals[n]) for n in bounded_ideals] == [1, 2, 2, 3, 0]
+assert [[I.norm() for I in bounded_ideals[n]] for n in bounded_ideals] == [
+    [1], [2, 2], [3, 3], [4, 4, 4], []
+]
+del bounded_ideal_field, bounded_ideals
+`);
+    console.log("sagelite-electron-ok bounded norm number field ideals resources smoke");
     console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all

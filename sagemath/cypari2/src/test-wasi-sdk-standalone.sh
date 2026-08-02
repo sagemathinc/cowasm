@@ -495,6 +495,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_ideallist(GEN nf,
+                                                   GEN bound,
+                                                   long flag,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gideallist(nf, bound, flag));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_bnfinit(GEN input,
                                                  long flag,
                                                  long precision,
@@ -1944,6 +1968,11 @@ cdef extern from *:
                                           GEN right,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_ideallist(GEN nf,
+                                           GEN bound,
+                                           long flag,
+                                           GEN *result,
+                                           long *errnum)
     int cowasm_cypari2_gen_clone_bnfinit(GEN input,
                                           long flag,
                                           long precision,
@@ -2695,6 +2724,19 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nfisisom(
             self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def ideallist(self, bound, long flag=4):
+        cdef Gen converted = objtogen(bound)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not cowasm_cypari2_gen_clone_ideallist(
+            self.g, converted.g, flag, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4164,6 +4206,13 @@ assert str(scaled_cubic_isomorphisms) == "[1/2*y^2]"
 assert scaled_cubic_isomorphisms.length() == 1
 assert not nonisomorphic_quadratic
 assert nonisomorphic_quadratic.length() == 0
+bounded_quartic_ideals = quartic_nf.ideallist(5)
+assert len(bounded_quartic_ideals) == 5
+assert [len(bounded_quartic_ideals[index]) for index in range(5)] == [
+    1, 0, 0, 0, 1
+]
+assert str(bounded_quartic_ideals[0][0]) == str(unit_ideal)
+assert int(quartic_nf.idealnorm(bounded_quartic_ideals[4][0])) == 5
 assert quartic_nf.nfeltval(12, first_prime) == 2
 assert quartic_nf.nfeltval(3, first_prime) == 0
 assert quartic_nf.nfeltval(objtogen("4*y"), first_prime) == 2
@@ -4353,6 +4402,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial isomorphism input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).ideallist(5)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal listing was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.ideallist(objtogen("[1, 2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("nonscalar ideal-list bound was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     quartic_nf.nfeltval(12, objtogen("[2]"))
