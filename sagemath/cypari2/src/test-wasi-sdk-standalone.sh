@@ -472,6 +472,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nfisisom(GEN left,
+                                                  GEN right,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nfisisom(left, right));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_bnfinit(GEN input,
                                                  long flag,
                                                  long precision,
@@ -1917,6 +1940,10 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_nfdisc(GEN input,
                                         GEN *result,
                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nfisisom(GEN left,
+                                          GEN right,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_bnfinit(GEN input,
                                           long flag,
                                           long precision,
@@ -2409,6 +2436,11 @@ cdef class Gen(Gen_base):
             return glength(self.g)
         raise TypeError("PARI object does not have a Python length")
 
+    def length(self):
+        if self.g == NULL:
+            return 0
+        return glength(self.g)
+
     def __bool__(self):
         return self != 0
 
@@ -2652,6 +2684,17 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nfdisc(
             self.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def nfisisom(self, other):
+        cdef Gen converted = objtogen(other)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nfisisom(
+            self.g, converted.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4111,6 +4154,16 @@ assert str(quartic_nf.idealfactor(IdealLike(twelve_ideal))) == str(
 )
 assert int(objtogen("x^3 + x^2 - 2*x + 8").nfdisc()) == -503
 assert int(objtogen("x^2 - 1/2").nfdisc()) == 8
+isomorphic_cubic = objtogen("x^3 - 2")
+same_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 2"))
+scaled_cubic_isomorphisms = isomorphic_cubic.nfisisom(objtogen("y^3 - 4"))
+nonisomorphic_quadratic = isomorphic_cubic.nfisisom(objtogen("y^2 - 2"))
+assert str(same_cubic_isomorphisms) == "[y]"
+assert same_cubic_isomorphisms.length() == 1
+assert str(scaled_cubic_isomorphisms) == "[1/2*y^2]"
+assert scaled_cubic_isomorphisms.length() == 1
+assert not nonisomorphic_quadratic
+assert nonisomorphic_quadratic.length() == 0
 assert quartic_nf.nfeltval(12, first_prime) == 2
 assert quartic_nf.nfeltval(3, first_prime) == 0
 assert quartic_nf.nfeltval(objtogen("4*y"), first_prime) == 2
@@ -4293,6 +4346,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial number-field discriminant was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).nfisisom(objtogen("x^2 - 2"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial isomorphism input was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     quartic_nf.nfeltval(12, objtogen("[2]"))

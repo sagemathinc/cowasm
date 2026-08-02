@@ -87,6 +87,24 @@ assert discriminant_field.disc() == -503
 del discriminant_field
 `);
     console.log("sagelite-electron-ok number field discriminant resources smoke");
+    console.log("sagelite-electron-start number field isomorphism resources smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+
+x = PolynomialRing(QQ, 'x').gen()
+base_field = NumberField(x**2 + 1, 'a')
+isomorphic_field = NumberField(x**2 + 4, 'b')
+nonisomorphic_field = NumberField(x**2 + 5, 'c')
+assert base_field.is_isomorphic(isomorphic_field)
+assert not base_field.is_isomorphic(nonisomorphic_field)
+result, maps = base_field.is_isomorphic(isomorphic_field, True)
+assert result and len(maps) == 2
+del base_field, isomorphic_field, nonisomorphic_field, result, maps
+`);
+    console.log("sagelite-electron-ok number field isomorphism resources smoke");
     console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all
