@@ -3326,6 +3326,14 @@ quadratic_different_square_inverse = ~quadratic_different_square
 assert quadratic_different_square_inverse.norm() == QQ(1) / 529
 assert repr(quadratic_different_square_inverse) == 'Fractional ideal (1/23)'
 assert repr(quadratic_different_square_inverse * quadratic_different_square) == 'Fractional ideal (1)'
+quadratic_different_cube_via_pari = quadratic_field.ideal(
+    quadratic_field.pari_nf().idealpow(quadratic_different, 3)
+)
+assert quadratic_different_cube_via_pari.number_field() is quadratic_field
+assert quadratic_different_cube_via_pari.norm() == 12167
+assert repr(quadratic_different_cube_via_pari) == 'Fractional ideal (23*a)'
+assert repr(quadratic_field.ideal(quadratic_field.pari_nf().idealpow(quadratic_different, 0))) == 'Fractional ideal (1)'
+assert repr(quadratic_field.ideal(quadratic_field.pari_nf().idealpow(quadratic_different, -1))) == 'Fractional ideal (1/23*a)'
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
@@ -3339,6 +3347,13 @@ assert repr(other_quadratic_quotient) == 'Fractional ideal (2*b)'
 other_quadratic_square_inverse = ~(other_quadratic_field.different()**2)
 assert other_quadratic_square_inverse.norm() == QQ(1) / 242064
 assert repr(other_quadratic_square_inverse) == 'Fractional ideal (1/492)'
+other_quadratic_cube_via_pari = other_quadratic_field.ideal(
+    other_quadratic_field.pari_nf().idealpow(other_quadratic_field.different(), 3)
+)
+assert other_quadratic_cube_via_pari.number_field() is other_quadratic_field
+assert other_quadratic_cube_via_pari.norm() == 119095488
+assert repr(other_quadratic_cube_via_pari) == 'Fractional ideal (984*b)'
+assert repr(other_quadratic_field.ideal(other_quadratic_field.pari_nf().idealpow(other_quadratic_field.different(), -1))) == 'Fractional ideal (1/246*b)'
 assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
@@ -3662,7 +3677,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=331
+electron_manifest_schema_version=332
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -3853,6 +3868,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-display-v301"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-multiplication-v302"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-division-v303"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-number-field-ideal-power-v304"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

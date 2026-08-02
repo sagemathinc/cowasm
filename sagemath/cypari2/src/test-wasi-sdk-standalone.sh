@@ -748,6 +748,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealpow(GEN nf,
+                                                  GEN ideal,
+                                                  GEN exponent,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealpow(nf, ideal, exponent));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                                    GEN ideal,
                                                    GEN *result,
@@ -1524,6 +1548,11 @@ cdef extern from *:
                                           GEN right,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_idealpow(GEN nf,
+                                          GEN ideal,
+                                          GEN exponent,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_idealnorm(GEN nf,
                                            GEN ideal,
                                            GEN *result,
@@ -2223,6 +2252,24 @@ cdef class Gen(Gen_base):
         converted_right = objtogen(right)
         if not cowasm_cypari2_gen_clone_idealdiv(
             self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealpow(self, ideal, exponent):
+        cdef Gen converted_ideal
+        cdef Gen converted_exponent
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not isinstance(ideal, Gen) and hasattr(ideal, "pari_hnf"):
+            ideal = ideal.pari_hnf()
+        converted_ideal = objtogen(ideal)
+        converted_exponent = objtogen(exponent)
+        if not cowasm_cypari2_gen_clone_idealpow(
+            self.g, converted_ideal.g, converted_exponent.g, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -3217,6 +3264,15 @@ assert str(quartic_nf.idealnorm(inverse_two_ideal)) == "1/16"
 assert str(
     quartic_nf.idealdiv(IdealLike(two_ideal), IdealLike(two_ideal))
 ) == str(unit_ideal)
+assert str(quartic_nf.idealpow(two_ideal, 0)) == str(unit_ideal)
+assert str(quartic_nf.idealpow(two_ideal, 3)) == str(quartic_nf.idealhnf(8))
+assert int(quartic_nf.idealnorm(quartic_nf.idealpow(two_ideal, 3))) == 4096
+inverse_two_ideal_via_power = quartic_nf.idealpow(two_ideal, -1)
+assert str(inverse_two_ideal_via_power) == str(inverse_two_ideal)
+assert str(quartic_nf.idealnorm(inverse_two_ideal_via_power)) == "1/16"
+assert str(quartic_nf.idealpow(IdealLike(two_ideal), 2)) == str(
+    quartic_nf.idealhnf(4)
+)
 assert int(quartic_nf.idealnorm(unit_ideal)) == 1
 assert int(quartic_nf.idealnorm(two_ideal)) == 16
 pari = Pari()
@@ -3286,6 +3342,20 @@ except TypeError as err:
     assert str(err) == "PARI ideal operations require a number field"
 else:
     raise AssertionError("non-number-field ideal division was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealpow(1, 2)
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal power was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealpow(two_ideal, objtogen("y"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-integral ideal exponent was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).bnfinit(1)
