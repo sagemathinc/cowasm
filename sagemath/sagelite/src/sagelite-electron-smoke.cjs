@@ -375,6 +375,15 @@ primality_field = NumberField(x**2 - 17, 'd')
 assert primality_field.ideal(5).is_prime()
 assert not primality_field.ideal(13).is_prime()
 assert not primality_field.ideal(17).is_prime()
+uniformizer_field = NumberField(x**2 + 5, 'u')
+uniformizer_prime, _ = uniformizer_field.ideal(3).prime_factors()
+negative_uniformizer = uniformizer_field.uniformizer(
+    uniformizer_prime, 'negative'
+)
+assert repr(negative_uniformizer) == '1/2*u + 1/2'
+assert uniformizer_field.ideal(negative_uniformizer).valuation(
+    uniformizer_prime
+) == 1
 quadratic_two_ideal = quadratic_field.ideal(2)
 quadratic_three_ideal = quadratic_field.ideal(3)
 quadratic_one_mod_three = quadratic_two_ideal.element_1_mod(quadratic_three_ideal)

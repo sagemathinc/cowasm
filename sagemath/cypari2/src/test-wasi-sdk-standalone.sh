@@ -790,6 +790,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_idealappr(GEN nf,
+                                                   GEN factors,
+                                                   long flag,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(idealappr0(nf, factors, flag));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_idealcoprime(GEN nf,
                                                       GEN left,
                                                       GEN right,
@@ -1876,6 +1900,11 @@ cdef extern from *:
                                                GEN right,
                                                GEN *result,
                                                long *errnum)
+    int cowasm_cypari2_gen_clone_idealappr(GEN nf,
+                                           GEN factors,
+                                           long flag,
+                                           GEN *result,
+                                           long *errnum)
     int cowasm_cypari2_gen_clone_idealcoprime(GEN nf,
                                               GEN left,
                                               GEN right,
@@ -2676,6 +2705,19 @@ cdef class Gen(Gen_base):
         converted_right = objtogen(right)
         if not cowasm_cypari2_gen_clone_idealaddtoone(
             self.g, converted_left.g, converted_right.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def idealappr(self, factors, long flag=0):
+        cdef Gen converted = objtogen(factors)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g == NULL or typ(self.g) != t_VEC:
+            raise TypeError("PARI ideal operations require a number field")
+        if not cowasm_cypari2_gen_clone_idealappr(
+            self.g, converted.g, flag, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -3754,6 +3796,22 @@ class Pari:
     def Col(self, value):
         return objtogen(value).Col()
 
+    def matrix(self, rows, columns, entries):
+        rows = int(rows)
+        columns = int(columns)
+        if rows <= 0 or columns <= 0:
+            raise ValueError("matrix dimensions must be positive")
+        try:
+            values = list(entries)
+        except TypeError:
+            return _missing_runtime(rows, columns, entries)
+        if len(values) != rows * columns:
+            raise ValueError("matrix entry count does not match its dimensions")
+        return self.Mat([
+            self.Col(values[row * columns:(row + 1) * columns])
+            for row in range(rows)
+        ]).mattranspose()
+
     def __call__(self, *args, **kwargs):
         if kwargs or len(args) != 1:
             return _missing_runtime(*args, **kwargs)
@@ -3930,6 +3988,27 @@ rebuilt_factorization = pari.Mat([
     for row in range(3)
 ]).mattranspose()
 assert str(rebuilt_factorization) == str(twelve_factorization)
+matrix_factor_row = pari.matrix(1, 2, [first_prime, -1])
+assert matrix_factor_row.nrows() == 1
+assert matrix_factor_row.ncols() == 2
+assert str(matrix_factor_row[0, 0]) == str(first_prime)
+assert int(matrix_factor_row[0, 1]) == -1
+try:
+    pari.matrix(0, 2, [])
+except ValueError as err:
+    assert str(err) == "matrix dimensions must be positive"
+else:
+    raise AssertionError("nonpositive matrix dimensions were accepted")
+try:
+    pari.matrix(2, 2, [1, 2])
+except ValueError as err:
+    assert str(err) == "matrix entry count does not match its dimensions"
+else:
+    raise AssertionError("incomplete matrix entries were accepted")
+assert str(quartic_nf.idealappr(matrix_factor_row, 1)) == "1/2"
+assert str(quartic_nf.idealappr(twelve_factorization, 1)) == (
+    "[-36, 24, 0, 0]~"
+)
 chinese_residues = [1, 2, 3]
 chinese_result = quartic_nf.idealchinese(
     rebuilt_factorization, chinese_residues
@@ -4098,6 +4177,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("noncoprime ideals were accepted by idealaddtoone")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).idealappr(objtogen("[1, -1]"))
+except TypeError as err:
+    assert str(err) == "PARI ideal operations require a number field"
+else:
+    raise AssertionError("non-number-field ideal approximation was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    quartic_nf.idealappr(objtogen("[2]"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("malformed ideal factorization was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen(1).idealcoprime(2, 3)
