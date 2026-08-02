@@ -43,10 +43,10 @@ conversion protocol supporting that path includes owned generic
 multiplication, variable discovery and variable-specific polynomial degree,
 polynomial coefficient indexing, and univariate polynomial evaluation.
 Focused ideal arithmetic now also exposes owned `idealhnf()`, `idealadd()`,
-`idealintersect()`, `idealinv()`, `idealmul()`, `idealdiv()`, `idealpow()`, and
-`idealnorm()` results, completing the adjacent
+`idealintersect()`, `idealinv()`, `idealnumden()`, `idealmul()`, `idealdiv()`,
+`idealpow()`, and `idealnorm()` results, completing the adjacent
 `NumberFieldFractionalIdeal.norm()`, intersection, multiplication, quotient,
-inverse, and direct PARI inversion and power paths.
+inverse, and direct PARI inversion, numerator/denominator, and power paths.
 Focused BNF support preserves PARI random state and exposes owned `bnfinit()`,
 `bnfisprincipal()`, `nffactorback()`, and `nfbasistoalg()` results. This is
 the narrow principality chain Sage uses to print reduced generators for small

@@ -343,6 +343,12 @@ assert quadratic_inverse_via_pari.number_field() is quadratic_field
 assert quadratic_inverse_via_pari.norm() == 1/23
 assert repr(quadratic_inverse_via_pari) == 'Fractional ideal (1/23*a)'
 assert repr(quadratic_inverse_via_pari * quadratic_different) == 'Fractional ideal (1)'
+quadratic_inverse_numden = quadratic_field.pari_nf().idealnumden(quadratic_inverse_via_pari)
+quadratic_inverse_numerator = quadratic_field.ideal(quadratic_inverse_numden[0])
+quadratic_inverse_denominator = quadratic_field.ideal(quadratic_inverse_numden[1])
+assert repr(quadratic_inverse_numerator) == 'Fractional ideal (1)'
+assert repr(quadratic_inverse_denominator) == 'Fractional ideal (a)'
+assert repr(quadratic_inverse_numerator / quadratic_inverse_denominator) == 'Fractional ideal (1/23*a)'
 assert quadratic_field.disc() == -23
 other_quadratic_field = NumberField(x**2 - 123, 'b')
 assert other_quadratic_field.different().norm() == 492
@@ -379,6 +385,12 @@ assert other_quadratic_inverse_via_pari.number_field() is other_quadratic_field
 assert other_quadratic_inverse_via_pari.norm() == 1/492
 assert repr(other_quadratic_inverse_via_pari) == 'Fractional ideal (1/246*b)'
 assert repr(other_quadratic_inverse_via_pari * other_quadratic_field.different()) == 'Fractional ideal (1)'
+other_quadratic_inverse_numden = other_quadratic_field.pari_nf().idealnumden(other_quadratic_inverse_via_pari)
+other_quadratic_inverse_numerator = other_quadratic_field.ideal(other_quadratic_inverse_numden[0])
+other_quadratic_inverse_denominator = other_quadratic_field.ideal(other_quadratic_inverse_numden[1])
+assert repr(other_quadratic_inverse_numerator) == 'Fractional ideal (1)'
+assert repr(other_quadratic_inverse_denominator) == 'Fractional ideal (2*b)'
+assert repr(other_quadratic_inverse_numerator / other_quadratic_inverse_denominator) == 'Fractional ideal (1/246*b)'
 assert other_quadratic_field.disc() == 492
 alpha = (y / 6).Mod(f)
 assert str(alpha) == 'Mod(1/6*y, y^2 + 6)'
