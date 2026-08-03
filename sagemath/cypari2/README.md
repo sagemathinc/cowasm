@@ -50,7 +50,9 @@ completing the direct
 roots-of-unity, Dedekind-zeta coefficient, automorphism, and subfield paths
 for explicit degrees without constructing a maximal order or unit group.
 The factorization bridge also completes polynomial factorization over absolute
-number fields and the reverse maps returned for full-degree subfields.
+number fields and the reverse maps returned for full-degree subfields. Owned
+`rnfpolredbest()` results complete the change of relative polynomial and
+generator required by non-monic and non-integral relative extensions.
 Focused polynomial introspection now includes leading coefficient, content,
 denominator, irreducibility, and recursive polynomial lifting. Together with
 owned `nf_rnfeq()`, `nf_nfzk()`, `nfeltup()`, absolute-to-relative,

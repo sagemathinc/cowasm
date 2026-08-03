@@ -723,6 +723,31 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_rnfpolredbest(
+        GEN nf,
+        GEN relative_polynomial,
+        long flag,
+        GEN *result,
+        long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(rnfpolredbest(nf, relative_polynomial, flag));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                                   GEN relative_polynomial,
                                                   GEN *result,
@@ -2395,6 +2420,11 @@ cdef extern from *:
                                           GEN polynomial,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_rnfpolredbest(GEN nf,
+                                               GEN relative_polynomial,
+                                               long flag,
+                                               GEN *result,
+                                               long *errnum)
     int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                           GEN relative_polynomial,
                                           GEN *result,
@@ -3288,6 +3318,17 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nffactor(
             self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def rnfpolredbest(self, polynomial, long flag=0):
+        cdef Gen converted = objtogen(polynomial)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_rnfpolredbest(
+            self.g, converted.g, flag, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -4888,6 +4929,21 @@ assert [str(gaussian_quartic_factors[row, 0]) for row in range(4)] == [
     "x - 1", "x + 1", "x + Mod(-y, y^2 + 1)", "x + Mod(y, y^2 + 1)"
 ]
 assert [int(gaussian_quartic_factors[row, 1]) for row in range(4)] == [1] * 4
+gaussian_reduced_relative = gaussian_nf.rnfpolredbest(
+    objtogen("x^2 - 1/2"), flag=1
+)
+assert str(gaussian_reduced_relative) == (
+    "[x^2 + Mod(y, y^2 + 1), "
+    "Mod(Mod(-1/2*y - 1/2, y^2 + 1)*x, x^2 + Mod(y, y^2 + 1))]"
+)
+quadratic_reduced_relative = objtogen("y^2 + 2").nfinit().rnfpolredbest(
+    objtogen("x^2 - 1/3"), flag=1
+)
+assert str(quadratic_reduced_relative) == (
+    "[x^2 + Mod(y, y^2 + 2)*x + 1, "
+    "Mod(Mod(-1/3*y, y^2 + 2)*x + Mod(1/3, y^2 + 2), "
+    "x^2 + Mod(y, y^2 + 2)*x + 1)]"
+)
 gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
     objtogen("x^2 + 2")
 )
@@ -5172,6 +5228,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-polynomial number-field factor input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    gaussian_nf.rnfpolredbest(objtogen(1), flag=1)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial relative reduction input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).rnfpolredbest(objtogen("x^2 + 1"), flag=1)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-number-field relative reduction was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen("y^2 + 1")._nf_rnfeq(objtogen(1))

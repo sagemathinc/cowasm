@@ -215,11 +215,24 @@ except ValueError as err:
     assert str(err) == 'The element b is not in the base field'
 else:
     raise AssertionError('relative generator unexpectedly lifted to the base field')
+nonintegral_extension = base_field.extension(t**2 - QQ(1)/2, 'c')
+assert nonintegral_extension.relative_degree() == 2
+assert nonintegral_extension.absolute_degree() == 4
+assert nonintegral_extension.gen()**2 == QQ(1)/2
+assert nonintegral_extension.lift_to_base(nonintegral_extension.gen()**2) == QQ(1)/2
+nonmonic_base = NumberField(2*x**2 + 1, 'd')
+u = PolynomialRing(nonmonic_base, 'u').gen()
+nonmonic_extension = nonmonic_base.extension(u**2 - QQ(1)/3, 'e')
+assert nonmonic_extension.relative_degree() == 2
+assert nonmonic_extension.absolute_degree() == 4
+assert nonmonic_extension.gen()**2 == QQ(1)/3
+assert nonmonic_extension.lift_to_base(nonmonic_extension.gen()**2) == QQ(1)/3
 del relative_field, base_field, t, quadratic_extension, lifted_base
 del relative_space, from_relative_space, to_relative_space
 del mixed_element, coordinates
+del nonintegral_extension, nonmonic_base, u, nonmonic_extension
 `);
-    console.log("sagelite-electron-ok relative number field base lifts resources smoke");
+    console.log("sagelite-electron-ok relative number field non-monic resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

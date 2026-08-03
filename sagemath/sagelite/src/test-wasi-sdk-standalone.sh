@@ -3870,7 +3870,21 @@ except ValueError as err:
     assert str(err) == 'The element b is not in the base field'
 else:
     raise AssertionError('relative generator unexpectedly lifted to the base field')
-print('sagelite-node-ok relative number field element conversion smoke')"
+nonintegral_base = NumberField(x**2 + 1, 'c')
+v = PolynomialRing(nonintegral_base, 'v').gen()
+nonintegral_extension = nonintegral_base.extension(v**2 - QQ(1)/2, 'd')
+assert nonintegral_extension.relative_degree() == 2
+assert nonintegral_extension.absolute_degree() == 4
+assert nonintegral_extension.gen()**2 == QQ(1)/2
+assert nonintegral_extension.lift_to_base(nonintegral_extension.gen()**2) == QQ(1)/2
+nonmonic_base = NumberField(2*x**2 + 1, 'e')
+u = PolynomialRing(nonmonic_base, 'u').gen()
+nonmonic_extension = nonmonic_base.extension(u**2 - QQ(1)/3, 'f')
+assert nonmonic_extension.relative_degree() == 2
+assert nonmonic_extension.absolute_degree() == 4
+assert nonmonic_extension.gen()**2 == QQ(1)/3
+assert nonmonic_extension.lift_to_base(nonmonic_extension.gen()**2) == QQ(1)/3
+print('sagelite-node-ok relative number field non-monic construction smoke')"
 
 run_node_import \
   "high-byte string literal delivery smoke" \
@@ -3882,7 +3896,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=356
+electron_manifest_schema_version=357
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -4098,6 +4112,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-numbe
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-construction-v326"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-elements-v327"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-base-lifts-v328"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-nonmonic-v329"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
