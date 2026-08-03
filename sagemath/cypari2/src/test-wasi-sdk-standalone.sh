@@ -748,6 +748,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_rnfinit(GEN nf,
+                                                 GEN relative_polynomial,
+                                                 long flag,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(rnfinit0(nf, relative_polynomial, flag));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                                   GEN relative_polynomial,
                                                   GEN *result,
@@ -2425,6 +2449,11 @@ cdef extern from *:
                                                long flag,
                                                GEN *result,
                                                long *errnum)
+    int cowasm_cypari2_gen_clone_rnfinit(GEN nf,
+                                         GEN relative_polynomial,
+                                         long flag,
+                                         GEN *result,
+                                         long *errnum)
     int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                           GEN relative_polynomial,
                                           GEN *result,
@@ -3328,6 +3357,17 @@ cdef class Gen(Gen_base):
         cdef long errnum = 0
 
         if not cowasm_cypari2_gen_clone_rnfpolredbest(
+            self.g, converted.g, flag, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def rnfinit(self, relative_polynomial, long flag=0):
+        cdef Gen converted = objtogen(relative_polynomial)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_rnfinit(
             self.g, converted.g, flag, &result, &errnum
         ):
             _raise_pari_error(errnum)
@@ -4944,6 +4984,17 @@ assert str(quadratic_reduced_relative) == (
     "Mod(Mod(-1/3*y, y^2 + 2)*x + Mod(1/3, y^2 + 2), "
     "x^2 + Mod(y, y^2 + 2)*x + 1)]"
 )
+gaussian_rnf = gaussian_nf.rnfinit(objtogen("x^2 - y"))
+assert gaussian_rnf.length() == 12
+assert str(gaussian_rnf[0]) == "x^2 - y"
+assert str(gaussian_rnf[2]) == "[4, [0, 1]~]"
+assert str(gaussian_rnf[4]) == "[2]"
+assert str(gaussian_rnf[11]) == "[0, 0]"
+gaussian_rnf_with_absolute = gaussian_nf.rnfinit(
+    objtogen("x^2 - y"), flag=1
+)
+assert gaussian_rnf_with_absolute.length() == 12
+assert gaussian_rnf_with_absolute[11].length() == 2
 gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
     objtogen("x^2 + 2")
 )
@@ -5242,6 +5293,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field relative reduction was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    gaussian_nf.rnfinit(objtogen(1))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-polynomial relative field input was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).rnfinit(objtogen("x^2 + 1"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-number-field relative field receiver was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen("y^2 + 1")._nf_rnfeq(objtogen(1))

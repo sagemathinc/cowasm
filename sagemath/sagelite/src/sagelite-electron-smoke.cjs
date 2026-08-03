@@ -207,6 +207,10 @@ mixed_element = quadratic_extension.gen() + base_field.gen()
 coordinates = to_relative_space(mixed_element)
 assert from_relative_space(coordinates) == mixed_element
 assert coordinates[0] == base_field.gen() and coordinates[1] == 1
+relative_rnf = quadratic_extension.pari_rnf()
+assert relative_rnf.length() == 12
+assert str(relative_rnf[0]) == 'x^2 - y'
+assert str(relative_rnf[11]) == '[0, 0]'
 assert quadratic_extension.lift_to_base(quadratic_extension.gen()**2) == base_field.gen()
 assert quadratic_extension.lift_to_base(lifted_base) == base_field.gen() + QQ(1)/2
 try:
@@ -227,12 +231,12 @@ assert nonmonic_extension.relative_degree() == 2
 assert nonmonic_extension.absolute_degree() == 4
 assert nonmonic_extension.gen()**2 == QQ(1)/3
 assert nonmonic_extension.lift_to_base(nonmonic_extension.gen()**2) == QQ(1)/3
-del relative_field, base_field, t, quadratic_extension, lifted_base
+del relative_field, base_field, t, quadratic_extension, lifted_base, relative_rnf
 del relative_space, from_relative_space, to_relative_space
 del mixed_element, coordinates
 del nonintegral_extension, nonmonic_base, u, nonmonic_extension
 `);
-    console.log("sagelite-electron-ok relative number field non-monic resources smoke");
+    console.log("sagelite-electron-ok relative number field rnf data resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

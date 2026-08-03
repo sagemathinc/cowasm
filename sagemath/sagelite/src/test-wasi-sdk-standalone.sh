@@ -3862,6 +3862,10 @@ mixed_element = relative_field.gen() + base_field.gen()
 coordinates = to_relative_space(mixed_element)
 assert from_relative_space(coordinates) == mixed_element
 assert coordinates[0] == base_field.gen() and coordinates[1] == 1
+relative_rnf = relative_field.pari_rnf()
+assert relative_rnf.length() == 12
+assert str(relative_rnf[0]) == 'x^2 - 3'
+assert str(relative_rnf[11]) == '[0, 0]'
 assert relative_field.lift_to_base(relative_field.gen()**2) == 3
 assert relative_field.lift_to_base(base_field.gen() + QQ(1)/2) == base_field.gen() + QQ(1)/2
 try:
@@ -3896,7 +3900,7 @@ print('sagelite-node-ok high-byte string literal delivery smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=357
+electron_manifest_schema_version=358
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -4113,6 +4117,7 @@ electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relat
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-elements-v327"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-base-lifts-v328"
 electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-nonmonic-v329"
+electron_manifest_smoke_contract="${electron_manifest_smoke_contract}-pari-relative-number-field-rnf-data-v330"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
