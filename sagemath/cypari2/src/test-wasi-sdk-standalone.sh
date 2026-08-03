@@ -795,6 +795,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_rnfisfree(GEN bnf,
+                                             GEN order,
+                                             long *result,
+                                             long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = rnfisfree(bnf, order);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                                   GEN relative_polynomial,
                                                   GEN *result,
@@ -2481,6 +2504,10 @@ cdef extern from *:
                                          GEN relative_polynomial,
                                          GEN *result,
                                          long *errnum)
+    int cowasm_cypari2_gen_rnfisfree(GEN bnf,
+                                     GEN order,
+                                     long *result,
+                                     long *errnum)
     int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                           GEN relative_polynomial,
                                           GEN *result,
@@ -3410,6 +3437,17 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    def rnfisfree(self, order):
+        cdef Gen converted = objtogen(order)
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_rnfisfree(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return result
 
     def _nf_rnfeq(self, relative_polynomial):
         cdef Gen converted = objtogen(relative_polynomial)
@@ -5042,6 +5080,10 @@ quadratic_relative_discriminant = quadratic_relative_nf.rnfdisc(
     objtogen("x^2 - 1/3")
 )
 assert str(quadratic_relative_discriminant) == "[2/3, 1/3]"
+gaussian_bnf = objtogen("y^2 + 1").bnfinit(1)
+assert gaussian_bnf.rnfisfree(objtogen("x^2 - y")) == 1
+nonfree_bnf = objtogen("y^2 + 6").bnfinit(1)
+assert nonfree_bnf.rnfisfree(objtogen("x^2 + 3")) == 0
 gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
     objtogen("x^2 + 2")
 )
@@ -5368,6 +5410,13 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-number-field relative discriminant receiver was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).rnfisfree(objtogen("x^2 + 1"))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-bnf relative freeness receiver was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen("y^2 + 1")._nf_rnfeq(objtogen(1))
