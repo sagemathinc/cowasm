@@ -55,7 +55,9 @@ number fields and the reverse maps returned for full-degree subfields. Owned
 generator required by non-monic and non-integral relative extensions, while
 owned `rnfinit()` and `rnfdisc()` results expose Sage's public relative-number-
 field PARI data and relative discriminants, and scalar `rnfisfree()` completes
-the public relative integral-basis freeness check.
+the public relative integral-basis freeness check. Owned `nf_subst()`,
+`rnfidealhnf()`, and `rnfidealabstorel()` results complete relative-ideal HNF
+normalization and the public relative-ideal zero predicate.
 Focused polynomial introspection now includes leading coefficient, content,
 denominator, irreducibility, and recursive polynomial lifting. Together with
 owned `nf_rnfeq()`, `nf_nfzk()`, `nfeltup()`, absolute-to-relative,

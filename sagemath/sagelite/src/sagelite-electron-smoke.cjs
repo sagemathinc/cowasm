@@ -213,6 +213,10 @@ assert str(relative_rnf[0]) == 'x^2 - y'
 assert str(relative_rnf[11]) == '[0, 0]'
 assert quadratic_extension.relative_discriminant() == base_field.ideal(4 * base_field.gen())
 assert quadratic_extension.is_free() is True
+relative_17_ideal = quadratic_extension.ideal(17)
+assert relative_17_ideal.is_zero() is False
+assert relative_17_ideal.pari_rhnf().length() == 2
+assert quadratic_extension.ideal(0).is_zero() is True
 assert quadratic_extension.lift_to_base(quadratic_extension.gen()**2) == base_field.gen()
 assert quadratic_extension.lift_to_base(lifted_base) == base_field.gen() + QQ(1)/2
 try:
@@ -234,11 +238,12 @@ assert nonmonic_extension.absolute_degree() == 4
 assert nonmonic_extension.gen()**2 == QQ(1)/3
 assert nonmonic_extension.lift_to_base(nonmonic_extension.gen()**2) == QQ(1)/3
 del relative_field, base_field, t, quadratic_extension, lifted_base, relative_rnf
+del relative_17_ideal
 del relative_space, from_relative_space, to_relative_space
 del mixed_element, coordinates
 del nonintegral_extension, nonmonic_base, u, nonmonic_extension
 `);
-    console.log("sagelite-electron-ok relative number field freeness resources smoke");
+    console.log("sagelite-electron-ok relative number field ideal zero resources smoke");
     console.log("sagelite-electron-start number field isomorphism resources smoke");
     await python.exec(String.raw`
 import sage.all

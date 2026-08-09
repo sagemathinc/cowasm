@@ -723,6 +723,29 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nf_subst(GEN nf,
+                                                  GEN variable,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gsubst(nf, gvar(nf), variable));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_rnfpolredbest(
         GEN nf,
         GEN relative_polynomial,
@@ -812,6 +835,52 @@ cdef extern from *:
       }
       pari_TRY {
         *result = rnfisfree(bnf, order);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_rnfidealhnf(GEN rnf,
+                                                      GEN ideal,
+                                                      GEN *result,
+                                                      long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(rnfidealhnf(rnf, ideal));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_rnfidealabstorel(GEN rnf,
+                                                          GEN ideal,
+                                                          GEN *result,
+                                                          long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(rnfidealabstorel(rnf, ideal));
       }
       pari_ENDCATCH;
 
@@ -2490,6 +2559,10 @@ cdef extern from *:
                                           GEN polynomial,
                                           GEN *result,
                                           long *errnum)
+    int cowasm_cypari2_gen_clone_nf_subst(GEN nf,
+                                          GEN variable,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_clone_rnfpolredbest(GEN nf,
                                                GEN relative_polynomial,
                                                long flag,
@@ -2508,6 +2581,14 @@ cdef extern from *:
                                      GEN order,
                                      long *result,
                                      long *errnum)
+    int cowasm_cypari2_gen_clone_rnfidealhnf(GEN rnf,
+                                             GEN ideal,
+                                             GEN *result,
+                                             long *errnum)
+    int cowasm_cypari2_gen_clone_rnfidealabstorel(GEN rnf,
+                                                   GEN ideal,
+                                                   GEN *result,
+                                                   long *errnum)
     int cowasm_cypari2_gen_clone_nf_rnfeq(GEN nf,
                                           GEN relative_polynomial,
                                           GEN *result,
@@ -3405,6 +3486,17 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
+    def nf_subst(self, variable):
+        cdef Gen converted = objtogen(variable)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nf_subst(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def rnfpolredbest(self, polynomial, long flag=0):
         cdef Gen converted = objtogen(polynomial)
         cdef GEN result = NULL
@@ -3448,6 +3540,28 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return result
+
+    def rnfidealhnf(self, ideal):
+        cdef Gen converted = objtogen(ideal)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_rnfidealhnf(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def rnfidealabstorel(self, ideal):
+        cdef Gen converted = objtogen(ideal)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_rnfidealabstorel(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
 
     def _nf_rnfeq(self, relative_polynomial):
         cdef Gen converted = objtogen(relative_polynomial)
@@ -5031,6 +5145,8 @@ assert str(objtogen("x^3 - 3*x + 1").nfsubfields()) == (
     "[[x, 0], [x^3 - 3*x + 1, x]]"
 )
 gaussian_nf = objtogen("y^2 + 1").nfinit()
+gaussian_nf_z = gaussian_nf.nf_subst(objtogen("z"))
+assert str(gaussian_nf_z.nf_get_zk()) == "[1, z]"
 gaussian_quadratic_factors = gaussian_nf.nffactor(objtogen("x^2 + 1"))
 assert gaussian_quadratic_factors.nrows() == 2
 assert gaussian_quadratic_factors.ncols() == 2
@@ -5084,6 +5200,15 @@ gaussian_bnf = objtogen("y^2 + 1").bnfinit(1)
 assert gaussian_bnf.rnfisfree(objtogen("x^2 - y")) == 1
 nonfree_bnf = objtogen("y^2 + 6").bnfinit(1)
 assert nonfree_bnf.rnfisfree(objtogen("x^2 + 3")) == 0
+gaussian_relative_zero_ideal = gaussian_rnf.rnfidealhnf(0)
+assert str(gaussian_relative_zero_ideal) == "[[;], []]"
+gaussian_relative_17_ideal = gaussian_rnf.rnfidealhnf(17)
+assert str(gaussian_relative_17_ideal) == "[[1, 0; 0, 1], [17, 17]]"
+gaussian_absolute_17_ideal = objtogen("[17, 17*x^2, 17*x, 17*x^3]")
+gaussian_relative_17_from_absolute = gaussian_rnf.rnfidealabstorel(
+    gaussian_absolute_17_ideal
+)
+assert str(gaussian_relative_17_from_absolute) == str(gaussian_relative_17_ideal)
 gaussian_relative_equation = objtogen("y^2 + 1")._nf_rnfeq(
     objtogen("x^2 + 2")
 )
@@ -5417,6 +5542,20 @@ except PariError as err:
     assert str(err).startswith("PARI error ")
 else:
     raise AssertionError("non-bnf relative freeness receiver was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).rnfidealhnf(objtogen(17))
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-relative-field ideal HNF receiver was accepted")
+assert str(objtogen("13*17")) == "221"
+try:
+    objtogen(1).rnfidealabstorel(gaussian_absolute_17_ideal)
+except PariError as err:
+    assert str(err).startswith("PARI error ")
+else:
+    raise AssertionError("non-relative-field absolute ideal receiver was accepted")
 assert str(objtogen("13*17")) == "221"
 try:
     objtogen("y^2 + 1")._nf_rnfeq(objtogen(1))
